@@ -1,0 +1,11 @@
+textarea{
+    resize:none;
+}
+
+.form-control{
+    border: 1px solid #343a40;
+}
+
+#estado_rol, #tipo_rol{
+    border: 1px solid #343a40;
+}
