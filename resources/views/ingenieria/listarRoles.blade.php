@@ -18,7 +18,9 @@
             <br>
             <div>
                 <h4>Convenciones:</h4>
-                <button class="btn btn-xs btn-default text-primary" title="Edit"><i class="fa fa-lg fa-fw fa-pen"></i></button> Editar
+                <p>
+                    <i class="fa fa-sm fa-pen text-primary"></i> Editar Rol &nbsp;
+                </p>
             </div>
             <br>
             <div class="card card-primary">

@@ -22,6 +22,8 @@
         <div class="col-12">
             <a href="{{route('NuevaVista')}}" class="btn btn-primary"><i class="fas fa-plus"></i> Crear Vista Principal</a>
             <a href="{{route('NuevaVistaOtros')}}" class="btn btn-primary"><i class="fas fa-plus"></i> Crear Vistas Secundarias</a>
+            <a href="{{route('AsignacionVista')}}" class="btn btn-primary"><i class="far fa-address-card"></i> Asignar Vistas a Roles</a>
+            <a href="{{route('ConsultarAsignacionVista')}}" class="btn btn-primary"><i class="fas fa-list"></i> Consultar Asignación de Vistas a Roles</a>
         </div>
     </div>
 @stop

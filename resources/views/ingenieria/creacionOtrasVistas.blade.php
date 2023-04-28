@@ -12,6 +12,7 @@
 <div class="row">
     <div class="col-12">
         <a href="{{route("RolPrincipal")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+        <a href="{{route('NuevaVista')}}" class="btn btn-info"><i class="fas fa-plus"></i> Crear Vista Principal</a>
         <br><br>
         <div class="card card-primary">
             <div class="card-header">
@@ -20,9 +21,9 @@
             <form action="{{ route('CreacionOtraVista') }}" method="POST">
                 @csrf
                 <div class="card-body">
-                    @if (session()->get('vista_no_creada'))
+                    @if (session()->get('otra_vista_no_creada'))
                         <div class="alert alert-danger mt-2" role="alert">
-                            <strong>{{session()->get('vista_no_creada')}}</strong>
+                            <strong>{{session()->get('otra_vista_no_creada')}}</strong>
                         </div>
                     @endif
                     @if (session()->get('otra_vista_creada'))
@@ -40,7 +41,7 @@
                             </div>
                             <div class="form-group row">
                                 <label for="selector_nombre_subcarpeta" class="col-sm-3 col-form-label">Sub Carpeta (Opcional)</label>
-                                <div class="col-sm-9">
+                                <div class="col-sm-9" id="padre">
                                     <select class="selector_nombre_subcarpeta custom-select" name="selector_nombre_subcarpeta" id="selector_nombre_subcarpeta" disabled></select>
                                 </div>
                             </div>

@@ -332,8 +332,6 @@ class IngenieriaController extends Controller
                     $msg= "El rol {$verificar_rol_otro[0]->nombre_rol} ya fue asignado a este usuario.";
                     return back()->with('asignacion_rol_failed', $msg);
                 }
-
-                
             }
         }
 
@@ -473,7 +471,7 @@ class IngenieriaController extends Controller
 
         $nombre_carpeta_nueva = str_replace(' ', '_', strtolower($request->nombre_carpeta));
         $nombre_subcarpeta_nueva = str_replace(' ', '_',strtolower($request->nombre_subcarpeta));
-        $nombre_archivo_nuevo = str_replace(' ', '_',strtolower($request->nombre_archivo));  
+        $nombre_archivo_nuevo = str_replace(' ', '', lcfirst(ucwords($request->nombre_archivo)));
         $observacion_vista_nueva = $request->observacion_vista;      
         
         // creación de ruta de views
@@ -509,7 +507,7 @@ class IngenieriaController extends Controller
                 // Preparamos los datos en un array para insertarlos
                 $nueva_vista = array(
                     'carpeta' => $nombre_carpeta_nueva,
-                    'subcarpeta' => $nombre_subcarpeta_nueva,
+                    'subcarpeta' => null,
                     'archivo' => $nombre_archivo_nuevo,
                     'observacion' => $observacion_vista_nueva,
                     'created_at' => $date,
@@ -578,7 +576,7 @@ class IngenieriaController extends Controller
             return redirect('/');
         }
 
-        $datos = DB::table('sigmel_vistas')->select("id", "carpeta")->get();
+        $datos = DB::table('sigmel_vistas')->select("carpeta")->distinct('carpeta')->get();
         $informacion_usuario = json_decode(json_encode($datos), true);
         return response()->json($informacion_usuario);
     }
@@ -605,7 +603,7 @@ class IngenieriaController extends Controller
 
         $nombre_carpeta_seleccionada = $request->selector_nombre_carpeta;
         $nombre_subcarpeta_seleccionada = $request->selector_nombre_subcarpeta;
-        $nombre_archivo = str_replace(' ', '_',strtolower($request->nombre_archivo));  
+        $nombre_archivo = str_replace(' ', '', lcfirst(ucwords($request->nombre_archivo)));
         $observacion_vista = $request->observacion_vista;      
         
         // creación de ruta de views
@@ -630,15 +628,189 @@ class IngenieriaController extends Controller
                 // Cerramos el archivo
                 fclose($gestor);
                 
+                // Se habilitan todos los permisos para el archivo en caso de que necesiten editar o eliminar
                 $mode = 707;
                 chmod($crear_archivo, octdec($mode));
-                return back()->with('otra_vista_creada','Archivo creados correctamente.');
+
+                // / Preparamos los datos en un array para insertarlos
+                $otra_vista = array(
+                    'carpeta' => $nombre_carpeta_seleccionada,
+                    'subcarpeta' => null,
+                    'archivo' => $nombre_archivo,
+                    'observacion' => $observacion_vista,
+                    'created_at' => $date,
+                );
+
+                DB::table('sigmel_vistas')->insert($otra_vista);
+                return back()->with('otra_vista_creada','Archivo creado correctamente.');
+            }else{
+                return back()->with('otra_vista_no_creada','El directorio no existe.');
             }
 
         } else {
-            # code...
+            if (File::exists($ruta_carpeta_views.$nombre_carpeta_seleccionada)) {
+                // Se crea el archivo con el nombre que dijo el usuario.
+                $crear_archivo = $ruta_carpeta_views.$nombre_carpeta_seleccionada."/{$nombre_subcarpeta_seleccionada}/{$nombre_archivo}.blade.php";
+    
+                $gestor =fopen($crear_archivo, "w+");
+                // Agregamos el string para el archivo
+                fwrite($gestor, $string_contenido_todos_archivos);
+                // Cerramos el archivo
+                fclose($gestor);
+                
+                // Se habilitan todos los permisos para el archivo en caso de que necesiten editar o eliminar
+                $mode = 707;
+                chmod($crear_archivo, octdec($mode));
+
+                // / Preparamos los datos en un array para insertarlos
+                $otra_vista = array(
+                    'carpeta' => $nombre_carpeta_seleccionada,
+                    'subcarpeta' => $nombre_subcarpeta_seleccionada,
+                    'archivo' => $nombre_archivo,
+                    'observacion' => $observacion_vista,
+                    'created_at' => $date,
+                );
+
+                DB::table('sigmel_vistas')->insert($otra_vista);
+                return back()->with('otra_vista_creada','Archivo creado correctamente.');
+            }else {
+                return back()->with('otra_vista_no_creada','El directorio no existe.');
+            }
         }
         
 
     }
+
+    /* TODO LO REFERENTE A ASIGNACIÓN DE VISTAS */
+    public function mostrarVistaAsignacionVista (){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        return view('ingenieria.asignacionVista', compact('user'));
+    }
+
+    public function listadoCarpetasSubCarpetasVistas (){
+        // Si el usuario no ha iniciado, no podrá ingresar al sistema
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $datos = DB::table('sigmel_vistas')->select("id", "carpeta", "subcarpeta", "archivo")->get();
+        $informacion_usuario = json_decode(json_encode($datos), true);
+        return response()->json($informacion_usuario);
+    }
+
+    public function asignar_vista(Request $request){
+
+        // Preparamos los datos en un array para ingresar la asignacion de una vista a un rol
+        $time = time();
+        $date = date("Y-m-d h:i:s", $time);
+
+        // Consultamos la vista principal que tiene el rol seleccionado
+        $verificar_vista_principal = DB::table('sigmel_usuarios_vistas')->select('tipo')
+                                    ->where('rol_id', $request->listado_roles_para_vistas)
+                                    ->where('tipo', 'principal')->get();
+    
+        /* echo "id rol: ".$request->listado_roles_para_vistas."<br>";
+        echo "id vista: ".$request->listado_vistas_asignar."<br>";
+        echo "tipo: ".$request->tipo_vista."<br><br>";
+        echo $verificar_vista_principal."<br><br>"; */
+
+        // Si es por primera vez que se le va asignar una vista principal a un rol
+        if (empty($verificar_vista_principal[0])) {
+            // echo "no existo"."<br>";
+            $asignar_vista = array(
+                'rol_id' => $request->listado_roles_para_vistas,
+                'vista_id' => $request->listado_vistas_asignar,
+                'estado' => $request->estado_vista,
+                'tipo' => $request->tipo_vista,
+                'created_at' => $date
+            );
+
+            DB::table('sigmel_usuarios_vistas')->insert($asignar_vista);
+            return back()->with('asignacion_vista_success','Asignación de vista creada correctamente.');
+
+        }else {
+            // echo "existo"."<br>";
+            // Si el tipo de vista que desea asignar es principal, no permitirá asignar esa vista a ese rol
+            if ($verificar_vista_principal[0]->tipo == $request->tipo_vista) {
+                return back()->with('asignacion_vista_failed', 'El rol seleccionado ya cuenta con una vista principal.');
+            }
+
+            // consultamos si la vista es de tipo otro 
+            $verificar_vista_otro = DB::table('sigmel_usuarios_vistas')
+                                    ->select('tipo')
+                                    ->where('rol_id', $request->listado_roles_para_vistas)
+                                    ->where('vista_id', $request->listado_vistas_asignar)
+                                    ->where('tipo', 'otro')
+                                    ->get();
+
+            // echo $verificar_vista_otro."<br>";
+            // Si la vista de tipo otro será asignada pero ya existe, el sistema no dejará asignarla nuevamente.
+            if (!empty($verificar_vista_otro[0])) {
+                return back()->with('asignacion_vista_failed', 'La vista que intenta asignar ya está asignada al rol seleccionado.');
+            }else {
+                // Se verifica nuevamente la vista principal
+                $verificar_vista_principal_again = DB::table('sigmel_usuarios_vistas')->select('tipo')
+                                                ->where('rol_id', $request->listado_roles_para_vistas)
+                                                ->where('vista_id', $request->listado_vistas_asignar)
+                                                ->where('tipo', 'principal')->get();
+                
+                // echo $verificar_vista_principal_again;
+                // Si la vista que desea asignar como tipo otro ya está creada como tipo principal, no lo dejerá
+                if (!empty($verificar_vista_principal_again[0])) {
+                    return back()->with('asignacion_vista_failed', 'No puede asignar una vista principal como otra vista');
+                }else {
+                    $asignar_vista = array(
+                        'rol_id' => $request->listado_roles_para_vistas,
+                        'vista_id' => $request->listado_vistas_asignar,
+                        'estado' => $request->estado_vista,
+                        'tipo' => $request->tipo_vista,
+                        'created_at' => $date
+                    );
+
+                    DB::table('sigmel_usuarios_vistas')->insert($asignar_vista);
+                    return back()->with('asignacion_vista_success','Asignación de vista creada correctamente.');
+                }
+            }
+
+        }
+
+
+        
+    }
+
+    /* CONSULTAR ASIGNACIÓN DE VISTAS A ROLES */
+    public function mostrarVistaConsultarAsignacionVista (){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        return view('ingenieria.listarAsignacionVista', compact('user'));
+    }
+
+    public function ConsultaAsignacionVistaRol (Request $request){
+
+        
+        /* Preparamos los datos para consultar los roles que tiene asignado un usuario */
+        $roles_asociados_usuario = DB::table('sigmel_vistas as sv')
+                                    ->leftJoin('sigmel_usuarios_vistas as suv', 'sv.id', '=', 'suv.vista_id')
+                                    ->select('sv.id as id_vista', 'sv.carpeta', 'sv.subcarpeta', 'sv.archivo', 'suv.id as id_asignacion', 'suv.rol_id', 'suv.vista_id', 'suv.estado', 'suv.tipo', 'suv.created_at', 'suv.updated_at')
+                                    ->where('suv.rol_id', $request->rol_id)
+                                    ->get();
+        
+        return response()->json($roles_asociados_usuario);
+    }
+
+    public function mostrarVistaEditarVista(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        $id_vista = $request->id_vista;
+        $info_vista = DB::table('sigmel_vistas')->select('carpeta', 'subcarpeta', 'archivo', 'observacion')->where('id', $id_vista)->get();
+        return view('ingenieria.edicionVista', compact('user', 'info_vista', 'id_vista'));
+    }
+
 }

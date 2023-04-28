@@ -3,9 +3,6 @@
 @section('content_header')
     <div class="row mb-2">
         <div class="col-sm-6">
-            <h3>Asignación de Rol</h3>
-        </div>
-        <div class="col-sm-6">
             
         </div>
     </div>
@@ -37,13 +34,13 @@
                             </div>
                         @endif
                         <div class="form-group row">
-                            <label for="usuarios" class="col-sm-2 col-form-label">Seleccione un Rol</label>
+                            <label for="listado_todos_roles" class="col-sm-2 col-form-label">Seleccione un Rol</label>
                             <div class="col-sm-10">
                                 <select id="listado_todos_roles" class="listado_todos_roles custom-select" name="listado_todos_roles" required></select>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="usuarios" class="col-sm-2 col-form-label">Seleccione un Usuario</label>
+                            <label for="listado_usuarios" class="col-sm-2 col-form-label">Seleccione un Usuario</label>
                             <div class="col-sm-10">
                                 <select id="listado_usuarios" class="listado_usuarios custom-select" name="listado_usuarios" required></select>
                             </div>
@@ -70,7 +67,7 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <input type="submit" class="btn btn-info" value="Enviar Información">
+                        <input type="submit" class="btn btn-outline-success" value="Enviar Información">
                     </div>
                 </form>
             </div>

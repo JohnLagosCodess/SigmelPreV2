@@ -102,18 +102,21 @@ Route::post('/listarSubCarpetasCarpetasVistas', [IngenieriaController::class, 'l
 // Creación de una otra vista
 Route::post('/Sigmel/usuarios/creacionOtraVista', [IngenieriaController::class, 'guardar_otra_vista'])->name('CreacionOtraVista');
 
+// 27/04/2023 - ASIGNACIÓN DE VISTAS A ROLES
+// Vista: Asignación de Roles a Usuarios
+Route::get('/Sigmel/usuarios/asignacionVista', [IngenieriaController::class, 'mostrarVistaAsignacionVista'])->name('AsignacionVista');
+// Traer listado de carpetas y subcarpetas de vistas para el selector de carpetas
+Route::post('/listarCarpetasYSubCarpetasVistas', [IngenieriaController::class, 'listadoCarpetasSubCarpetasVistas']);
+// Creación de Asignación de Vista
+Route::post('/Sigmel/usuarios/asignacionVista', [IngenieriaController::class, 'asignar_vista'])->name('AsignacionVista');
 
-
-/* // Vista: Listar Usuarios
-Route::get('/Sigmel/usuarios/listarRoles', [IngenieriaController::class, 'mostrarVistaListarRoles'])->name('ListadoRoles');
-// Vista: formulario para editar la información de un rol
-Route::post('/Sigmel/usuarios/editarRol', [IngenieriaController::class, 'mostrarVistaEditarRol'])->name('EditarRol');
-// Actualización de la información del rol
-Route::post('/Sigmel/usuarios/actualizarRol', [IngenieriaController::class, 'actualizar_rol'])->name('ActualizacionRol'); */
-
-
-
-
+// 27/04/2023 - CONSULTAR ASIGNACIÓN DE VISTAS A ROLES.
+// Vista: Consulta de Asignación de Vistas a roles
+Route::get('/Sigmel/usuarios/consultarAsignacionVista', [IngenieriaController::class, 'mostrarVistaConsultarAsignacionVista'])->name('ConsultarAsignacionVista');
+// Trae la información de las vistas que tiene asignado un rol para llenar el datatable correspondiente.
+Route::post('/ConsultaAsignacionVistaRol', [IngenieriaController::class, 'ConsultaAsignacionVistaRol']);
+// Vista: formulario para editar la información de una vista
+Route::get('/Sigmel/usuarios/editarVista/{id_vista}', [IngenieriaController::class, 'mostrarVistaEditarVista'])->name('EditarVista');
 
 /* Route::get('Sigmel/usuarios/mao', function(){
     $user = Auth::user();

@@ -3,9 +3,6 @@
 @section('content_header')
     <div class="row mb-2">
         <div class="col-sm-6">
-            <h3>Consulta Asignación de Rol</h3>
-        </div>
-        <div class="col-sm-6">
             
         </div>
     </div>
@@ -47,7 +44,7 @@
                         </div>
                     @endif
                     <div class="form-group row">
-                        <label for="usuarios" class="col-sm-2 col-form-label">Seleccione un Usuario</label>
+                        <label for="listado_usuarios_asignacion_rol" class="col-sm-2 col-form-label">Seleccione un Usuario</label>
                         <div class="col-sm-10">
                             <select id="listado_usuarios_asignacion_rol" class="listado_usuarios_asignacion_rol custom-select" name="listado_usuarios_asignacion_rol"></select>
                         </div>
@@ -88,7 +85,6 @@
                 url:'/ConsultaAsignacionRolUsuario',
                 data: datos_consultar_asignacion,
                 success:function(data) {
-                    
                     var generar_estado = "";
                     var generar_tipo = "";
                     for (let i = 0; i < data.length; i++) {
@@ -126,7 +122,7 @@
             $('#listado_asignacion_roles').DataTable({
                 "destroy": true,
                 "data": response,
-                order: [[2, 'desc']],
+                "order": [[2, 'desc']],
                 "columns":[
                     {"data":"nombre_rol"},
                     {"data":"tipo"},
