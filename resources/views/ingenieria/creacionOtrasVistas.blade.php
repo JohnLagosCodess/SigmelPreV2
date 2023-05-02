@@ -31,32 +31,35 @@
                             <strong>{{session()->get('otra_vista_creada')}}</strong>
                         </div>
                     @endif
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="form-group row">
-                                <label for="selector_nombre_carpeta" class="col-sm-3 col-form-label">Carpeta</label>
-                                <div class="col-sm-9">
-                                    <select class="selector_nombre_carpeta custom-select" name="selector_nombre_carpeta" id="selector_nombre_carpeta" required></select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="selector_nombre_subcarpeta" class="col-sm-3 col-form-label">Sub Carpeta (Opcional)</label>
-                                <div class="col-sm-9" id="padre">
-                                    <select class="selector_nombre_subcarpeta custom-select" name="selector_nombre_subcarpeta" id="selector_nombre_subcarpeta" disabled></select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="nombre_archivo" class="col-sm-3 col-form-label">Nombre Archivo</label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="nombre_archivo" id="nombre_archivo" required>
-                                </div>
-                            </div>
+                
+                    <div class="form-group row">
+                        <label for="selector_nombre_carpeta" class="col-sm-3 col-form-label">Carpeta</label>
+                        <div class="col-sm-9">
+                            <select class="selector_nombre_carpeta custom-select" name="selector_nombre_carpeta" id="selector_nombre_carpeta" required></select>
                         </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label for="observacion_vista" class="col-form-label">Observación (Opcional)</label>
-                                <textarea class="form-control" name="observacion_vista" id="observacion_vista" rows="4"></textarea>
-                            </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="selector_nombre_subcarpeta" class="col-sm-3 col-form-label">Sub Carpeta (Opcional)</label>
+                        <div class="col-sm-9" id="padre">
+                            <select class="selector_nombre_subcarpeta custom-select" name="selector_nombre_subcarpeta" id="selector_nombre_subcarpeta" disabled></select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="nombre_archivo" class="col-sm-3 col-form-label">Nombre Archivo</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="nombre_archivo" id="nombre_archivo" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="nombre_renderizar" class="col-sm-3 col-form-label">Nombre Vista (Opcional)</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="nombre_renderizar" id="nombre_renderizar">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="observacion_vista" class="col-sm-3 col-form-label">Observación (Opcional)</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control" name="observacion_vista" id="observacion_vista" rows="4"></textarea>
                         </div>
                     </div>
                 </div>

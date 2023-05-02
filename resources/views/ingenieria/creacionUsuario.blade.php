@@ -21,7 +21,7 @@
                     @csrf
                     <div class="card-body">
                         @if(session()->get('email'))
-                            <div class="alert alert-warning mt-2" role="alert">
+                            <div class="alert alert-danger mt-2" role="alert">
                                 <strong>{{session()->get('email')}}</strong>
                             </div>
                         @endif

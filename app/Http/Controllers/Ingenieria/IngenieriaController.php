@@ -13,8 +13,16 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\sigmel_roles;
 use App\Models\sigmel_usuarios_roles;
+use App\Models\sigmel_usuarios_vistas;
 class IngenieriaController extends Controller
 {
+    public function show(){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        return view('ingenieria.index', compact('user'));
+    }
     /* TODO LO REFERENTE A LOS USUARIOS DEL APLICATIVO */
     public function mostrarVistaNuevoUsuario (){
         if(!Auth::check()){
@@ -472,6 +480,11 @@ class IngenieriaController extends Controller
         $nombre_carpeta_nueva = str_replace(' ', '_', strtolower($request->nombre_carpeta));
         $nombre_subcarpeta_nueva = str_replace(' ', '_',strtolower($request->nombre_subcarpeta));
         $nombre_archivo_nuevo = str_replace(' ', '', lcfirst(ucwords($request->nombre_archivo)));
+        if($request->nombre_renderizar <>  ""){
+            $nombre_renderizar = str_replace(' ', '', lcfirst(ucwords($request->nombre_renderizar)));
+        }else {
+            $nombre_renderizar = null;
+        }
         $observacion_vista_nueva = $request->observacion_vista;      
         
         // creación de ruta de views
@@ -509,6 +522,7 @@ class IngenieriaController extends Controller
                     'carpeta' => $nombre_carpeta_nueva,
                     'subcarpeta' => null,
                     'archivo' => $nombre_archivo_nuevo,
+                    'nombre_renderizar' => $nombre_renderizar,
                     'observacion' => $observacion_vista_nueva,
                     'created_at' => $date,
                 );
@@ -547,6 +561,7 @@ class IngenieriaController extends Controller
                     'carpeta' => $nombre_carpeta_nueva,
                     'subcarpeta' => $nombre_subcarpeta_nueva,
                     'archivo' => $nombre_archivo_nuevo,
+                    'nombre_renderizar' => $nombre_renderizar,
                     'observacion' => $observacion_vista_nueva,
                     'created_at' => $date,
                 );
@@ -604,6 +619,11 @@ class IngenieriaController extends Controller
         $nombre_carpeta_seleccionada = $request->selector_nombre_carpeta;
         $nombre_subcarpeta_seleccionada = $request->selector_nombre_subcarpeta;
         $nombre_archivo = str_replace(' ', '', lcfirst(ucwords($request->nombre_archivo)));
+        if($request->nombre_renderizar <>  ""){
+            $nombre_renderizar = str_replace(' ', '', lcfirst(ucwords($request->nombre_renderizar)));
+        }else {
+            $nombre_renderizar = null;
+        }
         $observacion_vista = $request->observacion_vista;      
         
         // creación de ruta de views
@@ -637,6 +657,7 @@ class IngenieriaController extends Controller
                     'carpeta' => $nombre_carpeta_seleccionada,
                     'subcarpeta' => null,
                     'archivo' => $nombre_archivo,
+                    'nombre_renderizar' => $nombre_renderizar,
                     'observacion' => $observacion_vista,
                     'created_at' => $date,
                 );
@@ -667,6 +688,7 @@ class IngenieriaController extends Controller
                     'carpeta' => $nombre_carpeta_seleccionada,
                     'subcarpeta' => $nombre_subcarpeta_seleccionada,
                     'archivo' => $nombre_archivo,
+                    'nombre_renderizar' => $nombre_renderizar,
                     'observacion' => $observacion_vista,
                     'created_at' => $date,
                 );
@@ -809,8 +831,119 @@ class IngenieriaController extends Controller
         }
         $user = Auth::user();
         $id_vista = $request->id_vista;
-        $info_vista = DB::table('sigmel_vistas')->select('carpeta', 'subcarpeta', 'archivo', 'observacion')->where('id', $id_vista)->get();
+        $info_vista = DB::table('sigmel_vistas')->select('archivo', 'observacion')->where('id', $id_vista)->get();
         return view('ingenieria.edicionVista', compact('user', 'info_vista', 'id_vista'));
+    }
+
+    /* public function actualizar_vista(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        // Preparamos los datos en un array para actualizar la info del usuario.
+        $time = time();
+        $date = date("Y-m-d h:i:s", $time);
+
+        $datos_actualizar_vista = array(
+            'archivo' => str_replace(' ', '', lcfirst(ucwords($request->edicion_nombre_archivo))),
+            'observacion' => $request->edicion_observacion_vista,
+            'updated_at' => $date
+        );
+
+        // Generamos el update
+        sigmel_vistas::where('id', $request->id_vista)->update($datos_actualizar_vista);
+        return redirect()->route('ConsultarAsignacionVista')->with('vista_actualizada','Vista actualizada correctamente.');
+    } */
+
+    public function inactivarVista (Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        // Preparamos los datos en un array para actualizar la info del usuario.
+        $time = time();
+        $date = date("Y-m-d h:i:s", $time);
+
+        $datos_inactivar_rol = array(
+            'estado' => 'inactivo',
+            'updated_at' => $date
+        );
+
+        // Generamos el update
+        sigmel_usuarios_vistas::where([
+            ['id', '=', $request->id],
+            ['rol_id', '=', $request->rol_id],
+            ['vista_id', '=', $request->vista_id],
+        ])
+        ->update($datos_inactivar_rol);
+
+        return redirect()->route('ConsultarAsignacionVista')->with('confirmacion_vista_inactivada','Vista inactivada correctamente.');
+    }
+
+    public function activarVista (Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        // Preparamos los datos en un array para actualizar la info del usuario.
+        $time = time();
+        $date = date("Y-m-d h:i:s", $time);
+
+        $datos_inactivar_rol = array(
+            'estado' => 'activo',
+            'updated_at' => $date
+        );
+
+        // Generamos el update
+        sigmel_usuarios_vistas::where([
+            ['id', '=', $request->id],
+            ['rol_id', '=', $request->rol_id],
+            ['vista_id', '=', $request->vista_id],
+        ])
+        ->update($datos_inactivar_rol);
+
+        return redirect()->route('ConsultarAsignacionVista')->with('confirmacion_vista_activada','Vista activada correctamente.');
+    }
+   
+
+    public function cambiarAVistaPrincipal (Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+
+        // Se extrae el id del rol que el usuario tiene actualmente como principal para cambiarlo al tipo de rol: otro
+        $id_tipo_vista_principal= DB::table('sigmel_usuarios_vistas')
+                                    ->select('id')
+                                    ->where([
+                                        ['rol_id', '=', $request->rol_id],
+                                        ['tipo', '=', 'principal']
+                                    ])->get();
+        
+        // Actualizamos el rol del id extraido
+        $datos_vista_principal_out = array(
+            'tipo' => 'otro'
+        );
+        sigmel_usuarios_vistas::where('id', $id_tipo_vista_principal[0]->id)->update($datos_vista_principal_out);
+
+        // Preparamos los datos en un array para actualizar la info del usuario.
+        $time = time();
+        $date = date("Y-m-d h:i:s", $time);
+
+        $datos_a_vista_principal = array(
+            'tipo' => 'principal',
+            'updated_at' => $date
+        );
+
+        // Generamos el update
+        sigmel_usuarios_vistas::where([
+            ['id', '=', $request->id],
+            ['rol_id', '=', $request->rol_id],
+            ['vista_id', '=', $request->vista_id],
+        ])
+        ->update($datos_a_vista_principal);
+
+        return redirect()->route('ConsultarAsignacionVista')->with('confirmacion_vista_principal','El cambio de tipo de vista se realizó correctamente.');
     }
 
 }

@@ -9,5 +9,11 @@ use Illuminate\Support\Facades\Auth;
 class AdministradorController extends Controller
 {
     
-    
+    public function show(){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        return view('administrador.index', compact('user'));
+    }
 }

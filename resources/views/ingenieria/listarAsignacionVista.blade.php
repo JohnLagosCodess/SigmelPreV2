@@ -18,7 +18,6 @@
                 <i class="far fa-eye text-success"></i> Activar Vista &nbsp;
                 <i class="far fa-eye-slash text-danger"></i> Inactivar Vista &nbsp;
                 <i class="fas fa-user-check text-success"></i> Cambiar a Vista principal &nbsp;
-                <i class="fa fa-sm fa-pen text-primary"></i> Editar Vista &nbsp;
             </p>
         </div>
         <div class="card card-primary">
@@ -90,32 +89,33 @@
                     var generar_estado = "";
                     var generar_tipo = "";
                     for (let i = 0; i < data.length; i++) {
-                        generar_estado = "<a href={{route('EditarVista', ['id_vista'=>':id'])}} class='btn' Title='Editar Vista'><i class='fa fa-sm fa-pen text-primary'></i></a>";
-                        generar_estado = generar_estado.replace(':id', data[i]['id_vista']);
-                        data[i]['acciones'] = generar_estado;
+                        /* generar_estado='<form action="{{route("EditarVista")}}" method="POST">@csrf <input type="hidden" name="id_vista" value="'+data[i]['id_vista']+'"><button class="btn btn-xs btn-default text-primary" title="Editar" type="submit"><i class="fa fa-lg fa-fw fa-pen"></i></button></form>';
+                        data[i]['acciones'] = generar_estado; */
 
-                        /* // ESTADO DEL ROL
+                        // ESTADO DE LA VISTA
                         if(data[i]['estado'] === 'activo'){
-                            generar_estado = "<a href={{route('inactivarRol', ['id'=>':id', 'usuario_id'=>':usuario_id', 'rol_id'=>':rol_id'])}} class='btn' Title='Inactivar Rol'><i class='far fa-eye-slash text-danger'></i></a>";
-                            generar_estado = generar_estado.replace(':id', data[i]['id']);
-                            generar_estado = generar_estado.replace(':usuario_id', data[i]['usuario_id']);
+                            generar_estado = "<a href={{route('inactivarVista', ['id'=>':id', 'rol_id'=>':rol_id', 'vista_id'=>':vista_id'])}} class='btn' Title='Inactivar Vista'><i class='far fa-eye-slash text-danger'></i></a>";
+                            generar_estado = generar_estado.replace(':id', data[i]['id_asignacion']);
                             generar_estado = generar_estado.replace(':rol_id', data[i]['rol_id']);
-                            data[i]['acciones'] = generar_estado;
-                        }else{
-                            generar_estado = "<a href={{route('activarRol', ['id'=>':id', 'usuario_id'=>':usuario_id', 'rol_id'=>':rol_id'])}} class='btn' Title='Activar Rol'><i class='far fa-eye text-success'></i></a>";
-                            generar_estado = generar_estado.replace(':id', data[i]['id']);
-                            generar_estado = generar_estado.replace(':usuario_id', data[i]['usuario_id']);
-                            generar_estado = generar_estado.replace(':rol_id', data[i]['rol_id']);
+                            generar_estado = generar_estado.replace(':vista_id', data[i]['vista_id']);
                             data[i]['acciones'] = generar_estado;
                         }
-                        // TIPO DE ROL
+                        else{
+                            generar_estado = "<a href={{route('activarVista', ['id'=>':id', 'rol_id'=>':rol_id', 'vista_id'=>':vista_id'])}} class='btn' Title='Activar Vista'><i class='far fa-eye text-success'></i></a>";
+                            generar_estado = generar_estado.replace(':id', data[i]['id_asignacion']);
+                            generar_estado = generar_estado.replace(':rol_id', data[i]['rol_id']);
+                            generar_estado = generar_estado.replace(':vista_id', data[i]['vista_id']);
+                            data[i]['acciones'] = generar_estado;
+                        }
+                        
+                        // TIPO DE VISTA
                         if (data[i]['tipo'] === 'otro' && data[i]['estado'] === 'activo') {
-                            generar_tipo = "<a href={{route('cambiarARolPrincipal', ['id'=>':id', 'usuario_id'=>':usuario_id', 'rol_id'=>':rol_id'])}} class='btn' Title='Cambiar a Rol Principal'><i class='fas fa-user-check text-success'></i></a>";
-                            generar_tipo = generar_tipo.replace(':id', data[i]['id']);
-                            generar_tipo = generar_tipo.replace(':usuario_id', data[i]['usuario_id']);
+                            generar_tipo = "<a href={{route('cambiarAVistaPrincipal', ['id'=>':id', 'rol_id'=>':rol_id', 'vista_id'=>':vista_id'])}} class='btn' Title='Cambiar a Vista Principal'><i class='fas fa-user-check text-success'></i></a>";
+                            generar_tipo = generar_tipo.replace(':id', data[i]['id_asignacion']);
                             generar_tipo = generar_tipo.replace(':rol_id', data[i]['rol_id']);
+                            generar_tipo = generar_tipo.replace(':vista_id', data[i]['vista_id']);
                             data[i]['acciones'] = generar_estado + generar_tipo;
-                        } */
+                        }
                     };
                     
                     $.each(data, function(index, value){

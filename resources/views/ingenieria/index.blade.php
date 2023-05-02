@@ -20,6 +20,7 @@
     </div><br>
     <div class="row">
         <div class="col-12">
+            <i class="fa-users-viewfinder"></i>
             <a href="{{route('NuevaVista')}}" class="btn btn-primary"><i class="fas fa-plus"></i> Crear Vista Principal</a>
             <a href="{{route('NuevaVistaOtros')}}" class="btn btn-primary"><i class="fas fa-plus"></i> Crear Vistas Secundarias</a>
             <a href="{{route('AsignacionVista')}}" class="btn btn-primary"><i class="far fa-address-card"></i> Asignar Vistas a Roles</a>
