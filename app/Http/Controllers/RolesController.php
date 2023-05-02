@@ -220,7 +220,7 @@ class RolesController extends Controller
                         ->leftJoin('sigmel_usuarios_vistas as suv', 'sm.vista_id', '=', 'suv.vista_id')
                         ->leftJoin('sigmel_usuarios_vistas as suv1', 'sm.rol_id', '=', 'suv1.rol_id')
                         ->leftJoin('sigmel_vistas as sv', 'suv.vista_id', '=', 'sv.id')
-                        ->select('sm.id', 'sm.nombre', 'sm.id_padre', 'sm.tipo', 'sv.nombre_renderizar', 'sm.icono', 'sm.estado')
+                        ->select('sm.id', 'sm.nombre', 'sm.id_padre', 'sm.tipo', 'sv.nombre_renderizar', 'sm.icono', 'sm.estado', 'sm.vista_id')
                         ->where([
                             ['sm.rol_id', $id_rol],
                             ['sm.tipo', 'primario']
@@ -236,7 +236,7 @@ class RolesController extends Controller
         $menu_final = array();
         for ($i=0; $i < count($informacion_menu) ; $i++) { 
             // Creamos la opción de menu que es una función y no tiene hijos
-            if($informacion_menu[$i]['id_padre'] == '' && $informacion_menu[$i]['nombre_renderizar'] <> '' && $informacion_menu[$i]['estado'] == 'activo'){
+            if($informacion_menu[$i]['id_padre'] == '' && $informacion_menu[$i]['estado'] == 'activo' && $informacion_menu[$i]['tipo'] == 'primario' && $informacion_menu[$i]['vista_id'] <> 0){
                 array_push($menu_final, 
                     [
                         'text'=> $informacion_menu[$i]['nombre'], 
@@ -246,12 +246,12 @@ class RolesController extends Controller
                 );
             }
             // Creamos la opción de menu que sera un padre y tendra hijos
-            if ($informacion_menu[$i]['id_padre'] == '' && $informacion_menu[$i]['nombre_renderizar'] == '' && $informacion_menu[$i]['estado'] == 'activo') {
+            if ($informacion_menu[$i]['id_padre'] == '' && $informacion_menu[$i]['estado'] == 'activo' && $informacion_menu[$i]['tipo'] == 'primario' && $informacion_menu[$i]['vista_id'] == 0) {
                 $datos_submenu = DB::table('sigmel_menuses as sm')
                                 ->leftJoin('sigmel_usuarios_vistas as suv', 'sm.vista_id', '=', 'suv.vista_id')
                                 ->leftJoin('sigmel_usuarios_vistas as suv1', 'sm.rol_id', '=', 'suv1.rol_id')
                                 ->leftJoin('sigmel_vistas as sv', 'suv.vista_id', '=', 'sv.id')
-                                ->select('sm.nombre', 'sm.id_padre', 'sm.tipo', 'sv.nombre_renderizar', 'sm.icono')
+                                ->select('sm.nombre', 'sv.nombre_renderizar', 'sm.icono', 'sm.estado')
                                 ->where([
                                     ['sm.id_padre', $informacion_menu[$i]['id']],
                                     ['sm.tipo', 'secundario'],
@@ -268,13 +268,13 @@ class RolesController extends Controller
                 ]);
 
                 for ($a=0; $a < count($informacion_submenu); $a++) { 
-                    array_push($array_submenu[0]['submenu'], [
-                        
-                        'text' => $informacion_submenu[$a]['nombre'], 
-                        'icon' => $informacion_submenu[$a]['icono'], 
-                        'url' => route($informacion_submenu[$a]['nombre_renderizar'])
-                         
-                    ]);
+                    if($informacion_submenu[$a]['estado'] <> 'inactivo'){
+                        array_push($array_submenu[0]['submenu'], [
+                            'text' => $informacion_submenu[$a]['nombre'], 
+                            'icon' => $informacion_submenu[$a]['icono'], 
+                            'url' => route($informacion_submenu[$a]['nombre_renderizar'])
+                        ]);
+                    }
                 }
                 // array_push($menu_final, $array_submenu);
                 $menu_final[] = $array_submenu[0];

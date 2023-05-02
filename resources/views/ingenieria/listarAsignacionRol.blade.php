@@ -10,11 +10,11 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            <a href="{{route("RolPrincipal")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+            {{-- <a href="{{route("RolPrincipal")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
             <a href="{{route('NuevoRol')}}" class="btn btn-info"><i class="fas fa-plus"></i> Crear Rol</a>
             <a href="{{route('ListadoRoles')}}" class="btn btn-info"><i class="fas fa-list"></i> Consultar Lista de Roles</a>
             <a href="{{route('AsignacionRol')}}" class="btn btn-info"><i class="far fa-address-card"></i> Asignar Roles a Usuarios</a>
-            <br>
+            <br> --}}
             <div>
                 <h4>Convenciones:</h4>
                 <p>
@@ -50,7 +50,8 @@
                         </div>
                     </div>
                     <hr>
-                    <div class="table table-responsive">
+                    <span id="no_info"></span>
+                    <div class="table table-responsive" id="si_tabla">
                         <table id="listado_asignacion_roles" class="table table-striped">
                             <thead>
                                 <tr>
@@ -85,36 +86,44 @@
                 url:'/ConsultaAsignacionRolUsuario',
                 data: datos_consultar_asignacion,
                 success:function(data) {
-                    var generar_estado = "";
-                    var generar_tipo = "";
-                    for (let i = 0; i < data.length; i++) {
-                        // ESTADO DEL ROL
-                        if(data[i]['estado'] === 'activo'){
-                            generar_estado = "<a href={{route('inactivarRol', ['id'=>':id', 'usuario_id'=>':usuario_id', 'rol_id'=>':rol_id'])}} class='btn' Title='Inactivar Rol'><i class='far fa-eye-slash text-danger'></i></a>";
-                            generar_estado = generar_estado.replace(':id', data[i]['id']);
-                            generar_estado = generar_estado.replace(':usuario_id', data[i]['usuario_id']);
-                            generar_estado = generar_estado.replace(':rol_id', data[i]['rol_id']);
-                            data[i]['acciones'] = generar_estado;
-                        }else{
-                            generar_estado = "<a href={{route('activarRol', ['id'=>':id', 'usuario_id'=>':usuario_id', 'rol_id'=>':rol_id'])}} class='btn' Title='Activar Rol'><i class='far fa-eye text-success'></i></a>";
-                            generar_estado = generar_estado.replace(':id', data[i]['id']);
-                            generar_estado = generar_estado.replace(':usuario_id', data[i]['usuario_id']);
-                            generar_estado = generar_estado.replace(':rol_id', data[i]['rol_id']);
-                            data[i]['acciones'] = generar_estado;
-                        }
-                        // TIPO DE ROL
-                        if (data[i]['tipo'] === 'otro' && data[i]['estado'] === 'activo') {
-                            generar_tipo = "<a href={{route('cambiarARolPrincipal', ['id'=>':id', 'usuario_id'=>':usuario_id', 'rol_id'=>':rol_id'])}} class='btn' Title='Cambiar a Rol Principal'><i class='fas fa-user-check text-success'></i></a>";
-                            generar_tipo = generar_tipo.replace(':id', data[i]['id']);
-                            generar_tipo = generar_tipo.replace(':usuario_id', data[i]['usuario_id']);
-                            generar_tipo = generar_tipo.replace(':rol_id', data[i]['rol_id']);
-                            data[i]['acciones'] = generar_estado + generar_tipo;
-                        }
-                    };
-                    
-                    $.each(data, function(index, value){
-                        llenar(data, index, value);
-                    });
+                    if(data.length == 0){
+                        $('#no_info').empty();
+                        $('#no_info').append('<h3>No se encontró información.</h3>');
+                        $('#si_tabla').css("display", "none");
+                    }else{
+                        $('#no_info').empty();
+                        $('#si_tabla').css("display", "block");
+                        var generar_estado = "";
+                        var generar_tipo = "";
+                        for (let i = 0; i < data.length; i++) {
+                            // ESTADO DEL ROL
+                            if(data[i]['estado'] === 'activo'){
+                                generar_estado = "<a href={{route('inactivarRol', ['id'=>':id', 'usuario_id'=>':usuario_id', 'rol_id'=>':rol_id'])}} class='btn' Title='Inactivar Rol'><i class='far fa-eye-slash text-danger'></i></a>";
+                                generar_estado = generar_estado.replace(':id', data[i]['id']);
+                                generar_estado = generar_estado.replace(':usuario_id', data[i]['usuario_id']);
+                                generar_estado = generar_estado.replace(':rol_id', data[i]['rol_id']);
+                                data[i]['acciones'] = generar_estado;
+                            }else{
+                                generar_estado = "<a href={{route('activarRol', ['id'=>':id', 'usuario_id'=>':usuario_id', 'rol_id'=>':rol_id'])}} class='btn' Title='Activar Rol'><i class='far fa-eye text-success'></i></a>";
+                                generar_estado = generar_estado.replace(':id', data[i]['id']);
+                                generar_estado = generar_estado.replace(':usuario_id', data[i]['usuario_id']);
+                                generar_estado = generar_estado.replace(':rol_id', data[i]['rol_id']);
+                                data[i]['acciones'] = generar_estado;
+                            }
+                            // TIPO DE ROL
+                            if (data[i]['tipo'] === 'otro' && data[i]['estado'] === 'activo') {
+                                generar_tipo = "<a href={{route('cambiarARolPrincipal', ['id'=>':id', 'usuario_id'=>':usuario_id', 'rol_id'=>':rol_id'])}} class='btn' Title='Cambiar a Rol Principal'><i class='fas fa-user-check text-success'></i></a>";
+                                generar_tipo = generar_tipo.replace(':id', data[i]['id']);
+                                generar_tipo = generar_tipo.replace(':usuario_id', data[i]['usuario_id']);
+                                generar_tipo = generar_tipo.replace(':rol_id', data[i]['rol_id']);
+                                data[i]['acciones'] = generar_estado + generar_tipo;
+                            }
+                        };
+                        
+                        $.each(data, function(index, value){
+                            llenar(data, index, value);
+                        });
+                    }
                 }
             });
         });

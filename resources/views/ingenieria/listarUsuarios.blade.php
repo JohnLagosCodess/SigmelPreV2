@@ -11,16 +11,15 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            <a href="{{route("RolPrincipal")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
-            <a href="{{route("NuevoUsuario")}}" class="btn btn-info" type="button"><i class="fas fa-user"></i> Crear Usuario</a>
-            <br>
+            {{-- <a href="{{route("RolPrincipal")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a> --}}
+            {{-- <a href="{{route("NuevoUsuario")}}" class="btn btn-info" type="button"><i class="fas fa-user"></i> Crear Usuario</a> --}}
+            {{-- <br> --}}
             <div>
                 <h4>Convenciones:</h4>
                 <p>
                     <i class="fa fa-sm fa-pen text-primary"></i> Editar &nbsp;
                 </p>
             </div>
-            <br>
             <div class="card card-primary">
                 <div class="card-header">
                     <h3>Listado de Usuarios</h3>

@@ -10,12 +10,12 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            <a href="{{route("RolPrincipal")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
-            <a href="{{route('ListarUsuarios')}}" class="btn btn-info"><i class="fas fa-edit"></i> Consultar Lista de Usuarios</a>
-            <br><br>
+            {{-- <a href="{{route("IndexIngenieria")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a> --}}
+            {{-- <a href="{{route('ListarUsuarios')}}" class="btn btn-info"><i class="fas fa-edit"></i> Consultar Lista de Usuarios</a> --}}
+            {{-- <br><br> --}}
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3>Formulario para Creación de Usuario</h3>
+                    <h3>Formulario para Creación de Usuarios</h3>
                 </div>
                 <form action="{{ route('CreacionUsuario') }}" method="POST">
                     @csrf

@@ -4,7 +4,7 @@
     <h2>Rol: @php echo $user->rol_usuario; @endphp</h2>
 @stop
 @section('content')
-    <div class="row">
+    {{-- <div class="row">
         <div class="col-6">
             <a href="{{route('NuevoUsuario')}}" class="btn btn-primary"><i class="fas fa-user"></i> Crear Usuario</a>
             <a href="{{route('ListarUsuarios')}}" class="btn btn-primary"><i class="fas fa-list"></i> Consultar Lista de Usuarios</a>
@@ -26,6 +26,6 @@
             <a href="{{route('AsignacionVista')}}" class="btn btn-primary"><i class="far fa-address-card"></i> Asignar Vistas a Roles</a>
             <a href="{{route('ConsultarAsignacionVista')}}" class="btn btn-primary"><i class="fas fa-list"></i> Consultar Asignación de Vistas a Roles</a>
         </div>
-    </div>
+    </div> --}}
 @stop
 

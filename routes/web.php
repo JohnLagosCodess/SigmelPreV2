@@ -41,7 +41,6 @@ Route::get('/Sigmel/RolIngenieria', [IngenieriaController::class, 'show'])->name
 Route::get('/Sigmel/RolAdministrador', [AdministradorController::class, 'show'])->name('IndexAdministrador');
 
 
-
 // 24/04/2023 - CRUD DE USUARIOS.
 // Vista: formulario para crear usuarios
 Route::get('/Sigmel/usuarios/nuevoUsuario', [IngenieriaController::class, 'mostrarVistaNuevoUsuario'])->name('NuevoUsuario');
@@ -138,6 +137,31 @@ Route::get('/activarVista/{id}/{rol_id}/{vista_id}', [IngenieriaController::clas
 // Acción: Cambiar a vista principal
 Route::get('/cambiarAVistaPrincipal/{id}/{rol_id}/{vista_id}', [IngenieriaController::class, 'cambiarAVistaPrincipal'])->name('cambiarAVistaPrincipal');
 
+// 02/05/2023 - CRUD MENÚS
+// Vista: Formulario para crear un menú
+Route::get('/Sigmel/usuarios/nuevoMenu', [IngenieriaController::class, 'mostrarVistaNuevoMenu'])->name('nuevoMenu');
+// Acción: Creación de un menu padre
+Route::post('/Sigmel/usuarios/creacionMenu', [IngenieriaController::class, 'guardar_menu'])->name('creacionMenu');
+// Vista: Formulario para crear un sub menú
+Route::get('/Sigmel/usuarios/nuevoSubMenu', [IngenieriaController::class, 'mostrarVistaNuevoSubMenu'])->name('nuevoSubMenu');
+// Acción: Traer listado de todos los menu padres para selector de menu padres js
+Route::post('/listamenupadres', [IngenieriaController::class, 'listadoMenusPadres']);
+// Acción: Creación de un sub menu
+Route::post('/Sigmel/usuarios/creacionSubMenu', [IngenieriaController::class, 'guardar_submenu'])->name('creacionSubMenu');
+// Vista: Listar Menus y/o Sub menus
+Route::get('/Sigmel/usuarios/listarMenuSubmenu', [IngenieriaController::class, 'mostrarVistaListarMenuSubmenu'])->name('listarMenusSubmenus');
+// Acción: Trae la información de los menus que tiene asignado un rol para llenar el datatable correspondiente.
+Route::post('/ConsultaMenusSubmenus', [IngenieriaController::class, 'ConsultaMenusSubmenus']);
+// Acción Inactivar Menu
+Route::get('/inactivarMenuSubmenu/{id}/{tipo_menu}', [IngenieriaController::class, 'inactivarMenuSubmenu'])->name('inactivarMenuSubmenu');
+// Acción: Activar Menu
+Route::get('/activarMenuSubmenu/{id}/{tipo_menu}', [IngenieriaController::class, 'activarMenuSubmenu'])->name('activarMenuSubmenu');
+// Vista: Editar Información Menu
+Route::post('/Sigmel/usuarios/EditarMenu', [IngenieriaController::class, 'mostrarVistaEditarMenu'])->name('EditarMenu');
+// Acción: Actualización de la información del menú
+Route::post('/Sigmel/usuarios/actualizarMenu', [IngenieriaController::class, 'actualizar_menu'])->name('ActualizacionMenu');
+
+
 // PRUEBAS
-Route::get('/Sigmel/usuarios/mao', [RolesController::class, 'crear_menu']);
+// Route::get('/Sigmel/usuarios/mao', [IngenieriaController::class, 'ConsultaMenusSubmenus']);
 

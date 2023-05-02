@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-    // CONTENEDOR DE SUBCARPETA OCULTO INICIALMENTE
+    /* CONTENEDOR DE SUBCARPETA OCULTO INICIALMENTE */
     $('#contenedor_subcarpeta').css('display','none');
 
     // SI SE SELECCIONA EL CHECKBOX DE CONFIRMACIÓN DE SUBCARPETA HABILITARÁ EL DIV

@@ -14,14 +14,38 @@ use App\Models\User;
 use App\Models\sigmel_roles;
 use App\Models\sigmel_usuarios_roles;
 use App\Models\sigmel_usuarios_vistas;
+use App\Models\sigmel_menus;
 class IngenieriaController extends Controller
 {
     public function show(){
         if(!Auth::check()){
             return redirect('/');
         }
-        $user = Auth::user();
-        return view('ingenieria.index', compact('user'));
+        $id_usuario = Auth::id();
+        $email_usuario = Auth::user()->email;
+
+        $datos = DB::table('sigmel_roles as sr')
+                        ->leftJoin("sigmel_usuarios_roles as sur", 'sr.id', '=', 'sur.rol_id') 
+                        ->leftJoin("users as u", 'u.id', '=', 'sur.usuario_id' ) 
+                        ->select("sr.nombre_rol")
+                        ->where([
+                            ['u.id', '=', $id_usuario],
+                            ['u.email', '=', $email_usuario],
+                        ])
+                        ->get();
+
+        $informacion_usuario = json_decode(json_encode($datos), true);
+        if (count($informacion_usuario) > 0) {
+            $rol_usuario = $informacion_usuario[0]['nombre_rol'];
+            
+            $user = Auth::user();
+            $user->rol_usuario = $rol_usuario;
+            return view ('ingenieria.index', compact('user'));
+
+        }else{
+            return redirect()->route('login');
+        }
+
     }
     /* TODO LO REFERENTE A LOS USUARIOS DEL APLICATIVO */
     public function mostrarVistaNuevoUsuario (){
@@ -403,7 +427,7 @@ class IngenieriaController extends Controller
         $time = time();
         $date = date("Y-m-d h:i:s", $time);
 
-        $datos_inactivar_rol = array(
+        $datos_activar_rol = array(
             'estado' => 'activo',
             'updated_at' => $date
         );
@@ -414,7 +438,7 @@ class IngenieriaController extends Controller
             ['usuario_id', '=', $request->usuario_id],
             ['rol_id', '=', $request->rol_id]
         ])
-        ->update($datos_inactivar_rol);
+        ->update($datos_activar_rol);
 
         return redirect()->route('ConsultarAsignacionRol')->with('rol_activado','Rol activado correctamente.');
     }
@@ -904,7 +928,6 @@ class IngenieriaController extends Controller
 
         return redirect()->route('ConsultarAsignacionVista')->with('confirmacion_vista_activada','Vista activada correctamente.');
     }
-   
 
     public function cambiarAVistaPrincipal (Request $request){
         if(!Auth::check()){
@@ -946,4 +969,241 @@ class IngenieriaController extends Controller
         return redirect()->route('ConsultarAsignacionVista')->with('confirmacion_vista_principal','El cambio de tipo de vista se realizó correctamente.');
     }
 
+    /* TODO LO REFERENTE A MENÚS */
+    public function mostrarVistaNuevoMenu(){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        return view('ingenieria.crearMenu', compact('user'));
+    }
+
+    public function guardar_menu(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $time = time();
+        $date = date("Y-m-d h:i:s", $time);
+
+        
+        $nombre = ucfirst(ucwords($request->nombre_menu));
+        $id_padre = null;
+        $estado = $request->estado_menu;
+        $tipo = $request->tipo_menu;
+        $rol_id = $request->listado_roles_para_menus;
+
+        // Si no escoje una vista quiere decir que será un menú padre. caso contrario
+        // el menú tendrá su misma funcionalidad
+        if($request->listado_vistas_para_menus == ''){
+            $vista_id = 0;
+        }
+        else {
+            $vista_id = $request->listado_vistas_para_menus;
+        }
+
+        $icono = trim($request->nombre_icono);
+        $observacion = $request->observacion_menu;
+
+        if ($tipo <> 'primario') {
+            return back()->with('menu_no_creado','Aquí solamente podrá crear menús con funcionalidad o menú padres.');
+        }
+
+        // / Preparamos los datos en un array para insertarlos
+        $crear_menu = array(
+            'nombre' => $nombre,
+            'id_padre' => $id_padre,
+            'estado' => $estado,
+            'tipo' => $tipo,
+            'rol_id' => $rol_id,
+            'vista_id' => $vista_id,
+            'icono' => $icono,
+            'observacion' => $observacion,
+            'created_at' => $date,
+        );
+
+        DB::table('sigmel_menuses')->insert($crear_menu);
+        return back()->with('menu_creado','Menú creado correctamente.');
+    }
+
+    public function mostrarVistaNuevoSubMenu(){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        return view('ingenieria.crearSubMenu', compact('user'));
+    }
+
+    public function listadoMenusPadres(){
+        // Si el usuario no ha iniciado, no podrá ingresar al sistema
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $datos = DB::table('sigmel_menuses as sm')
+                    ->leftJoin("sigmel_roles as sr", "sm.rol_id", "=", "sr.id")
+                    ->select("sm.id", "sm.nombre", "sr.nombre_rol")
+                    ->whereNull('id_padre')
+                    ->where([
+                        ['estado', 'activo'],
+                        ['tipo', 'primario'],
+                        ['vista_id', '0']
+                    ])
+                    ->get();
+
+        $informacion_roles = json_decode(json_encode($datos), true);
+
+        return response()->json($informacion_roles);
+    }
+
+    public function guardar_submenu(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $time = time();
+        $date = date("Y-m-d h:i:s", $time);
+
+        
+        $nombre = ucfirst(ucwords($request->nombre_submenu));
+        $id_padre = $request->listado_padres_menu;
+        $estado = $request->estado_submenu;
+        $tipo = $request->tipo_submenu;
+
+        // select rol_id from sigmel_menuses sm where id = 15;
+        $rol_id = DB::table('sigmel_menuses')->select('rol_id')->where('id', $id_padre)->get();
+        $rol_id = $rol_id[0]->rol_id;
+        
+        $vista_id = $request->listado_vistas_para_submenus;
+
+        $icono = trim($request->nombre_icono);
+        $observacion = $request->observacion_submenu;
+
+        if ($tipo <> 'secundario') {
+            return back()->with('submenu_no_creado','Aquí solamente podrá crear sub menús.');
+        }
+
+        // / Preparamos los datos en un array para insertarlos
+        $crear_submenu = array(
+            'nombre' => $nombre,
+            'id_padre' => $id_padre,
+            'estado' => $estado,
+            'tipo' => $tipo,
+            'rol_id' => $rol_id,
+            'vista_id' => $vista_id,
+            'icono' => $icono,
+            'observacion' => $observacion,
+            'created_at' => $date,
+        );
+
+        DB::table('sigmel_menuses')->insert($crear_submenu);
+        return back()->with('submenu_creado','Sub Menú creado correctamente.');
+    }
+
+    public function mostrarVistaListarMenuSubmenu(){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        return view('ingenieria.listarMenusSubmenus', compact('user'));
+    }
+
+    public function ConsultaMenusSubmenus (Request $request){
+
+        
+        /* Preparamos los datos para consultar los roles que tiene asignado un usuario */
+        $datos = DB::table('sigmel_menuses as sm')
+                    ->leftJoin('sigmel_menuses as sm2', 'sm.id_padre', '=', 'sm2.id')
+                    ->select("sm.id", "sm.id_padre", "sm.nombre", "sm.estado", "sm2.nombre as padre",
+                    DB::raw("CASE WHEN sm.id_padre is null && sm.tipo = 'primario' && sm.vista_id <> 0 THEN 'Menu + Funcionalidad' WHEN sm.id_padre is null && sm.tipo = 'primario' && sm.vista_id = 0 THEN 'Menu Padre' WHEN sm.id_padre <> '' && sm.tipo = 'secundario' && sm.vista_id <> 0 THEN 'Sub menu' ELSE 1 END as tipo_menu"), "sm.created_at", "sm.updated_at")
+                    ->where("sm.rol_id", $request->rol_id)
+                    ->orderBy('sm.id', 'asc')
+                    ->get();
+        
+        // echo "<pre>";
+        // print_r(json_decode(json_encode($datos), true));
+        // echo "</pre>";
+
+        return response()->json($datos);
+    }
+
+    public function inactivarMenuSubmenu (Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        // Preparamos los datos en un array para actualizar la info del usuario.
+        $time = time();
+        $date = date("Y-m-d h:i:s", $time);
+
+        $datos_inactivar_menu = array(
+            'estado' => 'inactivo',
+            'updated_at' => $date
+        );
+
+        // Generamos el update
+        sigmel_menus::where([
+            ['id', '=', $request->id]
+        ])
+        ->update($datos_inactivar_menu);
+
+        $tipo = str_replace("_", " ", $request->tipo_menu);
+        $msg = "{$tipo} inactivado correctamente.";
+        return redirect()->route('listarMenusSubmenus')->with('confirmacion_menu_inactivado', $msg);
+    }
+
+    public function activarMenuSubmenu (Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        // Preparamos los datos en un array para actualizar la info del usuario.
+        $time = time();
+        $date = date("Y-m-d h:i:s", $time);
+
+        $datos_activar_menu = array(
+            'estado' => 'activo',
+            'updated_at' => $date
+        );
+
+        // Generamos el update
+        sigmel_menus::where([
+            ['id', '=', $request->id],
+        ])
+        ->update($datos_activar_menu);
+
+        $tipo = str_replace("_", " ", $request->tipo_menu);
+        $msg = "{$tipo} activado correctamente.";
+        return redirect()->route('listarMenusSubmenus')->with('confirmacion_menu_activado', $msg);
+    }
+
+    public function mostrarVistaEditarMenu(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        $id_menu = $request->id_menu;
+        $info_menu = DB::table('sigmel_menuses')->select('nombre', 'icono', 'observacion')->where('id', $id_menu)->get();
+        return view('ingenieria.edicionMenu', compact('user', 'info_menu', 'id_menu'));
+    }
+
+    public function actualizar_menu(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        // Preparamos los datos en un array para actualizar la info del usuario.
+        $time = time();
+        $date = date("Y-m-d h:i:s", $time);
+
+        $datos_actualizar_menu = array(
+            'nombre' => $request->editar_nombre_menu,
+            'observacion' => $request->editar_descripcion_menu,
+            'updated_at' => $date
+        );
+
+        // Generamos el update
+        sigmel_menus::where('id', $request->id_menu)->update($datos_actualizar_menu);
+        return redirect()->route('listarMenusSubmenus')->with('confirmacion_menu_editado','Información actualizada correctamente.');
+    }
 }
