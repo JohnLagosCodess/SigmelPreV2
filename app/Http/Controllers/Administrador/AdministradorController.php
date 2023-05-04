@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\sigmel_grupos_trabajos;
 use App\Models\sigmel_usuarios_grupos_trabajos;
 use App\Models\sigmel_clientes;
+use App\Models\sigmel_auditorias_gr_trabajos;
+use App\Models\sigmel_auditorias_creacion_clientes;
 
 class AdministradorController extends Controller
 {
@@ -69,6 +71,19 @@ class AdministradorController extends Controller
                 );
                 sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')->insert($asignar_usuarios);
             }
+
+
+            /* REGISTRO ACTIVIDAD PARA AUDITORIA */
+            $accion_realizada = "Registro de Grupo de Trabajo N° {$id_grupo_trabajo['id']}";
+            $registro_actividad = [
+                'id_usuario_sesion' => Auth::id(),
+                'nombre_usuario_sesion' => Auth::user()->name,
+                'email_usuario_sesion' => Auth::user()->email,
+                'acccion_realizada' => $accion_realizada,
+                'fecha_registro_accion' => $date
+            ];
+            
+            sigmel_auditorias_gr_trabajos::on('sigmel_auditorias')->insert($registro_actividad);
 
             return back()->with('grupo_creado', 'Grupo de trabajo creado correctamente.');
 
@@ -237,6 +252,18 @@ class AdministradorController extends Controller
                 }
             }
 
+            /* REGISTRO ACTIVIDAD PARA AUDITORIA */
+            $accion_realizada = "Edición de Grupo de Trabajo N° {$id_grupo_trabajo}";
+            $registro_actividad = [
+                'id_usuario_sesion' => Auth::id(),
+                'nombre_usuario_sesion' => Auth::user()->name,
+                'email_usuario_sesion' => Auth::user()->email,
+                'acccion_realizada' => $accion_realizada,
+                'fecha_registro_accion' => $date
+            ];
+            
+            sigmel_auditorias_gr_trabajos::on('sigmel_auditorias')->insert($registro_actividad);
+
             $msg = 'Información actualizada correctamente';
             return redirect()->route('listarGruposTrabajo')->with('grupo_editado', $msg);
 
@@ -286,9 +313,21 @@ class AdministradorController extends Controller
             'created_at' => $date
         ];
 
-        $msg= "Cliente registrado correctamente.";
-
         sigmel_clientes::on('sigmel_gestiones')->insert($crear_unico_cliente);
+
+        /* REGISTRO ACTIVIDAD PARA AUDITORIA */
+        $accion_realizada = "Registro de cliente: {$request->nombre_cliente}";
+        $registro_actividad = [
+            'id_usuario_sesion' => Auth::id(),
+            'nombre_usuario_sesion' => Auth::user()->name,
+            'email_usuario_sesion' => Auth::user()->email,
+            'acccion_realizada' => $accion_realizada,
+            'fecha_registro_accion' => $date
+        ];
+        
+        sigmel_auditorias_creacion_clientes::on('sigmel_auditorias')->insert($registro_actividad);
+
+        $msg= "Cliente registrado correctamente.";
         return redirect()->route('registrarCliente')->with('cliente_creado', $msg);
 
     }
@@ -320,12 +359,25 @@ class AdministradorController extends Controller
             'updated_at' => $date
         ];
 
-        $msg= "Información de cliente actualizada correctamente.";
 
+        
         sigmel_clientes::on('sigmel_gestiones')
         ->where('id', $request->id_cliente)
         ->update($crear_unico_cliente);
 
+        /* REGISTRO ACTIVIDAD PARA AUDITORIA */
+        $accion_realizada = "Actualización de información del cliente: {$request->nombre_cliente}";
+        $registro_actividad = [
+            'id_usuario_sesion' => Auth::id(),
+            'nombre_usuario_sesion' => Auth::user()->name,
+            'email_usuario_sesion' => Auth::user()->email,
+            'acccion_realizada' => $accion_realizada,
+            'fecha_registro_accion' => $date
+        ];
+        
+        sigmel_auditorias_creacion_clientes::on('sigmel_auditorias')->insert($registro_actividad);
+        
+        $msg= "Información de cliente actualizada correctamente.";
         return redirect()->route('registrarCliente')->with('cliente_creado', $msg);
     }
 
