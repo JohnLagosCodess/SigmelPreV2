@@ -278,7 +278,7 @@ class IngenieriaController extends Controller
             return redirect('/');
         }
 
-        $datos = DB::table('users')->select("id", "name")->get();
+        $datos = DB::table('users')->select("id", "name", "email")->get();
 
         $informacion_usuario = json_decode(json_encode($datos), true);
 

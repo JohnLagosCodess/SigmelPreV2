@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Autenticacion\LoginController;
 use App\Http\Controllers\Autenticacion\LogoutController;
 use App\Http\Controllers\Ingenieria\IngenieriaController;
+use App\Http\Controllers\ProbandoController;
 use App\Http\Controllers\RolesController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,12 +34,6 @@ Route::get('/Sigmel', [RolesController::class, 'rolPrincipal'])->name('RolPrinci
 Route::post('/rolesiniciales', [RolesController::class, 'listadoRoles']);
 // Cambio de rol
 Route::post('/Sigmel',[RolesController::class, 'cambioDeRol'])->name('Sigmel');
-
-// 28/04/2023 
-// Vista: Index Rol Ingenieria
-Route::get('/Sigmel/RolIngenieria', [IngenieriaController::class, 'show'])->name('IndexIngenieria');
-// Vista: Index Rol Administrador
-Route::get('/Sigmel/RolAdministrador', [AdministradorController::class, 'show'])->name('IndexAdministrador');
 
 
 // 24/04/2023 - CRUD DE USUARIOS.
@@ -161,7 +156,36 @@ Route::post('/Sigmel/usuarios/EditarMenu', [IngenieriaController::class, 'mostra
 // Acción: Actualización de la información del menú
 Route::post('/Sigmel/usuarios/actualizarMenu', [IngenieriaController::class, 'actualizar_menu'])->name('ActualizacionMenu');
 
+// 03/05/2023 - CRUD GRUPOS TRABAJO
+// Acción: Crear un nuevo grupo de trabajo
+Route::post('/Sigmel/RolAdministrador/CrearNuevoGrupo', [AdministradorController::class, 'guardar_grupo_trabajo'])->name('CrearNuevoGrupo');
+// Vista: Listar grupos de trabajo
+Route::get('/Sigmel/RolAdministrador/listarGruposTrabajo', [AdministradorController::class, 'mostrarVistaListarGruposTrabajo'])->name('listarGruposTrabajo');
+// Vista: Formulario para editar un grupo de trabajo
+Route::post('/Sigmel/RolAdministrador/EditarGrupoTrabajo', [AdministradorController::class, 'mostrarVistaEditarGrupoTrabajo'])->name('EditarGrupoTrabajo');
+// Acción: Traer listado de lideres para edición grupo de trabajos para el selector de lideres para la edición js
+Route::post('/listadoLideresEditar', [AdministradorController::class, 'listadoLideresEditar']);
+// Acción: Traer listado de usuarios asignados y no asignados para construir el selector dual de usuarios asignar grupos 
+Route::post('/listadoUsuariosAsignacion', [AdministradorController::class, 'listadoUsuariosAsignacion']);
+// 04/05/2023
+// Acción: Guardar edición de grupo de trabajo
+Route::post('/Sigmel/RolAdministrador/GuardarEdicionGrupo', [AdministradorController::class, 'editar_grupo_trabajo'])->name('GuardarEdicionGrupo');
+
 
 // PRUEBAS
-// Route::get('/Sigmel/usuarios/mao', [IngenieriaController::class, 'ConsultaMenusSubmenus']);
+// Route::get('/Sigmel/pruebas', [ProbandoController::class, 'index']);
 
+
+
+
+/* INICIO SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
+
+// 28/04/2023 
+// Vista: Index Rol Ingenieria
+Route::get('/Sigmel/RolIngenieria', [IngenieriaController::class, 'show'])->name('IndexIngenieria');
+// Vista: Index Rol Administrador
+Route::get('/Sigmel/RolAdministrador', [AdministradorController::class, 'show'])->name('IndexAdministrador');
+// Vista: Formulario para crear un nuevo grupo de trabajo
+Route::get('/Sigmel/RolAdministrador/NuevoGrupoTrabajo', [AdministradorController::class, 'mostrarVistaNuevoGrupoTrabajo'])->name('crearGruposTrabajo');
+
+/* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */

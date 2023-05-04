@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Administrador;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
+use App\Models\sigmel_grupos_trabajos;
+use App\Models\sigmel_usuarios_grupos_trabajos;
 class AdministradorController extends Controller
 {
     
@@ -16,4 +19,144 @@ class AdministradorController extends Controller
         $user = Auth::user();
         return view('administrador.index', compact('user'));
     }
+
+    // TODO LO REFERENTE A LOS GRUPOS DE TRABAJO
+    public function mostrarVistaNuevoGrupoTrabajo(){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        return view('administrador.crearGruposTrabajo', compact('user'));
+    }
+
+    public function guardar_grupo_trabajo(Request $request){
+
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d h:i:s", $time);
+        
+        
+
+        if (empty($request->listado_usuarios_grupo)) {
+            return back()->with('grupo_no_creado', 'Debe almenos seleccionar un usuario para crear un grupo de trabajo.');
+        }else{
+
+            // Se realiza el registro de un nuevo grupo de trabajo
+            $nuevo_grupo = array(
+                'nombre' => $request->nombre_grupo_trabajo,
+                'lider' => $request->listado_lider,
+                'estado' => $request->estado_grupo,
+                'observacion' => $request->observacion_grupo_trabajo,
+                'created_at' => $date
+            );
+
+            
+            sigmel_grupos_trabajos::on('sigmel_gestiones')->insert($nuevo_grupo);
+
+            $id_grupo_trabajo = sigmel_grupos_trabajos::on('sigmel_gestiones')->select('id')->latest('id')->first();
+
+            for ($i=0; $i < count($request->listado_usuarios_grupo); $i++) { 
+                $id_usuario_asignar = $request->listado_usuarios_grupo[$i];
+
+                $asignar_usuarios = array(
+                    'id_grupo_trabajo' => $id_grupo_trabajo['id'],
+                    'id_usuarios_asignados' => $id_usuario_asignar,
+                    'created_at' => $date
+                );
+                sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')->insert($asignar_usuarios);
+            }
+
+            return back()->with('grupo_creado', 'Grupo de trabajo creado correctamente.');
+
+        }
+
+    }
+
+    public function mostrarVistaListarGruposTrabajo(){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        $listado_grupos_trabajo = sigmel_grupos_trabajos::on('sigmel_gestiones')
+                                ->select('id', 'lider', 'nombre', 'estado', 'created_at', 'updated_at')->get();
+
+        
+        return view('administrador.listarGruposTrabajo', compact('user', 'listado_grupos_trabajo'));
+    }
+
+    public function mostrarVistaEditarGrupoTrabajo(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        $id = $request->id;
+        $lider = $request->lider;
+
+        $info_selector_lider = DB::table('users')->select('id', 'name', 'email')->where('id', $lider)->get();
+        $info_grupo_trabajo = sigmel_grupos_trabajos::on('sigmel_gestiones')->select('id', 'nombre', 'estado', 'observacion')->get();
+
+        return view('administrador.editarGrupoTrabajo', compact('user', 'info_selector_lider', 'info_grupo_trabajo'));
+    }
+
+    public function listadoLideresEditar(Request $request){
+        // Si el usuario no ha iniciado, no podrá ingresar al sistema
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $datos = DB::table('users')->select('id', 'name', 'email')->whereNotIn('id', [$request->id])->get();
+        $informacion_usuario = json_decode(json_encode($datos), true);
+        return response()->json($informacion_usuario);
+    }
+
+    public function listadoUsuariosAsignacion (Request $request){
+        // Si el usuario no ha iniciado, no podrá ingresar al sistema
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        
+        $id_grupo_trabajo = $request->id_grupo_trabajo;
+
+        $ids_usuarios_asignados =  sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')
+                                    ->select('id_usuarios_asignados')
+                                    ->where('id_grupo_trabajo', $id_grupo_trabajo)->get();
+
+        $string_ids = array();
+        for ($i=0; $i < count($ids_usuarios_asignados); $i++) { 
+            
+            array_push($string_ids, $ids_usuarios_asignados[$i]->id_usuarios_asignados);
+        }
+
+        $datos_usuarios_no_asignados = DB::table('users')->select('id', 'name', 'email', DB::raw("'no' as seleccionado"))->whereNotIn('id', $string_ids)->get();
+
+        $datos_usuarios_asignados = DB::table('users')->select('id', 'name', 'email', DB::raw("'selected' as seleccionado"))->whereIn('id', $string_ids)->get();
+
+        $info_usuarios_no_asignados = json_decode(json_encode($datos_usuarios_no_asignados), true);
+        $info_usuarios_asignados = json_decode(json_encode($datos_usuarios_asignados), true);
+
+        $listado_todos_usuarios = array();
+
+        for ($a=0; $a < count($info_usuarios_no_asignados); $a++) { 
+            array_push($listado_todos_usuarios, [
+                'id' => $info_usuarios_no_asignados[$a]['id'],
+                'name' => $info_usuarios_no_asignados[$a]['name'],
+                'email' => $info_usuarios_no_asignados[$a]['email'],
+                'seleccionado' => $info_usuarios_no_asignados[$a]['seleccionado'],
+            ]);
+        }
+
+        for ($c=0; $c < count($info_usuarios_asignados); $c++) { 
+            array_push($listado_todos_usuarios, [
+                'id' => $info_usuarios_asignados[$c]['id'],
+                'name' => $info_usuarios_asignados[$c]['name'],
+                'email' => $info_usuarios_asignados[$c]['email'],
+                'seleccionado' => $info_usuarios_asignados[$c]['seleccionado'],
+            ]);
+        }
+
+        return response()->json($listado_todos_usuarios);
+    }
+
 }

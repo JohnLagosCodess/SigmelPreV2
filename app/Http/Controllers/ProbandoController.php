@@ -19,9 +19,14 @@ class ProbandoController extends Controller
         $nuevos->nombre = 'PRUEBA NOMBRE PAULA C';
         $nuevos->save(); */
 
-        $datos_pruebas = sigmel_probando::on('mysql2')->get();
+        // $id_ult = sigmel_probando::on('mysql2')->select('id')->latest('id')->first();
+        // echo "<pre>";
+        // print_r($id_ult['id']);
+        // echo "</pre>";
+
+        // $datos_pruebas = sigmel_probando::on('mysql2')->get();
         // $datos_pruebas = sigmel_probando::on('mysql2')->where('id', '2')->get();
-        $user= Auth::user();
-        return view ('otra_conexion', compact('datos_pruebas', 'user'));
+        // $user= Auth::user();
+        // return view ('otra_conexion', compact('datos_pruebas', 'user'));
     }
 }
