@@ -85,7 +85,9 @@
                         "next": "Siguiente",
                         "first": "Primero",
                         "last": "Último"
-                    }
+                    },
+                    "emptyTable": "No se encontró información",
+                    "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
                 }
             });
         });

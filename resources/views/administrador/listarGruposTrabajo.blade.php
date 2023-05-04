@@ -23,6 +23,16 @@
                 <h3>Listado de Grupos de Trabajo</h3>
             </div>
             <div class="card-body">
+                @if (session()->get('grupo_editado'))
+                    <div class="alert alert-success mt-2" role="alert">
+                        <strong>{{session()->get('grupo_editado')}}</strong>
+                    </div>
+                @endif
+                @if (session()->get('grupo_no_editado'))
+                    <div class="alert alert-danger mt-2" role="alert">
+                        <strong>{{session()->get('grupo_no_editado')}}</strong>
+                    </div>
+                @endif
                 <div class="table-responsive">
                     <table id="listado_grupos_trabajo" class="table table-striped">
                         <thead>
@@ -79,7 +89,9 @@
                         "next": "Siguiente",
                         "first": "Primero",
                         "last": "Último"
-                    }
+                    },
+                    "emptyTable": "No se encontró información",
+                    "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
                 }
             });
         });

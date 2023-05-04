@@ -14,23 +14,15 @@
 @section('content')
  <div class="row">
     <div class="col-12">
+        <a href="{{route("listarGruposTrabajo")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+            <br><br>
         <div class="card card-primary">
             <div class="card-header">
                 <h3>Formulario para editar Grupo de Trabajo: {{$info_grupo_trabajo[0]->nombre}}</h3>
             </div>
-            <form action="{{route('CrearNuevoGrupo')}}" method="POST">
+            <form action="{{route('GuardarEdicionGrupo')}}" method="POST">
                 @csrf
                 <div class="card-body">
-                    @if (session()->get('grupo_editado'))
-                        <div class="alert alert-success mt-2" role="alert">
-                            <strong>{{session()->get('grupo_editado')}}</strong>
-                        </div>
-                    @endif
-                    @if (session()->get('grupo_no_editado'))
-                        <div class="alert alert-danger mt-2" role="alert">
-                            <strong>{{session()->get('grupo_no_editado')}}</strong>
-                        </div>
-                    @endif
                     <div class="row">
                         <div class="col-4">
                             <div class="form-group">
@@ -48,8 +40,8 @@
                         </div>
                         <div class="col-4">
                             <div class="form-group">
-                                <label for="estado_grupo" class="col-form-label">Estado</label>
-                                <select id="estado_grupo" class="estado_grupo custom-select" name="estado_grupo" required>
+                                <label for="editar_estado_grupo" class="col-form-label">Estado</label>
+                                <select id="editar_estado_grupo" class="editar_estado_grupo custom-select" name="editar_estado_grupo" required>
                                     @if ($info_grupo_trabajo[0]->estado == 'activo')
                                         <option value="activo" selected>Activo</option> 
                                         <option value="inactivo">Inactivo</option>
@@ -64,7 +56,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="form-group">
-                                <input type="hidden" id="id_grupo" name="id" value="{{$info_grupo_trabajo[0]->id}}">
+                                <input type="hidden" id="id_grupo" name="id_grupo_trabajo" value="{{$info_grupo_trabajo[0]->id}}">
                                 <label for="editar_listado_usuarios_grupo" class="col-form-label">Usuarios del Grupo</label>
                                 <select multiple="multiple" id="editar_listado_usuarios_grupo" class="editar_listado_usuarios_grupo" name="editar_listado_usuarios_grupo[]"></select>
                             </div>
@@ -80,7 +72,7 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <input type="submit" class="btn btn-outline-success" value="Enviar Información">
+                    <input type="submit" class="btn btn-outline-success" value="Actualizar Información">
                 </div>
             </form>
         </div>

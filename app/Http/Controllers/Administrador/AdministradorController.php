@@ -95,7 +95,8 @@ class AdministradorController extends Controller
         $lider = $request->lider;
 
         $info_selector_lider = DB::table('users')->select('id', 'name', 'email')->where('id', $lider)->get();
-        $info_grupo_trabajo = sigmel_grupos_trabajos::on('sigmel_gestiones')->select('id', 'nombre', 'estado', 'observacion')->get();
+        $info_grupo_trabajo = sigmel_grupos_trabajos::on('sigmel_gestiones')->select('id', 'nombre', 'estado', 'observacion')
+                              ->where('id', $id)->get();
 
         return view('administrador.editarGrupoTrabajo', compact('user', 'info_selector_lider', 'info_grupo_trabajo'));
     }
@@ -157,6 +158,88 @@ class AdministradorController extends Controller
         }
 
         return response()->json($listado_todos_usuarios);
+    }
+
+    public function editar_grupo_trabajo(Request $request){
+        // Si el usuario no ha iniciado, no podrá ingresar al sistema
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        
+        $time = time();
+        $date = date("Y-m-d h:i:s", $time);
+        
+        $id_grupo_trabajo = $request->id_grupo_trabajo;
+
+        $ids_usuarios_asignados =  sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')
+                                    ->select('id_usuarios_asignados')
+                                    ->where('id_grupo_trabajo', $id_grupo_trabajo)->get();
+                                    
+        
+        $id_asignados_orignales = [];
+        for ($i=0; $i < count($ids_usuarios_asignados); $i++) { 
+            $id_asignados_orignales [] = $ids_usuarios_asignados[$i]->id_usuarios_asignados;
+        }
+
+        $ids_asignados_formulario = $request->editar_listado_usuarios_grupo;
+
+        if (empty($ids_asignados_formulario)) {
+            $msg = 'No puede eliminar todos los usuarios del grupo.';
+            return redirect()->route('listarGruposTrabajo')->with('grupo_no_editado', $msg);
+        } else {
+
+            if($request->editar_observacion_grupo_trabajo <> ""){
+                $observacion = $request->editar_observacion_grupo_trabajo;
+            }else{
+                $observacion = null;
+            }
+
+            // Se realiza la actualización de la información del grupo de trabajo
+            $actualizar_info_grupo = array(
+                'nombre' => $request->editar_nombre_grupo_trabajo,
+                'lider' => $request->editar_listado_lider,
+                'estado' => $request->editar_estado_grupo,
+                'observacion' => $observacion,
+                'updated_at' => $date
+            );
+            
+            sigmel_grupos_trabajos::on('sigmel_gestiones')
+            ->where('id', $id_grupo_trabajo)
+            ->update($actualizar_info_grupo);
+            
+            $eliminar_ids_asignados = array();
+            if (count($ids_asignados_formulario) < count($id_asignados_orignales)) {
+                $diferencia = array_diff($id_asignados_orignales, $ids_asignados_formulario);
+                // echo "borrar";
+
+                foreach ($diferencia as $key => $id_eliminar) {
+                    sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')
+                    ->where([
+                        ['id_grupo_trabajo', $id_grupo_trabajo],
+                        ['id_usuarios_asignados', $id_eliminar]
+                    ])->delete();
+                }
+            }
+    
+            if (count($ids_asignados_formulario) > count($id_asignados_orignales)) {
+                $diferencia = array_diff($ids_asignados_formulario, $id_asignados_orignales);
+                // echo "insertar";
+
+                foreach ($diferencia as $key => $id_insertar) {
+                    $asignar_usuarios = array(
+                        'id_grupo_trabajo' => $id_grupo_trabajo,
+                        'id_usuarios_asignados' => $id_insertar,
+                        'created_at' => $date
+                    );
+                    sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')->insert($asignar_usuarios);
+                }
+            }
+
+            $msg = 'Información actualizada correctamente';
+            return redirect()->route('listarGruposTrabajo')->with('grupo_editado', $msg);
+
+        }
+        
     }
 
 }
