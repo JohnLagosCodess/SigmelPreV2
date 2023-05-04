@@ -157,6 +157,8 @@ Route::post('/Sigmel/usuarios/EditarMenu', [IngenieriaController::class, 'mostra
 Route::post('/Sigmel/usuarios/actualizarMenu', [IngenieriaController::class, 'actualizar_menu'])->name('ActualizacionMenu');
 
 // 03/05/2023 - CRUD GRUPOS TRABAJO
+// Vista: Formulario para crear un nuevo grupo de trabajo
+Route::get('/Sigmel/RolAdministrador/NuevoGrupoTrabajo', [AdministradorController::class, 'mostrarVistaNuevoGrupoTrabajo'])->name('crearGruposTrabajo');
 // Acción: Crear un nuevo grupo de trabajo
 Route::post('/Sigmel/RolAdministrador/CrearNuevoGrupo', [AdministradorController::class, 'guardar_grupo_trabajo'])->name('CrearNuevoGrupo');
 // Vista: Listar grupos de trabajo
@@ -167,9 +169,16 @@ Route::post('/Sigmel/RolAdministrador/EditarGrupoTrabajo', [AdministradorControl
 Route::post('/listadoLideresEditar', [AdministradorController::class, 'listadoLideresEditar']);
 // Acción: Traer listado de usuarios asignados y no asignados para construir el selector dual de usuarios asignar grupos 
 Route::post('/listadoUsuariosAsignacion', [AdministradorController::class, 'listadoUsuariosAsignacion']);
+
 // 04/05/2023
 // Acción: Guardar edición de grupo de trabajo
 Route::post('/Sigmel/RolAdministrador/GuardarEdicionGrupo', [AdministradorController::class, 'editar_grupo_trabajo'])->name('GuardarEdicionGrupo');
+// Vista: Formulario para registrar Cliente
+Route::get('/Sigmel/RolAdministrador/RegistroCliente', [AdministradorController::class, 'mostrarVistaCrearCliente'])->name('registrarCliente');
+// Acción: Registrar el cliente
+Route::post('/Sigmel/RolAdministrador/CrearCliente', [AdministradorController::class, 'guardar_cliente'])->name('CrearCliente');
+// Acción: Actualizar información del cliente.
+Route::post('/Sigmel/RolAdministrador/ActualizarCliente', [AdministradorController::class, 'actualizar_cliente'])->name('ActualizarCliente');
 
 
 // PRUEBAS
@@ -185,7 +194,6 @@ Route::post('/Sigmel/RolAdministrador/GuardarEdicionGrupo', [AdministradorContro
 Route::get('/Sigmel/RolIngenieria', [IngenieriaController::class, 'show'])->name('IndexIngenieria');
 // Vista: Index Rol Administrador
 Route::get('/Sigmel/RolAdministrador', [AdministradorController::class, 'show'])->name('IndexAdministrador');
-// Vista: Formulario para crear un nuevo grupo de trabajo
-Route::get('/Sigmel/RolAdministrador/NuevoGrupoTrabajo', [AdministradorController::class, 'mostrarVistaNuevoGrupoTrabajo'])->name('crearGruposTrabajo');
+
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */

@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 use App\Models\sigmel_grupos_trabajos;
 use App\Models\sigmel_usuarios_grupos_trabajos;
+use App\Models\sigmel_clientes;
+
 class AdministradorController extends Controller
 {
     
@@ -240,6 +242,91 @@ class AdministradorController extends Controller
 
         }
         
+    }
+
+    /* TODO LO REFERENTE A CLIENTE */
+    public function mostrarVistaCrearCliente(){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $user = Auth::user();
+
+        $info_registro_cliente = sigmel_clientes::on('sigmel_gestiones')
+        ->select('id', 'nombre_cliente', 'nit', 'razon_social', 'representante_legal', 
+        'telefono_contacto', 'correo_contacto', 
+        'estado', 'observacion', 'created_at', 'updated_at')->get();
+
+        return view('administrador.registrarCliente', compact('user', 'info_registro_cliente'));
+    }
+
+    public function guardar_cliente(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        
+        $time = time();
+        $date = date("Y-m-d h:i:s", $time);
+
+        if ($request->observacion_cliente <> '') {
+            $observacion = $request->observacion_cliente;
+        } else {
+            $observacion = null;
+        }
+
+        $crear_unico_cliente = [
+            'nombre_cliente' => $request->nombre_cliente,
+            'nit' => $request->nit_cliente,
+            'razon_social' => $request->razon_social_cliente,
+            'representante_legal' => $request->representante_legal_cliente,
+            'telefono_contacto' => $request->telefono_contacto_cliente,
+            'correo_contacto' => $request->correo_contacto_cliente,
+            'estado' => $request->estado_cliente,
+            'observacion' => $observacion,
+            'created_at' => $date
+        ];
+
+        $msg= "Cliente registrado correctamente.";
+
+        sigmel_clientes::on('sigmel_gestiones')->insert($crear_unico_cliente);
+        return redirect()->route('registrarCliente')->with('cliente_creado', $msg);
+
+    }
+
+    public function actualizar_cliente(Request $request){
+
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        
+        $time = time();
+        $date = date("Y-m-d h:i:s", $time);
+
+        if ($request->observacion_cliente <> '') {
+            $observacion = $request->observacion_cliente;
+        } else {
+            $observacion = null;
+        }
+
+        $crear_unico_cliente = [
+            'nombre_cliente' => $request->nombre_cliente,
+            'nit' => $request->nit_cliente,
+            'razon_social' => $request->razon_social_cliente,
+            'representante_legal' => $request->representante_legal_cliente,
+            'telefono_contacto' => $request->telefono_contacto_cliente,
+            'correo_contacto' => $request->correo_contacto_cliente,
+            'estado' => $request->estado_cliente,
+            'observacion' => $observacion,
+            'updated_at' => $date
+        ];
+
+        $msg= "Información de cliente actualizada correctamente.";
+
+        sigmel_clientes::on('sigmel_gestiones')
+        ->where('id', $request->id_cliente)
+        ->update($crear_unico_cliente);
+
+        return redirect()->route('registrarCliente')->with('cliente_creado', $msg);
     }
 
 }
