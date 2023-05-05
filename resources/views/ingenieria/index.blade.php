@@ -27,5 +27,6 @@
             <a href="{{route('ConsultarAsignacionVista')}}" class="btn btn-primary"><i class="fas fa-list"></i> Consultar Asignación de Vistas a Roles</a>
         </div>
     </div> --}}
+
 @stop
 

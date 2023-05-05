@@ -65,7 +65,7 @@ class EventServiceProvider extends ServiceProvider
                 
             }
 
-            $event->menu->add('ACCIONES DEL SISTEMA');
+            $event->menu->add('ALERTAS DEL SISTEMA');
             $event->menu->add(
                 [
                     'text'       => 'Acción No Realizada',
