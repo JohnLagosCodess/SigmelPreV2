@@ -15,7 +15,7 @@
         <div class="col-12">
             <a href="{{route("ListarUsuarios")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
             <br><br>
-            <div class="card card-info">
+            <div class="card card-primary">
                 <div class="card-header">
                     <h3>Formulario para Editar la Información del Usuario: {{$info_usuario[0]->name}}</h3>
                 </div>
