@@ -13,7 +13,7 @@
             {{-- <a href="{{route("IndexIngenieria")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a> --}}
             {{-- <a href="{{route('ListarUsuarios')}}" class="btn btn-info"><i class="fas fa-edit"></i> Consultar Lista de Usuarios</a> --}}
             {{-- <br><br> --}}
-            <div class="card card-primary">
+            <div class="card card-info">
                 <div class="card-header">
                     <h3>Formulario para Creación de Usuarios</h3>
                 </div>

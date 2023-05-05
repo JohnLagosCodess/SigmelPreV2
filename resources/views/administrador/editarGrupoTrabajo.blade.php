@@ -16,7 +16,7 @@
     <div class="col-12">
         <a href="{{route("listarGruposTrabajo")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
             <br><br>
-        <div class="card card-primary">
+        <div class="card card-info">
             <div class="card-header">
                 <h3>Formulario para editar Grupo de Trabajo: {{$info_grupo_trabajo[0]->nombre}}</h3>
             </div>

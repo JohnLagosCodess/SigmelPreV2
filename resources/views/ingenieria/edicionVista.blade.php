@@ -17,7 +17,7 @@
         <div class="col-12">
             <a href="{{route("ConsultarAsignacionVista")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
             <br><br>
-            <div class="card card-primary">
+            <div class="card card-info">
                 <div class="card-header">
                     <h3>Formulario para Edición de Vista</h3>
                 </div>

@@ -14,7 +14,7 @@
         <a href="{{route('NuevaVista')}}" class="btn btn-info"><i class="fas fa-plus"></i> Crear Vista Principal</a>
         <a href="{{route('NuevaVistaOtros')}}" class="btn btn-info"><i class="fas fa-plus"></i> Crear Vistas Secundarias</a>
         <br><br> --}}
-        <div class="card card-primary">
+        <div class="card card-info">
             <div class="card-header">
                 <h3>Formulario para Asignación de Vistas a Roles</h3>
             </div>

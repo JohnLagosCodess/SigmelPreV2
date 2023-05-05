@@ -20,7 +20,7 @@
                 <i class="fas fa-user-check text-success"></i> Cambiar a Vista principal &nbsp;
             </p>
         </div>
-        <div class="card card-primary">
+        <div class="card card-info">
             <div class="card-header">
                 <h3>Formulario para Consultar Asignación de Vistas</h3>
             </div>

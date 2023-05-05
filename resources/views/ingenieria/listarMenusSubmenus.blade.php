@@ -18,7 +18,7 @@
                     <i class="fa fa-sm fa-pen text-primary"></i> Editar Información Menú/Sub Menú &nbsp;
                 </p>
             </div>
-            <div class="card card-primary">
+            <div class="card card-info">
                 <div class="card-header">
                     <h3>Formulario para Consultar Información de Menús y Sub Menús</h3>
                 </div>

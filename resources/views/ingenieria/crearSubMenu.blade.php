@@ -10,7 +10,7 @@
 @section('content')
  <div class="row">
     <div class="col-12">
-        <div class="card card-primary">
+        <div class="card card-info">
             <div class="card-header">
                 <h3>Formulario para Creación de Sub Menús</h3>
             </div>

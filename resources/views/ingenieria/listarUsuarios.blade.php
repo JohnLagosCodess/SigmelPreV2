@@ -20,7 +20,7 @@
                     <i class="fa fa-sm fa-pen text-primary"></i> Editar &nbsp;
                 </p>
             </div>
-            <div class="card card-primary">
+            <div class="card card-info">
                 <div class="card-header">
                     <h3>Listado de Usuarios</h3>
                 </div>

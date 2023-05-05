@@ -10,7 +10,7 @@
 @section('content')
  <div class="row">
     <div class="col-12">
-        <div class="card card-primary">
+        <div class="card card-info">
             <div class="card-header">
                 @if (isset($info_registro_cliente[0]->id) && $info_registro_cliente[0]->id <> '')
                     <h3>

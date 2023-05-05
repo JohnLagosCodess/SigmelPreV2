@@ -15,7 +15,7 @@
             <a href="{{route('AsignacionRol')}}" class="btn btn-info"><i class="far fa-address-card"></i> Asignar Roles a Usuarios</a>
             <a href="{{route('ConsultarAsignacionRol')}}" class="btn btn-info"><i class="fas fa-list"></i> Consultar Asignación de Roles a Usuarios</a>
             <br><br> --}}
-            <div class="card card-primary">
+            <div class="card card-info">
                 <div class="card-header">
                     <h3>Formulario para Creación de Rol</h3>
                 </div>

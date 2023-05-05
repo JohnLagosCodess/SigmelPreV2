@@ -13,7 +13,7 @@
         <div class="col-12">
             <a href="{{route("ListadoRoles")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
             <br><br>
-            <div class="card card-primary">
+            <div class="card card-info">
                 <div class="card-header">
                     <h3>Formulario para Editar la Información del Rol: {{$info_rol[0]->nombre_rol}}</h3>
                 </div>

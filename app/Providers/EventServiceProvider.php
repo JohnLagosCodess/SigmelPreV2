@@ -65,7 +65,7 @@ class EventServiceProvider extends ServiceProvider
                 
             }
 
-            $event->menu->add('VIÑETAS');
+            $event->menu->add('ACCIONES DEL SISTEMA');
             $event->menu->add(
                 [
                     'text'       => 'Acción No Realizada',
@@ -74,7 +74,7 @@ class EventServiceProvider extends ServiceProvider
                     'url'        => '#',
                 ],
                 [
-                    'text'       => 'Acción x',
+                    'text'       => 'Precaución',
                     'icon'       => 'fas fa-circle',
                     'icon_color' => 'yellow',
                     'url'        => '#',
@@ -86,7 +86,7 @@ class EventServiceProvider extends ServiceProvider
                     'url'        => '#',
                 ],
                 [
-                    'text'       => 'Información',
+                    'text'       => 'Informativo',
                     'icon'       => 'fas fa-circle',
                     'icon_color' => 'cyan',
                     'url'        => '#',
