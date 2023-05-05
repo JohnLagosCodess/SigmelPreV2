@@ -179,13 +179,18 @@ Route::get('/Sigmel/RolAdministrador/RegistroCliente', [AdministradorController:
 Route::post('/Sigmel/RolAdministrador/CrearCliente', [AdministradorController::class, 'guardar_cliente'])->name('CrearCliente');
 // Acción: Actualizar información del cliente.
 Route::post('/Sigmel/RolAdministrador/ActualizarCliente', [AdministradorController::class, 'actualizar_cliente'])->name('ActualizarCliente');
-
-
-// PRUEBAS
-// Route::get('/Sigmel/pruebas', [ProbandoController::class, 'index']);
-
-
-
+// Vista: Bandeja de gestión Inicial
+Route::get('/Sigmel/RolAdministrador/BandejaGestionInicial', [AdministradorController::class, 'mostrarVistaBandejaGestionInicial'])->name('bandejaGestionInicial');
+// Vista: Cargue de Bases
+Route::get('/Sigmel/RolAdministrador/CargueBases', [AdministradorController::class, 'mostrarVistaCargueBases'])->name('cargueBases');
+// Vista: Reportes Módulos
+Route::get('/Sigmel/RolAdministrador/ReportesModulos', [AdministradorController::class, 'mostrarVistaReportesModulos'])->name('reportesModulos');
+// Vista: Reportes Bandejas
+Route::get('/Sigmel/RolAdministrador/ReportesBandejas', [AdministradorController::class, 'mostrarVistaReportesBandejas'])->name('reportesBandejas');
+// Vista: Gestionar Facturación
+Route::get('/Sigmel/RolAdministrador/GestionarFacturacion', [AdministradorController::class, 'mostrarVistaGestionarFacturacion'])->name('gestionarFacturacion');
+// Vista: Auditoria Grupos
+Route::get('/Sigmel/RolAdministrador/AuditoriaGrupos', [AdministradorController::class, 'mostrarVistaAuditoriaGrupos'])->name('auditoriaGrupos');
 
 /* INICIO SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
@@ -194,6 +199,5 @@ Route::post('/Sigmel/RolAdministrador/ActualizarCliente', [AdministradorControll
 Route::get('/Sigmel/RolIngenieria', [IngenieriaController::class, 'show'])->name('IndexIngenieria');
 // Vista: Index Rol Administrador
 Route::get('/Sigmel/RolAdministrador', [AdministradorController::class, 'show'])->name('IndexAdministrador');
-
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */

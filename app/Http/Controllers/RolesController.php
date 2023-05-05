@@ -198,7 +198,7 @@ class RolesController extends Controller
 
     public function crear_menu(){
 
-        $valor_almacenado = session('id_cambio_rol');
+       $valor_almacenado = session('id_cambio_rol');
         
         $id_usuario = Auth::id();
 

@@ -381,4 +381,56 @@ class AdministradorController extends Controller
         return redirect()->route('registrarCliente')->with('cliente_creado', $msg);
     }
 
+    /* VISTA FRONTEND BANDEJA GESTIÓN INICIAL */
+    public function mostrarVistaBandejaGestionInicial(){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        return view('administrador.bandejaGestionInicial', compact('user'));
+    }
+
+    /* VISTA FRONTEND PARA CARGUE DE BASES */
+    public function mostrarVistaCargueBases(){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        return view('administrador.cargueBases', compact('user'));
+    }
+
+    /* VISTA FRONTEND PARA REPORTES MODULOS */
+    public function mostrarVistaReportesModulos(){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        return view('administrador.reportesModulos', compact('user'));
+    }
+
+    /* VISTA FRONTEND PARA REPORTES BANDEJAS */
+    public function mostrarVistaReportesBandejas(){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        return view('administrador.reportesBandejas', compact('user'));
+    }
+
+    /* VISTA FRONTEND PARA GESTIONAR FACTURACION */
+    public function mostrarVistaGestionarFacturacion(){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        return view('administrador.gestionarFacturacion', compact('user'));
+    }
+
+    public function mostrarVistaAuditoriaGrupos(){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        return view('administrador.auditoriaGrupos', compact('user'));
+    }
 }

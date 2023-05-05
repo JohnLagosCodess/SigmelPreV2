@@ -2,10 +2,11 @@ textarea{
     resize:none;
 }
 
-.form-control{
+.form-control, .custom-select{
     border: 1px solid #343a40;
 }
 
-#estado_rol, #tipo_rol{
+/* .borde_selector_no_select_2 {
     border: 1px solid #343a40;
-}
+} */
+

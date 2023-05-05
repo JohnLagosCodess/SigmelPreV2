@@ -31,10 +31,6 @@ class EventServiceProvider extends ServiceProvider
         Event::listen(BuildingMenu::class, function (BuildingMenu $event) {
             
             $menu_final = (new RolesController)->crear_menu();
-            
-            // echo "<pre>";
-            //     print_r($menu_final);
-            //     echo "</pre>";
 
             for ($i=0; $i < count($menu_final); $i++) { 
 
@@ -66,7 +62,36 @@ class EventServiceProvider extends ServiceProvider
                         
                     };
                 }
+                
             }
+
+            $event->menu->add('VIÑETAS');
+            $event->menu->add(
+                [
+                    'text'       => 'Acción No Realizada',
+                    'icon'       => 'fas fa-circle',
+                    'icon_color' => 'red',
+                    'url'        => '#',
+                ],
+                [
+                    'text'       => 'Acción x',
+                    'icon'       => 'fas fa-circle',
+                    'icon_color' => 'yellow',
+                    'url'        => '#',
+                ],
+                [
+                    'text'       => 'Acción Realizada',
+                    'icon'       => 'fas fa-circle',
+                    'icon_color' => 'green',
+                    'url'        => '#',
+                ],
+                [
+                    'text'       => 'Información',
+                    'icon'       => 'fas fa-circle',
+                    'icon_color' => 'cyan',
+                    'url'        => '#',
+                ]
+            );
         });
     }
 

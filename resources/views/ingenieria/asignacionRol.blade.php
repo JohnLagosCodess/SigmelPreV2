@@ -48,7 +48,7 @@
                         <div class="form-group row">
                             <label for="estado_rol" class="col-sm-2 col-form-label">Seleccione un Estado</label>
                             <div class="col-sm-10">
-                                <select id="estado_rol" class="custom-select" name="estado_rol" required>
+                                <select id="estado_rol" class="borde_selector_no_select_2 custom-select" name="estado_rol" required>
                                     <option value="" selected>Seleccione</option>
                                     <option value="activo">Activo</option>
                                     <option value="inactivo">Inactivo</option>
@@ -58,7 +58,7 @@
                         <div class="form-group row">
                             <label for="tipo_rol" class="col-sm-2 col-form-label">Seleccione el Tipo de Rol</label>
                             <div class="col-sm-10">
-                                <select id="tipo_rol" class="custom-select" name="tipo_rol" required>
+                                <select id="tipo_rol" class=" borde_selector_no_select_2 custom-select" name="tipo_rol" required>
                                     <option value="" selected>Seleccione</option>
                                     <option value="principal">Principal</option>
                                     <option value="otro">Otro</option>
