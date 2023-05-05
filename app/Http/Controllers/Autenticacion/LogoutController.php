@@ -79,6 +79,8 @@ class LogoutController extends Controller
             'fecha_cerro_sesion' => $fecha_cerro_sesion,
             'hora_cerro_sesion' => $hora_cerro_sesion
         );
+
+        session()->forget('id_cambio_rol');
         
         // Generamos el update
         sigmel_control_sesiones::where('usuario_id', $id_usuario)
