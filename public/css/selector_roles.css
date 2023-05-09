@@ -31,6 +31,23 @@
     z-index:2;
 }
 
+.sidebar-dark-white2{
+    background: #ECECEC !important;  /* Color para el sidebar*/
+}
+
+.nav-link{
+    color:rgb(10, 10, 10) !important; /* Cambiar color de texto de nav*/ 
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    color: rgb(10, 10, 10);
+    background-color: #ECECEC;
+}
+
+.nav-header {
+    color: black !important;
+}
+
 
 
 

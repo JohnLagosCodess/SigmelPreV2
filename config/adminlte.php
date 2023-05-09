@@ -63,12 +63,12 @@ return [
     |
     */
 
-    'logo' => '<b>BIENVENIDO SIGMEL</b>',
+    'logo' => '<b>SIGMEL</b>',
     'logo_img' => 'images/present_log_SIGMEL-17.png',
     'logo_img_class' => 'brand-image text-center elevation-6',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Admin Logo',
+    'logo_img_alt' => 'Logo Sigmel',
 
     /*
     |--------------------------------------------------------------------------
@@ -87,10 +87,10 @@ return [
         'enabled' => false,
         'img' => [
             'path' => 'images/present_log_SIGMEL-17.png',
-            'alt' => 'Auth Logo',
+            'alt' => 'Logo Sigmel Inicio Sesion',
             'class' => '',
-            'width' => 50,
-            'height' => 50,
+            'width' => 80,
+            'height' => 80,
         ],
     ],
 
@@ -109,11 +109,11 @@ return [
     'preloader' => [
         'enabled' => true,
         'img' => [
-            'path' => 'images/present_log_SIGMEL-17.png',
+            'path' => 'images/present_log_SIGMEL-14.png',
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
-            'width' => 100,
-            'height' => 100,
+            'width' => 1000,
+            'height' => 350,
         ],
     ],
 
@@ -192,7 +192,7 @@ return [
     'classes_content_wrapper' => '',
     'classes_content_header' => '',
     'classes_content' => '',
-    'classes_sidebar' => 'sidebar-dark-info elevation-4',
+    'classes_sidebar' => 'sidebar-dark-white2 elevation-4',
     'classes_sidebar_nav' => '',
     'classes_topnav' => 'navbar-white navbar-light',
     'classes_topnav_nav' => 'navbar-expand',
