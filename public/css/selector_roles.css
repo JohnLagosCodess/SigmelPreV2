@@ -48,6 +48,15 @@
     color: black !important;
 }
 
+.logo-xl.brand-image-xl{
+    left: 30px !important;
+    top: -7px !important;
+}
+.brand-link .brand-image-xl {
+    line-height: .8 !important;
+    max-height: 68px !important;
+    width: auto !important;
+}
 
 
 

@@ -66,8 +66,8 @@ return [
     'logo' => '<b>SIGMEL</b>',
     'logo_img' => 'images/present_log_SIGMEL-17.png',
     'logo_img_class' => 'brand-image text-center elevation-6',
-    'logo_img_xl' => null,
-    'logo_img_xl_class' => 'brand-image-xs',
+    'logo_img_xl' => 'images/present_log_SIGMEL-14.png',
+    'logo_img_xl_class' => 'brand-image-xl',
     'logo_img_alt' => 'Logo Sigmel',
 
     /*
