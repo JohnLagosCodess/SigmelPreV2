@@ -1222,160 +1222,254 @@ class IngenieriaController extends Controller
         /* OPCION: PLANTILLA PREDETERMINADA */
         $plantilla_predeterminada = $request->plantilla_predeterminada;
         
-        switch ($plantilla_predeterminada) {
-            case 'plantilla_oscura':
-                $codigo_css = "
-                    /* background */
-                    .sidebar-dark-white2{
-                        background-color: #343a40 !important;
-                    }
-
-                    /* colores menú padre sin seleccionar */
-                    .nav-sidebar .nav-item > .nav-link{
-                        color: white;
-                    }
-
-                    /* colores menú padre que tengan sub menus cuando son seleccionados */
-                    .nav-sidebar > .nav-item.menu-open > .nav-link{
-                        background-color: rgba(255, 255, 255, .1) !important;
-                        color: white !important;
-                    }
-
-                    /* color menú padre cuando se deja de hacer focus */
-                    .nav-pills .nav-link.active{
-                        color: #fff !important;
-                        background-color: #007bff !important;
-                    }
-
-                    /* colores menú hijos */
-                    .nav-treeview > .nav-item > .nav-link{
-                        color:white !important;
-                    }
-
-                    /* hover menu hijos */
-                    .nav-treeview > .nav-item > .nav-link:hover{
-                        box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
-                        margin-left: 7px;
-                    }
-
-                    /* colores menú hijo seleccionado */
-                    .nav-treeview >.nav-item >.nav-link.active{
-                        background-color: rgba(255,255,255,.9) !important;
-                        color: #343A40 !important;
-                    }
-
-                    .nav-header {
-                        color: white !important;
-                        text-align: center;
-                        font-weight: bold;
-                    }
-                ";
-                
-                $apertura_archivo = fopen($ruta_archivo_css, 'w+');
-                fwrite($apertura_archivo, trim($codigo_css));
-                fclose($apertura_archivo);
-            break;
-            case 'plantilla_gris':
-                $codigo_css = "
-                    /* background */
-                    .sidebar-dark-white2{
-                        background-color: #ECECEC !important;
-                    }
-
-                    /* colores menú padre sin seleccionar */
-                    .nav-sidebar .nav-item > .nav-link{
-                        color:rgb(10, 10, 10) !important;
-                    }
-
-                    /* colores menú padre que tengan sub menus cuando son seleccionados */
-                    .nav-sidebar > .nav-item.menu-open > .nav-link{
-                        color: rgb(10, 10, 10) !important;
-                        background-color: rgba(255, 255, 255, .1) !important;
-                    }
-
-                    /* color menú padre cuando se deja de hacer focus */
-                    .nav-pills .nav-link.active{
-                        color: rgb(10, 10, 10) !important;
-                        background-color: #ECECEC !important;
-                    }
-
-                    /* colores menú hijos */
-                    .nav-treeview > .nav-item > .nav-link{
-                        color:rgb(10, 10, 10) !important;
-                    }
-
-                    /* hover menu hijos*/
-                    .nav-treeview > .nav-item > .nav-link:hover{
-                        box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
-                        margin-left: 7px;
-                    }
-
-                    /* colores menú hijo seleccionado */
-                    .nav-treeview >.nav-item >.nav-link.active{
-                        background-color: rgba(255,255,255,.9) !important;
-                    }
-
-                    .nav-header {
-                        color: black !important;
-                        text-align: center;
-                        font-weight: bold;
-                    }
-                ";
-
-                $apertura_archivo = fopen($ruta_archivo_css, 'w+');
-                fwrite($apertura_archivo, trim($codigo_css));
-                fclose($apertura_archivo);
-            break;
-            case 'plantilla_botones':
-                $codigo_css= "
-                    .sidebar-dark-white2{
-                        background-color: #ECECEC !important;
-                    }
+        if ($plantilla_predeterminada <> 'ninguna_predeterminada') {
+            switch ($plantilla_predeterminada) {
+                case 'plantilla_oscura':
+                    $codigo_css = "
+                        /* background */
+                        .sidebar-dark-white2{
+                            background-color: #343a40 !important;
+                        }
+    
+                        /* colores menú padre sin seleccionar */
+                        .nav-sidebar .nav-item > .nav-link{
+                            color: white !important;
+                        }
+    
+                        /* colores menú padre que tengan sub menus cuando son seleccionados */
+                        .nav-sidebar > .nav-item.menu-open > .nav-link{
+                            background-color: rgba(255, 255, 255, .1) !important;
+                            color: white !important;
+                        }
+    
+                        /* color menú padre cuando se deja de hacer focus */
+                        .nav-pills .nav-link.active{
+                            color: #fff !important;
+                            background-color: #007bff !important;
+                        }
+    
+                        /* colores menú hijos */
+                        .nav-treeview > .nav-item > .nav-link{
+                            color:white !important;
+                        }
+    
+                        /* hover menu hijos */
+                        .nav-treeview > .nav-item > .nav-link:hover{
+                            box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
+                            margin-left: 7px;
+                        }
+    
+                        /* colores menú hijo seleccionado */
+                        .nav-treeview >.nav-item >.nav-link.active{
+                            background-color: rgba(255,255,255,.9) !important;
+                            color: #343A40 !important;
+                        }
+    
+                        .nav-header {
+                            color: white !important;
+                            text-align: center;
+                            font-weight: bold;
+                        }
+                    ";
                     
-                    .nav .nav-link{/* Cambiar estilo de opciones*/ 
-                        color:black !important; 
-                        background: linear-gradient(90deg, rgba(163,163,163,1) 0%, rgba(251,251,251,1) 82%);
-                        font-weight: bold;
-                        border-right: #9a9a9a 3px solid;
-                        border-bottom: #9a9a9a 3px solid;
-                        margin-bottom: 10px !important;
-                    }
-                    .nav .nav-link:hover{
-                        background: linear-gradient(90deg,rgba(251,251,251,1)  70%, rgba(163,163,163,1) 90%);
-                        color:#0d6efd!important;
-                        font-weight: bold;
-                        font-size: 16px;
-                    }
-                    
-                    .nav-pills .nav-treeview .nav-link.active, .nav-pills .show>.nav-link {
-                        color: white !important;
-                        font-weight: bold;  
-                        background: #17a2b8 !important; 
-                    }
-                    
-                    .nav-treeview .nav-link {
-                        margin-left: 7px;
-                        font-weight: normal;
-                        border-right: #0d6efd 1px solid;
-                        border-bottom: #0d6efd 1px solid;
-                    }
+                    $apertura_archivo = fopen($ruta_archivo_css, 'w+');
+                    fwrite($apertura_archivo, trim($codigo_css));
+                    fclose($apertura_archivo);
+                break;
+                case 'plantilla_gris':
+                    $codigo_css = "
+                        /* background */
+                        .sidebar-dark-white2{
+                            background-color: #ECECEC !important;
+                        }
+    
+                        /* colores menú padre sin seleccionar */
+                        .nav-sidebar .nav-item > .nav-link{
+                            color:rgb(10, 10, 10) !important;
+                        }
+    
+                        /* colores menú padre que tengan sub menus cuando son seleccionados */
+                        .nav-sidebar > .nav-item.menu-open > .nav-link{
+                            color: rgb(10, 10, 10) !important;
+                            background-color: rgba(255, 255, 255, .1) !important;
+                        }
+    
+                        /* color menú padre cuando se deja de hacer focus */
+                        .nav-pills .nav-link.active{
+                            color: rgb(10, 10, 10) !important;
+                            background-color: #ECECEC !important;
+                        }
+    
+                        /* colores menú hijos */
+                        .nav-treeview > .nav-item > .nav-link{
+                            color:rgb(10, 10, 10) !important;
+                        }
+    
+                        /* hover menu hijos*/
+                        .nav-treeview > .nav-item > .nav-link:hover{
+                            box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
+                            margin-left: 7px;
+                        }
+    
+                        /* colores menú hijo seleccionado */
+                        .nav-treeview >.nav-item >.nav-link.active{
+                            background-color: rgba(255,255,255,.9) !important;
+                        }
+    
+                        .nav-header {
+                            color: black !important;
+                            text-align: center;
+                            font-weight: bold;
+                        }
+                    ";
+    
+                    $apertura_archivo = fopen($ruta_archivo_css, 'w+');
+                    fwrite($apertura_archivo, trim($codigo_css));
+                    fclose($apertura_archivo);
+                break;
+                case 'plantilla_botones':
+                    $codigo_css= "
+                        .sidebar-dark-white2{
+                            background-color: #ECECEC !important;
+                        }
+                        
+                        .nav .nav-link{/* Cambiar estilo de opciones*/ 
+                            color:black !important; 
+                            background: linear-gradient(90deg, rgba(163,163,163,1) 0%, rgba(251,251,251,1) 82%);
+                            font-weight: bold;
+                            border-right: #9a9a9a 3px solid;
+                            border-bottom: #9a9a9a 3px solid;
+                            margin-bottom: 10px !important;
+                        }
+                        .nav .nav-link:hover{
+                            background: linear-gradient(90deg,rgba(251,251,251,1)  70%, rgba(163,163,163,1) 90%);
+                            color:#0d6efd!important;
+                            font-weight: bold;
+                            font-size: 16px;
+                        }
+                        
+                        .nav-pills .nav-treeview .nav-link.active, .nav-pills .show>.nav-link {
+                            color: white !important;
+                            font-weight: bold;  
+                            background: #17a2b8 !important; 
+                        }
+                        
+                        .nav-treeview .nav-link {
+                            margin-left: 7px;
+                            font-weight: normal;
+                            border-right: #0d6efd 1px solid;
+                            border-bottom: #0d6efd 1px solid;
+                        }
+    
+                        .nav-header {
+                            color: black !important;
+                            text-align: center;
+                            font-weight: bold;
+                        }
+                    ";
+    
+                    $apertura_archivo = fopen($ruta_archivo_css, 'w+');
+                    fwrite($apertura_archivo, trim($codigo_css));
+                    fclose($apertura_archivo);
+                break;
+                default:
+                    # code...
+                break;
+            }
 
-                    .nav-header {
-                        color: black !important;
-                        text-align: center;
-                        font-weight: bold;
-                    }
-                ";
-
-                $apertura_archivo = fopen($ruta_archivo_css, 'w+');
-                fwrite($apertura_archivo, trim($codigo_css));
-                fclose($apertura_archivo);
-            break;
-            default:
-                # code...
-            break;
+            sleep(6);
+            return back()->with('edicion_realizada', 'Código css editado correctamente');
         }
 
-        return back()->with('edicion_realizada', 'Código css editado correctamente');
+        if ($request->background_sidebar <> '') {
+            $background_sidebar = $request->background_sidebar;
+            $color_menu_padre_sin_seleccionar_sidebar = $request->color_menu_padre_sin_seleccionar_sidebar;
+            $color_menu_padre_submenu_seleccionado_sidebar = $this->rgb2hex2rgb($request->color_menu_padre_submenu_seleccionado_sidebar);
+            $color_menu_padre_sin_focus_sidebar = $request->color_menu_padre_sin_focus_sidebar;
+            $color_sub_menus_sidebar = $request->color_sub_menus_sidebar;
+            $color_hover_sub_menus_sidebar = $this->rgb2hex2rgb($request->color_hover_sub_menus_sidebar);
+            $color_sub_menu_seleccionado_sidebar = $this->rgb2hex2rgb($request->color_sub_menu_seleccionado_sidebar);
+
+            $codigo_css_nuevo = "/* background */
+                .sidebar-dark-white2{
+                    background-color: {$background_sidebar} !important;
+                }
+
+                /* colores menú padre sin seleccionar */
+                .nav-sidebar .nav-item > .nav-link{
+                    color: {$color_menu_padre_sin_seleccionar_sidebar} !important;
+                }
+
+                /* colores menú padre que tengan sub menus cuando son seleccionados */
+                .nav-sidebar > .nav-item.menu-open > .nav-link{
+                    background-color: rgba({$color_menu_padre_submenu_seleccionado_sidebar['r']}, {$color_menu_padre_submenu_seleccionado_sidebar['g']}, {$color_menu_padre_submenu_seleccionado_sidebar['b']}, .1) !important;
+                    /* color: white !important; */
+                }
+
+                /* color menú padre cuando se deja de hacer focus */
+                .nav-pills .nav-link.active{
+                    color: #fff !important;
+                    background-color: {$color_menu_padre_sin_focus_sidebar} !important;
+                }
+
+                /* colores menú hijos */
+                .nav-treeview > .nav-item > .nav-link{
+                    color: {$color_sub_menus_sidebar} !important;
+                }
+
+                /* hover menu hijos */
+                .nav-treeview > .nav-item > .nav-link:hover{
+                    box-shadow: 0 1px 3px rgba({$color_hover_sub_menus_sidebar['r']}, {$color_hover_sub_menus_sidebar['g']}, {$color_hover_sub_menus_sidebar['b']}, .12),0 1px 2px rgba({$color_hover_sub_menus_sidebar['r']}, {$color_hover_sub_menus_sidebar['g']}, {$color_hover_sub_menus_sidebar['b']}, .24);
+                    margin-left: 7px;
+                }
+
+                /* colores menú hijo seleccionado */
+                .nav-treeview >.nav-item >.nav-link.active{
+                    background-color: rgba({$color_sub_menu_seleccionado_sidebar['r']}, {$color_sub_menu_seleccionado_sidebar['g']}, {$color_sub_menu_seleccionado_sidebar['b']}, .9) !important;
+                    color: #343A40 !important;
+                }
+            ";
+
+            // echo $codigo_css_nuevo;
+            
+            $apertura_archivo = fopen($ruta_archivo_css, 'w+');
+            fwrite($apertura_archivo, trim($codigo_css_nuevo));
+            fclose($apertura_archivo);
+
+            sleep(6);
+            return back()->with('edicion_realizada', 'Código css editado correctamente');
+            
+        }
     }
+
+    function rgb2hex2rgb($color){ 
+        if(!$color) return false; 
+        $color = trim($color); 
+        $result = false; 
+       if(preg_match("/^[0-9ABCDEFabcdef\#]+$/i", $color)){
+           $hex = str_replace('#','', $color);
+           if(!$hex) return false;
+           if(strlen($hex) == 3):
+              $result['r'] = hexdec(substr($hex,0,1).substr($hex,0,1));
+              $result['g'] = hexdec(substr($hex,1,1).substr($hex,1,1));
+              $result['b'] = hexdec(substr($hex,2,1).substr($hex,2,1));
+           else:
+              $result['r'] = hexdec(substr($hex,0,2));
+              $result['g'] = hexdec(substr($hex,2,2));
+              $result['b'] = hexdec(substr($hex,4,2));
+           endif;       
+        }elseif (preg_match("/^[0-9]+(,| |.)+[0-9]+(,| |.)+[0-9]+$/i", $color)){ 
+           $rgbstr = str_replace(array(',',' ','.'), ':', $color); 
+           $rgbarr = explode(":", $rgbstr);
+           $result = '#';
+           $result .= str_pad(dechex($rgbarr[0]), 2, "0", STR_PAD_LEFT);
+           $result .= str_pad(dechex($rgbarr[1]), 2, "0", STR_PAD_LEFT);
+           $result .= str_pad(dechex($rgbarr[2]), 2, "0", STR_PAD_LEFT);
+           $result = strtoupper($result); 
+        }else{
+           $result = false;
+        }
+               
+        return $result; 
+     } 
 }
