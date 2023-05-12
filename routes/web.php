@@ -192,6 +192,12 @@ Route::get('/Sigmel/RolAdministrador/GestionarFacturacion', [AdministradorContro
 // Vista: Auditoria Grupos
 Route::get('/Sigmel/RolAdministrador/AuditoriaGrupos', [AdministradorController::class, 'mostrarVistaAuditoriaGrupos'])->name('auditoriaGrupos');
 
+// 12-05-2023
+// Vista: Edición de Sidebar - Navbar - Footer 
+Route::get('/Sigmel/usuarios/EdicionPlantilla', [IngenieriaController::class, 'mostrarVistaEdicionPlantilla'])->name('edicionNavbarSidebarFooter');
+// Acción: Editar Plantilla
+Route::post('/Sigmel/usuarios/AplicarEdicionPlantilla', [IngenieriaController::class, 'aplicar_edicion_plantilla'])->name('AplicarEdicionPlantilla');
+
 /* INICIO SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 // 28/04/2023 
