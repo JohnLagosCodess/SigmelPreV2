@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="row">
-        <div class="col-12">
+        <div class="col-12 mt-5">
             <table border="1">
                 <thead>
                     <tr>
@@ -23,6 +23,13 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
+        <div class="col-12">
+            <br>
+            <form action="{{route('generarExcel')}}" method="POST">
+                @csrf
+                <input type="submit" class="btn btn-warning" value="GENERAR">
+            </form>
         </div>
     </div>
 @stop

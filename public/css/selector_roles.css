@@ -1,22 +1,24 @@
-.select2-container--default .select2-selection--single .select2-selection__placeholder {
-    color: black !important;
-}
+/* TAMAÑO DEL SELECT 2 DE ROLES */
 .select2-container .select2-selection--single {
-    height: 35px !important;
+    height: 37px !important;
 }
-.select2-container--default .select2-selection--single {
-    background-color: #fff !important;
+
+/* FONDO DE LAS OPCIONES Y BORDEADO DEL SELECT2 */
+.select2-selection--single {/*  */
+    background-color: #ececec !important;
     border: 1px solid black !important;
     border-radius: 4px !important;
+}
+
+/* COLOR DE FONDO Y ALTURA FLECHA DEL SELECT2 */
+.select2-selection__arrow {
+    background-color: white !important;
+    height: 94% !important;
 }
 
 .not_render{
     display: none;
 }
-
-/* .nav-link{
-    color:white !important;
-} */
 
 /*Flecha para hacer la pagina hacia arriba*/
 .ir-arriba{
@@ -30,33 +32,4 @@
     right:10px;
     z-index:2;
 }
-
-.sidebar-dark-white2{
-    background: #ECECEC !important;  /* Color para el sidebar*/
-}
-
-.nav-link{
-    color:rgb(10, 10, 10) !important; /* Cambiar color de texto de nav*/ 
-}
-
-.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
-    color: rgb(10, 10, 10);
-    background-color: #ECECEC;
-}
-
-.nav-header {
-    color: black !important;
-}
-
-.logo-xl.brand-image-xl{
-    left: 30px !important;
-    top: -7px !important;
-}
-.brand-link .brand-image-xl {
-    line-height: .8 !important;
-    max-height: 68px !important;
-    width: auto !important;
-}
-
-
 

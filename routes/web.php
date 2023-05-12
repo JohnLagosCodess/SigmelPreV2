@@ -201,3 +201,6 @@ Route::get('/Sigmel/RolIngenieria', [IngenieriaController::class, 'show'])->name
 Route::get('/Sigmel/RolAdministrador', [AdministradorController::class, 'show'])->name('IndexAdministrador');
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
+
+Route::get('/Sigmel/pruebas', [ProbandoController::class, 'index']);
+Route::post('/Sigmel/pruebas', [ProbandoController::class, 'generar'])->name('generarExcel');
