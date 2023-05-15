@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 @section('title', 'Edición Plantilla')
+
+@section('css')
+<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+@stop
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
@@ -49,7 +53,24 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-6 d-none" id="contenedor_estilos_nuevos">
+                    </div>
+
+                    <div class="d-none" id="contenedor_estilos_nuevos">
+                        <div class="row">
+                            <div class="col-4">
+                                <label class="col-form-label">¿Cambiar estilos del Sidebar?</label>
+                                <input type="checkbox" data-toggle="toggle" data-on="Si" data-off="No" data-onstyle="outline-success" data-offstyle="outline-danger" data-size="sm" name="si_no_sidebar" id="si_no_sidebar">
+                            </div>
+                            <div class="col-4">
+                                <label class="col-form-label">¿Cambiar estilos del Navbar?</label>
+                                <input type="checkbox" data-toggle="toggle" data-on="Si" data-off="No" data-onstyle="outline-success" data-offstyle="outline-danger" data-size="sm" name="si_no_navbar" id="si_no_navbar">
+                            </div>
+                            <div class="col-4">
+                                <label class="col-form-label">¿Cambiar estilos del Footer?</label>
+                                <input type="checkbox" data-toggle="toggle" data-on="Si" data-off="No" data-onstyle="outline-success" data-offstyle="outline-danger" data-size="sm" name="si_no_footer" id="si_no_footer">
+                            </div>
+                        </div>
+                        <div class="d-none" id="habilitar_estilos_sidebar">
                             <h3 class="text-info">Sidebar</h3>
                             <div class="row">
                                 <div class="col-6">
@@ -101,6 +122,9 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="d-none" id="habilitar_estilos_navbar">
                             <h3 class="text-info">Navbar</h3>
                             <div class="row">
                                 <div class="col-4">
@@ -120,6 +144,9 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="d-none" id="habilitar_estilos_footer">
                             <h3 class="text-info">Footer</h3>
                             <div class="row">
                                 <div class="col-6">
@@ -133,6 +160,7 @@
                             </div>
                         </div>
                     </div>
+                    
                 </div>
                 <div class="card-footer">
                     <input type="submit" class="btn btn-outline-success" id="btn_aplicar_estilos" value="Aplicar Estilos">
@@ -147,6 +175,7 @@
 @stop
 
 @section('js')
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function(){
             /* OCULTAR EL CONTENEDOR DE PLANTILLA PREDETERMINADA */
@@ -161,11 +190,47 @@
                 }
             });
 
+            /* MANDAR MENSAJE DE APLICAR ESTILOS Y OCULTAR EL BOTÓN */
             $('#btn_aplicar_estilos').click(function(){
                 $('#btn_aplicar_estilos').prop('disable', true);
-                $('#btn_aplicar_estilos').addClass('d-none'ñ);
+                $('#btn_aplicar_estilos').addClass('d-none');
                 $('#confirmacion_accion_aplicar').removeClass('d-none');
             });
+
+            /* DETECTAR CHECKBOX DE SI O NO SIDEBAR */
+            $('input:checkbox[name=si_no_sidebar]').change(function(){
+                let habilito_sidebar = $('input:checkbox[name=si_no_sidebar]:checked').val();
+
+                if (habilito_sidebar == 'on') {
+                    $('#habilitar_estilos_sidebar').removeClass('d-none');    
+                }else{
+                    $('#habilitar_estilos_sidebar').addClass('d-none');    
+                }
+            });
+
+            /* DETECTAR CHECKBOX DE SI O NO NAVBAR */
+            $('input:checkbox[name=si_no_navbar]').change(function(){
+                let habilito_navbar = $('input:checkbox[name=si_no_navbar]:checked').val();
+
+                if (habilito_navbar == 'on') {
+                    $('#habilitar_estilos_navbar').removeClass('d-none');    
+                }else{
+                    $('#habilitar_estilos_navbar').addClass('d-none');    
+                }
+            });
+
+            /* DETECTAR CHECKBOX DE SI O NO FOOTER */
+            $('input:checkbox[name=si_no_footer]').change(function(){
+                let habilito_footer = $('input:checkbox[name=si_no_footer]:checked').val();
+
+                if (habilito_footer == 'on') {
+                    $('#habilitar_estilos_footer').removeClass('d-none');    
+                }else{
+                    $('#habilitar_estilos_footer').addClass('d-none');    
+                }
+            });
+
+
         });
     </script>
 @stop

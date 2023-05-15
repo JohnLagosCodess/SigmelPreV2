@@ -1383,101 +1383,142 @@ class IngenieriaController extends Controller
 
         if ($request->background_sidebar <> '') {
 
-            /* VARIABLES PARA EL SIDEBAR */
-            $background_sidebar = $request->background_sidebar;
-            $color_menu_padre_sin_seleccionar_sidebar = $request->color_menu_padre_sin_seleccionar_sidebar;
-            $color_menu_padre_submenu_seleccionado_sidebar = $this->rgb2hex2rgb($request->color_menu_padre_submenu_seleccionado_sidebar);
-            $color_menu_padre_sin_focus_sidebar = $request->color_menu_padre_sin_focus_sidebar;
-            $color_sub_menus_sidebar = $request->color_sub_menus_sidebar;
-            $color_hover_sub_menus_sidebar = $this->rgb2hex2rgb($request->color_hover_sub_menus_sidebar);
-            $color_sub_menu_seleccionado_sidebar = $this->rgb2hex2rgb($request->color_sub_menu_seleccionado_sidebar);
+            /* CAPTURA DE LOS CHECKBOX DE CONFIRMACIÓN DE CAMBIO DE ESTILOS */
+            $si_no_sidebar = $request->si_no_sidebar;
+            $si_no_navbar = $request->si_no_navbar;
+            $si_no_footer = $request->si_no_footer;
 
-            /* VARIABLES PARA EL NAVBAR */
-            $background_navbar = $request->background_navbar;
-            $color_boton_apertura_cierre_sidebar = $request->color_boton_apertura_cierre_sidebar;
-            $color_nombre_usuario = $request->color_nombre_usuario;
+            if($si_no_sidebar === 'on'){
+                /* VARIABLES PARA EL SIDEBAR */
+                $background_sidebar = $request->background_sidebar;
+                $color_menu_padre_sin_seleccionar_sidebar = $request->color_menu_padre_sin_seleccionar_sidebar;
+                $color_menu_padre_submenu_seleccionado_sidebar = $this->rgb2hex2rgb($request->color_menu_padre_submenu_seleccionado_sidebar);
+                $color_menu_padre_sin_focus_sidebar = $request->color_menu_padre_sin_focus_sidebar;
+                $color_sub_menus_sidebar = $request->color_sub_menus_sidebar;
+                $color_hover_sub_menus_sidebar = $this->rgb2hex2rgb($request->color_hover_sub_menus_sidebar);
+                $color_sub_menu_seleccionado_sidebar = $this->rgb2hex2rgb($request->color_sub_menu_seleccionado_sidebar);
 
-            /* VARIABLES PARA EL FOOTER */
-            $background_footer = $request->background_footer;
-            $color_texto_footer = $request->color_texto_footer;
+                $codigo_css_sidebar = " /* TODO LO REFERENTE AL SIDEBAR */
+                    /* background */
+                    .sidebar-dark-white2{
+                        background-color: {$background_sidebar} !important;
+                    }
 
-            $codigo_css_nuevo = " /* TODO LO REFERENTE AL SIDEBAR */
-                /* background */
-                .sidebar-dark-white2{
-                    background-color: {$background_sidebar} !important;
-                }
+                    /* colores menú padre sin seleccionar */
+                    .nav-sidebar .nav-item > .nav-link{
+                        color: {$color_menu_padre_sin_seleccionar_sidebar} !important;
+                    }
 
-                /* colores menú padre sin seleccionar */
-                .nav-sidebar .nav-item > .nav-link{
-                    color: {$color_menu_padre_sin_seleccionar_sidebar} !important;
-                }
+                    /* colores menú padre que tengan sub menus cuando son seleccionados */
+                    .nav-sidebar > .nav-item.menu-open > .nav-link{
+                        background-color: rgba({$color_menu_padre_submenu_seleccionado_sidebar['r']}, {$color_menu_padre_submenu_seleccionado_sidebar['g']}, {$color_menu_padre_submenu_seleccionado_sidebar['b']}, .1) !important;
+                        /* color: white !important; */
+                    }
 
-                /* colores menú padre que tengan sub menus cuando son seleccionados */
-                .nav-sidebar > .nav-item.menu-open > .nav-link{
-                    background-color: rgba({$color_menu_padre_submenu_seleccionado_sidebar['r']}, {$color_menu_padre_submenu_seleccionado_sidebar['g']}, {$color_menu_padre_submenu_seleccionado_sidebar['b']}, .1) !important;
-                    /* color: white !important; */
-                }
+                    /* color menú padre cuando se deja de hacer focus */
+                    .nav-pills .nav-link.active{
+                        color: #fff !important;
+                        background-color: {$color_menu_padre_sin_focus_sidebar} !important;
+                    }
 
-                /* color menú padre cuando se deja de hacer focus */
-                .nav-pills .nav-link.active{
-                    color: #fff !important;
-                    background-color: {$color_menu_padre_sin_focus_sidebar} !important;
-                }
+                    /* colores menú hijos */
+                    .nav-treeview > .nav-item > .nav-link{
+                        color: {$color_sub_menus_sidebar} !important;
+                    }
 
-                /* colores menú hijos */
-                .nav-treeview > .nav-item > .nav-link{
-                    color: {$color_sub_menus_sidebar} !important;
-                }
+                    /* hover menu hijos */
+                    .nav-treeview > .nav-item > .nav-link:hover{
+                        box-shadow: 0 1px 3px rgba({$color_hover_sub_menus_sidebar['r']}, {$color_hover_sub_menus_sidebar['g']}, {$color_hover_sub_menus_sidebar['b']}, .12),0 1px 2px rgba({$color_hover_sub_menus_sidebar['r']}, {$color_hover_sub_menus_sidebar['g']}, {$color_hover_sub_menus_sidebar['b']}, .24);
+                        margin-left: 7px;
+                    }
 
-                /* hover menu hijos */
-                .nav-treeview > .nav-item > .nav-link:hover{
-                    box-shadow: 0 1px 3px rgba({$color_hover_sub_menus_sidebar['r']}, {$color_hover_sub_menus_sidebar['g']}, {$color_hover_sub_menus_sidebar['b']}, .12),0 1px 2px rgba({$color_hover_sub_menus_sidebar['r']}, {$color_hover_sub_menus_sidebar['g']}, {$color_hover_sub_menus_sidebar['b']}, .24);
-                    margin-left: 7px;
-                }
+                    /* colores menú hijo seleccionado */
+                    .nav-treeview >.nav-item >.nav-link.active{
+                        background-color: rgba({$color_sub_menu_seleccionado_sidebar['r']}, {$color_sub_menu_seleccionado_sidebar['g']}, {$color_sub_menu_seleccionado_sidebar['b']}, .9) !important;
+                        color: #343A40 !important;
+                    }
+                ";
 
-                /* colores menú hijo seleccionado */
-                .nav-treeview >.nav-item >.nav-link.active{
-                    background-color: rgba({$color_sub_menu_seleccionado_sidebar['r']}, {$color_sub_menu_seleccionado_sidebar['g']}, {$color_sub_menu_seleccionado_sidebar['b']}, .9) !important;
-                    color: #343A40 !important;
-                }
+                /* Mofidica todo el contenido del archivo */
+                $tipo_edicion = 'w+'; 
 
-                /* TODO LO REFERENTE AL NAVBAR */
+                $apertura_archivo = fopen($ruta_archivo_css, $tipo_edicion);
+                fwrite($apertura_archivo, trim($codigo_css_sidebar));
+                fclose($apertura_archivo);
+                
+                
+            }else{$codigo_css_sidebar= '';}
 
-                /* backgroubd navbar */
-                .navbar-white{
-                    background-color: {$background_navbar} !important;
-                }
+            if($si_no_navbar === 'on'){
+                /* VARIABLES PARA EL NAVBAR */
+                $background_navbar = $request->background_navbar;
+                $color_boton_apertura_cierre_sidebar = $request->color_boton_apertura_cierre_sidebar;
+                $color_nombre_usuario = $request->color_nombre_usuario;
 
-                /* botón apertura/cierre sidebar */
-                .fa-bars{
-                    color: {$color_boton_apertura_cierre_sidebar} !important;
-                }
+                $codigo_css_navbar = "
+                    /* TODO LO REFERENTE AL NAVBAR */
 
-                /* nombre usuario */
-                .dropdown-toggle{
-                    color: {$color_nombre_usuario} !important;
-                }
+                    /* backgroubd navbar */
+                    .navbar-white{
+                        background-color: {$background_navbar} !important;
+                    }
 
-                /* TODO LO REFERENTE AL FOOTER */
+                    /* botón apertura/cierre sidebar */
+                    .fa-bars{
+                        color: {$color_boton_apertura_cierre_sidebar} !important;
+                    }
 
-                /* background y texto footer */
-                .main-footer{
-                    background-color: {$background_footer} !important;
-                    color: {$color_texto_footer} !important;
-                }
-            ";
+                    /* nombre usuario */
+                    .dropdown-toggle{
+                        color: {$color_nombre_usuario} !important;
+                    }
+                ";
 
-            // echo $codigo_css_nuevo;
-            
-            $apertura_archivo = fopen($ruta_archivo_css, 'w+');
+                /* Añade el contenido al archivo */
+                $tipo_edicion = 'a+'; 
+
+                $apertura_archivo = fopen($ruta_archivo_css, $tipo_edicion);
+                fwrite($apertura_archivo, trim($codigo_css_navbar));
+                fclose($apertura_archivo);
+                
+            }else{$codigo_css_navbar = '';}
+
+            if($si_no_footer === 'on'){
+                /* VARIABLES PARA EL FOOTER */
+                $background_footer = $request->background_footer;
+                $color_texto_footer = $request->color_texto_footer;
+
+                $codigo_css_footer = "
+                    /* TODO LO REFERENTE AL FOOTER */
+    
+                    /* background y texto footer */
+                    .main-footer{
+                        background-color: {$background_footer} !important;
+                        color: {$color_texto_footer} !important;
+                    }
+                ";
+
+                /* Añade el contenido al archivo */
+                $tipo_edicion = 'a+'; 
+
+                $apertura_archivo = fopen($ruta_archivo_css, $tipo_edicion);
+                fwrite($apertura_archivo, trim($codigo_css_footer));
+                fclose($apertura_archivo);
+
+            }else{$codigo_css_footer= '';}
+
+            /* $codigo_css_nuevo = $codigo_css_sidebar.$codigo_css_navbar.$codigo_css_footer;
+            $apertura_archivo = fopen($ruta_archivo_css, $tipo_edicion);
             fwrite($apertura_archivo, trim($codigo_css_nuevo));
-            fclose($apertura_archivo);
+            fclose($apertura_archivo); */
 
             sleep(6);
             return back()->with('edicion_realizada', 'Código css editado correctamente');
             
         }
     }
+    
+
 
     function rgb2hex2rgb($color){ 
         if(!$color) return false; 
