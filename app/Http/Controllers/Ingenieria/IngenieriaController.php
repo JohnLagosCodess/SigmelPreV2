@@ -1382,6 +1382,8 @@ class IngenieriaController extends Controller
         }
 
         if ($request->background_sidebar <> '') {
+
+            /* VARIABLES PARA EL SIDEBAR */
             $background_sidebar = $request->background_sidebar;
             $color_menu_padre_sin_seleccionar_sidebar = $request->color_menu_padre_sin_seleccionar_sidebar;
             $color_menu_padre_submenu_seleccionado_sidebar = $this->rgb2hex2rgb($request->color_menu_padre_submenu_seleccionado_sidebar);
@@ -1390,7 +1392,17 @@ class IngenieriaController extends Controller
             $color_hover_sub_menus_sidebar = $this->rgb2hex2rgb($request->color_hover_sub_menus_sidebar);
             $color_sub_menu_seleccionado_sidebar = $this->rgb2hex2rgb($request->color_sub_menu_seleccionado_sidebar);
 
-            $codigo_css_nuevo = "/* background */
+            /* VARIABLES PARA EL NAVBAR */
+            $background_navbar = $request->background_navbar;
+            $color_boton_apertura_cierre_sidebar = $request->color_boton_apertura_cierre_sidebar;
+            $color_nombre_usuario = $request->color_nombre_usuario;
+
+            /* VARIABLES PARA EL FOOTER */
+            $background_footer = $request->background_footer;
+            $color_texto_footer = $request->color_texto_footer;
+
+            $codigo_css_nuevo = " /* TODO LO REFERENTE AL SIDEBAR */
+                /* background */
                 .sidebar-dark-white2{
                     background-color: {$background_sidebar} !important;
                 }
@@ -1427,6 +1439,31 @@ class IngenieriaController extends Controller
                 .nav-treeview >.nav-item >.nav-link.active{
                     background-color: rgba({$color_sub_menu_seleccionado_sidebar['r']}, {$color_sub_menu_seleccionado_sidebar['g']}, {$color_sub_menu_seleccionado_sidebar['b']}, .9) !important;
                     color: #343A40 !important;
+                }
+
+                /* TODO LO REFERENTE AL NAVBAR */
+
+                /* backgroubd navbar */
+                .navbar-white{
+                    background-color: {$background_navbar} !important;
+                }
+
+                /* botón apertura/cierre sidebar */
+                .fa-bars{
+                    color: {$color_boton_apertura_cierre_sidebar} !important;
+                }
+
+                /* nombre usuario */
+                .dropdown-toggle{
+                    color: {$color_nombre_usuario} !important;
+                }
+
+                /* TODO LO REFERENTE AL FOOTER */
+
+                /* background y texto footer */
+                .main-footer{
+                    background-color: {$background_footer} !important;
+                    color: {$color_texto_footer} !important;
                 }
             ";
 
