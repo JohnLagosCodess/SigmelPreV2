@@ -163,7 +163,7 @@
 
             $('#btn_aplicar_estilos').click(function(){
                 $('#btn_aplicar_estilos').prop('disable', true);
-                $('#btn_aplicar_estilos').addClass('d-none');
+                $('#btn_aplicar_estilos').addClass('d-none'ñ);
                 $('#confirmacion_accion_aplicar').removeClass('d-none');
             });
         });
