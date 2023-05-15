@@ -135,7 +135,10 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <input type="submit" class="btn btn-outline-success" value="Aplicar Estilos">
+                    <input type="submit" class="btn btn-outline-success" id="btn_aplicar_estilos" value="Aplicar Estilos">
+                    <div class="d-none" id="confirmacion_accion_aplicar">
+                        <span>Aplicando Estilos...  <span class="spinner-border spinner-border-sm text-success" role="status"></span></span>
+                    </div>
                 </div>
             </form>
         </div>
@@ -156,6 +159,12 @@
                     $('#contenedor_estilos_nuevos').removeClass('d-none');
                     $('#contenedor_plantilla_predeterminado').addClass('d-none');
                 }
+            });
+
+            $('#btn_aplicar_estilos').click(function(){
+                $('#btn_aplicar_estilos').prop('disable', true);
+                $('#btn_aplicar_estilos').addClass('d-none');
+                $('#confirmacion_accion_aplicar').removeClass('d-none');
             });
         });
     </script>
