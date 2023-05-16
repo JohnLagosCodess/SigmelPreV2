@@ -1328,7 +1328,7 @@ class IngenieriaController extends Controller
                     fclose($apertura_archivo);
                 break;
                 case 'plantilla_botones':
-                    $codigo_css= "
+                    $codigo_css = "
                         .sidebar-dark-white2{
                             background-color: #ECECEC !important;
                         }
@@ -1368,6 +1368,48 @@ class IngenieriaController extends Controller
                         }
                     ";
     
+                    $apertura_archivo = fopen($ruta_archivo_css, 'w+');
+                    fwrite($apertura_archivo, trim($codigo_css));
+                    fclose($apertura_archivo);
+                break;
+                case 'plantilla_naranja':
+                    $codigo_css = "
+                        .sidebar-dark-white2{
+                            background: #ECECEC !important;  /* Color para el sidebar*/
+                        }
+                        
+                        .nav-link{
+                            color:rgb(10, 10, 10) !important; /* Cambiar color de texto de nav*/ 
+                        }
+                        
+                        .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+                            color: rgb(10, 10, 10);
+                            background-color: #ECECEC;
+                        }
+                        
+                        .nav-header {
+                            color: black !important;
+                        }
+                        
+                        .nav-link.active {
+                            color: rgb(253, 126, 20) !important;
+                        }
+                        
+                        /* backgroubd navbar */
+                        .navbar-orange{
+                            background-color: #FD7E14 !important;
+                        }
+                        
+                        /* botón apertura/cierre sidebar */
+                        .fa-bars{
+                            color: #0A0A0A !important;
+                        }
+                        
+                        /* nombre usuario */
+                        .dropdown-toggle{
+                            color: #0A0A0A !important;
+                        }
+                    ";
                     $apertura_archivo = fopen($ruta_archivo_css, 'w+');
                     fwrite($apertura_archivo, trim($codigo_css));
                     fclose($apertura_archivo);
@@ -1519,7 +1561,6 @@ class IngenieriaController extends Controller
     }
     
 
-
     function rgb2hex2rgb($color){ 
         if(!$color) return false; 
         $color = trim($color); 
@@ -1549,5 +1590,5 @@ class IngenieriaController extends Controller
         }
                
         return $result; 
-     } 
+    } 
 }

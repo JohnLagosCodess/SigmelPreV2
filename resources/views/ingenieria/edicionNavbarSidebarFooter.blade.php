@@ -50,6 +50,7 @@
                                     <option value="plantilla_oscura">Oscura</option>
                                     <option value="plantilla_gris">Gris (Sin Opciones Resaltadas)</option>
                                     <option value="plantilla_botones">Gris (Con Opciones Resaltadas)</option>
+                                    <option value="plantilla_naranja">Naranja</option>
                                 </select>
                             </div>
                         </div>
@@ -81,7 +82,7 @@
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label class="col-form-label">Color del Menú Padre sin seleccionar </label>
+                                        <label class="col-form-label">Color Menús Padre</label>
                                         <input class="form-control" type="color" name="color_menu_padre_sin_seleccionar_sidebar" id="color_menu_padre_sin_seleccionar_sidebar">
                                     </div>
                                 </div>                                
@@ -89,7 +90,7 @@
                             <div class="row">
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label class="col-form-label">Color del Menú Padre que tengan sub menus cuando es seleccionado</label>
+                                        <label class="col-form-label">Color Menús Padre que tiene sub menus cuando es seleccionado</label>
                                         <input class="form-control" type="color" name="color_menu_padre_submenu_seleccionado_sidebar" id="color_menu_padre_submenu_seleccionado_sidebar">
                                     </div>
                                 </div>
