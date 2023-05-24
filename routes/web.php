@@ -209,4 +209,15 @@ Route::get('/Sigmel/RolAdministrador', [AdministradorController::class, 'show'])
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 Route::get('/Sigmel/pruebas', [ProbandoController::class, 'index']);
+// GENERAR EXCEL CON PHPSPREADSHEET
 Route::post('/Sigmel/pruebas', [ProbandoController::class, 'generar'])->name('generarExcel');
+// GENERAR EXCEL CON LARAVEL EXCEL
+Route::controller(ProbandoController::class)->group(function(){
+    Route::post('/Sigmel/probando-export', 'ExportarArchivo')->name('ExportarArchivo');
+    // CSV
+    Route::post('/Sigmel/probando-import-csv-con_encabezados', 'importarCsvConEncabezados')->name('ImportarCsvConEncabezados');
+    Route::post('/Sigmel/probando-import-csv-sin_encabezados', 'importarCsvSinEncabezados')->name('ImportarCsvSinEncabezados');
+    // XLSX
+    Route::post('/Sigmel/probando-import-xlsx-sin_encabezados', 'importarXlsxSinEncabezados')->name('ImportarXlsxSinEncabezados');
+    Route::post('/Sigmel/probando-import-xlsx-con_encabezados', 'importarXlsxConEncabezados')->name('ImportarXlsxConEncabezados');
+});

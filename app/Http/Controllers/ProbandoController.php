@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -10,6 +11,16 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 use App\Models\sigmel_probando;
+
+use App\Exports\ProbandoExport;
+
+use App\Imports\ProbandoImportCsvConEncabezados;
+use App\Imports\ProbandoImportCsvSinEncabezados;
+
+use App\Imports\ProbandoImportXslxConEncabezados;
+use App\Imports\ProbandoImportXslxSinEncabezados;
+use Maatwebsite\Excel\Facades\Excel;
+
 class ProbandoController extends Controller
 {
     public function index(){
@@ -18,22 +29,29 @@ class ProbandoController extends Controller
         if(!Auth::check()){
             return redirect('/');
         }
+        
+        $time = time();
+        $date = date("Y-m-d h:i:s", $time);
+        
+        /* $datos_nuevos = [
+            'nombre' => 'Paula Gomez Cantor',
+            'created_at' => $date,
+            'updated_at' => $date
+        ];
+        sigmel_probando::on('mysql2')->insert($datos_nuevos); */
 
-        /* $nuevos = new sigmel_probando;
-        $nuevos->nombre = 'PRUEBA NOMBRE PAULA C';
-        $nuevos->save(); */
-
-        // $id_ult = sigmel_probando::on('mysql2')->select('id')->latest('id')->first();
-        // echo "<pre>";
-        // print_r($id_ult['id']);
-        // echo "</pre>";
+        /* COMO OBTENER EL ID DE UN REGISTRO INSERTADO */
+        /* $id_ult = sigmel_probando::on('mysql2')->select('id')->latest('id')->first();
+        echo "<pre>";
+        print_r($id_ult['id']);
+        echo "</pre>"; */
 
         $datos_pruebas = sigmel_probando::on('mysql2')->get();
         $user= Auth::user();
         return view ('otra_conexion', compact('datos_pruebas', 'user'));
     }
 
-    /* EJEMPLO 1 */
+    /* EJEMPLO 1 PHP SPREADSHEET */
     public function generar1(){ 
 
         $mySpreadsheet = new Spreadsheet();
@@ -87,45 +105,86 @@ class ProbandoController extends Controller
         $writer->save('php://output');
     }
 
-    /* EJEMPLO 2 */
+    /* EJEMPLO 2 PHP SPREADSHEET */
     public function generar(){
+
+        
         $datos_pruebas = sigmel_probando::on('mysql2')->get();
         // $datos_pruebas = sigmel_probando::on('mysql2')->where('id', '2')->get();
 
         $info = json_decode(json_encode($datos_pruebas), true);
-        echo "<pre>";
-        print_r($info);
-        echo "</pre>";
+    
 
         /* CREAR UN NUEVO DOCUMENTO */
         $documento = new Spreadsheet();
 
         /* SE TRABAJA SOBRE LA HOJA 0 */
         $hoja = $documento->getActiveSheet();
-        $hoja->setTitle("Productos");
+        $hoja->setTitle("PROBANDO");
 
         /* GENERAR ENCABEZADOS DE CADA COLUMNA */
-        $encabezado = ["ID", "NOMBRE", "FECHA CREACIÓN", "FECHA ACTUALIZACIÓN"];
-        $hoja->fromArray($encabezado, null, 'A1');
-
-        /* INSERCIÓN DE DATOS */
-        $am = array();
-        for ($i=0; $i < count($info); $i++) { 
-            array_push($am, $info[$i]['id']);
-            $am = [array_keys($info[$i])];
-        };
-        echo "<pre>";
-        print_r($am);
-        echo "</pre>";
-
+        $am = [["ID", "NOMBRE", "FECHA CREACIÓN", "FECHA ACTUALIZACIÓN"]];
         
-        /* $nombreDelDocumento = "PROBANDO_REG_DB.xlsx";
+        for ($a=0; $a < count($info); $a++) { 
+            array_push($am, array($info[$a]['id'], $info[$a]['nombre'], $info[$a]['created_at'], $info[$a]['updated_at']));
+        }
+
+        $hoja->fromArray($am);
+
+        foreach (range('A', $hoja->getHighestColumn()) as $col) {
+            $hoja->getColumnDimension($col)->setAutoSize(true);
+         }
+        
+        $nombreDelDocumento = "PROBANDO_REG_DB.xlsx";
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $nombreDelDocumento . '"');
         header('Cache-Control: max-age=0');
         $writer = IOFactory::createWriter($documento, 'Xlsx');
-        $writer->save('php://output'); */
+        $writer->save('php://output');
 
     }
+
+    /* EJEMPLO 1 LARAVEL EXCEL (LIBRERIA) */
+    /* 
+        ESTE EJEMPLO PRETENDE SUBIR UN ARCHIVO CSV A LA TABLA SIGMEL_PROBANDOS
+        Y FINALMENTE PODER EXPORTARLO.
+        PARA ELLO EL PRIMER PASO ES CREAR EL PROCESO DE IMPORTACION:
+        COMANDO: php artisan make:import ProbandoImport --model=sigmel_probando
+        ESTO CREARÁ UNA CARPETA NUEVA LLAMADA IMPORTS ALLÍ ESTARÁ EL ARCHIVO
+
+        EL SEGUNDO PASO ES CREAR EL PROCESO DE EXPORTACIÓN
+        COMANDO: php artisan make:export ProbandoExport --model=sigmel_probando
+        ESTO CREARÁ UNA CARPETA NUEVA LLAMADA EXPORTS ALLÍ ESTARÁ EL ARCHIVO
+    */
+    public function ExportarArchivo() 
+    {
+        return Excel::download(new ProbandoExport, 'probando.xlsx');
+    }
+
+    /* CSV */
+    public function importarCsvConEncabezados() 
+    {
+        Excel::import(new ProbandoImportCsvConEncabezados,request()->file('file_csv_con_encabezados'));
+        return back();
+    }
+
+    public function importarCsvSinEncabezados(){
+        Excel::import(new ProbandoImportCsvSinEncabezados,request()->file('file_csv_sin_encabezados'));
+        return back();
+    }
+
+
+    /* XLSX */
+    public function ImportarXlsxConEncabezados(){
+        Excel::import(new ProbandoImportXslxConEncabezados,request()->file('file_xlsx_con_encabezados'));
+        return back();
+    }
+
+    public function importarXlsxSinEncabezados(){
+        Excel::import(new ProbandoImportXslxSinEncabezados,request()->file('file_xlsx_sin_encabezados'));
+        return back();
+    }
+
+    
 }
 ?>

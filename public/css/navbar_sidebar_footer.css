@@ -1,33 +1,39 @@
-.sidebar-dark-white2{
+/* background */
+                        .sidebar-dark-white2{
                             background-color: #ECECEC !important;
                         }
-                        
-                        .nav .nav-link{/* Cambiar estilo de opciones*/ 
-                            color:black !important; 
-                            background: linear-gradient(90deg, rgba(163,163,163,1) 0%, rgba(251,251,251,1) 82%);
-                            font-weight: bold;
-                            border-right: #9a9a9a 3px solid;
-                            border-bottom: #9a9a9a 3px solid;
-                            margin-bottom: 10px !important;
+    
+                        /* colores menú padre sin seleccionar */
+                        .nav-sidebar .nav-item > .nav-link{
+                            color:rgb(10, 10, 10) !important;
                         }
-                        .nav .nav-link:hover{
-                            background: linear-gradient(90deg,rgba(251,251,251,1)  70%, rgba(163,163,163,1) 90%);
-                            color:#0d6efd!important;
-                            font-weight: bold;
-                            font-size: 16px;
+    
+                        /* colores menú padre que tengan sub menus cuando son seleccionados */
+                        .nav-sidebar > .nav-item.menu-open > .nav-link{
+                            color: rgb(10, 10, 10) !important;
+                            background-color: rgba(255, 255, 255, .1) !important;
                         }
-                        
-                        .nav-pills .nav-treeview .nav-link.active, .nav-pills .show>.nav-link {
-                            color: white !important;
-                            font-weight: bold;  
-                            background: #17a2b8 !important; 
+    
+                        /* color menú padre cuando se deja de hacer focus */
+                        .nav-pills .nav-link.active{
+                            color: rgb(10, 10, 10) !important;
+                            background-color: #ECECEC !important;
                         }
-                        
-                        .nav-treeview .nav-link {
+    
+                        /* colores menú hijos */
+                        .nav-treeview > .nav-item > .nav-link{
+                            color:rgb(10, 10, 10) !important;
+                        }
+    
+                        /* hover menu hijos*/
+                        .nav-treeview > .nav-item > .nav-link:hover{
+                            box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
                             margin-left: 7px;
-                            font-weight: normal;
-                            border-right: #0d6efd 1px solid;
-                            border-bottom: #0d6efd 1px solid;
+                        }
+    
+                        /* colores menú hijo seleccionado */
+                        .nav-treeview >.nav-item >.nav-link.active{
+                            background-color: rgba(255,255,255,.9) !important;
                         }
     
                         .nav-header {
