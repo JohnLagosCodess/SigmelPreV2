@@ -433,4 +433,13 @@ class AdministradorController extends Controller
         $user = Auth::user();
         return view('administrador.auditoriaGrupos', compact('user'));
     }
+
+    /* TODO LO REFERENTE AL FORMULARIO DE GESTIÓN INICIAL NUEVO */
+    public function mostrarVistaGestionInicialNuevo(){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        return view('administrador.gestionInicialNuevo', compact('user'));
+    }
 }
