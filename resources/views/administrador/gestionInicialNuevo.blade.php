@@ -15,6 +15,7 @@
         </div>
         <div class="card-body">
             <form action="" method="POST">
+                @csrf
                 <div class="row">
                     {{-- AQUI VA EL FORMULARIO COMPLETO --}}
                     <div class="col-12">
@@ -159,7 +160,7 @@
                                             <div class="col-sm otro_estado_civil">
                                                 <div class="form-group">
                                                     <label for="otro_estado_civil" class="col-form-label">Otro Estado civil</label>
-                                                    <select class="otro_estado_civil custom-select" name="otro_estado_civil" id="otro_estado_civil"></select>
+                                                    <input class="otro_estado_civil form-control" name="otro_estado_civil" id="otro_estado_civil">
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -171,7 +172,7 @@
                                             <div class="col-sm otro_nivel_escolar">
                                                 <div class="form-group">
                                                     <label for="otro_nivel_escolar" class="col-form-label">Otro Nivel escolar</label>
-                                                    <select class="otro_nivel_escolar custom-select" name="otro_nivel_escolar" id="otro_nivel_escolar"></select>
+                                                    <input class="otro_nivel_escolar form-control" name="otro_nivel_escolar" id="otro_nivel_escolar">
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -215,7 +216,7 @@
                                             <div class="col-sm otro_tipo_afiliado">
                                                 <div class="form-group">
                                                     <label for="otro_tipo_afiliado" class="col-form-label">Otro Tipo de Afiliado</label>
-                                                    <select class="otro_tipo_afiliado custom-select" name="otro_tipo_afiliado" id="otro_tipo_afiliado"></select>
+                                                    <input class="otro_tipo_afiliado form-control" name="otro_tipo_afiliado" id="otro_tipo_afiliado">
                                                 </div>
                                             </div>
                                         </div>
@@ -533,5 +534,5 @@
 @stop
 
 @section('js')
- {{-- AQUI PARA LLAMAR EL ARCHIVO JS SI ES NECESARIO --}}
+<script src="/js/selectores_gestion_inicial.js"></script>
 @stop

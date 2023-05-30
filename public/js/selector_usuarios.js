@@ -60,6 +60,7 @@ $(document).ready(function(){
         url:'/listausuarios',
         data: datos,
         success:function(data) {
+            console.log(data);
             $('#listado_usuarios_asignacion_rol').empty();
             $('#listado_usuarios_asignacion_rol').append('<option value="" selected>Seleccione</option>');
             let claves = Object.keys(data);
