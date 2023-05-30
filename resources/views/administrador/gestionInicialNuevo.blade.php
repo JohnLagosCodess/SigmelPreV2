@@ -36,7 +36,7 @@
                             <div class="col-sm otro_tipo_cliente">
                                 <div class="form-group">
                                     <label for="otro_tipo_cliente" class="col-form-label" style="color:;">Otro Tipo Cliente</label>
-                                    <select class="otro_tipo_cliente custom-select" name="otro_tipo_cliente" id="otro_tipo_cliente" required></select>
+                                    <input class="otro_tipo_cliente form-control" name="otro_tipo_cliente" id="otro_tipo_cliente" required>
                                 </div>
                             </div>
                         </div>
@@ -397,7 +397,7 @@
                                             </div>
                                             <div class="col-sm">
                                                 <label for="antiguedad_cargo" class="col-form-label">Antiguedad en el cargo (Meses)</label>
-                                                <input type="text" class="antiguedad_cargo form-control" name="antiguedad_cargo" id="antiguedad_cargo">
+                                                <input type="number" class="antiguedad_cargo form-control" name="antiguedad_cargo" id="antiguedad_cargo">
                                             </div>
                                             <div class="col-sm">
                                                 <label for="fecha_retiro" class="col-form-label">Fecha de retiro</label>

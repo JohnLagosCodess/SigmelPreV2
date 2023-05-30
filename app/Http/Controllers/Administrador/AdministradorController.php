@@ -13,6 +13,24 @@ use App\Models\sigmel_clientes;
 use App\Models\sigmel_auditorias_gr_trabajos;
 use App\Models\sigmel_auditorias_creacion_clientes;
 
+/* llamado modelos formulario gestion inicial */
+use App\Models\sigmel_lista_clientes;
+use App\Models\sigmel_lista_tipo_clientes;
+use App\Models\sigmel_lista_tipo_eventos;
+use App\Models\sigmel_lista_parametros;
+use App\Models\sigmel_lista_dominancias;
+use App\Models\sigmel_lista_departamentos_municipios;
+use App\Models\sigmel_lista_eps;
+use App\Models\sigmel_lista_afps;
+use App\Models\sigmel_lista_arls;
+use App\Models\sigmel_lista_actividad_economicas;
+use App\Models\sigmel_lista_clase_riesgos;
+use App\Models\sigmel_lista_ciuo_codigos;
+use App\Models\sigmel_lista_motivo_solicitudes;
+use App\Models\sigmel_lista_solicitantes;
+use App\Models\sigmel_lista_procesos_servicios;
+use App\Models\sigmel_lista_acciones_procesos_servicios;
+
 class AdministradorController extends Controller
 {
     
@@ -441,5 +459,286 @@ class AdministradorController extends Controller
         }
         $user = Auth::user();
         return view('administrador.gestionInicialNuevo', compact('user'));
+    }
+
+    public function cargueListadoSelectores(Request $request){
+
+        $parametro = $request->parametro;
+
+        /* TRAER LISTADO DE CLIENTES */
+        if($parametro == 'lista_clientes'){
+            $listado_clientes = sigmel_lista_clientes::on('sigmel_gestiones')
+                            ->select('Id_Cliente', 'Nombre_cliente')->get();
+            
+            $info_lista_clientes = json_decode(json_encode($listado_clientes, true));
+            return response()->json($info_lista_clientes);
+        }
+
+        /* TRAER LISTADO DE TIPOS DE CLIENTE */
+        if ($parametro == "lista_tipo_clientes") {
+            
+            $listado_tipo_clientes = sigmel_lista_tipo_clientes::on('sigmel_gestiones')
+                            ->select('Id_TipoCliente', 'Nombre_tipo_cliente')->get();
+            
+            $info_lista_tipo_clientes = json_decode(json_encode($listado_tipo_clientes, true));
+            return response()->json($info_lista_tipo_clientes);
+        }
+
+        /* TRAER LISTADO DE TIPOS DE EVENTO */
+        if ($parametro == "lista_tipo_evento") {
+            
+            $listado_tipo_eventos = sigmel_lista_tipo_eventos::on('sigmel_gestiones')
+                            ->select('Id_Evento', 'Nombre_evento')->get();
+            
+            $info_lista_tipo_eventos = json_decode(json_encode($listado_tipo_eventos, true));
+            return response()->json($info_lista_tipo_eventos);
+        }
+
+        /* TRAER LISTADO DE TIPOS DE DOCUMENTO */
+        if ($parametro == "lista_tipo_documento") {
+            
+            $listado_tipo_documento = sigmel_lista_parametros::on('sigmel_gestiones')
+                            ->select('Nombre_parametro')
+                            ->where('Tipo_lista', 'Tipo de documento')
+                            ->get();
+            
+            $info_lista_tipo_documento = json_decode(json_encode($listado_tipo_documento, true));
+            return response()->json($info_lista_tipo_documento);
+        }
+
+        /* TRAER LISTADO DE GENERO */
+        if ($parametro == "genero") {
+            
+            $listado_generos = sigmel_lista_parametros::on('sigmel_gestiones')
+                            ->select('Nombre_parametro')
+                            ->where('Tipo_lista', 'Genero')
+                            ->get();
+            
+            $info_lista_generos = json_decode(json_encode($listado_generos, true));
+            return response()->json($info_lista_generos);
+        }
+
+        /* TRAER LISTADO DE ESTADO CIVIL */
+        if ($parametro == "estado_civil") {
+            
+            $listado_estado_civil = sigmel_lista_parametros::on('sigmel_gestiones')
+                            ->select('Nombre_parametro')
+                            ->where('Tipo_lista', 'Estado civil')
+                            ->get();
+            
+            $info_lista_estado_civil = json_decode(json_encode($listado_estado_civil, true));
+            return response()->json($info_lista_estado_civil);
+        }
+
+        /* TRAER LISTADO DE NIVEL ESCOLAR */
+        if ($parametro == "nivel_escolar") {
+            
+            $listado_nivel_escolar = sigmel_lista_parametros::on('sigmel_gestiones')
+                            ->select('Nombre_parametro')
+                            ->where('Tipo_lista', 'Nivel escolar')
+                            ->get();
+            
+            $info_lista_nivel_escolar = json_decode(json_encode($listado_nivel_escolar, true));
+            return response()->json($info_lista_nivel_escolar);
+        }
+
+        /* TRAER LISTADO DE DOMINANCIAS */
+        if ($parametro == "dominancia") {
+            
+            $listado_dominancia = sigmel_lista_dominancias::on('sigmel_gestiones')
+                            ->select('Id_Dominancia', 'Nombre_dominancia')
+                            ->get();
+            
+            $info_lista_dominancia = json_decode(json_encode($listado_dominancia, true));
+            return response()->json($info_lista_dominancia);
+        }
+
+        /* TRAER LISTADO DEPARTAMENTOS (INFORMACIÓN DE AFILIADO) */
+        if ($parametro == "departamentos_info_afiliado") {
+            
+            $listado_departamentos_info_afiliado = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
+                            ->select('Id_Departamentos', 'Nombre_departamento')
+                            ->groupBy('Nombre_departamento')
+                            ->get();
+            
+            $info_lista_departamentos_info_afiliado = json_decode(json_encode($listado_departamentos_info_afiliado, true));
+            return response()->json($info_lista_departamentos_info_afiliado);
+        }
+
+        /* TRAER LISTADO MUNCIPIOS (INFORMACIÓN DE AFILIADO) */
+        
+        /* TRAER LISTADO DE TIPOS DE AFILIADO */
+        if ($parametro == "tipo_afiliado") {
+            
+            $listado_tipo_afiliado = sigmel_lista_parametros::on('sigmel_gestiones')
+                            ->select('Nombre_parametro')
+                            ->where('Tipo_lista', 'Tipo de Afiliado')
+                            ->get();
+            
+            $info_lista_tipo_afiliado = json_decode(json_encode($listado_tipo_afiliado, true));
+            return response()->json($info_lista_tipo_afiliado);
+        }
+
+        /* TRAER LISTADO DE EPS */
+        if ($parametro == "lista_eps") {
+            
+            $listado_eps = sigmel_lista_eps::on('sigmel_gestiones')
+                            ->select('Id_Eps', 'Nombre_eps')
+                            ->orderBy('Nombre_eps', 'asc')
+                            ->get();
+            
+            $info_lista_eps = json_decode(json_encode($listado_eps, true));
+            return response()->json($info_lista_eps);
+        }
+
+        /* TRAER LISTADO DE AFP */
+        if ($parametro == "lista_afp") {
+            
+            $listado_afp = sigmel_lista_afps::on('sigmel_gestiones')
+                            ->select('Id_Afp', 'Nombre_afp')
+                            ->orderBy('Nombre_afp', 'asc')
+                            ->get();
+            
+            $info_lista_afp = json_decode(json_encode($listado_afp, true));
+            return response()->json($info_lista_afp);
+        }
+
+        /* TRAER LISTADO DE ARL (Información Afiliado) */
+        if ($parametro == "lista_arl_info_afiliado") {
+            
+            $listado_arl_info_afiliado = sigmel_lista_arls::on('sigmel_gestiones')
+                            ->select('Id_Arl', 'Nombre_arl')
+                            ->orderBy('Nombre_arl', 'asc')
+                            ->get();
+            
+            $info_lista_arl_info_afiliado = json_decode(json_encode($listado_arl_info_afiliado, true));
+            return response()->json($info_lista_arl_info_afiliado);
+        }
+
+        /* TRAER LISTADO DE APODERADO */
+        if ($parametro == "apoderado") {
+            
+            $listado_apoderado = sigmel_lista_parametros::on('sigmel_gestiones')
+                            ->select('Nombre_parametro')
+                            ->where('Tipo_lista', 'Apoderado')
+                            ->get();
+            
+            $info_lista_apoderado = json_decode(json_encode($listado_apoderado, true));
+            return response()->json($info_lista_apoderado);
+        }
+
+        /* TRAER LISTADO DE ACTIVO */
+        if ($parametro == "activo") {
+            
+            $listado_activo = sigmel_lista_parametros::on('sigmel_gestiones')
+                            ->select('Nombre_parametro')
+                            ->where('Tipo_lista', 'Activo')
+                            ->get();
+            
+            $info_lista_activo = json_decode(json_encode($listado_activo, true));
+            return response()->json($info_lista_activo);
+        }
+
+        /* LISTADO ARL */
+        if($parametro == 'listado_arl_info_laboral'){
+            $listado_arls = sigmel_lista_arls::on('sigmel_gestiones')
+                            ->select('Id_Arl', 'Nombre_arl')->get();
+            $info_listado_arls = json_decode(json_encode($listado_arls, true));
+            return response()->json(($info_listado_arls));
+        }
+
+        /* LISTADO DEPARTAMENTOS (Información Laboral) */
+        if($parametro == 'listado_departamento_info_laboral'){
+            $listado_departamento_info_laboral = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
+                            ->select('Id_departamento', 'Nombre_departamento')->groupBy('Id_departamento','Nombre_departamento')->get();
+            $info_listado_departamento_info_laboral = json_decode(json_encode($listado_departamento_info_laboral, true));
+            return response()->json(($info_listado_departamento_info_laboral));
+        }
+
+        /* LISTADO DE MUNICIPIOS (Información Laboral) */
+
+        /* LISTADO ACTIVIDAD ECONOMICA */
+        if($parametro == 'listado_actividad_economica'){
+            $listado_actividades_economicas = sigmel_lista_actividad_economicas::on('sigmel_gestiones')
+                            ->select('Id_ActEco', 'id_codigo', 'Nombre_actividad')->get();
+            $info_listado_actividades_economicas = json_decode(json_encode($listado_actividades_economicas, true));
+            return response()->json(($info_listado_actividades_economicas));
+        }
+
+        /* LISTADO CLASE DE RIESGO */
+        if($parametro == 'listado_clase_riesgo'){
+            $listado_clases_de_riesgos = sigmel_lista_clase_riesgos::on('sigmel_gestiones')
+                            ->select('Id_Riesgo', 'Nombre_riesgo')->get();
+            $info_listado_clases_de_riesgos = json_decode(json_encode($listado_clases_de_riesgos, true));
+            return response()->json(($info_listado_clases_de_riesgos));
+        }
+
+        /* LISTADO CODIGO CIUO */
+        if($parametro == 'listado_codigo_ciuo'){
+            $listado_actividades_economicas = sigmel_lista_ciuo_codigos::on('sigmel_gestiones')
+                            ->select('Id_Codigo', 'id_codigo_ciuo', 'Nombre_ciuo')->get();
+            $info_listado_actividades_economicas = json_decode(json_encode($listado_actividades_economicas, true));
+            return response()->json(($info_listado_actividades_economicas));
+        }
+        
+        /* LISTADO MOTIVO SOLICITUD */
+        if($parametro == 'listado_motivo_solicitud'){
+            $listado_motivo_solicitud = sigmel_lista_motivo_solicitudes::on('sigmel_gestiones')
+                            ->select('Id_Solicitud', 'Nombre_solicitud')->get();
+            $info_listado_motivo_solicitud = json_decode(json_encode($listado_motivo_solicitud, true));
+            return response()->json(($info_listado_motivo_solicitud));
+        }
+
+        /* LISTADO TIPO VINCULO */
+        if($parametro == 'listado_tipo_vinculo'){
+            $listado_tipo_vinculo = sigmel_lista_parametros::on('sigmel_gestiones')
+                            ->select('Nombre_parametro')->where('Tipo_lista', '=', 'Tipo de vinculacion')->get();
+            $info_listado_tipo_vinculo = json_decode(json_encode($listado_tipo_vinculo, true));
+            return response()->json(($info_listado_tipo_vinculo));
+        }
+
+        /* LISTADO REGIMEN EN SALUD */
+        if($parametro == 'listado_solicitud_regimen_en_salud'){
+            $listado_solicitud_regimen_salud = sigmel_lista_parametros::on('sigmel_gestiones')
+                            ->select('Nombre_parametro')->where('Tipo_lista', '=', 'Solicitud Regimen en salud')->get();
+            $info_listado_solicitud_regimen_salud = json_decode(json_encode($listado_solicitud_regimen_salud, true));
+            return response()->json(($info_listado_solicitud_regimen_salud));
+        }
+
+        /* LISTADO SOLICITANTE */
+        if($parametro == 'listado_solicitante'){
+            $listado_solicitante = sigmel_lista_solicitantes::on('sigmel_gestiones')
+                            ->select('Id_solicitante', 'Solicitante')->groupBy('Id_solicitante','Solicitante')->get();
+            $info_listado_solicitante = json_decode(json_encode($listado_solicitante, true));
+            return response()->json(($info_listado_solicitante));
+        }
+
+        /* NOMBRE DE SOLICITANTE */
+
+        /* FUENTE DE INFORMACIÓN */
+        if($parametro == 'listado_fuente_informacion'){
+            $listado_fuente_informacion = sigmel_lista_parametros::on('sigmel_gestiones')
+                            ->select('Nombre_parametro')
+                            ->where('Tipo_lista', '=', 'Fuente de informacion')
+                            ->get();
+            $info_listado_fuente_informacion = json_decode(json_encode($listado_fuente_informacion, true));
+            return response()->json(($info_listado_fuente_informacion));
+        }
+
+        /* LISTADO PROCESO */
+        if($parametro == 'listado_proceso'){
+            $listado_proceso = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                            ->select('Id_proceso', 'Nombre_proceso')->groupBy('Id_proceso','Nombre_proceso')->get();
+            $info_listado_proceso = json_decode(json_encode($listado_proceso, true));
+            return response()->json(($info_listado_proceso));
+        }
+
+        /* LISTADO ACCION */
+        if($parametro == 'listado_accion'){
+            $listado_accion = sigmel_lista_acciones_procesos_servicios::on('sigmel_gestiones')
+                            ->select('Id_Accion', 'Nombre_accion')->get();
+            $info_listado_accion= json_decode(json_encode($listado_accion, true));
+            return response()->json(($info_listado_accion));
+        }
     }
 }

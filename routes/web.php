@@ -207,6 +207,8 @@ Route::get('/Sigmel/RolIngenieria', [IngenieriaController::class, 'show'])->name
 Route::get('/Sigmel/RolAdministrador', [AdministradorController::class, 'show'])->name('IndexAdministrador');
 // Vista: Gestión Inicial Nuevo
 Route::get('/Sigmel/RolAdministrador/GestionInicialNuevo', [AdministradorController::class, 'mostrarVistaGestionInicialNuevo'])->name('gestionInicialNuevo');
+// Acción: Rellenar los selectores del formulario acorde al parametro indicado
+Route::post('/cargarselectores', [AdministradorController::class, 'cargueListadoSelectores']);
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
