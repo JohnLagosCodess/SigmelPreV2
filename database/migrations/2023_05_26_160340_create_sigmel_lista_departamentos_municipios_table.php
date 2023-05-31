@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_lista_departamentos_municipios', function (Blueprint $table) {
-            $table->increments('Id_Departamentos');
+            $table->increments('Id_municipios');
             $table->integer('Id_departamento')->nullable();
             $table->string('Nombre_departamento', 30)->nullable();
             $table->string('Nombre_municipio', 50)->nullable();

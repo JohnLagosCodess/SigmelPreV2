@@ -357,11 +357,34 @@ $(document).ready(function(){
             $('#departamento_info_afiliado').append('<option value="" selected>Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#departamento_info_afiliado').append('<option value="'+data[claves[i]]["Id_Departamentos"]+'">'+data[claves[i]]["Nombre_departamento"]+'</option>');
+                $('#departamento_info_afiliado').append('<option value="'+data[claves[i]]["Id_departamento"]+'">'+data[claves[i]]["Nombre_departamento"]+'</option>');
             }
         }
     });
     // listado municipios dependiendo del departamentos (informacion afiliado)
+    $('#departamento_info_afiliado').change(function(){
+        $('#municipio_info_afiliado').prop('disabled', false);
+        let id_departamento_info_afiliado = $('#departamento_info_afiliado').val();
+        let datos_lista_municipios_info_afiliado = {
+            '_token': token,
+            'parametro' : "municipios_info_afiliado",
+            'id_departamento_info_afiliado': id_departamento_info_afiliado
+        };
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_lista_municipios_info_afiliado,
+            success:function(data) {
+                // console.log(data);
+                $('#municipio_info_afiliado').empty();
+                $('#municipio_info_afiliado').append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $('#municipio_info_afiliado').append('<option value="'+data[claves[i]]["Id_municipios"]+'">'+data[claves[i]]["Nombre_municipio"]+'</option>');
+                }
+            }
+        });
+    });
 
     // listado tipo de afiliado
     let datos_lista_tipo_afiliado = {
@@ -499,7 +522,7 @@ $(document).ready(function(){
         }
     });
 
-    //LISTADO DEPARTAMENTO
+    //LISTADO DEPARTAMENTO (Información Laboral)
     let datos_listado_departamento = {
         '_token': token,
         'parametro' : "listado_departamento_info_laboral"
@@ -517,6 +540,32 @@ $(document).ready(function(){
                 $('#departamento_info_laboral').append('<option value="'+data[claves[i]]["Id_departamento"]+'">'+data[claves[i]]["Nombre_departamento"]+'</option>');
             }
         }
+    });
+
+    // LISTADO DE MUNICIPIOS (Información Laboral)
+    $('#departamento_info_laboral').change( function(){
+        $('#municipio_info_laboral').prop('disabled', false);
+        let id_departamento_info_laboral = $('#departamento_info_laboral').val();
+        let datos_municipio_info_laboral = {
+            '_token': token,
+            'parametro' : "municipios_info_laboral",
+            'id_departamento_info_laboral': id_departamento_info_laboral
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_municipio_info_laboral,
+            success:function(data) {
+                //console.log(data);
+                $('#municipio_info_laboral').empty();
+                $('#municipio_info_laboral').append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $('#municipio_info_laboral').append('<option value="'+data[claves[i]]["Id_municipios"]+'">'+data[claves[i]]["Nombre_municipio"]+'</option>');
+                }
+            }
+        });
     });
 
     //LISTADO ACTIVIDAD ECONOMICA
@@ -659,6 +708,31 @@ $(document).ready(function(){
         }
     });
 
+    // LISTADO NOMBRE SOLICITANTE
+    $('#solicitante').change(function(){
+        $('#nombre_solicitante').prop('disabled', false);
+        let id_solicitante = $('#solicitante').val();
+        let datos_listado_nombre_solicitante = {
+            '_token': token,
+            'parametro' : "nombre_solicitante",
+            'id_solicitante': id_solicitante
+        };
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_listado_nombre_solicitante,
+            success:function(data) {
+                // console.log(data);
+                $('#nombre_solicitante').empty();
+                $('#nombre_solicitante').append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $('#nombre_solicitante').append('<option value="'+data[claves[i]]["Id_Nombre_solicitante"]+'">'+data[claves[i]]["Nombre_solicitante"]+'</option>');
+                }
+            }
+        });
+    });
+
     //LISTADO FUENTE DE INFORMACION
     let datos_listado_fuente_informacion = {
         '_token': token,
@@ -699,6 +773,32 @@ $(document).ready(function(){
         }
     });
 
+    // LISTADO DE SERVICIOS
+    $('#proceso').change(function(){
+        $('#servicio').prop('disabled', false);
+        let id_proceso = $('#proceso').val();
+        let datos_listado_servicios = {
+            '_token': token,
+            'parametro' : "listado_servicios",
+            'id_proceso' : id_proceso
+        };
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_listado_servicios,
+            success:function(data) {
+                //console.log(data);
+                $('#servicio').empty();
+                $('#servicio').append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $('#servicio').append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
+                }
+            }
+        });
+
+    });
+
     //LISTADO ACCION
     let datos_listado_accion = {
         '_token': token,
@@ -719,4 +819,202 @@ $(document).ready(function(){
         }
     });
 
+    /* VALIDACIÓN OPCIONES OTRO */
+
+    /* Validación opción OTRO/¿Cuál? del selector Tipo de Cliente */
+    $('.columna_otro_tipo_cliente').css('display','none');
+    $('#tipo_cliente').change(function(){
+        let opt_otro_cual_tipo_cliente = $("#tipo_cliente option:selected").text();
+        if (opt_otro_cual_tipo_cliente === "OTRO/¿Cuál?") {
+            $(".columna_otro_tipo_cliente").slideDown('slow');
+            $('#otro_tipo_cliente').prop('required', true);
+        }else{
+            $(".columna_otro_tipo_cliente").slideUp('slow');
+            $('#otro_tipo_cliente').prop('required', false);
+        }
+    });
+
+    /* Validación opción Otro/¿Cuál? del selector Tipo de documento */
+    $('#tipo_documento').change(function (){
+        let opt_otro_tipo_documento = $("#tipo_documento option:selected").text();
+        if (opt_otro_tipo_documento === "Otro/¿Cuál?") {
+            $(".otro_documento").removeClass('d-none');
+            $(".otro_documento").slideDown('slow');
+            // $('#otro_nombre_documento').prop('required', true);
+        } else {
+            $(".otro_documento").slideUp('slow');
+            // $('#otro_nombre_documento').prop('required', false);
+        }
+    });
+
+    /* Validación opción Otro/¿Cual? del selector de Estado Civil */
+    $('#estado_civil').change(function(){
+        let opt_otro_estado_civil = $("#estado_civil option:selected").text();
+        if (opt_otro_estado_civil === "Otro/¿Cual?") {
+            $(".columna_otro_estado_civil").removeClass('d-none');
+            $(".columna_otro_estado_civil").slideDown('slow');
+            // $('#otro_estado_civil').prop('required', true);
+        } else {
+            $(".columna_otro_estado_civil").slideUp('slow');
+            // $('#otro_estado_civil').prop('required', false);
+        }
+    });
+
+    /* Validación opción Otro/¿Cual? del selector Nivel de Escolar */
+    $('#nivel_escolar').change(function(){
+        let opt_otro_nivel_escolar = $('#nivel_escolar option:selected').text();
+        if (opt_otro_nivel_escolar === "Otro/¿Cual?") {
+            $(".columna_otro_nivel_escolar").removeClass('d-none');
+            $(".columna_otro_nivel_escolar").slideDown('slow');
+            // $('#otro_nivel_escolar').prop('required', true);
+        } else {
+            $(".columna_otro_nivel_escolar").slideUp('slow');
+            // $('#otro_nivel_escolar').prop('required', false);
+        }
+    });
+
+    /* Validación opción Exterior del selector Departamento (Información Afiliado) */
+    $('#departamento_info_afiliado').change(function(){
+        let opt_exterior_info_afiliado = $('#departamento_info_afiliado option:selected').text();
+        if (opt_exterior_info_afiliado === "Exterior") {
+            $(".columna_pais_exterior_info_afiliado").removeClass('d-none');
+            $(".columna_pais_exterior_info_afiliado").slideDown('slow');
+            $('.columna_municipio_info_afiliado').addClass('d-none');
+            // $('#pais_exterior_info_afiliado').prop('required', true);
+        } else {
+            $(".columna_pais_exterior_info_afiliado").slideUp('slow');
+            $('.columna_municipio_info_afiliado').removeClass('d-none');
+            // $('#otro_nivel_escolar').prop('required', false);
+        }
+    });
+
+    /* Validación opción Otro/¿Cuál? del selector Tipo de afiliado */
+    $('#tipo_afiliado').change(function(){
+        let opt_otro_afiliado = $('#tipo_afiliado option:selected').text();
+        if (opt_otro_afiliado === "Otro/¿Cuál?") {
+            $(".columna_otro_tipo_afiliado").removeClass('d-none');
+            $(".columna_otro_tipo_afiliado").slideDown('slow');
+            // $('#otro_tipo_afiliado').prop('required', true);
+        } else {
+            $(".columna_otro_tipo_afiliado").slideUp('slow');
+            // $('#otro_nivel_escolar').prop('required', false);
+        }
+    });
+
+    /* Validación opción Otro/¿Cual? del selector EPS */
+    $('#eps').change(function(){
+        let opt_otra_eps = $('#eps option:selected').text();
+        if (opt_otra_eps === "Otro/¿Cual?") {
+            $(".columna_otro_eps").removeClass('d-none');
+            $(".columna_otro_eps").slideDown('slow');
+            // $('#otra_eps').prop('required', true);
+        } else {
+            $(".columna_otro_eps").slideUp('slow');
+            // $('#otra_eps').prop('required', false);
+        }
+    });
+
+    /* Validación opción Si del selector Apoderado */
+    $('#apoderado').change(function(){
+        let opt_apoderado = $('#apoderado').val();
+        if (opt_apoderado === "Si") {
+            $(".columna_nombre_apoderado").removeClass('d-none');
+            $(".columna_nombre_apoderado").slideDown('slow');
+            // $('#nombre_apoderado').prop('required', true);
+            $(".columna_identificacion_apoderado").removeClass('d-none');
+            $(".columna_identificacion_apoderado").slideDown('slow');
+            // $('#nro_identificacion_apoderado').prop('required', true);
+
+        } else {
+            $(".columna_nombre_apoderado").slideUp('slow');
+            // $('#nombre_apoderado').prop('required', true);
+            $(".columna_identificacion_apoderado").slideUp('slow');
+            // $('#nro_identificacion_apoderado').prop('required', true);
+        }
+    });
+
+    /* Validación opción OTRO/¿Cuál? del selector Tipo AFP  */
+    $('#afp').change(function (){
+        let opt_otro_afp = $("#afp option:selected").text();
+        if (opt_otro_afp === "Otro/¿Cual?") {
+            $(".columna_otro_afp").removeClass('d-none');
+            $(".columna_otro_afp").slideDown('slow');
+        } else {
+            $(".columna_otro_afp").slideUp('slow');
+        }
+    });
+
+    /* Validación opción OTRO/¿Cuál? del selector Tipo ARL (Información Afiliado) */
+    $('#arl_info_afiliado').change(function(){
+        let opt_otro_arl_info_afiliado = $('#arl_info_afiliado option:selected').text();
+        if (opt_otro_arl_info_afiliado === "Otro/¿Cual?") {
+            $(".columna_otro_arl_info_afiliado").removeClass('d-none');
+            $(".columna_otro_arl_info_afiliado").slideDown('slow');
+        } else {
+            $(".columna_otro_arl_info_afiliado").slideUp('slow');
+        }
+    });
+
+    /* Validación opción OTRO/¿Cuál? del selector Tipo ARL (Información Laboral) */
+    $('#arl_info_laboral').change(function (){
+        let opt_otro_arl_info_laboral = $("#arl_info_laboral option:selected").text();
+        if (opt_otro_arl_info_laboral === "Otro/¿Cual?") {
+            $(".otro_arl_info_laboral").removeClass('d-none');
+            $(".otro_arl_info_laboral").slideDown('slow');
+        } else {
+            $(".otro_arl_info_laboral").slideUp('slow');
+        }
+    });
+
+    /* Validación opción OTRO/¿Cuál? del selector Tipo Departamentos  */
+    $('#departamento_info_laboral').change(function (){
+        let opt_otro_departamento_exterior = $("#departamento_info_laboral option:selected").text();
+        if (opt_otro_departamento_exterior === "Exterior") {
+            $(".columna_pais_exterior_info_laboral").removeClass('d-none');
+            $(".columna_pais_exterior_info_laboral").slideDown('slow');            
+            $('#pais_exterior_info_laboral').prop('required', true);
+            $(".columna_municipio_info_laboral").slideUp('slow');
+        } else {
+            $(".columna_pais_exterior_info_laboral").slideUp('slow');
+            $(".columna_municipio_info_laboral").slideDown('slow');
+
+        }
+    });
+
+    /* Validación opción OTRO/¿Cuál? del selector Solicitante  */
+    $('#solicitante').change(function (){
+        let opt_otro_solicitante = $("#solicitante option:selected").text();
+        if (opt_otro_solicitante === "Otro/¿Cual?") {
+            $(".columna_otro_solicitante").removeClass('d-none');
+            $(".columna_otro_solicitante").slideDown('slow');
+            $(".columna_nombre_solicitante").slideUp('slow');
+            $(".columna_otro_nombre_solicitante").slideUp('slow');
+        } else {
+            $(".columna_otro_solicitante").slideUp('slow');
+            $(".columna_nombre_solicitante").slideDown('slow');
+
+        }
+    });
+
+    /* Validación opción OTRO/¿Cuál? del selector Nombre Solicitante  */
+    $('#nombre_solicitante').change(function (){
+        let opt_otro_nombre_solicitante = $("#nombre_solicitante option:selected").text();
+        if (opt_otro_nombre_solicitante === "Otro/¿Cual?") {
+            $(".columna_otro_nombre_solicitante").removeClass('d-none');
+            $(".columna_otro_nombre_solicitante").slideDown('slow');
+        } else {
+            $(".columna_otro_nombre_solicitante").slideUp('slow');
+        }
+    });
+
+    /* Validación opción OTRO/¿Cuál? del selector Fuente de informacion  */
+    $('#fuente_informacion').change(function (){
+        let opt_otro_fuente_informacion = $("#fuente_informacion option:selected").text();
+        if (opt_otro_fuente_informacion === "Otro/¿Cual?") {
+            $(".columna_otra_fuente_informacion").removeClass('d-none');
+            $(".columna_otra_fuente_informacion").slideDown('slow');
+        } else {
+            $(".columna_otra_fuente_informacion").slideUp('slow');
+        }
+    });
 });

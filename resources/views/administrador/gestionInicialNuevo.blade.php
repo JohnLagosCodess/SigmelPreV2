@@ -33,10 +33,10 @@
                                     <select class="tipo_cliente custom-select" name="tipo_cliente" id="tipo_cliente" required></select>
                                 </div>
                             </div>
-                            <div class="col-sm otro_tipo_cliente">
+                            <div class="col-sm columna_otro_tipo_cliente">
                                 <div class="form-group">
                                     <label for="otro_tipo_cliente" class="col-form-label" style="color:;">Otro Tipo Cliente</label>
-                                    <input class="otro_tipo_cliente form-control" name="otro_tipo_cliente" id="otro_tipo_cliente" required>
+                                    <input class="otro_tipo_cliente form-control" name="otro_tipo_cliente" id="otro_tipo_cliente">
                                 </div>
                             </div>
                         </div>
@@ -105,10 +105,10 @@
                                                     <select class="tipo_documento custom-select" name="tipo_documento " id="tipo_documento" required></select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm otro_documento">
+                                            <div class="col-sm otro_documento d-none">
                                                 <div class="form-group">
                                                     <label for="otro_nombre_documento" class="col-form-label" style="color:;">Otro Documento</label>
-                                                    <input type="text" class="otro_nombre_documento form-control" name="otro_nombre_documento" id="otro_nombre_documento" required>
+                                                    <input type="text" class="otro_nombre_documento form-control" name="otro_nombre_documento" id="otro_nombre_documento">
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -157,7 +157,7 @@
                                                     <select class="estado_civil custom-select" name="estado_civil" id="estado_civil"></select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm otro_estado_civil">
+                                            <div class="col-sm columna_otro_estado_civil d-none">
                                                 <div class="form-group">
                                                     <label for="otro_estado_civil" class="col-form-label">Otro Estado civil</label>
                                                     <input class="otro_estado_civil form-control" name="otro_estado_civil" id="otro_estado_civil">
@@ -169,7 +169,7 @@
                                                     <select class="nivel_escolar custom-select" name="nivel_escolar" id="nivel_escolar"></select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm otro_nivel_escolar">
+                                            <div class="col-sm columna_otro_nivel_escolar d-none">
                                                 <div class="form-group">
                                                     <label for="otro_nivel_escolar" class="col-form-label">Otro Nivel escolar</label>
                                                     <input class="otro_nivel_escolar form-control" name="otro_nivel_escolar" id="otro_nivel_escolar">
@@ -189,16 +189,16 @@
                                                     <select class="departamento_info_afiliado custom-select" name="departamento_info_afiliado" id="departamento_info_afiliado"></select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm pais_exterior_info_afiliado">
+                                            <div class="col-sm columna_pais_exterior_info_afiliado d-none">
                                                 <div class="form-group">
                                                     <label for="pais_exterior_info_afiliado" class="col-form-label">País Exterior</label>
                                                     <input type="text" class="pais_exterior_info_afiliado form-control" name="pais_exterior_info_afiliado" id="pais_exterior_info_afiliado">
                                                 </div>
                                             </div>
-                                            <div class="col-sm">
+                                            <div class="col-sm columna_municipio_info_afiliado">
                                                 <div class="form-group">
                                                     <label for="municipio_info_afiliado" class="col-form-label">Municipio</label>
-                                                    <select class="municipio_info_afiliado custom-select" name="municipio_info_afiliado" id="municipio_info_afiliado"></select>
+                                                    <select class="municipio_info_afiliado custom-select" name="municipio_info_afiliado" id="municipio_info_afiliado" disabled></select>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -213,7 +213,7 @@
                                                     <select class="tipo_afiliado custom-select" name="tipo_afiliado" id="tipo_afiliado"></select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm otro_tipo_afiliado">
+                                            <div class="col-sm columna_otro_tipo_afiliado d-none">
                                                 <div class="form-group">
                                                     <label for="otro_tipo_afiliado" class="col-form-label">Otro Tipo de Afiliado</label>
                                                     <input class="otro_tipo_afiliado form-control" name="otro_tipo_afiliado" id="otro_tipo_afiliado">
@@ -222,50 +222,72 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-sm">
-                                                <label for="ibc" class="col-form label">IBC</label>
-                                                <input type="text" class="ibc form-control" name="ibc" id="ibc">
+                                                <div class="form-group">
+                                                    <label for="ibc" class="col-form label">IBC</label>
+                                                    <input type="text" class="ibc form-control" name="ibc" id="ibc">
+                                                </div>
                                             </div>
                                             <div class="col-sm">
-                                                <label for="eps" class="col-form label">EPS</label>
-                                                <select class="eps custom-select" name="eps" id="eps"></select>
+                                                <div class="form-group">
+                                                    <label for="eps" class="col-form label">EPS</label>
+                                                    <select class="eps custom-select" name="eps" id="eps"></select>
+                                                </div>
                                             </div>
-                                            <div class="col-sm otro_eps">
-                                                <label for="otra_eps" class="col-form label">Otra EPS</label>
-                                                <input type="text" class="otra_eps form-control" name="otra_eps" id="otra_eps">
-                                            </div>
-                                            <div class="col-sm">
-                                                <label for="afp" class="col-form label">AFP</label>
-                                                <select class="afp custom-select" name="afp" id="afp"></select>
-                                            </div>
-                                            <div class="col-sm otro_afp">
-                                                <label for="otra_afp" class="col-form label">Otra AFP</label>
-                                                <input type="text" class="otra_afp form-control" name="otra_afp" id="otra_afp">
+                                            <div class="col-sm columna_otro_eps d-none">
+                                                <div class="form-group">
+                                                    <label for="otra_eps" class="col-form label">Otra EPS</label>
+                                                    <input type="text" class="otra_eps form-control" name="otra_eps" id="otra_eps">
+                                                </div>
                                             </div>
                                             <div class="col-sm">
-                                                <label for="arl_info_afiliado" class="col-form label">ARL</label>
-                                                <select class="arl_info_afiliado custom-select" name="arl_info_afiliado" id="arl_info_afiliado"></select>
+                                                <div class="form-group">
+                                                    <label for="afp" class="col-form label">AFP</label>
+                                                    <select class="afp custom-select" name="afp" id="afp"></select>
+                                                </div>
                                             </div>
-                                            <div class="col-sm otro_arl">
-                                                <label for="otra_arl_info_afiliado" class="col-form label">Otra ARL</label>
-                                                <input type="text" class="otra_arl_info_afiliado form-control" name="otra_arl_info_afiliado" id="otra_arl_info_afiliado">
+                                            <div class="col-sm columna_otro_afp d-none">
+                                                <div class="form-group">
+                                                    <label for="otra_afp" class="col-form label">Otra AFP</label>
+                                                    <input type="text" class="otra_afp form-control" name="otra_afp" id="otra_afp">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="arl_info_afiliado" class="col-form label">ARL</label>
+                                                    <select class="arl_info_afiliado custom-select" name="arl_info_afiliado" id="arl_info_afiliado"></select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm columna_otro_arl_info_afiliado d-none">
+                                                <div class="form-group">
+                                                    <label for="otra_arl_info_afiliado" class="col-form label">Otra ARL</label>
+                                                    <input type="text" class="otra_arl_info_afiliado form-control" name="otra_arl_info_afiliado" id="otra_arl_info_afiliado">
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-sm si_no_apoderado">
-                                                <label for="apoderado" class="col-form-label">Apoderado</label>
-                                                <select class="apoderado custom-select" name="apoderado" id="apoderado"></select>
+                                            <div class="col-3 si_no_apoderado">
+                                                <div class="form-group">
+                                                    <label for="apoderado" class="col-form-label">Apoderado</label>
+                                                    <select class="apoderado custom-select" name="apoderado" id="apoderado"></select>
+                                                </div>
                                             </div>
-                                            <div class="col-sm nombre_apoderado">
-                                                <label for="nombre_apoderado" class="col-form-label">Nombre del apoderado</label>
-                                                <input type="text" class="nombre_apoderado form-control" name="nombre_apoderado" id="nombre_apoderado">
+                                            <div class="col-3 columna_nombre_apoderado d-none">
+                                                <div class="form-group">
+                                                    <label for="nombre_apoderado" class="col-form-label">Nombre del apoderado</label>
+                                                    <input type="text" class="nombre_apoderado form-control" name="nombre_apoderado" id="nombre_apoderado">
+                                                </div>
                                             </div>
-                                            <div class="col-sm identificacion_apoderado">
-                                                <label for="nro_identificacion_apoderado" class="col-form-label">N° identificación apoderado</label>
-                                                <input type="text" class="nro_identificacion_apoderado form-control" name="nro_identificacion_apoderado" id="nro_identificacion_apoderado">
+                                            <div class="col-3 columna_identificacion_apoderado d-none">
+                                                <div class="form-group">
+                                                    <label for="nro_identificacion_apoderado" class="col-form-label">N° identificación apoderado</label>
+                                                    <input type="text" class="nro_identificacion_apoderado form-control" name="nro_identificacion_apoderado" id="nro_identificacion_apoderado">
+                                                </div>
                                             </div>
-                                            <div class="col-sm">
-                                                <label for="activo" class="col-form-label">Activo</label>
-                                                <select class="activo custom-select" name="activo" id="activo" required></select>
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <label for="activo" class="col-form-label">Activo</label>
+                                                    <select class="activo custom-select" name="activo" id="activo" required></select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -302,24 +324,34 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-sm">
-                                                <label for="arl_info_laboral" class="col-form-label">ARL</label>
-                                                <select class="arl_info_laboral custom-select" name="arl_info_laboral" id="arl_info_laboral"></select>
+                                                <div class="form-group">
+                                                    <label for="arl_info_laboral" class="col-form-label">ARL</label>
+                                                    <select class="arl_info_laboral custom-select" name="arl_info_laboral" id="arl_info_laboral"></select>
+                                                </div>
                                             </div>
-                                            <div class="col-sm otro_arl_info_laboral">
-                                                <label for="otra_arl_info_laboral" class="col-form-label">Otra ARL</label>
-                                                <input type="text" class="otra_arl_info_laboral form-control" name="otra_arl_info_laboral" id="otra_arl_info_laboral">
-                                            </div>
-                                            <div class="col-sm">
-                                                <label for="empresa" class="col-form-label">Empresa</label>
-                                                <input type="text" class="empresa form-control" name="empresa" id="empresa" required>
-                                            </div>
-                                            <div class="col-sm">
-                                                <label for="nit_cc" class="col-form-label">NIT / CC</label>
-                                                <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc" required>
+                                            <div class="col-sm otro_arl_info_laboral d-none">
+                                                <div class="form-group">
+                                                    <label for="otra_arl_info_laboral" class="col-form-label">Otra ARL</label>
+                                                    <input type="text" class="otra_arl_info_laboral form-control" name="otra_arl_info_laboral" id="otra_arl_info_laboral">
+                                                </div>
                                             </div>
                                             <div class="col-sm">
-                                                <label for="telefono_empresa" class="col-form-label">Télefono empresa</label>
-                                                <input type="text" class="telefono_empresa form-control" name="telefono_empresa" id="telefono_empresa">
+                                                <div class="form-group">
+                                                    <label for="empresa" class="col-form-label">Empresa</label>
+                                                    <input type="text" class="empresa form-control" name="empresa" id="empresa" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="nit_cc" class="col-form-label">NIT / CC</label>
+                                                    <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="telefono_empresa" class="col-form-label">Télefono empresa</label>
+                                                    <input type="text" class="telefono_empresa form-control" name="telefono_empresa" id="telefono_empresa">
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -341,71 +373,95 @@
                                                     <select class="departamento_info_laboral custom-select" name="departamento_info_laboral" id="departamento_info_laboral"></select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm pais_exterior_info_laboral">
+                                            <div class="col-sm columna_pais_exterior_info_laboral d-none">
                                                 <div class="form-group">
                                                     <label for="pais_exterior_info_laboral" class="col-form-label">País Exterior</label>
                                                     <input type="text" class="pais_exterior_info_laboral form-control" name="pais_exterior_info_laboral" id="pais_exterior_info_laboral">
                                                 </div>
                                             </div>
-                                            <div class="col-sm">
+                                            <div class="col-sm columna_municipio_info_laboral">
                                                 <div class="form-group">
                                                     <label for="municipio_info_laboral" class="col-form-label">Municipio</label>
-                                                    <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral"></select>
+                                                    <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral" disabled></select>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-sm">
-                                                <label for="actividad_economica" class="col-form-label">Actividad económica</label>
-                                                <select class="actividad_economica custom-select" name="actividad_economica" id="actividad_economica"></select>
+                                                <div class="form-group">
+                                                    <label for="actividad_economica" class="col-form-label">Actividad económica</label>
+                                                    <select class="actividad_economica custom-select" name="actividad_economica" id="actividad_economica"></select>
+                                                </div>
                                             </div>
                                             <div class="col-sm">
-                                                <label for="clase_riesgo" class="col-form-label">Clase / Riesgo</label>
-                                                <select class="clase_riesgo custom-select" name="clase_riesgo" id="clase_riesgo"></select>
+                                                <div class="form-group">
+                                                    <label for="clase_riesgo" class="col-form-label">Clase / Riesgo</label>
+                                                    <select class="clase_riesgo custom-select" name="clase_riesgo" id="clase_riesgo"></select>
+                                                </div>
                                             </div>
                                             <div class="col-sm">
-                                                <label for="persona_contacto" class="col-form-label">Persona de contacto</label>
-                                                <input type="text" class="persona_contacto form-control" name="persona_contacto" id="persona_contacto">
+                                                <div class="form-group">
+                                                    <label for="persona_contacto" class="col-form-label">Persona de contacto</label>
+                                                    <input type="text" class="persona_contacto form-control" name="persona_contacto" id="persona_contacto">
+                                                </div>
                                             </div>
                                             <div class="col-sm">
-                                                <label for="telefono_persona_contacto" class="col-form-label">Teléfono persona contacto</label>
-                                                <input type="text" class="telefono_persona_contacto form-control" name="telefono_persona_contacto" id="telefono_persona_contacto">
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm">
-                                                <label for="codigo_ciuo" class="col-form-label">Código CIUO</label>
-                                                <select class="codigo_ciuo custom-select" name="codigo_ciuo" id="codigo_ciuo"></select>
-                                            </div>
-                                            <div class="col-sm">
-                                                <label for="fecha_ingreso" class="col-form-label">Fecha de ingreso</label>
-                                                <input type="date" class="fecha_ingreso form-control" name="fecha_ingreso" id="fecha_ingreso">
-                                            </div>
-                                            <div class="col-sm">
-                                                <label for="cargo" class="col-form-label">Cargo</label>
-                                                <input type="text" class="cargo form-control" name="cargo" id="cargo">
-                                            </div>
-                                            <div class="col-sm">
-                                                <label for="funciones_cargo" class="col-form-label">Funciones del cargo</label>
-                                                <textarea class="funciones_cargo form-control" name="funciones_cargo" id="funciones_cargo" rows="2"></textarea>
+                                                <div class="form-group">
+                                                    <label for="telefono_persona_contacto" class="col-form-label">Teléfono persona contacto</label>
+                                                    <input type="text" class="telefono_persona_contacto form-control" name="telefono_persona_contacto" id="telefono_persona_contacto">
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-sm">
-                                                <label for="antiguedad_empresa" class="col-form-label">Antiguedad en empresa (Meses)</label>
-                                                <input type="number" class="antiguedad_empresa form-control" name="antiguedad_empresa" id="antiguedad_empresa">
+                                                <div class="form-group">
+                                                    <label for="codigo_ciuo" class="col-form-label">Código CIUO</label>
+                                                    <select class="codigo_ciuo custom-select" name="codigo_ciuo" id="codigo_ciuo"></select>
+                                                </div>
                                             </div>
                                             <div class="col-sm">
-                                                <label for="antiguedad_cargo" class="col-form-label">Antiguedad en el cargo (Meses)</label>
-                                                <input type="number" class="antiguedad_cargo form-control" name="antiguedad_cargo" id="antiguedad_cargo">
+                                                <div class="form-group">
+                                                    <label for="fecha_ingreso" class="col-form-label">Fecha de ingreso</label>
+                                                    <input type="date" class="fecha_ingreso form-control" name="fecha_ingreso" id="fecha_ingreso">
+                                                </div>
                                             </div>
                                             <div class="col-sm">
-                                                <label for="fecha_retiro" class="col-form-label">Fecha de retiro</label>
-                                                <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro">
+                                                <div class="form-group">
+                                                    <label for="cargo" class="col-form-label">Cargo</label>
+                                                    <input type="text" class="cargo form-control" name="cargo" id="cargo">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="funciones_cargo" class="col-form-label">Funciones del cargo</label>
+                                                    <textarea class="funciones_cargo form-control" name="funciones_cargo" id="funciones_cargo" rows="2"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="antiguedad_empresa" class="col-form-label">Antiguedad en empresa (Meses)</label>
+                                                    <input type="number" class="antiguedad_empresa form-control" name="antiguedad_empresa" id="antiguedad_empresa">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="antiguedad_cargo" class="col-form-label">Antiguedad en el cargo (Meses)</label>
+                                                    <input type="number" class="antiguedad_cargo form-control" name="antiguedad_cargo" id="antiguedad_cargo">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="fecha_retiro" class="col-form-label">Fecha de retiro</label>
+                                                    <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro">
+                                                </div>
                                             </div>
                                             <div class="col-12">
-                                                <label for="descripcion" class="col-form-label">Descripción</label>
-                                                <textarea class="descripcion form-control" name="descripcion" id="descripcion" rows="2"></textarea>
+                                                <div class="form-group">
+                                                    <label for="descripcion" class="col-form-label">Descripción</label>
+                                                    <textarea class="descripcion form-control" name="descripcion" id="descripcion" rows="2"></textarea>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -422,40 +478,58 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-4">
-                                                <label for="motivo_solicitud" class="col-form label">Motivo solicitud</label>
-                                                <select class="motivo_solicitud custom-select" name="motivo_solicitud" id="motivo_solicitud"></select>
+                                                <div class="form-group">
+                                                    <label for="motivo_solicitud" class="col-form label">Motivo solicitud</label>
+                                                    <select class="motivo_solicitud custom-select" name="motivo_solicitud" id="motivo_solicitud"></select>
+                                                </div>
                                             </div>
                                             <div class="col-4">
-                                                <label for="tipovinculo" class="col-form label">Tipo de vinculación</label>
-                                                <select class="tipovinculo custom-select" name="tipovinculo" id="tipovinculo"></select>
+                                                <div class="form-group">
+                                                    <label for="tipovinculo" class="col-form label">Tipo de vinculación</label>
+                                                    <select class="tipovinculo custom-select" name="tipovinculo" id="tipovinculo"></select>
+                                                </div>
                                             </div>
                                             <div class="col-4">
-                                                <label for="regimen" class="col-form label">Régimen en salud</label>
-                                                <select class="regimen custom-select" name="regimen" id="regimen"></select>
+                                                <div class="form-group">
+                                                    <label for="regimen" class="col-form label">Régimen en salud</label>
+                                                    <select class="regimen custom-select" name="regimen" id="regimen"></select>
+                                                </div>
                                             </div>
                                             <div class="col-4">
-                                                <label for="solicitante" class="col-form label">Solicitante</label>
-                                                <select class="solicitante custom-select" name="solicitante" id="solicitante"></select>
+                                                <div class="form-group">
+                                                    <label for="solicitante" class="col-form label">Solicitante</label>
+                                                    <select class="solicitante custom-select" name="solicitante" id="solicitante"></select>
+                                                </div>
                                             </div>     
-                                            <div class="col-4">
-                                                <label for="otro_solicitante" class="col-form label">Otro solicitante</label>
-                                                <input type="text" class="otro_solicitante form-control" name="otro_solicitante" id="otro_solicitante">
+                                            <div class="col-4 columna_otro_solicitante d-none">
+                                                <div class="form-group">
+                                                    <label for="otro_solicitante" class="col-form label">Otro solicitante</label>
+                                                    <input type="text" class="otro_solicitante form-control" name="otro_solicitante" id="otro_solicitante">
+                                                </div>
+                                            </div>
+                                            <div class="col-4 columna_nombre_solicitante">
+                                                <div class="form-group">
+                                                    <label for="nombre_solicitante" class="col-form label">Nombre de solicitante</label>
+                                                    <select class="nombre_solicitante custom-select" name="nombre_solicitante" id="nombre_solicitante" disabled></select>
+                                                </div>
+                                            </div>
+                                            <div class="col-4 columna_otro_nombre_solicitante d-none">
+                                                <div class="form-group">
+                                                    <label for="otro_nombre_solicitante" class="col-form label">Otro Nombre de solicitante</label>
+                                                    <input type="text" class="otro_nombre_solicitante form-control" name="otro_nombre_solicitante" id="otro_nombre_solicitante">
+                                                </div>
                                             </div>
                                             <div class="col-4">
-                                                <label for="nombre_solicitante" class="col-form label">Nombre de solicitante</label>
-                                                <select class="nombre_solicitante custom-select" name="nombre_solicitante" id="nombre_solicitante"></select>
+                                                <div class="form-group">
+                                                    <label for="fuente_informacion" class="col-form label">Fuente de información</label>
+                                                    <select class="fuente_informacion custom-select" name="fuente_informacion" id="fuente_informacion"></select>
+                                                </div>
                                             </div>
-                                            <div class="col-4">
-                                                <label for="otro_nombre_solicitante" class="col-form label">Otro Nombre de solicitante</label>
-                                                <input type="text" class="otro_nombre_solicitante form-control" name="otro_nombre_solicitante" id="otro_nombre_solicitante">
-                                            </div>
-                                            <div class="col-4">
-                                                <label for="fuente_informacion" class="col-form label">Fuente de información</label>
-                                                <select class="fuente_informacion custom-select" name="fuente_informacion" id="fuente_informacion"></select>
-                                            </div>
-                                            <div class="col-4">
-                                                <label for="otra_fuente_informacion" class="col-form label">Otra Fuente de información</label>
-                                                <input type="text" class="otra_fuente_informacion form-control" name="otra_fuente_informacion" id="otra_fuente_informacion">
+                                            <div class="col-4 columna_otra_fuente_informacion d-none">
+                                                <div class="form-group">
+                                                    <label for="otra_fuente_informacion" class="col-form label">Otra Fuente de información</label>
+                                                    <input type="text" class="otra_fuente_informacion form-control" name="otra_fuente_informacion" id="otra_fuente_informacion">
+                                                </div>
                                             </div>
                                         </div>
                                         {{-- <div class="row">
@@ -503,7 +577,7 @@
                                             </div>
                                             <div class="col-sm">
                                                 <label for="servicio" class="col-form label">Servicio</label>
-                                                <select class="servicio custom-select" name="servicio" id="servicio" requierd></select>
+                                                <select class="servicio custom-select" name="servicio" id="servicio" requierd disabled></select>
                                             </div>
                                             <div class="col-sm">
                                                 <label for="accion" class="col-form label">Acción</label>

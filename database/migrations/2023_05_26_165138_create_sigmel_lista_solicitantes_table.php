@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_lista_solicitantes', function (Blueprint $table) {
-            $table->increments('Id_Solicitantes');
+            $table->increments('Id_Nombre_solicitante');
             $table->integer('Id_solicitante')->nullable();
             $table->string('Solicitante', 15)->nullable();
             $table->string('Nombre_solicitante', 80)->nullable();

@@ -5,9 +5,13 @@
 
 /* FONDO DE LAS OPCIONES Y BORDEADO DEL SELECT2 */
 .select2-selection--single {/*  */
-    background-color: #ececec !important;
+    /* background-color: red !important; */
     border: 1px solid black !important;
     border-radius: 4px !important;
+}
+
+.select2-container--default .select2-selection--single {
+    background-color: white !important;
 }
 
 /* COLOR DE FONDO Y ALTURA FLECHA DEL SELECT2 */

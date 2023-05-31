@@ -557,15 +557,24 @@ class AdministradorController extends Controller
         if ($parametro == "departamentos_info_afiliado") {
             
             $listado_departamentos_info_afiliado = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
-                            ->select('Id_Departamentos', 'Nombre_departamento')
-                            ->groupBy('Nombre_departamento')
-                            ->get();
+            ->select('Id_departamento', 'Nombre_departamento')
+            ->groupBy('Nombre_departamento')
+            ->get();
             
             $info_lista_departamentos_info_afiliado = json_decode(json_encode($listado_departamentos_info_afiliado, true));
             return response()->json($info_lista_departamentos_info_afiliado);
         }
 
         /* TRAER LISTADO MUNCIPIOS (INFORMACIÓN DE AFILIADO) */
+        if($parametro == "municipios_info_afiliado"){
+            $listado_municipios_info_afiliado = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
+            ->select('Id_municipios', 'Nombre_municipio')
+            ->where('Id_departamento', $request->id_departamento_info_afiliado)
+            ->get();
+
+            $info_lista_municpios_info_afiliado = json_decode(json_encode($listado_municipios_info_afiliado, true));
+            return response()->json($info_lista_municpios_info_afiliado);
+        }
         
         /* TRAER LISTADO DE TIPOS DE AFILIADO */
         if ($parametro == "tipo_afiliado") {
@@ -584,7 +593,7 @@ class AdministradorController extends Controller
             
             $listado_eps = sigmel_lista_eps::on('sigmel_gestiones')
                             ->select('Id_Eps', 'Nombre_eps')
-                            ->orderBy('Nombre_eps', 'asc')
+                            // ->orderBy('Nombre_eps', 'asc')
                             ->get();
             
             $info_lista_eps = json_decode(json_encode($listado_eps, true));
@@ -596,7 +605,7 @@ class AdministradorController extends Controller
             
             $listado_afp = sigmel_lista_afps::on('sigmel_gestiones')
                             ->select('Id_Afp', 'Nombre_afp')
-                            ->orderBy('Nombre_afp', 'asc')
+                            // ->orderBy('Nombre_afp', 'asc')
                             ->get();
             
             $info_lista_afp = json_decode(json_encode($listado_afp, true));
@@ -608,7 +617,7 @@ class AdministradorController extends Controller
             
             $listado_arl_info_afiliado = sigmel_lista_arls::on('sigmel_gestiones')
                             ->select('Id_Arl', 'Nombre_arl')
-                            ->orderBy('Nombre_arl', 'asc')
+                            // ->orderBy('Nombre_arl', 'asc')
                             ->get();
             
             $info_lista_arl_info_afiliado = json_decode(json_encode($listado_arl_info_afiliado, true));
@@ -656,6 +665,12 @@ class AdministradorController extends Controller
         }
 
         /* LISTADO DE MUNICIPIOS (Información Laboral) */
+        if($parametro == "municipios_info_laboral"){
+            $listado_municipios_info_laboral = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
+            ->select('Id_municipios', 'Nombre_municipio')->where('Id_departamento', '=', $request-> id_departamento_info_laboral)->get();
+            $info_listado_municipio_info_laboral = json_decode(json_encode($listado_municipios_info_laboral, true));
+            return response()->json(($info_listado_municipio_info_laboral));
+        }
 
         /* LISTADO ACTIVIDAD ECONOMICA */
         if($parametro == 'listado_actividad_economica'){
@@ -714,6 +729,15 @@ class AdministradorController extends Controller
         }
 
         /* NOMBRE DE SOLICITANTE */
+        if($parametro == "nombre_solicitante"){
+            $listado_nombre_solicitante = sigmel_lista_solicitantes::on('sigmel_gestiones')
+            ->select('Id_Nombre_solicitante', 'Nombre_solicitante')
+            ->where('Id_solicitante', $request->id_solicitante)
+            ->get();
+
+            $info_listado_nombre_solicitante = json_decode(json_encode($listado_nombre_solicitante, true));
+            return response()->json(($info_listado_nombre_solicitante));
+        }
 
         /* FUENTE DE INFORMACIÓN */
         if($parametro == 'listado_fuente_informacion'){
@@ -731,6 +755,17 @@ class AdministradorController extends Controller
                             ->select('Id_proceso', 'Nombre_proceso')->groupBy('Id_proceso','Nombre_proceso')->get();
             $info_listado_proceso = json_decode(json_encode($listado_proceso, true));
             return response()->json(($info_listado_proceso));
+        }
+
+        /* LISTADO SERVICIOS */
+        if ($parametro == 'listado_servicios') {
+            $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            ->select('Id_Servicio', 'Nombre_servicio')
+            ->where('Id_proceso', $request->id_proceso)
+            ->get();
+
+            $info_listado_servicios = json_decode(json_encode($listado_servicios, true));
+            return response()->json(($info_listado_servicios));
         }
 
         /* LISTADO ACCION */
