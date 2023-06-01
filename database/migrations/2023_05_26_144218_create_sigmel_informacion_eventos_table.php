@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_eventos', function (Blueprint $table) {
             $table->increments('Id_Eventos');
             $table->text('Cliente');
-            $table->string('Tipo_cliente', 30);
-            $table->string('Tipo_evento', 10);
+            $table->integer('Tipo_cliente');
+            $table->integer('Tipo_evento');
             $table->string('ID_evento', 10);
             $table->date('F_evento');
             $table->date('F_radicacion');

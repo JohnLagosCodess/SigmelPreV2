@@ -15,11 +15,11 @@ return new class extends Migration
             $table->increments('Id_Pericial');
             $table->string('ID_evento', 10);
             $table->integer('Id_motivo_solicitud')->nullable();
-            $table->string('Tipo_vinculacion', 15)->nullable();
-            $table->string('Regimen_salud', 13)->nullable();
+            $table->integer('Tipo_vinculacion')->nullable();
+            $table->integer('Regimen_salud')->nullable();
             $table->integer('Id_solicitante')->nullable();
             $table->integer('Id_nombre_solicitante')->nullable();
-            $table->string('Fuente_informacion', 10)->nullable();
+            $table->integer('Fuente_informacion')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

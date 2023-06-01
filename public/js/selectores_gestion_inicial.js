@@ -262,7 +262,7 @@ $(document).ready(function(){
             $('#tipo_documento').append('<option value="" selected>Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#tipo_documento').append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                $('#tipo_documento').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
             }
         }
     });
@@ -281,7 +281,7 @@ $(document).ready(function(){
             $('#genero').append('<option value="" selected>Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#genero').append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                $('#genero').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
             }
         }
     });
@@ -300,7 +300,7 @@ $(document).ready(function(){
             $('#estado_civil').append('<option value="" selected>Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#estado_civil').append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                $('#estado_civil').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
             }
         }
     });
@@ -319,7 +319,7 @@ $(document).ready(function(){
             $('#nivel_escolar').append('<option value="" selected>Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#nivel_escolar').append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                $('#nivel_escolar').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
             }
         }
     });
@@ -401,7 +401,7 @@ $(document).ready(function(){
             $('#tipo_afiliado').append('<option value="" selected>Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#tipo_afiliado').append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                $('#tipo_afiliado').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
             }
         }
     });
@@ -663,7 +663,7 @@ $(document).ready(function(){
             $('#tipovinculo').append('<option value="" selected>Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#tipovinculo').append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                $('#tipovinculo').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
             }
         }
     });
@@ -683,7 +683,7 @@ $(document).ready(function(){
             $('#regimen').append('<option value="" selected>Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#regimen').append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                $('#regimen').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
             }
         }
     });
@@ -748,7 +748,7 @@ $(document).ready(function(){
             $('#fuente_informacion').append('<option value="" selected>Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#fuente_informacion').append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                $('#fuente_informacion').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
             }
         }
     });

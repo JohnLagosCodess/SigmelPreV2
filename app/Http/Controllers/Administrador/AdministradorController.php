@@ -498,7 +498,7 @@ class AdministradorController extends Controller
         if ($parametro == "lista_tipo_documento") {
             
             $listado_tipo_documento = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Nombre_parametro')
+                            ->select('Id_Parametro','Nombre_parametro')
                             ->where('Tipo_lista', 'Tipo de documento')
                             ->get();
             
@@ -510,7 +510,7 @@ class AdministradorController extends Controller
         if ($parametro == "genero") {
             
             $listado_generos = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Nombre_parametro')
+                            ->select('Id_Parametro','Nombre_parametro')
                             ->where('Tipo_lista', 'Genero')
                             ->get();
             
@@ -522,7 +522,7 @@ class AdministradorController extends Controller
         if ($parametro == "estado_civil") {
             
             $listado_estado_civil = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Nombre_parametro')
+                            ->select('Id_Parametro','Nombre_parametro')
                             ->where('Tipo_lista', 'Estado civil')
                             ->get();
             
@@ -534,7 +534,7 @@ class AdministradorController extends Controller
         if ($parametro == "nivel_escolar") {
             
             $listado_nivel_escolar = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Nombre_parametro')
+                            ->select('Id_Parametro','Nombre_parametro')
                             ->where('Tipo_lista', 'Nivel escolar')
                             ->get();
             
@@ -580,7 +580,7 @@ class AdministradorController extends Controller
         if ($parametro == "tipo_afiliado") {
             
             $listado_tipo_afiliado = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Nombre_parametro')
+                            ->select('Id_Parametro','Nombre_parametro')
                             ->where('Tipo_lista', 'Tipo de Afiliado')
                             ->get();
             
@@ -707,7 +707,7 @@ class AdministradorController extends Controller
         /* LISTADO TIPO VINCULO */
         if($parametro == 'listado_tipo_vinculo'){
             $listado_tipo_vinculo = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Nombre_parametro')->where('Tipo_lista', '=', 'Tipo de vinculacion')->get();
+                            ->select('Id_Parametro','Nombre_parametro')->where('Tipo_lista', '=', 'Tipo de vinculacion')->get();
             $info_listado_tipo_vinculo = json_decode(json_encode($listado_tipo_vinculo, true));
             return response()->json(($info_listado_tipo_vinculo));
         }
@@ -715,7 +715,7 @@ class AdministradorController extends Controller
         /* LISTADO REGIMEN EN SALUD */
         if($parametro == 'listado_solicitud_regimen_en_salud'){
             $listado_solicitud_regimen_salud = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Nombre_parametro')->where('Tipo_lista', '=', 'Solicitud Regimen en salud')->get();
+                            ->select('Id_Parametro','Nombre_parametro')->where('Tipo_lista', '=', 'Solicitud Regimen en salud')->get();
             $info_listado_solicitud_regimen_salud = json_decode(json_encode($listado_solicitud_regimen_salud, true));
             return response()->json(($info_listado_solicitud_regimen_salud));
         }
@@ -742,7 +742,7 @@ class AdministradorController extends Controller
         /* FUENTE DE INFORMACIÓN */
         if($parametro == 'listado_fuente_informacion'){
             $listado_fuente_informacion = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Nombre_parametro')
+                            ->select('Id_Parametro','Nombre_parametro')
                             ->where('Tipo_lista', '=', 'Fuente de informacion')
                             ->get();
             $info_listado_fuente_informacion = json_decode(json_encode($listado_fuente_informacion, true));
