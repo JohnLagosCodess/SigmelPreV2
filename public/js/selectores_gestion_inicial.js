@@ -187,6 +187,21 @@ $(document).ready(function(){
         allowClear: false
     });
 
+    /* VALIDACIÓN CUANDO SE ESCRIBA EL NOMBRE DEL AFILIADO SIEMPRE SEA EN MAYUSCULA */
+    $('#nombre_afiliado').keyup(function(){
+        $('#nombre_afiliado').val($(this).val().toUpperCase());
+    });
+
+    /* VALIDACIÓN CUANDO SE ESCRIBA EL NOMBRE DEL APODERADO SIEMPRE SEA EN MAYUSCULA */
+    $('#nombre_apoderado').keyup(function(){
+        $('#nombre_apoderado').val($(this).val().toUpperCase());
+    });
+
+    /* VALIDACIÓN CUANDO SE ESCRIBA LA EMPRESA SIEMPRE SEA EN MAYUSCULA */
+    $('#empresa').keyup(function(){
+        $('#empresa').val($(this).val().toUpperCase());
+    });
+
     /* LLENADO DE SELECTORES PRINCIPALES */
     let token = $('input[name=_token]').val();
 
@@ -876,17 +891,26 @@ $(document).ready(function(){
     /* Validación opción Exterior del selector Departamento (Información Afiliado) */
     $('#departamento_info_afiliado').change(function(){
         let opt_exterior_info_afiliado = $('#departamento_info_afiliado option:selected').text();
-        if (opt_exterior_info_afiliado === "Exterior") {
+        if (opt_exterior_info_afiliado != "Exterior") {
+            $(".columna_pais_exterior_info_afiliado").addClass('d-none');
+            $(".columna_pais_exterior_info_afiliado").slideUp('slow');
+            // $('#pais_exterior_info_afiliado').prop('required', true);
+        }
+    });
+
+    /* Validación opción País? del selector Municipio (Información Afiliado) */
+    $('#municipio_info_afiliado').change(function(){
+        let opt_exterior_info_afiliado = $('#municipio_info_afiliado option:selected').text();
+        if (opt_exterior_info_afiliado === "País?") {
             $(".columna_pais_exterior_info_afiliado").removeClass('d-none');
             $(".columna_pais_exterior_info_afiliado").slideDown('slow');
-            $('.columna_municipio_info_afiliado').addClass('d-none');
             // $('#pais_exterior_info_afiliado').prop('required', true);
         } else {
             $(".columna_pais_exterior_info_afiliado").slideUp('slow');
-            $('.columna_municipio_info_afiliado').removeClass('d-none');
             // $('#otro_nivel_escolar').prop('required', false);
         }
     });
+
 
     /* Validación opción Otro/¿Cuál? del selector Tipo de afiliado */
     $('#tipo_afiliado').change(function(){
@@ -966,17 +990,23 @@ $(document).ready(function(){
         }
     });
 
-    /* Validación opción OTRO/¿Cuál? del selector Tipo Departamentos  */
+    /* Validación opción OTRO/¿Cuál? del selector Departamentos (Información Laboral) */
     $('#departamento_info_laboral').change(function (){
         let opt_otro_departamento_exterior = $("#departamento_info_laboral option:selected").text();
-        if (opt_otro_departamento_exterior === "Exterior") {
+        if (opt_otro_departamento_exterior != "Exterior") {
+            $(".columna_pais_exterior_info_laboral").addClass('d-none');
+            $(".columna_pais_exterior_info_laboral").slideUp('slow');            
+        }
+    });
+
+     /* Validación opción País? del selector Municipios (Información Laboral) */
+     $('#municipio_info_laboral').change(function (){
+        let opt_otro_departamento_exterior = $("#municipio_info_laboral option:selected").text();
+        if (opt_otro_departamento_exterior === "País?") {
             $(".columna_pais_exterior_info_laboral").removeClass('d-none');
             $(".columna_pais_exterior_info_laboral").slideDown('slow');            
-            $('#pais_exterior_info_laboral').prop('required', true);
-            $(".columna_municipio_info_laboral").slideUp('slow');
         } else {
             $(".columna_pais_exterior_info_laboral").slideUp('slow');
-            $(".columna_municipio_info_laboral").slideDown('slow');
 
         }
     });

@@ -19,6 +19,7 @@ use App\Imports\ProbandoImportCsvSinEncabezados;
 
 use App\Imports\ProbandoImportXslxConEncabezados;
 use App\Imports\ProbandoImportXslxSinEncabezados;
+use App\Models\sigmel_lista_solicitantes;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ProbandoController extends Controller
@@ -49,6 +50,8 @@ class ProbandoController extends Controller
         $datos_pruebas = sigmel_probando::on('mysql2')->get();
         $user= Auth::user();
         return view ('otra_conexion', compact('datos_pruebas', 'user'));
+
+
     }
 
     /* EJEMPLO 1 PHP SPREADSHEET */

@@ -8,13 +8,24 @@
 @stop
 
 @section('content')
+    <h5>Los campos marcados con <span style="color:red;">(*)</span> son obligatorios.</h5>
     <div class="card-info" style="border: 1px solid black;">
         <div class="card-header text-center">
             <h4>NUEVO</h4>
             <h4>Registrar Evento</h4>
         </div>
         <div class="card-body">
-            <form action="" method="POST">
+            @if (session()->get('mensaje_confirmacion_nuevo_evento'))
+                <div class="alert alert-success mt-2" role="alert">
+                    <strong>{{session()->get('mensaje_confirmacion_nuevo_evento')}}</strong>
+                </div>
+            @endif
+            @if (session()->get('confirmacion_evento_no_creado'))
+                <div class="alert alert-danger mt-2" role="alert">
+                    <strong>{{session()->get('confirmacion_evento_no_creado')}}</strong>
+                </div>
+            @endif
+            <form action="{{route('creacionEvento')}}" method="POST">
                 @csrf
                 <div class="row">
                     {{-- AQUI VA EL FORMULARIO COMPLETO --}}
@@ -23,19 +34,19 @@
                         <div class="row">
                             <div class="col-sm">
                                 <div class="form-group">
-                                    <label for="cliente" class="col-form-label">Cliente</label>
-                                    <select class="cliente custom-select" name="cliente" id="cliente" required></select>
+                                    <label for="cliente" class="col-form-label">Cliente <span style="color:red;">(*)</span></label>
+                                    <select class="cliente custom-select" name="cliente" id="cliente" required="true"></select>
                                 </div>
                             </div>
                             <div class="col-sm">
                                 <div class="form-group">
-                                    <label for="tipo_cliente" class="col-form-label">Tipo de Cliente</label>
+                                    <label for="tipo_cliente" class="col-form-label">Tipo de Cliente <span style="color:red;">(*)</span></label>
                                     <select class="tipo_cliente custom-select" name="tipo_cliente" id="tipo_cliente" required></select>
                                 </div>
                             </div>
                             <div class="col-sm columna_otro_tipo_cliente">
                                 <div class="form-group">
-                                    <label for="otro_tipo_cliente" class="col-form-label" style="color:;">Otro Tipo Cliente</label>
+                                    <label for="otro_tipo_cliente" class="col-form-label">Otro Tipo Cliente <span style="color:red;">(*)</span></label>
                                     <input class="otro_tipo_cliente form-control" name="otro_tipo_cliente" id="otro_tipo_cliente">
                                 </div>
                             </div>
@@ -51,29 +62,30 @@
                                         <div class="row">
                                             <div class="col-sm-3">
                                                 <div class="form-group">
-                                                    <label for="tipo_evento" class="col-form-label">Tipo de evento</label>
+                                                    <label for="tipo_evento" class="col-form-label">Tipo de evento <span style="color:red;">(*)</span></label>
                                                     <select class="tipo_evento custom-select" name="tipo_evento" id="tipo_evento" required></select>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group">
-                                                    <label for="id_evento" class="col-form-label">ID evento</label>
+                                                    <label for="id_evento" class="col-form-label">ID evento <span style="color:red;">(*)</span></label>
                                                     <input type="text" class="id_evento form-control" name="id_evento" id="id_evento" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group">
-                                                    <label for="fecha_evento" class="col-form-label">Fecha de evento</label>
+                                                    <label for="fecha_evento" class="col-form-label">Fecha de evento <span style="color:red;">(*)</span></label>
                                                     <input type="date" class="fecha_evento form-control" name="fecha_evento" id="fecha_evento" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group">
-                                                    <label for="fecha_radicacion" class="col-form-label">Fecha de radicación</label>
+                                                    <label for="fecha_radicacion" class="col-form-label">Fecha de radicación <span style="color:red;">(*)</span></label>
                                                     <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" required>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="mostrar_tabla_eventos"></div>
                                     </div>
                                 </div>
                             </div>
@@ -89,20 +101,20 @@
                                         <div class="row">
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="nombre_afiliado" class="col-form-label">Nombre de afiliado</label>
+                                                    <label for="nombre_afiliado" class="col-form-label">Nombre de afiliado <span style="color:red;">(*)</span></label>
                                                     <input type="text" class="nombre_afiliado form-control" name="nombre_afiliado" id="nombre_afiliado" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="direccion_info_afiliado" class="col-form-label">Dirección</label>
+                                                    <label for="direccion_info_afiliado" class="col-form-label">Dirección <span style="color:red;">(*)</span></label>
                                                     <input type="text" class="direccion_info_afiliado form-control" name="direccion_info_afiliado" id="direccion_info_afiliado" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="tipo_documento" class="col-form-label">Tipo de documento</label>
-                                                    <select class="tipo_documento custom-select" name="tipo_documento " id="tipo_documento" required></select>
+                                                    <label for="tipo_documento" class="col-form-label">Tipo de documento <span style="color:red;">(*)</span></label>
+                                                    <select class="tipo_documento custom-select" name="tipo_documento" id="tipo_documento" required></select>
                                                 </div>
                                             </div>
                                             <div class="col-sm otro_documento d-none">
@@ -113,7 +125,7 @@
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="nro_identificacion" class="col-form-label">N° de identificación</label>
+                                                    <label for="nro_identificacion" class="col-form-label">N° de identificación <span style="color:red;">(*)</span></label>
                                                     <input type="text" class="nro_identificacion form-control" name="nro_identificacion" id="nro_identificacion" required>
                                                 </div>
                                             </div>
@@ -121,7 +133,7 @@
                                         <div class="row">
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="fecha_nacimiento" class="col-form-label">Fecha de nacimiento</label>
+                                                    <label for="fecha_nacimiento" class="col-form-label">Fecha de nacimiento <span style="color:red;">(*)</span></label>
                                                     <input type="date" class="fecha_nacimiento form-control" name="fecha_nacimiento" id="fecha_nacimiento" required>
                                                 </div>
                                             </div>
@@ -147,7 +159,7 @@
                                         <div class="row">
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="telefono" class="col-form-label">Teléfono/Celular</label>
+                                                    <label for="telefono" class="col-form-label">Teléfono/Celular <span style="color:red;">(*)</span></label>
                                                     <input type="text" class="telefono form-control" name="telefono" id="telefono" required>
                                                 </div>
                                             </div>
@@ -189,16 +201,16 @@
                                                     <select class="departamento_info_afiliado custom-select" name="departamento_info_afiliado" id="departamento_info_afiliado"></select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm columna_pais_exterior_info_afiliado d-none">
-                                                <div class="form-group">
-                                                    <label for="pais_exterior_info_afiliado" class="col-form-label">País Exterior</label>
-                                                    <input type="text" class="pais_exterior_info_afiliado form-control" name="pais_exterior_info_afiliado" id="pais_exterior_info_afiliado">
-                                                </div>
-                                            </div>
                                             <div class="col-sm columna_municipio_info_afiliado">
                                                 <div class="form-group">
                                                     <label for="municipio_info_afiliado" class="col-form-label">Municipio</label>
                                                     <select class="municipio_info_afiliado custom-select" name="municipio_info_afiliado" id="municipio_info_afiliado" disabled></select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm columna_pais_exterior_info_afiliado d-none">
+                                                <div class="form-group">
+                                                    <label for="pais_exterior_info_afiliado" class="col-form-label">País Exterior</label>
+                                                    <input type="text" class="pais_exterior_info_afiliado form-control" name="pais_exterior_info_afiliado" id="pais_exterior_info_afiliado">
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -285,7 +297,7 @@
                                             </div>
                                             <div class="col-3">
                                                 <div class="form-group">
-                                                    <label for="activo" class="col-form-label">Activo</label>
+                                                    <label for="activo" class="col-form-label">Activo <span style="color:red;">(*)</span></label>
                                                     <select class="activo custom-select" name="activo" id="activo" required></select>
                                                 </div>
                                             </div>
@@ -305,19 +317,19 @@
                                         <div class="row text-center">
                                             <div class="col-sm">
                                                 <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="tipo_empleo" id="empleo_actual" value="empleo_actual" required>
+                                                  <input class="form-check-input" type="radio" name="tipo_empleo" id="empleo_actual" value="Empleado actual" required>
                                                   <label class="form-check-label" for="empleo_actual">Empleo Actual</label>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="tipo_empleo" id="independiente" value="independiente" required>
+                                                  <input class="form-check-input" type="radio" name="tipo_empleo" id="independiente" value="Independiente" required>
                                                   <label class="form-check-label" for="independiente">Independiente</label>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="tipo_empleo" id="beneficiario" value="beneficiario" required>
+                                                  <input class="form-check-input" type="radio" name="tipo_empleo" id="beneficiario" value="Beneficiario" required>
                                                   <label class="form-check-label" for="beneficiario">Beneficiario</label>
                                                 </div>
                                             </div>
@@ -337,13 +349,13 @@
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="empresa" class="col-form-label">Empresa</label>
+                                                    <label for="empresa" class="col-form-label">Empresa <span style="color:red;">(*)</span></label>
                                                     <input type="text" class="empresa form-control" name="empresa" id="empresa" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="nit_cc" class="col-form-label">NIT / CC</label>
+                                                    <label for="nit_cc" class="col-form-label">NIT / CC <span style="color:red;">(*)</span></label>
                                                     <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc" required>
                                                 </div>
                                             </div>
@@ -373,16 +385,16 @@
                                                     <select class="departamento_info_laboral custom-select" name="departamento_info_laboral" id="departamento_info_laboral"></select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm columna_pais_exterior_info_laboral d-none">
-                                                <div class="form-group">
-                                                    <label for="pais_exterior_info_laboral" class="col-form-label">País Exterior</label>
-                                                    <input type="text" class="pais_exterior_info_laboral form-control" name="pais_exterior_info_laboral" id="pais_exterior_info_laboral">
-                                                </div>
-                                            </div>
                                             <div class="col-sm columna_municipio_info_laboral">
                                                 <div class="form-group">
                                                     <label for="municipio_info_laboral" class="col-form-label">Municipio</label>
                                                     <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral" disabled></select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm columna_pais_exterior_info_laboral d-none">
+                                                <div class="form-group">
+                                                    <label for="pais_exterior_info_laboral" class="col-form-label">País Exterior</label>
+                                                    <input type="text" class="pais_exterior_info_laboral form-control" name="pais_exterior_info_laboral" id="pais_exterior_info_laboral">
                                                 </div>
                                             </div>
                                         </div>
@@ -572,15 +584,15 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-sm">
-                                                <label for="proceso" class="col-form label">Proceso</label>
+                                                <label for="proceso" class="col-form label">Proceso <span style="color:red;">(*)</span></label>
                                                 <select class="proceso custom-select" name="proceso" id="proceso" requierd></select>
                                             </div>
                                             <div class="col-sm">
-                                                <label for="servicio" class="col-form label">Servicio</label>
+                                                <label for="servicio" class="col-form label">Servicio <span style="color:red;">(*)</span></label>
                                                 <select class="servicio custom-select" name="servicio" id="servicio" requierd disabled></select>
                                             </div>
                                             <div class="col-sm">
-                                                <label for="accion" class="col-form label">Acción</label>
+                                                <label for="accion" class="col-form label">Acción <span style="color:red;">(*)</span></label>
                                                 <select class="accion custom-select" name="accion" id="accion" requierd></select>
                                             </div>                                                                                       
                                         </div>    
@@ -596,14 +608,17 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="card-footer">
+                        <div class="grupo_botones" style="float: right;">
+                            <input type="reset" class="btn btn-info" value="Borrar">
+                            <input type="submit" class="btn btn-info" value="Guardar">
+                        </div>
+                    </div>
+                </div>
             </form>
         </div>
-        <div class="card-footer">
-            <div class="grupo_botones" style="float: right;">
-                <input type="submit" class="btn btn-info" value="Borrar">
-                <input type="submit" class="btn btn-info" value="Guardar">
-            </div>
-        </div>
+        
     </div>
 @stop
 

@@ -205,10 +205,14 @@ Route::post('/Sigmel/usuarios/AplicarEdicionPlantilla', [IngenieriaController::c
 Route::get('/Sigmel/RolIngenieria', [IngenieriaController::class, 'show'])->name('IndexIngenieria');
 // Vista: Index Rol Administrador
 Route::get('/Sigmel/RolAdministrador', [AdministradorController::class, 'show'])->name('IndexAdministrador');
+
+// 23/05/2023
 // Vista: Gestión Inicial Nuevo
 Route::get('/Sigmel/RolAdministrador/GestionInicialNuevo', [AdministradorController::class, 'mostrarVistaGestionInicialNuevo'])->name('gestionInicialNuevo');
 // Acción: Rellenar los selectores del formulario acorde al parametro indicado
 Route::post('/cargarselectores', [AdministradorController::class, 'cargueListadoSelectores']);
+// Acción: Registrar evento
+Route::post('/Sigmel/RolAdministrador/CreacionEvento', [AdministradorController::class, 'creacionEvento'])->name('creacionEvento');
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
