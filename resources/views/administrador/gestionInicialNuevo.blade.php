@@ -6,6 +6,11 @@
             <h1>HOLA</h1>
         </div>
     </div>
+    <div class='row mb-2'>
+        <div class='col-sm-6'>
+            <h1>prueba 2</h1>
+        </div>
+    </div>
 @stop
 
 @section('content')
