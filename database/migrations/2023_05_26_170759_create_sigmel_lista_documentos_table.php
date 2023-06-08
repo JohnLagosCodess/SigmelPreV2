@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::connection('sigmel_gestiones')->create('sigmel_lista_documentos', function (Blueprint $table) {
             $table->increments('Id_Documento');
             $table->string('Nro_documento', 3);
-            $table->string('Nombre_documento', 60);
+            $table->text('Nombre_documento');
+            $table->enum('Requerido', ['Si', 'No']);
             $table->enum('Estado', ['activo', 'inactivo'])->default('activo');
             $table->date('F_registro_documento');
         });
