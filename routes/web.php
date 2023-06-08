@@ -213,6 +213,28 @@ Route::get('/Sigmel/RolAdministrador/GestionInicialNuevo', [AdministradorControl
 Route::post('/cargarselectores', [AdministradorController::class, 'cargueListadoSelectores']);
 // Acción: Registrar evento
 Route::post('/Sigmel/RolAdministrador/CreacionEvento', [AdministradorController::class, 'creacionEvento'])->name('creacionEvento');
+// Acción: Consulta de Nro identificacion afiliado y fecha evento para saber si permite un registro de evento nuevo
+Route::post('/consultaFechaNroIdent', [AdministradorController::class, 'ConsultaFechaNroIdent']);
+
+// Acción: Consultar datos Información Afiliado acorde al numero de identificación para autocompletar los campos de
+// información afiliado del formulario de creación de envento.
+Route::post('/consultarInfoAfiliadoLlenar', [AdministradorController::class, 'llenarDatosInfoAfiliado']);
+// Acción: Consultar datos Información Laboral acorde al numero de identificación para autocompletar los campos de
+// información laboral del formulario de creación de envento.
+Route::post('/consultarInfoLaboralLlenar', [AdministradorController::class, 'llenarDatosInfoLaboral']);
+// Acción:Registrar Otra EMpresa en el modal de Empresas
+Route::post('/registrarOtraEmpresa', [AdministradorController::class, 'registrarOtraEmpresa']);
+// Acción: Traer el listado de historicos de empresa dependiendo del numero de identificacion del afiliado
+Route::post('/consultaHistoricoEmpresas', [AdministradorController::class, 'consultaHistoricoEmpresas']);
+
+// Acción: Consulta del Id Evento para validar si ya se encuentra registrado el Id Evento
+Route::post('/consultaIdEvento', [AdministradorController::class, 'ConsultaIDEvento']);
+// Vista: Edicion del Id Evento
+Route::post('/Sigmel/RolAdministrador/GestionInicialEdicion', [AdministradorController::class, 'mostrarVistaEdicionInicialNuevo'])->name('gestionInicialEdicion');
+// Acción: Actualizar evento
+Route::post('/Sigmel/RolAdministrador/ActualizarEvento', [AdministradorController::class, 'actualizarGestionInicial'])->name('actualizarEvento');
+
+
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 

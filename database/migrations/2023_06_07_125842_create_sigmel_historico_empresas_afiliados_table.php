@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('sigmel_gestiones')->create('sigmel_informacion_laboral_eventos', function (Blueprint $table) {
-            $table->increments('Id_Laboral');
-            $table->string('ID_evento', 10);
-            $table->string('Nro_identificacion', 25);
+        Schema::connection('sigmel_gestiones')->create('sigmel_historico_empresas_afiliados', function (Blueprint $table) {
+            $table->increments('Id_HistoricoLaboral');
+            $table->string('Nro_identificacion', 25)->nullable();
             $table->enum('Tipo_empleado', ['Empleado actual', 'Independiente', 'Beneficiario']);
             $table->integer('Id_arl')->nullable();
             $table->text('Empresa');
@@ -46,6 +45,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sigmel_informacion_laboral_eventos');
+        Schema::dropIfExists('sigmel_historico_empresas_afiliados');
     }
 };

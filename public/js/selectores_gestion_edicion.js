@@ -103,8 +103,21 @@ $(document).ready(function(){
         allowClear: false
     });
 
+    /* INICIALIZACIÓN DEL SELECT2 DE LISTADO ARL MODAL (INFORMACIÓN LABORAL) */
+    $(".arl_info_laboral_registrar").select2({
+        placeholder: "Seleccione una opción",
+        allowClear: false
+        // dropdownParent: $('#myModal')
+    });
+
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DEPARTAMENTO (INFORMACIÓN LABORAL) */
     $(".departamento_info_laboral").select2({
+        placeholder: "Seleccione una opción",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DEPARTAMENTO MODAL (INFORMACIÓN LABORAL) */
+    $(".departamento_info_laboral_registrar").select2({
         placeholder: "Seleccione una opción",
         allowClear: false
     });
@@ -115,8 +128,20 @@ $(document).ready(function(){
         allowClear: false
     });
 
+    /* INICIALIZACIÓN DEL SELECT2 DE LISTADO MUNICIPIO MODAL (INFORMACIÓN LABORAL) */
+    $(".municipio_info_laboral_registrar").select2({
+        placeholder: "Seleccione una opción",
+        allowClear: false
+    });
+
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO ACTIVIDAD ECONOMICA */
     $(".actividad_economica").select2({
+        placeholder: "Seleccione una opción",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN DEL SELECT2 DE LISTADO ACTIVIDAD ECONOMICA MODAL */
+    $(".actividad_economica_registrar").select2({
         placeholder: "Seleccione una opción",
         allowClear: false
     });
@@ -127,8 +152,20 @@ $(document).ready(function(){
         allowClear: false
     });
 
+    /* INICIALIZACIÓN DEL SELECT2 DE LISTADO CLASE RIESGO MODAL */
+    $(".clase_riesgo_registrar").select2({
+        placeholder: "Seleccione una opción",
+        allowClear: false
+    });
+
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO CIUO */
     $(".codigo_ciuo").select2({
+        placeholder: "Seleccione una opción",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN DEL SELECT2 DE LISTADO CIUO MODAL */
+    $(".codigo_ciuo_registrar").select2({
         placeholder: "Seleccione una opción",
         allowClear: false
     });
@@ -215,12 +252,13 @@ $(document).ready(function(){
         url:'/cargarselectores',
         data: datos_lista_clientes,
         success:function(data) {
-            // console.log(data);
-            $('#cliente').empty();
-            $('#cliente').append('<option value="" selected>Seleccione</option>');
+            // console.log(data);            
+            let clienteEdicion = $('select[name=cliente]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#cliente').append('<option value="'+data[claves[i]]["Id_Cliente"]+'">'+data[claves[i]]["Nombre_cliente"]+'</option>');
+                if (data[claves[i]]["Id_Cliente"] != clienteEdicion) {
+                    $('#cliente').append('<option value="'+data[claves[i]]["Id_Cliente"]+'">'+data[claves[i]]["Nombre_cliente"]+'</option>');
+                }
             }
         }
     });
@@ -235,14 +273,16 @@ $(document).ready(function(){
         data: datos_lista_tipo_clientes,
         success:function(data) {
             // console.log(data);
-            $('#tipo_cliente').empty();
-            $('#tipo_cliente').append('<option value="" selected>Seleccione</option>');
+            let Id_TipoClienteEdicion = $('select[name=tipo_cliente]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#tipo_cliente').append('<option value="'+data[claves[i]]["Id_TipoCliente"]+'">'+data[claves[i]]["Nombre_tipo_cliente"]+'</option>');
+                if (data[claves[i]]["Id_TipoCliente"] != Id_TipoClienteEdicion) {
+                    $('#tipo_cliente').append('<option value="'+data[claves[i]]["Id_TipoCliente"]+'">'+data[claves[i]]["Nombre_tipo_cliente"]+'</option>');                    
+                }
             }
         }
     });
+
     // listado tipo de evento
     let datos_lista_tipo_evento = {
         '_token': token,
@@ -254,14 +294,16 @@ $(document).ready(function(){
         data: datos_lista_tipo_evento,
         success:function(data) {
             // console.log(data);
-            $('#tipo_evento').empty();
-            $('#tipo_evento').append('<option value="" selected>Seleccione</option>');
+            let tipo_eventoEdicion = $('select[name=tipo_evento]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#tipo_evento').append('<option value="'+data[claves[i]]["Id_Evento"]+'">'+data[claves[i]]["Nombre_evento"]+'</option>');
+                if (data[claves[i]]["Id_Evento"] != tipo_eventoEdicion) {
+                    $('#tipo_evento').append('<option value="'+data[claves[i]]["Id_Evento"]+'">'+data[claves[i]]["Nombre_evento"]+'</option>');                    
+                }
             }
         }
     });
+
     // listado tipos de documento
     let datos_lista_tipo_documento = {
         '_token': token,
@@ -273,14 +315,16 @@ $(document).ready(function(){
         data: datos_lista_tipo_documento,
         success:function(data) {
             // console.log(data);
-            $('#tipo_documento').empty();
-            $('#tipo_documento').append('<option value="" selected>Seleccione</option>');
+            let tipo_documentoEdicion = $('select[name=tipo_documento]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#tipo_documento').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                if (data[claves[i]]["Id_Parametro"] != tipo_documentoEdicion) {
+                    $('#tipo_documento').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');                    
+                }
             }
         }
     });
+
     // listado generos
     let datos_lista_generos = {
         '_token': token,
@@ -292,14 +336,16 @@ $(document).ready(function(){
         data: datos_lista_generos,
         success:function(data) {
             // console.log(data);
-            $('#genero').empty();
-            $('#genero').append('<option value="" selected>Seleccione</option>');
+            let generoEdicion = $('select[name=genero]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#genero').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                if (data[claves[i]]["Id_Parametro"] != generoEdicion) {
+                    $('#genero').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');                    
+                }
             }
         }
     });
+
     // listado estado civil
     let datos_lista_estado_civil = {
         '_token': token,
@@ -311,11 +357,12 @@ $(document).ready(function(){
         data: datos_lista_estado_civil,
         success:function(data) {
             // console.log(data);
-            $('#estado_civil').empty();
-            $('#estado_civil').append('<option value="" selected>Seleccione</option>');
+            let estado_civilEdicion = $('select[name=estado_civil]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#estado_civil').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                if (data[claves[i]]["Id_Parametro"] != estado_civilEdicion) {
+                    $('#estado_civil').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');                    
+                }
             }
         }
     });
@@ -330,11 +377,12 @@ $(document).ready(function(){
         data: datos_lista_nivel_escolar,
         success:function(data) {
             // console.log(data);
-            $('#nivel_escolar').empty();
-            $('#nivel_escolar').append('<option value="" selected>Seleccione</option>');
+            let nivel_escolarEdicion = $('select[name=nivel_escolar]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#nivel_escolar').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                if (data[claves[i]]["Id_Parametro"] != nivel_escolarEdicion) {
+                    $('#nivel_escolar').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');                    
+                }
             }
         }
     });
@@ -349,14 +397,16 @@ $(document).ready(function(){
         data: datos_lista_dominancia,
         success:function(data) {
             // console.log(data);
-            $('#dominancia').empty();
-            $('#dominancia').append('<option value="" selected>Seleccione</option>');
+            let dominanciaEdicion = $('select[name=dominancia]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#dominancia').append('<option value="'+data[claves[i]]["Id_Dominancia"]+'">'+data[claves[i]]["Nombre_dominancia"]+'</option>');
+                if (data[claves[i]]["Id_Dominancia"] != dominanciaEdicion) {
+                    $('#dominancia').append('<option value="'+data[claves[i]]["Id_Dominancia"]+'">'+data[claves[i]]["Nombre_dominancia"]+'</option>');                    
+                }
             }
         }
     });
+
     // listado Departamentos (Informacion Afiliado)
     let datos_lista_departamentos_info_afiliado = {
         '_token': token,
@@ -368,14 +418,16 @@ $(document).ready(function(){
         data: datos_lista_departamentos_info_afiliado,
         success:function(data) {
             // console.log(data);
-            $('#departamento_info_afiliado').empty();
-            $('#departamento_info_afiliado').append('<option value="" selected>Seleccione</option>');
+            let departamento_info_afiliadoEdicion = $('select[name=departamento_info_afiliado]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#departamento_info_afiliado').append('<option value="'+data[claves[i]]["Id_departamento"]+'">'+data[claves[i]]["Nombre_departamento"]+'</option>');
+                if (data[claves[i]]["Id_departamento"] != departamento_info_afiliadoEdicion) {
+                    $('#departamento_info_afiliado').append('<option value="'+data[claves[i]]["Id_departamento"]+'">'+data[claves[i]]["Nombre_departamento"]+'</option>');                    
+                }
             }
         }
     });
+
     // listado municipios dependiendo del departamentos (informacion afiliado)
     $('#departamento_info_afiliado').change(function(){
         $('#municipio_info_afiliado').prop('disabled', false);
@@ -392,10 +444,12 @@ $(document).ready(function(){
             success:function(data) {
                 // console.log(data);
                 $('#municipio_info_afiliado').empty();
-                $('#municipio_info_afiliado').append('<option value="" selected>Seleccione</option>');
+                let municipio_info_afiliadoEdicion = $('select[name=municipio_info_afiliado]').val();
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
-                    $('#municipio_info_afiliado').append('<option value="'+data[claves[i]]["Id_municipios"]+'">'+data[claves[i]]["Nombre_municipio"]+'</option>');
+                    if (data[claves[i]]["Id_municipios"] != municipio_info_afiliadoEdicion) {
+                        $('#municipio_info_afiliado').append('<option value="'+data[claves[i]]["Id_municipios"]+'">'+data[claves[i]]["Nombre_municipio"]+'</option>');                        
+                    }
                 }
             }
         });
@@ -412,14 +466,16 @@ $(document).ready(function(){
         data: datos_lista_tipo_afiliado,
         success:function(data) {
             // console.log(data);
-            $('#tipo_afiliado').empty();
-            $('#tipo_afiliado').append('<option value="" selected>Seleccione</option>');
+            let tipo_afiliadoEdicion = $('select[name=tipo_afiliado]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#tipo_afiliado').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                if (data[claves[i]]["Id_Parametro"] != tipo_afiliadoEdicion) {
+                    $('#tipo_afiliado').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');                    
+                }
             }
         }
     });
+
     // lista eps
     let datos_lista_eps = {
         '_token': token,
@@ -431,11 +487,12 @@ $(document).ready(function(){
         data: datos_lista_eps,
         success:function(data) {
             // console.log(data);
-            $('#eps').empty();
-            $('#eps').append('<option value="" selected>Seleccione</option>');
+            let epsEdicion = $('select[name=eps]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#eps').append('<option value="'+data[claves[i]]["Id_Eps"]+'">'+data[claves[i]]["Nombre_eps"]+'</option>');
+                if (data[claves[i]]["Id_Eps"] != epsEdicion) {                    
+                    $('#eps').append('<option value="'+data[claves[i]]["Id_Eps"]+'">'+data[claves[i]]["Nombre_eps"]+'</option>');
+                }
             }
         }
     });
@@ -451,11 +508,12 @@ $(document).ready(function(){
         data: datos_lista_afp,
         success:function(data) {
             // console.log(data);
-            $('#afp').empty();
-            $('#afp').append('<option value="" selected>Seleccione</option>');
+            let afpEdicion = $('select[name=afp]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#afp').append('<option value="'+data[claves[i]]["Id_Afp"]+'">'+data[claves[i]]["Nombre_afp"]+'</option>');
+                if (data[claves[i]]["Id_Afp"] != afpEdicion) {                    
+                    $('#afp').append('<option value="'+data[claves[i]]["Id_Afp"]+'">'+data[claves[i]]["Nombre_afp"]+'</option>');
+                }
             }
         }
     });
@@ -470,14 +528,16 @@ $(document).ready(function(){
         data: datos_lista_arl_info_afiliado,
         success:function(data) {
             // console.log(data);
-            $('#arl_info_afiliado').empty();
-            $('#arl_info_afiliado').append('<option value="" selected>Seleccione</option>');
+            let arl_info_afiliadoEdicion = $('select[name=arl_info_afiliado]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#arl_info_afiliado').append('<option value="'+data[claves[i]]["Id_Arl"]+'">'+data[claves[i]]["Nombre_arl"]+'</option>');
+                if (data[claves[i]]["Id_Arl"] != arl_info_afiliadoEdicion) {                    
+                    $('#arl_info_afiliado').append('<option value="'+data[claves[i]]["Id_Arl"]+'">'+data[claves[i]]["Nombre_arl"]+'</option>');
+                }
             }
         }
     });
+
     // lista apoderado
     let datos_lista_arl_apoderado = {
         '_token': token,
@@ -489,14 +549,16 @@ $(document).ready(function(){
         data: datos_lista_arl_apoderado,
         success:function(data) {
             // console.log(data);
-            $('#apoderado').empty();
-            $('#apoderado').append('<option value="" selected>Seleccione</option>');
+            let apoderadoEdicion = $('select[name=apoderado]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#apoderado').append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                if (data[claves[i]]["Nombre_parametro"] != apoderadoEdicion) {                    
+                    $('#apoderado').append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                }
             }
         }
     });
+
     // lista activo
     let datos_lista_activo = {
         '_token': token,
@@ -508,11 +570,12 @@ $(document).ready(function(){
         data: datos_lista_activo,
         success:function(data) {
             // console.log(data);
-            $('#activo').empty();
-            $('#activo').append('<option value="" selected>Seleccione</option>');
+            let activoEdicion = $('select[name=activo]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#activo').append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                if (data[claves[i]]["Nombre_parametro"] != activoEdicion) {                    
+                    $('#activo').append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                }
             }
         }
     });
@@ -528,15 +591,35 @@ $(document).ready(function(){
         data: datos_lista_arl,
         success:function(data) {
             // console.log(data);
-            $('#arl_info_laboral').empty();
-            $('#arl_info_laboral').append('<option value="" selected>Seleccione</option>');
+            let arl_info_laboralEdicion = $('select[name=arl_info_laboral]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#arl_info_laboral').append('<option value="'+data[claves[i]]["Id_Arl"]+'">'+data[claves[i]]["Nombre_arl"]+'</option>');
+                if (data[claves[i]]["Id_Arl"] != arl_info_laboralEdicion) {                    
+                    $('#arl_info_laboral').append('<option value="'+data[claves[i]]["Id_Arl"]+'">'+data[claves[i]]["Nombre_arl"]+'</option>');
+                }
             }
         }
     });
 
+    //LISTADO ARL MODAL (Información Laboral)
+    let datos_lista_arl_modal = {
+        '_token': token,
+        'parametro' : "listado_arl_info_laboral"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargarselectores',
+        data: datos_lista_arl_modal,
+        success:function(data) {
+            // console.log(data);
+            $('#arl_info_laboral_registrar').empty();
+            $('#arl_info_laboral_registrar').append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $('#arl_info_laboral_registrar').append('<option value="'+data[claves[i]]["Id_Arl"]+'">'+data[claves[i]]["Nombre_arl"]+'</option>');
+            }
+        }
+    });
 
     //LISTADO DEPARTAMENTO (Información Laboral)
     let datos_listado_departamento = {
@@ -549,15 +632,35 @@ $(document).ready(function(){
         data: datos_listado_departamento,
         success:function(data) {
             //console.log(data);
-            $('#departamento_info_laboral').empty();
-            $('#departamento_info_laboral').append('<option value="" selected>Seleccione</option>');
+            let departamento_info_laboralEdicion = $('select[name=departamento_info_laboral]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#departamento_info_laboral').append('<option value="'+data[claves[i]]["Id_departamento"]+'">'+data[claves[i]]["Nombre_departamento"]+'</option>');
+                if (data[claves[i]]["Id_departamento"] != departamento_info_laboralEdicion) {                    
+                    $('#departamento_info_laboral').append('<option value="'+data[claves[i]]["Id_departamento"]+'">'+data[claves[i]]["Nombre_departamento"]+'</option>');
+                }
             }
         }
     });
-    
+
+    //LISTADO DEPARTAMENTO MODAL (Información Laboral)
+    let datos_listado_departamento_registrar = {
+        '_token': token,
+        'parametro' : "listado_departamento_info_laboral"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargarselectores',
+        data: datos_listado_departamento_registrar,
+        success:function(data) {
+            //console.log(data);
+            $('#departamento_info_laboral_registrar').empty();
+            $('#departamento_info_laboral_registrar').append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $('#departamento_info_laboral_registrar').append('<option value="'+data[claves[i]]["Id_departamento"]+'">'+data[claves[i]]["Nombre_departamento"]+'</option>');
+            }
+        }
+    });
 
     // LISTADO DE MUNICIPIOS (Información Laboral)
     $('#departamento_info_laboral').change( function(){
@@ -576,10 +679,38 @@ $(document).ready(function(){
             success:function(data) {
                 //console.log(data);
                 $('#municipio_info_laboral').empty();
-                $('#municipio_info_laboral').append('<option value="" selected>Seleccione</option>');
+                let municipio_info_laboralEdicion = $('select[name=municipio_info_laboral]').val();
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
-                    $('#municipio_info_laboral').append('<option value="'+data[claves[i]]["Id_municipios"]+'">'+data[claves[i]]["Nombre_municipio"]+'</option>');
+                    if (data[claves[i]]["Id_municipios"] != municipio_info_laboralEdicion) {
+                        $('#municipio_info_laboral').append('<option value="'+data[claves[i]]["Id_municipios"]+'">'+data[claves[i]]["Nombre_municipio"]+'</option>');                        
+                    }
+                }
+            }
+        });
+    });
+
+    // LISTADO DE MUNICIPIOS MODAL (Información Laboral)
+    $('#departamento_info_laboral_registrar').change( function(){
+        $('#municipio_info_laboral_registrar').prop('disabled', false);
+        let id_departamento_info_laboral_reg = $('#departamento_info_laboral_registrar').val();
+        let datos_municipio_info_laboral_reg = {
+            '_token': token,
+            'parametro' : "municipios_info_laboral",
+            'id_departamento_info_laboral': id_departamento_info_laboral_reg
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_municipio_info_laboral_reg,
+            success:function(data) {
+                //console.log(data);
+                $('#municipio_info_laboral_registrar').empty();
+                $('#municipio_info_laboral_registrar').append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $('#municipio_info_laboral_registrar').append('<option value="'+data[claves[i]]["Id_municipios"]+'">'+data[claves[i]]["Nombre_municipio"]+'</option>');
                 }
             }
         });
@@ -596,11 +727,32 @@ $(document).ready(function(){
         data: datos_lista_actividad_economica,
         success:function(data) {
             //console.log(data);
-            $('#actividad_economica').empty();
-            $('#actividad_economica').append('<option value="" selected>Seleccione</option>');
+            let actividad_economicaEdicion = $('select[name=actividad_economica]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#actividad_economica').append('<option value="'+data[claves[i]]["Id_ActEco"]+'">'+data[claves[i]]["id_codigo"]+' - '+data[claves[i]]["Nombre_actividad"]+'</option>');
+                if (data[claves[i]]["Id_ActEco"] != actividad_economicaEdicion) {                    
+                    $('#actividad_economica').append('<option value="'+data[claves[i]]["Id_ActEco"]+'">'+data[claves[i]]["id_codigo"]+' - '+data[claves[i]]["Nombre_actividad"]+'</option>');
+                }
+            }
+        }
+    });
+
+    //LISTADO ACTIVIDAD ECONOMICA modal
+    let datos_lista_actividad_economica_registrar = {
+        '_token': token,
+        'parametro' : "listado_actividad_economica"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargarselectores',
+        data: datos_lista_actividad_economica_registrar,
+        success:function(data) {
+            //console.log(data);
+            $('#actividad_economica_registrar').empty();
+            $('#actividad_economica_registrar').append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $('#actividad_economica_registrar').append('<option value="'+data[claves[i]]["Id_ActEco"]+'">'+data[claves[i]]["id_codigo"]+' - '+data[claves[i]]["Nombre_actividad"]+'</option>');
             }
         }
     });
@@ -616,11 +768,32 @@ $(document).ready(function(){
         data: datos_lista_clase_de_riesgos,
         success:function(data) {
             //console.log(data);
-            $('#clase_riesgo').empty();
-            $('#clase_riesgo').append('<option value="" selected>Seleccione</option>');
+            let clase_riesgoEdicion = $('select[name=clase_riesgo]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#clase_riesgo').append('<option value="'+data[claves[i]]["Id_Riesgo"]+'">'+data[claves[i]]["Nombre_riesgo"]+'</option>');
+                if (data[claves[i]]["Id_Riesgo"] != clase_riesgoEdicion) {                    
+                    $('#clase_riesgo').append('<option value="'+data[claves[i]]["Id_Riesgo"]+'">'+data[claves[i]]["Nombre_riesgo"]+'</option>');
+                }
+            }
+        }
+    });
+
+    //LISTADO CLASE DE RIESGO MODAL
+    let datos_lista_clase_de_riesgos_registrar = {
+        '_token': token,
+        'parametro' : "listado_clase_riesgo"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargarselectores',
+        data: datos_lista_clase_de_riesgos_registrar,
+        success:function(data) {
+            //console.log(data);
+            $('#clase_riesgo_registrar').empty();
+            $('#clase_riesgo_registrar').append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $('#clase_riesgo_registrar').append('<option value="'+data[claves[i]]["Id_Riesgo"]+'">'+data[claves[i]]["Nombre_riesgo"]+'</option>');
             }
         }
     });
@@ -636,11 +809,32 @@ $(document).ready(function(){
         data: datos_lista_ciuo,
         success:function(data) {
             //console.log(data);
-            $('#codigo_ciuo').empty();
-            $('#codigo_ciuo').append('<option value="" selected>Seleccione</option>');
+            let codigo_ciuoEdicion = $('select[name=codigo_ciuo]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#codigo_ciuo').append('<option value="'+data[claves[i]]["Id_Codigo"]+'">'+data[claves[i]]["id_codigo_ciuo"]+' - '+data[claves[i]]["Nombre_ciuo"]+'</option>');
+                if (data[claves[i]]["Id_Codigo"] != codigo_ciuoEdicion) {                    
+                    $('#codigo_ciuo').append('<option value="'+data[claves[i]]["Id_Codigo"]+'">'+data[claves[i]]["id_codigo_ciuo"]+' - '+data[claves[i]]["Nombre_ciuo"]+'</option>');
+                }
+            }
+        }
+    });
+
+    //LISTADO CIUO MODAL
+    let datos_lista_ciuo_registrar = {
+        '_token': token,
+        'parametro' : "listado_codigo_ciuo"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargarselectores',
+        data: datos_lista_ciuo_registrar,
+        success:function(data) {
+            //console.log(data);
+            $('#codigo_ciuo_registrar').empty();
+            $('#codigo_ciuo_registrar').append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $('#codigo_ciuo_registrar').append('<option value="'+data[claves[i]]["Id_Codigo"]+'">'+data[claves[i]]["id_codigo_ciuo"]+' - '+data[claves[i]]["Nombre_ciuo"]+'</option>');
             }
         }
     });
@@ -656,11 +850,12 @@ $(document).ready(function(){
         data: datos_lista_motivo_solicitud,
         success:function(data) {
             //console.log(data);
-            $('#motivo_solicitud').empty();
-            $('#motivo_solicitud').append('<option value="" selected>Seleccione</option>');
+            let motivo_solicitudEdicion = $('select[name=motivo_solicitud]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#motivo_solicitud').append('<option value="'+data[claves[i]]["Id_Solicitud"]+'">'+data[claves[i]]["Nombre_solicitud"]+'</option>');
+                if (data[claves[i]]["Id_Solicitud"] != motivo_solicitudEdicion) {                    
+                    $('#motivo_solicitud').append('<option value="'+data[claves[i]]["Id_Solicitud"]+'">'+data[claves[i]]["Nombre_solicitud"]+'</option>');
+                }
             }
         }
     });
@@ -676,11 +871,12 @@ $(document).ready(function(){
         data: datos_lista_tipo_viculacion,
         success:function(data) {
             //console.log(data);
-            $('#tipovinculo').empty();
-            $('#tipovinculo').append('<option value="" selected>Seleccione</option>');
+            let tipovinculoEdicion = $('select[name=tipovinculo]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#tipovinculo').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                if (data[claves[i]]["Id_Parametro"] != tipovinculoEdicion) {                    
+                    $('#tipovinculo').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                }
             }
         }
     });
@@ -696,11 +892,12 @@ $(document).ready(function(){
         data: datos_listado_solicitud_regimen_en_salud,
         success:function(data) {
             //console.log(data);
-            $('#regimen').empty();
-            $('#regimen').append('<option value="" selected>Seleccione</option>');
+            let regimenEdicion = $('select[name=regimen]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#regimen').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                if (data[claves[i]]["Id_Parametro"] != regimenEdicion) {                    
+                    $('#regimen').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                }
             }
         }
     });
@@ -716,11 +913,12 @@ $(document).ready(function(){
         data: datos_listado_solicitante,
         success:function(data) {
             //console.log(data);
-            $('#solicitante').empty();
-            $('#solicitante').append('<option value="" selected>Seleccione</option>');
+            let solicitanteEdicion = $('select[name=solicitante]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#solicitante').append('<option value="'+data[claves[i]]["Id_solicitante"]+'">'+data[claves[i]]["Solicitante"]+'</option>');
+                if (data[claves[i]]["Id_solicitante"] != solicitanteEdicion) {                    
+                    $('#solicitante').append('<option value="'+data[claves[i]]["Id_solicitante"]+'">'+data[claves[i]]["Solicitante"]+'</option>');
+                }
             }
         }
     });
@@ -741,15 +939,18 @@ $(document).ready(function(){
             success:function(data) {
                 // console.log(data);
                 $('#nombre_solicitante').empty();
-                $('#nombre_solicitante').append('<option value="" selected>Seleccione</option>');
+                let nombre_solicitanteEdicion = $('select[name=nombre_solicitante]').val();
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
-                    $('#nombre_solicitante').append('<option value="'+data[claves[i]]["Id_Nombre_solicitante"]+'">'+data[claves[i]]["Nombre_solicitante"]+'</option>');
+                    if (data[claves[i]]["Id_Nombre_solicitante"] != nombre_solicitanteEdicion) {                        
+                        $('#nombre_solicitante').append('<option value="'+data[claves[i]]["Id_Nombre_solicitante"]+'">'+data[claves[i]]["Nombre_solicitante"]+'</option>');
+                    }
                 }
             }
         });
     });
 
+   
     //LISTADO FUENTE DE INFORMACION
     let datos_listado_fuente_informacion = {
         '_token': token,
@@ -761,11 +962,12 @@ $(document).ready(function(){
         data: datos_listado_fuente_informacion,
         success:function(data) {
             //console.log(data);
-            $('#fuente_informacion').empty();
-            $('#fuente_informacion').append('<option value="" selected>Seleccione</option>');
+            let fuente_informacionEdicion = $('select[name=fuente_informacion]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#fuente_informacion').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                if (data[claves[i]]["Id_Parametro"] != fuente_informacionEdicion) {
+                    $('#fuente_informacion').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');                    
+                }
             }
         }
     });
@@ -781,11 +983,12 @@ $(document).ready(function(){
         data: datos_listado_proceso,
         success:function(data) {
             //console.log(data);
-            $('#proceso').empty();
-            $('#proceso').append('<option value="" selected>Seleccione</option>');
+            let procesoEdicion = $('select[name=proceso]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#proceso').append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
+                if (data[claves[i]]["Id_proceso"] != procesoEdicion) {                    
+                    $('#proceso').append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
+                }
             }
         }
     });
@@ -806,10 +1009,12 @@ $(document).ready(function(){
             success:function(data) {
                 //console.log(data);
                 $('#servicio').empty();
-                $('#servicio').append('<option value="" selected>Seleccione</option>');
+                let servicioEdicion = $('select[name=servicio]').val();
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
-                    $('#servicio').append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
+                    if (data[claves[i]]["Id_Servicio"] != servicioEdicion) {                        
+                        $('#servicio').append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
+                    }
                 }
             }
         });
@@ -827,11 +1032,12 @@ $(document).ready(function(){
         data: datos_listado_accion,
         success:function(data) {
             //console.log(data);
-            $('#accion').empty();
-            $('#accion').append('<option value="" selected>Seleccione</option>');
+            let accionEdicion = $('select[name=accion]').val();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#accion').append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Nombre_accion"]+'</option>');
+                if (data[claves[i]]["Id_Accion"] != accionEdicion) {                    
+                    $('#accion').append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Nombre_accion"]+'</option>');
+                }
             }
         }
     });
@@ -958,6 +1164,7 @@ $(document).ready(function(){
             // $('#nro_identificacion_apoderado').prop('required', true);
         }
     });
+  
 
     /* Validación opción OTRO/¿Cuál? del selector Tipo AFP  */
     $('#afp').change(function (){
@@ -992,7 +1199,18 @@ $(document).ready(function(){
         }
     });
 
-    /* Validación opción Exterior del selector Departamentos (Información Laboral) */
+    /* Validación opción OTRO/¿Cuál? del selector Tipo ARL MODAL (Información Laboral) */
+    $('#arl_info_laboral_registrar').change(function (){
+        let opt_otro_arl_info_laboral_reg = $("#arl_info_laboral_registrar option:selected").text();
+        if (opt_otro_arl_info_laboral_reg === "Otro/¿Cual?") {
+            $(".otro_arl_info_laboral_registrar").removeClass('d-none');
+            $(".otro_arl_info_laboral_registrar").slideDown('slow');
+        } else {
+            $(".otro_arl_info_laboral_registrar").slideUp('slow');
+        }
+    });
+
+    /* Validación opción OTRO/¿Cuál? del selector Departamentos (Información Laboral) */
     $('#departamento_info_laboral').change(function (){
         let opt_otro_departamento_exterior = $("#departamento_info_laboral option:selected").text();
         if (opt_otro_departamento_exterior != "Exterior") {
@@ -1009,6 +1227,27 @@ $(document).ready(function(){
             $(".columna_pais_exterior_info_laboral").slideDown('slow');            
         } else {
             $(".columna_pais_exterior_info_laboral").slideUp('slow');
+
+        }
+    });
+
+    /* Validación opción Exterior del selector Departamentos MODAL (Información Laboral) */
+    $('#departamento_info_laboral_registrar').change(function (){
+        let opt_otro_departamento_exterior_reg = $("#departamento_info_laboral_registrar option:selected").text();
+        if (opt_otro_departamento_exterior_reg != "Exterior") {
+            $(".columna_pais_exterior_info_laboral_registrar").addClass('d-none');
+            $(".columna_pais_exterior_info_laboral_registrar").slideUp('slow');            
+        }
+    });
+
+     /* Validación opción País? del selector Municipios MODAL (Información Laboral) */
+     $('#municipio_info_laboral_registrar').change(function (){
+        let opt_otro_departamento_exterior_reg = $("#municipio_info_laboral_registrar option:selected").text();
+        if (opt_otro_departamento_exterior_reg === "País?") {
+            $(".columna_pais_exterior_info_laboral_registrar").removeClass('d-none');
+            $(".columna_pais_exterior_info_laboral_registrar").slideDown('slow');            
+        } else {
+            $(".columna_pais_exterior_info_laboral_registrar").slideUp('slow');
 
         }
     });
@@ -1051,254 +1290,111 @@ $(document).ready(function(){
     });
 
 
-    /* VALIDACIONES CON EL CAMPO DE NÚMERO DE IDENTIFICACIÓN */
-    $('#nro_identificacion').keyup(function(){
-        let numero_ident_afiliado = $(this).val();
-        let fecha_evento = $('#fecha_evento').val();
+    /* GUARDAR OTRA EMPRESA */
+    $('#guardar_otra_empresa').click(function(e){
 
-        /* AUTOCOMPLETADO DE DATOS: SECCIÓN FORMULARIO INFORMACIÓN AFILIADO */
-        let datos_para_llenar_info_afiliado = {
-            '_token': token,
-            'numero_ident_afiliado' : numero_ident_afiliado,
-        };
-        $.ajax({
-            type:'POST',
-            url:'/consultarInfoAfiliadoLlenar',
-            data: datos_para_llenar_info_afiliado,
-            success:function(data) {
-                // console.log(data);
-                let claves_info_afiliado = Object.keys(data);
-                if (claves_info_afiliado.length > 0) {
-                    for (let i = 0; i < claves_info_afiliado.length; i++) {
-                        $('#nombre_afiliado').val(data[claves_info_afiliado[i]]["Nombre_afiliado"]);
-                        $('#direccion_info_afiliado').val(data[claves_info_afiliado[i]]["Direccion"]);
-                        $('#tipo_documento').val(data[claves_info_afiliado[i]]["Tipo_documento"]).change();
-                        $('#fecha_nacimiento').val(data[claves_info_afiliado[i]]["F_nacimiento"]);
-                        $('#edad').val(data[claves_info_afiliado[i]]["Edad"]);
-                        $('#genero').val(data[claves_info_afiliado[i]]["Genero"]).change();
-                        $('#email_info_afiliado').val(data[claves_info_afiliado[i]]["Email"]);
-                        $('#telefono').val(data[claves_info_afiliado[i]]["Telefono_contacto"]);
-                        $('#estado_civil').val(data[claves_info_afiliado[i]]["Estado_civil"]).change();
-                        $('#nivel_escolar').val(data[claves_info_afiliado[i]]["Nivel_escolar"]).change();
-                        $('#dominancia').val(data[claves_info_afiliado[i]]["Id_dominancia"]).change();
-                        $('#departamento_info_afiliado').val(data[claves_info_afiliado[i]]["Id_departamento"]).change();
-                        setTimeout(function(){
-                            $('#municipio_info_afiliado').val(data[claves_info_afiliado[i]]["Id_municipio"]).change().prop('disabled', false);
-                        }, 100);
-                        $('#ocupacion').val(data[claves_info_afiliado[i]]["Ocupacion"]);
-                        $('#tipo_afiliado').val(data[claves_info_afiliado[i]]["Tipo_afiliado"]).change();
-                        $('#ibc').val(data[claves_info_afiliado[i]]["Ibc"]);
-                        $('#eps').val(data[claves_info_afiliado[i]]["Id_eps"]).change();
-                        $('#afp').val(data[claves_info_afiliado[i]]["Id_afp"]).change();
-                        $('#arl_info_afiliado').val(data[claves_info_afiliado[i]]["Id_arl"]).change();
-                        $('#apoderado').val(data[claves_info_afiliado[i]]["Apoderado"]).change();
-                        if (data[claves_info_afiliado[i]]["Apoderado"] == 'Si') {
-                            $('.columna_nombre_apoderado').removeClass('d-none');
-                            $('.columna_identificacion_apoderado').removeClass('d-none');
-                            $('#nombre_apoderado').val(data[claves_info_afiliado[i]]["Nombre_apoderado"]);
-                            $('#nro_identificacion_apoderado').val(data[claves_info_afiliado[i]]["Nro_identificacion_apoderado"]);
-                        }else{
-                            $('.columna_nombre_apoderado').addClass('d-none');
-                            $('.columna_identificacion_apoderado').addClass('d-none');
-                        }
-                        $('#activo').val(data[claves_info_afiliado[i]]["Activo"]).change();
-                    }
-                }
-                else{
-                    $('#nombre_afiliado').val('');
-                    $('#direccion_info_afiliado').val('');
-                    $('#tipo_documento').val('').change();
-                    $('#fecha_nacimiento').val('');
-                    $('#edad').val('');
-                    $('#genero').val('').change();
-                    $('#email_info_afiliado').val('');
-                    $('#telefono').val('');
-                    $('#estado_civil').val('').change();
-                    $('#nivel_escolar').val('').change();
-                    $('#dominancia').val('').change();
-                    $('#departamento_info_afiliado').val('').change();
-                    $('#municipio_info_afiliado').val('').change().prop('disabled', true);
-                    $('#ocupacion').val('');
-                    $('#tipo_afiliado').val('').change();
-                    $('#ibc').val('');
-                    $('#eps').val('').change();
-                    $('#afp').val('').change();
-                    $('#arl_info_afiliado').val('').change();
-                    $('#apoderado').val('').change();
-                    $('.columna_nombre_apoderado').addClass('d-none');
-                    $('.columna_identificacion_apoderado').addClass('d-none');
-                    $('#nombre_apoderado').val('');
-                    $('#nro_identificacion_apoderado').val('');
-                    $('#activo').val('').change();
-                }
-            }
-        });
-        
-        /* AUTOCOMPLETADO DE DATOS: SECCIÓN FORMULARIO INFORMACIÓN LABORAL */
-        let datos_para_llenar_info_laboral = {
-            '_token': token,
-            'numero_ident_laboral' : numero_ident_afiliado,
-        };
-        $.ajax({
-            type:'POST',
-            url:'/consultarInfoLaboralLlenar',
-            data: datos_para_llenar_info_laboral,
-            success:function(data) {
-                // console.log(data);
-                let claves_info_laboral = Object.keys(data);
-                if (claves_info_laboral.length > 0) {
-                    for (let i = 0; i < claves_info_laboral.length; i++) {
-                        let tipo_empleo = data[claves_info_laboral[i]]["Tipo_empleado"];
+        e.preventDefault();
+        /* Validación de los radio button */
+        var sumatoria_entradas_empleo = $('#empleo_actual_registrar:checked').length + $('#independiente_registrar:checked').length + $('#beneficiario_registrar:checked').length
 
-                        switch (tipo_empleo) {
-                            case 'Empleado actual':
-                                $('#empleo_actual').prop('checked', true);
-                            break;
-                            case 'Independiente':
-                                $('#independiente').prop('checked', true);
-                            break;
-                            case 'Beneficiario':
-                                $('#beneficiario').prop('checked', true);
-                            break;
-                            default:
-                            break;
-                        }
+        if (sumatoria_entradas_empleo === 0) {
+            $('.no_creada_empresa').removeClass('d-none');
+            $('.no_creada_empresa').append('<strong>Debe seleccionar un tipo de empleo.</strong>; ');
+        }
 
-                        $('#arl_info_laboral').val(data[claves_info_laboral[i]]["Id_arl"]).change();
-                        $('#empresa').val(data[claves_info_laboral[i]]["Empresa"]);
-                        $('#nit_cc').val(data[claves_info_laboral[i]]["Nit_o_cc"]);
-                        $('#telefono_empresa').val(data[claves_info_laboral[i]]["Telefono_empresa"]);
-                        $('#email_info_laboral').val(data[claves_info_laboral[i]]["Email"]);
-                        $('#direccion_info_laboral').val(data[claves_info_laboral[i]]["Direccion"]);
-                        $('#departamento_info_laboral').val(data[claves_info_laboral[i]]["Id_departamento"]).change();
-                        setTimeout(function (){
-                            $('#municipio_info_laboral').val(data[claves_info_laboral[i]]["Id_municipio"]).change().prop('disabled', false);
-                        }, 100);
-                        $('#actividad_economica').val(data[claves_info_laboral[i]]["Id_actividad_economica"]).change();
-                        $('#clase_riesgo').val(data[claves_info_laboral[i]]["Id_clase_riesgo"]).change();
-                        $('#persona_contacto').val(data[claves_info_laboral[i]]["Persona_contacto"]);
-                        $('#telefono_persona_contacto').val(data[claves_info_laboral[i]]["Telefono_persona_contacto"]);
-                        $('#codigo_ciuo').val(data[claves_info_laboral[i]]["Id_codigo_ciuo"]).change();
-                        $('#fecha_ingreso').val(data[claves_info_laboral[i]]["F_ingreso"]);
-                        $('#cargo').val(data[claves_info_laboral[i]]["Cargo"]);
-                        $('#funciones_cargo').val(data[claves_info_laboral[i]]["Funciones_cargo"]);
-                        $('#antiguedad_empresa').val(data[claves_info_laboral[i]]["Antiguedad_empresa"]);
-                        $('#antiguedad_cargo').val(data[claves_info_laboral[i]]["Antiguedad_cargo_empresa"]);
-                        $('#fecha_retiro').val(data[claves_info_laboral[i]]["F_retiro"]);
-                        $('#descripcion').val(data[claves_info_laboral[i]]["Descripcion"]);
-                    }
-                }
-                else{
-                    $('#empleo_actual').prop('checked', false);
-                    $('#independiente').prop('checked', false);
-                    $('#beneficiario').prop('checked', false);
-                    $('#arl_info_laboral').val('').change();
-                    $('#empresa').val('');
-                    $('#nit_cc').val('');
-                    $('#telefono_empresa').val('');
-                    $('#email_info_laboral').val('');
-                    $('#direccion_info_laboral').val('');
-                    $('#departamento_info_laboral').val('').change();
-                    $('#municipio_info_laboral').val('').change().prop('disabled', true);
-                    $('#actividad_economica').val('').change();
-                    $('#clase_riesgo').val('').change();
-                    $('#persona_contacto').val('');
-                    $('#telefono_persona_contacto').val('');
-                    $('#codigo_ciuo').val('').change();
-                    $('#fecha_ingreso').val('');
-                    $('#cargo').val('');
-                    $('#funciones_cargo').val('');
-                    $('#antiguedad_empresa').val('');
-                    $('#antiguedad_cargo').val('');
-                    $('#fecha_retiro').val('');
-                    $('#descripcion').val('');
-                }
-            }
-        });
+        /* Validación Input Empresa */
+        if ($('#empresa_registrar').val() === "") {
+            $('.no_creada_empresa').removeClass('d-none');
+            $('.no_creada_empresa').append('<strong>El campo Empresa es obligatorio.</strong>; ');
+        }else{
+            var confirmacion_empresa = 1;
+        }
 
+        /* Validación Input NIT / CC */
+        if ($('#nit_cc_registrar').val() === "") {
+            $('.no_creada_empresa').removeClass('d-none');
+            $('.no_creada_empresa').append('<strong>El campo NIT/CC es obligatorio.</strong>');
+        }else{
+            var confirmacion_nit_cc = 1;
+        }
 
-        /* VALIDACION N°2 PARA NO PERMTIR REGISTRAR UN NUEVO EVENTO */
-        if (fecha_evento != "") {
-            let datos_validacion_no2 = {
-                '_token': token,
-                'numero_ident_afiliado' : numero_ident_afiliado,
-                'fecha_evento' : fecha_evento
+        if (sumatoria_entradas_empleo == 1 && confirmacion_empresa == 1 && confirmacion_nit_cc == 1) {
+            $('.no_creada_empresa').addClass('d-none');
+            $('.no_creada_empresa').empty();
+
+            let datos_registrar_empresa = {
+                '_token': $("input[name='_token']").val(),
+                'nro_identificacion_registrar': $('#nro_identificacion').val(),
+                'tipo_empleo_registrar': $("input[name='tipo_empleo_registrar']:checked ").val(),
+                'arl_info_laboral_registrar': $('#arl_info_laboral_registrar').val(),
+                'otra_arl_info_laboral_registrar': $('#otra_arl_info_laboral_registrar').val(),
+                'empresa_registrar': $('#empresa_registrar').val(),
+                'nit_cc_registrar': $('#nit_cc_registrar').val(),
+                'telefono_empresa_registrar': $('#telefono_empresa_registrar').val(),
+                'email_info_laboral_registrar': $('#email_info_laboral_registrar').val(),
+                'direccion_info_laboral_registrar': $('#direccion_info_laboral_registrar').val(),
+                'departamento_info_laboral_registrar': $('#departamento_info_laboral_registrar').val(),
+                'municipio_info_laboral_registrar': $('#municipio_info_laboral_registrar').val(),
+                'pais_exterior_info_laboral_registrar': $('#pais_exterior_info_laboral_registrar').val(),
+                'actividad_economica_registrar': $('#actividad_economica_registrar').val(),
+                'clase_riesgo_registrar': $('#clase_riesgo_registrar').val(),
+                'persona_contacto_registrar': $('#persona_contacto_registrar').val(),
+                'telefono_persona_contacto_registrar': $('#telefono_persona_contacto_registrar').val(),
+                'codigo_ciuo_registrar': $('#codigo_ciuo_registrar').val(),
+                'fecha_ingreso_registrar': $('#fecha_ingreso_registrar').val(),
+                'cargo_registrar': $('#cargo_registrar').val(),
+                'funciones_cargo_registrar': $('#funciones_cargo_registrar').val(),
+                'antiguedad_empresa_registrar': $('#antiguedad_empresa_registrar').val(),
+                'antiguedad_cargo_registrar': $('#antiguedad_cargo_registrar').val(),
+                'fecha_retiro_registrar': $('#fecha_retiro_registrar').val(),
+                'descripcion_registrar': $('#descripcion_registrar').val()
             };
+            
+            // console.log(datos_registrar_empresa);
+            
             $.ajax({
                 type:'POST',
-                url:'/consultaFechaNroIdent',
-                data: datos_validacion_no2,
+                url:'/registrarOtraEmpresa',
+                data: datos_registrar_empresa,
                 success:function(data) {
-                    // si hay un evento creado
-                    if (fecha_evento == data) {
-                        $('#nro_identificacion').val('');
-                        $('.no_creacion_evento').removeClass('d-none');
-                        $('#mostrar_f_evento').html(fecha_evento);
-                        $('.ocultar_seccion_info_afiliado').addClass('d-none');
-                        $('.ocultar_seccion_info_laboral').addClass('d-none');
-                        $('.ocultar_seccion_info_pericial').addClass('d-none');
-                        $('.ocultar_seccion_info_asignacion').addClass('d-none');
-                        $('.grupo_botones').addClass('d-none');
-                    }else{
-                        $('.no_creacion_evento').addClass('d-none');
-                        $('.ocultar_seccion_info_afiliado').removeClass('d-none');
-                        $('.ocultar_seccion_info_laboral').removeClass('d-none');
-                        $('.ocultar_seccion_info_pericial').removeClass('d-none');
-                        $('.ocultar_seccion_info_asignacion').removeClass('d-none');
-                        $('.grupo_botones').removeClass('d-none');
+                    if (data.a == "si_creo") {
+                        $('.creada_empresa').removeClass('d-none');
+                        $('.creada_empresa').append('<strong>'+data.b+'</strong>');
+                        setTimeout(function(){
+                            $('.creada_empresa').addClass('d-none');
+                            $('.creada_empresa').empty();
+
+                            $('#empleo_actual_registrar').prop('checked', false);
+                            $('#independiente_registrar').prop('checked', false);
+                            $('#beneficiario_registrar').prop('checked', false);
+                            $('#arl_info_laboral_registrar').val('').change();
+                            $('#otra_arl_info_laboral_registrar').val('');
+                            $('#empresa_registrar').val('');
+                            $('#nit_cc_registrar').val('');
+                            $('#telefono_empresa_registrar').val('');
+                            $('#email_info_laboral_registrar').val('');
+                            $('#direccion_info_laboral_registrar').val('');
+                            $('#departamento_info_laboral_registrar').val('').change();
+                            $('#municipio_info_laboral_registrar').val('').change();
+                            $('#pais_exterior_info_laboral_registrar').val('');
+                            $('#actividad_economica_registrar').val('').change();
+                            $('#clase_riesgo_registrar').val('').change();
+                            $('#persona_contacto_registrar').val('');
+                            $('#telefono_persona_contacto_registrar').val('');
+                            $('#codigo_ciuo_registrar').val('').change();
+                            $('#fecha_ingreso_registrar').val('');
+                            $('#cargo_registrar').val('');
+                            $('#funciones_cargo_registrar').val('');
+                            $('#antiguedad_empresa_registrar').val('');
+                            $('#antiguedad_cargo_registrar').val('');
+                            $('#fecha_retiro_registrar').val('');
+                            $('#descripcion_registrar').val('');
+                        }, 3000);
                     }
                 }
             });
         }
-    });
-
-    /* VALIDACIÓN DEL ID EVENTO PARA EDICIÓN */
-    $('#fecha_evento').click(function(){
-        let idEvento = $('#id_evento').val();
-        $('#info_Idevento').empty();
-        if (idEvento != ""){
-
-            let datos_validacion_evento= {
-                '_token': token,
-                'IdEvento': idEvento
-            };
-            $.ajax({
-                type:'POST',
-                url:'/consultaIdEvento',
-                data: datos_validacion_evento,
-                success:function(data){
-                    // console.log(data);
-                   // Si existe el evento
-                   let registro = Object.keys(data);
-                   if(registro.length > 0) {
-                        $('#fecha_evento').val('');
-                        for (let i = 0; i < registro.length; i++) {                        
-                            if (idEvento === data[registro[i]]["ID_evento"]) {
-                                $('.mostrar_tabla_eventos').removeClass('d-none');                                                   
-                                $('#info_Idevento').append('<tr><td>'+data[registro[i]]["ID_evento"]+'</td>'+
-                                '<td>'+data[registro[i]]["F_evento"]+'</td>'+
-                                '<td>'+data[registro[i]]["F_radicacion"]+'</td>'+
-                                '<td>'+
-                                    '<form action="/Sigmel/RolAdministrador/GestionInicialEdicion" method="POST">'+
-                                        '<input type="hidden" name="_token" value="'+token+'">'+
-                                        '<input class="btn btn-info" type="submit" value="Editar">'+
-                                        '<input type="hidden" name="newIdEvento" value="'+data[registro[i]]["ID_evento"]+'">'+
-                                    '</form>'+
-                                '</td>'+
-                                '</tr>');                                                    
-                            }
-                        
-                        }                    
-                   }
-                   else{
-                        $('.mostrar_tabla_eventos').addClass('d-none');
-                        $('#info_Idevento').empty();
-                   }
-                } 
-            });
-        }
-    });
-
+    })
 
 
 });

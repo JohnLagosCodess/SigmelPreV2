@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('F_nacimiento');
             $table->string('Edad', 3)->nullable();
             $table->integer('Genero')->nullable();
-            $table->string('Email', 20)->nullable();
+            $table->text('Email')->nullable();
             $table->string('Telefono_contacto', 22);
             $table->integer('Estado_civil')->nullable();
             $table->integer('Nivel_escolar')->nullable();

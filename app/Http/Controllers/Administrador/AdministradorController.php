@@ -37,6 +37,9 @@ use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_pericial_eventos;
 use App\Models\sigmel_informacion_laboral_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
+use App\Models\sigmel_historico_empresas_afiliados;
+
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Rels;
 
 class AdministradorController extends Controller
 {
@@ -469,6 +472,7 @@ class AdministradorController extends Controller
     }
 
     public function cargueListadoSelectores(Request $request){
+
         $parametro = $request->parametro;
 
         /* TRAER LISTADO DE CLIENTES */
@@ -788,7 +792,7 @@ class AdministradorController extends Controller
         if(!Auth::check()){
             return redirect('/');
         }
-        
+
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
@@ -1073,6 +1077,7 @@ class AdministradorController extends Controller
 
             $datos_info_laboral_evento =[
                 'ID_evento' => $request->id_evento,
+                'Nro_identificacion' => $request->nro_identificacion,
                 'Tipo_empleado' => $request->tipo_empleo,
                 'Id_arl' => $otra_arl,
                 'Empresa' => $request->empresa,
@@ -1236,5 +1241,861 @@ class AdministradorController extends Controller
         }
         
     }
-    
+
+    public function ConsultaFechaNroIdent(Request $request){
+
+        $numero_ident_afiliado = $request->numero_ident_afiliado;
+        $fecha_evento = $request->fecha_evento;
+
+        // extraemos todos los ID EVENTO acorde al numero de identificación del afiliado
+        $array_id_evento_buscado = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+        ->select('ID_evento')->where('Nro_identificacion', $numero_ident_afiliado)->get();
+
+        if (!empty($array_id_evento_buscado)) {
+
+            /* realizamos una subconsulta para determinar si ya existe un
+            evento acorde a la fecha de evento del formulario y todos los ID Evento posibles */
+
+            $array_fecha_evento_db = sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->select('F_evento')
+            ->where([
+                ['F_evento', '=', $fecha_evento]
+            ])
+            ->whereIn('ID_evento', $array_id_evento_buscado)->first();
+
+            /* Si el arreglo no viene vacio quiere decir que ya hay un evento creado con la
+            fecha de evento que se captura del formulario */
+            if(!empty($array_fecha_evento_db)){
+                $fecha_evento_db =  $array_fecha_evento_db['F_evento'];
+                echo $fecha_evento_db;
+            }
+
+            // $array_informacion_afiliado = sigmel_informacion_eventos::on('sigmel_gestiones')
+            // ->select('Nombre_afiliado', 'Direccion');
+
+            
+        }
+    }
+
+    public function llenarDatosInfoAfiliado(Request $request){
+
+        $array_datos_info_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_tipo_doc', 'siae.Tipo_documento', '=', 'slp_tipo_doc.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_tipo_genero', 'siae.Genero', '=', 'slp_tipo_genero.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_estado_civil', 'siae.Estado_civil', '=', 'slp_estado_civil.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_nivel_escolar', 'siae.Nivel_escolar', '=', 'slp_nivel_escolar.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_dominancias as sld', 'siae.Id_dominancia', '=', 'sld.Id_Dominancia')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'siae.Id_departamento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sldm1.Id_municipios', '=', 'siae.Id_municipio')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_tipo_afiliado', 'siae.Tipo_afiliado', '=', 'slp_tipo_afiliado.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_eps as sle', 'sle.Id_Eps', '=', 'siae.Id_eps')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_afps as slafp', 'slafp.Id_Afp', '=', 'siae.Id_afp')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_arls as slarl', 'slarl.Id_Arl', '=', 'siae.Id_arl')
+        ->select(
+            'siae.ID_evento',
+            'siae.Id_Afiliado',
+            'siae.Nombre_afiliado',
+            'siae.Direccion',
+            'siae.Tipo_documento',
+            'slp_tipo_doc.Nombre_parametro as Nombre_documento',
+            'siae.Nro_identificacion',
+            'siae.F_nacimiento',
+            'siae.Edad',
+            'siae.Genero',
+            'slp_tipo_genero.Nombre_parametro as Nombre_genero',
+            'siae.Email',
+            'siae.Telefono_contacto',
+            'siae.Estado_civil',
+            'slp_estado_civil.Nombre_parametro as Nombre_estado_civil',
+            'Nivel_escolar',
+            'slp_nivel_escolar.Nombre_parametro as Nombre_nivel_escolar',
+            'sld.Id_dominancia',
+            'sld.Nombre_dominancia as Dominancia',
+            'siae.Id_departamento',
+            'sldm.Nombre_departamento',
+            'siae.Id_municipio',
+            'sldm1.Nombre_municipio',
+            'siae.Ocupacion',
+            'siae.Tipo_afiliado',
+            'slp_tipo_afiliado.Nombre_parametro as Nombre_tipo_afiliado',
+            'siae.Ibc',
+            'siae.Id_eps',
+            'sle.Nombre_eps',
+            'siae.Id_afp',
+            'slafp.Nombre_afp',
+            'siae.Id_arl',
+            'slarl.Nombre_arl',
+            'siae.Apoderado',
+            'siae.Nombre_apoderado',
+            'siae.Nro_identificacion_apoderado',
+            'siae.Activo'
+        )
+        ->where([
+            ['siae.Nro_identificacion', '=', $request->numero_ident_afiliado]
+        ])
+        ->orderBy('siae.F_registro', 'desc')
+        ->limit(1)
+        ->get();
+
+        $informacion_afiliado = json_decode(json_encode($array_datos_info_afiliado, true));
+        return response()->json($informacion_afiliado);
+    }
+
+    public function llenarDatosInfoLaboral(Request $request){
+
+        $array_datos_laboral = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_laboral_eventos as sile')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_arls as slarl', 'slarl.Id_Arl', '=', 'sile.Id_arl')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'sile.Id_departamento') 
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sldm1.Id_municipios', '=', 'sile.Id_municipio') 
+        ->leftJoin('sigmel_gestiones.sigmel_lista_actividad_economicas as slae', 'slae.Id_ActEco', '=', 'sile.Id_actividad_economica')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_clase_riesgos as slcr', 'slcr.Id_Riesgo', '=', 'sile.Id_clase_riesgo')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_ciuo_codigos as slcc', 'slcc.Id_Codigo', '=', 'sile.Id_codigo_ciuo')
+        ->select(
+            'sile.Tipo_empleado',
+            'sile.Id_arl',
+            'slarl.Nombre_arl',
+            'sile.Empresa',
+            'sile.Nit_o_cc',
+            'sile.Telefono_empresa',
+            'sile.Email',
+            'sile.Direccion',
+            'sile.Id_departamento',
+            'sldm.Nombre_departamento',
+            'sile.Id_municipio',
+            'sldm1.Nombre_municipio',
+            'sile.Id_actividad_economica',
+            'slae.id_codigo',
+            'slae.Nombre_actividad',
+            'sile.Id_clase_riesgo',
+            'slcr.Nombre_riesgo',
+            'sile.Persona_contacto',
+            'sile.Telefono_persona_contacto',
+            'sile.Id_codigo_ciuo',
+            'slcc.id_codigo_ciuo',
+            'slcc.Nombre_ciuo',
+            'sile.F_ingreso',
+            'sile.Cargo',
+            'sile.Funciones_cargo',
+            'sile.Antiguedad_empresa',
+            'sile.Antiguedad_cargo_empresa',
+            'sile.F_retiro',
+            'sile.Descripcion'
+        )
+        ->where([
+            ['sile.Nro_identificacion', '=', $request->numero_ident_laboral]
+        ])
+        ->orderBy('sile.F_registro', 'desc')
+        ->limit(1)
+        ->get();
+
+        $informacion_laboral = json_decode(json_encode($array_datos_laboral, true));
+        return response()->json($informacion_laboral);
+    }
+
+
+    /* TODO LO REFERENTE AL FORMULARIO DE EDICIÓN DE EVENTO */
+    public function ConsultaIDEvento(Request $request){
+        $idEventodigitado = $request->IdEvento;
+        //consultar el id evento en la DB
+
+        $arrayEventoconsultado = sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->select('ID_evento','F_evento','F_radicacion')->where('ID_evento', $idEventodigitado)->get();
+
+        $info_EventoConsultado= json_decode(json_encode($arrayEventoconsultado, true));
+        return response()->json(($info_EventoConsultado));
+    }
+
+    public function mostrarVistaEdicionInicialNuevo(Request $request){
+
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        $newIdEvento = $request->newIdEvento;
+        $parametro = $request->parametro;
+
+        $array_datos_info_evento =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_eventos as sie')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_clientes as slc', 'sie.Cliente', '=', 'slc.Id_Cliente')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_clientes as sltc', 'sie.Tipo_cliente', '=', 'sltc.Id_TipoCliente')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'sie.Tipo_evento', '=', 'slte.Id_Evento')
+        ->select('sie.Cliente', 'slc.Nombre_cliente', 'sie.Tipo_cliente', 'sltc.Nombre_tipo_cliente', 'sie.Tipo_evento',
+        'slte.Nombre_evento', 'sie.ID_evento', 'sie.F_evento', 'sie.F_radicacion')
+        ->where([['sie.ID_evento', '=', $newIdEvento]])->get();  
+        
+        $array_datos_info_afiliados =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_tipo_doc', 'siae.Tipo_documento', '=', 'slp_tipo_doc.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_tipo_genero', 'siae.Genero', '=', 'slp_tipo_genero.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_estado_civil', 'siae.Estado_civil', '=', 'slp_estado_civil.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_nivel_escolar', 'siae.Nivel_escolar', '=', 'slp_nivel_escolar.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_dominancias as sld', 'siae.Id_dominancia', '=', 'sld.Id_Dominancia')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'siae.Id_departamento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sldm1.Id_municipios', '=', 'siae.Id_municipio')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_tipo_afiliado', 'siae.Tipo_afiliado', '=', 'slp_tipo_afiliado.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_eps as sle', 'sle.Id_Eps', '=', 'siae.Id_eps')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_afps as slafp', 'slafp.Id_Afp', '=', 'siae.Id_afp')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_arls as slarl', 'slarl.Id_Arl', '=', 'siae.Id_arl')
+        ->select('siae.Id_Afiliado', 'siae.ID_evento', 'siae.F_registro', 'siae.Nombre_afiliado', 'siae.Direccion', 'siae.Tipo_documento',
+        'slp_tipo_doc.Nombre_parametro as Nombre_documento', 'siae.Nro_identificacion', 'siae.F_nacimiento', 'siae.Edad', 'siae.Genero',
+        'slp_tipo_genero.Nombre_parametro as Nombre_genero', 'siae.Email', 'siae.Telefono_contacto', 'siae.Estado_civil',
+        'slp_estado_civil.Nombre_parametro as Nombre_estado_civil', 'siae.Nivel_escolar', 'slp_nivel_escolar.Nombre_parametro as Nombre_nivel_escolar',
+        'sld.Id_dominancia', 'sld.Nombre_dominancia as Dominancia', 'siae.Id_departamento', 'sldm.Nombre_departamento',
+        'siae.Id_municipio', 'sldm1.Nombre_municipio', 'siae.Ocupacion', 'siae.Tipo_afiliado', 'slp_tipo_afiliado.Nombre_parametro as Nombre_tipo_afiliado',
+        'siae.Ibc', 'siae.Id_eps', 'sle.Nombre_eps', 'slafp.Id_Afp', 'slafp.Nombre_afp', 'slarl.Id_Arl', 'slarl.Nombre_arl',
+        'siae.Apoderado', 'siae.Nombre_apoderado', 'siae.Nro_identificacion_apoderado', 'siae.Activo')
+        ->where([['siae.ID_evento','=',$newIdEvento]])
+        ->orderBy('siae.F_registro', 'desc')
+        ->limit(1)
+        ->get();
+
+        $array_datos_info_laboral=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_arls as sla', 'sla.Id_arl', '=', 'sile.Id_arl')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'sile.Id_departamento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldms', 'sldms.Id_municipios', '=', 'sile.Id_municipio')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_actividad_economicas as slae', 'slae.Id_ActEco', '=', 'sile.Id_actividad_economica')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_clase_riesgos as slcr', 'slcr.Id_Riesgo', '=', 'sile.Id_clase_riesgo')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_ciuo_codigos as slcc', 'slcc.Id_Codigo', '=', 'sile.Id_codigo_ciuo')
+        ->select('sile.ID_evento', 'sile.Tipo_empleado','sile.Id_arl', 'sla.Nombre_arl', 'sile.Empresa', 'sile.Nit_o_cc', 'sile.Telefono_empresa',
+        'sile.Email', 'sile.Direccion', 'sile.Id_departamento', 'sldm.Nombre_departamento', 'sile.Id_municipio', 
+        'sldms.Nombre_municipio', 'sile.Id_actividad_economica', 'slae.Nombre_actividad', 'sile.Id_clase_riesgo', 
+        'slcr.Nombre_riesgo', 'sile.Persona_contacto', 'sile.Telefono_persona_contacto', 'sile.Id_codigo_ciuo', 'slcc.Nombre_ciuo', 
+        'sile.F_ingreso', 'sile.Cargo', 'sile.Funciones_cargo', 'sile.Antiguedad_empresa', 'sile.Antiguedad_cargo_empresa', 
+        'sile.F_retiro', 'sile.Descripcion')
+        ->where([['sile.ID_evento','=', $newIdEvento]])
+        ->orderBy('sile.F_registro', 'desc')
+        ->limit(1)
+        ->get();
+
+        $array_datos_info_pericial=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_pericial_eventos as sipe')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_motivo_solicitudes as slms', 'slms.Id_Solicitud', '=', 'sipe.Id_motivo_solicitud')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sipe.Tipo_vinculacion')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'sipe.Regimen_salud')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_solicitantes as sls', 'sls.Id_solicitante', '=', 'sipe.Id_solicitante')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_solicitantes as slsn', 'slsn.Id_nombre_solicitante', '=', 'sipe.Id_nombre_solicitante')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpf', 'slpf.Id_Parametro', '=', 'sipe.Fuente_informacion')
+        ->select('sipe.ID_evento', 'sipe.Id_motivo_solicitud', 'slms.Nombre_solicitud', 'sipe.Tipo_vinculacion', 'slp.Nombre_parametro as tipo_viculacion',
+        'sipe.Regimen_salud', 'slps.Nombre_parametro as regimen_salud', 'sipe.Id_solicitante', 'sls.Solicitante', 'sipe.Id_nombre_solicitante',
+        'slsn.Nombre_solicitante', 'sipe.Fuente_informacion', 'slpf.Nombre_parametro as fuente_informacion')
+        ->where([['sipe.ID_evento','=', $newIdEvento]])
+        ->orderBy('sipe.F_registro', 'desc')
+        ->limit(1)
+        ->get();
+
+        $array_datos_info_asignacion=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slps', 'slps.Id_proceso', '=', 'siae.Id_proceso')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slpss', 'slpss.Id_servicio', '=', 'siae.Id_servicio')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_acciones_procesos_servicios as slaps', 'slaps.Id_Accion', '=', 'siae.Id_accion')
+        ->select('siae.ID_evento', 'siae.Id_proceso', 'slps.Nombre_proceso', 'siae.Id_servicio', 'slpss.Nombre_servicio',
+        'siae.Id_accion', 'slaps.Nombre_accion', 'siae.Descripcion')
+        ->where([['siae.ID_evento', '=', $newIdEvento]])
+        ->orderBy('siae.F_registro', 'Desc')
+        ->limit(1)
+        ->get();
+
+        
+        return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
+        'array_datos_info_laboral', 'array_datos_info_pericial', 'array_datos_info_asignacion'));
+
+    }
+
+
+    public function actualizarGestionInicial1(Request $request){
+        
+    }
+
+    public function actualizarGestionInicial(Request $request){
+
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+        $IdEventoactulizar = $request->id_evento_enviar;
+        
+        /* Actualizacion tabla sigmel_informacion_eventos */
+
+        //validacion del otro/cual? en el tipo de cliente 
+
+        if ($request->tipo_cliente == 4) {
+                
+            $datos_otro_tipo_cliente_edicion = [
+                'Nombre_tipo_cliente' => $request->otro_tipo_cliente,
+                'Estado' => 'activo',
+                'F_registro' => $date
+            ];
+            sigmel_lista_tipo_clientes::on('sigmel_gestiones')->insert($datos_otro_tipo_cliente_edicion);
+            $array_tipo_cliente_edicion = sigmel_lista_tipo_clientes::on('sigmel_gestiones')->select('Id_TipoCliente')->latest('Id_TipoCliente')->first();
+            $tipo_cliente = $array_tipo_cliente_edicion['Id_TipoCliente'];
+        } else {
+            $tipo_cliente = $request->tipo_cliente;
+        } 
+
+        
+        $actualizar_GestionInicialEvento = [
+            'Cliente' => $request->cliente,
+            'Tipo_cliente' => $tipo_cliente,
+            'Tipo_evento' => $request->tipo_evento,
+            'F_evento' => $request->fecha_evento,
+            'F_radicacion' => $request->fecha_radicacion,
+            'Nombre_usuario' => $nombre_usuario,
+            'F_registro' => $date
+        ];      
+        
+        
+        $eventoActualizar = sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
+        $eventoActualizar->fill($actualizar_GestionInicialEvento);
+        $eventoActualizar->save();
+
+        
+        sleep(2);
+
+        /* Actualizacion tabla sigmel_informacion_afiliado_eventos */
+
+        // validacion si selecciona la opción Otro/¿Cual? del selector de Tipo de documento
+
+        if ($request->tipo_documento == 8) {
+                
+            $datos_otro_tipo_documento_edicion = [
+                'Tipo_lista' => 'Tipo de documento',
+                'Nombre_parametro' => $request->otro_nombre_documento,
+                'Estado' => 'activo',
+                'F_registro' => $date
+            ];
+
+            sigmel_lista_parametros::on('sigmel_gestiones')->insert($datos_otro_tipo_documento_edicion);
+            $array_tipo_documento_edicion = sigmel_lista_parametros::on('sigmel_gestiones')->select('Id_Parametro')->latest('Id_Parametro')->first();
+            $tipo_documento = $array_tipo_documento_edicion['Id_Parametro'];
+        } else {
+            $tipo_documento = $request->tipo_documento;
+        }
+        
+        // validacion si selecciona la opción Otro/¿Cual? del selector de Estado civil
+        if ($request->estado_civil == 14) {
+
+            $datos_otro_estado_civil_edicion = [
+                'Tipo_lista' => 'Estado civil',
+                'Nombre_parametro' => $request->otro_estado_civil,
+                'Estado' => 'activo',
+                'F_registro' => $date
+            ];
+
+            sigmel_lista_parametros::on('sigmel_gestiones')->insert($datos_otro_estado_civil_edicion);
+            $array_estado_civil_edicion = sigmel_lista_parametros::on('sigmel_gestiones')->select('Id_Parametro')->latest('Id_Parametro')->first();
+            $estado_civil = $array_estado_civil_edicion['Id_Parametro'];
+        } else {
+            $estado_civil = $request->estado_civil;
+        }
+        
+        // validacion si selecciona la opción Otro/¿Cual? del selector de Nivel escolar
+        if ($request->nivel_escolar == 25) {
+            
+            $datos_otro_nivel_escolar_edicion = [
+                'Tipo_lista' => 'Nivel escolar',
+                'Nombre_parametro' => $request->otro_nivel_escolar,
+                'Estado' => 'activo',
+                'F_registro' => $date
+            ];
+
+            sigmel_lista_parametros::on('sigmel_gestiones')->insert($datos_otro_nivel_escolar_edicion);
+            $array_nivel_escolar_edicion = sigmel_lista_parametros::on('sigmel_gestiones')->select('Id_Parametro')->latest('Id_Parametro')->first();
+            $nivel_escolar = $array_nivel_escolar_edicion['Id_Parametro'];
+        } else {
+            $nivel_escolar = $request->nivel_escolar;
+        }
+        
+        // validacion si selecciona la opción Si del selector Apoderado
+        if ($request->apoderado == 'Si') {
+            
+            $nombre_apoderado = $request->nombre_apoderado;
+            $nro_identificacion_apoderado = $request->nro_identificacion_apoderado;
+        } else {
+            $nombre_apoderado = "";
+            $nro_identificacion_apoderado = "";
+        }
+        
+        // validacion si selecciona la opción de Exterior del selector Departamentos (Información afiliado)
+        if ($request->departamento_info_afiliado == 33) {
+            
+            // validacion si selecciona la opción de País? del selector Municipios (Información afiliado)
+            if($request->municipio_info_afiliado == 1120){
+
+                $datos_pais_exterior_edicion = [
+                'Id_departamento' => 33,
+                'Nombre_departamento' => "Exterior",
+                'Nombre_municipio' => $request->pais_exterior_info_afiliado,
+                'Estado' => "activo",
+                'F_registro' => $date
+                ];
+
+                sigmel_lista_departamentos_municipios::on('sigmel_gestiones')->insert($datos_pais_exterior_edicion);
+                $array_id_municipio_edicion = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')->select('Id_municipios')->latest('Id_municipios')->first();
+                $id_municipio = $array_id_municipio_edicion['Id_municipios'];
+
+            }else{
+                $id_municipio = $request->municipio_info_afiliado;
+            }
+
+        } else{
+            $id_municipio = $request->municipio_info_afiliado;
+        }
+        
+        // validacion si selecciona la opción Otro/¿Cuál? del selector de Tipo de afiliado
+        if ($request->tipo_afiliado == 29) {
+            
+            $datos_otro_tipo_afiliado_edicion = [
+                'Tipo_lista' => 'Tipo de Afiliado',
+                'Nombre_parametro' => $request->otro_tipo_afiliado,
+                'Estado' => 'activo',
+                'F_registro' => $date
+            ];
+
+            sigmel_lista_parametros::on('sigmel_gestiones')->insert($datos_otro_tipo_afiliado_edicion);
+            $array_tipo_afiliado_edicion = sigmel_lista_parametros::on('sigmel_gestiones')->select('Id_Parametro')->latest('Id_Parametro')->first();
+            $tipo_afiliado = $array_tipo_afiliado_edicion['Id_Parametro'];
+
+        } else {
+            $tipo_afiliado = $request->tipo_afiliado;
+        }
+
+        // validacion si selecciona la opción Otro/¿Cual? del selector de EPS
+        if ($request->eps == 31) {
+
+            $datos_otra_eps_edicion = [
+                'Nombre_eps' => $request->otra_eps,
+                'Estado' => 'activo',
+                'F_registro' => $date
+            ];
+
+            sigmel_lista_eps::on('sigmel_gestiones')->insert($datos_otra_eps_edicion);
+            $array_id_eps_edicion = sigmel_lista_eps::on('sigmel_gestiones')->select('Id_Eps')->latest('Id_Eps')->first();
+            $id_eps = $array_id_eps_edicion['Id_Eps'];
+
+        } else {
+            $id_eps = $request->eps;
+        }
+
+        // validacion si selecciona la opción Otro/¿Cual? del selector de AFP
+        if ($request->afp == 6) {
+
+            $datos_otra_afp_edicion = [
+                'Nombre_afp' => $request->otra_afp,
+                'Estado' => 'activo',
+                'F_registro' => $date
+            ];
+
+            sigmel_lista_afps::on('sigmel_gestiones')->insert($datos_otra_afp_edicion);
+            $array_id_afp_edicion = sigmel_lista_afps::on('sigmel_gestiones')->select('Id_Afp')->latest('Id_Afp')->first();
+            $id_afp = $array_id_afp_edicion['Id_Afp'];
+
+        } else {
+            $id_afp = $request->afp;
+        }
+
+        // validacion si selecciona la opción Otro/¿Cual? del selector de ARL
+        if ($request->arl_info_afiliado == 10) {
+
+            $datos_otra_arl_edicion = [
+                'Nombre_arl' => $request->otra_arl_info_afiliado,
+                'Estado' => 'activo',
+                'F_registro' => $date
+            ];
+
+            sigmel_lista_arls::on('sigmel_gestiones')->insert($datos_otra_arl_edicion);
+            $array_id_arl_edicion = sigmel_lista_arls::on('sigmel_gestiones')->select('Id_Arl')->latest('Id_Arl')->first();
+            $id_arl = $array_id_arl_edicion['Id_Arl'];
+
+        } else {
+            $id_arl = $request->arl_info_afiliado;
+        }
+
+        $actualizar_GestionInicialAfiliado = [
+            'Nombre_afiliado' => $request->nombre_afiliado,
+            'Tipo_documento' => $tipo_documento,
+            'Nro_identificacion' => $request->nro_identificacion,
+            'F_nacimiento' => $request->fecha_nacimiento,
+            'Edad' => $request->edad,
+            'Genero' => $request->genero,
+            'Email' => $request->email_info_afiliado,
+            'Telefono_contacto' => $request->telefono,
+            'Estado_civil' => $estado_civil,
+            'Nivel_escolar' => $nivel_escolar,
+            'Apoderado' => $request->apoderado,
+            'Nombre_apoderado' => $nombre_apoderado,
+            'Nro_identificacion_apoderado' => $nro_identificacion_apoderado,
+            'Id_dominancia' => $request->dominancia,
+            'Direccion' => $request->direccion_info_afiliado,
+            'Id_departamento' => $request->departamento_info_afiliado,
+            'Id_municipio' => $id_municipio,
+            'Ocupacion' => $request->ocupacion,
+            'Tipo_afiliado' => $tipo_afiliado,
+            'Ibc' => $request->ibc,
+            'Id_eps' => $id_eps,
+            'Id_afp' => $id_afp,
+            'Id_arl' => $id_arl,
+            'Activo' => $request->activo,
+            'Nombre_usuario' => $nombre_usuario,
+            'F_registro' => $date
+        ];        
+
+        $afiliadoActualizar = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+        ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
+        $afiliadoActualizar->fill($actualizar_GestionInicialAfiliado);
+        $afiliadoActualizar->save();
+
+        sleep(2);
+
+        /* Actualizacion tabla sigmel_informacion_laboral_eventos */
+
+        // validacion si selecciona la opción Otro/¿Cual? del selector de ARL
+
+        if ($request->arl_info_laboral == 10) {
+                
+            $datos_otra_arl_info_laboral_edicion = [
+                'Nombre_arl' => $request->otra_arl_info_laboral,
+                'Estado' => 'activo',
+                'F_registro' => $date
+            ];
+
+            sigmel_lista_arls::on('sigmel_gestiones')->insert($datos_otra_arl_info_laboral_edicion);
+            $array_otra_arl_edicion = sigmel_lista_arls::on('sigmel_gestiones')->select('Id_Arl')->latest('Id_Arl')->first();
+            $otra_arl = $array_otra_arl_edicion['Id_Arl'];
+        } else {
+            $otra_arl = $request->arl_info_laboral;
+        }
+
+        if ($request->departamento_info_laboral == 33) {
+            
+            // validacion si selecciona la opción de País? del selector Municipios (Información laboral)
+            if($request->municipio_info_laboral == 1120){
+
+                $datos_pais_exterior_edicion_laboral = [
+                'Id_departamento' => 33,
+                'Nombre_departamento' => "Exterior",
+                'Nombre_municipio' => $request->pais_exterior_info_laboral,
+                'Estado' => "activo",
+                'F_registro' => $date
+                ];
+
+                sigmel_lista_departamentos_municipios::on('sigmel_gestiones')->insert($datos_pais_exterior_edicion_laboral);
+                $array_id_municipio_laboral_edicion = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')->select('Id_municipios')->latest('Id_municipios')->first();
+                $id_municipio_laboral = $array_id_municipio_laboral_edicion['Id_municipios'];
+            }else{
+                $id_municipio_laboral = $request->municipio_info_laboral;
+            }
+
+        } else{
+            $id_municipio_laboral = $request->municipio_info_laboral;
+        }
+
+        $actualizar_GestionInicialLaboral = [
+            'Tipo_empleado' => $request->tipo_empleo,
+            'Id_arl' => $otra_arl,
+            'Empresa' => $request->empresa,
+            'Nit_o_cc' => $request->nit_cc,
+            'Telefono_empresa' => $request->telefono_empresa,
+            'Email' => $request->email_info_laboral,
+            'Direccion' => $request->direccion_info_laboral,
+            'Id_departamento' => $request->departamento_info_laboral,
+            'Id_municipio' => $id_municipio_laboral,
+            'Id_actividad_economica' => $request->actividad_economica,
+            'Id_clase_riesgo' => $request->clase_riesgo,
+            'Persona_contacto' => $request->persona_contacto,
+            'Telefono_persona_contacto' => $request->telefono_persona_contacto,
+            'Id_codigo_ciuo' => $request->codigo_ciuo,
+            'F_ingreso' => $request->fecha_ingreso,
+            'Cargo' => $request->cargo,
+            'Funciones_cargo' => $request->funciones_cargo,
+            'Antiguedad_empresa' => $request->antiguedad_empresa,
+            'Antiguedad_cargo_empresa' => $request->antiguedad_cargo,
+            'F_retiro' => $request->fecha_retiro,
+            'Descripcion' => $request->descripcion,
+            'Nombre_usuario' => $nombre_usuario,
+            'F_registro' => $date
+        ];        
+
+        $laboralActualizar = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
+        ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
+        $laboralActualizar->fill($actualizar_GestionInicialLaboral);
+        $laboralActualizar->save();
+
+        sleep(2);
+
+        /* Actualizacion tabla sigmel_informacion_pericial_eventos */
+
+        // validacion si selecciona la opción de otro/cual? del selector solicitante
+
+        if($request->solicitante == 8){
+
+            $id_solicitante_actual = sigmel_lista_solicitantes::on('sigmel_gestiones')
+            ->select('Id_solicitante')->max('Id_solicitante');
+
+            $id_solicitante_nuevo = $id_solicitante_actual + 1;
+
+            $datos_otro_solicitante_edicion = [
+                'Id_solicitante' => $id_solicitante_nuevo,
+                'Solicitante' => $request->otro_solicitante,
+                'Nombre_solicitante' => "",
+                'Estado' => 'activo',
+                'F_registro' => $date
+            ];
+
+            sigmel_lista_solicitantes::on('sigmel_gestiones')->insert($datos_otro_solicitante_edicion);
+            $array_id_solicitante_edicion = sigmel_lista_solicitantes::on('sigmel_gestiones')->select('Id_solicitante')->latest('Id_solicitante')->first();
+            $id_solicitante = $array_id_solicitante_edicion['Id_solicitante'];
+        }else{
+            $id_solicitante = $request->solicitante;
+        }
+
+        // validacion si selecciona la opción Otro/¿Cual? del selector de Nombre Solicitante
+
+        $id_nombre_solicitante_analizar = $request->nombre_solicitante;
+
+        switch($id_nombre_solicitante_analizar)
+        {
+            case 10:
+                $datos_otro_nombre_solicitante_edicion = [
+                    'Id_solicitante' => 1,
+                    'Solicitante' => 'ARL',
+                    'Nombre_solicitante' => $request->otro_nombre_solicitante,
+                    'Estado' => 'activo',
+                    'F_registro' => $date
+                ];
+
+                sigmel_lista_solicitantes::on('sigmel_gestiones')->insert($datos_otro_nombre_solicitante_edicion);
+                $array_id_nombre_solicitante_edicion = sigmel_lista_solicitantes::on('sigmel_gestiones')->select('Id_Nombre_solicitante')->latest('Id_Nombre_solicitante')->first();
+                $id_nombre_solicitante = $array_id_nombre_solicitante_edicion['Id_Nombre_solicitante'];
+            break;
+            case 16:
+                $datos_otro_nombre_solicitante_edicion = [
+                    'Id_solicitante' => 2,
+                    'Solicitante' => 'AFP',
+                    'Nombre_solicitante' => $request->otro_nombre_solicitante,
+                    'Estado' => 'activo',
+                    'F_registro' => $date
+                ];
+
+                sigmel_lista_solicitantes::on('sigmel_gestiones')->insert($datos_otro_nombre_solicitante_edicion);
+                $array_id_nombre_solicitante_edicion = sigmel_lista_solicitantes::on('sigmel_gestiones')->select('Id_Nombre_solicitante')->latest('Id_Nombre_solicitante')->first();
+                $id_nombre_solicitante = $array_id_nombre_solicitante_edicion['Id_Nombre_solicitante'];
+            break;
+            case 47:
+                $datos_otro_nombre_solicitante_edicion = [
+                    'Id_solicitante' => 3,
+                    'Solicitante' => 'EPS',
+                    'Nombre_solicitante' => $request->otro_nombre_solicitante,
+                    'Estado' => 'activo',
+                    'F_registro' => $date
+                ];
+
+                sigmel_lista_solicitantes::on('sigmel_gestiones')->insert($datos_otro_nombre_solicitante_edicion);
+                $array_id_nombre_solicitante_edicion = sigmel_lista_solicitantes::on('sigmel_gestiones')->select('Id_Nombre_solicitante')->latest('Id_Nombre_solicitante')->first();
+                $id_nombre_solicitante = $array_id_nombre_solicitante_edicion['Id_Nombre_solicitante'];
+            break;
+            default;
+                $id_nombre_solicitante = $request->nombre_solicitante;
+            break;
+        }
+
+        // validacion si selecciona la opción Otro/¿Cual? del selector de Fuente de Información
+
+        if ($request->fuente_informacion == 42) {
+            
+            $datos_otra_fuente_informacion_edicion = [
+                'Tipo_lista' => 'Fuente de informacion',
+                'Nombre_parametro' => $request->otra_fuente_informacion,
+                'Estado' => 'activo',
+                'F_registro' => $date
+            ];
+
+            sigmel_lista_parametros::on('sigmel_gestiones')->insert($datos_otra_fuente_informacion_edicion);
+            $array_fuente_informacion_edicion = sigmel_lista_parametros::on('sigmel_gestiones')->select('Id_Parametro')->latest('Id_Parametro')->first();
+            $fuente_informacion = $array_fuente_informacion_edicion['Id_Parametro'];
+            
+        } else {
+            $fuente_informacion = $request->fuente_informacion;
+        }
+
+        $actualizar_GestionIniciaPericial = [
+            'Id_motivo_solicitud' => $request->motivo_solicitud,
+            'Tipo_vinculacion' => $request->tipovinculo,
+            'Regimen_salud' => $request->regimen,
+            'Id_solicitante' => $id_solicitante,
+            'Id_nombre_solicitante' => $id_nombre_solicitante,
+            'Fuente_informacion' => $fuente_informacion,
+            'Nombre_usuario' => $nombre_usuario,
+            'F_registro' => $date
+        ];        
+
+        $pericialActualizar = sigmel_informacion_pericial_eventos::on('sigmel_gestiones')
+        ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
+        $pericialActualizar->fill($actualizar_GestionIniciaPericial);
+        $pericialActualizar->save();
+
+        sleep(2);
+
+
+        /* Actualizacion tabla sigmel_informacion_asignacion_eventos */
+
+        $actualizar_GestionIniciaAsignacion = [
+            'Id_proceso' => $request->proceso,
+            'Id_servicio' => $request->servicio,
+            'Id_accion' => $request->accion,
+            'Descripcion' => $request->descripcion_asignacion,
+            'Nombre_usuario' => $nombre_usuario,
+            'F_registro' => $date
+        ];  
+
+        $asignacionActualizar = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
+        $asignacionActualizar->fill($actualizar_GestionIniciaAsignacion);
+        $asignacionActualizar->save();
+
+        sleep(2);
+        
+        return redirect()->route('gestionInicialNuevo')->with('evento_actualizado', 'Evento actualizado Sactifactoriamente');
+
+    }
+
+    public function registrarOtraEmpresa(Request $request){
+
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+        
+        /* RECOLECCIÓN INFORMACIÓN PARA LA TABLA: sigmel_informacion_laboral_eventos */
+
+        // Evaluamos si selecciona la opción Otro/¿Cuál? del selector arl (información laboral)
+        if ($request->arl_info_laboral_registrar == 10) {
+            
+            $datos_otra_arl_info_laboral = [
+                'Nombre_arl' => $request->otra_arl_info_laboral_registrar,
+                'Estado' => 'activo',
+                'F_registro' => $date
+            ];
+
+            sigmel_lista_arls::on('sigmel_gestiones')->insert($datos_otra_arl_info_laboral);
+            $array_otra_arl = sigmel_lista_arls::on('sigmel_gestiones')->select('Id_Arl')->latest('Id_Arl')->first();
+            $otra_arl = $array_otra_arl['Id_Arl'];
+        } else {
+            $otra_arl = $request->arl_info_laboral_registrar;
+        }
+
+        if ($request->departamento_info_laboral_registrar == 33) {
+            
+            // Evaluamos si selecciona la opción de País? del selector Municipios (Información laboral)
+            if($request->municipio_info_laboral_registrar == 1120){
+
+                $datos_pais_exterior = [
+                'Id_departamento' => 33,
+                'Nombre_departamento' => "Exterior",
+                'Nombre_municipio' => $request->pais_exterior_info_laboral_registrar,
+                'Estado' => "activo",
+                'F_registro' => $date
+                ];
+
+                sigmel_lista_departamentos_municipios::on('sigmel_gestiones')->insert($datos_pais_exterior);
+                $array_id_municipio_laboral = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')->select('Id_municipios')->latest('Id_municipios')->first();
+                $id_municipio_laboral = $array_id_municipio_laboral['Id_municipios'];
+            }else{
+                $id_municipio_laboral = $request->municipio_info_laboral_registrar;
+            }
+
+        } else{
+            $id_municipio_laboral = $request->municipio_info_laboral_registrar;
+        }
+
+        $datos_info_laboral_nuevo =[
+            'Nro_identificacion' => $request->nro_identificacion_registrar,
+            'Tipo_empleado' => $request->tipo_empleo_registrar,
+            'Id_arl' => $otra_arl,
+            'Empresa' => $request->empresa_registrar,
+            'Nit_o_cc' => $request->nit_cc_registrar,
+            'Telefono_empresa' => $request->telefono_empresa_registrar,
+            'Email' => $request->email_info_laboral_registrar,
+            'Direccion' => $request->direccion_info_laboral_registrar,
+            'Id_departamento' => $request->departamento_info_laboral_registrar,
+            'Id_municipio' => $id_municipio_laboral,
+            'Id_actividad_economica' => $request->actividad_economica_registrar,
+            'Id_clase_riesgo' => $request->clase_riesgo_registrar,
+            'Persona_contacto' => $request->persona_contacto_registrar,
+            'Telefono_persona_contacto' => $request->telefono_persona_contacto_registrar,
+            'Id_codigo_ciuo' => $request->codigo_ciuo_registrar,
+            'F_ingreso' => $request->fecha_ingreso_registrar,
+            'Cargo' => $request->cargo_registrar,
+            'Funciones_cargo' => $request->funciones_cargo_registrar,
+            'Antiguedad_empresa' => $request->antiguedad_empresa_registrar,
+            'Antiguedad_cargo_empresa' => $request->antiguedad_cargo_registrar,
+            'F_retiro' => $request->fecha_retiro_registrar,
+            'Descripcion' => $request->descripcion_registrar,
+            'Nombre_usuario' => $nombre_usuario,
+            'F_registro' => $date
+        ];
+
+        // Inserción de datos en la tabla sigmel_informacion_laboral_eventos
+        sigmel_historico_empresas_afiliados::on('sigmel_gestiones')->insert($datos_info_laboral_nuevo);
+
+        // colacamos un tiempo de retardo pequeño para que alcance a insertar los datos
+        sleep(2);
+
+        $mensajes = array(
+            "a" => 'si_creo',
+            "b" => 'Registro creado satisfactoriamente.'
+        );
+        
+        return json_decode(json_encode($mensajes, true));
+	    
+    }
+
+    public function consultaHistoricoEmpresas(Request $request){
+        $array_datos_laboral_tabla = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_historico_empresas_afiliados as shea')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_arls as slarl', 'slarl.Id_Arl', '=', 'shea.Id_arl')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'shea.Id_departamento') 
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sldm1.Id_municipios', '=', 'shea.Id_municipio') 
+        ->leftJoin('sigmel_gestiones.sigmel_lista_actividad_economicas as slae', 'slae.Id_ActEco', '=', 'shea.Id_actividad_economica')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_clase_riesgos as slcr', 'slcr.Id_Riesgo', '=', 'shea.Id_clase_riesgo')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_ciuo_codigos as slcc', 'slcc.Id_Codigo', '=', 'shea.Id_codigo_ciuo')
+        ->select(
+            'shea.Tipo_empleado',
+            'shea.Id_arl',
+            'slarl.Nombre_arl',
+            'shea.Empresa',
+            'shea.Nit_o_cc',
+            'shea.Telefono_empresa',
+            'shea.Email',
+            'shea.Direccion',
+            'shea.Id_departamento',
+            'sldm.Nombre_departamento',
+            'shea.Id_municipio',
+            'sldm1.Nombre_municipio',
+            'shea.Id_actividad_economica',
+            'slae.id_codigo',
+            'slae.Nombre_actividad',
+            DB::raw("CONCAT(slae.id_codigo,' - ',slae.Nombre_actividad) as full_actividad_economica"),
+            'shea.Id_clase_riesgo',
+            'slcr.Nombre_riesgo',
+            'shea.Persona_contacto',
+            'shea.Telefono_persona_contacto',
+            'shea.Id_codigo_ciuo',
+            'slcc.id_codigo_ciuo',
+            'slcc.Nombre_ciuo',
+            DB::raw("CONCAT(slcc.id_codigo_ciuo,' - ',slcc.Nombre_ciuo) as full_ciuo"),
+            'shea.F_ingreso',
+            'shea.Cargo',
+            'shea.Funciones_cargo',
+            'shea.Antiguedad_empresa',
+            'shea.Antiguedad_cargo_empresa',
+            'shea.F_retiro',
+            'shea.Descripcion'
+        )
+        ->where([
+            ['shea.Nro_identificacion', '=', $request->numero_identificacion]
+        ])
+        ->groupBy('shea.Nro_identificacion')
+        ->orderBy('shea.F_registro', 'desc')
+        ->get();
+
+        return response()->json($array_datos_laboral_tabla);
+    }
+
 }
