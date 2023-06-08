@@ -12,11 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_registro_documentos_eventos', function (Blueprint $table) {
-            $table->increments('Id_Reg_Documento');
+            $table->increments('Id_Registro_Documento');
+            $table->integer('Id_Documento');
             $table->string('ID_evento', 10);
-            $table->string('Nombre_documento', 60);
+            $table->text('Nombre_documento');
             $table->string('Formato_documento', 7);
             $table->enum('Estado', ['activo', 'inactivo'])->default('activo');
+            $table->date('F_cargue_documento');
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });
