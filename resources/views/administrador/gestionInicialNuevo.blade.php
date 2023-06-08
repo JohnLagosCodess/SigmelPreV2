@@ -3,7 +3,8 @@
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
-            <h1>HOLA COMO ESTÁSGI</h1>
+            <h1>HOLA</h1>
+            <h4>soy Gay</h4>
         </div>
     </div>
 @stop
