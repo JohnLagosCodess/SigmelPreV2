@@ -1497,11 +1497,6 @@ class AdministradorController extends Controller
 
     }
 
-
-    public function actualizarGestionInicial1(Request $request){
-        
-    }
-
     public function actualizarGestionInicial(Request $request){
 
         if(!Auth::check()){
@@ -1712,7 +1707,7 @@ class AdministradorController extends Controller
         $actualizar_GestionInicialAfiliado = [
             'Nombre_afiliado' => $request->nombre_afiliado,
             'Tipo_documento' => $tipo_documento,
-            'Nro_identificacion' => $request->nro_identificacion,
+            'Nro_identificacion' => $request->nro_identificacion_enviar,
             'F_nacimiento' => $request->fecha_nacimiento,
             'Edad' => $request->edad,
             'Genero' => $request->genero,
@@ -2091,8 +2086,9 @@ class AdministradorController extends Controller
         ->where([
             ['shea.Nro_identificacion', '=', $request->numero_identificacion]
         ])
-        ->groupBy('shea.Nro_identificacion')
-        ->orderBy('shea.F_registro', 'desc')
+        // ->groupBy('shea.Nro_identificacion')
+        // ->orderBy('shea.F_registro', 'desc')
+        ->distinct()
         ->get();
 
         return response()->json($array_datos_laboral_tabla);

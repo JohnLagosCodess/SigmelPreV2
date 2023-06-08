@@ -1292,19 +1292,21 @@ $(document).ready(function(){
 
     /* GUARDAR OTRA EMPRESA */
     $('#guardar_otra_empresa').click(function(e){
-
+        $('.no_creada_empresa').empty();
         e.preventDefault();
+
+        
         /* Validación de los radio button */
         var sumatoria_entradas_empleo = $('#empleo_actual_registrar:checked').length + $('#independiente_registrar:checked').length + $('#beneficiario_registrar:checked').length
 
         if (sumatoria_entradas_empleo === 0) {
-            $('.no_creada_empresa').removeClass('d-none');
+            // $('.no_creada_empresa').removeClass('d-none');
             $('.no_creada_empresa').append('<strong>Debe seleccionar un tipo de empleo.</strong>; ');
         }
 
         /* Validación Input Empresa */
         if ($('#empresa_registrar').val() === "") {
-            $('.no_creada_empresa').removeClass('d-none');
+            // $('.no_creada_empresa').removeClass('d-none');
             $('.no_creada_empresa').append('<strong>El campo Empresa es obligatorio.</strong>; ');
         }else{
             var confirmacion_empresa = 1;
@@ -1312,7 +1314,7 @@ $(document).ready(function(){
 
         /* Validación Input NIT / CC */
         if ($('#nit_cc_registrar').val() === "") {
-            $('.no_creada_empresa').removeClass('d-none');
+            // $('.no_creada_empresa').removeClass('d-none');
             $('.no_creada_empresa').append('<strong>El campo NIT/CC es obligatorio.</strong>');
         }else{
             var confirmacion_nit_cc = 1;
@@ -1393,6 +1395,9 @@ $(document).ready(function(){
                     }
                 }
             });
+        }
+        else{
+            $('.no_creada_empresa').removeClass('d-none');
         }
     })
 
