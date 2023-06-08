@@ -633,188 +633,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {{-- MODAL PARA AGREGAR INFORMACION LABORAL --}}
-                                        <div class="row">
-                                            <div class="contenedor_agregar_empresa" style="float: left;">
-                                                <x-adminlte-modal id="modalInfoLaboral" title="Agregar Información laboral" theme="info" icon="fas fa-plus" size='xl' disable-animations>
-                                                    <form id="formulario_empresa">
-                                                        @csrf
-                                                        <div class="row text-center">
-                                                            <div class="col-sm">
-                                                                <div class="form-check custom-control custom-radio">
-                                                                  <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_empleo_registrar" id="empleo_actual_registrar" value="Empleado actual" required>
-                                                                  <label class="form-check-label custom-control-label" for="empleo_actual_registrar"><strong>Empleo Actual</strong></label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-sm">
-                                                                <div class="form-check custom-control custom-radio">
-                                                                  <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_empleo_registrar" id="independiente_registrar" value="Independiente" required>
-                                                                  <label class="form-check-label custom-control-label" for="independiente_registrar"><strong>Independiente</strong></label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-sm">
-                                                                <div class="form-check custom-control custom-radio">
-                                                                  <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_empleo_registrar" id="beneficiario_registrar" value="Beneficiario" required>
-                                                                  <label class="form-check-label custom-control-label" for="beneficiario_registrar"><strong>Beneficiario</strong></label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="container">
-                                                            <div class="row">
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="arl_info_laboral_registrar" class="col-form-label">ARL</label><br>
-                                                                        <select class="arl_info_laboral_registrar custom-select" name="arl_info_laboral_registrar" id="arl_info_laboral_registrar" style="width: 261.5px;"></select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm otro_arl_info_laboral_registrar d-none">
-                                                                    <div class="form-group">
-                                                                        <label for="otra_arl_info_laboral_registrar" class="col-form-label">Otra ARL</label>
-                                                                        <input type="text" class="otra_arl_info_laboral_registrar form-control" name="otra_arl_info_laboral_registrar" id="otra_arl_info_laboral_registrar">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="empresa_registrar" class="col-form-label">Empresa <span style="color:red;">(*)</span></label>
-                                                                        <input type="text" class="empresa_registrar form-control" name="empresa_registrar" id="empresa_registrar" required>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="nit_cc_registrar" class="col-form-label">NIT / CC <span style="color:red;">(*)</span></label>
-                                                                        <input type="text" class="nit_cc_registrar form-control" name="nit_cc_registrar" id="nit_cc_registrar" required>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="telefono_empresa_registrar" class="col-form-label">Télefono empresa</label>
-                                                                        <input type="text" class="telefono_empresa_registrar form-control" name="telefono_empresa_registrar" id="telefono_empresa_registrar">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="email_info_laboral_registrar" class="col-form-label">Email</label>
-                                                                        <input type="email" class="email_info_laboral_registrar form-control" name="email_info_laboral_registrar" id="email_info_laboral_registrar">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="direccion_info_laboral_registrar" class="col-form-label">Dirección</label>
-                                                                        <input type="text" class="direccion_info_laboral_registrar form-control" name="direccion_info_laboral_registrar" id="direccion_info_laboral_registrar">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="departamento_info_laboral_registrar" class="col-form-label">Departamento</label>
-                                                                        <select class="departamento_info_laboral_registrar custom-select" name="departamento_info_laboral_registrar" id="departamento_info_laboral_registrar" style="width: 261.5px;"></select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm columna_municipio_info_laboral_registrar">
-                                                                    <div class="form-group">
-                                                                        <label for="municipio_info_laboral_registrar" class="col-form-label">Municipio</label>
-                                                                        <select class="municipio_info_laboral_registrar custom-select" name="municipio_info_laboral_registrar" id="municipio_info_laboral_registrar" style="width: 261.5px;" disabled></select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm columna_pais_exterior_info_laboral_registrar d-none">
-                                                                    <div class="form-group">
-                                                                        <label for="pais_exterior_info_laboral_registrar" class="col-form-label">País Exterior</label>
-                                                                        <input type="text" class="pais_exterior_info_laboral_registrar form-control" name="pais_exterior_info_laboral_registrar" id="pais_exterior_info_laboral_registrar">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="actividad_economica_registrar" class="col-form-label">Actividad económica</label>
-                                                                        <select class="actividad_economica_registrar custom-select" name="actividad_economica_registrar" id="actividad_economica_registrar" style="width: 261.5px;"></select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="clase_riesgo_registrar" class="col-form-label">Clase / Riesgo</label>
-                                                                        <select class="clase_riesgo_registrar custom-select" name="clase_riesgo_registrar" id="clase_riesgo_registrar" style="width: 261.5px;"></select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="persona_contacto_registrar" class="col-form-label">Persona de contacto</label>
-                                                                        <input type="text" class="persona_contacto_registrar form-control" name="persona_contacto_registrar" id="persona_contacto_registrar" style="width: 100% !important;">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="telefono_persona_contacto_registrar" class="col-form-label">Tel persona contacto</label>
-                                                                        <input type="text" class="telefono_persona_contacto_registrar form-control" name="telefono_persona_contacto_registrar" id="telefono_persona_contacto_registrar" style="width: 100% !important;">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="codigo_ciuo_registrar" class="col-form-label">Código CIUO</label><br>
-                                                                        <select class="codigo_ciuo_registrar custom-select" name="codigo_ciuo_registrar" id="codigo_ciuo_registrar" style="width: 353.67px;"></select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="fecha_ingreso_registrar" class="col-form-label">Fecha de ingreso</label>
-                                                                        <input type="date" class="fecha_ingreso_registrar form-control" name="fecha_ingreso_registrar" id="fecha_ingreso_registrar">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="cargo_registrar" class="col-form-label">Cargo</label>
-                                                                        <input type="text" class="cargo_registrar form-control" name="cargo_registrar" id="cargo_registrar">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-12">
-                                                                    <div class="form-group">
-                                                                        <label for="funciones_cargo_registrar" class="col-form-label">Funciones del cargo</label>
-                                                                        <textarea class="funciones_cargo_registrar form-control" name="funciones_cargo_registrar" id="funciones_cargo_registrar" rows="2"></textarea>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="antiguedad_empresa_registrar" class="col-form-label">Antiguedad en empresa (Meses)</label>
-                                                                        <input type="number" class="antiguedad_empresa_registrar form-control" name="antiguedad_empresa_registrar" id="antiguedad_empresa_registrar">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="antiguedad_cargo_registrar" class="col-form-label">Antiguedad en el cargo (Meses)</label>
-                                                                        <input type="number" class="antiguedad_cargo_registrar form-control" name="antiguedad_cargo_registrar" id="antiguedad_cargo_registrar">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm">
-                                                                    <div class="form-group">
-                                                                        <label for="fecha_retiro_registrar" class="col-form-label">Fecha de retiro</label>
-                                                                        <input type="date" class="fecha_retiro_registrar form-control" name="fecha_retiro_registrar" id="fecha_retiro_registrar">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-12">
-                                                                    <div class="form-group">
-                                                                        <label for="descripcion_registrar" class="col-form-label">Descripción</label>
-                                                                        <textarea class="descripcion_registrar form-control" name="descripcion_registrar" id="descripcion_registrar" rows="2"></textarea>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-12">
-                                                                    <div class="no_creada_empresa alert alert-danger mt-2 d-none" role="alert"></div>
-                                                                    <div class="creada_empresa alert alert-success mt-2 d-none" role="alert"></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <x-slot name="footerSlot">
-                                                            <x-adminlte-button class="mr-auto" id="guardar_otra_empresa" theme="info" label="Guardar"/>
-                                                            <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
-                                                        </x-slot>
-                                                    </form>
-                                                </x-adminlte-modal>
-                                            </div>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -895,32 +714,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {{-- <div class="row">
-                                            <div class="col-sm">
-                                                <label for="solicitante" class="col-form label">Solicitante</label>
-                                                <select class="solicitante custom-select" name="solicitante" id="solicitante"></select>
-                                            </div>     
-                                            <div class="col-sm">
-                                                <label for="otro_solicitante" class="col-form label">Otro solicitante</label>
-                                                <input type="text" class="otro_solicitante form-control" name="otro_solicitante" id="otro_solicitante">
-                                            </div>
-                                            <div class="col-sm">
-                                                <label for="nombre_solicitante" class="col-form label">Nombre de solicitante</label>
-                                                <select class="nombre_solicitante custom-select" name="nombre_solicitante" id="nombre_solicitante"></select>
-                                            </div>
-                                            <div class="col-sm">
-                                                <label for="otro_nombre_solicitante" class="col-form label">Otro Nombre de solicitante</label>
-                                                <input type="text" class="otro_nombre_solicitante form-control" name="otro_nombre_solicitante" id="otro_nombre_solicitante">
-                                            </div>
-                                            <div class="col-sm">
-                                                <label for="fuente_informacion" class="col-form label">Fuente de información</label>
-                                                <select class="fuente_informacion custom-select" name="fuente_informacion" id="fuente_informacion"></select>
-                                            </div>
-                                            <div class="col-sm">
-                                                <label for="otra_fuente_informacion" class="col-form label">Otra Fuente de información</label>
-                                                <input type="text" class="otra_fuente_informacion form-control" name="otra_fuente_informacion" id="otra_fuente_informacion">
-                                            </div>
-                                        </div> --}}
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -979,7 +773,188 @@
                 </div>
             </div>
         </form>
-        
+        {{-- MODAL PARA AGREGAR INFORMACION LABORAL --}}
+        <div class="row">
+            <div class="contenedor_agregar_empresa" style="float: left;">
+                <x-adminlte-modal id="modalInfoLaboral" title="Agregar Información laboral" theme="info" icon="fas fa-plus" size='xl' disable-animations>
+                    <form id="formulario_empresa">
+                        @csrf
+                        <div class="row text-center">
+                            <div class="col-sm">
+                                <div class="form-check custom-control custom-radio">
+                                  <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_empleo_registrar" id="empleo_actual_registrar" value="Empleado actual" required>
+                                  <label class="form-check-label custom-control-label" for="empleo_actual_registrar"><strong>Empleo Actual</strong></label>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-check custom-control custom-radio">
+                                  <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_empleo_registrar" id="independiente_registrar" value="Independiente" required>
+                                  <label class="form-check-label custom-control-label" for="independiente_registrar"><strong>Independiente</strong></label>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-check custom-control custom-radio">
+                                  <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_empleo_registrar" id="beneficiario_registrar" value="Beneficiario" required>
+                                  <label class="form-check-label custom-control-label" for="beneficiario_registrar"><strong>Beneficiario</strong></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="arl_info_laboral_registrar" class="col-form-label">ARL</label><br>
+                                        <select class="arl_info_laboral_registrar custom-select" name="arl_info_laboral_registrar" id="arl_info_laboral_registrar" style="width: 261.5px;"></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm otro_arl_info_laboral_registrar d-none">
+                                    <div class="form-group">
+                                        <label for="otra_arl_info_laboral_registrar" class="col-form-label">Otra ARL</label>
+                                        <input type="text" class="otra_arl_info_laboral_registrar form-control" name="otra_arl_info_laboral_registrar" id="otra_arl_info_laboral_registrar">
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="empresa_registrar" class="col-form-label">Empresa <span style="color:red;">(*)</span></label>
+                                        <input type="text" class="empresa_registrar form-control" name="empresa_registrar" id="empresa_registrar" required>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="nit_cc_registrar" class="col-form-label">NIT / CC <span style="color:red;">(*)</span></label>
+                                        <input type="text" class="nit_cc_registrar form-control" name="nit_cc_registrar" id="nit_cc_registrar" required>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="telefono_empresa_registrar" class="col-form-label">Télefono empresa</label>
+                                        <input type="text" class="telefono_empresa_registrar form-control" name="telefono_empresa_registrar" id="telefono_empresa_registrar">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="email_info_laboral_registrar" class="col-form-label">Email</label>
+                                        <input type="email" class="email_info_laboral_registrar form-control" name="email_info_laboral_registrar" id="email_info_laboral_registrar">
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="direccion_info_laboral_registrar" class="col-form-label">Dirección</label>
+                                        <input type="text" class="direccion_info_laboral_registrar form-control" name="direccion_info_laboral_registrar" id="direccion_info_laboral_registrar">
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="departamento_info_laboral_registrar" class="col-form-label">Departamento</label>
+                                        <select class="departamento_info_laboral_registrar custom-select" name="departamento_info_laboral_registrar" id="departamento_info_laboral_registrar" style="width: 261.5px;"></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm columna_municipio_info_laboral_registrar">
+                                    <div class="form-group">
+                                        <label for="municipio_info_laboral_registrar" class="col-form-label">Municipio</label>
+                                        <select class="municipio_info_laboral_registrar custom-select" name="municipio_info_laboral_registrar" id="municipio_info_laboral_registrar" style="width: 261.5px;" disabled></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm columna_pais_exterior_info_laboral_registrar d-none">
+                                    <div class="form-group">
+                                        <label for="pais_exterior_info_laboral_registrar" class="col-form-label">País Exterior</label>
+                                        <input type="text" class="pais_exterior_info_laboral_registrar form-control" name="pais_exterior_info_laboral_registrar" id="pais_exterior_info_laboral_registrar">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="actividad_economica_registrar" class="col-form-label">Actividad económica</label>
+                                        <select class="actividad_economica_registrar custom-select" name="actividad_economica_registrar" id="actividad_economica_registrar" style="width: 261.5px;"></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="clase_riesgo_registrar" class="col-form-label">Clase / Riesgo</label>
+                                        <select class="clase_riesgo_registrar custom-select" name="clase_riesgo_registrar" id="clase_riesgo_registrar" style="width: 261.5px;"></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="persona_contacto_registrar" class="col-form-label">Persona de contacto</label>
+                                        <input type="text" class="persona_contacto_registrar form-control" name="persona_contacto_registrar" id="persona_contacto_registrar" style="width: 100% !important;">
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="telefono_persona_contacto_registrar" class="col-form-label">Tel persona contacto</label>
+                                        <input type="text" class="telefono_persona_contacto_registrar form-control" name="telefono_persona_contacto_registrar" id="telefono_persona_contacto_registrar" style="width: 100% !important;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="codigo_ciuo_registrar" class="col-form-label">Código CIUO</label><br>
+                                        <select class="codigo_ciuo_registrar custom-select" name="codigo_ciuo_registrar" id="codigo_ciuo_registrar" style="width: 353.67px;"></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="fecha_ingreso_registrar" class="col-form-label">Fecha de ingreso</label>
+                                        <input type="date" class="fecha_ingreso_registrar form-control" name="fecha_ingreso_registrar" id="fecha_ingreso_registrar">
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="cargo_registrar" class="col-form-label">Cargo</label>
+                                        <input type="text" class="cargo_registrar form-control" name="cargo_registrar" id="cargo_registrar">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="funciones_cargo_registrar" class="col-form-label">Funciones del cargo</label>
+                                        <textarea class="funciones_cargo_registrar form-control" name="funciones_cargo_registrar" id="funciones_cargo_registrar" rows="2"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="antiguedad_empresa_registrar" class="col-form-label">Antiguedad en empresa (Meses)</label>
+                                        <input type="number" class="antiguedad_empresa_registrar form-control" name="antiguedad_empresa_registrar" id="antiguedad_empresa_registrar">
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="antiguedad_cargo_registrar" class="col-form-label">Antiguedad en el cargo (Meses)</label>
+                                        <input type="number" class="antiguedad_cargo_registrar form-control" name="antiguedad_cargo_registrar" id="antiguedad_cargo_registrar">
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="fecha_retiro_registrar" class="col-form-label">Fecha de retiro</label>
+                                        <input type="date" class="fecha_retiro_registrar form-control" name="fecha_retiro_registrar" id="fecha_retiro_registrar">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="descripcion_registrar" class="col-form-label">Descripción</label>
+                                        <textarea class="descripcion_registrar form-control" name="descripcion_registrar" id="descripcion_registrar" rows="2"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="no_creada_empresa alert alert-danger mt-2 d-none" role="alert"></div>
+                                    <div class="creada_empresa alert alert-success mt-2 d-none" role="alert"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <x-slot name="footerSlot">
+                            <x-adminlte-button class="mr-auto" id="guardar_otra_empresa" theme="info" label="Guardar"/>
+                            <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
+                        </x-slot>
+                    </form>
+                </x-adminlte-modal>
+            </div>
+        </div>
     </div>
 @stop
 
