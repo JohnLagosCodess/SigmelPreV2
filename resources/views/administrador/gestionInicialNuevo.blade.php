@@ -3,7 +3,7 @@
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
-            <h1>HOLA SOY MAURO 1</h1>
+            <h1>HOLA SOY MAURO</h1>
         </div>
     </div>
     <div class='row mb-2'>
@@ -19,6 +19,7 @@
     <div class='row mb-2'>
         <div class='col-sm-6'>
             <h1>prueba 2</h1>
+            <h1>prueba 25</h1>
         </div>
     </div>
 @stop
