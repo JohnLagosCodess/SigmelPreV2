@@ -135,7 +135,8 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="nro_identificacion" class="col-form-label">N° de identificación <span style="color:red;">(*)</span></label>
-                                                    <input type="text" class="nro_identificacion form-control" name="nro_identificacion" id="nro_identificacion" value="{{$array_datos_info_afiliados[0]->Nro_identificacion}}" required>
+                                                    <input type="text" class="nro_identificacion form-control" name="nro_identificacion" id="nro_identificacion" value="{{$array_datos_info_afiliados[0]->Nro_identificacion}}" disabled>
+                                                    <input type="hidden" name="nro_identificacion_enviar" value="{{$array_datos_info_afiliados[0]->Nro_identificacion}}">
                                                 </div>
                                             </div>
                                         </div>
@@ -800,8 +801,10 @@
                                                                         <textarea class="descripcion_registrar form-control" name="descripcion_registrar" id="descripcion_registrar" rows="2"></textarea>
                                                                     </div>
                                                                 </div>
-                                                                <div class="no_creada_empresa alert alert-danger mt-2 d-none" role="alert"></div>
-                                                                <div class="creada_empresa alert alert-success mt-2 d-none" role="alert"></div>
+                                                                <div class="col-12">
+                                                                    <div class="no_creada_empresa alert alert-danger mt-2 d-none" role="alert"></div>
+                                                                    <div class="creada_empresa alert alert-success mt-2 d-none" role="alert"></div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <x-slot name="footerSlot">
@@ -984,38 +987,40 @@
     <script src="/js/selectores_gestion_edicion.js"></script>  
 
     <script type="text/javascript">
-        var conteo = 0;
+        // var conteo = 0;
         $('#llenar_tabla_historico_empresas').click(function(){
-            conteo = conteo + 1;
-            if (conteo == 1) {
-                conteo = 0;
-                var nro_ident = $('#listado_usuarios_asignacion_rol').val();
-                var datos_llenar_tabla_info_laboral = {
-                    '_token': $('input[name=_token]').val(),
-                    'numero_identificacion' : $('#nro_identificacion').val()
-                };
-                $.ajax({
-                    type:'POST',
-                    url:'/consultaHistoricoEmpresas',
-                    data: datos_llenar_tabla_info_laboral,
-                    success:function(data) {
-                        if(data.length == 0){
-                            $('#borrar').empty();
-                        }else{
-                            // console.log(data);
-                            $.each(data, function(index, value){
-                                llenar(data, index, value);
-                            });
-                        }
+            $('#borrar').empty();
+            // conteo = conteo + 1;
+            // if (conteo == 1) {
+            //     conteo = 0;
+            // }
+            var nro_ident = $('#listado_usuarios_asignacion_rol').val();
+            var datos_llenar_tabla_info_laboral = {
+                '_token': $('input[name=_token]').val(),
+                'numero_identificacion' : $('#nro_identificacion').val()
+            };
+            $.ajax({
+                type:'POST',
+                url:'/consultaHistoricoEmpresas',
+                data: datos_llenar_tabla_info_laboral,
+                success:function(data) {
+                    if(data.length == 0){
+                        $('#borrar').empty();
+                    }else{
+                        // console.log(data);
+                        $.each(data, function(index, value){
+                            llenar(data, index, value);
+                        });
                     }
-                });
-            }
+                }
+            });
         });
 
         function llenar(response, index, value){
             $('#listado_historico_empresas').DataTable({
                 "destroy": true,
                 "data": response,
+                "pageLength": 2,
                 // "order": [[2, 'desc']],
                 "columns":[
                     {"data":"Tipo_empleado"},
