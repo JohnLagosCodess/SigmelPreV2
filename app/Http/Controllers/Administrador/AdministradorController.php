@@ -30,6 +30,7 @@ use App\Models\sigmel_lista_motivo_solicitudes;
 use App\Models\sigmel_lista_solicitantes;
 use App\Models\sigmel_lista_procesos_servicios;
 use App\Models\sigmel_lista_acciones_procesos_servicios;
+use App\Models\sigmel_lista_documentos;
 
 /* llamado modelos para insertar la información del formulario de gestion inicial (creacion de evento) */
 use App\Models\sigmel_informacion_eventos;
@@ -468,7 +469,12 @@ class AdministradorController extends Controller
             return redirect('/');
         }
         $user = Auth::user();
-        return view('administrador.gestionInicialNuevo', compact('user'));
+
+        $listado_documentos = sigmel_lista_documentos::on('sigmel_gestiones')
+        ->select('Id_Documento', 'Nro_documento', 'Nombre_documento', 'Requerido')
+        ->where([['Estado', "=", "activo"]])->get();
+        
+        return view('administrador.gestionInicialNuevo', compact('user', 'listado_documentos'));
     }
 
     public function cargueListadoSelectores(Request $request){
