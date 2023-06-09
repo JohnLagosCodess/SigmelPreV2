@@ -1784,6 +1784,7 @@ class AdministradorController extends Controller
         }
 
         $actualizar_GestionInicialLaboral = [
+            'Nro_identificacion' => $request->nro_identificacion_enviar,
             'Tipo_empleado' => $request->tipo_empleo,
             'Id_arl' => $otra_arl,
             'Empresa' => $request->empresa,
@@ -1807,14 +1808,67 @@ class AdministradorController extends Controller
             'Descripcion' => $request->descripcion,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date
-        ];        
+        ];
+        
+        // Se recibe los datos como un objeto
+        $ActualInformacionLaboral = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
+        ->select('Nro_identificacion','Tipo_empleado', 'Id_arl', 'Empresa', 'Nit_o_cc', 'Telefono_empresa', 'Email', 'Direccion', 
+        'Id_departamento', 'Id_municipio', 'Id_actividad_economica', 'Id_clase_riesgo', 'Persona_contacto', 
+        'Telefono_persona_contacto', 'Id_codigo_ciuo', 'F_ingreso', 'Cargo', 'Funciones_cargo', 'Antiguedad_empresa', 
+        'Antiguedad_cargo_empresa', 'F_retiro', 'Descripcion', 'Nombre_usuario', 'F_registro')
+        ->where('ID_evento', $IdEventoactulizar)->get();
+        
+        // Se crea el array
+        $arrayActualInformacionLaboral= json_decode(json_encode($ActualInformacionLaboral, true));
 
-        $laboralActualizar = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
-        ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
-        $laboralActualizar->fill($actualizar_GestionInicialLaboral);
-        $laboralActualizar->save();
+        //Convertir el std objet a array
+        function convert_object_to_array($data) {
 
-        sleep(2);
+            if (is_object($data)) {
+                $data = get_object_vars($data);
+            }
+        
+            if (is_array($data)) {
+                return array_map(__FUNCTION__, $data);
+            }
+            else {
+                return $data;
+            }
+        }
+
+        $objetoconvertido = convert_object_to_array($arrayActualInformacionLaboral[0]);
+        //echo 'actual'.'<br>';
+        //print_r($objetoconvertido);
+        //echo 'nuevo'.'<br>';
+        //print_r($actualizar_GestionInicialLaboral);
+        $resultado = array_intersect($objetoconvertido, $actualizar_GestionInicialLaboral);
+        
+        $cantidadarray = sizeof($resultado);
+
+        //Si los array son iguales no se guarda en la tabla historico
+        
+        if ($cantidadarray == 24) {
+
+            $laboralActualizar = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
+            ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
+            $laboralActualizar->fill($actualizar_GestionInicialLaboral);
+            $laboralActualizar->save();          
+
+        }else{
+
+            sigmel_historico_empresas_afiliados::on('sigmel_gestiones')->insert($objetoconvertido);
+
+            sleep(2);
+
+            $laboralActualizar = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
+            ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
+            $laboralActualizar->fill($actualizar_GestionInicialLaboral);
+            $laboralActualizar->save(); 
+
+            sleep(2);
+        }
+
+        
 
         /* Actualizacion tabla sigmel_informacion_pericial_eventos */
 
