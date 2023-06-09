@@ -583,32 +583,63 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {{-- <div class="row">
-                                            <div class="col-sm">
-                                                <label for="solicitante" class="col-form label">Solicitante</label>
-                                                <select class="solicitante custom-select" name="solicitante" id="solicitante"></select>
-                                            </div>     
-                                            <div class="col-sm">
-                                                <label for="otro_solicitante" class="col-form label">Otro solicitante</label>
-                                                <input type="text" class="otro_solicitante form-control" name="otro_solicitante" id="otro_solicitante">
+                                        {{-- OPCIONES PARA HABILITAR EL MODAL DE DOCUMENTOS --}}
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <a href="javascript:void(0);" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
                                             </div>
-                                            <div class="col-sm">
-                                                <label for="nombre_solicitante" class="col-form label">Nombre de solicitante</label>
-                                                <select class="nombre_solicitante custom-select" name="nombre_solicitante" id="nombre_solicitante"></select>
-                                            </div>
-                                            <div class="col-sm">
-                                                <label for="otro_nombre_solicitante" class="col-form label">Otro Nombre de solicitante</label>
-                                                <input type="text" class="otro_nombre_solicitante form-control" name="otro_nombre_solicitante" id="otro_nombre_solicitante">
-                                            </div>
-                                            <div class="col-sm">
-                                                <label for="fuente_informacion" class="col-form label">Fuente de información</label>
-                                                <select class="fuente_informacion custom-select" name="fuente_informacion" id="fuente_informacion"></select>
-                                            </div>
-                                            <div class="col-sm">
-                                                <label for="otra_fuente_informacion" class="col-form label">Otra Fuente de información</label>
-                                                <input type="text" class="otra_fuente_informacion form-control" name="otra_fuente_informacion" id="otra_fuente_informacion">
-                                            </div>
-                                        </div> --}}
+                                        </div>
+                                        {{-- MODAL PARA MOSTRAR EL LISTADO DE DOCUMETNOS --}}
+                                        <div class="row">
+                                            <x-adminlte-modal id="modalListaDocumentos" title="Listado de Documentos" theme="info" icon="fas fa-plus" size='xl' scrollable="yes" disable-animations>
+                                                <div class="col-12">
+                                                    <div class="table table-responsive">
+                                                        <table id="listado_documentos" class="table table-striped table-bordered" style="width:100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>N°</th>
+                                                                    <th>Documento</th>
+                                                                    <th>Estado</th>
+                                                                    <th>Archivo</th>
+                                                                    <th style="width: 1px !important;">Obligatorio</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach ($listado_documentos as $documento)
+                                                                    <tr>
+                                                                        <td>{{$documento->Nro_documento}}</td>
+                                                                        <td style="width: 34% !important;">{{$documento->Nombre_documento}}</td>
+                                                                        <td>Cargado</td>
+                                                                        <th>
+                                                                            <form action="" method="POST" enctype="multipart/form-data">
+                                                                                <input type="hidden" name="Id_Documento" value="{{$documento->Id_Documento}}">
+                                                                                <input type="hidden" name="Nombre_documento" value="{{$documento->Nombre_documento}}">
+                                                                                <div class="row">
+                                                                                    {{-- <div class="form-group">
+                                                                                        <label for="archivo_a_cargar">Subir Archivo</label>
+                                                                                        <input type="file" class="form-control-file" id="archivo_a_cargar" name="archivo_a_cargar">
+                                                                                        <br>
+                                                                                        <input type="submit" class="btn btn-info" value="cargar">
+                                                                                    </div> --}}
+                                                                                    <div class="custom-file">
+                                                                                      <input type="file" class="custom-file-input" id="customFile">
+                                                                                      <label class="custom-file-label" for="customFile">Choose file</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </form>
+                                                                        </th>
+                                                                        <th style="width: 10% !important;">check</th>
+                                                                    </tr>
+                                                                @endforeach                                                                
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <x-slot name="footerSlot">
+                                                    <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
+                                                </x-slot>
+                                            </x-adminlte-modal>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -680,4 +711,11 @@
         $('#mostrar_barra_creacion_evento').css("display","block");
     }
 </script> 
+<script>
+    $(document).ready(function(){
+        $('#listado_documentos1').DataTable({
+            "paging": false,
+        });
+    })
+</script>
 @stop
