@@ -48,4 +48,22 @@
     width: auto !important;
 }
 
+/* Seleccionar archivo */
+
+.select-doc{
+    padding-inline: inherit; 
+    padding-block: inherit; 
+    height: max-content; 
+    color: black;
+}
+
+.button-doc-select{
+    padding-block: inherit;
+}
+
+.scales{
+
+    scale: 2;
+}
+
 
