@@ -589,59 +589,7 @@
                                                 <a href="javascript:void(0);" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
                                             </div>
                                         </div>
-                                        {{-- MODAL PARA MOSTRAR EL LISTADO DE DOCUMETNOS --}}
-                                        <div class="row">
-                                            <x-adminlte-modal id="modalListaDocumentos" title="Listado de Documentos" theme="info" icon="fas fa-plus" size='xl' scrollable="yes" disable-animations>
-                                                <div class="col-12">
-                                                    <div class="table table-responsive">
-                                                        <table id="listado_documentos" class="table table-striped table-bordered" style="width:100%">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>N°</th>
-                                                                    <th>Documento</th>
-                                                                    <th>Estado</th>
-                                                                    <th>Archivo</th>
-                                                                    <th style="width: 1px !important;">Obligatorio</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                @foreach ($listado_documentos as $documento)
-                                                                    <tr>
-                                                                        <td>{{$documento->Nro_documento}}</td>
-                                                                        <td style="width: 34% !important;">{{$documento->Nombre_documento}}</td>
-                                                                        <td id="estadoDocumento">No Cargado</td>
-                                                                        <td>
-                                                                            <form action="" method="POST" enctype="multipart/form-data">
-                                                                                <input type="hidden" name="Id_Documento" value="{{$documento->Id_Documento}}">
-                                                                                <input type="hidden" name="Nombre_documento" value="{{$documento->Nombre_documento}}">
-                                                                                <div class="row"> 
-                                                                                    <div class="input-group">
-                                                                                        <input type="file" class="form-control select-doc" id="listadodocumentos" aria-describedby="Carguedocumentos" aria-label="Upload">
-                                                                                        <button class="btn btn-info button-doc-select" type="button" id="inputGroupFileAddon04">Cargar</button>
-                                                                                    </div>                                                                                                                                                              
-                                                                                </div>
-                                                                            </form>
-                                                                        </td>
-                                                                        <td class="text-center" style="width: 10% !important;">
-                                                                            <?php 
-                                                                            $id_documento = $documento->Nro_documento;
-                                                                            if($id_documento <= 12): ?>
-                                                                            <input type="checkbox" class="scales" name="checkdocumentos" id="checkdocumentos" checked>
-                                                                            <?php else:?>
-                                                                            <input type="checkbox" class="scales" name="checkdocumentos" id="checkdocumentos">                                                                            
-                                                                            <?php endif ?>
-                                                                        </td>
-                                                                    </tr>
-                                                                @endforeach                                                                
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                                <x-slot name="footerSlot">
-                                                    <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
-                                                </x-slot>
-                                            </x-adminlte-modal>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -700,7 +648,61 @@
                 </div>
             </div>
         </form>
-        
+        {{-- MODAL PARA MOSTRAR EL LISTADO DE DOCUMETNOS --}}
+        <div class="row">
+            <x-adminlte-modal id="modalListaDocumentos" title="Listado de Documentos" theme="info" icon="fas fa-plus" size='xl' scrollable="yes" disable-animations>
+                <div class="col-12">
+                    <div class="table table-responsive">
+                        <table id="listado_documentos" class="table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>N°</th>
+                                    <th>Documento</th>
+                                    <th>Estado</th>
+                                    <th>Archivo</th>
+                                    <th style="width: 1px !important;">Obligatorio</th>
+                                </tr>
+                            </thead>
+                            <tbody>                                 
+                                @foreach ($listado_documentos as $documento)
+                                    <tr id="cargartdDocumentos">
+                                        <td>{{$documento->Nro_documento}}</td>
+                                        <td style="width: 34% !important;">{{$documento->Nombre_documento}}</td>
+                                        <td id="estadoDocumento">No Cargado</td>
+                                        <td>
+                                            <form name="formulario_documentos" id="formulario_documentos" enctype="multipart/form-data">
+                                                @csrf
+                                                <input type="hidden" name="Id_Documento" value="{{$documento->Id_Documento}}">
+                                                <input type="hidden" name="Nombre_documento" value="{{$documento->Nombre_documento}}">                                                
+                                                <input hidden="hidden" type="text" name="EventoID" id="EventoID" value="">                                                
+                                                <div class="row"> 
+                                                    <div class="input-group">
+                                                        <input type="file" class="form-control select-doc" name="listadodocumentos" id="listadodocumentos" aria-describedby="Carguedocumentos" aria-label="Upload" onclick="obtenerid()">
+                                                        <button class="btn btn-info button-doc-select" type="submit" id="CargarDocumento">Cargar</button>
+                                                    </div>                                                                                                                                                              
+                                                </div>
+                                            </form>
+                                        </td>
+                                        <td class="text-center" style="width: 10% !important;">
+                                            <?php 
+                                            $id_documento = $documento->Nro_documento;
+                                            if($id_documento <= 12): ?>
+                                            <input type="checkbox" class="scales" name="checkdocumentos" id="checkdocumentos" checked>
+                                            <?php else:?>
+                                            <input type="checkbox" class="scales" name="checkdocumentos" id="checkdocumentos">                                                                            
+                                            <?php endif ?>
+                                        </td>
+                                    </tr>
+                                @endforeach                                                                                              
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <x-slot name="footerSlot">
+                    <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
+                </x-slot>
+            </x-adminlte-modal>
+        </div>
     </div>
 @stop
 
@@ -719,5 +721,39 @@
             "paging": false,
         });
     })
+</script>
+<script type="text/javascript">
+    function obtenerid(){
+        let idobtenido = $('#id_evento').val();
+        $('#EventoID').val(idobtenido);
+        //console.log(idobtenido);
+    }
+</script> 
+<script>
+    
+$(function(){
+    $("#formulario_documentos").on("submit", function(e){
+              
+        // Cancelamos el evento si se requiere 
+        e.preventDefault();
+ 
+        // Obtenemos los datos del formulario 
+        var f = $(this);
+        var formData = new FormData(document.getElementById("formulario_documentos"));
+        formData.append("dato", "valor");
+               
+        // Enviamos los datos al archivo PHP que procesará el envio de los datos a un determinado correo 
+        $.ajax({
+            url: "/cargarDocumentos",
+            type: "post",
+            dataType: "json",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false           
+        })      
+ 
+    });
+});
 </script>
 @stop

@@ -6,6 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\CargarDocRequest;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\File;
+
 
 use App\Models\sigmel_grupos_trabajos;
 use App\Models\sigmel_usuarios_grupos_trabajos;
@@ -39,6 +44,7 @@ use App\Models\sigmel_informacion_pericial_eventos;
 use App\Models\sigmel_informacion_laboral_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_historico_empresas_afiliados;
+use App\Models\sigmel_registro_documentos_eventos;
 
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Rels;
 
@@ -2152,6 +2158,73 @@ class AdministradorController extends Controller
         ->get();
 
         return response()->json($array_datos_laboral_tabla);
+    }
+
+    public function cargaListadoDocumentosInicialNuevo(Request $request){
+
+        /* $request->validate([
+
+            "listadodocumentos" =>"mime:pdf,xls,xlsx,doc,docx,jpg,png|max:10000",
+
+        ]); */
+
+        /* Validator::validate($request, [
+            'listadodocumentos' => [
+                File::types(['pdf', 'xls', 'xlsx', 'doc', 'docx', 'jpg', 'png'])                    
+                    ->max(10000)
+            ],
+        ]); */
+        
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+        
+        if($request->isMethod('POST')){
+
+            $file = $request->file('listadodocumentos');
+            $id_documento = $request->input('Id_Documento');
+            $nombredocumento = $request->input('Nombre_documento');
+            $idEvento = $request->input('EventoID');
+            $nombrecompletodocumento = $nombredocumento."_IdEvento_".$idEvento;
+            $formatodocumento = $file->extension();
+            $estado = 'activo';
+            $file->storeAs('', $nombredocumento."_IdEvento_".$idEvento.".".$file->extension(),'public');
+
+            $cargar_GestionIniciaNuevoDocumento = [
+
+                'Id_Documento' => $id_documento,
+                'ID_evento' => $idEvento,
+                'Nombre_documento' => $nombrecompletodocumento,
+                'Formato_documento' => $formatodocumento,
+                'Estado' => $estado,
+                'F_cargue_documento' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date
+            ];  
+
+            sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($cargar_GestionIniciaNuevoDocumento);
+    
+            /* $archivos = [];        
+
+            foreach (Storage::disk('public')->files() as $archivo) {
+                $nombredocumento = str_replace('public/',"",$archivo);
+
+                $tipoarchivo="";
+
+                $tipo = Storage::disk('public')->Storage::mimeType(path);($nombredocumento);
+
+                if(strpos($tipo, "pdf")!==false || strpos($tipo, "xls")!==false || strpos($tipo, "xlsx")!==false ||
+                strpos($tipo, "doc")!==false || strpos($tipo, "docx")!==false ||  strpos($tipo, "jpg")!==false || 
+                strpos($tipo, "png")!==false){
+                    //$tipoarchivo = ".".Storage::url($archivo);
+                    $tipoarchivo = asset(Storage::disk('public')->url($nombredocumento));
+                }
+            }  */
+
+        }
+
+        return back();
+
     }
 
 }

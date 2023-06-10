@@ -223,6 +223,10 @@ Route::post('/consultarInfoAfiliadoLlenar', [AdministradorController::class, 'll
 // información laboral del formulario de creación de envento.
 Route::post('/consultarInfoLaboralLlenar', [AdministradorController::class, 'llenarDatosInfoLaboral']);
 // Acción:Registrar Otra EMpresa en el modal de Empresas
+
+// Acción: Cargar documentos en Gestion Inicial Nuevo
+Route::post('/cargarDocumentos', [AdministradorController::class, 'cargaListadoDocumentosInicialNuevo'])->name('cargaDocumento');
+
 Route::post('/registrarOtraEmpresa', [AdministradorController::class, 'registrarOtraEmpresa']);
 // Acción: Traer el listado de historicos de empresa dependiendo del numero de identificacion del afiliado
 Route::post('/consultaHistoricoEmpresas', [AdministradorController::class, 'consultaHistoricoEmpresas']);
