@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CargarDocRequest;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\File;
+// use Illuminate\Validation\Rules\File;
 
+use Illuminate\Support\Facades\File;
 
 use App\Models\sigmel_grupos_trabajos;
 use App\Models\sigmel_usuarios_grupos_trabajos;
@@ -2161,69 +2162,119 @@ class AdministradorController extends Controller
     }
 
     public function cargaListadoDocumentosInicialNuevo(Request $request){
-
-        /* $request->validate([
-
-            "listadodocumentos" =>"mime:pdf,xls,xlsx,doc,docx,jpg,png|max:10000",
-
-        ]); */
-
-        /* Validator::validate($request, [
-            'listadodocumentos' => [
-                File::types(['pdf', 'xls', 'xlsx', 'doc', 'docx', 'jpg', 'png'])                    
-                    ->max(10000)
-            ],
-        ]); */
         
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
-        
-        if($request->isMethod('POST')){
 
-            $file = $request->file('listadodocumentos');
-            $id_documento = $request->input('Id_Documento');
-            $nombredocumento = $request->input('Nombre_documento');
-            $idEvento = $request->input('EventoID');
-            $nombrecompletodocumento = $nombredocumento."_IdEvento_".$idEvento;
-            $formatodocumento = $file->extension();
-            $estado = 'activo';
-            $file->storeAs('', $nombredocumento."_IdEvento_".$idEvento.".".$file->extension(),'public');
-
-            $cargar_GestionIniciaNuevoDocumento = [
-
-                'Id_Documento' => $id_documento,
-                'ID_evento' => $idEvento,
-                'Nombre_documento' => $nombrecompletodocumento,
-                'Formato_documento' => $formatodocumento,
-                'Estado' => $estado,
-                'F_cargue_documento' => $date,
-                'Nombre_usuario' => $nombre_usuario,
-                'F_registro' => $date
-            ];  
-
-            sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($cargar_GestionIniciaNuevoDocumento);
-    
-            /* $archivos = [];        
-
-            foreach (Storage::disk('public')->files() as $archivo) {
-                $nombredocumento = str_replace('public/',"",$archivo);
-
-                $tipoarchivo="";
-
-                $tipo = Storage::disk('public')->Storage::mimeType(path);($nombredocumento);
-
-                if(strpos($tipo, "pdf")!==false || strpos($tipo, "xls")!==false || strpos($tipo, "xlsx")!==false ||
-                strpos($tipo, "doc")!==false || strpos($tipo, "docx")!==false ||  strpos($tipo, "jpg")!==false || 
-                strpos($tipo, "png")!==false){
-                    //$tipoarchivo = ".".Storage::url($archivo);
-                    $tipoarchivo = asset(Storage::disk('public')->url($nombredocumento));
-                }
-            }  */
-
+        /* Validación N° 1: Cuando el documento que se intenta cargar son de los que no son obligatorios y aún así se manda vacío el dato */
+        if($request->file('listadodocumento') == ""){
+            $mensajes = array(
+                "parametro" => 'fallo',
+                "mensaje" => 'Debe cargar este documento para poder guardarlo.'
+            );
+            return json_decode(json_encode($mensajes, true));
         }
 
-        return back();
+        /* Validación N° 2: EL ID DEL EVENTO DEBE ESTAR ESCRITO */
+        if($request->EventoID == ""){
+            $mensajes = array(
+                "parametro" => 'fallo',
+                "mensaje" => 'Debe diligenciar primero el formulario para poder cargar este documento.'
+            );
+            return json_decode(json_encode($mensajes, true));
+        }
+        
+        /* Validación N° 3: TIPO DE DOCUMENTO */
+        $reglas_validacion_tipo_documento = array(
+            'listadodocumento' => 'mimes:pdf,xls,xlsx,doc,docx,jpeg,png'
+        );
+
+        $ejecutar_validador_tipo_documento = Validator::make($request->all(), $reglas_validacion_tipo_documento);
+
+        if ($ejecutar_validador_tipo_documento->fails()) {
+            $mensajes = array(
+                "parametro" => 'fallo',
+                "mensaje" => 'El tipo de documento debe ser de alguna de estas extensiones: pdf, xls, xlsx, doc, docx, jpeg, png.'
+            );
+            return json_decode(json_encode($mensajes, true));
+        }
+
+        /* Validación N° 4: TAMAÑO DEL ARCHIVO */
+        $reglas_validacion_tamano_documento = array(
+            'listadodocumento' => 'max:10000'
+        );
+
+        $ejecutar_validador_tamano_documento = Validator::make($request->all(), $reglas_validacion_tamano_documento);
+
+        if ($ejecutar_validador_tamano_documento->fails()) {
+
+            $mensajes = array(
+                "parametro" => 'fallo',
+                "mensaje" => 'El tamaño máximo permitido para cargar este documento es de 10 Megas.'
+            );
+            
+            return json_decode(json_encode($mensajes, true));
+        }
+
+        
+        /* Si las validaciones son exitosas, Se procede a subir el documento */
+
+        // Captura de variables del formulario.
+        $file = $request->file('listadodocumento');
+        $id_documento = $request->Id_Documento;
+        if ($id_documento == 37) {
+            $nombre_lista_documento = str_replace(' ', '_', str_replace('/', '_', $request->nombre_otro_documento));
+        } else {
+            $nombre_lista_documento = str_replace(' ', '_', str_replace('/', '_', $request->Nombre_documento));
+        }
+        
+        $idEvento = $request->EventoID;
+
+        // Creación de carpeta con el ID EVENTO para insertar los documentos
+        $path = public_path('Documentos_Eventos/'.$idEvento);
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0777, true);
+
+            $mode = 777;
+            chmod($path, octdec($mode));
+
+            $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento.".".$file->extension();
+            Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
+        }else {
+            $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento.".".$file->extension();
+            Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
+        }
+
+        // Registrar la información del documento con relación al ID del evento.
+        $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento;
+        $nuevoDocumento = [
+            'Id_Documento' => $id_documento,
+            'ID_evento' => $idEvento,
+            'Nombre_documento' => $nombrecompletodocumento,
+            'Formato_documento' => $file->extension(),
+            'Estado' => 'activo',
+            'F_cargue_documento' => $date,
+            'Nombre_usuario' => $nombre_usuario,
+            'F_registro' => $date
+        ];  
+
+        if (count($nuevoDocumento) > 0) {
+            sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($nuevoDocumento);
+
+            $mensajes = array(
+                "parametro" => 'exito',
+                "mensaje" => 'Documento cargado satisfactoriamente.'
+            );
+
+            if ($id_documento == 37) {
+                $mensajes["otro"] = "envio_otro";
+            }
+            
+            return json_decode(json_encode($mensajes, true));
+        }
+
+        
 
     }
 

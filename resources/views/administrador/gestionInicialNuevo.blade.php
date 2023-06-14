@@ -64,6 +64,7 @@
                                 <div class="card-info">
                                     <div class="card-header text-center" style="border: 1.5px solid black;">
                                         <h5>Información del evento</h5>
+                                        <input type="hidden" id="action_evento" value="{{route("gestionInicialEdicion")}}">
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
@@ -665,32 +666,43 @@
                             </thead>
                             <tbody>                                 
                                 @foreach ($listado_documentos as $documento)
-                                    <tr id="cargartdDocumentos">
+                                    <tr>
                                         <td>{{$documento->Nro_documento}}</td>
                                         <td style="width: 34% !important;">{{$documento->Nombre_documento}}</td>
-                                        <td id="estadoDocumento">No Cargado</td>
-                                        <td>
-                                            <form name="formulario_documentos" id="formulario_documentos" enctype="multipart/form-data">
-                                                @csrf
-                                                <input type="hidden" name="Id_Documento" value="{{$documento->Id_Documento}}">
-                                                <input type="hidden" name="Nombre_documento" value="{{$documento->Nombre_documento}}">                                                
-                                                <input hidden="hidden" type="text" name="EventoID" id="EventoID" value="">                                                
-                                                <div class="row"> 
-                                                    <div class="input-group">
-                                                        <input type="file" class="form-control select-doc" name="listadodocumentos" id="listadodocumentos" aria-describedby="Carguedocumentos" aria-label="Upload" onclick="obtenerid()">
-                                                        <button class="btn btn-info button-doc-select" type="submit" id="CargarDocumento">Cargar</button>
-                                                    </div>                                                                                                                                                              
-                                                </div>
-                                            </form>
-                                        </td>
+                                        <?php if($documento->Id_Documento === 37):?>
+                                            <td id="estadoDocumentoOtro_{{$documento->Id_Documento}}"><strong class="text-danger">No Cargado</strong></td>
+                                            <td><x-adminlte-button label="Cargar Otro Documento" data-toggle="modal" data-target="#modalOtroDocumento" class="bg-info"/></td>
+                                        <?php else:?>
+                                            <td id="estadoDocumento_{{$documento->Id_Documento}}"><strong class="text-danger">No Cargado</strong></td>
+                                            <td>
+                                                <form id="formulario_documento_{{$documento->Id_Documento}}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    <div class="d-none">
+                                                        <input type="text" name="Id_Documento" value="{{$documento->Id_Documento}}">
+                                                        <input type="text" name="Nombre_documento" value="{{$documento->Nombre_documento}}">                                                
+                                                        <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">                                                
+                                                    </div>
+                                                    <div class="row"> 
+                                                        <div class="input-group">
+                                                            <input type="file" class="form-control select-doc" name="listadodocumento" 
+                                                            id="listadodocumento_{{$documento->Id_Documento}}" aria-describedby="Carguedocumentos" aria-label="Upload"
+                                                            <?php if($documento->Requerido === "Si"):?>
+                                                                required
+                                                            <?php endif?>
+                                                            >
+                                                            <button class="btn btn-info button-doc-select" type="submit" id="CargarDocumento_{{$documento->Id_Documento}}">Cargar</button>
+                                                        </div>                                                                                                                                                              
+                                                    </div>
+                                                </form>
+                                            </td>
+                                        <?php endif?>
                                         <td class="text-center" style="width: 10% !important;">
-                                            <?php 
-                                            $id_documento = $documento->Nro_documento;
-                                            if($id_documento <= 12): ?>
-                                            <input type="checkbox" class="scales" name="checkdocumentos" id="checkdocumentos" checked>
-                                            <?php else:?>
-                                            <input type="checkbox" class="scales" name="checkdocumentos" id="checkdocumentos">                                                                            
+                                            <input type="checkbox" class="scales" name="checkdocumentos" id="check_documento_{{$documento->Id_Documento}}" 
+                                            <?php if($documento->Requerido === "Si"): ?>
+                                            checked
+                                            disabled
                                             <?php endif ?>
+                                            >
                                         </td>
                                     </tr>
                                 @endforeach                                                                                              
@@ -698,6 +710,45 @@
                         </table>
                     </div>
                 </div>
+                <x-slot name="footerSlot">
+                    <div class="mostrar_fallo alert alert-danger mt-2 mr-auto d-none"role="alert"></div>
+                    <div class="mostrar_exito alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                    <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
+                </x-slot>
+            </x-adminlte-modal>
+
+            {{-- MODAL OTRO DOCUMENTO --}}
+            <x-adminlte-modal id="modalOtroDocumento" title="Cargar Otro Documento" theme="info" icon="fas fa-plus" size='xl' v-centered="yes" disable-animations>
+                <form id="formulario_documento_{{$documento->Id_Documento}}" class="form-inline align-items-center"" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="col-12">
+                        <div class="d-none">
+                            <input type="text" name="Id_Documento" value="{{$documento->Id_Documento}}">
+                            <input type="text" name="Nombre_documento" value="{{$documento->Nombre_documento}}">                                                
+                            <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">                                                
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-2 col-form-label">Nombre Documento</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="nombre_otro_documento" id="nombre_otro_documento" style="width: 100% !important;">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-2 col-form-label">Cargar Documento</label>
+                            <div class="col-sm-10">
+                                <input type="file" class="form-control mr-sm-2 select-doc" name="listadodocumento" 
+                                    id="listadodocumento_{{$documento->Id_Documento}}" aria-describedby="Carguedocumentos" aria-label="Upload"
+                                    <?php if($documento->Requerido === "Si"):?>
+                                        required
+                                    <?php endif?>
+                                    style="width: 100% !important;"
+                                >
+                            </div>
+                        </div>
+                        <button class="btn btn-info" type="submit" id="CargarDocumento_{{$documento->Id_Documento}}">Cargar</button>
+                    </div>
+                </form>
+
                 <x-slot name="footerSlot">
                     <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
                 </x-slot>
@@ -722,16 +773,9 @@
         });
     })
 </script>
-<script type="text/javascript">
-    function obtenerid(){
-        let idobtenido = $('#id_evento').val();
-        $('#EventoID').val(idobtenido);
-        //console.log(idobtenido);
-    }
-</script> 
 <script>
     
-$(function(){
+/* $(function(){
     $("#formulario_documentos").on("submit", function(e){
               
         // Cancelamos el evento si se requiere 
@@ -740,8 +784,7 @@ $(function(){
         // Obtenemos los datos del formulario 
         var f = $(this);
         var formData = new FormData(document.getElementById("formulario_documentos"));
-        formData.append("dato", "valor");
-               
+        
         // Enviamos los datos al archivo PHP que procesará el envio de los datos a un determinado correo 
         $.ajax({
             url: "/cargarDocumentos",
@@ -751,9 +794,31 @@ $(function(){
             cache: false,
             contentType: false,
             processData: false           
-        })      
+        }) 
  
     });
-});
+}); */
+
+/* 
+$("button[id^='CargarDocumento_']").click(function(e){
+        e.prevenDefault();
+        
+        // Obtenemos los datos del formulario cuando hacemos clic en el respectivo boton de cargar
+        var padre = $(this).parent().parent().parent();
+        var formData = new FormData(padre[0]);
+
+        // Enviamos los datos para validar y guardar el docmuento correspondiente
+        $.ajax({
+            url: "/cargarDocumentos",
+            type: "post",
+            dataType: "json",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false           
+        })
+
+    });
+ */
 </script>
 @stop

@@ -1279,9 +1279,9 @@ $(document).ready(function(){
                                 '<td>'+data[registro[i]]["F_evento"]+'</td>'+
                                 '<td>'+data[registro[i]]["F_radicacion"]+'</td>'+
                                 '<td>'+
-                                    '<form action="/Sigmel/RolAdministrador/GestionInicialEdicion" method="POST">'+
+                                    '<form id="form_editar_evento" action="" method="POST">'+
                                         '<input type="hidden" name="_token" value="'+token+'">'+
-                                        '<input class="btn btn-info" type="submit" value="Editar">'+
+                                        '<input class="btn btn-info" id="edit_evento" type="submit" value="Editar">'+
                                         '<input type="hidden" name="newIdEvento" value="'+data[registro[i]]["ID_evento"]+'">'+
                                     '</form>'+
                                 '</td>'+
@@ -1299,6 +1299,70 @@ $(document).ready(function(){
         }
     });
 
+    /* Asignar ruta del formulario de edicion de evento antes de dar clic en el botón Editar */
+    $(document).on('mouseover', '#edit_evento', function(){
+        let url_editar_evento = $('#action_evento').val();
+        $('#form_editar_evento').attr("action", url_editar_evento);
+    });
+
+    /* Obtener el ID del evento a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id evento */
+    $("input[id^='listadodocumento_']").click(function(){
+        let idobtenido = $('#id_evento').val();
+        $("input[id^='EventoID_']").val(idobtenido);
+    });
+
+    /* Envío de Información del Documento a Cargar */
+    $("form[id^='formulario_documento_']").submit(function(e){
+        e.preventDefault();
+        
+        var formData = new FormData($(this)[0]);
+        
+        /* for (var pair of formData.entries()) {
+            console.log(pair[0]+ ', ' + pair[1]); 
+        } */
+
+        var cambio_estado = $(this).parents()[1]['children'][2]["id"];
+        var input_documento = $(this).parents()[0]['children'][0][4]["id"];
+        
+        // Enviamos los datos para validar y guardar el docmuento correspondiente
+        $.ajax({
+            url: "/cargarDocumentos",
+            type: "post",
+            dataType: "json",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false  ,
+            success:function(response){
+                // console.log(response);
+                if (response.parametro == "fallo") {
+                    $('.mostrar_fallo').removeClass('d-none');
+                    $('.mostrar_fallo').append('<strong>'+response.mensaje+'</strong>');
+                    $('#'+input_documento).val('');
+                    setTimeout(function(){
+                        $('.mostrar_fallo').addClass('d-none');
+                        $('.mostrar_fallo').empty();
+                    }, 9000);
+                }else if (response.parametro == "exito") {
+                    if(response.otro == "envio_otro"){
+                        $("#estadoDocumentoOtro_37").empty();
+                        $("#estadoDocumentoOtro_37").append('<strong class="text-success">Cargado</strong>');
+                    }else{
+                        $("#"+cambio_estado).empty();
+                        $("#"+cambio_estado).append('<strong class="text-success">Cargado</strong>');
+                    }
+                    $('.mostrar_exito').removeClass('d-none');
+                    $('.mostrar_exito').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_exito').addClass('d-none');
+                        $('.mostrar_exito').empty();
+                    }, 9000);
+                }
+            }         
+        });
+
+
+    });
 
 
 });
