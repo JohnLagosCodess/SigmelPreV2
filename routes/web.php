@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Administrador\AdministradorController;
+use App\Http\Controllers\Administrador\BuscarEventoController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Autenticacion\LoginController;
 use App\Http\Controllers\Autenticacion\LogoutController;
@@ -238,7 +239,9 @@ Route::post('/Sigmel/RolAdministrador/GestionInicialEdicion', [AdministradorCont
 // Acción: Actualizar evento
 Route::post('/Sigmel/RolAdministrador/ActualizarEvento', [AdministradorController::class, 'actualizarGestionInicial'])->name('actualizarEvento');
 
-
+// 14/06/2023
+// Vista: Buscar Evento
+Route::get('/Sigmel/RolAdministrador/BusquedaEveto', [BuscarEventoController::class, 'mostrarVistaBuscarEvento'])->name('busquedaEvento');
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
