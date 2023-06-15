@@ -1317,13 +1317,17 @@ $(document).ready(function(){
         
         var formData = new FormData($(this)[0]);
         
-        /* for (var pair of formData.entries()) {
-            console.log(pair[0]+ ', ' + pair[1]); 
-        } */
+        
 
         var cambio_estado = $(this).parents()[1]['children'][2]["id"];
         var input_documento = $(this).parents()[0]['children'][0][4]["id"];
         
+        /* for (var pair of formData.entries()) {
+            console.log(pair[0]+ ', ' + pair[1]); 
+        } */
+
+        // console.log($("#bandera_otro_documento").val());
+
         // Enviamos los datos para validar y guardar el docmuento correspondiente
         $.ajax({
             url: "/cargarDocumentos",
@@ -1336,17 +1340,24 @@ $(document).ready(function(){
             success:function(response){
                 // console.log(response);
                 if (response.parametro == "fallo") {
+                    if (response.otro != undefined) {
+                        $('#listadodocumento_'+response.otro).val('');
+                    }else{
+                        $('#'+input_documento).val('');
+                    }
                     $('.mostrar_fallo').removeClass('d-none');
                     $('.mostrar_fallo').append('<strong>'+response.mensaje+'</strong>');
-                    $('#'+input_documento).val('');
                     setTimeout(function(){
                         $('.mostrar_fallo').addClass('d-none');
                         $('.mostrar_fallo').empty();
                     }, 9000);
                 }else if (response.parametro == "exito") {
-                    if(response.otro == "envio_otro"){
-                        $("#estadoDocumentoOtro_37").empty();
-                        $("#estadoDocumentoOtro_37").append('<strong class="text-success">Cargado</strong>');
+                    if(response.otro != undefined){
+                        $("#estadoDocumentoOtro_"+response.otro).empty();
+                        $("#estadoDocumentoOtro_"+response.otro).append('<strong class="text-success">Cargado</strong>');
+                        $('#listadodocumento_'+response.otro).prop("disabled", true);
+                        $('#CargarDocumento_'+response.otro).prop("disabled", true);
+                        $('#habilitar_modal_otro_doc').prop("disabled", true);
                     }else{
                         $("#"+cambio_estado).empty();
                         $("#"+cambio_estado).append('<strong class="text-success">Cargado</strong>');
