@@ -2168,7 +2168,7 @@ class AdministradorController extends Controller
         $nombre_usuario = Auth::user()->name;
 
         /* Validación N° 1: TAMAÑO DEL ARCHIVO */
-        /* $reglas_validacion_tamano_documento = array(
+        $reglas_validacion_tamano_documento = array(
             'listadodocumento' => 'max:10000'
         );
 
@@ -2187,10 +2187,10 @@ class AdministradorController extends Controller
             }
             
             return json_decode(json_encode($mensajes, true));
-        } */
+        }
 
         /* Validación N° 2: Cuando el documento que se intenta cargar son de los que no son obligatorios y aún así se manda vacío el dato */
-        /* if($request->file('listadodocumento') == ""){
+        if($request->file('listadodocumento') == ""){
 
             // echo "estoy vacio no subo gonorreas";
             $mensajes = array(
@@ -2204,10 +2204,10 @@ class AdministradorController extends Controller
             }
 
             return json_decode(json_encode($mensajes, true));
-        } */
+        }
 
         /* Validación N° 3: EL ID DEL EVENTO DEBE ESTAR ESCRITO */
-        /* if($request->EventoID == ""){
+        if($request->EventoID == ""){
             $mensajes = array(
                 "parametro" => 'fallo',
                 "mensaje" => 'Debe diligenciar primero el formulario para poder cargar este documento.'
@@ -2219,10 +2219,10 @@ class AdministradorController extends Controller
             }
 
             return json_decode(json_encode($mensajes, true));
-        } */
+        }
         
         /* Validación N° 4: TIPO DE DOCUMENTO */
-        /* $reglas_validacion_tipo_documento = array(
+        $reglas_validacion_tipo_documento = array(
             'listadodocumento' => 'mimes:pdf,xls,xlsx,doc,docx,jpeg,png'
         );
 
@@ -2240,12 +2240,12 @@ class AdministradorController extends Controller
             }
 
             return json_decode(json_encode($mensajes, true));
-        } */
+        }
 
         /* Si las validaciones son exitosas, Se procede a subir el documento */
 
         // Captura de variables del formulario.
-        /* $file = $request->file('listadodocumento');
+        $file = $request->file('listadodocumento');
         $id_documento = $request->Id_Documento;
         
         // Evaluamos si han enviado el OTRO DOCUMENTO para que así pueda reemplazar el nombre original por el nombre que indico en el formulario
@@ -2301,8 +2301,33 @@ class AdministradorController extends Controller
                 $mensajes["otro"] = $request->bandera_otro_documento;
             }
             
+            // SE VALIDA SI TODOS LOS DOCUMENTOS OBLIGATORIOS HAN SIDO CARGADOS PARA PROCEDER A HABILITAR EL BOTÓN QUE CREARÁ EL EVENTO
+            $id_docs_obligatorios = sigmel_lista_documentos::on('sigmel_gestiones')
+                    ->select('Id_Documento')
+                    ->where([
+                        ["Requerido", "=", "Si"],
+                        ["Estado", "=", "activo"]
+                    ])->get();
+    
+            $array_id_docs_obligatorios = json_decode(json_encode($id_docs_obligatorios), true);
+            $cantidad_id_docs_obligatorios = count($array_id_docs_obligatorios);
+    
+            $cantidad_id_docs_subidos = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento', '=', $request->EventoID]
+            ])
+            ->whereIn('Id_Documento', $array_id_docs_obligatorios)->count();
+            
+            if ($cantidad_id_docs_obligatorios <> $cantidad_id_docs_subidos) {
+                $mensajes["todos_obligatorios"] = "Si";
+            }
+
             return json_decode(json_encode($mensajes, true));
-        } */
+        }
+
+
+
+        
 
     }
 

@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 @section('title', 'Nuevo Evento')
+
+@section('css')
+    <link rel="stylesheet" type="text/css" href=/plugins/toatsr/build/toastr.min.css">
+@stop
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
@@ -637,9 +641,12 @@
                 </div>
             </div>
             <div class="card-footer">
+                <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Debe cargar los documentos obligatorios para crear el evento.
+                </div>
                 <div class="grupo_botones" style="float: left;">
                     <input type="reset" id="btn_borrar" class="btn btn-info" value="Borrar">
-                    <input type="submit" id="btn_guardar_evento" class="btn btn-info" value="Guardar" onclick="OcultarbotonGuardar()">
+                    <input type="submit" id="btn_guardar_evento" class="btn btn-info d-none" value="Guardar" onclick="OcultarbotonGuardar()">
                 </div>
                 <div class="text-center" id="mostrar_barra_creacion_evento"  style="display:none;">                                
                     <button class="btn btn-info" type="button" disabled>
@@ -777,52 +784,5 @@
         });
     })
 </script>
-<script>
-    
-/* $(function(){
-    $("#formulario_documentos").on("submit", function(e){
-              
-        // Cancelamos el evento si se requiere 
-        e.preventDefault();
- 
-        // Obtenemos los datos del formulario 
-        var f = $(this);
-        var formData = new FormData(document.getElementById("formulario_documentos"));
-        
-        // Enviamos los datos al archivo PHP que procesará el envio de los datos a un determinado correo 
-        $.ajax({
-            url: "/cargarDocumentos",
-            type: "post",
-            dataType: "json",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false           
-        }) 
- 
-    });
-}); */
-
-/* 
-$("button[id^='CargarDocumento_']").click(function(e){
-        e.prevenDefault();
-        
-        // Obtenemos los datos del formulario cuando hacemos clic en el respectivo boton de cargar
-        var padre = $(this).parent().parent().parent();
-        var formData = new FormData(padre[0]);
-
-        // Enviamos los datos para validar y guardar el docmuento correspondiente
-        $.ajax({
-            url: "/cargarDocumentos",
-            type: "post",
-            dataType: "json",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false           
-        })
-
-    });
- */
-</script>
+<script src="/plugins/toastr/build/toastr.min.js"></script>
 @stop
