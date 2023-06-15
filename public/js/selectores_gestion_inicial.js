@@ -1313,20 +1313,11 @@ $(document).ready(function(){
 
     /* Envío de Información del Documento a Cargar */
     $("form[id^='formulario_documento_']").submit(function(e){
-        e.preventDefault();
-        
-        var formData = new FormData($(this)[0]);
-        
-        
 
+        e.preventDefault();
+        var formData = new FormData($(this)[0]);
         var cambio_estado = $(this).parents()[1]['children'][2]["id"];
         var input_documento = $(this).parents()[0]['children'][0][4]["id"];
-        
-        /* for (var pair of formData.entries()) {
-            console.log(pair[0]+ ', ' + pair[1]); 
-        } */
-
-        // console.log($("#bandera_otro_documento").val());
 
         // Enviamos los datos para validar y guardar el docmuento correspondiente
         $.ajax({
@@ -1350,7 +1341,7 @@ $(document).ready(function(){
                     setTimeout(function(){
                         $('.mostrar_fallo').addClass('d-none');
                         $('.mostrar_fallo').empty();
-                    }, 9000);
+                    }, 6000);
                 }else if (response.parametro == "exito") {
                     if(response.otro != undefined){
                         $("#estadoDocumentoOtro_"+response.otro).empty();
@@ -1367,12 +1358,14 @@ $(document).ready(function(){
                     setTimeout(function(){
                         $('.mostrar_exito').addClass('d-none');
                         $('.mostrar_exito').empty();
-                    }, 9000);
+                    }, 6000);
+                }else{}
+                // Si ya se cargaron todos los documentos obligatorios habilita el botón de guardar y elimina el mensaje amarillo
+                if (response.todos_obligatorios == "Si") {
+                    
                 }
             }         
         });
-
-
     });
 
 
