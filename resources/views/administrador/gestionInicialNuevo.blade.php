@@ -653,6 +653,7 @@
         <div class="row">
             <x-adminlte-modal id="modalListaDocumentos" title="Listado de Documentos" theme="info" icon="fas fa-plus" size='xl' scrollable="yes" disable-animations>
                 <div class="col-12">
+                    <p class="h5">Los documentos marcados con &nbsp; &nbsp;<input type="checkbox" class="scales" disabled checked>&nbsp; &nbsp; son de cargue obligatorio para poder crear el evento.</p>
                     <div class="table table-responsive">
                         <table id="listado_documentos" class="table table-striped table-bordered" style="width:100%">
                             <thead>
@@ -669,9 +670,9 @@
                                     <tr>
                                         <td>{{$documento->Nro_documento}}</td>
                                         <td style="width: 34% !important;">{{$documento->Nombre_documento}}</td>
-                                        <?php if($documento->Id_Documento === 37):?>
+                                        <?php if($documento->Nombre_documento === "Otros documentos"):?>
                                             <td id="estadoDocumentoOtro_{{$documento->Id_Documento}}"><strong class="text-danger">No Cargado</strong></td>
-                                            <td><x-adminlte-button label="Cargar Otro Documento" data-toggle="modal" data-target="#modalOtroDocumento" class="bg-info"/></td>
+                                            <td><x-adminlte-button label="Cargar Otro Documento" id="habilitar_modal_otro_doc" data-toggle="modal" data-target="#modalOtroDocumento" class="bg-info"/></td>
                                         <?php else:?>
                                             <td id="estadoDocumento_{{$documento->Id_Documento}}"><strong class="text-danger">No Cargado</strong></td>
                                             <td>
@@ -698,10 +699,12 @@
                                         <?php endif?>
                                         <td class="text-center" style="width: 10% !important;">
                                             <input type="checkbox" class="scales" name="checkdocumentos" id="check_documento_{{$documento->Id_Documento}}" 
-                                            <?php if($documento->Requerido === "Si"): ?>
-                                            checked
-                                            disabled
-                                            <?php endif ?>
+                                                <?php if($documento->Requerido === "Si"): ?>
+                                                    checked
+                                                    disabled
+                                                <?php else:?>
+                                                    disabled
+                                                <?php endif ?>
                                             >
                                         </td>
                                     </tr>
@@ -725,7 +728,8 @@
                         <div class="d-none">
                             <input type="text" name="Id_Documento" value="{{$documento->Id_Documento}}">
                             <input type="text" name="Nombre_documento" value="{{$documento->Nombre_documento}}">                                                
-                            <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">                                                
+                            <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">    
+                            <input type="text" name="bandera_otro_documento" id="bandera_otro_documento" value="{{$documento->Id_Documento}}">                                            
                         </div>
                         <div class="form-group row">
                             <label for="" class="col-sm-2 col-form-label">Nombre Documento</label>
