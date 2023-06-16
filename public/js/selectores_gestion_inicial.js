@@ -1362,14 +1362,7 @@ $(document).ready(function(){
                 }else{}
                 // Si ya se cargaron todos los documentos obligatorios habilita el botón de guardar y elimina el mensaje amarillo
                 if (response.todos_obligatorios == "Si") {
-                    $('.mensaje_confirmacion_cargar_evento').addClass('d-none');
-                    $('#btn_guardar_evento').removeClass('d-none');
-                    toastr['success']('Documentos obligatorios cargados satisfactoriamente.');
-                    toastr.options.positionClass = 'toast-top-right';
-                    toastr.options.extendedTimeOut = 0; //1000;
-                    toastr.options.timeOut = 1000;
-                    toastr.options.fadeOut = 250;
-                    toastr.options.fadeIn = 250;
+                    
                 }
             }         
         });

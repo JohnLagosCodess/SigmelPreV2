@@ -2289,80 +2289,45 @@ class AdministradorController extends Controller
         ];  
 
         if (count($nuevoDocumento) > 0) {
+            sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($nuevoDocumento);
 
-            // Consultamos si el documento ya se encuentra dentro de la tabla para no cargarlo nuevamente
-            $consulta_documento_bd = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
-                ->select( "Id_Registro_Documento", "Nombre_documento", "Formato_documento")
-                ->where([
-                    ["Nombre_documento", "=", $nombrecompletodocumento],
-                    // ["Formato_documento", "=", $file->extension()],
-                    ["ID_evento", "=", $idEvento]
-                ])->get();
+            $mensajes = array(
+                "parametro" => 'exito',
+                "mensaje" => 'Documento cargado satisfactoriamente.'
+            );
 
-            $array_consulta_documento_bd = json_decode(json_encode($consulta_documento_bd), true);
+            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
+            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
+                $mensajes["otro"] = $request->bandera_otro_documento;
+            }
             
-            if(!empty($array_consulta_documento_bd)){
-                $Id_Registro_Documento_en_bd = $array_consulta_documento_bd[0]['Id_Registro_Documento'];
-                $Nombre_documento_en_bd = $array_consulta_documento_bd[0]['Nombre_documento'];
-
-                // $Formato_documento_en_bd = $array_consulta_documento_bd[0]['Formato_documento'];
-                // && $Formato_documento_en_bd == $file->extension()
-                
-                if ($Nombre_documento_en_bd == $nombrecompletodocumento) {
-                    $actualizar_documento = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
-                        ->where('Id_Registro_Documento', $Id_Registro_Documento_en_bd)->firstOrFail();
+            // SE VALIDA SI TODOS LOS DOCUMENTOS OBLIGATORIOS HAN SIDO CARGADOS PARA PROCEDER A HABILITAR EL BOTÓN QUE CREARÁ EL EVENTO
+            $id_docs_obligatorios = sigmel_lista_documentos::on('sigmel_gestiones')
+                    ->select('Id_Documento')
+                    ->where([
+                        ["Requerido", "=", "Si"],
+                        ["Estado", "=", "activo"]
+                    ])->get();
     
-                    $actualizar_documento->fill($nuevoDocumento);
-                    $actualizar_documento->save();
+            $array_id_docs_obligatorios = json_decode(json_encode($id_docs_obligatorios), true);
+            $cantidad_id_docs_obligatorios = count($array_id_docs_obligatorios);
     
-                    $mensajes = array(
-                        "parametro" => 'exito',
-                        "mensaje" => 'Documento cargado satisfactoriamente.'
-                    );
-                    return json_decode(json_encode($mensajes, true));
-    
-                } 
-
-            }
-            else {
-                sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($nuevoDocumento);
-    
-                $mensajes = array(
-                    "parametro" => 'exito',
-                    "mensaje" => 'Documento cargado satisfactoriamente.'
-                );
-    
-                // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
-                if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
-                    $mensajes["otro"] = $request->bandera_otro_documento;
-                }
-                
-                // SE VALIDA SI TODOS LOS DOCUMENTOS OBLIGATORIOS HAN SIDO CARGADOS PARA PROCEDER A HABILITAR EL BOTÓN QUE CREARÁ EL EVENTO
-                $id_docs_obligatorios = sigmel_lista_documentos::on('sigmel_gestiones')
-                        ->select('Id_Documento')
-                        ->where([
-                            ["Requerido", "=", "Si"],
-                            ["Estado", "=", "activo"]
-                        ])->get();
-        
-                $array_id_docs_obligatorios = json_decode(json_encode($id_docs_obligatorios), true);
-                $cantidad_id_docs_obligatorios = count($array_id_docs_obligatorios);
-        
-                $cantidad_id_docs_subidos = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
-                ->where([
-                    ['ID_evento', '=', $request->EventoID]
-                ])
-                ->whereIn('Id_Documento', $array_id_docs_obligatorios)->count();
-                
-                if ($cantidad_id_docs_obligatorios == $cantidad_id_docs_subidos) {
-                    $mensajes["todos_obligatorios"] = "Si";
-                }
-    
-                return json_decode(json_encode($mensajes, true));
-                
+            $cantidad_id_docs_subidos = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento', '=', $request->EventoID]
+            ])
+            ->whereIn('Id_Documento', $array_id_docs_obligatorios)->count();
+            
+            if ($cantidad_id_docs_obligatorios <> $cantidad_id_docs_subidos) {
+                $mensajes["todos_obligatorios"] = "Si";
             }
 
+            return json_decode(json_encode($mensajes, true));
         }
+
+
+
+        
 
     }
 

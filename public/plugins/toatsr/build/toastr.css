@@ -162,7 +162,6 @@ button.toast-close-button {
 }
 .toast-success {
   background-color: #51A351;
-  opacity: 1 !important;
 }
 .toast-error {
   background-color: #BD362F;

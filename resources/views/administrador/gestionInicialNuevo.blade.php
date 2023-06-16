@@ -2,7 +2,7 @@
 @section('title', 'Nuevo Evento')
 
 @section('css')
-    <link rel="stylesheet" type="text/css" href="/plugins/toatsr/build/toastr.css">
+    <link rel="stylesheet" type="text/css" href=/plugins/toatsr/build/toastr.min.css">
 @stop
 @section('content_header') 
     <div class='row mb-2'>
@@ -138,8 +138,14 @@
                                         <div class="row">
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="nro_identificacion" class="col-form-label">N° de identificación <span style="color:red;">(*)</span></label>
-                                                    <input type="text" class="nro_identificacion form-control" name="nro_identificacion" id="nro_identificacion" required>
+                                                    <label for="nombre_afiliado" class="col-form-label">Nombre de afiliado <span style="color:red;">(*)</span></label>
+                                                    <input type="text" class="nombre_afiliado form-control" name="nombre_afiliado" id="nombre_afiliado" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="direccion_info_afiliado" class="col-form-label">Dirección <span style="color:red;">(*)</span></label>
+                                                    <input type="text" class="direccion_info_afiliado form-control" name="direccion_info_afiliado" id="direccion_info_afiliado" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -156,14 +162,8 @@
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="nombre_afiliado" class="col-form-label">Nombre de afiliado <span style="color:red;">(*)</span></label>
-                                                    <input type="text" class="nombre_afiliado form-control" name="nombre_afiliado" id="nombre_afiliado" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="direccion_info_afiliado" class="col-form-label">Dirección <span style="color:red;">(*)</span></label>
-                                                    <input type="text" class="direccion_info_afiliado form-control" name="direccion_info_afiliado" id="direccion_info_afiliado" required>
+                                                    <label for="nro_identificacion" class="col-form-label">N° de identificación <span style="color:red;">(*)</span></label>
+                                                    <input type="text" class="nro_identificacion form-control" name="nro_identificacion" id="nro_identificacion" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -683,7 +683,6 @@
                                         <?php else:?>
                                             <td id="estadoDocumento_{{$documento->Id_Documento}}"><strong class="text-danger">No Cargado</strong></td>
                                             <td>
-                                                {{-- action="{{route('cargaDocumento')}}" --}}
                                                 <form id="formulario_documento_{{$documento->Id_Documento}}" method="POST" enctype="multipart/form-data">
                                                     @csrf
                                                     <div class="d-none">
@@ -691,7 +690,7 @@
                                                         <input type="text" name="Nombre_documento" value="{{$documento->Nombre_documento}}">                                                
                                                         <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">                                                
                                                     </div>
-                                                    <div class="row">
+                                                    <div class="row"> 
                                                         <div class="input-group">
                                                             <input type="file" class="form-control select-doc" name="listadodocumento" 
                                                             id="listadodocumento_{{$documento->Id_Documento}}" aria-describedby="Carguedocumentos" aria-label="Upload"
@@ -770,7 +769,6 @@
 @stop
 
 @section('js')
-<script src="/plugins/toatsr/build/toastr.min.js"></script>
 <script src="/js/selectores_gestion_inicial.js"></script>
 <script>
     function OcultarbotonGuardar(){
@@ -784,16 +782,7 @@
         $('#listado_documentos1').DataTable({
             "paging": false,
         });
-
-        /* $('#btn_borrar').click(function () {
-            Command: toastr['success']('Documentos obligatorios cargados satisfactoriamente.');
-            toastr.options.positionClass = 'toast-top-right';
-            toastr.options.extendedTimeOut = 0; //1000;
-            toastr.options.timeOut = 1000;
-            toastr.options.fadeOut = 250;
-            toastr.options.fadeIn = 250;
-        }); */
     })
 </script>
-
+<script src="/plugins/toastr/build/toastr.min.js"></script>
 @stop
