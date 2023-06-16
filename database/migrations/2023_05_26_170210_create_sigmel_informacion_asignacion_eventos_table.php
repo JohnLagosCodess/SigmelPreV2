@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('Id_servicio');
             $table->integer('Id_accion');
             $table->text('Descripcion');
+            $table->date('F_alerta')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

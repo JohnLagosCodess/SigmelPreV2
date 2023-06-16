@@ -491,7 +491,9 @@ class AdministradorController extends Controller
         /* TRAER LISTADO DE CLIENTES */
         if($parametro == 'lista_clientes'){
             $listado_clientes = sigmel_lista_clientes::on('sigmel_gestiones')
-                            ->select('Id_Cliente', 'Nombre_cliente')->get();
+                ->select('Id_Cliente', 'Nombre_cliente')
+                ->where('Estado', 'activo')
+                ->get();
             
             $info_lista_clientes = json_decode(json_encode($listado_clientes, true));
             return response()->json($info_lista_clientes);
@@ -501,7 +503,9 @@ class AdministradorController extends Controller
         if ($parametro == "lista_tipo_clientes") {
             
             $listado_tipo_clientes = sigmel_lista_tipo_clientes::on('sigmel_gestiones')
-                            ->select('Id_TipoCliente', 'Nombre_tipo_cliente')->get();
+                ->select('Id_TipoCliente', 'Nombre_tipo_cliente')
+                ->where('Estado', 'activo')
+                ->get();
             
             $info_lista_tipo_clientes = json_decode(json_encode($listado_tipo_clientes, true));
             return response()->json($info_lista_tipo_clientes);
@@ -511,7 +515,9 @@ class AdministradorController extends Controller
         if ($parametro == "lista_tipo_evento") {
             
             $listado_tipo_eventos = sigmel_lista_tipo_eventos::on('sigmel_gestiones')
-                            ->select('Id_Evento', 'Nombre_evento')->get();
+            ->select('Id_Evento', 'Nombre_evento')
+            ->where('Estado', 'activo')
+            ->get();
             
             $info_lista_tipo_eventos = json_decode(json_encode($listado_tipo_eventos, true));
             return response()->json($info_lista_tipo_eventos);
@@ -521,9 +527,12 @@ class AdministradorController extends Controller
         if ($parametro == "lista_tipo_documento") {
             
             $listado_tipo_documento = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Id_Parametro','Nombre_parametro')
-                            ->where('Tipo_lista', 'Tipo de documento')
-                            ->get();
+                ->select('Id_Parametro','Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Tipo de documento'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
             
             $info_lista_tipo_documento = json_decode(json_encode($listado_tipo_documento, true));
             return response()->json($info_lista_tipo_documento);
@@ -533,9 +542,12 @@ class AdministradorController extends Controller
         if ($parametro == "genero") {
             
             $listado_generos = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Id_Parametro','Nombre_parametro')
-                            ->where('Tipo_lista', 'Genero')
-                            ->get();
+                ->select('Id_Parametro','Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Genero'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
             
             $info_lista_generos = json_decode(json_encode($listado_generos, true));
             return response()->json($info_lista_generos);
@@ -545,9 +557,12 @@ class AdministradorController extends Controller
         if ($parametro == "estado_civil") {
             
             $listado_estado_civil = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Id_Parametro','Nombre_parametro')
-                            ->where('Tipo_lista', 'Estado civil')
-                            ->get();
+                ->select('Id_Parametro','Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Estado civil'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
             
             $info_lista_estado_civil = json_decode(json_encode($listado_estado_civil, true));
             return response()->json($info_lista_estado_civil);
@@ -557,9 +572,12 @@ class AdministradorController extends Controller
         if ($parametro == "nivel_escolar") {
             
             $listado_nivel_escolar = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Id_Parametro','Nombre_parametro')
-                            ->where('Tipo_lista', 'Nivel escolar')
-                            ->get();
+            ->select('Id_Parametro','Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Nivel escolar'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
             
             $info_lista_nivel_escolar = json_decode(json_encode($listado_nivel_escolar, true));
             return response()->json($info_lista_nivel_escolar);
@@ -569,8 +587,9 @@ class AdministradorController extends Controller
         if ($parametro == "dominancia") {
             
             $listado_dominancia = sigmel_lista_dominancias::on('sigmel_gestiones')
-                            ->select('Id_Dominancia', 'Nombre_dominancia')
-                            ->get();
+                ->select('Id_Dominancia', 'Nombre_dominancia')
+                ->where('Estado', 'activo')
+                ->get();
             
             $info_lista_dominancia = json_decode(json_encode($listado_dominancia, true));
             return response()->json($info_lista_dominancia);
@@ -580,9 +599,10 @@ class AdministradorController extends Controller
         if ($parametro == "departamentos_info_afiliado") {
             
             $listado_departamentos_info_afiliado = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
-            ->select('Id_departamento', 'Nombre_departamento')
-            ->groupBy('Nombre_departamento')
-            ->get();
+                ->select('Id_departamento', 'Nombre_departamento')
+                ->where('Estado', 'activo')
+                ->groupBy('Nombre_departamento')
+                ->get();
             
             $info_lista_departamentos_info_afiliado = json_decode(json_encode($listado_departamentos_info_afiliado, true));
             return response()->json($info_lista_departamentos_info_afiliado);
@@ -591,9 +611,12 @@ class AdministradorController extends Controller
         /* TRAER LISTADO MUNCIPIOS (INFORMACIÓN DE AFILIADO) */
         if($parametro == "municipios_info_afiliado"){
             $listado_municipios_info_afiliado = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
-            ->select('Id_municipios', 'Nombre_municipio')
-            ->where('Id_departamento', $request->id_departamento_info_afiliado)
-            ->get();
+                ->select('Id_municipios', 'Nombre_municipio')
+                ->where([
+                    ['Id_departamento', '=', $request->id_departamento_info_afiliado],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
 
             $info_lista_municpios_info_afiliado = json_decode(json_encode($listado_municipios_info_afiliado, true));
             return response()->json($info_lista_municpios_info_afiliado);
@@ -603,9 +626,12 @@ class AdministradorController extends Controller
         if ($parametro == "tipo_afiliado") {
             
             $listado_tipo_afiliado = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Id_Parametro','Nombre_parametro')
-                            ->where('Tipo_lista', 'Tipo de Afiliado')
-                            ->get();
+                ->select('Id_Parametro','Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Tipo de Afiliado'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
             
             $info_lista_tipo_afiliado = json_decode(json_encode($listado_tipo_afiliado, true));
             return response()->json($info_lista_tipo_afiliado);
@@ -615,9 +641,10 @@ class AdministradorController extends Controller
         if ($parametro == "lista_eps") {
             
             $listado_eps = sigmel_lista_eps::on('sigmel_gestiones')
-                            ->select('Id_Eps', 'Nombre_eps')
-                            // ->orderBy('Nombre_eps', 'asc')
-                            ->get();
+                ->select('Id_Eps', 'Nombre_eps')
+                ->where('Estado', 'activo')
+                // ->orderBy('Nombre_eps', 'asc')
+                ->get();
             
             $info_lista_eps = json_decode(json_encode($listado_eps, true));
             return response()->json($info_lista_eps);
@@ -627,9 +654,10 @@ class AdministradorController extends Controller
         if ($parametro == "lista_afp") {
             
             $listado_afp = sigmel_lista_afps::on('sigmel_gestiones')
-                            ->select('Id_Afp', 'Nombre_afp')
-                            // ->orderBy('Nombre_afp', 'asc')
-                            ->get();
+                ->select('Id_Afp', 'Nombre_afp')
+                ->where('Estado', 'activo')
+                // ->orderBy('Nombre_afp', 'asc')
+                ->get();
             
             $info_lista_afp = json_decode(json_encode($listado_afp, true));
             return response()->json($info_lista_afp);
@@ -639,9 +667,10 @@ class AdministradorController extends Controller
         if ($parametro == "lista_arl_info_afiliado") {
             
             $listado_arl_info_afiliado = sigmel_lista_arls::on('sigmel_gestiones')
-                            ->select('Id_Arl', 'Nombre_arl')
-                            // ->orderBy('Nombre_arl', 'asc')
-                            ->get();
+                ->select('Id_Arl', 'Nombre_arl')
+                ->where('Estado', 'activo')
+                // ->orderBy('Nombre_arl', 'asc')
+                ->get();
             
             $info_lista_arl_info_afiliado = json_decode(json_encode($listado_arl_info_afiliado, true));
             return response()->json($info_lista_arl_info_afiliado);
@@ -651,9 +680,12 @@ class AdministradorController extends Controller
         if ($parametro == "apoderado") {
             
             $listado_apoderado = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Nombre_parametro')
-                            ->where('Tipo_lista', 'Apoderado')
-                            ->get();
+                ->select('Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Apoderado'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
             
             $info_lista_apoderado = json_decode(json_encode($listado_apoderado, true));
             return response()->json($info_lista_apoderado);
@@ -663,9 +695,12 @@ class AdministradorController extends Controller
         if ($parametro == "activo") {
             
             $listado_activo = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Nombre_parametro')
-                            ->where('Tipo_lista', 'Activo')
-                            ->get();
+                ->select('Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Activo'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
             
             $info_lista_activo = json_decode(json_encode($listado_activo, true));
             return response()->json($info_lista_activo);
@@ -674,7 +709,10 @@ class AdministradorController extends Controller
         /* LISTADO ARL */
         if($parametro == 'listado_arl_info_laboral'){
             $listado_arls = sigmel_lista_arls::on('sigmel_gestiones')
-                            ->select('Id_Arl', 'Nombre_arl')->get();
+                ->select('Id_Arl', 'Nombre_arl')
+                ->where('Estado', 'activo')
+                ->get();
+            
             $info_listado_arls = json_decode(json_encode($listado_arls, true));
             return response()->json(($info_listado_arls));
         }
@@ -682,7 +720,11 @@ class AdministradorController extends Controller
         /* LISTADO DEPARTAMENTOS (Información Laboral) */
         if($parametro == 'listado_departamento_info_laboral'){
             $listado_departamento_info_laboral = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
-                            ->select('Id_departamento', 'Nombre_departamento')->groupBy('Id_departamento','Nombre_departamento')->get();
+                ->select('Id_departamento', 'Nombre_departamento')
+                ->where('Estado', 'activo')
+                ->groupBy('Id_departamento','Nombre_departamento')
+                ->get();
+
             $info_listado_departamento_info_laboral = json_decode(json_encode($listado_departamento_info_laboral, true));
             return response()->json(($info_listado_departamento_info_laboral));
         }
@@ -690,7 +732,13 @@ class AdministradorController extends Controller
         /* LISTADO DE MUNICIPIOS (Información Laboral) */
         if($parametro == "municipios_info_laboral"){
             $listado_municipios_info_laboral = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
-            ->select('Id_municipios', 'Nombre_municipio')->where('Id_departamento', '=', $request-> id_departamento_info_laboral)->get();
+                ->select('Id_municipios', 'Nombre_municipio')
+                ->where([
+                    ['Id_departamento', '=', $request-> id_departamento_info_laboral],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
+
             $info_listado_municipio_info_laboral = json_decode(json_encode($listado_municipios_info_laboral, true));
             return response()->json(($info_listado_municipio_info_laboral));
         }
@@ -698,7 +746,10 @@ class AdministradorController extends Controller
         /* LISTADO ACTIVIDAD ECONOMICA */
         if($parametro == 'listado_actividad_economica'){
             $listado_actividades_economicas = sigmel_lista_actividad_economicas::on('sigmel_gestiones')
-                            ->select('Id_ActEco', 'id_codigo', 'Nombre_actividad')->get();
+                ->select('Id_ActEco', 'id_codigo', 'Nombre_actividad')
+                ->where('Estado', 'activo')
+                ->get();
+
             $info_listado_actividades_economicas = json_decode(json_encode($listado_actividades_economicas, true));
             return response()->json(($info_listado_actividades_economicas));
         }
@@ -706,7 +757,10 @@ class AdministradorController extends Controller
         /* LISTADO CLASE DE RIESGO */
         if($parametro == 'listado_clase_riesgo'){
             $listado_clases_de_riesgos = sigmel_lista_clase_riesgos::on('sigmel_gestiones')
-                            ->select('Id_Riesgo', 'Nombre_riesgo')->get();
+                ->select('Id_Riesgo', 'Nombre_riesgo')
+                ->where('Estado', 'activo')
+                ->get();
+
             $info_listado_clases_de_riesgos = json_decode(json_encode($listado_clases_de_riesgos, true));
             return response()->json(($info_listado_clases_de_riesgos));
         }
@@ -714,7 +768,10 @@ class AdministradorController extends Controller
         /* LISTADO CODIGO CIUO */
         if($parametro == 'listado_codigo_ciuo'){
             $listado_actividades_economicas = sigmel_lista_ciuo_codigos::on('sigmel_gestiones')
-                            ->select('Id_Codigo', 'id_codigo_ciuo', 'Nombre_ciuo')->get();
+                ->select('Id_Codigo', 'id_codigo_ciuo', 'Nombre_ciuo')
+                ->where('Estado', 'activo')
+                ->get();
+
             $info_listado_actividades_economicas = json_decode(json_encode($listado_actividades_economicas, true));
             return response()->json(($info_listado_actividades_economicas));
         }
@@ -722,7 +779,10 @@ class AdministradorController extends Controller
         /* LISTADO MOTIVO SOLICITUD */
         if($parametro == 'listado_motivo_solicitud'){
             $listado_motivo_solicitud = sigmel_lista_motivo_solicitudes::on('sigmel_gestiones')
-                            ->select('Id_Solicitud', 'Nombre_solicitud')->get();
+                ->select('Id_Solicitud', 'Nombre_solicitud')
+                ->where('Estado', 'activo')
+                ->get();
+
             $info_listado_motivo_solicitud = json_decode(json_encode($listado_motivo_solicitud, true));
             return response()->json(($info_listado_motivo_solicitud));
         }
@@ -730,7 +790,13 @@ class AdministradorController extends Controller
         /* LISTADO TIPO VINCULO */
         if($parametro == 'listado_tipo_vinculo'){
             $listado_tipo_vinculo = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Id_Parametro','Nombre_parametro')->where('Tipo_lista', '=', 'Tipo de vinculacion')->get();
+                ->select('Id_Parametro','Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Tipo de vinculacion'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
+
             $info_listado_tipo_vinculo = json_decode(json_encode($listado_tipo_vinculo, true));
             return response()->json(($info_listado_tipo_vinculo));
         }
@@ -738,7 +804,13 @@ class AdministradorController extends Controller
         /* LISTADO REGIMEN EN SALUD */
         if($parametro == 'listado_solicitud_regimen_en_salud'){
             $listado_solicitud_regimen_salud = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Id_Parametro','Nombre_parametro')->where('Tipo_lista', '=', 'Solicitud Regimen en salud')->get();
+                ->select('Id_Parametro','Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Solicitud Regimen en salud'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
+
             $info_listado_solicitud_regimen_salud = json_decode(json_encode($listado_solicitud_regimen_salud, true));
             return response()->json(($info_listado_solicitud_regimen_salud));
         }
@@ -746,7 +818,11 @@ class AdministradorController extends Controller
         /* LISTADO SOLICITANTE */
         if($parametro == 'listado_solicitante'){
             $listado_solicitante = sigmel_lista_solicitantes::on('sigmel_gestiones')
-                            ->select('Id_solicitante', 'Solicitante')->groupBy('Id_solicitante','Solicitante')->get();
+                ->select('Id_solicitante', 'Solicitante')
+                ->where('Estado', 'activo')
+                ->groupBy('Id_solicitante','Solicitante')
+                ->get();
+
             $info_listado_solicitante = json_decode(json_encode($listado_solicitante, true));
             return response()->json(($info_listado_solicitante));
         }
@@ -755,7 +831,10 @@ class AdministradorController extends Controller
         if($parametro == "nombre_solicitante"){
             $listado_nombre_solicitante = sigmel_lista_solicitantes::on('sigmel_gestiones')
             ->select('Id_Nombre_solicitante', 'Nombre_solicitante')
-            ->where('Id_solicitante', $request->id_solicitante)
+            ->where([
+                ['Id_solicitante', '=', $request->id_solicitante],
+                ['Estado', '=', 'activo']
+            ])
             ->get();
 
             $info_listado_nombre_solicitante = json_decode(json_encode($listado_nombre_solicitante, true));
@@ -765,9 +844,13 @@ class AdministradorController extends Controller
         /* FUENTE DE INFORMACIÓN */
         if($parametro == 'listado_fuente_informacion'){
             $listado_fuente_informacion = sigmel_lista_parametros::on('sigmel_gestiones')
-                            ->select('Id_Parametro','Nombre_parametro')
-                            ->where('Tipo_lista', '=', 'Fuente de informacion')
-                            ->get();
+                ->select('Id_Parametro','Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Fuente de informacion'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
+
             $info_listado_fuente_informacion = json_decode(json_encode($listado_fuente_informacion, true));
             return response()->json(($info_listado_fuente_informacion));
         }
@@ -775,7 +858,11 @@ class AdministradorController extends Controller
         /* LISTADO PROCESO */
         if($parametro == 'listado_proceso'){
             $listado_proceso = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
-                            ->select('Id_proceso', 'Nombre_proceso')->groupBy('Id_proceso','Nombre_proceso')->get();
+                ->select('Id_proceso', 'Nombre_proceso')
+                ->where('Estado', 'activo')
+                ->groupBy('Id_proceso','Nombre_proceso')
+                ->get();
+
             $info_listado_proceso = json_decode(json_encode($listado_proceso, true));
             return response()->json(($info_listado_proceso));
         }
@@ -784,7 +871,10 @@ class AdministradorController extends Controller
         if ($parametro == 'listado_servicios') {
             $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
             ->select('Id_Servicio', 'Nombre_servicio')
-            ->where('Id_proceso', $request->id_proceso)
+            ->where([
+                ['Id_proceso', '=', $request->id_proceso],
+                ['Estado', '=', 'activo']
+            ])
             ->get();
 
             $info_listado_servicios = json_decode(json_encode($listado_servicios, true));
@@ -794,7 +884,10 @@ class AdministradorController extends Controller
         /* LISTADO ACCION */
         if($parametro == 'listado_accion'){
             $listado_accion = sigmel_lista_acciones_procesos_servicios::on('sigmel_gestiones')
-                            ->select('Id_Accion', 'Nombre_accion')->get();
+                ->select('Id_Accion', 'Nombre_accion')
+                ->where('Estado', 'activo')
+                ->get();
+
             $info_listado_accion= json_decode(json_encode($listado_accion, true));
             return response()->json(($info_listado_accion));
         }
@@ -1242,6 +1335,7 @@ class AdministradorController extends Controller
                 'Id_servicio' => $request->servicio,
                 'Id_accion' => $request->accion,
                 'Descripcion' => $request->descripcion_asignacion,
+                'F_alerta' => $request->fecha_alerta,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date
             ];
@@ -1498,15 +1592,27 @@ class AdministradorController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slpss', 'slpss.Id_servicio', '=', 'siae.Id_servicio')
         ->leftJoin('sigmel_gestiones.sigmel_lista_acciones_procesos_servicios as slaps', 'slaps.Id_Accion', '=', 'siae.Id_accion')
         ->select('siae.ID_evento', 'siae.Id_proceso', 'slps.Nombre_proceso', 'siae.Id_servicio', 'slpss.Nombre_servicio',
-        'siae.Id_accion', 'slaps.Nombre_accion', 'siae.Descripcion')
+        'siae.Id_accion', 'slaps.Nombre_accion', 'siae.Descripcion', 'siae.F_alerta')
         ->where([['siae.ID_evento', '=', $newIdEvento]])
         ->orderBy('siae.F_registro', 'Desc')
         ->limit(1)
         ->get();
 
-        
+
+        $listado_documentos = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_documentos as sld')
+        ->leftJoin('sigmel_gestiones.sigmel_registro_documentos_eventos as srde', 'sld.Id_Documento', '=', 'srde.Id_Documento')
+        ->select('sld.Id_Documento', 'sld.Nro_documento', 'sld.Nombre_documento', 'sld.Requerido',
+            DB::raw("if(srde.Id_Registro_Documento != '', srde.Id_Registro_Documento, '') as id_Registro_Documento"),
+            DB::raw("if(srde.Id_Registro_Documento != '', 'Cargado', 'No Cargado') as estado_documento"),
+            DB::raw("if(srde.Id_documento != '', srde.Id_documento, '') as id_documento"),
+            DB::raw("if(srde.ID_evento != '', srde.ID_evento, '') as iD_evento"),
+            DB::raw("if(srde.Nombre_Documento != '', srde.Nombre_Documento, '') as nombre_Documento"),
+            DB::raw("if(srde.Formato_documento != '', srde.Formato_documento, '') as formato_documento"),
+        )->where('sld.Estado', 'activo')
+        ->get();
+
         return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
-        'array_datos_info_laboral', 'array_datos_info_pericial', 'array_datos_info_asignacion'));
+        'array_datos_info_laboral', 'array_datos_info_pericial', 'array_datos_info_asignacion', 'listado_documentos'));
 
     }
 
@@ -2004,6 +2110,7 @@ class AdministradorController extends Controller
             'Id_servicio' => $request->servicio,
             'Id_accion' => $request->accion,
             'Descripcion' => $request->descripcion_asignacion,
+            'F_alerta' => $request->fecha_alerta,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date
         ];  
@@ -2271,12 +2378,23 @@ class AdministradorController extends Controller
             Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
 
         }else {
-            $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento.".".$file->extension();
+
+            if(!empty($request->bandera_nombre_otro_doc)){
+                $nombre_final_documento_en_carpeta = $request->bandera_nombre_otro_doc.".".$file->extension();
+            }else{
+                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento.".".$file->extension();
+            }
+
             Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
         }
 
         // Registrar la información del documento con relación al ID del evento.
-        $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento;
+        if(!empty($request->bandera_nombre_otro_doc)){
+            $nombrecompletodocumento = $request->bandera_nombre_otro_doc;
+        }else{
+            $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento;
+        }
+
         $nuevoDocumento = [
             'Id_Documento' => $id_documento,
             'ID_evento' => $idEvento,
@@ -2325,6 +2443,7 @@ class AdministradorController extends Controller
 
             }
             else {
+
                 sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($nuevoDocumento);
     
                 $mensajes = array(

@@ -1375,5 +1375,17 @@ $(document).ready(function(){
         });
     });
 
+    /* CALCULAR EDAD ACORDE A LA FECHA DE NACIMIENTO */
+    $('#fecha_nacimiento').change(function(){
+        var fecha_capturada = $(this).val();
+        var anio_extraido = fecha_capturada.substring(0,4);
+        var anio_actual = new Date().getFullYear();
+        
+        var edad_calculada = anio_actual - anio_extraido;
+
+        if (edad_calculada > 0) {
+            $('#edad').val(edad_calculada);
+        }
+    });
 
 });

@@ -108,14 +108,9 @@
                                         <div class="row">
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="nombre_afiliado" class="col-form-label">Nombre de afiliado <span style="color:red;">(*)</span></label>
-                                                    <input type="text" class="nombre_afiliado form-control" name="nombre_afiliado" id="nombre_afiliado" value="{{$array_datos_info_afiliados[0]->Nombre_afiliado}}" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="direccion_info_afiliado" class="col-form-label">Dirección <span style="color:red;">(*)</span></label>
-                                                    <input type="text" class="direccion_info_afiliado form-control" name="direccion_info_afiliado" id="direccion_info_afiliado" value="{{$array_datos_info_afiliados[0]->Direccion}}" required>
+                                                    <label for="nro_identificacion" class="col-form-label">N° de identificación <span style="color:red;">(*)</span></label>
+                                                    <input type="text" class="nro_identificacion form-control" name="nro_identificacion" id="nro_identificacion" value="{{$array_datos_info_afiliados[0]->Nro_identificacion}}" disabled>
+                                                    <input type="hidden" name="nro_identificacion_enviar" value="{{$array_datos_info_afiliados[0]->Nro_identificacion}}">
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -134,9 +129,14 @@
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="nro_identificacion" class="col-form-label">N° de identificación <span style="color:red;">(*)</span></label>
-                                                    <input type="text" class="nro_identificacion form-control" name="nro_identificacion" id="nro_identificacion" value="{{$array_datos_info_afiliados[0]->Nro_identificacion}}" disabled>
-                                                    <input type="hidden" name="nro_identificacion_enviar" value="{{$array_datos_info_afiliados[0]->Nro_identificacion}}">
+                                                    <label for="nombre_afiliado" class="col-form-label">Nombre de afiliado <span style="color:red;">(*)</span></label>
+                                                    <input type="text" class="nombre_afiliado form-control" name="nombre_afiliado" id="nombre_afiliado" value="{{$array_datos_info_afiliados[0]->Nombre_afiliado}}" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="direccion_info_afiliado" class="col-form-label">Dirección <span style="color:red;">(*)</span></label>
+                                                    <input type="text" class="direccion_info_afiliado form-control" name="direccion_info_afiliado" id="direccion_info_afiliado" value="{{$array_datos_info_afiliados[0]->Direccion}}" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -714,7 +714,12 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+                                        {{-- OPCIONES PARA HABILITAR EL MODAL DE DOCUMENTOS --}}
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <a href="javascript:void(0);" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -745,7 +750,13 @@
                                                 <select class="accion custom-select" name="accion" id="accion" requierd>
                                                     <option value="{{$array_datos_info_asignacion[0]->Id_accion}}">{{$array_datos_info_asignacion[0]->Nombre_accion}}</option>
                                                 </select>
-                                            </div>                                                                                       
+                                            </div>    
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="fecha_alerta" class="col-form label">Fecha Alerta</label>
+                                                    <input type="date" class="fecha_alerta form-control" name="fecha_alerta" id="fecha_alerta" value="{{$array_datos_info_asignacion[0]->F_alerta}}">
+                                                </div>
+                                            </div>                                                                                     
                                         </div>    
                                         <div class="row">
                                             <div class="col-sm">
@@ -762,7 +773,7 @@
             </div>
             <div class="card-footer">
                 <div class="grupo_botones" style="float: left;">
-                    <input type="reset" id="Borrar" class="btn btn-info" value="Borrar">
+                    <input type="reset" id="Borrar" class="btn btn-info" value="Restablecer">
                     <input type="submit" id="Edicion" class="btn btn-info" value="Actualizar" onclick="OcultarbotonActualizar()">
                 </div>
                 <div class="text-center" id="mostrar-barra2"  style="display:none;">                                
@@ -955,6 +966,158 @@
                 </x-adminlte-modal>
             </div>
         </div>
+
+        <div class="row">
+            <x-adminlte-modal id="modalListaDocumentos" title="Listado de Documentos" theme="info" icon="fas fa-plus" size='xl' scrollable="yes" disable-animations>
+                <div class="col-12">
+                    <p class="h5">Los documentos marcados con &nbsp; &nbsp;<input type="checkbox" class="scales" disabled checked>&nbsp; &nbsp; son de cargue obligatorio para poder crear el evento.</p>
+                    <div class="table table-responsive">
+                        <table id="listado_documentos" class="table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>N°</th>
+                                    <th>Documento</th>
+                                    <th>Estado</th>
+                                    <th>Archivo</th>
+                                    <th style="width: 1px !important;">Obligatorio</th>
+                                </tr>
+                            </thead>
+                            <tbody>                                 
+                                @foreach ($listado_documentos as $documento)
+                                    <tr>
+                                        <td>{{$documento->Nro_documento}}</td>
+                                        <td style="width: 34% !important;">{{$documento->Nombre_documento}}</td>
+                                        
+                                            <td id="estadoDocumento_{{$documento->Id_Documento}}">
+                                                <?php if($documento->estado_documento == "Cargado"):?>
+                                                    <strong class="text-success">Cargado</strong>
+                                                <?php else:?>
+                                                    <strong class="text-danger">No Cargado</strong>
+                                                <?php endif?>
+                                            </td>
+                                            <td>
+                                                <?php if($documento->Nombre_documento === "Otros documentos"):?>
+                                                    <form id="formulario_documento_{{$documento->Id_Documento}}" class="form-inline align-items-center"" method="POST" enctype="multipart/form-data">
+                                                        @csrf
+                                                        <div class="col-12">
+                                                            <div class="d-none">
+                                                                <input type="text" name="Id_Documento" value="{{$documento->Id_Documento}}">
+                                                                <input type="text" name="Nombre_documento" value="{{$documento->Nombre_documento}}">                                                
+                                                                <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">
+                                                                <input type="text" name="bandera_nombre_otro_doc" value="{{$documento->nombre_Documento}}">
+                                                            </div>
+                                                            <div class="row">
+                                                                <p><?php if($documento->nombre_Documento <> ""){echo "{$documento->nombre_Documento}.{$documento->formato_documento}";}?></p>
+                                                                <div class="input-group">
+                                                                    <input type="file" class="form-control select-doc" name="listadodocumento" 
+                                                                    id="listadodocumento_{{$documento->Id_Documento}}" aria-describedby="Carguedocumentos" aria-label="Upload"
+                                                                    <?php if($documento->Requerido === "Si"):?>
+                                                                        required
+                                                                    <?php endif?>
+                                                                    >&nbsp;
+                                                                    <button class="btn btn-info button-doc-select" type="submit" id="CargarDocumento_{{$documento->Id_Documento}}">
+                                                                        <?php if($documento->estado_documento == "Cargado"):?>
+                                                                            Actualizar
+                                                                        <?php else:?>
+                                                                            Cargar
+                                                                        <?php endif?>
+                                                                    </button>
+                                                                </div>                                                                                                                                                              
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                <?php else:?>
+                                                    {{-- action="{{route('cargaDocumento')}}" --}}
+                                                    <form id="formulario_documento_{{$documento->Id_Documento}}" method="POST" enctype="multipart/form-data">
+                                                        @csrf
+                                                        <div class="d-none">
+                                                            <input type="text" name="Id_Documento" value="{{$documento->Id_Documento}}">
+                                                            <input type="text" name="Nombre_documento" value="{{$documento->Nombre_documento}}">                                                
+                                                            <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">                                                
+                                                        </div>
+                                                        <div class="row">
+                                                            <p><?php if($documento->nombre_Documento <> ""){echo "{$documento->nombre_Documento}.{$documento->formato_documento}";}?></p>
+                                                            <div class="input-group">
+                                                                <input type="file" class="form-control select-doc" name="listadodocumento" 
+                                                                id="listadodocumento_{{$documento->Id_Documento}}" aria-describedby="Carguedocumentos" aria-label="Upload"
+                                                                <?php if($documento->Requerido === "Si"):?>
+                                                                    required
+                                                                <?php endif?>
+                                                                >&nbsp;
+                                                                <button class="btn btn-info button-doc-select" type="submit" id="CargarDocumento_{{$documento->Id_Documento}}">
+                                                                    <?php if($documento->estado_documento == "Cargado"):?>
+                                                                        Actualizar
+                                                                    <?php else:?>
+                                                                        Cargar
+                                                                    <?php endif?>
+                                                                </button>
+                                                            </div>                                                                                                                                                              
+                                                        </div>
+                                                    </form>
+                                                <?php endif?>
+                                            </td>
+                                        <td class="text-center" style="width: 10% !important;">
+                                            <input type="checkbox" class="scales" name="checkdocumentos" id="check_documento_{{$documento->Id_Documento}}" 
+                                                <?php if($documento->Requerido === "Si"): ?>
+                                                    checked
+                                                    disabled
+                                                <?php else:?>
+                                                    disabled
+                                                <?php endif ?>
+                                            >
+                                        </td>
+                                    </tr>
+                                @endforeach                                                                                              
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <x-slot name="footerSlot">
+                    <div class="mostrar_fallo alert alert-danger mt-2 mr-auto d-none"role="alert"></div>
+                    <div class="mostrar_exito alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                    <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
+                </x-slot>
+            </x-adminlte-modal>
+
+            {{-- MODAL OTRO DOCUMENTO --}}
+            <x-adminlte-modal id="modalOtroDocumento" title="Cargar Otro Documento" theme="info" icon="fas fa-plus" size='xl' v-centered="yes" disable-animations>
+                <form id="formulario_documento_{{$documento->Id_Documento}}" class="form-inline align-items-center"" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="col-12">
+                        <div class="d-none">
+                            <input type="text" name="Id_Documento" value="{{$documento->Id_Documento}}">
+                            <input type="text" name="Nombre_documento" value="{{$documento->Nombre_documento}}">                                                
+                            <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">    
+                            <input type="text" name="bandera_otro_documento" id="bandera_otro_documento" value="{{$documento->Id_Documento}}">                                            
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-2 col-form-label">Nombre Documento</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="nombre_otro_documento" id="nombre_otro_documento" style="width: 100% !important;">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-2 col-form-label">Cargar Documento</label>
+                            <div class="col-sm-10">
+                                <input type="file" class="form-control mr-sm-2 select-doc" name="listadodocumento" 
+                                    id="listadodocumento_{{$documento->Id_Documento}}" aria-describedby="Carguedocumentos" aria-label="Upload"
+                                    <?php if($documento->Requerido === "Si"):?>
+                                        required
+                                    <?php endif?>
+                                    style="width: 100% !important;"
+                                >
+                            </div>
+                        </div>
+                        <button class="btn btn-info" type="submit" id="CargarDocumento_{{$documento->Id_Documento}}">Cargar</button>
+                    </div>
+                </form>
+
+                <x-slot name="footerSlot">
+                    <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
+                </x-slot>
+            </x-adminlte-modal>
+        </div>    
+
     </div>
 @stop
 
@@ -1043,5 +1206,9 @@
             $('#Borrar').addClass('d-none');
             $('#mostrar-barra2').css("display","block");
         }
+
+        $('#Borrar').click(function(){
+            location.reload();
+        });
     </script> 
 @stop
