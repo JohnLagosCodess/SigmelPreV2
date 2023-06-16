@@ -1242,6 +1242,7 @@ class AdministradorController extends Controller
                 'Id_servicio' => $request->servicio,
                 'Id_accion' => $request->accion,
                 'Descripcion' => $request->descripcion_asignacion,
+                'F_alerta' => $request->fecha_alerta,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date
             ];
@@ -1498,15 +1499,27 @@ class AdministradorController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slpss', 'slpss.Id_servicio', '=', 'siae.Id_servicio')
         ->leftJoin('sigmel_gestiones.sigmel_lista_acciones_procesos_servicios as slaps', 'slaps.Id_Accion', '=', 'siae.Id_accion')
         ->select('siae.ID_evento', 'siae.Id_proceso', 'slps.Nombre_proceso', 'siae.Id_servicio', 'slpss.Nombre_servicio',
-        'siae.Id_accion', 'slaps.Nombre_accion', 'siae.Descripcion')
+        'siae.Id_accion', 'slaps.Nombre_accion', 'siae.Descripcion', 'siae.F_alerta')
         ->where([['siae.ID_evento', '=', $newIdEvento]])
         ->orderBy('siae.F_registro', 'Desc')
         ->limit(1)
         ->get();
 
-        
+
+        $listado_documentos = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_documentos as sld')
+        ->leftJoin('sigmel_gestiones.sigmel_registro_documentos_eventos as srde', 'sld.Id_Documento', '=', 'srde.Id_Documento')
+        ->select('sld.Id_Documento', 'sld.Nro_documento', 'sld.Nombre_documento', 'sld.Requerido',
+            DB::raw("if(srde.Id_Registro_Documento != '', srde.Id_Registro_Documento, '') as id_Registro_Documento"),
+            DB::raw("if(srde.Id_Registro_Documento != '', 'Cargado', 'No Cargado') as estado_documento"),
+            DB::raw("if(srde.Id_documento != '', srde.Id_documento, '') as id_documento"),
+            DB::raw("if(srde.ID_evento != '', srde.ID_evento, '') as iD_evento"),
+            DB::raw("if(srde.Nombre_Documento != '', srde.Nombre_Documento, '') as nombre_Documento"),
+            DB::raw("if(srde.Formato_documento != '', srde.Formato_documento, '') as formato_documento"),
+        )->where('sld.Estado', 'activo')
+        ->get();
+
         return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
-        'array_datos_info_laboral', 'array_datos_info_pericial', 'array_datos_info_asignacion'));
+        'array_datos_info_laboral', 'array_datos_info_pericial', 'array_datos_info_asignacion', 'listado_documentos'));
 
     }
 
@@ -2004,6 +2017,7 @@ class AdministradorController extends Controller
             'Id_servicio' => $request->servicio,
             'Id_accion' => $request->accion,
             'Descripcion' => $request->descripcion_asignacion,
+            'F_alerta' => $request->fecha_alerta,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date
         ];  
@@ -2271,12 +2285,23 @@ class AdministradorController extends Controller
             Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
 
         }else {
-            $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento.".".$file->extension();
+
+            if(!empty($request->bandera_nombre_otro_doc)){
+                $nombre_final_documento_en_carpeta = $request->bandera_nombre_otro_doc.".".$file->extension();
+            }else{
+                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento.".".$file->extension();
+            }
+
             Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
         }
 
         // Registrar la información del documento con relación al ID del evento.
-        $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento;
+        if(!empty($request->bandera_nombre_otro_doc)){
+            $nombrecompletodocumento = $request->bandera_nombre_otro_doc;
+        }else{
+            $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento;
+        }
+
         $nuevoDocumento = [
             'Id_Documento' => $id_documento,
             'ID_evento' => $idEvento,
@@ -2325,6 +2350,7 @@ class AdministradorController extends Controller
 
             }
             else {
+
                 sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($nuevoDocumento);
     
                 $mensajes = array(

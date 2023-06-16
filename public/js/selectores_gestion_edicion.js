@@ -1401,5 +1401,67 @@ $(document).ready(function(){
         }
     })
 
+    /* Obtener el ID del evento a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id evento */
+    $("input[id^='listadodocumento_']").click(function(){
+        let idobtenido = $('#id_evento').val();
+        $("input[id^='EventoID_']").val(idobtenido);
+    });
+
+    /* Envío de Información del Documento a Cargar */
+    $("form[id^='formulario_documento_']").submit(function(e){
+
+        e.preventDefault();
+        var formData = new FormData($(this)[0]);
+        var cambio_estado = $(this).parents()[1]['children'][2]["id"];
+        var input_documento = $(this).parents()[0]['children'][0][4]["id"];
+
+        /* for (var pair of formData.entries()) {
+            console.log(pair[0]+ ', ' + pair[1]); 
+        } */
+        // Enviamos los datos para validar y guardar el docmuento correspondiente
+        $.ajax({
+            url: "/cargarDocumentos",
+            type: "post",
+            dataType: "json",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false  ,
+            success:function(response){
+                // console.log(response);
+                if (response.parametro == "fallo") {
+                    if (response.otro != undefined) {
+                        $('#listadodocumento_'+response.otro).val('');
+                    }else{
+                        $('#'+input_documento).val('');
+                    }
+                    $('.mostrar_fallo').removeClass('d-none');
+                    $('.mostrar_fallo').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_fallo').addClass('d-none');
+                        $('.mostrar_fallo').empty();
+                    }, 6000);
+                }else if (response.parametro == "exito") {
+                    if(response.otro != undefined){
+                        $("#estadoDocumentoOtro_"+response.otro).empty();
+                        $("#estadoDocumentoOtro_"+response.otro).append('<strong class="text-success">Cargado</strong>');
+                        $('#listadodocumento_'+response.otro).prop("disabled", true);
+                        $('#CargarDocumento_'+response.otro).prop("disabled", true);
+                        $('#habilitar_modal_otro_doc').prop("disabled", true);
+                    }else{
+                        $("#"+cambio_estado).empty();
+                        $("#"+cambio_estado).append('<strong class="text-success">Cargado</strong>');
+                    }
+                    $('.mostrar_exito').removeClass('d-none');
+                    $('.mostrar_exito').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_exito').addClass('d-none');
+                        $('.mostrar_exito').empty();
+                    }, 6000);
+                }else{}
+                
+            }         
+        });
+    });
 
 });

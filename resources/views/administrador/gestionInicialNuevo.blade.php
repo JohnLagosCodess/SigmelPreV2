@@ -608,24 +608,30 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-4">
+                                            <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="proceso" class="col-form label">Proceso <span style="color:red;">(*)</span></label>
                                                     <select class="proceso custom-select" name="proceso" id="proceso" requierd></select>
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="servicio" class="col-form label">Servicio <span style="color:red;">(*)</span></label>
                                                     <select class="servicio custom-select" name="servicio" id="servicio" requierd disabled></select>
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="accion" class="col-form label">Acción <span style="color:red;">(*)</span></label>
                                                     <select class="accion custom-select" name="accion" id="accion" requierd></select>
                                                 </div>
-                                            </div>                                                                                       
+                                            </div> 
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="fecha_alerta" class="col-form label">Fecha Alerta</label>
+                                                    <input type="date" class="fecha_alerta form-control" name="fecha_alerta" id="fecha_alerta">
+                                                </div>
+                                            </div>                                                                                      
                                         </div>    
                                         <div class="row">
                                             <div class="col-sm">
@@ -645,7 +651,7 @@
                     <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Debe cargar los documentos obligatorios para crear el evento.
                 </div>
                 <div class="grupo_botones" style="float: left;">
-                    <input type="reset" id="btn_borrar" class="btn btn-info" value="Borrar">
+                    <input type="reset" id="btn_borrar" class="btn btn-info" value="Restablecer">
                     <input type="submit" id="btn_guardar_evento" class="btn btn-info d-none" value="Guardar" onclick="OcultarbotonGuardar()">
                 </div>
                 <div class="text-center" id="mostrar_barra_creacion_evento"  style="display:none;">                                
@@ -785,14 +791,9 @@
             "paging": false,
         });
 
-        /* $('#btn_borrar').click(function () {
-            Command: toastr['success']('Documentos obligatorios cargados satisfactoriamente.');
-            toastr.options.positionClass = 'toast-top-right';
-            toastr.options.extendedTimeOut = 0; //1000;
-            toastr.options.timeOut = 1000;
-            toastr.options.fadeOut = 250;
-            toastr.options.fadeIn = 250;
-        }); */
+        $('#btn_borrar').click(function(){
+            location.reload();
+        });
     })
 </script>
 
