@@ -429,6 +429,33 @@ $(document).ready(function(){
     });
 
     // listado municipios dependiendo del departamentos (informacion afiliado)
+    if ($('select[name=municipio_info_afiliado]').val() != "") {
+        $('#municipio_info_afiliado').prop('disabled', false);
+        let id_departamento_info_afiliado = $('#departamento_info_afiliado').val();
+        let datos_lista_municipios_info_afiliado = {
+            '_token': token,
+            'parametro' : "municipios_info_afiliado",
+            'id_departamento_info_afiliado': id_departamento_info_afiliado
+        };
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_lista_municipios_info_afiliado,
+            success:function(data) {
+                // console.log(data);
+                let municipio_info_afiliadoEdicion = $('select[name=municipio_info_afiliado]').val();
+                $('#municipio_info_afiliado').empty();
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    if (data[claves[i]]["Id_municipios"] != municipio_info_afiliadoEdicion) {
+                        $('#municipio_info_afiliado').append('<option value="'+data[claves[i]]["Id_municipios"]+'">'+data[claves[i]]["Nombre_municipio"]+'</option>');                        
+                    }else{
+                        $('#municipio_info_afiliado').append('<option value="'+data[claves[i]]["Id_municipios"]+'" selected>'+data[claves[i]]["Nombre_municipio"]+'</option>');                        
+                    }
+                }
+            }
+        });
+    }
     $('#departamento_info_afiliado').change(function(){
         $('#municipio_info_afiliado').prop('disabled', false);
         let id_departamento_info_afiliado = $('#departamento_info_afiliado').val();
@@ -663,6 +690,34 @@ $(document).ready(function(){
     });
 
     // LISTADO DE MUNICIPIOS (Información Laboral)
+    if($('select[name=municipio_info_laboral]').val() != ""){
+        $('#municipio_info_laboral').prop('disabled', false);
+        let id_departamento_info_laboral = $('#departamento_info_laboral').val();
+        let datos_municipio_info_laboral = {
+            '_token': token,
+            'parametro' : "municipios_info_laboral",
+            'id_departamento_info_laboral': id_departamento_info_laboral
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_municipio_info_laboral,
+            success:function(data) {
+                //console.log(data);
+                let municipio_info_laboralEdicion = $('select[name=municipio_info_laboral]').val();
+                $('#municipio_info_laboral').empty();
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    if (data[claves[i]]["Id_municipios"] != municipio_info_laboralEdicion) {
+                        $('#municipio_info_laboral').append('<option value="'+data[claves[i]]["Id_municipios"]+'">'+data[claves[i]]["Nombre_municipio"]+'</option>');                        
+                    }else{
+                        $('#municipio_info_laboral').append('<option value="'+data[claves[i]]["Id_municipios"]+'" selected>'+data[claves[i]]["Nombre_municipio"]+'</option>');                        
+                    }
+                }
+            }
+        });
+    }
     $('#departamento_info_laboral').change( function(){
         $('#municipio_info_laboral').prop('disabled', false);
         let id_departamento_info_laboral = $('#departamento_info_laboral').val();
@@ -924,6 +979,33 @@ $(document).ready(function(){
     });
 
     // LISTADO NOMBRE SOLICITANTE
+    if($('select[name=nombre_solicitante]').val() != ""){
+        $('#nombre_solicitante').prop('disabled', false);
+        let id_solicitante = $('#solicitante').val();
+        let datos_listado_nombre_solicitante = {
+            '_token': token,
+            'parametro' : "nombre_solicitante",
+            'id_solicitante': id_solicitante
+        };
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_listado_nombre_solicitante,
+            success:function(data) {
+                // console.log(data);
+                let nombre_solicitanteEdicion = $('select[name=nombre_solicitante]').val();
+                $('#nombre_solicitante').empty();
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    if (data[claves[i]]["Id_Nombre_solicitante"] != nombre_solicitanteEdicion) {                        
+                        $('#nombre_solicitante').append('<option value="'+data[claves[i]]["Id_Nombre_solicitante"]+'">'+data[claves[i]]["Nombre_solicitante"]+'</option>');
+                    }else{
+                        $('#nombre_solicitante').append('<option value="'+data[claves[i]]["Id_Nombre_solicitante"]+'" selected>'+data[claves[i]]["Nombre_solicitante"]+'</option>');
+                    }
+                }
+            }
+        });
+    }
     $('#solicitante').change(function(){
         $('#nombre_solicitante').prop('disabled', false);
         let id_solicitante = $('#solicitante').val();
@@ -994,6 +1076,33 @@ $(document).ready(function(){
     });
 
     // LISTADO DE SERVICIOS
+    if ($('select[name=servicio]').val() != "") {
+        $('#servicio').prop('disabled', false);
+        let id_proceso = $('#proceso').val();
+        let datos_listado_servicios = {
+            '_token': token,
+            'parametro' : "listado_servicios",
+            'id_proceso' : id_proceso
+        };
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_listado_servicios,
+            success:function(data) {
+                //console.log(data);
+                let servicioEdicion = $('select[name=servicio]').val();
+                $('#servicio').empty();
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    if (data[claves[i]]["Id_Servicio"] != servicioEdicion) {                        
+                        $('#servicio').append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
+                    }else{
+                        $('#servicio').append('<option value="'+data[claves[i]]["Id_Servicio"]+'" selected>'+data[claves[i]]["Nombre_servicio"]+'</option>');
+                    }
+                }
+            }
+        });
+    }
     $('#proceso').change(function(){
         $('#servicio').prop('disabled', false);
         let id_proceso = $('#proceso').val();
@@ -1018,7 +1127,6 @@ $(document).ready(function(){
                 }
             }
         });
-
     });
 
     //LISTADO ACCION

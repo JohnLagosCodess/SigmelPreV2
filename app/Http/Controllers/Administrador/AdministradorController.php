@@ -47,6 +47,9 @@ use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_historico_empresas_afiliados;
 use App\Models\sigmel_registro_documentos_eventos;
 
+/* Llamado modelo para consultar historial de acciones */
+use App\Models\sigmel_historial_acciones_eventos;
+
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Rels;
 
 class AdministradorController extends Controller
@@ -470,7 +473,7 @@ class AdministradorController extends Controller
         return view('administrador.auditoriaGrupos', compact('user'));
     }
 
-    /* TODO LO REFERENTE AL FORMULARIO DE GESTIÓN INICIAL NUEVO */
+    /* TODO LO REFERENTE AL FORMULARIO DE CREACIÓN DE EVENTO NUEVO */
     public function mostrarVistaGestionInicialNuevo(){
         if(!Auth::check()){
             return redirect('/');
@@ -1343,8 +1346,20 @@ class AdministradorController extends Controller
             // Inserción de datos en la tabla sigmel_informacion_asignacion_eventos
             sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insert($datos_info_asignacion_evento);
 
-            return back()->with('mensaje_confirmacion_nuevo_evento', 'Evento creado correctamente');
+            // colacamos un tiempo de retardo pequeño para que alcance a insertar los datos
+            sleep(2);
 
+            /* RECOLECCIÓN INFORMACIÓN PARA LA TABLA: sigmel_historial_acciones_eventos */
+            $datos_historial_acciones = [
+                'ID_evento' => $request->id_evento,
+                'F_accion' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+                'Accion_realizada' => "Creación de evento.",
+            ];
+
+            sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_historial_acciones);
+            sleep(2);
+            return back()->with('mensaje_confirmacion_nuevo_evento', 'Evento creado correctamente');
         }
         
     }
@@ -2121,9 +2136,18 @@ class AdministradorController extends Controller
         $asignacionActualizar->save();
 
         sleep(2);
-        
-        return redirect()->route('gestionInicialNuevo')->with('evento_actualizado', 'Evento actualizado Sactifactoriamente');
 
+        /* RECOLECCIÓN INFORMACIÓN PARA LA TABLA: sigmel_historial_acciones_eventos */
+        $datos_historial_acciones = [
+            'ID_evento' => $IdEventoactulizar,
+            'F_accion' => $date,
+            'Nombre_usuario' => $nombre_usuario,
+            'Accion_realizada' => "Edición de información del evento.",
+        ];
+
+        sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_historial_acciones);
+        sleep(2);
+        return redirect()->route('gestionInicialNuevo')->with('evento_actualizado', 'Evento actualizado Sactifactoriamente');
     }
 
     public function registrarOtraEmpresa(Request $request){
@@ -2483,6 +2507,15 @@ class AdministradorController extends Controller
 
         }
 
+    }
+
+    public function consultaHistorialAcciones (Request $request){
+        $array_datos_historial_acciones = sigmel_historial_acciones_eventos::on('sigmel_gestiones')
+        ->select('F_accion', 'Nombre_usuario', 'Accion_realizada')
+        ->where('ID_evento', $request->ID_evento)
+        ->get();
+
+        return response()->json($array_datos_historial_acciones);
     }
 
 }

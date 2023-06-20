@@ -237,7 +237,8 @@ Route::post('/consultaIdEvento', [AdministradorController::class, 'ConsultaIDEve
 Route::post('/Sigmel/RolAdministrador/GestionInicialEdicion', [AdministradorController::class, 'mostrarVistaEdicionInicialNuevo'])->name('gestionInicialEdicion');
 // Acción: Actualizar evento
 Route::post('/Sigmel/RolAdministrador/ActualizarEvento', [AdministradorController::class, 'actualizarGestionInicial'])->name('actualizarEvento');
-
+// Acción: Traer el listado de historial de acciones del evento
+Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);
 
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
