@@ -10,6 +10,12 @@
 @section('content')
  {{-- AQUI DEBE COLOCAR EL CONTENIDO DE LA VISTA --}} 
     <a href="{{route("gestionInicialNuevo")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a><br>
+    <x-adminlte-modal id="modalPurple" title="Theme Purple" theme="purple"
+        icon="fas fa-bolt" size='lg' disable-animations>
+        This is a purple theme modal without animations.
+    </x-adminlte-modal>
+{{-- Example button to open modal --}}
+<x-adminlte-button label="Open Modal" data-toggle="modal" data-target="#modalPurple" class="bg-purple"/>
     <h5>Los campos marcados con <span style="color:red;">(*)</span> son obligatorios.</h5>
     <div class="card-info" style="border: 1px solid black;">
         <div class="card-header text-center">
