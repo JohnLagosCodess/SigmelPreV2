@@ -8,14 +8,35 @@
 @stop
 
 @section('content')
- {{-- AQUI DEBE COLOCAR EL CONTENIDO DE LA VISTA --}} 
-    <a href="{{route("gestionInicialNuevo")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a><br>
-    <x-adminlte-modal id="modalPurple" title="Theme Purple" theme="purple"
-        icon="fas fa-bolt" size='lg' disable-animations>
-        This is a purple theme modal without animations.
+    <div class="row">
+        <div class="col-12">
+            <a href="{{route("gestionInicialNuevo")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#modalHistorialAcciones" class="btn btn-info" id="cargar_historial_acciones"><i class="fas fa-list"></i> Historial Acciones</a>
+        </div>
+    </div>
+    {{-- MODAL HISTORIAL DE ACCIONES --}}
+    <x-adminlte-modal id="modalHistorialAcciones" title="Historial de acciones - Evento: {{$array_datos_info_evento[0]->ID_evento}}" theme="info" icon="fas fa-list" size='xl' disable-animations>
+        <div class="row">
+            <div class="col-12">
+                <div class="table table-responsive">
+                    <table id="listado_historial_acciones_evento" class="table table-striped table-bordered" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Fecha de acción</th>
+                                <th>Usuario de acción</th>
+                                <th>Acción realizada</th>
+                            </tr>
+                        </thead>
+                        <tbody id="borrar_tabla_historial_acciones"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <x-slot name="footerSlot">
+            <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
+        </x-slot>
     </x-adminlte-modal>
-{{-- Example button to open modal --}}
-<x-adminlte-button label="Open Modal" data-toggle="modal" data-target="#modalPurple" class="bg-purple"/>
+
     <h5>Los campos marcados con <span style="color:red;">(*)</span> son obligatorios.</h5>
     <div class="card-info" style="border: 1px solid black;">
         <div class="card-header text-center">
@@ -631,7 +652,7 @@
                                                                         <th>Descripción</th>
                                                                     </tr>
                                                                 </thead>
-                                                                <tbody id="borrar"></tbody>
+                                                                <tbody id="borrar_tabla_historico_empresa"></tbody>
                                                             </table>
                                                         </div>
                                                       </div>
@@ -1133,11 +1154,7 @@
     <script type="text/javascript">
         // var conteo = 0;
         $('#llenar_tabla_historico_empresas').click(function(){
-            $('#borrar').empty();
-            // conteo = conteo + 1;
-            // if (conteo == 1) {
-            //     conteo = 0;
-            // }
+            $('#borrar_tabla_historico_empresa').empty();
             var nro_ident = $('#listado_usuarios_asignacion_rol').val();
             var datos_llenar_tabla_info_laboral = {
                 '_token': $('input[name=_token]').val(),
@@ -1149,18 +1166,43 @@
                 data: datos_llenar_tabla_info_laboral,
                 success:function(data) {
                     if(data.length == 0){
-                        $('#borrar').empty();
+                        $('#borrar_tabla_historico_empresa').empty();
                     }else{
                         // console.log(data);
                         $.each(data, function(index, value){
-                            llenar(data, index, value);
+                            llenar_historico_empresas(data, index, value);
                         });
                     }
                 }
             });
         });
 
-        function llenar(response, index, value){
+        $('#cargar_historial_acciones').click(function(){
+           $('#borrar_tabla_historial_acciones').empty();
+
+           var datos_llenar_tabla_historial_acciones = {
+                '_token': $('input[name=_token]').val(),
+                'ID_evento' : $('#id_evento').val()
+            };
+            
+            $.ajax({
+                type:'POST',
+                url:'/consultaHistorialAcciones',
+                data: datos_llenar_tabla_historial_acciones,
+                success:function(data) {
+                    if(data.length == 0){
+                        $('#borrar_tabla_historial_acciones').empty();
+                    }else{
+                        // console.log(data);
+                        $.each(data, function(index, value){
+                            llenar_historial_acciones(data, index, value);
+                        });
+                    }
+                }
+            });
+        });
+
+        function llenar_historico_empresas(response, index, value){
             $('#listado_historico_empresas').DataTable({
                 "destroy": true,
                 "data": response,
@@ -1192,6 +1234,33 @@
                 "language":{
                     "search": "Buscar",
                     "lengthMenu": "Mostrar _MENU_ resgistros por página",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "paginate": {
+                        "previous": "Anterior",
+                        "next": "Siguiente",
+                        "first": "Primero",
+                        "last": "Último"
+                    },
+                    "emptyTable": "No se encontró información",
+                    "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                }
+            });
+        }
+
+        function llenar_historial_acciones(response, index, value){
+            $('#listado_historial_acciones_evento').DataTable({
+                "dom": 'rtip',
+                "destroy": true,
+                "data": response,
+                "pageLength": 5,
+                "order": [[2, 'desc']],
+                "columns":[
+                    {"data":"F_accion"},
+                    {"data":"Nombre_usuario"},
+                    {"data":"Accion_realizada"}
+                ],
+                "language":{
+                    "search": "Buscar",
                     "info": "Mostrando página _PAGE_ de _PAGES_",
                     "paginate": {
                         "previous": "Anterior",
