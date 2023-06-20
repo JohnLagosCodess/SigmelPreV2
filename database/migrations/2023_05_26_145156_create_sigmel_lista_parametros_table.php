@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::connection('sigmel_gestiones')->create('sigmel_lista_parametros', function (Blueprint $table) {
             $table->increments('Id_Parametro');
             $table->string('Tipo_lista', 30)->nullable();
-            $table->string('Nombre_parametro', 30)->nullable();
+            $table->text('Nombre_parametro')->nullable();
             $table->enum('Estado', ['activo', 'inactivo'])->default('activo')->nullable();
             $table->date('F_registro')->nullable();
         });
