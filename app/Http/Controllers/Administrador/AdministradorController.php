@@ -1623,7 +1623,10 @@ class AdministradorController extends Controller
             DB::raw("if(srde.ID_evento != '', srde.ID_evento, '') as iD_evento"),
             DB::raw("if(srde.Nombre_Documento != '', srde.Nombre_Documento, '') as nombre_Documento"),
             DB::raw("if(srde.Formato_documento != '', srde.Formato_documento, '') as formato_documento"),
-        )->where('sld.Estado', 'activo')
+        )->where([
+            ['sld.Estado', '=', 'activo'],
+            ['srde.ID_evento', '=', $newIdEvento]
+        ])
         ->get();
 
         return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
