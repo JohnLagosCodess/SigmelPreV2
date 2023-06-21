@@ -100,8 +100,8 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="table-responsive">
-                        <table id="listado_evento" class="table table-striped">
+                    <div class="table table-responsive">
+                        <table id="Consulta_Eventos" class="table table-striped table-bordered" style="width:100%">
                             <thead>
                                 <tr>
                                     <th>N°</th>
@@ -155,15 +155,17 @@
             <!-- Fin de Acción botones-->
         </div>
         <!-- Fin de información del evento-->    
-        </div><!-- este div no cierra con nada pero si sequita no aparece el icono de subir-->
+        <!-- este div no cierra con nada pero si sequita no aparece el icono de subir-->
     </div>
 @stop
 @section('js')
    <script>
         $(document).ready(function(){
-            var table = $('#listado_evento').DataTable({
+            
+            var table = $('#Consulta_Eventos').DataTable({
                 "orderCellsTop": true,
                 "fixedHeader": true,
+                "scrollX": true,
                 "language":{
                     "search": "Buscar",
                     "lengthMenu": "Mostrar _MENU_ resgistros por página",
@@ -181,8 +183,8 @@
             $('#subscribe').on('change',function(){
                 if (this.checked) {
                     //Creamos una fila en el head de la tabla y lo clonamos para cada columna
-                    $('#listado_evento thead tr').clone(true).appendTo( '#listado_evento thead' );
-                    $('#listado_evento thead tr:eq(1) th').each( function (i) {
+                    $('#Consulta_Eventos thead tr').clone(true).appendTo( '#Consulta_Eventos thead' );
+                    $('#Consulta_Eventos thead tr:eq(1) th').each( function (i) {
                         var title = $(this).text(); //es el nombre de la columna
                         $(this).html( '<input type="text" placeholder="Buscar...'+title+'" />' );
                 
@@ -196,7 +198,7 @@
                         } );
                     } );  
                 } else {
-                    $("#listado_evento thead").hide();
+                    $("#Consulta_Eventos thead").hide();
                 }  
              })
         });
