@@ -242,10 +242,11 @@ Route::post('/Sigmel/RolAdministrador/ActualizarEvento', [AdministradorControlle
 // 14/06/2023
 // Vista: Buscar Evento
 Route::get('/Sigmel/RolAdministrador/BusquedaEveto', [BuscarEventoController::class, 'mostrarVistaBuscarEvento'])->name('busquedaEvento');
+// Acción Consultar evento 
+Route::post('/consultaEvento', [BuscarEventoController::class, 'mostrarResultadoBusqueda']);
+
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);
-
-
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 Route::get('/Sigmel/pruebas', [ProbandoController::class, 'index']);

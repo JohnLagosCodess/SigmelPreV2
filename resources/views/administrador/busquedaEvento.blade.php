@@ -16,8 +16,8 @@
                 <h4>Convenciones:</h4>
                 <p>
                     <!--<i class="far fa-eye text-success"></i> Activar Menú/Sub Menú &nbsp;
-                    <i class="far fa-eye-slash text-danger"></i> Inactivar Menú/Sub Menú &nbsp;
-                    <i class="fa fa-sm fa-pen text-primary"></i> Editar Información Menú/Sub Menú &nbsp;-->
+                    <i class="far fa-eye-slash text-danger"></i> Inactivar Menú/Sub Menú &nbsp;-->
+                    <i class="fas fa-filter text-primary"></i> Habilitar Filtros Columnas &nbsp;
                    <span style="color:red;">(*)</span> Campo Obligatorio.
                 </p>
             </div>
@@ -28,7 +28,7 @@
             <h4>Consultar Evento</h4>
         </div>
         <!-- Busqueda Filtros -->
-        <form action="" method="POST">
+        <form action="{{route('creacionEvento')}}" method="POST">
             @csrf
             <div class="card-body">
                 <div class="row">
@@ -96,6 +96,7 @@
                     </div>
                 </div>
                 <label for="nro_registros" class="col-form-label">Se encontraron xxxx registros</label>
+                <i class="fas fa-filter text-primary"></i>  <input type="checkbox" name="subscribe" id="subscribe">
             </div>
             <div class="card-body">
                 <div class="row">
@@ -158,12 +159,11 @@
     </div>
 @stop
 @section('js')
-    <script>
+   <script>
         $(document).ready(function(){
-            $('#listado_evento').DataTable({
-                "scrollY": '10vh',
-                "scrollCollapse": true,
-                "scrollX": true,
+            var table = $('#listado_evento').DataTable({
+                "orderCellsTop": true,
+                "fixedHeader": true,
                 "language":{
                     "search": "Buscar",
                     "lengthMenu": "Mostrar _MENU_ resgistros por página",
@@ -178,6 +178,28 @@
                     "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
                 }
             });
+            $('#subscribe').on('change',function(){
+                if (this.checked) {
+                    //Creamos una fila en el head de la tabla y lo clonamos para cada columna
+                    $('#listado_evento thead tr').clone(true).appendTo( '#listado_evento thead' );
+                    $('#listado_evento thead tr:eq(1) th').each( function (i) {
+                        var title = $(this).text(); //es el nombre de la columna
+                        $(this).html( '<input type="text" placeholder="Buscar...'+title+'" />' );
+                
+                        $( 'input', this ).on( 'keyup change', function () {
+                            if ( table.column(i).search() !== this.value ) {
+                                table
+                                    .column(i)
+                                    .search( this.value )
+                                    .draw();
+                            }
+                        } );
+                    } );  
+                } else {
+                    $("#listado_evento thead").hide();
+                }  
+             })
         });
+
     </script>
 @stop
