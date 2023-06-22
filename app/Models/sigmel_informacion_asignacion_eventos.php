@@ -19,6 +19,9 @@ class sigmel_informacion_asignacion_eventos extends Model
     'Id_servicio',
     'Id_accion',
     'Descripcion',
+    'F_alerta',
+    'Id_Estado_procesos',
+    'F_accion',
     'Nombre_usuario',
     'F_registro',
     ];

@@ -1339,6 +1339,7 @@ class AdministradorController extends Controller
                 'Id_accion' => $request->accion,
                 'Descripcion' => $request->descripcion_asignacion,
                 'F_alerta' => $request->fecha_alerta,
+                'Id_Estado_procesos' => 1,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date
             ];
