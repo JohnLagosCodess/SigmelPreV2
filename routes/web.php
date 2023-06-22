@@ -241,7 +241,7 @@ Route::post('/Sigmel/RolAdministrador/ActualizarEvento', [AdministradorControlle
 
 // 14/06/2023
 // Vista: Buscar Evento
-Route::get('/Sigmel/RolAdministrador/BusquedaEveto', [BuscarEventoController::class, 'mostrarVistaBuscarEvento'])->name('busquedaEvento');
+Route::get('/Sigmel/RolAdministrador/BusquedaEvento', [BuscarEventoController::class, 'mostrarVistaBuscarEvento'])->name('busquedaEvento');
 // Acción Consultar evento 
 Route::post('/consultaInformacionEvento', [BuscarEventoController::class, 'consultaInformacionEvento']);
 

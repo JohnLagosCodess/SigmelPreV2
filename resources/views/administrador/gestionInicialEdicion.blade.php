@@ -10,7 +10,12 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            <a href="{{route("gestionInicialNuevo")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+            <?php if (isset($_POST['badera_buscador_evento']) &&  $_POST['badera_buscador_evento'] == 'desdebuscador' ):?>
+                <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+            <?php else: ?>
+
+                <a href="{{route("gestionInicialNuevo")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+            <?php endif ?>
             <a href="javascript:void(0);" data-toggle="modal" data-target="#modalHistorialAcciones" class="btn btn-info" id="cargar_historial_acciones"><i class="fas fa-list"></i> Historial Acciones</a>
         </div>
     </div>

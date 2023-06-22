@@ -94,7 +94,7 @@
                 <div class="card-info">
                     <div class="card-header text-center" style="border: 1.5px solid black;">
                         <h5>Resultados de consulta</h5>
-                        <input type="hidden" id="action_afiliado" value="">
+                        <input type="hidden" id="action_evento_consultar" value="{{ route('gestionInicialEdicion') }}">
                     </div>
                 </div>
                 

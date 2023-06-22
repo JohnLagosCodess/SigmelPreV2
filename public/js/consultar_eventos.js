@@ -5,7 +5,7 @@ $(document).ready(function () {
         /* Captura de variables de formulario de consulta de evento */
         var consultar_nro_identificacion = $('#consultar_nro_identificacion').val();
         var consultar_id_evento = $('#consultar_id_evento').val();
-
+        let token = $('input[name=_token]').val();
         if(consultar_nro_identificacion != '' || consultar_id_evento != ''){
             
             var datos_consulta_evento = {
@@ -58,7 +58,19 @@ $(document).ready(function () {
                         $('.contenedor_info_evento').removeClass('d-none');
                         $('#num_registros').append(data.length);
 
-                        
+                        var IrEvento = '';
+
+                        for (let i = 0; i < data.length; i++) {
+                            if (data[i]['ID_evento'] != '') {
+                                IrEvento = '<form id="form_editar_evento_'+data[i]["ID_evento"]+'" action="" method="POST">'+
+                                '<input type="hidden" name="_token" value="'+token+'">'+
+                                '<input class="btn text-info btn-sm" id="edit_evento_'+data[i]["ID_evento"]+'" type="submit" style="font-weight: bold;" value="'+data[i]["ID_evento"]+'">'+
+                                '<input type="hidden" name="badera_buscador_evento" id="badera_buscador_evento" value="desdebuscador">'+
+                                '<input type="hidden" name="newIdEvento" value="'+data[i]["ID_evento"]+'">'+
+                                '</form>';
+                                data[i]['consulta_evento'] = IrEvento;
+                            }                            
+                        }                        
 
                         $.each(data, function(index, value){
                             llenar_informacion_evento(data, index, value);
@@ -132,7 +144,7 @@ $(document).ready(function () {
             "pageLength": 5,
             "order": [[5, 'desc']],
             "columns":[
-                {"data":"ID_evento"},
+                {"data":"consulta_evento"},
                 {"data":"Nombre_Cliente"},
                 {"data":"Empresa"},
                 {"data":"Nombre_evento"},
@@ -164,5 +176,17 @@ $(document).ready(function () {
         });
         
     }  
-    
+
+    /* Asignar ruta del formulario de edicion de evento antes de dar clic en el botón para ir al Evento */
+        
+    /* $("input[id^='edit_evento_']").on('mouseover',function(){
+        let url_editar_evento = $('#action_evento_consultar').val();
+        $("form[id^='form_editar_evento_']").attr("action", url_editar_evento);        
+    }); */
+    $(document).on('mouseover',"input[id^='edit_evento_']", function(){
+        let url_editar_evento = $('#action_evento_consultar').val();
+        $("form[id^='form_editar_evento_']").attr("action", url_editar_evento);    
+    });
 });
+
+
