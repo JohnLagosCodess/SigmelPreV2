@@ -72,14 +72,14 @@
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="form-group">
-                            <label for="nombre_afiliado" class="col-form-label">Nombre de afiliado:</label>
-                            Pepe Ramirez
+                            <label class="col-form-label">Nombre de afiliado:</label>
+                            <span id="nombre_afiliado">Pepe Ramirez</span>
                         </div>
                     </div>
                     <div class="col-sm-4">
                         <div class="form-group">
-                            <label for="nro_identificacion" class="col-form-label">N° de identificación:</label>
-                            1054545054054
+                            <label class="col-form-label">N° de identificación:</label>
+                            <span id="nro_identificacion">1054545054054</span>
                         </div>
                     </div>
                 </div>
@@ -89,17 +89,17 @@
         <!-- información del evento-->
         <div class="row">
             <div class="col-12">
+                &nbsp; <label for="nro_registros" class="col-form-label">Se encontraron xxxx registros</label>
                 <div class="card-info">
                     <div class="card-header text-center" style="border: 1.5px solid black;">
                         <h5>Resultados de consulta</h5>
                         <input type="hidden" id="action_afiliado" value="">
                     </div>
                 </div>
-                <label for="nro_registros" class="col-form-label">Se encontraron xxxx registros</label>
+                
                 <i class="fas fa-filter text-primary"></i>  <input type="checkbox" name="subscribe" id="subscribe">
-            </div>
-            <div class="card-body">
-                <div class="row">
+
+                <div class="card-body">
                     <div class="table table-responsive">
                         <table id="Consulta_Eventos" class="table table-striped table-bordered" style="width:100%">
                             <thead>
@@ -143,19 +143,16 @@
                         </table>
                     </div>
                 </div>
-            </div>
-            <!-- Acción de botones-->
-            <div class="card-footer">
-                <div class="grupo_botones" style="float: left;">
-                    <input type="submit" id="btn_expor_datos" class="btn btn-info" value="Exportar datos">
-                    <input type="submit" id="btn_new_servicio" class="btn btn-info" value="Nuevo servicio">
-                    <input type="submit" id="btn_new_consulta" class="btn btn-info" value="Nueva Consulta">
+
+                <div class="card-footer">
+                    <div class="grupo_botones" style="float: left;">
+                        <input type="submit" id="btn_expor_datos" class="btn btn-info" value="Exportar datos">
+                        <input type="submit" id="btn_new_servicio" class="btn btn-info" value="Nuevo servicio">
+                        <input type="submit" id="btn_new_consulta" class="btn btn-info" value="Nueva Consulta">
+                    </div>
                 </div>
             </div>
-            <!-- Fin de Acción botones-->
         </div>
-        <!-- Fin de información del evento-->    
-        <!-- este div no cierra con nada pero si sequita no aparece el icono de subir-->
     </div>
 @stop
 @section('js')
