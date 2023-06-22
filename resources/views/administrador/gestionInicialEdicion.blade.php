@@ -1107,7 +1107,7 @@
                 "destroy": true,
                 "data": response,
                 "pageLength": 5,
-                "order": [[2, 'desc']],
+                "order": [[0, 'desc']],
                 "columns":[
                     {"data":"F_accion"},
                     {"data":"Nombre_usuario"},
