@@ -57,6 +57,9 @@ $(document).ready(function () {
                         $('#num_registros').empty();
                         $('.contenedor_info_evento').removeClass('d-none');
                         $('#num_registros').append(data.length);
+
+                        
+
                         $.each(data, function(index, value){
                             llenar_informacion_evento(data, index, value);
                         });
@@ -137,12 +140,12 @@ $(document).ready(function () {
                 {"data":"F_registro"},
                 {"data":"Nombre_proceso"},
                 {"data":"Nombre_servicio"},
-                {"data":"NO DATA"},
-                {"data":"NO DATA"},
-                {"data":"NO DATA"},
-                {"data":"NO DATA"},
-                {"data":"NO DATA"},
-                {"data":"NO DATA"}
+                {"data":"Nombre_estado"},
+                {"data":"Resultado"},
+                {"data":"F_accion"},
+                {"data":"F_dictamen"},
+                {"data":"F_notificacion"},
+                {"data":"Detalle"}
             ],
             "language":{
                 "search": "Buscar",

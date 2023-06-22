@@ -111,11 +111,11 @@
                                     <th>Fecha registro</th>
                                     <th>Proceso</th>
                                     <th>Servicio</th>
-                                    <th style="color:red !important;">Estado</th>
-                                    <th style="color:red !important;">Resultado</th>
-                                    <th style="color:red !important;">Fecha de acción</th>
-                                    <th style="color:red !important;">Fecha de dictamen</th>
-                                    <th style="color:red !important;">Fecha de Notificación</th>
+                                    <th>Estado</th>
+                                    <th>Resultado</th>
+                                    <th>Fecha de acción</th>
+                                    <th>Fecha de dictamen</th>
+                                    <th>Fecha de Notificación</th>
                                     <th>Detalle</th>
                                 </tr>
                             </thead>
