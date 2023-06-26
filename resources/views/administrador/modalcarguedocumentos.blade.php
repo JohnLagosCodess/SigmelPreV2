@@ -17,7 +17,7 @@
                         </tr>
                     </thead>
                     <tbody>                                 
-                        @foreach ($listado_documentos as $documento)
+                        @foreach ($arraylistado_documentos as $documento)
                             <tr>
                                 <td>{{$documento->Nro_documento}}</td>
                                 <td style="width: 34% !important;">{{$documento->Nombre_documento}}</td>

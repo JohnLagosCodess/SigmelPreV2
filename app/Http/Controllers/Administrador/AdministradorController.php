@@ -49,8 +49,9 @@ use App\Models\sigmel_registro_documentos_eventos;
 
 /* Llamado modelo para consultar historial de acciones */
 use App\Models\sigmel_historial_acciones_eventos;
-
+use App\Models\psrvistadocumentos;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Rels;
+use stdClass;
 
 class AdministradorController extends Controller
 {
@@ -1603,7 +1604,7 @@ class AdministradorController extends Controller
         ->limit(1)
         ->get();
 
-        $array_datos_info_asignacion=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+        /* $array_datos_info_asignacion=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
         ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slps', 'slps.Id_proceso', '=', 'siae.Id_proceso')
         ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slpss', 'slpss.Id_servicio', '=', 'siae.Id_servicio')
         ->leftJoin('sigmel_gestiones.sigmel_lista_acciones_procesos_servicios as slaps', 'slaps.Id_Accion', '=', 'siae.Id_accion')
@@ -1612,26 +1613,12 @@ class AdministradorController extends Controller
         ->where([['siae.ID_evento', '=', $newIdEvento]])
         ->orderBy('siae.F_registro', 'Desc')
         ->limit(1)
-        ->get();
+        ->get(); */          
 
-
-        $listado_documentos = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_documentos as sld')
-        ->leftJoin('sigmel_gestiones.sigmel_registro_documentos_eventos as srde', 'sld.Id_Documento', '=', 'srde.Id_Documento')
-        ->select('sld.Id_Documento', 'sld.Nro_documento', 'sld.Nombre_documento', 'sld.Requerido',
-            DB::raw("if(srde.Id_Registro_Documento != '', srde.Id_Registro_Documento, '') as id_Registro_Documento"),
-            DB::raw("if(srde.Id_Registro_Documento != '', 'Cargado', 'No Cargado') as estado_documento"),
-            DB::raw("if(srde.Id_documento != '', srde.Id_documento, '') as id_documento"),
-            DB::raw("if(srde.ID_evento != '', srde.ID_evento, '') as iD_evento"),
-            DB::raw("if(srde.Nombre_Documento != '', srde.Nombre_Documento, '') as nombre_Documento"),
-            DB::raw("if(srde.Formato_documento != '', srde.Formato_documento, '') as formato_documento"),
-        )->where([
-            ['sld.Estado', '=', 'activo'],
-            ['srde.ID_evento', '=', $newIdEvento]
-        ])
-        ->get();
-
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento)); 
+        
         return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
-        'array_datos_info_laboral', 'array_datos_info_pericial', 'array_datos_info_asignacion', 'listado_documentos'));
+        'array_datos_info_laboral', 'array_datos_info_pericial', 'arraylistado_documentos'));
 
     }
 
@@ -2124,7 +2111,7 @@ class AdministradorController extends Controller
 
         /* Actualizacion tabla sigmel_informacion_asignacion_eventos */
 
-        $actualizar_GestionIniciaAsignacion = [
+        /* $actualizar_GestionIniciaAsignacion = [
             'Id_proceso' => $request->proceso,
             'Id_servicio' => $request->servicio,
             'Id_accion' => $request->accion,
@@ -2139,7 +2126,7 @@ class AdministradorController extends Controller
         $asignacionActualizar->fill($actualizar_GestionIniciaAsignacion);
         $asignacionActualizar->save();
 
-        sleep(2);
+        sleep(2); */
 
         /* RECOLECCIÓN INFORMACIÓN PARA LA TABLA: sigmel_historial_acciones_eventos */
         $datos_historial_acciones = [

@@ -757,7 +757,7 @@
                             </div>
                         </div>
                         {{-- INFORMACIÓN ASIGNACION --}}
-                        <div class="row ocultar_seccion_info_asignacion">
+                        {{-- <div class="row ocultar_seccion_info_asignacion">
                             <div class="col-12">
                                 <div class="card-info">
                                     <div class="card-header text-center" style="border: 1.5px solid black;">
@@ -799,7 +799,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -1002,8 +1002,11 @@
         {{-- MODAL PARA AGREGAR DOCUMENTOS INFORMACION PERICIAL --}}
         <?php $aperturaModal = 'Edicion'; ?>
         @include('administrador.modalcarguedocumentos')
-           
-
+        <?php 
+        /* echo'<pre>';
+        print_r($arraylistado_documentos) ;
+        echo'</pre>'; */
+        ?>
     </div>
 @stop
 
