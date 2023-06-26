@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('sigmel_gestiones')->create('sigmel_listado_estados_procesos', function (Blueprint $table) {
+        Schema::connection('sigmel_gestiones')->create('sigmel_listado_estados_eventos', function (Blueprint $table) {
             $table->increments('Id_Estado');
             $table->text('Nombre_estado')->nullable();
-            $table->enum('Visible', ['Si','No'])->default('Si')->nullable();            
+            $table->enum('Visible', ['Si','No'])->default('Si')->nullable();   
         });
     }
 
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sigmel_listado_estados_procesos');
+        Schema::dropIfExists('sigmel_listado_estados_eventos');
     }
 };
