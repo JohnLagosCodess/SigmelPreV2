@@ -94,7 +94,7 @@ $(document).ready(function () {
                                                     <div class="col-12">\
                                                         <form method="POST">\
                                                             <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Fecha de Radicación</label>\
+                                                                <label for="" class="col-sm-3 col-form-label">Fecha de Radicación <span style="color:red;">(*)</span></label>\
                                                                 <div class="col-sm-9">\
                                                                     <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion" required>\
                                                                 </div>\
@@ -106,21 +106,39 @@ $(document).ready(function () {
                                                                 </div>\
                                                             </div>\
                                                             <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Servicio</label>\
+                                                                <label for="" class="col-sm-3 col-form-label">Servicio <span style="color:red;">(*)</span></label>\
                                                                 <div class="col-sm-9">\
                                                                     <select class="nuevo_servicio_'+data[i]['ID_evento']+' custom-select" name="nuevo_servicio" id="nuevo_servicio_'+data[i]['ID_evento']+'" style="width:100%;" requierd></select>\
                                                                 </div>\
                                                             </div>\
                                                             <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Fecha de acción</label>\
+                                                                <label for="" class="col-sm-3 col-form-label">Fecha de acción <span style="color:red;">(*)</span></label>\
                                                                 <div class="col-sm-9">\
-                                                                    <input type="date" class="form-control" name="nueva_fecha_accion" id="nueva_fecha_accion_'+data[i]['ID_evento']+'">\
+                                                                    <input type="date" class="form-control" name="nueva_fecha_accion" id="nueva_fecha_accion_'+data[i]['ID_evento']+'" required>\
                                                                 </div>\
                                                             </div>\
                                                             <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Acción</label>\
+                                                                <label for="" class="col-sm-3 col-form-label">Acción <span style="color:red;">(*)</span></label>\
                                                                 <div class="col-sm-9">\
-                                                                    <select class="nuevo_servicio_'+data[i]['ID_evento']+' custom-select" name="nuevo_servicio" id="nuevo_servicio_'+data[i]['ID_evento']+'" style="width:100%;" requierd></select>\
+                                                                    <select class="nueva_accion_'+data[i]['ID_evento']+' custom-select" name="nueva_accion" id="nueva_accion_'+data[i]['ID_evento']+'" style="width:100%;" requierd></select>\
+                                                                </div>\
+                                                            </div>\
+                                                            <div class="form-group row">\
+                                                                <label for="" class="col-sm-3 col-form-label">Profesional</label>\
+                                                                <div class="col-sm-9">\
+                                                                    <input type="text" readonly class="form-control" name="nuevo_profesional" id="nuevo_profesional" value="Nombre Profesional">\
+                                                                </div>\
+                                                            </div>\
+                                                            <div class="form-group row">\
+                                                                <label for="" class="col-sm-3 col-form-label">Descripción</label>\
+                                                                <div class="col-sm-9">\
+                                                                    <textarea class="form-control" name="nueva_descripcion" id="nueva_descripcion" rows="2"></textarea>\
+                                                                </div>\
+                                                            </div>\
+                                                            <div class="form-group row">\
+                                                                <label for="" class="col-sm-3 col-form-label">Fecha alerta <span style="color:red;">(*)</span></label>\
+                                                                <div class="col-sm-9">\
+                                                                    <input type="date" class="form-control" name="nueva_fecha_alerta" id="nueva_fecha_alerta" required>\
                                                                 </div>\
                                                             </div>\
                                                         </form>\
@@ -273,6 +291,13 @@ $(document).ready(function () {
         /* SETEO DE LA FECHA ACTUAL PARA EL CAMPO DE FECHA DE ACCIÓN */
         var fecha = new Date();
         $("input[id^='nueva_fecha_accion_']").val(fecha.toJSON().slice(0,10));
+
+        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE ACCIONES */
+        $("select[id^='nueva_accion_']").select2({
+            placeholder: "Seleccione una opción",
+            allowClear: false
+        });
+
     });
 
 

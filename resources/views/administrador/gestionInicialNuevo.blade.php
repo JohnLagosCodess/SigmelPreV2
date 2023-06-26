@@ -652,7 +652,7 @@
                 </div>
                 <div class="grupo_botones" style="float: left;">
                     <input type="reset" id="btn_borrar" class="btn btn-info" value="Restablecer">
-                    <input type="submit" id="btn_guardar_evento" class="btn btn-info " value="Guardar" onclick="OcultarbotonGuardar()">
+                    <input type="submit" id="btn_guardar_evento" class="btn btn-info d-none" value="Guardar" onclick="OcultarbotonGuardar()">
                 </div>
                 <div class="text-center" id="mostrar_barra_creacion_evento"  style="display:none;">                                
                     <button class="btn btn-info" type="button" disabled>
