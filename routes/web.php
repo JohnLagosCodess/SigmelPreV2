@@ -8,6 +8,7 @@ use App\Http\Controllers\Autenticacion\LogoutController;
 use App\Http\Controllers\Ingenieria\IngenieriaController;
 use App\Http\Controllers\ProbandoController;
 use App\Http\Controllers\RolesController;
+use App\Http\Controllers\Coordinador\CoordinadorController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -206,6 +207,8 @@ Route::post('/Sigmel/usuarios/AplicarEdicionPlantilla', [IngenieriaController::c
 Route::get('/Sigmel/RolIngenieria', [IngenieriaController::class, 'show'])->name('IndexIngenieria');
 // Vista: Index Rol Administrador
 Route::get('/Sigmel/RolAdministrador', [AdministradorController::class, 'show'])->name('IndexAdministrador');
+// Vista: Index Rol Coordinador 28/06/2023
+Route::get('/Sigmel/RolCoordinador', [CoordinadorController::class, 'show'])->name('IndexCoordinador');
 
 // 23/05/2023
 // Vista: Gestión Inicial Nuevo
@@ -244,6 +247,11 @@ Route::post('/Sigmel/RolAdministrador/ActualizarEvento', [AdministradorControlle
 Route::get('/Sigmel/RolAdministrador/BusquedaEvento', [BuscarEventoController::class, 'mostrarVistaBuscarEvento'])->name('busquedaEvento');
 // Acción Consultar evento 
 Route::post('/consultaInformacionEvento', [BuscarEventoController::class, 'consultaInformacionEvento']);
+
+// 28/06/2023
+// Vista: Bandeja PCL Coordinador
+Route::get('/Sigmel/RolCoordinador/BandejaPCL', [CoordinadorController::class, 'mostrarVistaBandejaPCL'])->name('bandejaPCL');
+
 
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);
