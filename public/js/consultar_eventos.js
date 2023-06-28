@@ -2,6 +2,7 @@ $(document).ready(function () {
             
     $('#form_consultar_evento').submit(function(e){
         e.preventDefault();
+
         /* Captura de variables de formulario de consulta de evento */
         var consultar_nro_identificacion = $('#consultar_nro_identificacion').val();
         var consultar_id_evento = $('#consultar_id_evento').val();
@@ -18,7 +19,7 @@ $(document).ready(function () {
                 type:'POST',
                 url:'/consultaInformacionEvento',
                 data: datos_consulta_evento,
-                success:function(data) {
+                success:function(data) {                    
                     // console.log();
                     if (data.parametro == "sin_datos") {
                         /* Mostrar contenedor mensaje de que no hay información */
@@ -64,7 +65,7 @@ $(document).ready(function () {
                         for (let i = 0; i < data.length; i++) {
                             // Validación para mostrar el formulario de edición correspondiente al ID de evento.
                             if (data[i]['ID_evento'] != '') {
-                                IrEvento = '<form id="form_editar_evento_'+data[i]["ID_evento"]+'" action="" method="POST">'+
+                                IrEvento = '<span class="d-none">'+data[i]["ID_evento"]+'</span><form id="form_editar_evento_'+data[i]["ID_evento"]+'" action="" method="POST">'+
                                 '<input type="hidden" name="_token" value="'+token+'">'+
                                 '<input class="btn text-info btn-sm" id="edit_evento_'+data[i]["ID_evento"]+'" type="submit" style="font-weight: bold;" value="'+data[i]["ID_evento"]+'">'+
                                 '<input type="hidden" name="badera_buscador_evento" id="badera_buscador_evento" value="desdebuscador">'+
@@ -160,6 +161,7 @@ $(document).ready(function () {
                         $.each(data, function(index, value){
                             llenar_informacion_evento(data, index, value);
                         });
+
                     }
 
                 }
@@ -177,9 +179,17 @@ $(document).ready(function () {
                 $('#llenar_mensaje_validacion').empty();
             }, 5000);
         }
+        setTimeout(() => {
+            var botonBuscar = $('#contenedorTable').parents();
+            var contenedorBotonBuscar = botonBuscar[0].childNodes[5].childNodes[1].childNodes[1].childNodes[0].classList[0];
+            //console.log(contenedorBotonBuscar);        
+            $('.'+contenedorBotonBuscar).addClass('d-none');
+        }, 5000);
 
         
+        
     });  
+    
     $('#Consulta_Eventos thead tr').clone(true).addClass('filters').appendTo('#Consulta_Eventos thead');
     function llenar_informacion_evento(response, index, value){
         $('#Consulta_Eventos').DataTable({
@@ -237,6 +247,31 @@ $(document).ready(function () {
 
                 });
             },
+            dom: 'Bfrtip',
+            /* buttons: [
+                'excel',                
+            ], */            
+            buttons:{
+                dom:{
+                    buttons:{
+                        className: 'btn'
+                    }
+                },
+                buttons:[
+                    {
+                        extend:"excel",
+                        title: response[0]['Nombre_afiliado']+" "+response[0]['Nro_identificacion'],
+                        text:'Exportar datos',
+                        className: 'btn btn-success',
+                        "excelStyles": [                      // Add an excelStyles definition
+                                                     
+                        ],
+                        exportOptions: {
+                            columns: [ 0,1,2,3,4,5,6,7,8,9,10,11,12]
+                        }
+                    }
+                ]
+            },
             "destroy": true,
             "data": response,
             "pageLength": 5,
@@ -257,7 +292,7 @@ $(document).ready(function () {
                 {"data":"F_notificacion"},
                 {"data":"acciones"}
             ],
-            "language":{
+            "language":{                
                 "search": "Buscar",
                 "lengthMenu": "Mostrar _MENU_ resgistros",
                 "info": "Mostrando registros _START_ a _END_ de un total de _TOTAL_ registros",
@@ -272,9 +307,17 @@ $(document).ready(function () {
                 "infoEmpty": "No se encontró información",
             }
         });
-        
     }  
 
+    $('#btn_expor_datos').click(function () {
+        var infobtnExcel = $(this).parents();
+        var selectorbtnExcel = infobtnExcel[4].childNodes[13].childNodes[1].childNodes[5].childNodes[1].childNodes[1].childNodes[0].childNodes[0].classList[0];
+
+        $('.'+selectorbtnExcel).click();
+
+        //console.log(selectorbtnExcel);
+    });
+    
     /* Asignar ruta del formulario de edicion de evento antes de dar clic en el botón para ir al Evento */
     $(document).on('mouseover',"input[id^='edit_evento_']", function(){
         let url_editar_evento = $('#action_evento_consultar').val();
