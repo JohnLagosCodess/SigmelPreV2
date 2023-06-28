@@ -895,8 +895,53 @@ class AdministradorController extends Controller
             $info_listado_accion= json_decode(json_encode($listado_accion, true));
             return response()->json(($info_listado_accion));
         }
-    }
 
+        /* LISTADO DE SERVICIOS DEPENDIENDO DEL PROCESO PARA LA VISTA DE BUSCADOR DE EVENTOS (MODAL NUEVO SERVICIO) 
+            Se captura el evento para traer los servicios que no han sido usados en eventos
+        */
+        if($parametro == 'listado_servicios_nuevo_servicio'){
+            
+            $listado_id_servicios_evento = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_servicio')
+                ->where([
+                    ['ID_evento', '=', $request->nro_evento],
+                    ['Id_proceso', '=',  $request->id_proceso_actual]
+                ])->get();
+
+            $string_ids_servicios = array();
+
+            for ($i=0; $i < count($listado_id_servicios_evento); $i++) { 
+                array_push($string_ids_servicios, $listado_id_servicios_evento[$i]->Id_servicio);
+            }
+
+            $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            ->select('Id_Servicio', 'Nombre_servicio')
+            ->where([
+                ['Id_proceso', '=', $request->id_proceso_actual],
+                ['Estado', '=', 'activo']
+            ])
+            ->whereNotIn('Id_Servicio', $string_ids_servicios)
+            ->get();
+
+            $info_listado_servicios = json_decode(json_encode($listado_servicios, true));
+            return response()->json(($info_listado_servicios));
+        }
+
+        /* LISTADO DE ACCIONES PARA LA VISTA DE BUSCADOR DE EVENTOS (MODAL NUEVO SERVICIO) */
+        if ($parametro == 'listado_accion_nuevo_servicio') {
+            $listado_accion = sigmel_lista_acciones_procesos_servicios::on('sigmel_gestiones')
+                ->select('Id_Accion', 'Nombre_accion')
+                ->where([
+                    ['Id_Accion', '=', 1],
+                    ['Estado', 'activo']
+                    ])
+                ->get();
+
+            $info_listado_accion= json_decode(json_encode($listado_accion, true));
+            return response()->json(($info_listado_accion));
+        }
+    }
+    
     public function creacionEvento(Request $request){
     
         if(!Auth::check()){
@@ -2507,6 +2552,16 @@ class AdministradorController extends Controller
         ->get();
 
         return response()->json($array_datos_historial_acciones);
+    }
+
+    public function cargueDocumentosXEvento(Request $request){
+
+        $id_evento = $request->id_evento;
+
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($id_evento)); 
+        // $aperturaModal = 'Edicion_Busqueda';
+        // return view('administrador.modalcarguedocumentos', compact('arraylistado_documentos', 'aperturaModal'));
+        return response()->json($arraylistado_documentos);
     }
 
 }

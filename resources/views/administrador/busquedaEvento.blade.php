@@ -103,7 +103,7 @@
                     <div class="table table-responsive">
                         <table id="Consulta_Eventos" class="table table-striped table-bordered" style="width:100%">
                             <thead>
-                                <tr>
+                                <tr class="bg-info">
                                     <th>ID evento</th>
                                     <th>Cliente</th>
                                     <th>Empresa</th>
@@ -133,12 +133,14 @@
                     </div>
                 </div>
             </div>
+
+            {{-- MODAL PARA AGREGAR DOCUMENTOS INFORMACION PERICIAL --}}
+            <?php $aperturaModal = 'Edicion_Busqueda'; ?>
+            @include('administrador.modalcarguedocumentos')
+        
         </div>
     </div>
 @stop
 @section('js')
-    <script src="/js/consultar_eventos.js"></script>
-    <script type="text/javascript">
-    
-    </script>
+<script src="/js/consultar_eventos.js"></script>
 @stop
