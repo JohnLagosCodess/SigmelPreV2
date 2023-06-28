@@ -1,3 +1,4 @@
+
 @extends('adminlte::page')
 @section('title', 'Buscar Evento')
 @section('content_header') 
@@ -86,13 +87,13 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>            
         </div>
         <!-- información del evento-->
         <div class="row contenedor_info_evento d-none">
             <div class="col-12">
                 &nbsp; <label for="nro_registros" class="col-form-label">Se encontraron <span id="num_registros"></span> registros</label>
-                <div class="card-info">
+                <div class="card-info" id="contenedorTable">
                     <div class="card-header text-center" style="border: 1.5px solid black;">
                         <h5>Resultados de consulta</h5>
                         <input type="hidden" id="action_evento_consultar" value="{{ route('gestionInicialEdicion') }}">
@@ -121,14 +122,13 @@
                                 </tr>
                             </thead>
                             <tbody id="body_listado_eventos"></tbody>
-                        </table>
+                        </table>                        
                     </div>
                 </div>
 
                 <div class="card-footer">
                     <div class="grupo_botones" style="float: left;">
-                        <input type="submit" id="btn_expor_datos" class="btn btn-info" value="Exportar datos">
-                        <input type="submit" id="btn_new_servicio" class="btn btn-info" value="Nuevo servicio">
+                        <input type="button" id="btn_expor_datos" class="btn btn-info" value="Exportar datos"> 
                         <input type="submit" id="btn_new_consulta" class="btn btn-info" value="Nueva Consulta">
                     </div>
                 </div>
@@ -139,8 +139,27 @@
             @include('administrador.modalcarguedocumentos')
         
         </div>
+        
+        
     </div>
 @stop
 @section('js')
-<script src="/js/consultar_eventos.js"></script>
+    
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.templates.min.js"></script>
+
+    <script src="/js/consultar_eventos.js"></script>
+    <script>        
+        $('#btn_new_consulta').click(function(){
+            location.reload();
+        });
+    </script> 
+
 @stop
