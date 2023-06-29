@@ -15,12 +15,16 @@ return new class extends Migration
             $table->increments('Id_Asignacion');
             $table->string('ID_evento', 10);
             $table->integer('Id_proceso');
+            $table->enum('Visible_Nuevo_Proceso', ['Si','No'])->default('Si')->nullable();
             $table->integer('Id_servicio');
+            $table->enum('Visible_Nuevo_Servicio', ['Si','No'])->default('Si')->nullable();
             $table->integer('Id_accion');
             $table->text('Descripcion');
             $table->date('F_alerta')->nullable();
             $table->integer('Id_Estado_evento')->nullable();
             $table->date('F_accion')->nullable();
+            $table->date('F_radicacion')->nullable();
+            $table->text('Nombre_profesional')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

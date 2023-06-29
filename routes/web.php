@@ -255,6 +255,10 @@ Route::get('/Sigmel/RolCoordinador/BandejaPCL', [CoordinadorController::class, '
 
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);
+
+// Acción: Traer la información de los documentos acorde al id evento: Vistar Buscador de Eventos (Modal Formulario Nuevo Servicio)
+// Acción: Rellenar los selectores del formulario acorde al parametro indicado
+Route::post('/cargueDocumentosXEvento', [AdministradorController::class, 'cargueDocumentosXEvento']);
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 
