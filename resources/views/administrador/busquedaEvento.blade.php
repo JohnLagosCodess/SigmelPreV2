@@ -18,8 +18,9 @@
                 <p>
                     <!--<i class="far fa-eye text-success"></i> Activar Menú/Sub Menú &nbsp;
                     <i class="far fa-eye-slash text-danger"></i> Inactivar Menú/Sub Menú &nbsp;-->
-                   <span style="color:red;">(*)</span> Campo Obligatorio&nbsp;
-                   <i class="fa fa-puzzle-piece text-info"></i> Agregar Nuevo Servicio&nbsp;
+                   <span style="color:red;">(*)</span> Campo Obligatorio&nbsp;|
+                   <i class="fa fa-puzzle-piece text-info"></i> Agregar Nuevo Servicio&nbsp;|
+                   <i class="far fa-clone text-info"></i> Agregar Nuevo Proceso&nbsp;
                 </p>
             </div>
         </div>

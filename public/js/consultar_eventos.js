@@ -61,6 +61,7 @@ $(document).ready(function () {
 
                         var IrEvento = '';
                         var acciones = '';
+                        var acciones2 = '';
 
                         for (let i = 0; i < data.length; i++) {
                             // Validación para mostrar el formulario de edición correspondiente al ID de evento.
@@ -162,6 +163,90 @@ $(document).ready(function () {
                                 
 
                                 data[i]['acciones'] = acciones; 
+                            }
+
+                            if(data[i]['Nombre_proceso'] != ""){
+                                acciones2 = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoProceso_'+data[i]["ID_evento"]+'" id="btn_nuevo_proceso_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Proceso"><i class="far fa-clone text-info"></i></a>'+
+                                '<div class="modal fade" id="modalNuevoProceso_'+data[i]["ID_evento"]+'" tabindex="-1" aria-hidden="true">\
+                                    <div class="modal-dialog modal-lg">\
+                                        <div class="modal-content">\
+                                            <div class="modal-header bg-info">\
+                                                <h4 class="modal-title"><i class="far fa-clone"></i> Nuevo proceso para el evento: '+data[i]['ID_evento']+'</h4>\
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">\
+                                                    <span aria-hidden="true">&times;</span>\
+                                                </button>\
+                                            </div>\
+                                            <form id="form_nuevo_servicio_evento_'+data[i]['ID_evento']+'" method="POST">\
+                                                <div class="modal-body">\
+                                                    <div class="row">\
+                                                        <div class="col-12">\
+                                                            <div class="form-group row">\
+                                                                <label for="" class="col-sm-3 col-form-label">Fecha de Radicación <span style="color:red;">(*)</span></label>\
+                                                                <div class="col-sm-9">\
+                                                                    <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion" required>\
+                                                                </div>\
+                                                            </div>\
+                                                            <div class="form-group row">\
+                                                                <label for="" class="col-sm-3 col-form-label">Proceso</label>\
+                                                                <div class="col-sm-9">\
+                                                                    <input type="hidden" class="form-control" name="id_proceso_actual" id="id_proceso_actual_'+data[i]["ID_evento"]+'" value="'+data[i]["Id_proceso"]+'">\
+                                                                    <input type="text" readonly class="form-control" name="nuevo_proceso" id="nuevo_proceso" value="'+data[i]["Nombre_proceso"]+'">\
+                                                                </div>\
+                                                            </div>\
+                                                            <div class="form-group row">\
+                                                                <label for="" class="col-sm-3 col-form-label">Servicio <span style="color:red;">(*)</span></label>\
+                                                                <div class="col-sm-9">\
+                                                                    <input type="hidden" class="form-control" name="id_servicio_actual" id="id_servicio_actual_'+data[i]["ID_evento"]+'" value="'+data[i]["Id_Servicio"]+'">\
+                                                                    <select class="nuevo_servicio_'+data[i]['ID_evento']+' custom-select" name="nuevo_servicio" id="nuevo_servicio_'+data[i]['ID_evento']+'" style="width:100%;" requierd></select>\
+                                                                </div>\
+                                                            </div>\
+                                                            <div class="form-group row">\
+                                                                <label for="" class="col-sm-3 col-form-label">Fecha de acción <span style="color:red;">(*)</span></label>\
+                                                                <div class="col-sm-9">\
+                                                                    <input type="date" class="form-control" name="nueva_fecha_accion" id="nueva_fecha_accion_'+data[i]['ID_evento']+'" required>\
+                                                                </div>\
+                                                            </div>\
+                                                            <div class="form-group row">\
+                                                                <label for="" class="col-sm-3 col-form-label">Acción <span style="color:red;">(*)</span></label>\
+                                                                <div class="col-sm-9">\
+                                                                    <select class="nueva_accion_'+data[i]['ID_evento']+' custom-select" name="nueva_accion" id="nueva_accion_'+data[i]['ID_evento']+'" style="width:100%;" requierd></select>\
+                                                                </div>\
+                                                            </div>\
+                                                            <div class="form-group row">\
+                                                                <label for="" class="col-sm-3 col-form-label">Profesional</label>\
+                                                                <div class="col-sm-9">\
+                                                                    <input type="text" readonly class="form-control" name="nuevo_profesional" id="nuevo_profesional" value="Nombre Profesional">\
+                                                                </div>\
+                                                            </div>\
+                                                            <div class="form-group row">\
+                                                                <label for="" class="col-sm-3 col-form-label">Descripción</label>\
+                                                                <div class="col-sm-9">\
+                                                                    <textarea class="form-control" name="nueva_descripcion" id="nueva_descripcion" rows="2"></textarea>\
+                                                                </div>\
+                                                            </div>\
+                                                            <div class="form-group row">\
+                                                                <label for="" class="col-sm-3 col-form-label">Fecha alerta <span style="color:red;">(*)</span></label>\
+                                                                <div class="col-sm-9">\
+                                                                    <input type="date" class="form-control" name="nueva_fecha_alerta" id="nueva_fecha_alerta" required>\
+                                                                </div>\
+                                                            </div>\
+                                                        </div>\
+                                                    </div>\
+                                                </div>\
+                                                <div class="modal-footer">\
+                                                    <input type="hidden" class="form-control" id="nro_evento_'+data[i]["ID_evento"]+'" value="'+data[i]["ID_evento"]+'">\
+                                                    <a href="javascript:void(0);" class="text-dark text-md mr-auto" data-toggle="modal" data-target="#modalListaDocumentos" id="cargue_documentos_evento_'+data[i]['ID_evento']+'">\
+                                                    <i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>\
+                                                    <input type="submit" class="form-control btn btn-info" id="crear_servicio_evento_'+data[i]['ID_evento']+'" value="Crear">\
+                                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>\
+                                                </div>\
+                                            </form>\
+                                        </div>\
+                                    </div>\
+                                </div>';
+                                
+
+                                data[i]['acciones2'] = acciones2; 
                             }
                         }                        
 
@@ -298,7 +383,13 @@ $(document).ready(function () {
                 {"data":"F_accion"},
                 {"data":"F_dictamen"},
                 {"data":"F_notificacion"},
-                {"data":"acciones"}
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return data.acciones + '  ' + data.acciones2;
+                    }
+                },
+                
             ],
             "language":{                
                 "search": "Buscar",
