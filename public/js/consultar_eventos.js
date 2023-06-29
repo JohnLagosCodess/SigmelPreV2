@@ -92,19 +92,20 @@ $(document).ready(function () {
                                             </div>\
                                             <form id="form_nuevo_servicio_evento_'+data[i]['ID_evento']+'" method="POST">\
                                                 <div class="modal-body">\
+                                                    <p>Los campos marcados con <span style="color:red;">(*)</span> son de obligatorio diligenciamiento.</p>\
                                                     <div class="row">\
                                                         <div class="col-12">\
                                                             <div class="form-group row">\
                                                                 <label for="" class="col-sm-3 col-form-label">Fecha de Radicación <span style="color:red;">(*)</span></label>\
                                                                 <div class="col-sm-9">\
-                                                                    <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion" required>\
+                                                                    <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion_'+data[i]["ID_evento"]+'" required>\
                                                                 </div>\
                                                             </div>\
                                                             <div class="form-group row">\
                                                                 <label for="" class="col-sm-3 col-form-label">Proceso</label>\
                                                                 <div class="col-sm-9">\
                                                                     <input type="hidden" class="form-control" name="id_proceso_actual" id="id_proceso_actual_'+data[i]["ID_evento"]+'" value="'+data[i]["Id_proceso"]+'">\
-                                                                    <input type="text" readonly class="form-control" name="nuevo_proceso" id="nuevo_proceso" value="'+data[i]["Nombre_proceso"]+'">\
+                                                                    <input type="text" readonly class="form-control" name="nuevo_proceso" id="nuevo_proceso_'+data[i]["ID_evento"]+'" value="'+data[i]["Nombre_proceso"]+'">\
                                                                 </div>\
                                                             </div>\
                                                             <div class="form-group row">\
@@ -129,19 +130,19 @@ $(document).ready(function () {
                                                             <div class="form-group row">\
                                                                 <label for="" class="col-sm-3 col-form-label">Profesional</label>\
                                                                 <div class="col-sm-9">\
-                                                                    <input type="text" readonly class="form-control" name="nuevo_profesional" id="nuevo_profesional" value="Nombre Profesional">\
+                                                                    <input type="text" readonly class="form-control" name="nuevo_profesional" id="nuevo_profesional_'+data[i]["ID_evento"]+'" value="Nombre Profesional">\
                                                                 </div>\
                                                             </div>\
                                                             <div class="form-group row">\
                                                                 <label for="" class="col-sm-3 col-form-label">Descripción</label>\
                                                                 <div class="col-sm-9">\
-                                                                    <textarea class="form-control" name="nueva_descripcion" id="nueva_descripcion" rows="2"></textarea>\
+                                                                    <textarea class="form-control" name="nueva_descripcion" id="nueva_descripcion_'+data[i]["ID_evento"]+'" rows="2"></textarea>\
                                                                 </div>\
                                                             </div>\
                                                             <div class="form-group row">\
                                                                 <label for="" class="col-sm-3 col-form-label">Fecha alerta <span style="color:red;">(*)</span></label>\
                                                                 <div class="col-sm-9">\
-                                                                    <input type="date" class="form-control" name="nueva_fecha_alerta" id="nueva_fecha_alerta" required>\
+                                                                    <input type="date" class="form-control" name="nueva_fecha_alerta" id="nueva_fecha_alerta_'+data[i]["ID_evento"]+'" required>\
                                                                 </div>\
                                                             </div>\
                                                         </div>\
@@ -151,7 +152,7 @@ $(document).ready(function () {
                                                     <input type="hidden" class="form-control" id="nro_evento_'+data[i]["ID_evento"]+'" value="'+data[i]["ID_evento"]+'">\
                                                     <a href="javascript:void(0);" class="text-dark text-md mr-auto" data-toggle="modal" data-target="#modalListaDocumentos" id="cargue_documentos_evento_'+data[i]['ID_evento']+'">\
                                                     <i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>\
-                                                    <input type="submit" class="form-control btn btn-info" id="crear_servicio_evento_'+data[i]['ID_evento']+'" value="Crear">\
+                                                    <button type="submit" class="btn btn-info" id="crear_servicio_evento_'+data[i]['ID_evento']+'">Crear</button>\
                                                     <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>\
                                                 </div>\
                                             </form>\
@@ -330,32 +331,24 @@ $(document).ready(function () {
         $("form[id^='form_editar_evento_']").attr("action", url_editar_evento);    
     });
 
+    /* FUNCIONES ASOCIADAS AL BOTÓN DE NUEVO SERVICIO */
     $(document).on('click', "a[id^='btn_nuevo_servicio_']", function(){
+
         /* INICIALIZACIÓN DEL SELECT2 DE LISTADO PROCESO */
         $("select[id^='nuevo_servicio_']").select2({
             placeholder: "Seleccione una opción",
             allowClear: false
         });
 
-        /* SETEO DE LA FECHA ACTUAL PARA EL CAMPO DE FECHA DE ACCIÓN */
-        var fecha = new Date();
-        $("input[id^='nueva_fecha_accion_']").val(fecha.toJSON().slice(0,10));
+        var info = $(this).parents();
 
-        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE ACCIONES */
-        $("select[id^='nueva_accion_']").select2({
-            placeholder: "Seleccione una opción",
-            allowClear: false
-        });
-
-    });
-
-    /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Servicio */
-    $(document).on('mouseover', "span[aria-labelledby^='select2-nuevo_servicio_']", function(){
-        var info_formulario_servicio = $(this).parents();
+        /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Servicio */
+        var id_selector_servicio =  info[0].childNodes[1].childNodes[1].childNodes[1].childNodes[3][4].id;
+        var info_formulario_servicio = $("#"+id_selector_servicio).parents();
         
-        let id_proceso_actual = info_formulario_servicio[5].childNodes[1].childNodes[3].childNodes[3].childNodes[1].value;
-        let id_servicio_actual = info_formulario_servicio[5].childNodes[1].childNodes[5].childNodes[3].childNodes[1].value;
-        let nro_evento = info_formulario_servicio[7][10].value;
+        let id_proceso_actual = info_formulario_servicio[5][1].value;
+        let id_servicio_actual = info_formulario_servicio[5][3].value;
+        let nro_evento = info_formulario_servicio[5][10].value;
 
         let token = $("input[name='_token']").val();
         
@@ -372,25 +365,29 @@ $(document).ready(function () {
             url:'/cargarselectores',
             data: datos_listado_servicios,
             success:function(data) {
-                var selector_nuevo_servicio = info_formulario_servicio[3].childNodes[3].childNodes[3].id;
+                var selector_nuevo_servicio = id_selector_servicio;
                 $("#"+selector_nuevo_servicio).empty();
                 $("#"+selector_nuevo_servicio).append('<option value="" selected>Seleccione</option>');
 
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
-                    
                     $("#"+selector_nuevo_servicio).append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
                 }
             }
         });
-    });
 
-    /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Acción */
-    $(document).on('mouseover', "span[aria-labelledby^='select2-nueva_accion_']", function(){
-        var info_formulario_accion = $(this).parents();
-        
-        let token = $("input[name='_token']").val();
-        let datos_listado_servicios = {
+        /* SETEO DE LA FECHA ACTUAL PARA EL CAMPO DE FECHA DE ACCIÓN */
+        var fecha = new Date();
+        $("input[id^='nueva_fecha_accion_']").val(fecha.toJSON().slice(0,10));
+
+        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE ACCIONES */
+        $("select[id^='nueva_accion_']").select2({
+            placeholder: "Seleccione una opción",
+            allowClear: false
+        });
+
+        /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Acción */
+        let datos_listado_accion = {
             '_token': token,
             'parametro' : "listado_accion_nuevo_servicio",
         };
@@ -398,7 +395,74 @@ $(document).ready(function () {
         $.ajax({
             type:'POST',
             url:'/cargarselectores',
-            data: datos_listado_servicios,
+            data: datos_listado_accion,
+            success:function(data) {
+                var selector_nuevo_accion = info[0].childNodes[1].childNodes[1].childNodes[1].childNodes[3][6].id;
+                $("#"+selector_nuevo_accion).empty();
+                $("#"+selector_nuevo_accion).append('<option value="" selected>Seleccione</option>');
+
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#"+selector_nuevo_accion).append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Nombre_accion"]+'</option>');
+                }
+
+            }
+        });
+    });
+
+    /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Servicio (VIEJO NO IMPLEMENTADO PERO SE DEJÓ EN CASO DE ALGO) */
+    /* 
+        $(document).on('mouseover', "span[aria-labelledby^='select2-nuevo_servicio_']", function(){
+            var info_formulario_servicio = $(this).parents();
+            
+            let id_proceso_actual = info_formulario_servicio[5].childNodes[1].childNodes[3].childNodes[3].childNodes[1].value;
+            let id_servicio_actual = info_formulario_servicio[5].childNodes[1].childNodes[5].childNodes[3].childNodes[1].value;
+            let nro_evento = info_formulario_servicio[7][10].value;
+
+            let token = $("input[name='_token']").val();
+            
+            let datos_listado_servicios = {
+                '_token': token,
+                'parametro' : "listado_servicios_nuevo_servicio",
+                'id_proceso_actual' : id_proceso_actual,
+                'id_servicio_actual': id_servicio_actual,
+                'nro_evento': nro_evento
+            };
+
+            $.ajax({
+                type:'POST',
+                url:'/cargarselectores',
+                data: datos_listado_servicios,
+                success:function(data) {
+                    var selector_nuevo_servicio = info_formulario_servicio[3].childNodes[3].childNodes[3].id;
+                    $("#"+selector_nuevo_servicio).empty();
+                    $("#"+selector_nuevo_servicio).append('<option value="" selected>Seleccione</option>');
+
+                    let claves = Object.keys(data);
+                    for (let i = 0; i < claves.length; i++) {
+                        
+                        $("#"+selector_nuevo_servicio).append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
+                    }
+                }
+            });
+        });
+
+    */
+
+    /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Acción (VIEJO NO IMPLEMENTADO PERO SE DEJÓ EN CASO DE ALGO) */
+    /* $(document).on('mouseover', "span[aria-labelledby^='select2-nueva_accion_']", function(){
+        var info_formulario_accion = $(this).parents();
+        
+        let token = $("input[name='_token']").val();
+        let datos_listado_accion = {
+            '_token': token,
+            'parametro' : "listado_accion_nuevo_servicio",
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_listado_accion,
             success:function(data) {
                 var selector_nuevo_accion = info_formulario_accion[2].childNodes[1].id;
                 $("#"+selector_nuevo_accion).empty();
@@ -408,10 +472,11 @@ $(document).ready(function () {
                 for (let i = 0; i < claves.length; i++) {
                     $("#"+selector_nuevo_accion).append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Nombre_accion"]+'</option>');
                 }
+
             }
         });
 
-    });
+    }); */
 
     /* CAPTURA ID EVENTO PARA PINTAR EL LISTADO DE DOCUMENTOS PERTENENCIENTES A EL */
     $(document).on('click', "a[id^='cargue_documentos_evento_']", function(){
@@ -555,6 +620,19 @@ $(document).ready(function () {
             }         
         });
     });
+
+
+    /* Envío de Información de Nuevo Servicio */
+    $(document).on('submit', "form[id^='form_nuevo_servicio_evento_']", function(e){
+        e.preventDefault();
+        
+        var formData = new FormData($(this)[0]);
+        for (var pair of formData.entries()) {
+            console.log(pair[0]+ ', ' + pair[1]); 
+        }
+    });
+
+
 
 });
 
