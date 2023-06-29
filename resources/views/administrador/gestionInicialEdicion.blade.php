@@ -115,13 +115,13 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="fecha_evento" class="col-form-label">Fecha de evento <span style="color:red;">(*)</span></label>
-                                                    <input type="date" class="fecha_evento form-control" name="fecha_evento" id="fecha_evento" value="{{$array_datos_info_evento[0]->F_evento}}" required>
+                                                    <input type="date" class="fecha_evento form-control" name="fecha_evento" id="fecha_evento" value="{{$array_datos_info_evento[0]->F_evento}}"  max="{{date("Y-m-d")}}" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="fecha_radicacion" class="col-form-label">Fecha de radicación <span style="color:red;">(*)</span></label>
-                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" value="{{$array_datos_info_evento[0]->F_radicacion}}" required>
+                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" value="{{$array_datos_info_evento[0]->F_radicacion}}" max="{{date("Y-m-d")}}" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -178,7 +178,7 @@
                                                 <div class="col-sm">
                                                     <div class="form-group">
                                                         <label for="fecha_nacimiento" class="col-form-label">Fecha de nacimiento <span style="color:red;">(*)</span></label>
-                                                        <input type="date" class="fecha_nacimiento form-control" name="fecha_nacimiento" id="fecha_nacimiento" value="{{$array_datos_info_afiliados[0]->F_nacimiento}}" required>
+                                                        <input type="date" class="fecha_nacimiento form-control" name="fecha_nacimiento" id="fecha_nacimiento" value="{{$array_datos_info_afiliados[0]->F_nacimiento}}" max="{{date("Y-m-d")}}" required>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm">
@@ -575,7 +575,7 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="fecha_ingreso" class="col-form-label">Fecha de ingreso</label>
-                                                    <input type="date" class="fecha_ingreso form-control" name="fecha_ingreso" id="fecha_ingreso" value="{{$array_datos_info_laboral[0]->F_ingreso}}" >
+                                                    <input type="date" class="fecha_ingreso form-control" name="fecha_ingreso" id="fecha_ingreso" value="{{$array_datos_info_laboral[0]->F_ingreso}}" max="{{date("Y-m-d")}}">
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -607,7 +607,7 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="fecha_retiro" class="col-form-label">Fecha de retiro</label>
-                                                    <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro" value="{{$array_datos_info_laboral[0]->F_retiro}}">
+                                                    <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro" value="{{$array_datos_info_laboral[0]->F_retiro}}" max="{{date("Y-m-d")}}">
                                                 </div>
                                             </div>
                                             <div class="col-12">
@@ -943,7 +943,7 @@
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label for="fecha_ingreso_registrar" class="col-form-label">Fecha de ingreso</label>
-                                        <input type="date" class="fecha_ingreso_registrar form-control" name="fecha_ingreso_registrar" id="fecha_ingreso_registrar">
+                                        <input type="date" class="fecha_ingreso_registrar form-control" name="fecha_ingreso_registrar" id="fecha_ingreso_registrar" max="{{date("Y-m-d")}}">
                                     </div>
                                 </div>
                                 <div class="col-sm">
@@ -975,7 +975,7 @@
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label for="fecha_retiro_registrar" class="col-form-label">Fecha de retiro</label>
-                                        <input type="date" class="fecha_retiro_registrar form-control" name="fecha_retiro_registrar" id="fecha_retiro_registrar">
+                                        <input type="date" class="fecha_retiro_registrar form-control" name="fecha_retiro_registrar" id="fecha_retiro_registrar" max="{{date("Y-m-d")}}">
                                     </div>
                                 </div>
                                 <div class="col-12">

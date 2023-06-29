@@ -30,7 +30,7 @@
                                         </td>
                                         <td>
                                             <?php if($documento->Nombre_documento === "Otros documentos"):?>
-                                                <form id="formulario_documento_{{$documento->Id_Documento}}" class="form-inline align-items-center"" method="POST" enctype="multipart/form-data">
+                                                <form id="formulario_documento_{{$documento->Id_Documento}}" class="form-inline align-items-center" method="POST" enctype="multipart/form-data">
                                                     @csrf
                                                     <div class="col-12">
                                                         <div class="d-none">
