@@ -378,14 +378,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row columna_row1_laboral ">
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="arl_info_laboral" class="col-form-label">ARL</label>
                                                     <select class="arl_info_laboral custom-select" name="arl_info_laboral" id="arl_info_laboral"></select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm otro_arl_info_laboral d-none">
+                                            <div class="col-sm otro_arl_info_laboral ">
                                                 <div class="form-group">
                                                     <label for="otra_arl_info_laboral" class="col-form-label">Otra ARL</label>
                                                     <input type="text" class="otra_arl_info_laboral form-control" name="otra_arl_info_laboral" id="otra_arl_info_laboral">
@@ -394,13 +394,13 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="empresa" class="col-form-label">Empresa <span style="color:red;">(*)</span></label>
-                                                    <input type="text" class="empresa form-control" name="empresa" id="empresa" required>
+                                                    <input type="text" class="empresa form-control" name="empresa" id="empresa">
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="nit_cc" class="col-form-label">NIT / CC <span style="color:red;">(*)</span></label>
-                                                    <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc" required>
+                                                    <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc">
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -410,7 +410,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row columna_row2_laboral ">
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="email_info_laboral" class="col-form-label">Email</label>
@@ -429,20 +429,20 @@
                                                     <select class="departamento_info_laboral custom-select" name="departamento_info_laboral" id="departamento_info_laboral"></select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm columna_municipio_info_laboral">
+                                            <div class="col-sm columna_municipio_info_laboral ">
                                                 <div class="form-group">
                                                     <label for="municipio_info_laboral" class="col-form-label">Municipio</label>
                                                     <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral" disabled></select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm columna_pais_exterior_info_laboral d-none">
+                                            <div class="col-sm columna_pais_exterior_info_laboral ">
                                                 <div class="form-group">
                                                     <label for="pais_exterior_info_laboral" class="col-form-label">País Exterior</label>
                                                     <input type="text" class="pais_exterior_info_laboral form-control" name="pais_exterior_info_laboral" id="pais_exterior_info_laboral">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row columna_row3_laboral ">
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="actividad_economica" class="col-form-label">Actividad económica</label>
@@ -468,7 +468,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row columna_row4_laboral ">
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="codigo_ciuo" class="col-form-label">Código CIUO</label>
@@ -494,7 +494,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row columna_row5_laboral ">
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="antiguedad_empresa" class="col-form-label">Antiguedad en empresa (Meses)</label>

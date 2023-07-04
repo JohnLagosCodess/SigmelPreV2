@@ -1388,4 +1388,44 @@ $(document).ready(function(){
         }
     });
 
+    /* VALIDACIÓN MOSTRAR CAMPOS LABORAL  */ 
+    $("#empleo_actual").change(function(){
+        let opt_tipoempleo = $('#empleo_actual').val();
+        if (opt_tipoempleo === "Empleado actual"){                    
+            $(".columna_row1_laboral").slideDown('slow');
+            $(".columna_row2_laboral").slideDown('slow');
+            $(".columna_row3_laboral").slideDown('slow');
+            $(".columna_row4_laboral").slideDown('slow');
+            $(".columna_row5_laboral").slideDown('slow');
+            document.getElementById('empresa').required = true;
+            document.getElementById('nit_cc').required = true;
+        }
+    }); 
+
+    $("#independiente").change(function(){
+        let opt_tipoempleo = $('#independiente').val();
+        if (opt_tipoempleo === "Independiente"){                           
+            $(".columna_row1_laboral").slideUp('slow');
+            $(".columna_row2_laboral").slideUp('slow');
+            $(".columna_row3_laboral").slideUp('slow');
+            $(".columna_row4_laboral").slideUp('slow');
+            $(".columna_row5_laboral").slideUp('slow');
+            document.getElementById('empresa').required = false;
+            document.getElementById('nit_cc').required = false;
+        }
+    }); 
+
+    $("#beneficiario").change(function(){
+        let opt_tipoempleo = $('#beneficiario').val();
+        if (opt_tipoempleo === "Beneficiario"){                           
+            $(".columna_row1_laboral").slideUp('slow');
+            $(".columna_row2_laboral").slideUp('slow');
+            $(".columna_row3_laboral").slideUp('slow');
+            $(".columna_row4_laboral").slideUp('slow');
+            $(".columna_row5_laboral").slideUp('slow');
+            document.getElementById('empresa').required = false;
+            document.getElementById('nit_cc').required = false;
+        }
+    }); 
+
 });
