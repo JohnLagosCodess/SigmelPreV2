@@ -39,13 +39,13 @@
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     <label for="nro_identificacion" class="col-form-label">N° de identificación</label>
-                                    <input type="number" class="nro_identificacion form-control" name="consultar_nro_identificacion" id="consultar_nro_identificacion">
+                                    <input type="number" class="nro_identificacion form-control" name="consultar_nro_identificacion" id="consultar_nro_identificacion" value="{{ old('consultar_nro_identificacion') }}">
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     <label for="id_evento" class="col-form-label">ID evento</label>
-                                    <input type="number" class="id_evento form-control" name="consultar_id_evento" id="consultar_id_evento">
+                                    <input type="number" class="id_evento form-control" name="consultar_id_evento" id="consultar_id_evento" value="{{ old('consultar_id_evento') }}">
                                 </div>
                             </div>
                             <div class="col-sm-3">
@@ -134,6 +134,10 @@
                     </div>
                 </div>
             </div>
+
+            {{-- PARA PROPOSITOS DE PONER EL MODAL DE NUEVO SERVICIO --}}
+            <div class="renderizar_nuevo_servicio"></div>
+            <div class="renderizar_nuevo_proceso"></div>
 
             {{-- MODAL PARA AGREGAR DOCUMENTOS INFORMACION PERICIAL --}}
             <?php $aperturaModal = 'Edicion_Busqueda'; ?>

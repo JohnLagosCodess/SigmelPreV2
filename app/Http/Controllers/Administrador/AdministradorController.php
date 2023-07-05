@@ -940,6 +940,80 @@ class AdministradorController extends Controller
             $info_listado_accion= json_decode(json_encode($listado_accion, true));
             return response()->json(($info_listado_accion));
         }
+
+        /* LISTADO DE PROCESOS DEPENDIENDO DEL PROCESO ACTUAL (TRAE LOS QUE SEAN DIFERENTES AL ID ENVIADO) PARA LA VISTA BUSCADOR DE EVENTOS (MODAL NUEVO PROCESO) */
+        if($parametro == 'listado_procesos_nuevo_proceso'){
+
+            $listado_id_procesos_evento = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_proceso')
+                ->where([
+                    ['ID_evento', '=', $request->ident_evento_actual],
+                ])->groupBy('Id_proceso')
+                ->get();
+
+            $string_ids_procesos = array();
+
+            for ($i=0; $i < count($listado_id_procesos_evento); $i++) { 
+                array_push($string_ids_procesos, $listado_id_procesos_evento[$i]->Id_proceso);
+            }
+
+            $listado_procesos_nuevo_proceso = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                ->select('Id_proceso', 'Nombre_proceso')
+                ->where('Estado', 'activo')
+                ->whereNotIn('Id_proceso', $string_ids_procesos)
+                ->groupBy('Id_proceso','Nombre_proceso')
+                ->get();
+
+            $info_listado_procesos_nuevo_proceso = json_decode(json_encode($listado_procesos_nuevo_proceso, true));
+            return response()->json(($info_listado_procesos_nuevo_proceso));
+        }
+
+
+        /* LISTADO DE SERVICIOS DEPENDIENDO DEL PROCESO PARA LA VISTA DE BUSCADOR DE EVENTOS (MODAL NUEVO PROCESO) 
+            Se captura el evento para traer los servicios que no han sido usados en eventos
+        */
+        if($parametro == 'listado_servicios_nuevo_proceso'){
+            
+            $listado_id_servicios_evento = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_servicio')
+                ->where([
+                    ['ID_evento', '=', $request->nro_evento_nuevo_proceso],
+                    ['Id_proceso', '=',  $request->id_proceso_escogido]
+                ])->get();
+
+            $string_ids_servicios = array();
+
+            for ($i=0; $i < count($listado_id_servicios_evento); $i++) { 
+                array_push($string_ids_servicios, $listado_id_servicios_evento[$i]->Id_servicio);
+            }
+
+            $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            ->select('Id_Servicio', 'Nombre_servicio')
+            ->where([
+                ['Id_proceso', '=', $request->id_proceso_escogido],
+                ['Estado', '=', 'activo']
+            ])
+            ->whereNotIn('Id_Servicio', $string_ids_servicios)
+            ->get();
+
+            $info_listado_servicios = json_decode(json_encode($listado_servicios, true));
+            return response()->json(($info_listado_servicios));
+        }
+
+        /* LISTADO DE ACCIONES PARA LA VISTA DE BUSCADOR DE EVENTOS (MODAL NUEVO PROCESO) */
+        if ($parametro == 'listado_accion_nuevo_proceso') {
+            $listado_accion = sigmel_lista_acciones_procesos_servicios::on('sigmel_gestiones')
+                ->select('Id_Accion', 'Nombre_accion')
+                ->where([
+                    ['Id_Accion', '=', 1],
+                    ['Estado', 'activo']
+                    ])
+                ->get();
+
+            $info_listado_accion= json_decode(json_encode($listado_accion, true));
+            return response()->json(($info_listado_accion));
+        }
+
     }
     
     public function creacionEvento(Request $request){
@@ -2555,6 +2629,7 @@ class AdministradorController extends Controller
         return response()->json($array_datos_historial_acciones);
     }
 
+    /* TODO LO REFERENTE A BUSQUEDA DE EVENTO */
     public function cargueDocumentosXEvento(Request $request){
 
         $id_evento = $request->id_evento;
@@ -2565,4 +2640,5 @@ class AdministradorController extends Controller
         return response()->json($arraylistado_documentos);
     }
 
+    
 }
