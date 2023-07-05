@@ -39,13 +39,21 @@
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     <label for="nro_identificacion" class="col-form-label">N° de identificación</label>
-                                    <input type="number" class="nro_identificacion form-control" name="consultar_nro_identificacion" id="consultar_nro_identificacion" value="{{ old('consultar_nro_identificacion') }}">
+                                    @if (session()->get('num_ident'))
+                                        <input type="number" class="nro_identificacion form-control" name="consultar_nro_identificacion" id="consultar_nro_identificacion" value="{{session()->get('num_ident')}}">
+                                    @else
+                                        <input type="number" class="nro_identificacion form-control" name="consultar_nro_identificacion" id="consultar_nro_identificacion">
+                                    @endif
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     <label for="id_evento" class="col-form-label">ID evento</label>
-                                    <input type="number" class="id_evento form-control" name="consultar_id_evento" id="consultar_id_evento" value="{{ old('consultar_id_evento') }}">
+                                    @if (session()->get('num_id_evento'))
+                                        <input type="number" class="id_evento form-control" name="consultar_id_evento" id="consultar_id_evento" value="{{session()->get('num_id_evento')}}">
+                                    @else
+                                        <input type="number" class="id_evento form-control" name="consultar_id_evento" id="consultar_id_evento">
+                                    @endif
                                 </div>
                             </div>
                             <div class="col-sm-3">
@@ -130,12 +138,13 @@
                 <div class="card-footer">
                     <div class="grupo_botones" style="float: left;">
                         <input type="button" id="btn_expor_datos" class="btn btn-info" value="Exportar datos"> 
-                        <input type="submit" id="btn_new_consulta" class="btn btn-info" value="Nueva Consulta">
+                        <input type="submit" id="btn_nueva_consulta" class="btn btn-info" value="Nueva Consulta">
                     </div>
                 </div>
             </div>
 
             {{-- PARA PROPOSITOS DE PONER EL MODAL DE NUEVO SERVICIO --}}
+            <input type="hidden" id="fecha_de_hoy" value="{{date("Y-m-d")}}">
             <div class="renderizar_nuevo_servicio"></div>
             <div class="renderizar_nuevo_proceso"></div>
 
@@ -162,9 +171,7 @@
 
     <script src="/js/consultar_eventos.js"></script>
     <script>        
-        $('#btn_new_consulta').click(function(){
-            location.reload();
-        });
+        
     </script> 
 
 @stop

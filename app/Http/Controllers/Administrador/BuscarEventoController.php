@@ -19,8 +19,11 @@ class BuscarEventoController extends Controller
         }
         $user = Auth::user();
 
-        return view('administrador.busquedaEvento', compact('user'));
+        $session = app('session');
+        $session->put('num_ident', "");
+        $session->put('num_id_evento', "");
 
+        return view('administrador.busquedaEvento', compact('user'));
     }
 
 
@@ -194,5 +197,26 @@ class BuscarEventoController extends Controller
         return json_decode(json_encode($mensajes, true));
 
 
+    }
+
+    // Mantener o Borrar datos de búsqueda del formulario de buscador de eventos
+    public function mantenerDatosBusquedaEvento(Request $request){
+        // Obtén la instancia del objeto de sesión
+        $session = app('session');
+
+        $parametro = $request->parametro;
+        if ($parametro == "mantener_datos_busqueda") {
+
+            // Establece la variable de sesión
+            $session->put('num_ident', $request->consulta_nro_identificacion);
+            $session->put('num_id_evento', $request->consulta_id_evento);
+        }
+
+        if ($parametro == "borrar_datos_busqueda") {
+
+            // Establece la variable de sesión
+            $session->put('num_ident', "");
+            $session->put('num_id_evento', "");
+        }
     }
 }

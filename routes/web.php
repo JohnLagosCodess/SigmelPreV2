@@ -259,6 +259,8 @@ Route::post('/cargueDocumentosXEvento', [AdministradorController::class, 'cargue
 Route::post('/crearNuevoServicio', [BuscarEventoController::class, 'crearNuevoServicio']);
 // Acción: Crear un nuevo proceso a partir del Evento
 Route::post('/crearNuevoProceso', [BuscarEventoController::class, 'crearNuevoProceso']);
+// Acción: Mantener datos de búsqueda del formulario
+Route::post('/mantenerDatosBusquedaEvento', [BuscarEventoController::class, 'mantenerDatosBusquedaEvento']);
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 

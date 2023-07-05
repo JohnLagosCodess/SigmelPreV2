@@ -30,7 +30,7 @@ $(document).ready(function () {
                             $('.resultado_validacion').addClass('d-none');
                             $('.resultado_validacion').removeClass('alert-danger');
                             $('#llenar_mensaje_validacion').empty();
-                        }, 5000);
+                        }, 6000);
 
                         /* Ocultar contenedor informacion del afiliado */
                         $('.contenedor_info_afiliado').addClass('d-none');
@@ -116,6 +116,12 @@ $(document).ready(function () {
                 }
             });
 
+            
+            setTimeout(() => {
+                var botonBuscar = $('#contenedorTable').parents();
+                var contenedorBotonBuscar = botonBuscar[0].childNodes[5].childNodes[1].childNodes[1].childNodes[0].classList[0];
+                $('.'+contenedorBotonBuscar).addClass('d-none');
+            }, 100);
         }
         else{
             var mensaje = "<i class='fas fa-info-circle'></i> <strong>Importante:</strong> Debe digitar un número de identifiación o un número de evento para realizar la consulta.";
@@ -126,16 +132,8 @@ $(document).ready(function () {
                 $('.resultado_validacion').addClass('d-none');
                 $('.resultado_validacion').removeClass('alert-warning');
                 $('#llenar_mensaje_validacion').empty();
-            }, 5000);
+            }, 6500);
         }
-        setTimeout(() => {
-            var botonBuscar = $('#contenedorTable').parents();
-            var contenedorBotonBuscar = botonBuscar[0].childNodes[5].childNodes[1].childNodes[1].childNodes[0].classList[0];
-            //console.log(contenedorBotonBuscar);        
-            $('.'+contenedorBotonBuscar).addClass('d-none');
-        }, 5000);
-
-        
         
     });  
 
@@ -289,6 +287,8 @@ $(document).ready(function () {
         var id_servicio_nuevo_servicio =  $(this).data("id_servicio_nuevo_servicio"); //ID SERVICIO ACTUAL
         var id_asignacion_nuevo_servicio =  $(this).data("id_asignacion_nuevo_servicio"); // ID TUPLA DE SERVICIO (PARA COLOCAR ESTADO DE VISIBLE EN NO)
 
+        var fecha_de_hoy = $("#fecha_de_hoy").val();
+
         $string_html_modal_nuevo_servicio = '\
             <div class="modal fade" id="modalNuevoServicio_'+id_evento_nuevo_servicio+'" tabindex="-1" aria-hidden="true">\
                 <div class="modal-dialog modal-lg">\
@@ -307,7 +307,7 @@ $(document).ready(function () {
                                         <div class="form-group row">\
                                             <label for="" class="col-sm-3 col-form-label">Fecha de Radicación <span style="color:red;">(*)</span></label>\
                                             <div class="col-sm-9">\
-                                                <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion_'+id_evento_nuevo_servicio+'" required>\
+                                                <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion_'+id_evento_nuevo_servicio+'" max="'+fecha_de_hoy+'" required>\
                                             </div>\
                                         </div>\
                                         <div class="form-group row">\
@@ -351,7 +351,7 @@ $(document).ready(function () {
                                         <div class="form-group row">\
                                             <label for="" class="col-sm-3 col-form-label">Fecha alerta <span style="color:red;">(*)</span></label>\
                                             <div class="col-sm-9">\
-                                                <input type="date" class="form-control" name="nueva_fecha_alerta" id="nueva_fecha_alerta_'+id_evento_nuevo_servicio+'" required>\
+                                                <input type="date" class="form-control" name="nueva_fecha_alerta" id="nueva_fecha_alerta_'+id_evento_nuevo_servicio+'" min="'+fecha_de_hoy+'" required>\
                                             </div>\
                                         </div>\
                                     </div>\
@@ -537,7 +537,6 @@ $(document).ready(function () {
 
     });
 
-
     /* CREACIÓN DE NUEVO SERVICIO */
     $(document).on('submit', "form[id^='form_nuevo_servicio_evento_']", function(e){
         e.preventDefault();
@@ -573,7 +572,7 @@ $(document).ready(function () {
                     setTimeout(function(){
                         $('.mostrar_mensaje_creo_servicio').addClass('d-none');
                     $('.mostrar_mensaje_creo_servicio').empty();
-                    }, 5000);
+                    }, 9000);
 
                 }
             }         
@@ -581,13 +580,28 @@ $(document).ready(function () {
 
     });
 
-    /* ACTUALIZAR CONSULTA (Botón Guardar formulario Nuevo Servicio) */
+    /* ACTUALIZAR CONSULTA (Botón Actualizar formulario Nuevo Servicio) */
     $(document).on('click', "button[id^='actualizar_consulta_']", function(){
-        location.reload();
-        // setTimeout(() => {
-            
-        //     $("#consultar_nro_identificacion").val('123456');
-        // }, 5000);
+
+        let token = $("input[name='_token']").val();
+
+        let datos_formulario_consulta = {
+            "_token": token,
+            "parametro": "mantener_datos_busqueda",
+            "consulta_nro_identificacion": $("#consultar_nro_identificacion").val(),
+            "consulta_id_evento": $("#consultar_id_evento").val()
+        };
+
+        $.ajax({
+            url: "/mantenerDatosBusquedaEvento",
+            type: "post",
+            data: datos_formulario_consulta,
+            success:function(response){
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            }         
+        });
     })
 
     /* CREACIÓN Y AGREGACIÓN DEL MODAL NUEVO PROCESO AL CONTENEDOR DE REDENRIZAMIENTO */
@@ -596,6 +610,8 @@ $(document).ready(function () {
         var id_proceso_nuevo_proceso =  $(this).data("id_proceso_nuevo_proceso"); // ID PROCESO ACTUAL
         var id_servicio_nuevo_proceso =  $(this).data("id_servicio_nuevo_proceso"); //ID SERVICIO ACTUAL
         var id_asignacion_nuevo_proceso =  $(this).data("id_asignacion_nuevo_proceso"); // ID TUPLA DE PROCESO (PARA COLOCAR ESTADO DE VISIBLE EN NO)
+
+        var fecha_de_hoy = $("#fecha_de_hoy").val();
 
         $string_html_modal_nuevo_proceso = '\
             <div class="modal fade" id="modalNuevoProceso_'+id_evento_nuevo_proceso+'" tabindex="-1" aria-hidden="true">\
@@ -621,7 +637,7 @@ $(document).ready(function () {
                                         <div class="form-group row">\
                                             <label for="" class="col-sm-3 col-form-label">Fecha de Radicación <span style="color:red;">(*)</span></label>\
                                             <div class="col-sm-9">\
-                                                <input type="date" class="form-control" name="fecha_radicacion_nuevo_proceso" id="fecha_radicacion_nuevo_proceso" required>\
+                                                <input type="date" class="form-control" name="fecha_radicacion_nuevo_proceso" id="fecha_radicacion_nuevo_proceso" max="'+fecha_de_hoy+'" required>\
                                             </div>\
                                         </div>\
                                         <div class="form-group row">\
@@ -665,7 +681,7 @@ $(document).ready(function () {
                                         <div class="form-group row">\
                                             <label for="" class="col-sm-3 col-form-label">Fecha alerta <span style="color:red;">(*)</span></label>\
                                             <div class="col-sm-9">\
-                                                <input type="date" class="form-control" name="nueva_fecha_alerta_nuevo_proceso" id="nueva_fecha_alerta_nuevo_proceso_'+id_evento_nuevo_proceso+'" required>\
+                                                <input type="date" class="form-control" name="nueva_fecha_alerta_nuevo_proceso" id="nueva_fecha_alerta_nuevo_proceso_'+id_evento_nuevo_proceso+'" min="'+fecha_de_hoy+'" required>\
                                             </div>\
                                         </div>\
                                     </div>\
@@ -976,7 +992,7 @@ $(document).ready(function () {
                     setTimeout(function(){
                         $('.mostrar_mensaje_creo_proceso').addClass('d-none');
                         $('.mostrar_mensaje_creo_proceso').empty();
-                    }, 5000);
+                    }, 9000);
     
                 }
             }         
@@ -984,15 +1000,50 @@ $(document).ready(function () {
 
     });
 
-    /* ACTUALIZAR CONSULTA (Botón Guardar formulario Nuevo Proceso) */
+    /* ACTUALIZAR CONSULTA (Botón Actualizar formulario Nuevo Proceso) */
     $(document).on('click', "button[id^='actualizar_consulta_nuevo_proceso_']", function(){
-        location.reload();
-        // setTimeout(() => {
-            
-        //     $("#consultar_nro_identificacion").val('123456');
-        // }, 5000);
+
+        let token = $("input[name='_token']").val();
+        
+        let datos_formulario_consulta = {
+            "_token": token,
+            "parametro": "mantener_datos_busqueda",
+            "consulta_nro_identificacion": $("#consultar_nro_identificacion").val(),
+            "consulta_id_evento": $("#consultar_id_evento").val()
+        };
+
+        $.ajax({
+            url: "/mantenerDatosBusquedaEvento",
+            type: "post",
+            data: datos_formulario_consulta,
+            success:function(response){
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            }         
+        });
     })
 
+    /* FUNCIONALIDAD DEL BOTÓN NUEVA CONSULTA */
+    $('#btn_nueva_consulta').click(function(){
+        // location.reload();
+        let token = $("input[name='_token']").val();
+        let datos_formulario_consulta = {
+            "_token": token,
+            "parametro": "borrar_datos_busqueda",
+        };
+
+        $.ajax({
+            url: "/mantenerDatosBusquedaEvento",
+            type: "post",
+            data: datos_formulario_consulta,
+            success:function(response){
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            }         
+        });
+    });
 
 });
 
