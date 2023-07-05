@@ -115,13 +115,13 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="fecha_evento" class="col-form-label">Fecha de evento <span style="color:red;">(*)</span></label>
-                                                    <input type="date" class="fecha_evento form-control" name="fecha_evento" id="fecha_evento" value="{{$array_datos_info_evento[0]->F_evento}}" required>
+                                                    <input type="date" class="fecha_evento form-control" name="fecha_evento" id="fecha_evento" value="{{$array_datos_info_evento[0]->F_evento}}"  max="{{date("Y-m-d")}}" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="fecha_radicacion" class="col-form-label">Fecha de radicación <span style="color:red;">(*)</span></label>
-                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" value="{{$array_datos_info_evento[0]->F_radicacion}}" required>
+                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" value="{{$array_datos_info_evento[0]->F_radicacion}}" max="{{date("Y-m-d")}}" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -178,7 +178,7 @@
                                                 <div class="col-sm">
                                                     <div class="form-group">
                                                         <label for="fecha_nacimiento" class="col-form-label">Fecha de nacimiento <span style="color:red;">(*)</span></label>
-                                                        <input type="date" class="fecha_nacimiento form-control" name="fecha_nacimiento" id="fecha_nacimiento" value="{{$array_datos_info_afiliados[0]->F_nacimiento}}" required>
+                                                        <input type="date" class="fecha_nacimiento form-control" name="fecha_nacimiento" id="fecha_nacimiento" value="{{$array_datos_info_afiliados[0]->F_nacimiento}}" max="{{date("Y-m-d")}}" required>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm">
@@ -427,7 +427,7 @@
                                                 <div class="col-sm">
                                                     <div class="form-check custom-control custom-radio">
                                                     <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_empleo" id="empleo_actual" value="Empleado actual" required>
-                                                    <label class="form-check-label custom-control-label" for="empleo_actual"><strong>Empleo Actual</strong></label>
+                                                    <label class="form-check-label custom-control-label" for="empleo_actual"><strong>Empleado Actual</strong></label>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm">
@@ -463,7 +463,7 @@
                                                 </div>
                                             <?php endif?>
                                         </div> 
-                                        <div class="row">
+                                        <div class="row columna_row1_laboral"  <?php if ($radio == 'Empleado actual'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="arl_info_laboral" class="col-form-label">ARL</label>
@@ -481,13 +481,13 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="empresa" class="col-form-label">Empresa <span style="color:red;">(*)</span></label>
-                                                    <input type="text" class="empresa form-control" name="empresa" id="empresa"  value="{{$array_datos_info_laboral[0]->Empresa}}" required>
+                                                    <input type="text" class="empresa form-control" name="empresa" id="empresa"  value="{{$array_datos_info_laboral[0]->Empresa}}" >
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="nit_cc" class="col-form-label">NIT / CC <span style="color:red;">(*)</span></label>
-                                                    <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc"  value="{{$array_datos_info_laboral[0]->Nit_o_cc}}" required>
+                                                    <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc"  value="{{$array_datos_info_laboral[0]->Nit_o_cc}}" >
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -497,7 +497,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row columna_row2_laboral" <?php if ($radio == 'Empleado actual'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="email_info_laboral" class="col-form-label">Email</label>
@@ -533,7 +533,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row columna_row3_laboral" <?php if ($radio == 'Empleado actual'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="actividad_economica" class="col-form-label">Actividad económica</label>
@@ -563,7 +563,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row columna_row4_laboral" <?php if ($radio == 'Empleado actual'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="codigo_ciuo" class="col-form-label">Código CIUO</label>
@@ -575,7 +575,7 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="fecha_ingreso" class="col-form-label">Fecha de ingreso</label>
-                                                    <input type="date" class="fecha_ingreso form-control" name="fecha_ingreso" id="fecha_ingreso" value="{{$array_datos_info_laboral[0]->F_ingreso}}" >
+                                                    <input type="date" class="fecha_ingreso form-control" name="fecha_ingreso" id="fecha_ingreso" value="{{$array_datos_info_laboral[0]->F_ingreso}}" max="{{date("Y-m-d")}}">
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -591,7 +591,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row columna_row5_laboral" <?php if ($radio == 'Empleado actual'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="antiguedad_empresa" class="col-form-label">Antiguedad en empresa (Meses)</label>
@@ -607,7 +607,7 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="fecha_retiro" class="col-form-label">Fecha de retiro</label>
-                                                    <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro" value="{{$array_datos_info_laboral[0]->F_retiro}}">
+                                                    <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro" value="{{$array_datos_info_laboral[0]->F_retiro}}" max="{{date("Y-m-d")}}">
                                                 </div>
                                             </div>
                                             <div class="col-12">
@@ -617,6 +617,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <br>
                                         {{-- OPCIONES PARA HABILITAR EL COLLAPSE Y EL MODAL --}}
                                         <div class="row">
                                             <div class="col-6">
@@ -843,7 +844,7 @@
                             </div>
                         </div>
                         <div class="container">
-                            <div class="row">
+                            <div class="row columna_row1_laboral_registrar">
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label for="arl_info_laboral_registrar" class="col-form-label">ARL</label><br>
@@ -859,13 +860,13 @@
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label for="empresa_registrar" class="col-form-label">Empresa <span style="color:red;">(*)</span></label>
-                                        <input type="text" class="empresa_registrar form-control" name="empresa_registrar" id="empresa_registrar" required>
+                                        <input type="text" class="empresa_registrar form-control" name="empresa_registrar" id="empresa_registrar" >
                                     </div>
                                 </div>
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label for="nit_cc_registrar" class="col-form-label">NIT / CC <span style="color:red;">(*)</span></label>
-                                        <input type="text" class="nit_cc_registrar form-control" name="nit_cc_registrar" id="nit_cc_registrar" required>
+                                        <input type="text" class="nit_cc_registrar form-control" name="nit_cc_registrar" id="nit_cc_registrar" >
                                     </div>
                                 </div>
                                 <div class="col-sm">
@@ -875,7 +876,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row columna_row2_laboral_registrar">
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label for="email_info_laboral_registrar" class="col-form-label">Email</label>
@@ -907,7 +908,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row columna_row3_laboral_registrar">
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label for="actividad_economica_registrar" class="col-form-label">Actividad económica</label>
@@ -933,7 +934,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row columna_row4_laboral_registrar">
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label for="codigo_ciuo_registrar" class="col-form-label">Código CIUO</label><br>
@@ -943,7 +944,7 @@
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label for="fecha_ingreso_registrar" class="col-form-label">Fecha de ingreso</label>
-                                        <input type="date" class="fecha_ingreso_registrar form-control" name="fecha_ingreso_registrar" id="fecha_ingreso_registrar">
+                                        <input type="date" class="fecha_ingreso_registrar form-control" name="fecha_ingreso_registrar" id="fecha_ingreso_registrar" max="{{date("Y-m-d")}}">
                                     </div>
                                 </div>
                                 <div class="col-sm">
@@ -959,7 +960,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row columna_row5_laboral_registrar">
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label for="antiguedad_empresa_registrar" class="col-form-label">Antiguedad en empresa (Meses)</label>
@@ -975,7 +976,7 @@
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label for="fecha_retiro_registrar" class="col-form-label">Fecha de retiro</label>
-                                        <input type="date" class="fecha_retiro_registrar form-control" name="fecha_retiro_registrar" id="fecha_retiro_registrar">
+                                        <input type="date" class="fecha_retiro_registrar form-control" name="fecha_retiro_registrar" id="fecha_retiro_registrar" max="{{date("Y-m-d")}}">
                                     </div>
                                 </div>
                                 <div class="col-12">

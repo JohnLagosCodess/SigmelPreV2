@@ -2054,7 +2054,8 @@ class AdministradorController extends Controller
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date
         ];
-        
+
+         
         // Se recibe los datos como un objeto
         $ActualInformacionLaboral = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
         ->select('Nro_identificacion','Tipo_empleado', 'Id_arl', 'Empresa', 'Nit_o_cc', 'Telefono_empresa', 'Email', 'Direccion', 
@@ -2062,7 +2063,7 @@ class AdministradorController extends Controller
         'Telefono_persona_contacto', 'Id_codigo_ciuo', 'F_ingreso', 'Cargo', 'Funciones_cargo', 'Antiguedad_empresa', 
         'Antiguedad_cargo_empresa', 'F_retiro', 'Descripcion', 'Nombre_usuario', 'F_registro')
         ->where('ID_evento', $IdEventoactulizar)->get();
-        
+
         // Se crea el array
         $arrayActualInformacionLaboral= json_decode(json_encode($ActualInformacionLaboral, true));
 
@@ -2083,37 +2084,38 @@ class AdministradorController extends Controller
 
         $objetoconvertido = convert_object_to_array($arrayActualInformacionLaboral[0]);
         //echo 'actual'.'<br>';
-        //print_r($objetoconvertido);
+        /* echo '<pre>';
+        print_r($objetoconvertido['Tipo_empleado']);
+        echo '</pre>'; */
         //echo 'nuevo'.'<br>';
         //print_r($actualizar_GestionInicialLaboral);
-        $resultado = array_intersect($objetoconvertido, $actualizar_GestionInicialLaboral);
-        
+        $resultado = array_intersect($objetoconvertido, $actualizar_GestionInicialLaboral);        
         $cantidadarray = sizeof($resultado);
 
-        //Si los array son iguales no se guarda en la tabla historico
-        
-        if ($cantidadarray == 24) {
-
+        if ($objetoconvertido['Tipo_empleado'] == 'Independiente' || $objetoconvertido['Tipo_empleado'] == 'Beneficiario') {
             $laboralActualizar = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
             ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
             $laboralActualizar->fill($actualizar_GestionInicialLaboral);
-            $laboralActualizar->save();          
-
+            $laboralActualizar->save();              
         }else{
-
-            sigmel_historico_empresas_afiliados::on('sigmel_gestiones')->insert($objetoconvertido);
-
-            sleep(2);
-
-            $laboralActualizar = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
-            ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
-            $laboralActualizar->fill($actualizar_GestionInicialLaboral);
-            $laboralActualizar->save(); 
-
-            sleep(2);
-        }
-
-        
+            //Si los array son iguales no se guarda en la tabla historico            
+            if ($cantidadarray == 24) {    
+                $laboralActualizar = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
+                ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
+                $laboralActualizar->fill($actualizar_GestionInicialLaboral);
+                $laboralActualizar->save();         
+    
+            }else{    
+                sigmel_historico_empresas_afiliados::on('sigmel_gestiones')->insert($objetoconvertido);    
+                sleep(2);    
+                $laboralActualizar = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
+                ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
+                $laboralActualizar->fill($actualizar_GestionInicialLaboral);
+                $laboralActualizar->save(); 
+    
+                sleep(2);
+            }
+        }        
 
         /* Actualizacion tabla sigmel_informacion_pericial_eventos */
 
