@@ -19,9 +19,9 @@ class BuscarEventoController extends Controller
         }
         $user = Auth::user();
 
-        $session = app('session');
-        $session->put('num_ident', "");
-        $session->put('num_id_evento', "");
+        // $session = app('session');
+        // $session->put('num_ident', "");
+        // $session->put('num_id_evento', "");
 
         return view('administrador.busquedaEvento', compact('user'));
     }
@@ -218,5 +218,10 @@ class BuscarEventoController extends Controller
             $session->put('num_ident', "");
             $session->put('num_id_evento', "");
         }
+
+        $mensajes = array(
+            "parametro" => 'creo_variables'
+        );
+        return json_decode(json_encode($mensajes, true));
     }
 }

@@ -44,6 +44,7 @@ $(document).ready(function () {
 
                     } else {
                         /* Ocultar contenedor mensaje de que no hay información */
+                        $('.resultado_validacion').addClass('d-none');
                         $('.contenendor_mensaje_no_datos').addClass('d-none');
                         $('.mensaje_no_datos').empty();
 
@@ -111,17 +112,17 @@ $(document).ready(function () {
                             llenar_informacion_evento(data, index, value);
                         });
 
+                        setTimeout(() => {
+                            var botonBuscar = $('#contenedorTable').parents();
+                            var contenedorBotonBuscar = botonBuscar[0].childNodes[5].childNodes[1].childNodes[1].childNodes[0].classList[0];
+                            $('.'+contenedorBotonBuscar).addClass('d-none');
+                        }, 100);
                     }
 
                 }
             });
 
             
-            setTimeout(() => {
-                var botonBuscar = $('#contenedorTable').parents();
-                var contenedorBotonBuscar = botonBuscar[0].childNodes[5].childNodes[1].childNodes[1].childNodes[0].classList[0];
-                $('.'+contenedorBotonBuscar).addClass('d-none');
-            }, 100);
         }
         else{
             var mensaje = "<i class='fas fa-info-circle'></i> <strong>Importante:</strong> Debe digitar un número de identifiación o un número de evento para realizar la consulta.";
@@ -343,9 +344,9 @@ $(document).ready(function () {
                                             </div>\
                                         </div>\
                                         <div class="form-group row">\
-                                            <label for="" class="col-sm-3 col-form-label">Descripción</label>\
+                                            <label for="" class="col-sm-3 col-form-label">Descripción <span style="color:red;">(*)</span></label>\
                                             <div class="col-sm-9">\
-                                                <textarea class="form-control" name="nueva_descripcion" id="nueva_descripcion_'+id_evento_nuevo_servicio+'" rows="2"></textarea>\
+                                                <textarea class="form-control" name="nueva_descripcion" id="nueva_descripcion_'+id_evento_nuevo_servicio+'" rows="2" required></textarea>\
                                             </div>\
                                         </div>\
                                         <div class="form-group row">\
@@ -597,9 +598,11 @@ $(document).ready(function () {
             type: "post",
             data: datos_formulario_consulta,
             success:function(response){
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
+                if (response.parametro == "creo_variables") {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                }
             }         
         });
     })
@@ -673,9 +676,9 @@ $(document).ready(function () {
                                             </div>\
                                         </div>\
                                         <div class="form-group row">\
-                                            <label for="" class="col-sm-3 col-form-label">Descripción</label>\
+                                            <label for="" class="col-sm-3 col-form-label">Descripción <span style="color:red;">(*)</span></label>\
                                             <div class="col-sm-9">\
-                                                <textarea class="form-control" name="nueva_descripcion_nuevo_proceso" id="nueva_descripcion_nuevo_proceso_'+id_evento_nuevo_proceso+'" rows="2"></textarea>\
+                                                <textarea class="form-control" name="nueva_descripcion_nuevo_proceso" id="nueva_descripcion_nuevo_proceso_'+id_evento_nuevo_proceso+'" rows="2" required></textarea>\
                                             </div>\
                                         </div>\
                                         <div class="form-group row">\
@@ -1017,9 +1020,11 @@ $(document).ready(function () {
             type: "post",
             data: datos_formulario_consulta,
             success:function(response){
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
+                if (response.parametro == "creo_variables") {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                }
             }         
         });
     })
