@@ -30,6 +30,7 @@
                                 <th>Fecha de acción</th>
                                 <th>Usuario de acción</th>
                                 <th>Acción realizada</th>
+                                <th>Descripción</th>
                             </tr>
                         </thead>
                         <tbody id="borrar_tabla_historial_acciones"></tbody>
@@ -757,7 +758,7 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- INFORMACIÓN ASIGNACION --}}
+                        {{-- INFORMACIÓN ASIGNACION (NO ESTÁ YA ACTIVADA ESTE PARTE DEL CÓDIGO DEBIDO A QUE ESTA INFORMACIÓN YA NO SERÁ DE ACCESO PARA EL USUARIO)  --}}
                         {{-- <div class="row ocultar_seccion_info_asignacion">
                             <div class="col-12">
                                 <div class="card-info">
@@ -1116,11 +1117,12 @@
                 "destroy": true,
                 "data": response,
                 "pageLength": 5,
-                "order": [[0, 'desc']],
+                // "order": [[0, 'desc']],
                 "columns":[
                     {"data":"F_accion"},
                     {"data":"Nombre_usuario"},
-                    {"data":"Accion_realizada"}
+                    {"data":"Accion_realizada"},
+                    {"data":"Descripcion"}
                 ],
                 "language":{
                     "search": "Buscar",

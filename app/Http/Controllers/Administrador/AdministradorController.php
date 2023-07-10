@@ -1477,6 +1477,7 @@ class AdministradorController extends Controller
                 'F_accion' => $date,
                 'Nombre_usuario' => $nombre_usuario,
                 'Accion_realizada' => "Creación de evento.",
+                'Descripcion' => $request->descripcion_asignacion,
             ];
 
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_historial_acciones);
@@ -2231,7 +2232,7 @@ class AdministradorController extends Controller
         sleep(2);
 
 
-        /* Actualizacion tabla sigmel_informacion_asignacion_eventos */
+        /* Actualizacion tabla sigmel_informacion_asignacion_eventos (NO ESTÁ YA ACTIVADA ESTE PARTE DEL CÓDIGO DEBIDO A QUE ESTA INFORMACIÓN YA NO SERÁ DE ACCESO PARA EL USUARIO) */
 
         /* $actualizar_GestionIniciaAsignacion = [
             'Id_proceso' => $request->proceso,
@@ -2539,13 +2540,14 @@ class AdministradorController extends Controller
             'Formato_documento' => $file->extension(),
             'Estado' => 'activo',
             'F_cargue_documento' => $date,
+            'Descripcion' => $request->descripcion_documento,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date
         ];  
 
         if (count($nuevoDocumento) > 0) {
 
-            // Consultamos si el documento ya se encuentra dentro de la tabla para no cargarlo nuevamente
+            // Consultamos si el documento ya se encuentra dentro de la tabla para no cargarlo nuevamente (se reemplaza por el nuevo).
             $consulta_documento_bd = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
                 ->select( "Id_Registro_Documento", "Nombre_documento", "Formato_documento")
                 ->where([
@@ -2624,8 +2626,9 @@ class AdministradorController extends Controller
 
     public function consultaHistorialAcciones (Request $request){
         $array_datos_historial_acciones = sigmel_historial_acciones_eventos::on('sigmel_gestiones')
-        ->select('F_accion', 'Nombre_usuario', 'Accion_realizada')
+        ->select('F_accion', 'Nombre_usuario', 'Accion_realizada', 'Descripcion')
         ->where('ID_evento', $request->ID_evento)
+        ->orderBy('F_accion', 'asc')
         ->get();
 
         return response()->json($array_datos_historial_acciones);

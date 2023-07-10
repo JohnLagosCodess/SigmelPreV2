@@ -1428,4 +1428,12 @@ $(document).ready(function(){
         }
     }); 
 
+    // Poner primera letra en mayúscula en el textarea de Descripción (Aplica únicamente para el documento de nombre: Otro Documento)
+    $('#descripcion_documento').keyup(function() {
+      var inputText = $('#descripcion_documento').val();
+      var firstLetter = inputText.charAt(0).toUpperCase();
+      var restOfWord = inputText.slice(1);
+      $(this).val(firstLetter + restOfWord);
+    });
+
 });

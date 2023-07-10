@@ -652,7 +652,8 @@
                 </div>
                 <div class="grupo_botones" style="float: left;">
                     <input type="reset" id="btn_borrar" class="btn btn-info" value="Restablecer">
-                    <input type="submit" id="btn_guardar_evento" class="btn btn-info d-none" value="Guardar" onclick="OcultarbotonGuardar()">
+                    <input type="submit" id="btn_guardar_evento" class="btn btn-info d-none" value="Guardar">
+                    {{-- <input type="submit" id="btn_guardar_evento" class="btn btn-info d-none" value="Guardar" onclick="OcultarbotonGuardar()"> --}}
                 </div>
                 <div class="text-center" id="mostrar_barra_creacion_evento"  style="display:none;">                                
                     <button class="btn btn-info" type="button" disabled>
@@ -672,37 +673,70 @@
 <script src="/plugins/toatsr/build/toastr.min.js"></script>
 <script src="/js/selectores_gestion_inicial.js"></script>
 <script>
-    function OcultarbotonGuardar(){
+    $(document).ready(function(){
+        $('#btn_guardar_evento').click(function(){
+            var si_cliente = $('#cliente').val();
+            var si_tipo_cliente = $('#tipo_cliente').val();
+            var si_tipo_evento = $('#tipo_evento').val();
+            var si_id_evento= $('#id_evento').val();
+            var si_fecha_evento = $('#fecha_evento').val();
+            var si_fecha_radicacion = $('#fecha_radicacion').val();
+            var si_nro_identificacion = $('#nro_identificacion').val();
+            var si_tipo_documento = $('#tipo_documento').val();
+            var si_nombre_afiliado = $('#nombre_afiliado').val();
+            var si_direccion_info_afiliado = $('#direccion_info_afiliado').val();
+            var si_fecha_nacimiento = $('#fecha_nacimiento').val();
+            var si_telefono = $('#telefono').val();
+            var si_activo = $('#activo').val();
+            var si_empresa = $('#empresa').val();
+            var si_nit_cc = $('#nit_cc').val();
+            var si_proceso = $('#proceso').val();
+            var si_servicio = $('#servicio').val();
+            var si_accion = $('#accion').val();
 
-        var si_cliente = $('#cliente').val();
-        var si_tipo_cliente = $('#tipo_cliente').val();
-        var si_tipo_evento = $('#tipo_evento').val();
-        var si_id_evento= $('#id_evento').val();
-        var si_fecha_evento = $('#fecha_evento').val();
-        var si_fecha_radicacion = $('#fecha_radicacion').val();
-        var si_nro_identificacion = $('#nro_identificacion').val();
-        var si_tipo_documento = $('#tipo_documento').val();
-        var si_nombre_afiliado = $('#nombre_afiliado').val();
-        var si_direccion_info_afiliado = $('#direccion_info_afiliado').val();
-        var si_fecha_nacimiento = $('#fecha_nacimiento').val();
-        var si_telefono = $('#telefono').val();
-        var si_activo = $('#activo').val();
-        var si_empresa = $('#empresa').val();
-        var si_nit_cc = $('#nit_cc').val();
-        var si_proceso = $('#proceso').val();
-        var si_servicio = $('#servicio').val();
-        var si_accion = $('#accion').val();
+            if (si_cliente != '' && si_tipo_cliente != '' && si_tipo_evento !='' && si_id_evento != '' && si_fecha_evento != '' &&
+            si_fecha_radicacion != '' && si_nro_identificacion != '' && si_tipo_documento != '' && si_nombre_afiliado != '' &&
+            si_direccion_info_afiliado != '' && si_fecha_nacimiento != '' && si_telefono != '' && si_activo != '' && 
+            si_empresa != '' && si_nit_cc != '' && si_proceso != '' && si_servicio != '' && si_accion != '') {
+                
+                $('#btn_borrar').addClass('d-none');
+                $('#btn_guardar_evento').addClass('d-none');
+                $('#mostrar_barra_creacion_evento').css("display","block");
+            }
+        });
+    });
 
-        if (si_cliente != '' && si_tipo_cliente != '' && si_tipo_evento !='' && si_id_evento != '' si_fecha_evento != '' &&
-        si_fecha_radicacion != '' && si_nro_identificacion != '' && si_tipo_documento != '' && si_nombre_afiliado != '' &&
-        si_direccion_info_afiliado != '' && si_fecha_nacimiento != '' && si_telefono != '' && si_activo != '' && 
-        si_empresa != '' && si_nit_cc != '' si_proceso != '' si_servicio != '' si_accion) {
+    // function OcultarbotonGuardar(){
+
+    //     var si_cliente = $('#cliente').val();
+    //     var si_tipo_cliente = $('#tipo_cliente').val();
+    //     var si_tipo_evento = $('#tipo_evento').val();
+    //     var si_id_evento= $('#id_evento').val();
+    //     var si_fecha_evento = $('#fecha_evento').val();
+    //     var si_fecha_radicacion = $('#fecha_radicacion').val();
+    //     var si_nro_identificacion = $('#nro_identificacion').val();
+    //     var si_tipo_documento = $('#tipo_documento').val();
+    //     var si_nombre_afiliado = $('#nombre_afiliado').val();
+    //     var si_direccion_info_afiliado = $('#direccion_info_afiliado').val();
+    //     var si_fecha_nacimiento = $('#fecha_nacimiento').val();
+    //     var si_telefono = $('#telefono').val();
+    //     var si_activo = $('#activo').val();
+    //     var si_empresa = $('#empresa').val();
+    //     var si_nit_cc = $('#nit_cc').val();
+    //     var si_proceso = $('#proceso').val();
+    //     var si_servicio = $('#servicio').val();
+    //     var si_accion = $('#accion').val();
+
+    //     if (si_cliente != '' && si_tipo_cliente != '' && si_tipo_evento !='' && si_id_evento != '' si_fecha_evento != '' &&
+    //     si_fecha_radicacion != '' && si_nro_identificacion != '' && si_tipo_documento != '' && si_nombre_afiliado != '' &&
+    //     si_direccion_info_afiliado != '' && si_fecha_nacimiento != '' && si_telefono != '' && si_activo != '' && 
+    //     si_empresa != '' && si_nit_cc != '' si_proceso != '' si_servicio != '' si_accion) {
             
-            $('#btn_borrar').addClass('d-none');
-            $('#btn_guardar_evento').addClass('d-none');
-            $('#mostrar_barra_creacion_evento').css("display","block");
-        }
-    }
+    //         $('#btn_borrar').addClass('d-none');
+    //         $('#btn_guardar_evento').addClass('d-none');
+    //         $('#mostrar_barra_creacion_evento').css("display","block");
+    //     }
+    // }
 </script> 
 <script>
     $(document).ready(function(){

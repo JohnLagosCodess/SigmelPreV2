@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('Id_servicio');
             $table->enum('Visible_Nuevo_Servicio', ['Si','No'])->default('Si')->nullable();
             $table->integer('Id_accion');
-            $table->text('Descripcion');
+            $table->text('Descripcion')->nullable();
             $table->date('F_alerta')->nullable();
             $table->integer('Id_Estado_evento')->nullable();
             $table->date('F_accion')->nullable();
