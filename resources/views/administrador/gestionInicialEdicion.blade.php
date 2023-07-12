@@ -464,157 +464,167 @@
                                                 </div>
                                             <?php endif?>
                                         </div> 
-                                        <div class="row columna_row1_laboral"  <?php if ($radio == 'Empleado actual'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="arl_info_laboral" class="col-form-label">ARL</label>
-                                                    <select class="arl_info_laboral custom-select" name="arl_info_laboral" id="arl_info_laboral">
-                                                        <option value="{{$array_datos_info_laboral[0]->Id_arl}}">{{$array_datos_info_laboral[0]->Nombre_arl}}</option>
-                                                    </select>
+                                        <div class="row  columna_row1_laboral"  <?php if ($radio == 'Empleado actual'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
+                                            <div class="row">
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="arl_info_laboral" class="col-form-label">ARL</label>
+                                                        <select class="arl_info_laboral custom-select" name="arl_info_laboral" id="arl_info_laboral">
+                                                            <option value="{{$array_datos_info_laboral[0]->Id_arl}}">{{$array_datos_info_laboral[0]->Nombre_arl}}</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm otro_arl_info_laboral d-none">
-                                                <div class="form-group">
-                                                    <label for="otra_arl_info_laboral" class="col-form-label">Otra ARL</label>
-                                                    <input type="text" class="otra_arl_info_laboral form-control" name="otra_arl_info_laboral" id="otra_arl_info_laboral">
+                                                <div class="col-sm otro_arl_info_laboral d-none">
+                                                    <div class="form-group">
+                                                        <label for="otra_arl_info_laboral" class="col-form-label">Otra ARL</label>
+                                                        <input type="text" class="otra_arl_info_laboral form-control" name="otra_arl_info_laboral" id="otra_arl_info_laboral">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="empresa" class="col-form-label">Empresa <span style="color:red;">(*)</span></label>
-                                                    <input type="text" class="empresa form-control" name="empresa" id="empresa"  value="{{$array_datos_info_laboral[0]->Empresa}}" >
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="empresa" class="col-form-label">Empresa <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="empresa form-control" name="empresa" id="empresa"  value="{{$array_datos_info_laboral[0]->Empresa}}" >
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="nit_cc" class="col-form-label">NIT / CC <span style="color:red;">(*)</span></label>
-                                                    <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc"  value="{{$array_datos_info_laboral[0]->Nit_o_cc}}" >
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="nit_cc" class="col-form-label">NIT / CC <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc"  value="{{$array_datos_info_laboral[0]->Nit_o_cc}}" >
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="telefono_empresa" class="col-form-label">Télefono empresa</label>
-                                                    <input type="text" class="telefono_empresa form-control" name="telefono_empresa" id="telefono_empresa" value="{{$array_datos_info_laboral[0]->Telefono_empresa}}" >
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="telefono_empresa" class="col-form-label">Télefono empresa</label>
+                                                        <input type="text" class="telefono_empresa form-control" name="telefono_empresa" id="telefono_empresa" value="{{$array_datos_info_laboral[0]->Telefono_empresa}}" >
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row columna_row2_laboral" <?php if ($radio == 'Empleado actual'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="email_info_laboral" class="col-form-label">Email</label>
-                                                    <input type="email" class="email_info_laboral form-control" name="email_info_laboral" id="email_info_laboral" value="{{$array_datos_info_laboral[0]->Email}}">
+                                            <div class="row">
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="email_info_laboral" class="col-form-label">Email</label>
+                                                        <input type="email" class="email_info_laboral form-control" name="email_info_laboral" id="email_info_laboral" value="{{$array_datos_info_laboral[0]->Email}}">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="direccion_info_laboral" class="col-form-label">Dirección</label>
-                                                    <input type="text" class="direccion_info_laboral form-control" name="direccion_info_laboral" id="direccion_info_laboral" value="{{$array_datos_info_laboral[0]->Direccion}}">
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="direccion_info_laboral" class="col-form-label">Dirección</label>
+                                                        <input type="text" class="direccion_info_laboral form-control" name="direccion_info_laboral" id="direccion_info_laboral" value="{{$array_datos_info_laboral[0]->Direccion}}">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="departamento_info_laboral" class="col-form-label">Departamento</label>
-                                                    <select class="departamento_info_laboral custom-select" name="departamento_info_laboral" id="departamento_info_laboral">
-                                                        <option value="{{$array_datos_info_laboral[0]->Id_departamento}}">{{$array_datos_info_laboral[0]->Nombre_departamento}}</option>
-                                                    </select>
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="departamento_info_laboral" class="col-form-label">Departamento</label>
+                                                        <select class="departamento_info_laboral custom-select" name="departamento_info_laboral" id="departamento_info_laboral">
+                                                            <option value="{{$array_datos_info_laboral[0]->Id_departamento}}">{{$array_datos_info_laboral[0]->Nombre_departamento}}</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm columna_municipio_info_laboral">
-                                                <div class="form-group">
-                                                    <label for="municipio_info_laboral" class="col-form-label">Municipio</label>
-                                                    <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral">
-                                                        <option value="{{$array_datos_info_laboral[0]->Id_municipio}}">{{$array_datos_info_laboral[0]->Nombre_municipio}}</option>
-                                                    </select>
+                                                <div class="col-sm columna_municipio_info_laboral">
+                                                    <div class="form-group">
+                                                        <label for="municipio_info_laboral" class="col-form-label">Municipio</label>
+                                                        <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral">
+                                                            <option value="{{$array_datos_info_laboral[0]->Id_municipio}}">{{$array_datos_info_laboral[0]->Nombre_municipio}}</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm columna_pais_exterior_info_laboral d-none">
-                                                <div class="form-group">
-                                                    <label for="pais_exterior_info_laboral" class="col-form-label">País Exterior</label>
-                                                    <input type="text" class="pais_exterior_info_laboral form-control" name="pais_exterior_info_laboral" id="pais_exterior_info_laboral">
+                                                <div class="col-sm columna_pais_exterior_info_laboral d-none">
+                                                    <div class="form-group">
+                                                        <label for="pais_exterior_info_laboral" class="col-form-label">País Exterior</label>
+                                                        <input type="text" class="pais_exterior_info_laboral form-control" name="pais_exterior_info_laboral" id="pais_exterior_info_laboral">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row columna_row3_laboral" <?php if ($radio == 'Empleado actual'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="actividad_economica" class="col-form-label">Actividad económica</label>
-                                                    <select class="actividad_economica custom-select" name="actividad_economica" id="actividad_economica">
-                                                        <option value="{{$array_datos_info_laboral[0]->Id_actividad_economica}}">{{$array_datos_info_laboral[0]->Nombre_actividad}}</option>
-                                                    </select>
+                                            <div class="row">
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="actividad_economica" class="col-form-label">Actividad económica</label>
+                                                        <select class="actividad_economica custom-select" name="actividad_economica" id="actividad_economica">
+                                                            <option value="{{$array_datos_info_laboral[0]->Id_actividad_economica}}">{{$array_datos_info_laboral[0]->Nombre_actividad}}</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="clase_riesgo" class="col-form-label">Clase / Riesgo</label>
-                                                    <select class="clase_riesgo custom-select" name="clase_riesgo" id="clase_riesgo">
-                                                        <option value="{{$array_datos_info_laboral[0]->Id_clase_riesgo}}">{{$array_datos_info_laboral[0]->Nombre_riesgo}}</option>
-                                                    </select>
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="clase_riesgo" class="col-form-label">Clase / Riesgo</label>
+                                                        <select class="clase_riesgo custom-select" name="clase_riesgo" id="clase_riesgo">
+                                                            <option value="{{$array_datos_info_laboral[0]->Id_clase_riesgo}}">{{$array_datos_info_laboral[0]->Nombre_riesgo}}</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="persona_contacto" class="col-form-label">Persona de contacto</label>
-                                                    <input type="text" class="persona_contacto form-control" name="persona_contacto" id="persona_contacto" value="{{$array_datos_info_laboral[0]->Persona_contacto}}">
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="persona_contacto" class="col-form-label">Persona de contacto</label>
+                                                        <input type="text" class="persona_contacto form-control" name="persona_contacto" id="persona_contacto" value="{{$array_datos_info_laboral[0]->Persona_contacto}}">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="telefono_persona_contacto" class="col-form-label">Teléfono persona contacto</label>
-                                                    <input type="text" class="telefono_persona_contacto form-control" name="telefono_persona_contacto" id="telefono_persona_contacto" value="{{$array_datos_info_laboral[0]->Telefono_persona_contacto}}">
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="telefono_persona_contacto" class="col-form-label">Teléfono persona contacto</label>
+                                                        <input type="text" class="telefono_persona_contacto form-control" name="telefono_persona_contacto" id="telefono_persona_contacto" value="{{$array_datos_info_laboral[0]->Telefono_persona_contacto}}">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row columna_row4_laboral" <?php if ($radio == 'Empleado actual'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="codigo_ciuo" class="col-form-label">Código CIUO</label>
-                                                    <select class="codigo_ciuo custom-select" name="codigo_ciuo" id="codigo_ciuo">
-                                                        <option value="{{$array_datos_info_laboral[0]->Id_codigo_ciuo}}">{{$array_datos_info_laboral[0]->Nombre_ciuo}}</option>
-                                                    </select>
+                                            <div class="row">
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="codigo_ciuo" class="col-form-label">Código CIUO</label>
+                                                        <select class="codigo_ciuo custom-select" name="codigo_ciuo" id="codigo_ciuo">
+                                                            <option value="{{$array_datos_info_laboral[0]->Id_codigo_ciuo}}">{{$array_datos_info_laboral[0]->Nombre_ciuo}}</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="fecha_ingreso" class="col-form-label">Fecha de ingreso</label>
-                                                    <input type="date" class="fecha_ingreso form-control" name="fecha_ingreso" id="fecha_ingreso" value="{{$array_datos_info_laboral[0]->F_ingreso}}" max="{{date("Y-m-d")}}">
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="fecha_ingreso" class="col-form-label">Fecha de ingreso</label>
+                                                        <input type="date" class="fecha_ingreso form-control" name="fecha_ingreso" id="fecha_ingreso" value="{{$array_datos_info_laboral[0]->F_ingreso}}" max="{{date("Y-m-d")}}">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="cargo" class="col-form-label">Cargo</label>
-                                                    <input type="text" class="cargo form-control" name="cargo" id="cargo" value="{{$array_datos_info_laboral[0]->Cargo}}" >
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="cargo" class="col-form-label">Cargo</label>
+                                                        <input type="text" class="cargo form-control" name="cargo" id="cargo" value="{{$array_datos_info_laboral[0]->Cargo}}" >
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="funciones_cargo" class="col-form-label">Funciones del cargo</label>
-                                                    <textarea class="funciones_cargo form-control" name="funciones_cargo" id="funciones_cargo" rows="2">{{$array_datos_info_laboral[0]->Funciones_cargo}} </textarea>
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="funciones_cargo" class="col-form-label">Funciones del cargo</label>
+                                                        <textarea class="funciones_cargo form-control" name="funciones_cargo" id="funciones_cargo" rows="2">{{$array_datos_info_laboral[0]->Funciones_cargo}} </textarea>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row columna_row5_laboral" <?php if ($radio == 'Empleado actual'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="antiguedad_empresa" class="col-form-label">Antiguedad en empresa (Meses)</label>
-                                                    <input type="number" class="antiguedad_empresa form-control" name="antiguedad_empresa" id="antiguedad_empresa" value="{{$array_datos_info_laboral[0]->Antiguedad_empresa}}">
+                                            <div class="row">
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="antiguedad_empresa" class="col-form-label">Antiguedad en empresa (Meses)</label>
+                                                        <input type="number" class="antiguedad_empresa form-control" name="antiguedad_empresa" id="antiguedad_empresa" value="{{$array_datos_info_laboral[0]->Antiguedad_empresa}}">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="antiguedad_cargo" class="col-form-label">Antiguedad en el cargo (Meses)</label>
-                                                    <input type="number" class="antiguedad_cargo form-control" name="antiguedad_cargo" id="antiguedad_cargo" value="{{$array_datos_info_laboral[0]->Antiguedad_cargo_empresa}}">
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="antiguedad_cargo" class="col-form-label">Antiguedad en el cargo (Meses)</label>
+                                                        <input type="number" class="antiguedad_cargo form-control" name="antiguedad_cargo" id="antiguedad_cargo" value="{{$array_datos_info_laboral[0]->Antiguedad_cargo_empresa}}">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="fecha_retiro" class="col-form-label">Fecha de retiro</label>
-                                                    <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro" value="{{$array_datos_info_laboral[0]->F_retiro}}" max="{{date("Y-m-d")}}">
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="fecha_retiro" class="col-form-label">Fecha de retiro</label>
+                                                        <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro" value="{{$array_datos_info_laboral[0]->F_retiro}}" max="{{date("Y-m-d")}}">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="form-group">
-                                                    <label for="descripcion" class="col-form-label">Descripción</label>
-                                                    <textarea class="descripcion form-control" name="descripcion" id="descripcion" rows="2">{{$array_datos_info_laboral[0]->Descripcion}}</textarea>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label for="descripcion" class="col-form-label">Descripción</label>
+                                                        <textarea class="descripcion form-control" name="descripcion" id="descripcion" rows="2">{{$array_datos_info_laboral[0]->Descripcion}}</textarea>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
