@@ -97,7 +97,8 @@ $(document).ready(function () {
         var consultar_f_hasta = $('#consultar_f_hasta').val();
         var consultar_g_dias = $('#consultar_g_dias').val();
         let token = $('input[name=_token]').val();
-        if(consultar_f_desde == "" && consultar_f_hasta == "" && consultar_g_dias == ""){            
+        if(consultar_f_desde == "" && consultar_f_hasta == "" && consultar_g_dias == ""){                        
+            $('.resultado_validacion').addClass('d-none');
             $('.resultado_validacion2').removeClass('d-none');
             $('#body_listado_casos_pcl').empty();
             $('#contenedorTable').addClass('d-none');
@@ -144,7 +145,6 @@ $(document).ready(function () {
                     }else{
                         $('.resultado_validacion2').addClass('d-none');
                         $('#num_registros2').addClass('d-none');
-                        $('.resultado_validacion').addClass('d-none');
                         $('.resultado_validacion').addClass('d-none');
                         $('#num_registroslabel').removeClass('d-none');
                         $('#num_registros').empty();

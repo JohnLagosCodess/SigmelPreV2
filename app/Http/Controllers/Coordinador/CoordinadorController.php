@@ -139,7 +139,7 @@ class CoordinadorController extends Controller
                     }else{
                         $mensajes = array(
                             "parametro" => 'sin_datos',
-                            "mensajes" => 'No se encontraron registro acorde a la búsqueda realizada.',
+                            "mensajes" => 'No se encontraron registros acorde a la búsqueda realizada.',
                             "registros" => 0
                         );
                         return json_decode(json_encode($mensajes, true));

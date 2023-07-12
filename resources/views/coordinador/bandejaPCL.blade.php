@@ -12,13 +12,13 @@
     <div class="row">
         <div class="col-12">
             <div>
-                <h4>Convenciones:</h4>
+                {{-- <h4>Convenciones:</h4>
                 <p>
                     <!--<i class="far fa-eye text-success"></i> Activar Menú/Sub Menú &nbsp;
                     <i class="far fa-eye-slash text-danger"></i> Inactivar Menú/Sub Menú &nbsp;-->
                 <span style="color:red;">(*)</span> Campo Obligatorio&nbsp;
                 <!--<i class="fa fa-puzzle-piece text-info"></i> Agregar Nuevo Servicio&nbsp;-->
-                </p>
+                </p> --}}
             </div>
         </div>
     </div>
