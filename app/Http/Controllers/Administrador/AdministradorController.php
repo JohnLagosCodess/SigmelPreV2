@@ -940,6 +940,80 @@ class AdministradorController extends Controller
             $info_listado_accion= json_decode(json_encode($listado_accion, true));
             return response()->json(($info_listado_accion));
         }
+
+        /* LISTADO DE PROCESOS DEPENDIENDO DEL PROCESO ACTUAL (TRAE LOS QUE SEAN DIFERENTES AL ID ENVIADO) PARA LA VISTA BUSCADOR DE EVENTOS (MODAL NUEVO PROCESO) */
+        if($parametro == 'listado_procesos_nuevo_proceso'){
+
+            $listado_id_procesos_evento = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_proceso')
+                ->where([
+                    ['ID_evento', '=', $request->ident_evento_actual],
+                ])->groupBy('Id_proceso')
+                ->get();
+
+            $string_ids_procesos = array();
+
+            for ($i=0; $i < count($listado_id_procesos_evento); $i++) { 
+                array_push($string_ids_procesos, $listado_id_procesos_evento[$i]->Id_proceso);
+            }
+
+            $listado_procesos_nuevo_proceso = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                ->select('Id_proceso', 'Nombre_proceso')
+                ->where('Estado', 'activo')
+                ->whereNotIn('Id_proceso', $string_ids_procesos)
+                ->groupBy('Id_proceso','Nombre_proceso')
+                ->get();
+
+            $info_listado_procesos_nuevo_proceso = json_decode(json_encode($listado_procesos_nuevo_proceso, true));
+            return response()->json(($info_listado_procesos_nuevo_proceso));
+        }
+
+
+        /* LISTADO DE SERVICIOS DEPENDIENDO DEL PROCESO PARA LA VISTA DE BUSCADOR DE EVENTOS (MODAL NUEVO PROCESO) 
+            Se captura el evento para traer los servicios que no han sido usados en eventos
+        */
+        if($parametro == 'listado_servicios_nuevo_proceso'){
+            
+            $listado_id_servicios_evento = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_servicio')
+                ->where([
+                    ['ID_evento', '=', $request->nro_evento_nuevo_proceso],
+                    ['Id_proceso', '=',  $request->id_proceso_escogido]
+                ])->get();
+
+            $string_ids_servicios = array();
+
+            for ($i=0; $i < count($listado_id_servicios_evento); $i++) { 
+                array_push($string_ids_servicios, $listado_id_servicios_evento[$i]->Id_servicio);
+            }
+
+            $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            ->select('Id_Servicio', 'Nombre_servicio')
+            ->where([
+                ['Id_proceso', '=', $request->id_proceso_escogido],
+                ['Estado', '=', 'activo']
+            ])
+            ->whereNotIn('Id_Servicio', $string_ids_servicios)
+            ->get();
+
+            $info_listado_servicios = json_decode(json_encode($listado_servicios, true));
+            return response()->json(($info_listado_servicios));
+        }
+
+        /* LISTADO DE ACCIONES PARA LA VISTA DE BUSCADOR DE EVENTOS (MODAL NUEVO PROCESO) */
+        if ($parametro == 'listado_accion_nuevo_proceso') {
+            $listado_accion = sigmel_lista_acciones_procesos_servicios::on('sigmel_gestiones')
+                ->select('Id_Accion', 'Nombre_accion')
+                ->where([
+                    ['Id_Accion', '=', 1],
+                    ['Estado', 'activo']
+                    ])
+                ->get();
+
+            $info_listado_accion= json_decode(json_encode($listado_accion, true));
+            return response()->json(($info_listado_accion));
+        }
+
     }
     
     public function creacionEvento(Request $request){
@@ -1403,6 +1477,7 @@ class AdministradorController extends Controller
                 'F_accion' => $date,
                 'Nombre_usuario' => $nombre_usuario,
                 'Accion_realizada' => "Creación de evento.",
+                'Descripcion' => $request->descripcion_asignacion,
             ];
 
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_historial_acciones);
@@ -1980,7 +2055,8 @@ class AdministradorController extends Controller
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date
         ];
-        
+
+         
         // Se recibe los datos como un objeto
         $ActualInformacionLaboral = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
         ->select('Nro_identificacion','Tipo_empleado', 'Id_arl', 'Empresa', 'Nit_o_cc', 'Telefono_empresa', 'Email', 'Direccion', 
@@ -1988,7 +2064,7 @@ class AdministradorController extends Controller
         'Telefono_persona_contacto', 'Id_codigo_ciuo', 'F_ingreso', 'Cargo', 'Funciones_cargo', 'Antiguedad_empresa', 
         'Antiguedad_cargo_empresa', 'F_retiro', 'Descripcion', 'Nombre_usuario', 'F_registro')
         ->where('ID_evento', $IdEventoactulizar)->get();
-        
+
         // Se crea el array
         $arrayActualInformacionLaboral= json_decode(json_encode($ActualInformacionLaboral, true));
 
@@ -2009,37 +2085,38 @@ class AdministradorController extends Controller
 
         $objetoconvertido = convert_object_to_array($arrayActualInformacionLaboral[0]);
         //echo 'actual'.'<br>';
-        //print_r($objetoconvertido);
+        /* echo '<pre>';
+        print_r($objetoconvertido['Tipo_empleado']);
+        echo '</pre>'; */
         //echo 'nuevo'.'<br>';
         //print_r($actualizar_GestionInicialLaboral);
-        $resultado = array_intersect($objetoconvertido, $actualizar_GestionInicialLaboral);
-        
+        $resultado = array_intersect($objetoconvertido, $actualizar_GestionInicialLaboral);        
         $cantidadarray = sizeof($resultado);
 
-        //Si los array son iguales no se guarda en la tabla historico
-        
-        if ($cantidadarray == 24) {
-
+        if ($objetoconvertido['Tipo_empleado'] == 'Independiente' || $objetoconvertido['Tipo_empleado'] == 'Beneficiario') {
             $laboralActualizar = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
             ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
             $laboralActualizar->fill($actualizar_GestionInicialLaboral);
-            $laboralActualizar->save();          
-
+            $laboralActualizar->save();              
         }else{
-
-            sigmel_historico_empresas_afiliados::on('sigmel_gestiones')->insert($objetoconvertido);
-
-            sleep(2);
-
-            $laboralActualizar = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
-            ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
-            $laboralActualizar->fill($actualizar_GestionInicialLaboral);
-            $laboralActualizar->save(); 
-
-            sleep(2);
-        }
-
-        
+            //Si los array son iguales no se guarda en la tabla historico            
+            if ($cantidadarray == 24) {    
+                $laboralActualizar = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
+                ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
+                $laboralActualizar->fill($actualizar_GestionInicialLaboral);
+                $laboralActualizar->save();         
+    
+            }else{    
+                sigmel_historico_empresas_afiliados::on('sigmel_gestiones')->insert($objetoconvertido);    
+                sleep(2);    
+                $laboralActualizar = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
+                ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
+                $laboralActualizar->fill($actualizar_GestionInicialLaboral);
+                $laboralActualizar->save(); 
+    
+                sleep(2);
+            }
+        }        
 
         /* Actualizacion tabla sigmel_informacion_pericial_eventos */
 
@@ -2155,7 +2232,7 @@ class AdministradorController extends Controller
         sleep(2);
 
 
-        /* Actualizacion tabla sigmel_informacion_asignacion_eventos */
+        /* Actualizacion tabla sigmel_informacion_asignacion_eventos (NO ESTÁ YA ACTIVADA ESTE PARTE DEL CÓDIGO DEBIDO A QUE ESTA INFORMACIÓN YA NO SERÁ DE ACCESO PARA EL USUARIO) */
 
         /* $actualizar_GestionIniciaAsignacion = [
             'Id_proceso' => $request->proceso,
@@ -2463,13 +2540,14 @@ class AdministradorController extends Controller
             'Formato_documento' => $file->extension(),
             'Estado' => 'activo',
             'F_cargue_documento' => $date,
+            'Descripcion' => $request->descripcion_documento,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date
         ];  
 
         if (count($nuevoDocumento) > 0) {
 
-            // Consultamos si el documento ya se encuentra dentro de la tabla para no cargarlo nuevamente
+            // Consultamos si el documento ya se encuentra dentro de la tabla para no cargarlo nuevamente (se reemplaza por el nuevo).
             $consulta_documento_bd = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
                 ->select( "Id_Registro_Documento", "Nombre_documento", "Formato_documento")
                 ->where([
@@ -2548,13 +2626,15 @@ class AdministradorController extends Controller
 
     public function consultaHistorialAcciones (Request $request){
         $array_datos_historial_acciones = sigmel_historial_acciones_eventos::on('sigmel_gestiones')
-        ->select('F_accion', 'Nombre_usuario', 'Accion_realizada')
+        ->select('F_accion', 'Nombre_usuario', 'Accion_realizada', 'Descripcion')
         ->where('ID_evento', $request->ID_evento)
+        ->orderBy('F_accion', 'asc')
         ->get();
 
         return response()->json($array_datos_historial_acciones);
     }
 
+    /* TODO LO REFERENTE A BUSQUEDA DE EVENTO */
     public function cargueDocumentosXEvento(Request $request){
 
         $id_evento = $request->id_evento;
@@ -2565,4 +2645,5 @@ class AdministradorController extends Controller
         return response()->json($arraylistado_documentos);
     }
 
+    
 }

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('Formato_documento', 7);
             $table->enum('Estado', ['activo', 'inactivo'])->default('activo');
             $table->date('F_cargue_documento');
+            $table->text('Descripcion')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

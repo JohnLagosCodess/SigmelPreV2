@@ -87,13 +87,13 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="fecha_evento" class="col-form-label">Fecha de evento <span style="color:red;">(*)</span></label>
-                                                    <input type="date" class="fecha_evento form-control" name="fecha_evento" id="fecha_evento" required>
+                                                    <input type="date" class="fecha_evento form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="fecha_radicacion" class="col-form-label">Fecha de radicación <span style="color:red;">(*)</span></label>
-                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" required>
+                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" max="{{date("Y-m-d")}}" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -176,7 +176,7 @@
                                                 <div class="col-sm">
                                                     <div class="form-group">
                                                         <label for="fecha_nacimiento" class="col-form-label">Fecha de nacimiento <span style="color:red;">(*)</span></label>
-                                                        <input type="date" class="fecha_nacimiento form-control" name="fecha_nacimiento" id="fecha_nacimiento" required>
+                                                        <input type="date" class="fecha_nacimiento form-control" name="fecha_nacimiento" id="fecha_nacimiento" max="{{date("Y-m-d")}}" required>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm">
@@ -378,14 +378,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row columna_row1_laboral ">
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="arl_info_laboral" class="col-form-label">ARL</label>
                                                     <select class="arl_info_laboral custom-select" name="arl_info_laboral" id="arl_info_laboral"></select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm otro_arl_info_laboral d-none">
+                                            <div class="col-sm otro_arl_info_laboral ">
                                                 <div class="form-group">
                                                     <label for="otra_arl_info_laboral" class="col-form-label">Otra ARL</label>
                                                     <input type="text" class="otra_arl_info_laboral form-control" name="otra_arl_info_laboral" id="otra_arl_info_laboral">
@@ -394,13 +394,13 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="empresa" class="col-form-label">Empresa <span style="color:red;">(*)</span></label>
-                                                    <input type="text" class="empresa form-control" name="empresa" id="empresa" required>
+                                                    <input type="text" class="empresa form-control" name="empresa" id="empresa">
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="nit_cc" class="col-form-label">NIT / CC <span style="color:red;">(*)</span></label>
-                                                    <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc" required>
+                                                    <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc">
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -410,7 +410,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row columna_row2_laboral ">
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="email_info_laboral" class="col-form-label">Email</label>
@@ -429,20 +429,20 @@
                                                     <select class="departamento_info_laboral custom-select" name="departamento_info_laboral" id="departamento_info_laboral"></select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm columna_municipio_info_laboral">
+                                            <div class="col-sm columna_municipio_info_laboral ">
                                                 <div class="form-group">
                                                     <label for="municipio_info_laboral" class="col-form-label">Municipio</label>
                                                     <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral" disabled></select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm columna_pais_exterior_info_laboral d-none">
+                                            <div class="col-sm columna_pais_exterior_info_laboral ">
                                                 <div class="form-group">
                                                     <label for="pais_exterior_info_laboral" class="col-form-label">País Exterior</label>
                                                     <input type="text" class="pais_exterior_info_laboral form-control" name="pais_exterior_info_laboral" id="pais_exterior_info_laboral">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row columna_row3_laboral ">
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="actividad_economica" class="col-form-label">Actividad económica</label>
@@ -468,7 +468,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row columna_row4_laboral ">
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="codigo_ciuo" class="col-form-label">Código CIUO</label>
@@ -478,7 +478,7 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="fecha_ingreso" class="col-form-label">Fecha de ingreso</label>
-                                                    <input type="date" class="fecha_ingreso form-control" name="fecha_ingreso" id="fecha_ingreso">
+                                                    <input type="date" class="fecha_ingreso form-control" name="fecha_ingreso" id="fecha_ingreso" max="{{date("Y-m-d")}}">
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -494,7 +494,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row columna_row5_laboral ">
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="antiguedad_empresa" class="col-form-label">Antiguedad en empresa (Meses)</label>
@@ -510,7 +510,7 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="fecha_retiro" class="col-form-label">Fecha de retiro</label>
-                                                    <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro">
+                                                    <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro" max="{{date("Y-m-d")}}">
                                                 </div>
                                             </div>
                                             <div class="col-12">
@@ -629,7 +629,7 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="fecha_alerta" class="col-form label">Fecha Alerta</label>
-                                                    <input type="date" class="fecha_alerta form-control" name="fecha_alerta" id="fecha_alerta">
+                                                    <input type="date" class="fecha_alerta form-control" name="fecha_alerta" id="fecha_alerta" min="{{date("Y-m-d")}}">
                                                 </div>
                                             </div>                                                                                      
                                         </div>    
@@ -652,7 +652,8 @@
                 </div>
                 <div class="grupo_botones" style="float: left;">
                     <input type="reset" id="btn_borrar" class="btn btn-info" value="Restablecer">
-                    <input type="submit" id="btn_guardar_evento" class="btn btn-info d-none" value="Guardar" onclick="OcultarbotonGuardar()">
+                    <input type="submit" id="btn_guardar_evento" class="btn btn-info d-none" value="Guardar">
+                    {{-- <input type="submit" id="btn_guardar_evento" class="btn btn-info d-none" value="Guardar" onclick="OcultarbotonGuardar()"> --}}
                 </div>
                 <div class="text-center" id="mostrar_barra_creacion_evento"  style="display:none;">                                
                     <button class="btn btn-info" type="button" disabled>
@@ -672,37 +673,70 @@
 <script src="/plugins/toatsr/build/toastr.min.js"></script>
 <script src="/js/selectores_gestion_inicial.js"></script>
 <script>
-    function OcultarbotonGuardar(){
+    $(document).ready(function(){
+        $('#btn_guardar_evento').click(function(){
+            var si_cliente = $('#cliente').val();
+            var si_tipo_cliente = $('#tipo_cliente').val();
+            var si_tipo_evento = $('#tipo_evento').val();
+            var si_id_evento= $('#id_evento').val();
+            var si_fecha_evento = $('#fecha_evento').val();
+            var si_fecha_radicacion = $('#fecha_radicacion').val();
+            var si_nro_identificacion = $('#nro_identificacion').val();
+            var si_tipo_documento = $('#tipo_documento').val();
+            var si_nombre_afiliado = $('#nombre_afiliado').val();
+            var si_direccion_info_afiliado = $('#direccion_info_afiliado').val();
+            var si_fecha_nacimiento = $('#fecha_nacimiento').val();
+            var si_telefono = $('#telefono').val();
+            var si_activo = $('#activo').val();
+            var si_empresa = $('#empresa').val();
+            var si_nit_cc = $('#nit_cc').val();
+            var si_proceso = $('#proceso').val();
+            var si_servicio = $('#servicio').val();
+            var si_accion = $('#accion').val();
 
-        var si_cliente = $('#cliente').val();
-        var si_tipo_cliente = $('#tipo_cliente').val();
-        var si_tipo_evento = $('#tipo_evento').val();
-        var si_id_evento= $('#id_evento').val();
-        var si_fecha_evento = $('#fecha_evento').val();
-        var si_fecha_radicacion = $('#fecha_radicacion').val();
-        var si_nro_identificacion = $('#nro_identificacion').val();
-        var si_tipo_documento = $('#tipo_documento').val();
-        var si_nombre_afiliado = $('#nombre_afiliado').val();
-        var si_direccion_info_afiliado = $('#direccion_info_afiliado').val();
-        var si_fecha_nacimiento = $('#fecha_nacimiento').val();
-        var si_telefono = $('#telefono').val();
-        var si_activo = $('#activo').val();
-        var si_empresa = $('#empresa').val();
-        var si_nit_cc = $('#nit_cc').val();
-        var si_proceso = $('#proceso').val();
-        var si_servicio = $('#servicio').val();
-        var si_accion = $('#accion').val();
+            if (si_cliente != '' && si_tipo_cliente != '' && si_tipo_evento !='' && si_id_evento != '' && si_fecha_evento != '' &&
+            si_fecha_radicacion != '' && si_nro_identificacion != '' && si_tipo_documento != '' && si_nombre_afiliado != '' &&
+            si_direccion_info_afiliado != '' && si_fecha_nacimiento != '' && si_telefono != '' && si_activo != '' && 
+            si_empresa != '' && si_nit_cc != '' && si_proceso != '' && si_servicio != '' && si_accion != '') {
+                
+                $('#btn_borrar').addClass('d-none');
+                $('#btn_guardar_evento').addClass('d-none');
+                $('#mostrar_barra_creacion_evento').css("display","block");
+            }
+        });
+    });
 
-        if (si_cliente != '' && si_tipo_cliente != '' && si_tipo_evento !='' && si_id_evento != '' si_fecha_evento != '' &&
-        si_fecha_radicacion != '' && si_nro_identificacion != '' && si_tipo_documento != '' && si_nombre_afiliado != '' &&
-        si_direccion_info_afiliado != '' && si_fecha_nacimiento != '' && si_telefono != '' && si_activo != '' && 
-        si_empresa != '' && si_nit_cc != '' si_proceso != '' si_servicio != '' si_accion) {
+    // function OcultarbotonGuardar(){
+
+    //     var si_cliente = $('#cliente').val();
+    //     var si_tipo_cliente = $('#tipo_cliente').val();
+    //     var si_tipo_evento = $('#tipo_evento').val();
+    //     var si_id_evento= $('#id_evento').val();
+    //     var si_fecha_evento = $('#fecha_evento').val();
+    //     var si_fecha_radicacion = $('#fecha_radicacion').val();
+    //     var si_nro_identificacion = $('#nro_identificacion').val();
+    //     var si_tipo_documento = $('#tipo_documento').val();
+    //     var si_nombre_afiliado = $('#nombre_afiliado').val();
+    //     var si_direccion_info_afiliado = $('#direccion_info_afiliado').val();
+    //     var si_fecha_nacimiento = $('#fecha_nacimiento').val();
+    //     var si_telefono = $('#telefono').val();
+    //     var si_activo = $('#activo').val();
+    //     var si_empresa = $('#empresa').val();
+    //     var si_nit_cc = $('#nit_cc').val();
+    //     var si_proceso = $('#proceso').val();
+    //     var si_servicio = $('#servicio').val();
+    //     var si_accion = $('#accion').val();
+
+    //     if (si_cliente != '' && si_tipo_cliente != '' && si_tipo_evento !='' && si_id_evento != '' si_fecha_evento != '' &&
+    //     si_fecha_radicacion != '' && si_nro_identificacion != '' && si_tipo_documento != '' && si_nombre_afiliado != '' &&
+    //     si_direccion_info_afiliado != '' && si_fecha_nacimiento != '' && si_telefono != '' && si_activo != '' && 
+    //     si_empresa != '' && si_nit_cc != '' si_proceso != '' si_servicio != '' si_accion) {
             
-            $('#btn_borrar').addClass('d-none');
-            $('#btn_guardar_evento').addClass('d-none');
-            $('#mostrar_barra_creacion_evento').css("display","block");
-        }
-    }
+    //         $('#btn_borrar').addClass('d-none');
+    //         $('#btn_guardar_evento').addClass('d-none');
+    //         $('#mostrar_barra_creacion_evento').css("display","block");
+    //     }
+    // }
 </script> 
 <script>
     $(document).ready(function(){

@@ -30,7 +30,7 @@ $(document).ready(function () {
                             $('.resultado_validacion').addClass('d-none');
                             $('.resultado_validacion').removeClass('alert-danger');
                             $('#llenar_mensaje_validacion').empty();
-                        }, 5000);
+                        }, 6000);
 
                         /* Ocultar contenedor informacion del afiliado */
                         $('.contenedor_info_afiliado').addClass('d-none');
@@ -44,6 +44,7 @@ $(document).ready(function () {
 
                     } else {
                         /* Ocultar contenedor mensaje de que no hay información */
+                        $('.resultado_validacion').addClass('d-none');
                         $('.contenendor_mensaje_no_datos').addClass('d-none');
                         $('.mensaje_no_datos').empty();
 
@@ -60,8 +61,9 @@ $(document).ready(function () {
                         $('#num_registros').append(data.length);
 
                         var IrEvento = '';
-                        var acciones = '';
-                        var acciones2 = '';
+                        var Ver = '';
+                        var agregar_nuevo_servicio = '';
+                        var agregar_nuevo_proceso = '';
 
                         for (let i = 0; i < data.length; i++) {
                             // Validación para mostrar el formulario de edición correspondiente al ID de evento.
@@ -75,189 +77,52 @@ $(document).ready(function () {
                                 data[i]['consulta_evento'] = IrEvento;
                             }                
                             
+                            Ver = '<a href="javascript:void(0);"><i class="far fa-eye text-info"></i></a>';
+                            data[i]['Ver'] = Ver;
+
                             // Validación para crear el modal del formulario de nuevo servicio
-                            // acciones = '<a href="javascript:void(0);"><i class="fas fa-bezier-curve"></i></a>';
-                            // data[i]['acciones'] = acciones;
+                            if(data[i]['Nombre_servicio'] == 'Determinación del Origen (DTO) ATEL' || data[i]['Nombre_servicio'] == 'Adición DX' || data[i]['Nombre_servicio'] == 'Calificación técnica' || data[i]['Nombre_servicio'] == 'Recalificación' || data[i]['Nombre_servicio'] == 'Revisión pensión'){
+                                if(data[i]['Visible_Nuevo_Servicio'] == 'Si'){
+                                    agregar_nuevo_servicio = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoServicio_'+data[i]["ID_evento"]+'" id="btn_nuevo_servicio_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Servicio"\
+                                     data-id_evento_nuevo_servicio="'+data[i]["ID_evento"]+'" data-id_proceso_nuevo_servicio="'+data[i]["Id_proceso"]+'" data-nombre_proceso_nuevo_servicio="'+data[i]["Nombre_proceso"]+'" \
+                                     data-id_servicio_nuevo_servicio="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_servicio="'+data[i]["Id_Asignacion"]+'"><i class="fa fa-puzzle-piece text-info"></i></a>';
+                                    
+                                    data[i]['agregar_nuevo_servicio'] = agregar_nuevo_servicio;
+
+                                }else{
+                                    data[i]['agregar_nuevo_servicio'] = ""; 
+                                }
+                            }else{
+                                data[i]['agregar_nuevo_servicio'] = ""; 
+                            }
+
+                            // Validación para crear el modal del formulario de nuevo proceso
+                            if(data[i]['Visible_Nuevo_Proceso'] == 'Si'){
+                                agregar_nuevo_proceso = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoProceso_'+data[i]["ID_evento"]+'" id="btn_nuevo_proceso_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Proceso"\
+                                data-id_evento_nuevo_proceso="'+data[i]["ID_evento"]+'" data-id_proceso_nuevo_proceso="'+data[i]["Id_proceso"]+'"\
+                                data-id_servicio_nuevo_proceso="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_proceso="'+data[i]["Id_Asignacion"]+'"><i class="far fa-clone text-info"></i></a>';
+                                data[i]['agregar_nuevo_proceso'] = agregar_nuevo_proceso; 
+                            }else{
+                                data[i]['agregar_nuevo_proceso'] = ""; 
+                            }
                             
-                            if(data[i]['Nombre_servicio'] == 'Determinación del Origen (DTO) ATEL' || data[i]['Nombre_servicio'] == 'Adición DX' || 
-                            data[i]['Nombre_servicio'] == 'Calificación técnica' || data[i]['Nombre_servicio'] == 'Recalificación' || data[i]['Nombre_servicio'] == 'Revisión pensión'){
-                                acciones = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoServicio_'+data[i]["ID_evento"]+'" id="btn_nuevo_servicio_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Servicio"><i class="fa fa-puzzle-piece text-info"></i></a>'+
-                                '<div class="modal fade" id="modalNuevoServicio_'+data[i]["ID_evento"]+'" tabindex="-1" aria-hidden="true">\
-                                    <div class="modal-dialog modal-lg">\
-                                        <div class="modal-content">\
-                                            <div class="modal-header bg-info">\
-                                                <h4 class="modal-title"><i class="fa fa-puzzle-piece"></i> Nuevo servicio para el evento: '+data[i]['ID_evento']+'</h4>\
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">\
-                                                    <span aria-hidden="true">&times;</span>\
-                                                </button>\
-                                            </div>\
-                                            <form id="form_nuevo_servicio_evento_'+data[i]['ID_evento']+'" method="POST">\
-                                                <div class="modal-body">\
-                                                    <div class="row">\
-                                                        <div class="col-12">\
-                                                            <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Fecha de Radicación <span style="color:red;">(*)</span></label>\
-                                                                <div class="col-sm-9">\
-                                                                    <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion" required>\
-                                                                </div>\
-                                                            </div>\
-                                                            <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Proceso</label>\
-                                                                <div class="col-sm-9">\
-                                                                    <input type="hidden" class="form-control" name="id_proceso_actual" id="id_proceso_actual_'+data[i]["ID_evento"]+'" value="'+data[i]["Id_proceso"]+'">\
-                                                                    <input type="text" readonly class="form-control" name="nuevo_proceso" id="nuevo_proceso" value="'+data[i]["Nombre_proceso"]+'">\
-                                                                </div>\
-                                                            </div>\
-                                                            <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Servicio <span style="color:red;">(*)</span></label>\
-                                                                <div class="col-sm-9">\
-                                                                    <input type="hidden" class="form-control" name="id_servicio_actual" id="id_servicio_actual_'+data[i]["ID_evento"]+'" value="'+data[i]["Id_Servicio"]+'">\
-                                                                    <select class="nuevo_servicio_'+data[i]['ID_evento']+' custom-select" name="nuevo_servicio" id="nuevo_servicio_'+data[i]['ID_evento']+'" style="width:100%;" requierd></select>\
-                                                                </div>\
-                                                            </div>\
-                                                            <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Fecha de acción <span style="color:red;">(*)</span></label>\
-                                                                <div class="col-sm-9">\
-                                                                    <input type="date" class="form-control" name="nueva_fecha_accion" id="nueva_fecha_accion_'+data[i]['ID_evento']+'" required>\
-                                                                </div>\
-                                                            </div>\
-                                                            <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Acción <span style="color:red;">(*)</span></label>\
-                                                                <div class="col-sm-9">\
-                                                                    <select class="nueva_accion_'+data[i]['ID_evento']+' custom-select" name="nueva_accion" id="nueva_accion_'+data[i]['ID_evento']+'" style="width:100%;" requierd></select>\
-                                                                </div>\
-                                                            </div>\
-                                                            <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Profesional</label>\
-                                                                <div class="col-sm-9">\
-                                                                    <input type="text" readonly class="form-control" name="nuevo_profesional" id="nuevo_profesional" value="Nombre Profesional">\
-                                                                </div>\
-                                                            </div>\
-                                                            <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Descripción</label>\
-                                                                <div class="col-sm-9">\
-                                                                    <textarea class="form-control" name="nueva_descripcion" id="nueva_descripcion" rows="2"></textarea>\
-                                                                </div>\
-                                                            </div>\
-                                                            <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Fecha alerta <span style="color:red;">(*)</span></label>\
-                                                                <div class="col-sm-9">\
-                                                                    <input type="date" class="form-control" name="nueva_fecha_alerta" id="nueva_fecha_alerta" required>\
-                                                                </div>\
-                                                            </div>\
-                                                        </div>\
-                                                    </div>\
-                                                </div>\
-                                                <div class="modal-footer">\
-                                                    <input type="hidden" class="form-control" id="nro_evento_'+data[i]["ID_evento"]+'" value="'+data[i]["ID_evento"]+'">\
-                                                    <a href="javascript:void(0);" class="text-dark text-md mr-auto" data-toggle="modal" data-target="#modalListaDocumentos" id="cargue_documentos_evento_'+data[i]['ID_evento']+'">\
-                                                    <i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>\
-                                                    <input type="submit" class="form-control btn btn-info" id="crear_servicio_evento_'+data[i]['ID_evento']+'" value="Crear">\
-                                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>\
-                                                </div>\
-                                            </form>\
-                                        </div>\
-                                    </div>\
-                                </div>';
-                                
-
-                                data[i]['acciones'] = acciones; 
-                            }
-
-                            if(data[i]['Nombre_proceso'] != ""){
-                                acciones2 = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoProceso_'+data[i]["ID_evento"]+'" id="btn_nuevo_proceso_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Proceso"><i class="far fa-clone text-info"></i></a>'+
-                                '<div class="modal fade" id="modalNuevoProceso_'+data[i]["ID_evento"]+'" tabindex="-1" aria-hidden="true">\
-                                    <div class="modal-dialog modal-lg">\
-                                        <div class="modal-content">\
-                                            <div class="modal-header bg-info">\
-                                                <h4 class="modal-title"><i class="far fa-clone"></i> Nuevo proceso para el evento: '+data[i]['ID_evento']+'</h4>\
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">\
-                                                    <span aria-hidden="true">&times;</span>\
-                                                </button>\
-                                            </div>\
-                                            <form id="form_nuevo_servicio_evento_'+data[i]['ID_evento']+'" method="POST">\
-                                                <div class="modal-body">\
-                                                    <div class="row">\
-                                                        <div class="col-12">\
-                                                            <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Fecha de Radicación <span style="color:red;">(*)</span></label>\
-                                                                <div class="col-sm-9">\
-                                                                    <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion" required>\
-                                                                </div>\
-                                                            </div>\
-                                                            <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Proceso</label>\
-                                                                <div class="col-sm-9">\
-                                                                    <input type="hidden" class="form-control" name="id_proceso_actual" id="id_proceso_actual_'+data[i]["ID_evento"]+'" value="'+data[i]["Id_proceso"]+'">\
-                                                                    <input type="text" readonly class="form-control" name="nuevo_proceso" id="nuevo_proceso" value="'+data[i]["Nombre_proceso"]+'">\
-                                                                </div>\
-                                                            </div>\
-                                                            <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Servicio <span style="color:red;">(*)</span></label>\
-                                                                <div class="col-sm-9">\
-                                                                    <input type="hidden" class="form-control" name="id_servicio_actual" id="id_servicio_actual_'+data[i]["ID_evento"]+'" value="'+data[i]["Id_Servicio"]+'">\
-                                                                    <select class="nuevo_servicio_'+data[i]['ID_evento']+' custom-select" name="nuevo_servicio" id="nuevo_servicio_'+data[i]['ID_evento']+'" style="width:100%;" requierd></select>\
-                                                                </div>\
-                                                            </div>\
-                                                            <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Fecha de acción <span style="color:red;">(*)</span></label>\
-                                                                <div class="col-sm-9">\
-                                                                    <input type="date" class="form-control" name="nueva_fecha_accion" id="nueva_fecha_accion_'+data[i]['ID_evento']+'" required>\
-                                                                </div>\
-                                                            </div>\
-                                                            <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Acción <span style="color:red;">(*)</span></label>\
-                                                                <div class="col-sm-9">\
-                                                                    <select class="nueva_accion_'+data[i]['ID_evento']+' custom-select" name="nueva_accion" id="nueva_accion_'+data[i]['ID_evento']+'" style="width:100%;" requierd></select>\
-                                                                </div>\
-                                                            </div>\
-                                                            <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Profesional</label>\
-                                                                <div class="col-sm-9">\
-                                                                    <input type="text" readonly class="form-control" name="nuevo_profesional" id="nuevo_profesional" value="Nombre Profesional">\
-                                                                </div>\
-                                                            </div>\
-                                                            <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Descripción</label>\
-                                                                <div class="col-sm-9">\
-                                                                    <textarea class="form-control" name="nueva_descripcion" id="nueva_descripcion" rows="2"></textarea>\
-                                                                </div>\
-                                                            </div>\
-                                                            <div class="form-group row">\
-                                                                <label for="" class="col-sm-3 col-form-label">Fecha alerta <span style="color:red;">(*)</span></label>\
-                                                                <div class="col-sm-9">\
-                                                                    <input type="date" class="form-control" name="nueva_fecha_alerta" id="nueva_fecha_alerta" required>\
-                                                                </div>\
-                                                            </div>\
-                                                        </div>\
-                                                    </div>\
-                                                </div>\
-                                                <div class="modal-footer">\
-                                                    <input type="hidden" class="form-control" id="nro_evento_'+data[i]["ID_evento"]+'" value="'+data[i]["ID_evento"]+'">\
-                                                    <a href="javascript:void(0);" class="text-dark text-md mr-auto" data-toggle="modal" data-target="#modalListaDocumentos" id="cargue_documentos_evento_'+data[i]['ID_evento']+'">\
-                                                    <i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>\
-                                                    <input type="submit" class="form-control btn btn-info" id="crear_servicio_evento_'+data[i]['ID_evento']+'" value="Crear">\
-                                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>\
-                                                </div>\
-                                            </form>\
-                                        </div>\
-                                    </div>\
-                                </div>';
-                                
-
-                                data[i]['acciones2'] = acciones2; 
-                            }
                         }                        
 
                         $.each(data, function(index, value){
                             llenar_informacion_evento(data, index, value);
                         });
 
+                        setTimeout(() => {
+                            var botonBuscar = $('#contenedorTable').parents();
+                            var contenedorBotonBuscar = botonBuscar[0].childNodes[5].childNodes[1].childNodes[1].childNodes[0].classList[0];
+                            $('.'+contenedorBotonBuscar).addClass('d-none');
+                        }, 100);
                     }
 
                 }
             });
 
+            
         }
         else{
             var mensaje = "<i class='fas fa-info-circle'></i> <strong>Importante:</strong> Debe digitar un número de identifiación o un número de evento para realizar la consulta.";
@@ -268,20 +133,12 @@ $(document).ready(function () {
                 $('.resultado_validacion').addClass('d-none');
                 $('.resultado_validacion').removeClass('alert-warning');
                 $('#llenar_mensaje_validacion').empty();
-            }, 5000);
+            }, 6500);
         }
-        setTimeout(() => {
-            var botonBuscar = $('#contenedorTable').parents();
-            var contenedorBotonBuscar = botonBuscar[0].childNodes[5].childNodes[1].childNodes[1].childNodes[0].classList[0];
-            //console.log(contenedorBotonBuscar);        
-            $('.'+contenedorBotonBuscar).addClass('d-none');
-        }, 5000);
-
-        
         
     });  
 
-    
+    /* LLENADO DE DATOS Y PINTADO DEL DATATABLE */
     $('#Consulta_Eventos thead tr').clone(true).addClass('filters').appendTo('#Consulta_Eventos thead');
     function llenar_informacion_evento(response, index, value){
         $('#Consulta_Eventos').DataTable({
@@ -385,7 +242,7 @@ $(document).ready(function () {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return data.acciones + '  ' + data.acciones2;
+                        return data.Ver + '  ' + data.agregar_nuevo_servicio + '  ' + data.agregar_nuevo_proceso;
                     }
                 },
                 
@@ -406,6 +263,8 @@ $(document).ready(function () {
             }
         });
     }  
+
+    /* GENERAR DESCARGA DE DATOS EN EXCEL */
     $('#btn_expor_datos').click(function () {
         var infobtnExcel = $(this).parents();
         var selectorbtnExcel = infobtnExcel[4].childNodes[13].childNodes[1].childNodes[5].childNodes[1].childNodes[1].childNodes[0].childNodes[0].classList[0];
@@ -421,36 +280,124 @@ $(document).ready(function () {
         $("form[id^='form_editar_evento_']").attr("action", url_editar_evento);    
     });
 
+    /* CREACIÓN Y AGREGACIÓN DEL MODAL NUEVO SERVICIO AL CONTENEDOR DE REDENRIZAMIENTO */
+    $(document).on('mouseover', "a[id^='btn_nuevo_servicio_']", function(){
+        var id_evento_nuevo_servicio =  $(this).data("id_evento_nuevo_servicio"); //ID EVENTO
+        var id_proceso_nuevo_servicio =  $(this).data("id_proceso_nuevo_servicio"); // ID PROCESO ACTUAL
+        var nombre_proceso_nuevo_servicio =  $(this).data("nombre_proceso_nuevo_servicio"); // NOMBRE PROCESO ACTUAL
+        var id_servicio_nuevo_servicio =  $(this).data("id_servicio_nuevo_servicio"); //ID SERVICIO ACTUAL
+        var id_asignacion_nuevo_servicio =  $(this).data("id_asignacion_nuevo_servicio"); // ID TUPLA DE SERVICIO (PARA COLOCAR ESTADO DE VISIBLE EN NO)
+
+        var fecha_de_hoy = $("#fecha_de_hoy").val();
+
+        $string_html_modal_nuevo_servicio = '\
+            <div class="modal fade" id="modalNuevoServicio_'+id_evento_nuevo_servicio+'" tabindex="-1" aria-hidden="true">\
+                <div class="modal-dialog modal-lg">\
+                    <div class="modal-content">\
+                        <div class="modal-header bg-info">\
+                            <h4 class="modal-title"><i class="fa fa-puzzle-piece"></i> Nuevo servicio para el evento: '+id_evento_nuevo_servicio+'</h4>\
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">\
+                                <span aria-hidden="true">&times;</span>\
+                            </button>\
+                        </div>\
+                        <form id="form_nuevo_servicio_evento_'+id_evento_nuevo_servicio+'" method="POST">\
+                            <div class="modal-body">\
+                                <p>Los campos marcados con <span style="color:red;">(*)</span> son de obligatorio diligenciamiento para guardar la información.</p>\
+                                <div class="row">\
+                                    <div class="col-12">\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Fecha de Radicación <span style="color:red;">(*)</span></label>\
+                                            <div class="col-sm-9">\
+                                                <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion_'+id_evento_nuevo_servicio+'" max="'+fecha_de_hoy+'" required>\
+                                            </div>\
+                                        </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Proceso</label>\
+                                            <div class="col-sm-9">\
+                                                <input type="hidden" class="form-control" name="id_proceso_actual" id="id_proceso_actual_'+id_evento_nuevo_servicio+'" value="'+id_proceso_nuevo_servicio+'">\
+                                                <input type="text" readonly class="form-control" name="nuevo_proceso" id="nuevo_proceso_'+id_evento_nuevo_servicio+'" value="'+nombre_proceso_nuevo_servicio+'">\
+                                            </div>\
+                                        </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Servicio <span style="color:red;">(*)</span></label>\
+                                            <div class="col-sm-9">\
+                                                <input type="hidden" class="form-control" name="id_servicio_actual" id="id_servicio_actual_'+id_evento_nuevo_servicio+'" value="'+id_servicio_nuevo_servicio+'">\
+                                                <select class="nuevo_servicio_'+id_evento_nuevo_servicio+' custom-select" name="nuevo_servicio" id="nuevo_servicio_'+id_evento_nuevo_servicio+'" style="width:100%;" required></select>\
+                                            </div>\
+                                        </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Fecha de acción <span style="color:red;">(*)</span></label>\
+                                            <div class="col-sm-9">\
+                                                <input type="date" readonly class="form-control" name="nueva_fecha_accion" id="nueva_fecha_accion_'+id_evento_nuevo_servicio+'" required>\
+                                            </div>\
+                                        </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Acción <span style="color:red;">(*)</span></label>\
+                                            <div class="col-sm-9">\
+                                                <select class="nueva_accion_'+id_evento_nuevo_servicio+' custom-select" name="nueva_accion" id="nueva_accion_'+id_evento_nuevo_servicio+'" style="width:100%;" required></select>\
+                                            </div>\
+                                        </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Profesional</label>\
+                                            <div class="col-sm-9">\
+                                                <input type="text" readonly class="form-control" name="nuevo_profesional" id="nuevo_profesional_'+id_evento_nuevo_servicio+'" value="Nombre Profesional">\
+                                            </div>\
+                                        </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Descripción <span style="color:red;">(*)</span></label>\
+                                            <div class="col-sm-9">\
+                                                <textarea class="form-control" name="nueva_descripcion" id="nueva_descripcion_'+id_evento_nuevo_servicio+'" rows="2" required></textarea>\
+                                            </div>\
+                                        </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Fecha alerta <span style="color:red;">(*)</span></label>\
+                                            <div class="col-sm-9">\
+                                                <input type="date" class="form-control" name="nueva_fecha_alerta" id="nueva_fecha_alerta_'+id_evento_nuevo_servicio+'" min="'+fecha_de_hoy+'" required>\
+                                            </div>\
+                                        </div>\
+                                    </div>\
+                                </div>\
+                            </div>\
+                            <div class="mostrar_mensaje_creo_servicio alert alert-success mt-2 mr-auto d-none" role="alert"></div>\
+                            <div class="modal-footer">\
+                                <input type="hidden" class="form-control" id="nro_evento_'+id_evento_nuevo_servicio+'" value="'+id_evento_nuevo_servicio+'">\
+                                <a href="javascript:void(0);" class="text-dark text-md mr-auto" data-toggle="modal" data-target="#modalListaDocumentos" id="cargue_documentos_evento_'+id_evento_nuevo_servicio+'">\
+                                <i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>\
+                                <button type="submit" class="btn btn-info" id="crear_servicio_evento_'+id_evento_nuevo_servicio+'">Crear</button>\
+                                <button type="button" class="btn btn-info d-none" id="actualizar_consulta_'+id_evento_nuevo_servicio+'">Actualizar</button>\
+                                <input type="hidden" class="form-control" id="tupla_servicio_evento_'+id_evento_nuevo_servicio+'" value="'+id_asignacion_nuevo_servicio+'">\
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>\
+                            </div>\
+                        </form>\
+                    </div>\
+                </div>\
+            </div>\
+        ';
+
+        $('.renderizar_nuevo_servicio').empty();
+        $('.renderizar_nuevo_servicio').append($string_html_modal_nuevo_servicio);
+
+    });
+
+    /* FUNCIONES ASOCIADAS AL BOTÓN DE NUEVO SERVICIO */
     $(document).on('click', "a[id^='btn_nuevo_servicio_']", function(){
-        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO PROCESO */
+
+        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO SERVICIOS */
         $("select[id^='nuevo_servicio_']").select2({
             placeholder: "Seleccione una opción",
             allowClear: false
         });
 
-        /* SETEO DE LA FECHA ACTUAL PARA EL CAMPO DE FECHA DE ACCIÓN */
-        var fecha = new Date();
-        $("input[id^='nueva_fecha_accion_']").val(fecha.toJSON().slice(0,10));
-
-        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE ACCIONES */
-        $("select[id^='nueva_accion_']").select2({
-            placeholder: "Seleccione una opción",
-            allowClear: false
-        });
-
-    });
-
-    /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Servicio */
-    $(document).on('mouseover', "span[aria-labelledby^='select2-nuevo_servicio_']", function(){
-        var info_formulario_servicio = $(this).parents();
-        
-        let id_proceso_actual = info_formulario_servicio[5].childNodes[1].childNodes[3].childNodes[3].childNodes[1].value;
-        let id_servicio_actual = info_formulario_servicio[5].childNodes[1].childNodes[5].childNodes[3].childNodes[1].value;
-        let nro_evento = info_formulario_servicio[7][10].value;
-
         let token = $("input[name='_token']").val();
+
+        /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Servicio */
+        let id_proceso_actual = $('.renderizar_nuevo_servicio').find("input[id^='id_proceso_actual_']").val();
+        let id_servicio_actual = $('.renderizar_nuevo_servicio').find("input[id^='id_servicio_actual_']").val();
+        let nro_evento = $('.renderizar_nuevo_servicio').find("input[id^='nro_evento_']").val();
+
+        let selector_nuevo_servicio = $('.renderizar_nuevo_servicio').find("select[id^='nuevo_servicio_']").attr("id");
         
-        let datos_listado_servicios = {
+        let datos_listado_servicios_nuevo_servicio = {
             '_token': token,
             'parametro' : "listado_servicios_nuevo_servicio",
             'id_proceso_actual' : id_proceso_actual,
@@ -461,61 +408,66 @@ $(document).ready(function () {
         $.ajax({
             type:'POST',
             url:'/cargarselectores',
-            data: datos_listado_servicios,
+            data: datos_listado_servicios_nuevo_servicio,
             success:function(data) {
-                var selector_nuevo_servicio = info_formulario_servicio[3].childNodes[3].childNodes[3].id;
                 $("#"+selector_nuevo_servicio).empty();
                 $("#"+selector_nuevo_servicio).append('<option value="" selected>Seleccione</option>');
-
+    
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
-                    
                     $("#"+selector_nuevo_servicio).append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
                 }
             }
         });
-    });
 
-    /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Acción */
-    $(document).on('mouseover', "span[aria-labelledby^='select2-nueva_accion_']", function(){
-        var info_formulario_accion = $(this).parents();
-        
-        let token = $("input[name='_token']").val();
-        let datos_listado_servicios = {
+        /* SETEO DE LA FECHA ACTUAL PARA EL CAMPO DE FECHA DE ACCIÓN */
+        var fecha = new Date();
+        $('.renderizar_nuevo_servicio').find("input[id^='nueva_fecha_accion_']").val(fecha.toJSON().slice(0,10));
+
+        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE ACCIONES */
+        $("select[id^='nueva_accion_']").select2({
+            placeholder: "Seleccione una opción",
+            allowClear: false
+        });
+
+        /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Acción */
+        let datos_listado_accion = {
             '_token': token,
             'parametro' : "listado_accion_nuevo_servicio",
         };
 
+        let selector_nueva_accion_nuevo_servicio = $('.renderizar_nuevo_servicio').find("select[id^='nueva_accion_']").attr("id");
+
         $.ajax({
             type:'POST',
             url:'/cargarselectores',
-            data: datos_listado_servicios,
+            data: datos_listado_accion,
             success:function(data) {
-                var selector_nuevo_accion = info_formulario_accion[2].childNodes[1].id;
-                $("#"+selector_nuevo_accion).empty();
-                $("#"+selector_nuevo_accion).append('<option value="" selected>Seleccione</option>');
-
+                $("#"+selector_nueva_accion_nuevo_servicio).empty();
+                $("#"+selector_nueva_accion_nuevo_servicio).append('<option value="" selected>Seleccione</option>');
+    
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
-                    $("#"+selector_nuevo_accion).append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Nombre_accion"]+'</option>');
+                    $("#"+selector_nueva_accion_nuevo_servicio).append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Nombre_accion"]+'</option>');
                 }
+    
             }
         });
+        
 
     });
+
 
     /* CAPTURA ID EVENTO PARA PINTAR EL LISTADO DE DOCUMENTOS PERTENENCIENTES A EL */
     $(document).on('click', "a[id^='cargue_documentos_evento_']", function(){
         let token = $("input[name='_token']").val();
-        var info_form_evento = $(this).parents();
-        var selector_nro_evento = info_form_evento[0].childNodes[1].id;
-        var id_consultar_documentos_evento = $("input[id^='"+selector_nro_evento+"']").val();
+        let id_consultar_documentos_evento = $('.renderizar_nuevo_servicio').find("input[id^='nro_evento_']").val();
 
         let datos_a_consultar = {
             '_token': token,
             'id_evento':id_consultar_documentos_evento
         }
-        
+
         $.ajax({
             type:'POST',
             url:'/cargueDocumentosXEvento',
@@ -586,22 +538,383 @@ $(document).ready(function () {
 
     });
 
-    /* Envío de Información del Documento a Cargar */
-    $(document).on('submit', "form[id^='formulario_documento_']", function(e){
-
+    /* CREACIÓN DE NUEVO SERVICIO */
+    $(document).on('submit', "form[id^='form_nuevo_servicio_evento_']", function(e){
         e.preventDefault();
+
+        let nro_evento = $('.renderizar_nuevo_servicio').find("input[id^='nro_evento_']").val();
+        let tupla_servicio_escogido = $('.renderizar_nuevo_servicio').find("input[id^='tupla_servicio_evento_']").val();
+        let token = $("input[name='_token']").val();
+
+        let datos_nuevo_servicio = {
+            '_token': token,
+            'id_evento': nro_evento,
+            'tupla_servicio_escogido': tupla_servicio_escogido
+        };
+
+        var formData = new FormData($(this)[0]);
+        for (var pair of formData.entries()) {
+            var nombres_keys = pair[0];
+            datos_nuevo_servicio[nombres_keys] = pair[1];
+        }
+
+        $.ajax({
+            url: "/crearNuevoServicio",
+            type: "post",
+            data: datos_nuevo_servicio,
+            success:function(response){
+                if(response.parametro == "creo_servicio"){
+
+                    $("#crear_servicio_evento_"+response.retorno_id_evento).addClass('d-none');
+                    $("#actualizar_consulta_"+response.retorno_id_evento).removeClass('d-none');
+
+                    $('.mostrar_mensaje_creo_servicio').removeClass('d-none');
+                    $('.mostrar_mensaje_creo_servicio').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_mensaje_creo_servicio').addClass('d-none');
+                    $('.mostrar_mensaje_creo_servicio').empty();
+                    }, 9000);
+
+                }
+            }         
+        });
+
+    });
+
+    /* ACTUALIZAR CONSULTA (Botón Actualizar formulario Nuevo Servicio) */
+    $(document).on('click', "button[id^='actualizar_consulta_']", function(){
+
+        let token = $("input[name='_token']").val();
+
+        let datos_formulario_consulta = {
+            "_token": token,
+            "parametro": "mantener_datos_busqueda",
+            "consulta_nro_identificacion": $("#consultar_nro_identificacion").val(),
+            "consulta_id_evento": $("#consultar_id_evento").val()
+        };
+
+        $.ajax({
+            url: "/mantenerDatosBusquedaEvento",
+            type: "post",
+            data: datos_formulario_consulta,
+            success:function(response){
+                if (response.parametro == "creo_variables") {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                }
+            }         
+        });
+    })
+
+    /* CREACIÓN Y AGREGACIÓN DEL MODAL NUEVO PROCESO AL CONTENEDOR DE REDENRIZAMIENTO */
+    $(document).on('mouseover', "a[id^='btn_nuevo_proceso_']", function(){
+        var id_evento_nuevo_proceso =  $(this).data("id_evento_nuevo_proceso"); //ID EVENTO
+        var id_proceso_nuevo_proceso =  $(this).data("id_proceso_nuevo_proceso"); // ID PROCESO ACTUAL
+        var id_servicio_nuevo_proceso =  $(this).data("id_servicio_nuevo_proceso"); //ID SERVICIO ACTUAL
+        var id_asignacion_nuevo_proceso =  $(this).data("id_asignacion_nuevo_proceso"); // ID TUPLA DE PROCESO (PARA COLOCAR ESTADO DE VISIBLE EN NO)
+
+        var fecha_de_hoy = $("#fecha_de_hoy").val();
+
+        $string_html_modal_nuevo_proceso = '\
+            <div class="modal fade" id="modalNuevoProceso_'+id_evento_nuevo_proceso+'" tabindex="-1" aria-hidden="true">\
+                <div class="modal-dialog modal-lg">\
+                    <div class="modal-content">\
+                        <div class="modal-header bg-info">\
+                            <h4 class="modal-title"><i class="far fa-clone"></i> Nuevo proceso para el evento: '+id_evento_nuevo_proceso+'</h4>\
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">\
+                                <span aria-hidden="true">&times;</span>\
+                            </button>\
+                        </div>\
+                        <form id="form_nuevo_proceso_evento_'+id_evento_nuevo_proceso+'" method="POST">\
+                            <div class="modal-body">\
+                                <p>Los campos marcados con <span style="color:red;">(*)</span> son de obligatorio diligenciamiento para guardar la información.</p>\
+                                <div class="row">\
+                                    <div class="col-12">\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">ID evento relacionado</label>\
+                                            <div class="col-sm-9">\
+                                                <input type="text" class="form-control" readonly value="'+id_evento_nuevo_proceso+'">\
+                                            </div>\
+                                        </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Fecha de Radicación <span style="color:red;">(*)</span></label>\
+                                            <div class="col-sm-9">\
+                                                <input type="date" class="form-control" name="fecha_radicacion_nuevo_proceso" id="fecha_radicacion_nuevo_proceso" max="'+fecha_de_hoy+'" required>\
+                                            </div>\
+                                        </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Proceso <span style="color:red;">(*)</span></label>\
+                                            <div class="col-sm-9">\
+                                                <input type="hidden" class="form-control" name="id_proceso_actual_nuevo_proceso" id="id_proceso_actual_nuevo_proceso_'+id_evento_nuevo_proceso+'" value="'+id_proceso_nuevo_proceso+'">\
+                                                <select class="selector_nuevo_proceso_'+id_evento_nuevo_proceso+' custom-select" name="selector_nuevo_proceso" id="selector_nuevo_proceso_'+id_evento_nuevo_proceso+'" style="width:100%;" requierd></select>\
+                                            </div>\
+                                        </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Servicio <span style="color:red;">(*)</span></label>\
+                                            <div class="col-sm-9">\
+                                                <input type="hidden" class="form-control" name="id_servicio_actual_nuevo_proceso" id="id_servicio_actual_nuevo_proceso_'+id_evento_nuevo_proceso+'" value="'+id_servicio_nuevo_proceso+'">\
+                                                <select class="selector_nuevo_servicio_'+id_evento_nuevo_proceso+' custom-select" name="selector_nuevo_servicio" id="selector_nuevo_servicio_'+id_evento_nuevo_proceso+'" style="width:100%;" required></select>\
+                                            </div>\
+                                        </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Fecha de acción <span style="color:red;">(*)</span></label>\
+                                            <div class="col-sm-9">\
+                                                <input type="date" readonly class="form-control" name="nueva_fecha_accion_nuevo_proceso" id="nueva_fecha_accion_nuevo_proceso_'+id_evento_nuevo_proceso+'" required>\
+                                            </div>\
+                                        </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Acción <span style="color:red;">(*)</span></label>\
+                                            <div class="col-sm-9">\
+                                                <select class="nueva_accion_nuevo_proceso_'+id_evento_nuevo_proceso+' custom-select" name="nueva_accion_nuevo_proceso" id="nueva_accion_nuevo_proceso_'+id_evento_nuevo_proceso+'" style="width:100%;" required></select>\
+                                            </div>\
+                                        </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Profesional</label>\
+                                            <div class="col-sm-9">\
+                                                <input type="text" readonly class="form-control" name="nuevo_profesional_nuevo_proceso" id="nuevo_profesional_nuevo_proceso_'+id_evento_nuevo_proceso+'" value="Nombre Profesional">\
+                                            </div>\
+                                        </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Descripción <span style="color:red;">(*)</span></label>\
+                                            <div class="col-sm-9">\
+                                                <textarea class="form-control" name="nueva_descripcion_nuevo_proceso" id="nueva_descripcion_nuevo_proceso_'+id_evento_nuevo_proceso+'" rows="2" required></textarea>\
+                                            </div>\
+                                        </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Fecha alerta <span style="color:red;">(*)</span></label>\
+                                            <div class="col-sm-9">\
+                                                <input type="date" class="form-control" name="nueva_fecha_alerta_nuevo_proceso" id="nueva_fecha_alerta_nuevo_proceso_'+id_evento_nuevo_proceso+'" min="'+fecha_de_hoy+'" required>\
+                                            </div>\
+                                        </div>\
+                                    </div>\
+                                </div>\
+                            </div>\
+                            <div class="mostrar_mensaje_creo_proceso alert alert-success mt-2 mr-auto d-none" role="alert"></div>\
+                            <div class="modal-footer">\
+                                <input type="hidden" class="form-control" id="nro_evento_nuevo_proceso_'+id_evento_nuevo_proceso+'" value="'+id_evento_nuevo_proceso+'">\
+                                <a href="javascript:void(0);" class="text-dark text-md mr-auto" data-toggle="modal" data-target="#modalListaDocumentos" id="cargue_documentos_nuevo_proceso_evento_'+id_evento_nuevo_proceso+'">\
+                                <i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>\
+                                <button type="submit" class="btn btn-info" id="crear_proceso_evento_'+id_evento_nuevo_proceso+'">Crear</button>\
+                                <button type="button" class="btn btn-info d-none" id="actualizar_consulta_nuevo_proceso_'+id_evento_nuevo_proceso+'">Actualizar</button>\
+                                <input type="hidden" class="form-control" id="tupla_proceso_evento_'+id_evento_nuevo_proceso+'" value="'+id_asignacion_nuevo_proceso+'">\
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>\
+                            </div>\
+                        </form>\
+                    </div>\
+                </div>\
+            </div>\
+        ';
+        $('.renderizar_nuevo_proceso').empty();
+        $('.renderizar_nuevo_proceso').append($string_html_modal_nuevo_proceso);
+    });
+
+    /* FUNCIONES ASOCIADAS AL BOTÓN DE NUEVO PROCESO */
+    $(document).on('click', "a[id^='btn_nuevo_proceso_']", function(){
+
+        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO PROCESOS */
+        $("select[id^='selector_nuevo_proceso_']").select2({
+            placeholder: "Seleccione una opción",
+            allowClear: false
+        });
+
+        let token = $("input[name='_token']").val();
+
+        /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Proceso */
+        let ident_evento_actual = $('.renderizar_nuevo_proceso').find("input[id^='nro_evento_nuevo_proceso_']").val();
+        let selector_nuevo_proceso = $('.renderizar_nuevo_proceso').find("select[id^='selector_nuevo_proceso_']").attr("id");
+
+        let datos_listado_procesos_nuevo_proceso = {
+            '_token': token,
+            'parametro' : "listado_procesos_nuevo_proceso",
+            'ident_evento_actual': ident_evento_actual
+        };
+        
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_listado_procesos_nuevo_proceso,
+            success:function(data) {
+                $("#"+selector_nuevo_proceso).empty();
+                $("#"+selector_nuevo_proceso).append('<option value="" selected>Seleccione</option>');
+    
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#"+selector_nuevo_proceso).append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
+                }
+            }
+        });
+
+        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO SERVICIOS */
+        $("select[id^='selector_nuevo_servicio_']").select2({
+            placeholder: "Seleccione una opción",
+            allowClear: false
+        });
+
+        /* SETEO DE LA FECHA ACTUAL PARA EL CAMPO DE FECHA DE ACCIÓN */
+        var fecha = new Date();
+        $('.renderizar_nuevo_proceso').find("input[id^='nueva_fecha_accion_nuevo_proceso_']").val(fecha.toJSON().slice(0,10));
+
+        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE ACCIONES */
+        $("select[id^='nueva_accion_nuevo_proceso_']").select2({
+            placeholder: "Seleccione una opción",
+            allowClear: false
+        });
+
+        /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Acción */
+        let datos_listado_accion_nuevo_proceso = {
+            '_token': token,
+            'parametro' : "listado_accion_nuevo_proceso",
+        };
+
+        let selector_nueva_accion_nuevo_proceso = $(".renderizar_nuevo_proceso").find("select[id^='nueva_accion_nuevo_proceso_").attr("id");
+
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_listado_accion_nuevo_proceso,
+            success:function(data) {
+                $("#"+selector_nueva_accion_nuevo_proceso).empty();
+                $("#"+selector_nueva_accion_nuevo_proceso).append('<option value="" selected>Seleccione</option>');
+    
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#"+selector_nueva_accion_nuevo_proceso).append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Nombre_accion"]+'</option>');
+                }
+    
+            }
+        });
+        
+    });
+
+    /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Servicios que dependen del proceso. */
+    $(document).on('change', "select[id^='selector_nuevo_proceso_']", function(){
+        let id_servicio_actual_nuevo_proceso = $('.renderizar_nuevo_proceso').find("input[id^='id_servicio_actual_']").val();
+        let nro_evento_nuevo_proceso = $('.renderizar_nuevo_proceso').find("input[id^='nro_evento_nuevo_proceso_']").val();
+        let token = $("input[name='_token']").val();
+        let id_proceso_escogido = $(this).val();
+
+        var selector_nuevo_servicio = $('.renderizar_nuevo_proceso').find("select[id^='selector_nuevo_servicio_']").attr("id");
+
+        let datos_listado_servicios_nuevo_proceso = {
+            '_token': token,
+            'parametro' : "listado_servicios_nuevo_proceso",
+            'id_proceso_escogido' : id_proceso_escogido,
+            'id_servicio_actual_nuevo_proceso': id_servicio_actual_nuevo_proceso,
+            'nro_evento': nro_evento_nuevo_proceso
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_listado_servicios_nuevo_proceso,
+            success:function(data) {
+                $("#"+selector_nuevo_servicio).empty();
+                $("#"+selector_nuevo_servicio).append('<option value="" selected>Seleccione</option>');
+    
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#"+selector_nuevo_servicio).append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
+                }
+            }
+        });
+        
+
+    });
+
+    /* CAPTURA ID EVENTO PARA PINTAR EL LISTADO DE DOCUMENTOS PERTENENCIENTES A EL */
+    $(document).on('click', "a[id^='cargue_documentos_nuevo_proceso_evento_']", function(){
+        let token = $("input[name='_token']").val();
+        let id_consultar_documentos_evento = $('.renderizar_nuevo_proceso').find("input[id^='nro_evento_nuevo_proceso_']").val();
+
+        let datos_a_consultar = {
+            '_token': token,
+            'id_evento':id_consultar_documentos_evento
+        }
+
+        $.ajax({
+            type:'POST',
+            url:'/cargueDocumentosXEvento',
+            data: datos_a_consultar,
+            success:function(data) {
+                
+                $('#habilitar').removeClass('d-none');
+                $('#agregar_documentos').empty();
+                $.each(data, function(index, arraylistado_documentos){
+                $('#agregar_documentos').append('\
+                        <tr>\
+                            <td>'+arraylistado_documentos["Nro_documento"]+'</td>\
+                            <td style="width: 34% !important;">'+arraylistado_documentos["Nombre_documento"]+'</td>\
+                            <td id="estadoDocumento_'+arraylistado_documentos["Id_Documento"]+'">'+(arraylistado_documentos["estado_documento"] == "Cargado" ? '<strong class="text-success">Cargado</strong>': '<strong class="text-danger">No Cargado</strong>')+'</td>\
+                            <td>'+(arraylistado_documentos["Nombre_documento"] === "Otros documentos" ? '\
+                                <form id="formulario_documento_'+arraylistado_documentos["Id_Documento"]+'" class="form-inline align-items-center"" method="POST" enctype="multipart/form-data">\
+                                    <input type="hidden" name="_token" value="'+token+'">\
+                                    <div class="col-12">\
+                                        <div class="d-none">\
+                                            <input type="text" name="Id_Documento" value="'+arraylistado_documentos["Id_Documento"]+'">\
+                                            <input type="text" name="Nombre_documento" value="'+arraylistado_documentos["Nombre_documento"]+'">\
+                                            <input type="text" name="EventoID" id="EventoID_'+arraylistado_documentos["Id_Documento"]+'" value="'+id_consultar_documentos_evento+'">\
+                                            <input type="text" name="bandera_nombre_otro_doc" value="'+arraylistado_documentos["nombre_Documento"]+'">\
+                                        </div>\
+                                        <div class="row">\
+                                            <p>'+(arraylistado_documentos["nombre_Documento"] != "" ? arraylistado_documentos["nombre_Documento"] : '')+'</p>\
+                                            <div class="input-group">\
+                                                <input type="file" class="form-control select-doc" name="listadodocumento" id="listadodocumento_'+arraylistado_documentos["Id_Documento"]+'"\
+                                                aria-describedby="Carguedocumentos" aria-label="Upload"'+(arraylistado_documentos["Requerido"] === 'Si' ? 'required' : '')+'>&nbsp;\
+                                                <button class="btn btn-info button-doc-select" type="submit" id="CargarDocumento_'+arraylistado_documentos["Id_Documento"]+'">\
+                                                    '+(arraylistado_documentos["estado_documento"] == "Cargado" ? 'Actualizar' : 'Cargar')+'\
+                                                </button>\
+                                            </div>\
+                                        </div>\
+                                    </div>\
+                                </form>\
+                            ' : '\
+                                <form id="formulario_documento_'+arraylistado_documentos["Id_Documento"]+'" method="POST" enctype="multipart/form-data">\
+                                    <input type="hidden" name="_token" value="'+token+'">\
+                                    <div class="d-none">\
+                                        <input type="text" name="Id_Documento" value="'+arraylistado_documentos["Id_Documento"]+'">\
+                                        <input type="text" name="Nombre_documento" value="'+arraylistado_documentos["Nombre_documento"]+'">\
+                                        <input  type="text" name="EventoID" id="EventoID_'+arraylistado_documentos["Id_Documento"]+'" value="'+id_consultar_documentos_evento+'">\
+                                    </div>\
+                                    <div class="row">\
+                                            <p>'+(arraylistado_documentos["nombre_Documento"] != "" ? arraylistado_documentos["nombre_Documento"] : '')+'</p>\
+                                            <div class="input-group">\
+                                                <input type="file" class="form-control select-doc" name="listadodocumento" id="listadodocumento_'+arraylistado_documentos["Id_Documento"]+'"\
+                                                aria-describedby="Carguedocumentos" aria-label="Upload"'+(arraylistado_documentos["Requerido"] === 'Si' ? 'required' : '')+'>&nbsp;\
+                                                <button class="btn btn-info button-doc-select" type="submit" id="CargarDocumento_'+arraylistado_documentos["Id_Documento"]+'">\
+                                                    '+(arraylistado_documentos["estado_documento"] == "Cargado" ? 'Actualizar' : 'Cargar')+'\
+                                                </button>\
+                                            </div>\
+                                        </div>\
+                                </form>\
+                            ')+'\
+                            </td>\
+                            <td class="text-center" style="width: 10% !important;">\
+                                <input type="checkbox" class="scales" name="checkdocumentos" id="check_documento_'+arraylistado_documentos["Id_Documento"]+'"\
+                                '+(arraylistado_documentos["Requerido"] === "Si" ? 'checked disabled' : 'disabled')+'\
+                                >\
+                            </td>\
+                        </tr>\
+                ');
+                });
+            }
+        });
+
+    });
+
+
+    /* ENVÍO DE INFORMACIÓN DEL DOCUMENTO A CARGAR (APLICA PARA LOS DOCUMENTOS EN AMBOS MODALES: SERVICIO Y PROCESO) */
+    $(document).on('submit', "form[id^='formulario_documento_']", function(e){
+        e.preventDefault();
+
         var formData = new FormData($(this)[0]);
         var cambio_estado = $(this).parents()[1].childNodes[5].id;
         var input_documento = $(this).parents()[1].childNodes[7].childNodes[1][4].id;
-
-        /* console.log(cambio_estado);
-        console.log(input_documento); */
 
         /* for (var pair of formData.entries()) {
             console.log(pair[0]+ ', ' + pair[1]); 
         } */
 
-        // Enviamos los datos para validar y guardar el docmuento correspondiente
         $.ajax({
             url: "/cargarDocumentos",
             type: "post",
@@ -643,6 +956,96 @@ $(document).ready(function () {
                     }, 6000);
                 }else{}
                 
+            }         
+        });
+    });
+
+    /* CREACIÓN DEL NUEVO PROCESO */
+    $(document).on('submit', "form[id^='form_nuevo_proceso_evento_']", function(e){
+        e.preventDefault();
+
+        let nro_evento_nuevo_proceso = $('.renderizar_nuevo_proceso').find("input[id^='nro_evento_nuevo_proceso_']").val();
+        let tupla_proceso_escogido = $('.renderizar_nuevo_proceso').find("input[id^='tupla_proceso_evento_']").val();
+        let token = $("input[name='_token']").val();
+
+        let datos_nuevo_proceso = {
+            "_token": token,
+            "id_evento": nro_evento_nuevo_proceso,
+            "tupla_proceso_escogido": tupla_proceso_escogido
+        };
+
+        var formData = new FormData($(this)[0]);
+        for (var pair of formData.entries()) {
+            var nombres_keys = pair[0];
+            datos_nuevo_proceso[nombres_keys] = pair[1];
+        }
+
+        $.ajax({
+            url: "/crearNuevoProceso",
+            type: "post",
+            data: datos_nuevo_proceso,
+            success:function(response){
+                if(response.parametro == "creo_proceso"){
+    
+                    $("#crear_proceso_evento_"+response.retorno_id_evento).addClass('d-none');
+                    $("#actualizar_consulta_nuevo_proceso_"+response.retorno_id_evento).removeClass('d-none');
+    
+                    $('.mostrar_mensaje_creo_proceso').removeClass('d-none');
+                    $('.mostrar_mensaje_creo_proceso').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_mensaje_creo_proceso').addClass('d-none');
+                        $('.mostrar_mensaje_creo_proceso').empty();
+                    }, 9000);
+    
+                }
+            }         
+        });
+
+    });
+
+    /* ACTUALIZAR CONSULTA (Botón Actualizar formulario Nuevo Proceso) */
+    $(document).on('click', "button[id^='actualizar_consulta_nuevo_proceso_']", function(){
+
+        let token = $("input[name='_token']").val();
+        
+        let datos_formulario_consulta = {
+            "_token": token,
+            "parametro": "mantener_datos_busqueda",
+            "consulta_nro_identificacion": $("#consultar_nro_identificacion").val(),
+            "consulta_id_evento": $("#consultar_id_evento").val()
+        };
+
+        $.ajax({
+            url: "/mantenerDatosBusquedaEvento",
+            type: "post",
+            data: datos_formulario_consulta,
+            success:function(response){
+                if (response.parametro == "creo_variables") {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                }
+            }         
+        });
+    })
+
+    /* FUNCIONALIDAD DEL BOTÓN NUEVA CONSULTA */
+    $('#btn_nueva_consulta').click(function(){
+        // location.reload();
+        let token = $("input[name='_token']").val();
+        let datos_formulario_consulta = {
+            "_token": token,
+            "parametro": "borrar_datos_busqueda",
+        };
+
+        $.ajax({
+            url: "/mantenerDatosBusquedaEvento",
+            type: "post",
+            data: datos_formulario_consulta,
+            success:function(response){
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
             }         
         });
     });

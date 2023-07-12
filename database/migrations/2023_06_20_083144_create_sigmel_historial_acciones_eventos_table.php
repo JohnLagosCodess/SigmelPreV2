@@ -17,6 +17,7 @@ return new class extends Migration
             $table->date('F_accion')->nullable();
             $table->text('Nombre_usuario')->nullable();
             $table->text('Accion_realizada')->nullable();
+            $table->text('Descripcion')->nullable();
         });
     }
 

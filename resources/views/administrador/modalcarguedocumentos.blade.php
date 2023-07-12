@@ -30,7 +30,7 @@
                                         </td>
                                         <td>
                                             <?php if($documento->Nombre_documento === "Otros documentos"):?>
-                                                <form id="formulario_documento_{{$documento->Id_Documento}}" class="form-inline align-items-center"" method="POST" enctype="multipart/form-data">
+                                                <form id="formulario_documento_{{$documento->Id_Documento}}" class="form-inline align-items-center" method="POST" enctype="multipart/form-data">
                                                     @csrf
                                                     <div class="col-12">
                                                         <div class="d-none">
@@ -225,9 +225,10 @@
 
         {{-- MODAL OTRO DOCUMENTO --}}
         <x-adminlte-modal id="modalOtroDocumento" title="Cargar Otro Documento" theme="info" icon="fas fa-plus" size='xl' v-centered="yes" disable-animations>
-            <form id="formulario_documento_{{$documento->Id_Documento}}" class="form-inline align-items-center"" method="POST" enctype="multipart/form-data">
+            <form id="formulario_documento_{{$documento->Id_Documento}}" class="form-inline align-items-center" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="col-12">
+                    <h5>Los campos marcados con <span style="color:red;">(*)</span> son obligatorios.</h5>
                     <div class="d-none">
                         <input type="text" name="Id_Documento" value="{{$documento->Id_Documento}}">
                         <input type="text" name="Nombre_documento" value="{{$documento->Nombre_documento}}">                                                
@@ -235,9 +236,15 @@
                         <input type="text" name="bandera_otro_documento" id="bandera_otro_documento" value="{{$documento->Id_Documento}}">                                            
                     </div>
                     <div class="form-group row">
-                        <label for="" class="col-sm-2 col-form-label">Nombre Documento</label>
+                        <label for="" class="col-sm-2 col-form-label">Nombre Documento <span style="color:red;">(*)</span></label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="nombre_otro_documento" id="nombre_otro_documento" style="width: 100% !important;">
+                            <input type="text" class="form-control" name="nombre_otro_documento" id="nombre_otro_documento" style="width: 100% !important;" required>
+                        </div>
+                    </div>
+                    <div class="form-group row mt-1">
+                        <label for="" class="col-sm-2 col-form-label">Descripción</label>
+                        <div class="col-sm-10">
+                            <textarea class="descripcion_documento form-control" name="descripcion_documento" id="descripcion_documento" rows="2" style="width: 100% !important;"></textarea>
                         </div>
                     </div>
                     <div class="form-group row">

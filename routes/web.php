@@ -264,15 +264,25 @@ Route::post('/actualizarProfesionalServicio', [CoordinadorController::class, 'ac
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);
 
-// Acción: Traer la información de los documentos acorde al id evento: Vistar Buscador de Eventos (Modal Formulario Nuevo Servicio)
-// Acción: Rellenar los selectores del formulario acorde al parametro indicado
+// Acción: Traer la información de los documentos acorde al id evento: Vista Buscador de Eventos (Modal Formulario Nuevo Servicio)
 Route::post('/cargueDocumentosXEvento', [AdministradorController::class, 'cargueDocumentosXEvento']);
+
+// Acción: Crear un nuevo servicio a partir del Evento
+Route::post('/crearNuevoServicio', [BuscarEventoController::class, 'crearNuevoServicio']);
+// Acción: Crear un nuevo proceso a partir del Evento
+Route::post('/crearNuevoProceso', [BuscarEventoController::class, 'crearNuevoProceso']);
+// Acción: Mantener datos de búsqueda del formulario
+Route::post('/mantenerDatosBusquedaEvento', [BuscarEventoController::class, 'mantenerDatosBusquedaEvento']);
+
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 
 
 
 
+// 28/06/2023
+// Vista: Bandeja PCL Coordinador
+Route::get('/Sigmel/RolCoordinador/BandejaPCL', [CoordinadorController::class, 'mostrarVistaBandejaPCL'])->name('bandejaPCL');
 
 
 
