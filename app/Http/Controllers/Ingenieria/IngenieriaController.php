@@ -61,8 +61,24 @@ class IngenieriaController extends Controller
             return redirect('/');
         }
         $user = Auth::user();
-        $listado_usuarios = DB::table('users')->select('id', 'name', 'email', 'tipo_contrato', 'empresa', 'created_at', 'updated_at')->get();
-        return view('ingenieria.listarUsuarios', compact('user', 'listado_usuarios'));
+        // $listado_usuarios = DB::table('users')->select('id', 'name', 'email', 'tipo_contrato', 'empresa', 'created_at', 'updated_at')->get();
+        $listado_usuarios = DB::table('users as u')
+        ->leftJoin('sigmel_usuarios_roles as sur', 'u.id', '=', 'sur.usuario_id')
+        ->leftJoin('sigmel_roles as sr', 'sur.rol_id', '=', 'sr.id')
+        ->select('u.id', 'u.name', 'u.tipo_colaborador', 'u.estado',
+        DB::raw("GROUP_CONCAT(sr.nombre_rol SEPARATOR ', ') as roles_usuario"),
+        DB::raw('(SELECT GROUP_CONCAT(DISTINCT Nombre_proceso SEPARATOR ", ") FROM sigmel_gestiones.sigmel_lista_procesos_servicios where FIND_IN_SET(Id_proceso, u.id_procesos_usuario)) as procesos_usuario'),
+        'u.email_contacto',
+	    'u.telefono_contacto',
+	    'u.created_at',
+	    'u.updated_at')->groupBy('u.id')->get();
+
+        $conteo_activos_inactivos = DB::table('users')
+        ->select(DB::raw("COUNT(IF(estado = 'Activo', 1, NULL)) AS 'Activos'"), DB::raw("COUNT(IF(estado = 'Inactivo', 1, NULL)) AS 'Inactivos'"))
+        ->get();
+
+
+        return view('ingenieria.listarUsuarios', compact('user', 'listado_usuarios', 'conteo_activos_inactivos'));
     }
 
     public function mostrarVistaEditarUsuario (Request $request){
@@ -72,9 +88,15 @@ class IngenieriaController extends Controller
         $user = Auth::user();
         $id_usuario = $request->id_usuario;
 
-        $info_usuario = DB::table('users')->select('name', 'email', 'email_contacto', 'tipo_identificacion', 
-        'nro_identificacion', 'tipo_contrato', 'empresa', 'cargo', 'telefono_contacto', 'extension')->where('id', $id_usuario)->get();
-        return view('ingenieria.edicionUsuario', compact('user', 'info_usuario', 'id_usuario'));
+        $info_usuario = DB::table('users as u')
+        ->select('u.id','u.name', 'u.email', 'u.email_contacto', 'u.tipo_identificacion', 
+        'u.nro_identificacion', 'u.tipo_colaborador', 'u.empresa', 'u.cargo', 'u.telefono_contacto', 
+        'u.id_procesos_usuario', 'u.estado')->where('u.id', $id_usuario)->get();
+
+        $informacion_usuario = json_decode(json_encode($info_usuario), true);
+        return response()->json($informacion_usuario);
+
+        // return view('ingenieria.edicionUsuario', compact('user', 'info_usuario', 'id_usuario'));
     }
 
     public function guardar_usuario (Request $request){
@@ -93,19 +115,28 @@ class IngenieriaController extends Controller
             // Preparamos los datos en un array para insertarlos
             $time = time();
             $date = date("Y-m-d h:i:s", $time);
-    
+
+            if (count($request->listado_procesos_crear_usuario) > 0) {
+                $strings_id_procesos_usuario = implode(",", $request->listado_procesos_crear_usuario);
+            }else {
+                $strings_id_procesos_usuario = "";
+            }
+
+            // E-MAIL : correo_contacto_usuario
+            // CORREO POR USUARIO: correo_usuario
             $nuevo_usuario = array(
                 'name' => $request->nombre_usuario,
                 'email' => $request->correo_usuario,
                 'email_contacto' => $request->correo_contacto_usuario,
                 'tipo_identificacion' => $request->tipo_identificacion_usuario,
                 'nro_identificacion' => $request->nro_identificacion_usuario,
-                'tipo_contrato' => $request->tipo_contrato_usuario,
+                'tipo_colaborador' => $request->tipo_colaborador,
                 'empresa' => $request->empresa_usuario,
                 'cargo' => $request->cargo_usuario,
                 'telefono_contacto' => $request->telefono_contacto_usuario,
-                'extension' => $request->extension_contacto_usuario,
                 'password' => bcrypt($request->password_usuario),
+                'id_procesos_usuario' => $strings_id_procesos_usuario,
+                'estado' => $request->status_crear_usuario,
                 'created_at' => $date,
             );
 
@@ -124,31 +155,64 @@ class IngenieriaController extends Controller
         $time = time();
         $date = date("Y-m-d h:i:s", $time);
 
+        if (isset($request->editar_listado_procesos_crear_usuario)) {
+            $strings_id_procesos_usuario = implode(",", $request->editar_listado_procesos_crear_usuario);
+        }else {
+            $strings_id_procesos_usuario = "";
+        }
+
         if($request->editar_password_usuario <> ""){
             $password = bcrypt($request->editar_password_usuario);
         }else{
-            $password_db =DB::table('users')->where('id', $request->id_usuario)->select('password')->get();
+            $password_db =DB::table('users')->where('id', $request->captura_id_usuario)->select('password')->get();
             $password = $password_db[0]->password;
         }
 
+        // Si el estado se cambia a inactivo entonces se realiza la inactivación de su rol principal en caso de que tenga.
+
+        if ($request->editar_status_crear_usuario == "Inactivo") {
+            
+            $inactivar_rol_principal = array(
+                'estado' => "inactivo",
+                'updated_at' => $date
+            );
+
+            sigmel_usuarios_roles::where([['usuario_id', $request->captura_id_usuario], ['tipo', 'principal']])->update($inactivar_rol_principal);
+        }else{
+            $activar_rol_principal = array(
+                'estado' => "activo",
+                'updated_at' => $date
+            );
+            sigmel_usuarios_roles::where([['usuario_id', $request->captura_id_usuario], ['tipo', 'principal']])->update($activar_rol_principal);
+        }
+        
         $datos_actualizar_usuario = array(
             'name' => $request->editar_nombre_usuario,
             'email' => $request->editar_correo_usuario,
             'email_contacto' => $request->editar_correo_contacto_usuario,
             'tipo_identificacion' => $request->editar_tipo_identificacion_usuario,
             'nro_identificacion' => $request->editar_nro_identificacion_usuario,
-            'tipo_contrato' => $request->editar_tipo_contrato_usuario,
+            'tipo_colaborador' => $request->editar_tipo_colaborador,
             'empresa' => $request->editar_empresa_usuario,
             'cargo' => $request->editar_cargo_usuario,
             'telefono_contacto' => $request->editar_telefono_contacto_usuario,
-            'extension' => $request->editar_extension_contacto_usuario,
             'password' => $password,
+            'id_procesos_usuario' => $strings_id_procesos_usuario,
+            'estado' => $request->editar_status_crear_usuario,
             'updated_at' => $date,
         );
         
         // Generamos el update
-        User::where('id', $request->id_usuario)->update($datos_actualizar_usuario);
-        return redirect()->route('ListarUsuarios')->with('actualizado','Usuario actualizado correctamente.');
+        User::where('id', $request->captura_id_usuario)->update($datos_actualizar_usuario);
+
+        $mensajes = array(
+            "parametro" => 'exito',
+            "mensaje" => 'Información de usuario actualizada satisfactoriamente. Para visualizar los cambios debe hacer clic en el botón Actualizar.'
+        );
+
+        
+        return json_decode(json_encode($mensajes, true));
+
     }
 
     public function listadoTiposIdentificacion (){
@@ -162,13 +226,13 @@ class IngenieriaController extends Controller
         return response()->json($informacion_usuario);
     }
 
-    public function listadotiposContrato (){
+    public function listadoTiposColaborador (){
         // Si el usuario no ha iniciado, no podrá ingresar al sistema
         if(!Auth::check()){
             return redirect('/');
         }
 
-        $datos = DB::table('sigmel_tipo_contratos')->select("id", "tipo_contrato")->get();
+        $datos = DB::table('sigmel_tipo_contratos')->select("id", "tipo_contrato as tipo_colaborador")->get();
         $informacion_usuario = json_decode(json_encode($datos), true);
         return response()->json($informacion_usuario);
     }
@@ -184,13 +248,13 @@ class IngenieriaController extends Controller
         return response()->json($informacion_usuario);
     }
 
-    public function listadotiposContratoEditar(Request $request){
+    public function listadotiposColaboradorEditar(Request $request){
         // Si el usuario no ha iniciado, no podrá ingresar al sistema
         if(!Auth::check()){
             return redirect('/');
         }
 
-        $datos = DB::table('sigmel_tipo_contratos')->select("id", "tipo_contrato")->whereNotIn('tipo_contrato', [$request->tipo_contrato])->get();
+        $datos = DB::table('sigmel_tipo_contratos')->select("id", "tipo_contrato as tipo_colaborador")->whereNotIn('tipo_contrato', [$request->tipo_colaborador])->get();
         $informacion_usuario = json_decode(json_encode($datos), true);
         return response()->json($informacion_usuario);
     }
@@ -209,7 +273,7 @@ class IngenieriaController extends Controller
             return redirect('/');
         }
         $user = Auth::user();
-        $listado_roles = DB::table('sigmel_roles')->select('id', 'nombre_rol', 'created_at', 'updated_at')->get();
+        $listado_roles = DB::table('sigmel_roles')->select('id', 'nombre_rol', 'descripcion_rol', 'created_at', 'updated_at')->get();
         return view('ingenieria.listarRoles', compact('user', 'listado_roles'));
     }
 
@@ -219,7 +283,7 @@ class IngenieriaController extends Controller
         }
         $user = Auth::user();
         $rol_id = $request->rol_id;
-        $info_rol = DB::table('sigmel_roles')->select('nombre_rol', 'descripcion_rol')->where('id', $rol_id)->get();
+        $info_rol = DB::table('sigmel_roles')->select('id','nombre_rol', 'descripcion_rol')->where('id', $rol_id)->get();
         return view('ingenieria.edicionRol', compact('user', 'info_rol', 'rol_id'));
     }
 
@@ -260,7 +324,14 @@ class IngenieriaController extends Controller
 
         // Generamos el update
         sigmel_roles::where('id', $request->rol_id)->update($datos_actualizar_rol);
-        return redirect()->route('ListadoRoles')->with('rol_actualizado','Rol actualizado correctamente.');
+        
+        $mensajes = array(
+            "parametro" => 'exito',
+            "mensaje" => 'Información de rol actualizada satisfactoriamente. Para visualizar los cambios debe hacer clic en el botón Actualizar.'
+        );
+
+        
+        return json_decode(json_encode($mensajes, true));
     }
 
     /* TODO LO REFERENTE A ASIGNACIÓN DE ROL */
@@ -296,6 +367,32 @@ class IngenieriaController extends Controller
         $informacion_roles = json_decode(json_encode($datos), true);
 
         return response()->json($informacion_roles);
+    }
+
+    /* NUEVA FUNCIÓN: LISTADO DE ROLES QUE LE FALTAN A UN USUARIO POR ASIGNAR DEPENDIENDO DEL USUARIO SELECCIONADO */
+    public function listadoRolesXUsuario(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        // Extraemos los id de los roles que tiene asignados el usuario
+        $ids_roles_asignados_usuario = DB::table('sigmel_roles as sr')
+        ->leftJoin('sigmel_usuarios_roles as sur', 'sr.id', '=', 'sur.rol_id')
+        ->select('sr.id')->where('sur.usuario_id', $request->id_usuario_seleccionado)->get();
+
+        $string_ids_roles_asignados_usuario = array();
+        for ($i=0; $i < count($ids_roles_asignados_usuario); $i++) { 
+            array_push($string_ids_roles_asignados_usuario, $ids_roles_asignados_usuario[$i]->id);
+        }
+
+        if(count($string_ids_roles_asignados_usuario) > 0){
+            $datos_info_roles_faltantes = DB::table('sigmel_roles')->select("id", "nombre_rol")->whereNotIn('id', $string_ids_roles_asignados_usuario)->get();
+        }else{
+            $datos_info_roles_faltantes = DB::table('sigmel_roles')->select("id", "nombre_rol")->get();
+        }
+
+        $informacion_roles_faltantes = json_decode(json_encode($datos_info_roles_faltantes), true);
+        return response()->json($informacion_roles_faltantes);
     }
 
     public function asignar_rol(Request $request){
@@ -742,7 +839,7 @@ class IngenieriaController extends Controller
             return redirect('/');
         }
 
-        $datos = DB::table('sigmel_vistas')->select("id", "carpeta", "subcarpeta", "archivo")->get();
+        $datos = DB::table('sigmel_vistas')->select("id", "carpeta", "subcarpeta", "archivo")->orderBy('carpeta')->get();
         $informacion_usuario = json_decode(json_encode($datos), true);
         return response()->json($informacion_usuario);
     }

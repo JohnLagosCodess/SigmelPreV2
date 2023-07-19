@@ -16,8 +16,6 @@
             <div>
                 <h4>Convenciones:</h4>
                 <p>
-                    <!--<i class="far fa-eye text-success"></i> Activar Menú/Sub Menú &nbsp;
-                    <i class="far fa-eye-slash text-danger"></i> Inactivar Menú/Sub Menú &nbsp;-->
                    <span style="color:red;">(*)</span> Campo Obligatorio&nbsp;|
                    <i class="fa fa-puzzle-piece text-info"></i> Agregar Nuevo Servicio&nbsp;|
                    <i class="far fa-clone text-info"></i> Agregar Nuevo Proceso&nbsp;
@@ -158,20 +156,5 @@
     </div>
 @stop
 @section('js')
-    
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-    
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.templates.min.js"></script>
-
     <script src="/js/consultar_eventos.js"></script>
-    <script>        
-        
-    </script> 
-
 @stop

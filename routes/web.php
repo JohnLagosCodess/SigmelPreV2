@@ -69,6 +69,9 @@ Route::get('/Sigmel/usuarios/asignacionRol', [IngenieriaController::class, 'most
 Route::post('/listausuarios', [IngenieriaController::class, 'listadoUsuarios']);
 // Acción: Traer listado de todos los roles para selector de roles js
 Route::post('/listatodosroles', [IngenieriaController::class, 'listadoTodosRoles']);
+
+// Acción: Listado de Roles que le faltan por asignar dependiendo de la selección del usuario
+Route::post('/listadoRolesXUsuario', [IngenieriaController::class, 'listadoRolesXUsuario']);
 // Acción: Creación de Asignación de Rol
 Route::post('/Sigmel/usuarios/asignacionRol', [IngenieriaController::class, 'asignar_rol'])->name('AsignacionRol');
 
@@ -82,11 +85,11 @@ Route::post('/ConsultaAsignacionRolUsuario', [IngenieriaController::class, 'cons
 // Acción: Traer listado de tipos de identificación para el selector de tipo de documento js
 Route::post('/listartiposidentificacion', [IngenieriaController::class, 'listadoTiposIdentificacion']);
 // Acción: Traer listado de tipos de contratos para el selector de tipos de contrato js
-Route::post('/listartiposContrato', [IngenieriaController::class, 'listadotiposContrato']);
+Route::post('/listarTiposColaborador', [IngenieriaController::class, 'listadoTiposColaborador']);
 // Acción: Traer listado de tipos de identificación edición usuario para el selector de tipo de documento para la edición js
 Route::post('/listadoTiposIdentificacionEditar', [IngenieriaController::class, 'listadoTiposIdentificacionEditar']);
 // Acción: Traer listado de tipos de contratos edición usuario para el selector tipo de contratos para la edición js
-Route::post('/listadotiposContratoEditar', [IngenieriaController::class, 'listadotiposContratoEditar']);
+Route::post('/listadotiposColaboradorEditar', [IngenieriaController::class, 'listadotiposColaboradorEditar']);
 // Acción Inactivar rol
 Route::get('/inactivarRol/{id}/{usuario_id}/{rol_id}', [IngenieriaController::class, 'inactivarRol'])->name('inactivarRol');
 // Acción: Activar rol
@@ -158,23 +161,25 @@ Route::post('/Sigmel/usuarios/EditarMenu', [IngenieriaController::class, 'mostra
 // Acción: Actualización de la información del menú
 Route::post('/Sigmel/usuarios/actualizarMenu', [IngenieriaController::class, 'actualizar_menu'])->name('ActualizacionMenu');
 
-// 03/05/2023 - CRUD GRUPOS TRABAJO
-// Vista: Formulario para crear un nuevo grupo de trabajo
-Route::get('/Sigmel/RolAdministrador/NuevoGrupoTrabajo', [AdministradorController::class, 'mostrarVistaNuevoGrupoTrabajo'])->name('crearGruposTrabajo');
-// Acción: Crear un nuevo grupo de trabajo
-Route::post('/Sigmel/RolAdministrador/CrearNuevoGrupo', [AdministradorController::class, 'guardar_grupo_trabajo'])->name('CrearNuevoGrupo');
-// Vista: Listar grupos de trabajo
-Route::get('/Sigmel/RolAdministrador/listarGruposTrabajo', [AdministradorController::class, 'mostrarVistaListarGruposTrabajo'])->name('listarGruposTrabajo');
+// 03/05/2023 - CRUD EQUIPOS DE TRABAJO
+// Acción: Traer listado de lideres dependiendo de la selección del proceso
+Route::post('/ListaLideresXProceso', [AdministradorController::class, 'ListaLideresXProceso']);
+// Vista: Formulario para crear un nuevo equipo de trabajo
+Route::get('/Sigmel/RolAdministrador/NuevoEquipoTrabajo', [AdministradorController::class, 'mostrarVistaNuevoEquipoTrabajo'])->name('crearEquipoTrabajo');
+// Acción: Crear un nuevo equipo de trabajo
+Route::post('/Sigmel/RolAdministrador/CrearNuevoEquipo', [AdministradorController::class, 'guardar_equipo_trabajo'])->name('CrearNuevoEquipo');
+// Vista: Listar equipos de trabajo
+Route::get('/Sigmel/RolAdministrador/listarEquiposTrabajo', [AdministradorController::class, 'mostrarVistaListarEquiposTrabajo'])->name('listarEquiposTrabajo');
 // Vista: Formulario para editar un grupo de trabajo
-Route::post('/Sigmel/RolAdministrador/EditarGrupoTrabajo', [AdministradorController::class, 'mostrarVistaEditarGrupoTrabajo'])->name('EditarGrupoTrabajo');
+Route::post('/Sigmel/RolAdministrador/EditarEquipoTrabajo', [AdministradorController::class, 'mostrarVistaEditarEquipoTrabajo'])->name('EditarEquipoTrabajo');
 // Acción: Traer listado de lideres para edición grupo de trabajos para el selector de lideres para la edición js
 Route::post('/listadoLideresEditar', [AdministradorController::class, 'listadoLideresEditar']);
 // Acción: Traer listado de usuarios asignados y no asignados para construir el selector dual de usuarios asignar grupos 
 Route::post('/listadoUsuariosAsignacion', [AdministradorController::class, 'listadoUsuariosAsignacion']);
+// Acción: Guardar edición de grupo de trabajo
+Route::post('/Sigmel/RolAdministrador/GuardarEdicionEquipoTrabajo', [AdministradorController::class, 'editar_equipo_trabajo'])->name('GuardarEdicionEquipoTrabajo');
 
 // 04/05/2023
-// Acción: Guardar edición de grupo de trabajo
-Route::post('/Sigmel/RolAdministrador/GuardarEdicionGrupo', [AdministradorController::class, 'editar_grupo_trabajo'])->name('GuardarEdicionGrupo');
 // Vista: Formulario para registrar Cliente
 Route::get('/Sigmel/RolAdministrador/RegistroCliente', [AdministradorController::class, 'mostrarVistaCrearCliente'])->name('registrarCliente');
 // Acción: Registrar el cliente
@@ -247,14 +252,12 @@ Route::post('/Sigmel/RolAdministrador/ActualizarEvento', [AdministradorControlle
 Route::get('/Sigmel/RolAdministrador/BusquedaEvento', [BuscarEventoController::class, 'mostrarVistaBuscarEvento'])->name('busquedaEvento');
 // Acción Consultar evento 
 Route::post('/consultaInformacionEvento', [BuscarEventoController::class, 'consultaInformacionEvento']);
-
-
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);
-
 // Acción: Traer la información de los documentos acorde al id evento: Vista Buscador de Eventos (Modal Formulario Nuevo Servicio)
 Route::post('/cargueDocumentosXEvento', [AdministradorController::class, 'cargueDocumentosXEvento']);
-
+// Acción: Traer el listado de profesionales acorde al evento
+Route::post('/ProfesionalesXProceso', [BuscarEventoController::class, 'ProfesionalesXProceso']);
 // Acción: Crear un nuevo servicio a partir del Evento
 Route::post('/crearNuevoServicio', [BuscarEventoController::class, 'crearNuevoServicio']);
 // Acción: Crear un nuevo proceso a partir del Evento

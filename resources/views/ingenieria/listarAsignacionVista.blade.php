@@ -49,9 +49,10 @@
                 <hr>
                 <span id="no_info"></span>
                 <div class="table table-responsive" id="si_tabla">
-                    <table id="listado_asignacion_vistas" class="table table-striped">
+                    <table id="listado_asignacion_vistas" class="table table-striped table-bordered" style="width:100%">
                         <thead>
-                            <tr>
+                            <tr class="bg-info">
+                                <th>N°</th>
                                 <th>Nombre Vista (Carpeta)</th>
                                 <th>Sub Carpeta</th>
                                 <th>Nombre Archivo</th>
@@ -75,7 +76,11 @@
     <script src="/js/vistas.js"></script>
     <script type="text/javascript">
         /* CARGAR DATOS A DATATABLE ACORDE A LA SELECCIÓN DEL ROL. */
+        $('#listado_asignacion_vistas thead tr').clone(true).addClass('filters').appendTo('#listado_asignacion_vistas thead');
         $('#listado_roles_asignacion').change(function(){
+            var selectedOption = $('#listado_roles_asignacion').find(':selected');
+            var textoRol = selectedOption.text();
+
             var rol_asignacion = $('#listado_roles_asignacion').val();
 
             var datos_consultar_asignacion = {
@@ -96,7 +101,10 @@
                         $('#si_tabla').css("display", "block");
                         var generar_estado = "";
                         var generar_tipo = "";
+                        var aumentar = 0;
                         for (let i = 0; i < data.length; i++) {
+                            aumentar = aumentar + 1
+                            data[i]['aumentar'] = aumentar;
                             /* generar_estado='<form action="{{route("EditarVista")}}" method="POST">@csrf <input type="hidden" name="id_vista" value="'+data[i]['id_vista']+'"><button class="btn btn-xs btn-default text-primary" title="Editar" type="submit"><i class="fa fa-lg fa-fw fa-pen"></i></button></form>';
                             data[i]['acciones'] = generar_estado; */
     
@@ -127,18 +135,87 @@
                         };
                         
                         $.each(data, function(index, value){
-                            llenar(data, index, value);
+                            llenar(data, index, value, textoRol);
                         });
                     }
                 }
             });
         });
-        function llenar(response, index,value){
+        function llenar(response, index,value, textoRol){
             $('#listado_asignacion_vistas').DataTable({
+                orderCellsTop: true,
+                fixedHeader: true,
+                pageLength: 5,
                 "destroy": true,
                 "data": response,
-                "order": [[3, 'desc']],
+                "order": [[0, 'asc']],
+                initComplete: function () {
+                    var api = this.api();
+                        // For each column
+                    api.columns().eq(0).each(function (colIdx) {
+                        // Set the header cell to contain the input element
+                        var cell = $('.filters th').eq(
+                            $(api.column(colIdx).header()).index()
+                        );
+                        
+                        var title = $(cell).text();
+                        
+                        if (title !== 'Acciones') {
+                            
+                            $(cell).html('<input type="text" />');
+                            $('input',$('.filters th').eq($(api.column(colIdx).header()).index())).off('keyup change')
+                            .on('change', function (e) {
+                                // Get the search value
+                                $(this).attr('title', $(this).val());
+                                var regexr = '({search})'; //$(this).parents('th').find('select').val();
+                                // Search the column for that value
+                                api
+                                    .column(colIdx)
+                                    .search(
+                                        this.value != ''
+                                            ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                            : '',
+                                        this.value != '',
+                                        this.value == ''
+                                    )
+                                    .draw();
+                            })
+                            .on('keyup', function (e) {
+                                e.stopPropagation();
+                                var cursorPosition = this.selectionStart;
+                                $(this).trigger('change');
+                                $(this)
+                                    .focus()[0]
+                                    .setSelectionRange(cursorPosition, cursorPosition);
+                            });
+                        }
+
+                    });
+                },
+                dom: 'Bfrtip',
+                buttons:{
+                    dom:{
+                        buttons:{
+                            className: 'btn'
+                        }
+                    },
+                    buttons:[
+                        {
+                            extend:"excel",
+                            title: 'Lista Asignacion de Vistas para el Rol de: '+ textoRol,
+                            text:'Exportar datos',
+                            className: 'btn btn-info',
+                            "excelStyles": [                      // Add an excelStyles definition
+                                                        
+                            ],
+                            exportOptions: {
+                                columns: [0,1,2,3,4,5,6,7]
+                            }
+                        }
+                    ]
+                },
                 "columns":[
+                    {"data":"aumentar"},
                     {"data":"carpeta"},
                     {"data":"subcarpeta"},
                     {"data":"archivo"},

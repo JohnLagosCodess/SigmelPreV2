@@ -52,9 +52,10 @@
                     <hr>
                     <span id="no_info"></span>
                     <div class="table table-responsive" id="si_tabla">
-                        <table id="listado_asignacion_roles" class="table table-striped">
+                        <table id="listado_asignacion_roles" class="table table-striped table-bordered" style="width:100%">
                             <thead>
-                                <tr>
+                                <tr class="bg-info">
+                                    <th>N°</th>
                                     <th>Nombre Rol</th>
                                     <th>Tipo de Rol</th>
                                     <th>Estado del Rol</th>
@@ -75,7 +76,11 @@
     <script src="/js/selector_usuarios.js"></script>
     <script type="text/javascript">
         /* CARGAR DATOS A DATATABLE ACORDE A LA SELECCIÓN DEL USUARIO. */
+        $('#listado_asignacion_roles thead tr').clone(true).addClass('filters').appendTo('#listado_asignacion_roles thead');
         $('#listado_usuarios_asignacion_rol').change(function(){
+            var selectedOption = $('#listado_usuarios_asignacion_rol').find(':selected');
+            var textoUsuario = selectedOption.text();
+
             var usuario_asignacion = $('#listado_usuarios_asignacion_rol').val();
             var datos_consultar_asignacion = {
                 'usuario_id': usuario_asignacion,
@@ -95,7 +100,10 @@
                         $('#si_tabla').css("display", "block");
                         var generar_estado = "";
                         var generar_tipo = "";
+                        var aumentar = 0;
                         for (let i = 0; i < data.length; i++) {
+                            aumentar = aumentar + 1
+                            data[i]['aumentar'] = aumentar;
                             // ESTADO DEL ROL
                             if(data[i]['estado'] === 'activo'){
                                 generar_estado = "<a href={{route('inactivarRol', ['id'=>':id', 'usuario_id'=>':usuario_id', 'rol_id'=>':rol_id'])}} class='btn' Title='Inactivar Rol'><i class='far fa-eye-slash text-danger'></i></a>";
@@ -121,18 +129,88 @@
                         };
                         
                         $.each(data, function(index, value){
-                            llenar(data, index, value);
+                            llenar(data, index, value, textoUsuario);
                         });
                     }
                 }
             });
         });
-        function llenar(response, index,value){
+        function llenar(response, index,value, textoUsuario){
+            
             $('#listado_asignacion_roles').DataTable({
+                orderCellsTop: true,
+                fixedHeader: true,
+                pageLength: 5,
                 "destroy": true,
                 "data": response,
-                "order": [[2, 'desc']],
+                "order": [[0, 'asc']],
+                initComplete: function () {
+                    var api = this.api();
+                        // For each column
+                    api.columns().eq(0).each(function (colIdx) {
+                        // Set the header cell to contain the input element
+                        var cell = $('.filters th').eq(
+                            $(api.column(colIdx).header()).index()
+                        );
+                        
+                        var title = $(cell).text();
+                        
+                        if (title !== 'Acciones') {
+                            
+                            $(cell).html('<input type="text" />');
+                            $('input',$('.filters th').eq($(api.column(colIdx).header()).index())).off('keyup change')
+                            .on('change', function (e) {
+                                // Get the search value
+                                $(this).attr('title', $(this).val());
+                                var regexr = '({search})'; //$(this).parents('th').find('select').val();
+                                // Search the column for that value
+                                api
+                                    .column(colIdx)
+                                    .search(
+                                        this.value != ''
+                                            ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                            : '',
+                                        this.value != '',
+                                        this.value == ''
+                                    )
+                                    .draw();
+                            })
+                            .on('keyup', function (e) {
+                                e.stopPropagation();
+                                var cursorPosition = this.selectionStart;
+                                $(this).trigger('change');
+                                $(this)
+                                    .focus()[0]
+                                    .setSelectionRange(cursorPosition, cursorPosition);
+                            });
+                        }
+
+                    });
+                },
+                dom: 'Bfrtip',
+                buttons:{
+                    dom:{
+                        buttons:{
+                            className: 'btn'
+                        }
+                    },
+                    buttons:[
+                        {
+                            extend:"excel",
+                            title: 'Lista Asignacion de Roles de: '+ textoUsuario,
+                            text:'Exportar datos',
+                            className: 'btn btn-info',
+                            "excelStyles": [                      // Add an excelStyles definition
+                                                        
+                            ],
+                            exportOptions: {
+                                columns: [0,1,2,3,4,5]
+                            }
+                        }
+                    ]
+                },
                 "columns":[
+                    {"data":"aumentar"},
                     {"data":"nombre_rol"},
                     {"data":"tipo"},
                     {"data":"estado"},
