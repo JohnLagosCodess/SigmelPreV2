@@ -252,6 +252,20 @@ Route::post('/Sigmel/RolAdministrador/ActualizarEvento', [AdministradorControlle
 Route::get('/Sigmel/RolAdministrador/BusquedaEvento', [BuscarEventoController::class, 'mostrarVistaBuscarEvento'])->name('busquedaEvento');
 // Acción Consultar evento 
 Route::post('/consultaInformacionEvento', [BuscarEventoController::class, 'consultaInformacionEvento']);
+
+// 28/06/2023
+// Vista: Bandeja PCL Coordinador
+Route::get('/Sigmel/RolCoordinador/BandejaPCL', [CoordinadorController::class, 'mostrarVistaBandejaPCL'])->name('bandejaPCL');
+// Accion: Selectores Bandeja PCL
+Route::post('/selectoresBandejaPCL', [CoordinadorController::class, 'cargueListadoSelectoresBandejaPCL']);
+// Accion: Capturar data sin filtros
+Route::post('/sinfiltrosBandejaPCL', [CoordinadorController::class, 'sinFiltroBandejaPCL']);
+// Accion: Capturar data según los filtros
+Route::post('/filtrosBandejaPCL', [CoordinadorController::class, 'filtroBandejaPCl']);
+// Accion: Actualizar el profesional y redireccionar el servicio
+Route::post('/actualizarProfesionalServicio', [CoordinadorController::class, 'actualizarBandejaPCL']);
+
+
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);
 // Acción: Traer la información de los documentos acorde al id evento: Vista Buscador de Eventos (Modal Formulario Nuevo Servicio)
