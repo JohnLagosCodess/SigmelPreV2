@@ -1,0 +1,37 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::connection('sigmel_gestiones')->create('sigmel_informacion_accion_eventos', function (Blueprint $table) {
+            $table->increments('Id_Accion');
+            $table->integer('ID_evento');
+            $table->integer('Id_Asignacion');
+            $table->string('Modalidad_calificacion',25);
+            $table->date('F_accion');
+            $table->string('Accion',40);
+            $table->date('F_Alerta')->nullable();
+            $table->string('Enviar',40);
+            $table->string('Causal_devolucion_comite',40)->nullable();
+            $table->text('Descripcion_accion')->nullable();
+            $table->text('Nombre_usuario');
+            $table->date('F_registro');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('sigmel_informacion_accion_eventos');
+    }
+};

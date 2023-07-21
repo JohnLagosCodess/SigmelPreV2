@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    // Inicializacion del select2 del listado de servicio de PCL
+    // Inicializacion del select2 del listado de servicio y profesional bandeja de PCL
 
     $(".redireccionar").select2({
         placeholder:"Selecione una opción",
@@ -15,6 +15,29 @@ $(document).ready(function () {
 
     //llenado de selectores 
     let token = $('input[name=_token]').val();
+
+    //Listado de seleccion profecional bandeja PCL
+
+    let datos_lista_profesional={
+        '_token':token,
+        'parametro':"lista_profesional_pcl"
+    }
+
+    $.ajax({
+        type:'POST',
+        url:'/selectoresBandejaPCL',
+        data: datos_lista_profesional,
+        success:function (data) {
+            //console.log(data)
+            //$('#profesional').empty();
+            $('#profesional').append('<option value="" selected>Seleccione</option>');
+            let profecionalpcl = Object.keys(data);
+            for (let i = 0; i < profecionalpcl.length; i++) {
+                $('#profesional').append('<option value="'+data[profecionalpcl[i]]['id']+'">'+data[profecionalpcl[i]]['name']+'</option>')
+            }
+            
+        }
+    });
 
     //Listado de servicio de badeja PCl
     let datos_lista_servicio = {
@@ -52,12 +75,28 @@ $(document).ready(function () {
             $('#num_registros').append(data.length);
 
             var actualizarBandeja = '';
+            var modulocalificacionpcl = '';
 
             for (let i = 0; i < data.length; i++) {
 
                 if (data[i]['Id_Asignacion'] != '') {
                     actualizarBandeja='<input class="checkbox-class" name="actualizaBandejaPCL" id="actualizar_id_asignacion_'+data[i]['Id_Asignacion']+'" type="checkbox" value="'+data[i]["Id_Asignacion"]+'">';
                     data[i]['actualizarproser'] = actualizarBandeja;
+                }else{
+                    data[i]['actualizarproser'] = ""; 
+                }               
+                
+                if (data[i]['Id_Asignacion'] != ''){
+
+                    modulocalificacionpcl = '<form id="form_modulo_calificacion_PCL_'+data[i]["Id_Asignacion"]+'" action="" method="POST">'+
+                                '<input type="hidden" name="_token" value="'+token+'">'+
+                                '<input class="btn btn-sm text-info" id="modulo_califi_pcl_'+data[i]["Id_Asignacion"]+'" value="Modulo PCL" type="submit" style="font-weight: bold; padding-left: inherit;">'+ 
+                                '<input type="hidden" name="newIdAsignacion" value="'+data[i]["Id_Asignacion"]+'">'+
+                                '</form>';
+                    data[i]['moduloPCL'] = modulocalificacionpcl;
+                    
+                }else{
+                    data[i]['moduloPCL'] = ""; 
                 } 
             }
 
@@ -156,14 +195,29 @@ $(document).ready(function () {
                         $('#btn_bandeja').removeClass('d-none');
 
                         var actualizarBandeja = '';
+                        var modulocalificacionpcl = '';
 
                         for (let i = 0; i < data.length; i++) {
 
                             if (data[i]['Id_Asignacion'] != '') {
-                                actualizarBandeja='<input class="checkbox-class" name="actualizaBandejaPCL" id="actualizar_id_asignacion_'+data[i]["Id_Asignacion"]+'" type="checkbox" value="'+data[i]["Id_Asignacion"]+'">';
-
+                                actualizarBandeja='<input class="checkbox-class" name="actualizaBandejaPCL" id="actualizar_id_asignacion_'+data[i]['Id_Asignacion']+'" type="checkbox" value="'+data[i]["Id_Asignacion"]+'">';
                                 data[i]['actualizarproser'] = actualizarBandeja;
-                            } 
+                            }else{
+                                data[i]['actualizarproser'] = ""; 
+                            }               
+                            
+                            if (data[i]['Id_Asignacion'] != ''){
+            
+                                modulocalificacionpcl = '<form id="form_modulo_calificacion_PCL_'+data[i]["Id_Asignacion"]+'" action="" method="POST">'+
+                                            '<input type="hidden" name="_token" value="'+token+'">'+
+                                            '<input class="btn btn-sm text-info" id="modulo_califi_pcl_'+data[i]["Id_Asignacion"]+'" value="Modulo PCL" type="submit" style="font-weight: bold; padding-left: inherit;">'+ 
+                                            '<input type="hidden" name="newIdAsignacion" value="'+data[i]["Id_Asignacion"]+'">'+
+                                            '</form>';
+                                data[i]['moduloPCL'] = modulocalificacionpcl;
+                                
+                            }else{
+                                data[i]['moduloPCL'] = ""; 
+                            }  
                         }
 
                         $.each(data, function(index, value) {
@@ -299,7 +353,12 @@ $(document).ready(function () {
             "pageLength": 20,
             "order": [[5, 'desc']],            
             "columns":[
-                {"data":"actualizarproser"},
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return data.actualizarproser+data.moduloPCL;
+                    }
+                },
                 {"data":"Nombre_Cliente"},
                 {"data":"Nombre_afiliado"},
                 {"data":"Nro_identificacion"},
@@ -324,13 +383,7 @@ $(document).ready(function () {
                 {"data":"Fecha_recepcion_doc"},
                 {"data":"Fecha_asignacion_calif"},
                 {"data":"Fecha_devolucion_comite"},
-                {"data":"F_accion"}
-                /* {
-                    data: null,
-                    render: function (data, type, row) {
-                        return data.campo + '  ' + data.campo2;
-                    }
-                },  */                
+                {"data":"F_accion"},
             ],
             "language":{                
                 "search": "Buscar",
@@ -391,6 +444,12 @@ $(document).ready(function () {
         //console.log(selectorbtnExcel);
         $('.'+selectorbtnExcel).click();
 
+    });
+
+    //Asignar ruta del formulario de modulo calificacion pcl
+    $(document).on('mouseover',"input[id^='modulo_califi_pcl_']", function(){
+        let url_editar_evento = $('#action_modulo_calificacion_pcl').val();
+        $("form[id^='form_modulo_calificacion_PCL_']").attr("action", url_editar_evento);    
     });
 
     // Función para eliminar el elemento del array al desmarcar checkbox

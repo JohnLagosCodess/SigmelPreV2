@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Coordinador;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\DB;
 //llamado de modelos para formulario BandejaPCL y captura de data
 use App\Models\sigmel_lista_procesos_servicios;
 use App\Models\cndatos_bandeja_pcls;
 use App\Models\cndatos_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
+use App\Models\User;
 use Illuminate\Support\Arr;
 
 class CoordinadorController extends Controller
@@ -35,6 +36,16 @@ class CoordinadorController extends Controller
     // Cargar selectores de Bandeja PCL
     public function cargueListadoSelectoresBandejaPCL(Request $request){
         $parametro = $request->parametro;
+        
+        if ($parametro == 'lista_profesional_pcl') {
+            
+            $listado_profesional_pcl = DB::table('users')->select('id', 'name')
+            ->whereRaw("FIND_IN_SET(2, id_procesos_usuario) > 0")->get();
+
+            $info_listado_profesional_PCL = json_decode(json_encode($listado_profesional_pcl, true));
+            return response()->json($info_listado_profesional_PCL);
+        }
+
         //Listado servicio calificacion PCL
         if($parametro == 'lista_servicios_pcl'){
             $listado_servicio_PCl = sigmel_lista_procesos_servicios::on('sigmel_gestiones')

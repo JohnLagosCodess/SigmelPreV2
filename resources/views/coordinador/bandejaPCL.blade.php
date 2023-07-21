@@ -25,11 +25,11 @@
     <div class="card-info PCLbandeja" style="border: 1px solid black;">
         <div class="card-header text-center">
             <h4>Bandeja PCL</h4>
-        </div>
-        <!-- Busqueda Filtros bandeja PCL -->
+            <input type="hidden" id="action_modulo_calificacion_pcl" value="{{ route('calificacionPCL') }}">
+        </div>        
         <form id="form_filtro_bandejaPcl" method="POST">
             @csrf
-            <div class="card-body">
+            <div class="card-body">                
                 <div class="row">
                     <div class="col-12">
                         <div class="row">
@@ -135,12 +135,6 @@
                                         <div class="form-group">
                                             <label for="profesional" class="col-form-label">Profesional</label>
                                             <select class="profesional custom-select" id="profesional">
-                                                <option value=""></option>
-                                                <option value="Oscar Daniel Camacho">Oscar Daniel Camacho</option>
-                                                <option value="Diego Fernando Martinez">Diego Fernando Martinez</option>
-                                                <option value="Joe Alexander Perez">Joe Alexander Perez</option>
-                                                <option value="Gloria Estela Regueros">Gloria Estela Regueros</option>
-                                                <option value="Johan Alzata Carrillo">Johan Alzata Carrillo</option>
                                             </select>
                                         </div>
                                     </div>

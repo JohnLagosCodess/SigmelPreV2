@@ -5,10 +5,12 @@ use App\Http\Controllers\Administrador\BuscarEventoController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Autenticacion\LoginController;
 use App\Http\Controllers\Autenticacion\LogoutController;
+use App\Http\Controllers\Coordinador\CalificacionPCLController;
 use App\Http\Controllers\Ingenieria\IngenieriaController;
 use App\Http\Controllers\ProbandoController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\Coordinador\CoordinadorController;
+use App\Http\Controllers\Coordinador\SolicitudDocumentoSeguimientosPCLController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -160,11 +162,11 @@ Route::post('/Sigmel/usuarios/actualizarMenu', [IngenieriaController::class, 'ac
 
 // 03/05/2023 - CRUD GRUPOS TRABAJO
 // Vista: Formulario para crear un nuevo grupo de trabajo
-Route::get('/Sigmel/RolAdministrador/NuevoGrupoTrabajo', [AdministradorController::class, 'mostrarVistaNuevoGrupoTrabajo'])->name('crearGruposTrabajo');
+Route::get('/Sigmel/RolAdministrador/NuevoGrupoTrabajo', [AdministradorController::class, 'mostrarVistaNuevoGrupoTrabajo'])->name('crearEquipoTrabajo');
 // Acción: Crear un nuevo grupo de trabajo
 Route::post('/Sigmel/RolAdministrador/CrearNuevoGrupo', [AdministradorController::class, 'guardar_grupo_trabajo'])->name('CrearNuevoGrupo');
 // Vista: Listar grupos de trabajo
-Route::get('/Sigmel/RolAdministrador/listarGruposTrabajo', [AdministradorController::class, 'mostrarVistaListarGruposTrabajo'])->name('listarGruposTrabajo');
+Route::get('/Sigmel/RolAdministrador/listarGruposTrabajo', [AdministradorController::class, 'mostrarVistaListarGruposTrabajo'])->name('listarEquiposTrabajo');
 // Vista: Formulario para editar un grupo de trabajo
 Route::post('/Sigmel/RolAdministrador/EditarGrupoTrabajo', [AdministradorController::class, 'mostrarVistaEditarGrupoTrabajo'])->name('EditarGrupoTrabajo');
 // Acción: Traer listado de lideres para edición grupo de trabajos para el selector de lideres para la edición js
@@ -260,6 +262,16 @@ Route::post('/filtrosBandejaPCL', [CoordinadorController::class, 'filtroBandejaP
 // Accion: Actualizar el profesional y redireccionar el servicio
 Route::post('/actualizarProfesionalServicio', [CoordinadorController::class, 'actualizarBandejaPCL']);
 
+// 14/07/2023
+// Vista: Módulo Calificación PCL Coordinador
+Route::post('/calificacionPCL', [CalificacionPCLController::class, 'mostrarVistaCalificacionPCL'])->name('calificacionPCL');
+Route::get('/calificacionPCL', [CalificacionPCLController::class, 'mostrarVistaCalificacionPCL'])->name('calificacionPCL');
+// Accion: Selectores Módulo calificación PCl
+Route::post('/selectoresModuloCalificacionPCL', [CalificacionPCLController::class, 'cargueListadoSelectoresModuloCalifcacionPcl']);
+// Accion: Registrar Califcación PCL
+Route::post('/registrarCalificacionPCL', [CalificacionPCLController::class, 'guardarCalificacionPCL'])->name('registrarCalificacionPCL');
+
+
 
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);
@@ -275,15 +287,6 @@ Route::post('/crearNuevoProceso', [BuscarEventoController::class, 'crearNuevoPro
 Route::post('/mantenerDatosBusquedaEvento', [BuscarEventoController::class, 'mantenerDatosBusquedaEvento']);
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
-
-
-
-
-
-// 28/06/2023
-// Vista: Bandeja PCL Coordinador
-Route::get('/Sigmel/RolCoordinador/BandejaPCL', [CoordinadorController::class, 'mostrarVistaBandejaPCL'])->name('bandejaPCL');
-
 
 
 Route::get('/Sigmel/pruebas', [ProbandoController::class, 'index']);
