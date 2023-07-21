@@ -185,7 +185,8 @@ $(document).ready(function(){
             // console.log(id_proceso_seleccionado);
             var datos_consulta_edicion = {
                 '_token': token,
-                'id_proceso_seleccionado': id_proceso_seleccionado
+                'id_proceso_seleccionado': id_proceso_seleccionado,
+                'id_proceso_borrar': id_proceso
             };
             
             $.ajax({
@@ -221,7 +222,7 @@ $(document).ready(function(){
                 'id_equipo_trabajo' : id_equipo_trabajo,
                 'id_proceso_seleccionado': id_proceso
             };
-          
+            
             $.ajax({
                 type:'POST',
                 url:'/listadoUsuariosAsignacion',

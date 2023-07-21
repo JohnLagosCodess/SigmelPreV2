@@ -110,7 +110,7 @@ class AdministradorController extends Controller
                 return back()->with('equipo_creado', 'Debe almenos seleccionar un lider para crear el equipo de trabajo.');
             }else{
 
-                // Se realiza el registro de un nuevo grupo de trabajo
+                // Se realiza el registro de un nuevo equipo de trabajo
                 $nuevo_equipo = array(
                     'nombre' => $request->nombre_equipo_trabajo,
                     'Id_proceso_equipo' => $request->proceso,
@@ -224,7 +224,8 @@ class AdministradorController extends Controller
         ->whereRaw("FIND_IN_SET($request->id_proceso_seleccionado, id_procesos_usuario) > 0")
         ->whereNotIn('id', $string_ids)->get();
 
-        $datos_usuarios_asignados = DB::table('users')->select('id', 'name', 'email', DB::raw("'selected' as seleccionado"))->whereIn('id', $string_ids)->get();
+        $datos_usuarios_asignados = DB::table('users')->select('id', 'name', 'email', DB::raw("'selected' as seleccionado"))
+        ->whereIn('id', $string_ids)->get();
 
         $info_usuarios_no_asignados = json_decode(json_encode($datos_usuarios_no_asignados), true);
         $info_usuarios_asignados = json_decode(json_encode($datos_usuarios_asignados), true);
@@ -302,11 +303,8 @@ class AdministradorController extends Controller
             
             sigmel_grupos_trabajos::on('sigmel_gestiones')->where('id', $id_equipo_trabajo)->update($actualizar_info_equipo);
             
-            $eliminar_ids_asignados = array();
-            if (count($ids_asignados_formulario) < count($id_asignados_orignales)) {
+            /* if (count($ids_asignados_formulario) < count($id_asignados_orignales)) {
                 $diferencia = array_diff($id_asignados_orignales, $ids_asignados_formulario);
-                // echo "borrar";
-
                 foreach ($diferencia as $key => $id_eliminar) {
                     sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')
                     ->where([
@@ -318,8 +316,6 @@ class AdministradorController extends Controller
     
             if (count($ids_asignados_formulario) > count($id_asignados_orignales)) {
                 $diferencia = array_diff($ids_asignados_formulario, $id_asignados_orignales);
-                // echo "insertar";
-
                 foreach ($diferencia as $key => $id_insertar) {
                     $asignar_usuarios = array(
                         'id_equipo_trabajo' => $id_equipo_trabajo,
@@ -328,6 +324,23 @@ class AdministradorController extends Controller
                     );
                     sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')->insert($asignar_usuarios);
                 }
+            } */
+
+            
+            sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')
+            ->where('id_equipo_trabajo', $id_equipo_trabajo)
+            ->delete();
+
+            for ($i=0; $i < count($ids_asignados_formulario); $i++) { 
+                $id_usuario_asignar = $ids_asignados_formulario[$i];
+                
+                $insertar_usuarios = array(
+                    'id_equipo_trabajo' => $id_equipo_trabajo,
+                    'id_usuarios_asignados' => $id_usuario_asignar,
+                    'created_at' => $date,
+                    'updated_at' => $date
+                );
+                sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')->insert($insertar_usuarios);
             }
 
             /* REGISTRO ACTIVIDAD PARA AUDITORIA */

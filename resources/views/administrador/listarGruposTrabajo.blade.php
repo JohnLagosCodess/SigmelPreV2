@@ -120,7 +120,7 @@
                                                         </div>
                                                         <hr>
                                                         <div id="mostrar_mensaje_act_equipo_{{$editar_info_equipo->id}}" class="alert mt-2 mr-auto d-none" role="alert"></div>
-                                                        <input type="submit" class="btn btn-info" value="Actualizar Información">
+                                                        <input type="submit" class="btn btn-info" value="Guardar Información">
                                                         <button type="button" id="btn_actualizar_consulta_{{$editar_info_equipo->id}}" class="btn btn-info mr-auto d-none">Actualizar</button>
                                                         <button type="button" class="btn btn-danger" style="float:right;" data-dismiss="modal">Cerrar</button>
                                                         <x-slot name="footerSlot">
