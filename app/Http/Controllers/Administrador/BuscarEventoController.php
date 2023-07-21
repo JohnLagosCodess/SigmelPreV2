@@ -97,6 +97,25 @@ class BuscarEventoController extends Controller
         
     }
 
+    // Traer listado de Profesionales acorde al proceso
+    public function ProfesionalesXProceso(Request $request){
+        // Si el usuario no ha iniciado, no podrá ingresar al sistema
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        // Traemos los lideres acorde a la selección del proceso
+        // DB::raw("SELECT id, name, email FROM users WHERE FIND_IN_SET($request->id_proceso_seleccionado, id_procesos_usuario)");
+        $datos_lideres_x_proceso = DB::table('users')
+        ->select("id", "name", "email")
+        ->whereRaw("FIND_IN_SET($request->id_proceso, id_procesos_usuario) > 0")
+        ->get();
+
+        $informacion_de_vuelta = json_decode(json_encode($datos_lideres_x_proceso), true);
+
+        return response()->json($informacion_de_vuelta);
+    }
+
     // Crear un nuevo servicio para el Evento seleccionado
     public function crearNuevoServicio(Request $request){
         
@@ -117,6 +136,14 @@ class BuscarEventoController extends Controller
         sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->where('Id_Asignacion', $request->tupla_servicio_escogido)
         ->update($actualizar_estado_bandera_nuevo_servicio);
 
+        if ($request->nuevo_profesional <> "") {
+            $id_profesional = $request->nuevo_profesional;
+            $nombre_profesional = $request->nombre_profesional;
+        }else{
+            $id_profesional = null;
+            $nombre_profesional = null;
+        }
+
         // Recopilación de datos para insertar el nuevo servicio
         $datos_nuevo_servicio = [
             'ID_evento' => $request->id_evento,
@@ -130,7 +157,8 @@ class BuscarEventoController extends Controller
             'Id_Estado_evento' => 1,
             'F_accion' => $request->nueva_fecha_accion,
             'F_radicacion' => $request->nueva_fecha_radicacion,
-            'Nombre_profesional' => $request->nuevo_profesional,
+            'Id_profesional' => $id_profesional,
+            'Nombre_profesional' => $nombre_profesional,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date
         ];
@@ -168,6 +196,14 @@ class BuscarEventoController extends Controller
         sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->where('Id_Asignacion', $request->tupla_proceso_escogido)
         ->update($actualizar_estado_bandera_nuevo_proceso);
 
+        if ($request->nuevo_profesional_nuevo_proceso <> "") {
+            $id_profesional = $request->nuevo_profesional_nuevo_proceso;
+            $nombre_profesional = $request->nombre_profesional_nuevo_proceso;
+        }else{
+            $id_profesional = null;
+            $nombre_profesional = null;
+        }
+
         $datos_nuevo_proceso = [
             'ID_evento' => $request->id_evento,
             'Id_proceso' => $request->selector_nuevo_proceso,
@@ -180,7 +216,8 @@ class BuscarEventoController extends Controller
             'Id_Estado_evento' => 1,
             'F_accion' => $request->nueva_fecha_accion_nuevo_proceso,
             'F_radicacion' => $request->fecha_radicacion_nuevo_proceso,
-            'Nombre_profesional' => $request->nuevo_profesional_nuevo_proceso,
+            'Id_profesional' => $id_profesional,
+            'Nombre_profesional' => $nombre_profesional,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date
         ];

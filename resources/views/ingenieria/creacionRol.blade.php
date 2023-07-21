@@ -10,11 +10,7 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            {{-- <a href="{{route("RolPrincipal")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
-            <a href="{{route('ListadoRoles')}}" class="btn btn-info"><i class="fas fa-list"></i> Consultar Lista de Roles</a>
-            <a href="{{route('AsignacionRol')}}" class="btn btn-info"><i class="far fa-address-card"></i> Asignar Roles a Usuarios</a>
-            <a href="{{route('ConsultarAsignacionRol')}}" class="btn btn-info"><i class="fas fa-list"></i> Consultar Asignación de Roles a Usuarios</a>
-            <br><br> --}}
+            <h5>Los campos marcados con <span style="color:red;">(*)</span> son obligatorios.</h5>
             <div class="card card-info">
                 <div class="card-header">
                     <h3>Formulario para Creación de Rol</h3>
@@ -28,15 +24,21 @@
                             </div>
                         @endif
                         <div class="form-group row">
-                            <label for="nombre_rol" class="col-sm-2 col-form-label">Nombre</label>
+                            <label for="nombre_rol" class="col-sm-2 col-form-label">Nombre del rol <span style="color:red;">(*)</span></label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" name="nombre_rol" id="nombre_rol" required>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="descripcion_rol" class="col-sm-2 col-form-label">Descripción (Opcional)</label>
+                            <label for="descripcion_rol" class="col-sm-2 col-form-label">Descripción del rol <span style="color:red;">(*)</span></label>
                             <div class="col-sm-10">
-                                <textarea class="form-control" name="descripcion_rol" id="descripcion_rol" rows="4"></textarea>
+                                <textarea class="form-control" name="descripcion_rol" id="descripcion_rol" rows="4" required></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Fecha de creación</label>
+                            <div class="col-sm-10">
+                                <input type="date" class="form-control" readonly value="<?php echo date('Y-m-d'); ?>">
                             </div>
                         </div>
                     </div>
@@ -47,4 +49,7 @@
             </div>
         </div>
     </div>
+@stop
+@section('js')
+    <script src="/js/funciones_helpers.js"></script>
 @stop

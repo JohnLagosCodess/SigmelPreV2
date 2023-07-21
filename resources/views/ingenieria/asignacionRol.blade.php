@@ -11,11 +11,7 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            {{-- <a href="{{route("RolPrincipal")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
-            <a href="{{route('NuevoRol')}}" class="btn btn-info"><i class="fas fa-plus"></i> Crear Rol</a>
-            <a href="{{route('ListadoRoles')}}" class="btn btn-info"><i class="fas fa-list"></i> Consultar Lista de Roles</a>
-            <a href="{{route('ConsultarAsignacionRol')}}" class="btn btn-info"><i class="fas fa-list"></i> Consultar Asignación de Roles a Usuarios</a>
-            <br><br> --}}
+            <h5>Los campos marcados con <span style="color:red;">(*)</span> son obligatorios.</h5>
             <div class="card card-info">
                 <div class="card-header">
                     <h3>Formulario para Asignación del Roles a Usuarios</h3>
@@ -34,19 +30,19 @@
                             </div>
                         @endif
                         <div class="form-group row">
-                            <label for="listado_todos_roles" class="col-sm-2 col-form-label">Seleccione un Rol</label>
-                            <div class="col-sm-10">
-                                <select id="listado_todos_roles" class="listado_todos_roles custom-select" name="listado_todos_roles" required></select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="listado_usuarios" class="col-sm-2 col-form-label">Seleccione un Usuario</label>
+                            <label for="listado_usuarios" class="col-sm-2 col-form-label">Seleccione un Usuario <span style="color:red;">(*)</span></label>
                             <div class="col-sm-10">
                                 <select id="listado_usuarios" class="listado_usuarios custom-select" name="listado_usuarios" required></select>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="estado_rol" class="col-sm-2 col-form-label">Seleccione un Estado</label>
+                            <label for="listado_todos_roles" class="col-sm-2 col-form-label">Seleccione un Rol <span style="color:red;">(*)</span></label>
+                            <div class="col-sm-10">
+                                <select id="listado_todos_roles" class="listado_todos_roles custom-select" name="listado_todos_roles" required></select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="estado_rol" class="col-sm-2 col-form-label">Seleccione un Estado <span style="color:red;">(*)</span></label>
                             <div class="col-sm-10">
                                 <select id="estado_rol" class="borde_selector_no_select_2 custom-select" name="estado_rol" required>
                                     <option value="" selected>Seleccione</option>
@@ -56,7 +52,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="tipo_rol" class="col-sm-2 col-form-label">Seleccione el Tipo de Rol</label>
+                            <label for="tipo_rol" class="col-sm-2 col-form-label">Seleccione el Tipo de Rol <span style="color:red;">(*)</span></label>
                             <div class="col-sm-10">
                                 <select id="tipo_rol" class=" borde_selector_no_select_2 custom-select" name="tipo_rol" required>
                                     <option value="" selected>Seleccione</option>

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('Id_Estado_evento')->nullable();
             $table->date('F_accion')->nullable();
             $table->date('F_radicacion')->nullable();
+            $table->integer('Id_profesional')->nullable();
             $table->text('Nombre_profesional')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');

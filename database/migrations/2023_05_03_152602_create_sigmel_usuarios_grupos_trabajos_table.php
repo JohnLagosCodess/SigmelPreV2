@@ -14,7 +14,7 @@ return new class extends Migration
 
         Schema::connection('sigmel_gestiones')->create('sigmel_usuarios_grupos_trabajos', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('id_grupo_trabajo');
+            $table->unsignedInteger('id_equipo_trabajo');
             $table->unsignedInteger('id_usuarios_asignados');
             $table->timestamps();
         });

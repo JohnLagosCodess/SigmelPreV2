@@ -65,7 +65,7 @@ class AdministradorController extends Controller
     }
 
     // TODO LO REFERENTE A LOS GRUPOS DE TRABAJO
-    public function mostrarVistaNuevoGrupoTrabajo(){
+    public function mostrarVistaNuevoEquipoTrabajo(){
         if(!Auth::check()){
             return redirect('/');
         }
@@ -73,7 +73,26 @@ class AdministradorController extends Controller
         return view('administrador.crearGruposTrabajo', compact('user'));
     }
 
-    public function guardar_grupo_trabajo(Request $request){
+
+    public function ListaLideresXProceso(Request $request){
+        // Si el usuario no ha iniciado, no podrá ingresar al sistema
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        // Traemos los lideres acorde a la selección del proceso
+        // DB::raw("SELECT id, name, email FROM users WHERE FIND_IN_SET($request->id_proceso_seleccionado, id_procesos_usuario)");
+        $datos_lideres_x_proceso = DB::table('users')
+        ->select("id", "name", "email")
+        ->whereRaw("FIND_IN_SET($request->id_proceso_seleccionado, id_procesos_usuario) > 0")
+        ->get();
+
+        $informacion_de_vuelta = json_decode(json_encode($datos_lideres_x_proceso), true);
+
+        return response()->json($informacion_de_vuelta);
+    }
+
+    public function guardar_equipo_trabajo(Request $request){
 
         if(!Auth::check()){
             return redirect('/');
@@ -83,67 +102,81 @@ class AdministradorController extends Controller
         
         
 
-        if (empty($request->listado_usuarios_grupo)) {
-            return back()->with('grupo_no_creado', 'Debe almenos seleccionar un usuario para crear un grupo de trabajo.');
+        if (empty($request->listado_usuarios_equipo)) {
+            return back()->with('equipo_creado', 'Debe almenos seleccionar un usuario para crear el equipo de trabajo.');
         }else{
 
-            // Se realiza el registro de un nuevo grupo de trabajo
-            $nuevo_grupo = array(
-                'nombre' => $request->nombre_grupo_trabajo,
-                'lider' => $request->listado_lider,
-                'estado' => $request->estado_grupo,
-                'observacion' => $request->observacion_grupo_trabajo,
-                'created_at' => $date
-            );
+            if ($request->listado_lider == "") {
+                return back()->with('equipo_creado', 'Debe almenos seleccionar un lider para crear el equipo de trabajo.');
+            }else{
 
-            
-            sigmel_grupos_trabajos::on('sigmel_gestiones')->insert($nuevo_grupo);
-
-            $id_grupo_trabajo = sigmel_grupos_trabajos::on('sigmel_gestiones')->select('id')->latest('id')->first();
-
-            for ($i=0; $i < count($request->listado_usuarios_grupo); $i++) { 
-                $id_usuario_asignar = $request->listado_usuarios_grupo[$i];
-
-                $asignar_usuarios = array(
-                    'id_grupo_trabajo' => $id_grupo_trabajo['id'],
-                    'id_usuarios_asignados' => $id_usuario_asignar,
+                // Se realiza el registro de un nuevo equipo de trabajo
+                $nuevo_equipo = array(
+                    'nombre' => $request->nombre_equipo_trabajo,
+                    'Id_proceso_equipo' => $request->proceso,
+                    'lider' => $request->listado_lider,
+                    'estado' => $request->estado_equipo,
+                    'descripcion' => $request->descripcion_equipo_trabajo,
                     'created_at' => $date
                 );
-                sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')->insert($asignar_usuarios);
+    
+                
+                sigmel_grupos_trabajos::on('sigmel_gestiones')->insert($nuevo_equipo);
+    
+                $id_equipo_trabajo = sigmel_grupos_trabajos::on('sigmel_gestiones')->select('id')->latest('id')->first();
+    
+                for ($i=0; $i < count($request->listado_usuarios_equipo); $i++) { 
+                    $id_usuario_asignar = $request->listado_usuarios_equipo[$i];
+    
+                    $asignar_usuarios = array(
+                        'id_equipo_trabajo' => $id_equipo_trabajo['id'],
+                        'id_usuarios_asignados' => $id_usuario_asignar,
+                        'created_at' => $date
+                    );
+                    sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')->insert($asignar_usuarios);
+                }
+    
+    
+                /* REGISTRO ACTIVIDAD PARA AUDITORIA */
+                $accion_realizada = "Registro de Grupo de Trabajo N° {$id_equipo_trabajo['id']}";
+                $registro_actividad = [
+                    'id_usuario_sesion' => Auth::id(),
+                    'nombre_usuario_sesion' => Auth::user()->name,
+                    'email_usuario_sesion' => Auth::user()->email,
+                    'acccion_realizada' => $accion_realizada,
+                    'fecha_registro_accion' => $date
+                ];
+                
+                sigmel_auditorias_gr_trabajos::on('sigmel_auditorias')->insert($registro_actividad);
+    
+                return back()->with('equipo_creado', 'Equipo de trabajo creado correctamente.');
             }
 
-
-            /* REGISTRO ACTIVIDAD PARA AUDITORIA */
-            $accion_realizada = "Registro de Grupo de Trabajo N° {$id_grupo_trabajo['id']}";
-            $registro_actividad = [
-                'id_usuario_sesion' => Auth::id(),
-                'nombre_usuario_sesion' => Auth::user()->name,
-                'email_usuario_sesion' => Auth::user()->email,
-                'acccion_realizada' => $accion_realizada,
-                'fecha_registro_accion' => $date
-            ];
-            
-            sigmel_auditorias_gr_trabajos::on('sigmel_auditorias')->insert($registro_actividad);
-
-            return back()->with('grupo_creado', 'Grupo de trabajo creado correctamente.');
 
         }
 
     }
 
-    public function mostrarVistaListarGruposTrabajo(){
+    public function mostrarVistaListarEquiposTrabajo(){
         if(!Auth::check()){
             return redirect('/');
         }
         $user = Auth::user();
-        $listado_grupos_trabajo = sigmel_grupos_trabajos::on('sigmel_gestiones')
-                                ->select('id', 'lider', 'nombre', 'estado', 'created_at', 'updated_at')->get();
-
+        $listado_equipos_trabajo = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_grupos_trabajos as sgt')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slps', 'sgt.Id_proceso_equipo', '=', 'slps.Id_proceso')
+        ->leftJoin('sigmel_sys.users as u', 'sgt.lider', '=', 'u.id')
+        ->select("sgt.id", "slps.Id_proceso", "slps.Nombre_proceso", "sgt.nombre as Nombre_equipo", "sgt.lider", "u.name as Nombre_lider", "u.email as Correo_lider", "sgt.estado", "sgt.descripcion","sgt.created_at")
+        ->groupBy("sgt.id")
+        ->get();
         
-        return view('administrador.listarGruposTrabajo', compact('user', 'listado_grupos_trabajo'));
+        $conteo_activos_inactivos = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_grupos_trabajos')
+        ->select(DB::raw("COUNT(IF(estado = 'activo', 1, NULL)) AS 'Activos'"), DB::raw("COUNT(IF(estado = 'inactivo', 1, NULL)) AS 'Inactivos'"))
+        ->get();
+        
+        return view('administrador.listarGruposTrabajo', compact('user', 'listado_equipos_trabajo', 'conteo_activos_inactivos'));
     }
 
-    public function mostrarVistaEditarGrupoTrabajo(Request $request){
+    public function mostrarVistaEditarEquipoTrabajo(Request $request){
         if(!Auth::check()){
             return redirect('/');
         }
@@ -152,7 +185,7 @@ class AdministradorController extends Controller
         $lider = $request->lider;
 
         $info_selector_lider = DB::table('users')->select('id', 'name', 'email')->where('id', $lider)->get();
-        $info_grupo_trabajo = sigmel_grupos_trabajos::on('sigmel_gestiones')->select('id', 'nombre', 'estado', 'observacion')
+        $info_grupo_trabajo = sigmel_grupos_trabajos::on('sigmel_gestiones')->select('id', 'nombre', 'estado', 'descripcion')
                               ->where('id', $id)->get();
 
         return view('administrador.editarGrupoTrabajo', compact('user', 'info_selector_lider', 'info_grupo_trabajo'));
@@ -168,18 +201,18 @@ class AdministradorController extends Controller
         $informacion_usuario = json_decode(json_encode($datos), true);
         return response()->json($informacion_usuario);
     }
-
+    // MAURO
     public function listadoUsuariosAsignacion (Request $request){
         // Si el usuario no ha iniciado, no podrá ingresar al sistema
         if(!Auth::check()){
             return redirect('/');
         }
         
-        $id_grupo_trabajo = $request->id_grupo_trabajo;
+        $id_equipo_trabajo = $request->id_equipo_trabajo;
 
         $ids_usuarios_asignados =  sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')
                                     ->select('id_usuarios_asignados')
-                                    ->where('id_grupo_trabajo', $id_grupo_trabajo)->get();
+                                    ->where('id_equipo_trabajo', $id_equipo_trabajo)->get();
 
         $string_ids = array();
         for ($i=0; $i < count($ids_usuarios_asignados); $i++) { 
@@ -187,9 +220,12 @@ class AdministradorController extends Controller
             array_push($string_ids, $ids_usuarios_asignados[$i]->id_usuarios_asignados);
         }
 
-        $datos_usuarios_no_asignados = DB::table('users')->select('id', 'name', 'email', DB::raw("'no' as seleccionado"))->whereNotIn('id', $string_ids)->get();
+        $datos_usuarios_no_asignados = DB::table('users')->select('id', 'name', 'email', DB::raw("'no' as seleccionado"))
+        ->whereRaw("FIND_IN_SET($request->id_proceso_seleccionado, id_procesos_usuario) > 0")
+        ->whereNotIn('id', $string_ids)->get();
 
-        $datos_usuarios_asignados = DB::table('users')->select('id', 'name', 'email', DB::raw("'selected' as seleccionado"))->whereIn('id', $string_ids)->get();
+        $datos_usuarios_asignados = DB::table('users')->select('id', 'name', 'email', DB::raw("'selected' as seleccionado"))
+        ->whereIn('id', $string_ids)->get();
 
         $info_usuarios_no_asignados = json_decode(json_encode($datos_usuarios_no_asignados), true);
         $info_usuarios_asignados = json_decode(json_encode($datos_usuarios_asignados), true);
@@ -217,7 +253,7 @@ class AdministradorController extends Controller
         return response()->json($listado_todos_usuarios);
     }
 
-    public function editar_grupo_trabajo(Request $request){
+    public function editar_equipo_trabajo(Request $request){
         // Si el usuario no ha iniciado, no podrá ingresar al sistema
         if(!Auth::check()){
             return redirect('/');
@@ -226,11 +262,11 @@ class AdministradorController extends Controller
         $time = time();
         $date = date("Y-m-d h:i:s", $time);
         
-        $id_grupo_trabajo = $request->id_grupo_trabajo;
+        $id_equipo_trabajo = $request->id_equipo_trabajo;
 
         $ids_usuarios_asignados =  sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')
                                     ->select('id_usuarios_asignados')
-                                    ->where('id_grupo_trabajo', $id_grupo_trabajo)->get();
+                                    ->where('id_equipo_trabajo', $id_equipo_trabajo)->get();
                                     
         
         $id_asignados_orignales = [];
@@ -238,41 +274,41 @@ class AdministradorController extends Controller
             $id_asignados_orignales [] = $ids_usuarios_asignados[$i]->id_usuarios_asignados;
         }
 
-        $ids_asignados_formulario = $request->editar_listado_usuarios_grupo;
+        $ids_asignados_formulario = $request->editar_listado_usuarios_equipo;
 
         if (empty($ids_asignados_formulario)) {
-            $msg = 'No puede eliminar todos los usuarios del grupo.';
-            return redirect()->route('listarGruposTrabajo')->with('grupo_no_editado', $msg);
+            $mensajes = array(
+                "parametro" => 'fallo',
+                "mensaje" => 'No puede eliminar todos los usuarios del grupo.'
+            );
+            return json_decode(json_encode($mensajes, true));
+
         } else {
 
-            if($request->editar_observacion_grupo_trabajo <> ""){
-                $observacion = $request->editar_observacion_grupo_trabajo;
+            if($request->editar_descripcion_equipo_trabajo <> ""){
+                $descripcion_final = $request->editar_descripcion_equipo_trabajo;
             }else{
-                $observacion = null;
+                $descripcion_final = null;
             }
 
             // Se realiza la actualización de la información del grupo de trabajo
-            $actualizar_info_grupo = array(
-                'nombre' => $request->editar_nombre_grupo_trabajo,
+            $actualizar_info_equipo = array(
+                'Id_proceso_equipo' => $request->editar_proceso,
+                'nombre' => $request->editar_nombre_equipo_trabajo,
                 'lider' => $request->editar_listado_lider,
-                'estado' => $request->editar_estado_grupo,
-                'observacion' => $observacion,
+                'estado' => $request->editar_estado_equipo,
+                'descripcion' => $descripcion_final,
                 'updated_at' => $date
             );
             
-            sigmel_grupos_trabajos::on('sigmel_gestiones')
-            ->where('id', $id_grupo_trabajo)
-            ->update($actualizar_info_grupo);
+            sigmel_grupos_trabajos::on('sigmel_gestiones')->where('id', $id_equipo_trabajo)->update($actualizar_info_equipo);
             
-            $eliminar_ids_asignados = array();
-            if (count($ids_asignados_formulario) < count($id_asignados_orignales)) {
+            /* if (count($ids_asignados_formulario) < count($id_asignados_orignales)) {
                 $diferencia = array_diff($id_asignados_orignales, $ids_asignados_formulario);
-                // echo "borrar";
-
                 foreach ($diferencia as $key => $id_eliminar) {
                     sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')
                     ->where([
-                        ['id_grupo_trabajo', $id_grupo_trabajo],
+                        ['id_equipo_trabajo', $id_equipo_trabajo],
                         ['id_usuarios_asignados', $id_eliminar]
                     ])->delete();
                 }
@@ -280,20 +316,35 @@ class AdministradorController extends Controller
     
             if (count($ids_asignados_formulario) > count($id_asignados_orignales)) {
                 $diferencia = array_diff($ids_asignados_formulario, $id_asignados_orignales);
-                // echo "insertar";
-
                 foreach ($diferencia as $key => $id_insertar) {
                     $asignar_usuarios = array(
-                        'id_grupo_trabajo' => $id_grupo_trabajo,
+                        'id_equipo_trabajo' => $id_equipo_trabajo,
                         'id_usuarios_asignados' => $id_insertar,
                         'created_at' => $date
                     );
                     sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')->insert($asignar_usuarios);
                 }
+            } */
+
+            
+            sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')
+            ->where('id_equipo_trabajo', $id_equipo_trabajo)
+            ->delete();
+
+            for ($i=0; $i < count($ids_asignados_formulario); $i++) { 
+                $id_usuario_asignar = $ids_asignados_formulario[$i];
+                
+                $insertar_usuarios = array(
+                    'id_equipo_trabajo' => $id_equipo_trabajo,
+                    'id_usuarios_asignados' => $id_usuario_asignar,
+                    'created_at' => $date,
+                    'updated_at' => $date
+                );
+                sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')->insert($insertar_usuarios);
             }
 
             /* REGISTRO ACTIVIDAD PARA AUDITORIA */
-            $accion_realizada = "Edición de Grupo de Trabajo N° {$id_grupo_trabajo}";
+            $accion_realizada = "Edición de Grupo de Trabajo N° {$id_equipo_trabajo}";
             $registro_actividad = [
                 'id_usuario_sesion' => Auth::id(),
                 'nombre_usuario_sesion' => Auth::user()->name,
@@ -304,8 +355,11 @@ class AdministradorController extends Controller
             
             sigmel_auditorias_gr_trabajos::on('sigmel_auditorias')->insert($registro_actividad);
 
-            $msg = 'Información actualizada correctamente';
-            return redirect()->route('listarGruposTrabajo')->with('grupo_editado', $msg);
+            $mensajes = array(
+                "parametro" => 'exito',
+                "mensaje" => 'Información de equipo de trabajo actualizada satisfactoriamente. Para visualizar los cambios debe hacer clic en el botón Actualizar.'
+            );
+            return json_decode(json_encode($mensajes, true));
 
         }
         
@@ -871,6 +925,47 @@ class AdministradorController extends Controller
             return response()->json(($info_listado_proceso));
         }
 
+        /* LISTADO DE PROCESOS PARA LA EDICICIÓN DE USUARIO(MODAL FORMULARIO EDICIÓN USUARIO) */
+        if($parametro == 'listado_proceso_edicion_usuario'){
+
+            $ids_procesos_usuario = $request->id_procesos;
+            $arreglo_id_procesos_usuario = explode(",", $ids_procesos_usuario);
+
+            /* SE TRAE LA LISTA DE LOS PROCESOS QUE LE FUERON ASIGNADOS AL USUARIO */
+            $listado_procesos_usuario = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            ->select('Id_proceso', 'Nombre_proceso', DB::raw("'si' as seleccionado"))
+            ->where('Estado', 'activo')
+            ->whereIn('Id_proceso', $arreglo_id_procesos_usuario)
+            ->distinct()
+            ->get();
+
+            $info_procesos_usuario = json_decode(json_encode($listado_procesos_usuario, true));
+            // echo "<pre>";
+            // print_r($info_procesos_usuario);
+            // echo "</pre>";
+
+            /* SE TRAE LA LISTA DE TODOS LOS PROCESOS A EXCEPCION DE LOS QUE LE FUERON ASIGNADOS AL USUARIO */
+            $listado_procesos_faltantes = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            ->select('Id_proceso', 'Nombre_proceso', DB::raw("'no' as seleccionado"))
+            ->where('Estado', 'activo')
+            ->whereNotIn('Id_proceso', $arreglo_id_procesos_usuario)
+            ->distinct()
+            ->get();
+
+            $info_procesos_faltantes = json_decode(json_encode($listado_procesos_faltantes, true));
+            // echo "<pre>";
+            // print_r($info_procesos_faltantes);
+            // echo "</pre>";
+
+            $array_info_final = array_merge($info_procesos_usuario, $info_procesos_faltantes);
+            // echo "<pre>";
+            // print_r($array_info_final);
+            // echo "</pre>";
+
+            return response()->json(($array_info_final));
+
+        }
+
         /* LISTADO SERVICIOS */
         if ($parametro == 'listado_servicios') {
             $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
@@ -1013,6 +1108,20 @@ class AdministradorController extends Controller
             $info_listado_accion= json_decode(json_encode($listado_accion, true));
             return response()->json(($info_listado_accion));
         }
+
+        /* LISTADO DE PROCESOS PARA EL FORMULARIO DE EDICIÓN DE EQUIPO DE TRABAJO (MODAL EDICIÓN EQUIPO DE TRABAJO) */
+        if ($parametro == 'listado_proceso_edicion_equipo') {
+            $listado_procesos_edicion_equipo = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                ->select('Id_proceso', 'Nombre_proceso')
+                ->where('Estado', 'activo')
+                // ->whereNotIn('Id_proceso', [$request->id_proceso])
+                ->groupBy('Id_proceso','Nombre_proceso')
+                ->get();
+
+            $info_listado_procesos_edicion_equipo = json_decode(json_encode($listado_procesos_edicion_equipo, true));
+            return response()->json(($info_listado_procesos_edicion_equipo));
+        }
+
 
     }
     

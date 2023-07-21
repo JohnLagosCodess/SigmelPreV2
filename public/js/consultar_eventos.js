@@ -340,7 +340,8 @@ $(document).ready(function () {
                                         <div class="form-group row">\
                                             <label for="" class="col-sm-3 col-form-label">Profesional</label>\
                                             <div class="col-sm-9">\
-                                                <input type="text" readonly class="form-control" name="nuevo_profesional" id="nuevo_profesional_'+id_evento_nuevo_servicio+'" value="Nombre Profesional">\
+                                                <select class="nuevo_profesional_'+id_evento_nuevo_servicio+' custom-select" name="nuevo_profesional" id="nuevo_profesional_'+id_evento_nuevo_servicio+'" style="width:100%;"></select>\
+                                                <strong class="mensaje_no_hay_profesionales_servicio text-danger text-sm d-none" role="alert">No hay usuarios relacionados al proceso seleccionado.</strong>\
                                             </div>\
                                         </div>\
                                         <div class="form-group row">\
@@ -453,7 +454,43 @@ $(document).ready(function () {
     
             }
         });
+
+        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO PROFESIONALES DEPENDIENDO DEL PROCESO. */
+        $("select[id^='nuevo_profesional_']").select2({
+            placeholder: "Seleccione una opción",
+            allowClear: false
+        });
+
+        let selector_nuevo_profesional = $('.renderizar_nuevo_servicio').find("select[id^='nuevo_profesional_']").attr("id");
+
+        let datos_listado_profesionales_proceso = {
+            '_token': token,
+            'id_proceso' : id_proceso_actual,
+        };
+
+        // CARGUE DE PROFESIONALES ACORDE AL PROCESO.
+        $.ajax({
+            type:'POST',
+            url:'/ProfesionalesXProceso',
+            data: datos_listado_profesionales_proceso,
+            success:function(data) {
+                if (data.length > 0) {
+                    $("#"+selector_nuevo_profesional).empty();
+                    $("#"+selector_nuevo_profesional).append('<option value="" selected>Seleccione</option>');
         
+                    let claves = Object.keys(data);
+                    for (let i = 0; i < claves.length; i++) {
+                        $("#"+selector_nuevo_profesional).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["name"]+'</option>');
+                    }
+                    
+                    $('.mensaje_no_hay_profesionales_servicio').addClass("d-none");
+                }else{
+                    $('.mensaje_no_hay_profesionales_servicio').removeClass("d-none");
+                }
+            }
+        });
+
+
 
     });
 
@@ -546,8 +583,11 @@ $(document).ready(function () {
         let tupla_servicio_escogido = $('.renderizar_nuevo_servicio').find("input[id^='tupla_servicio_evento_']").val();
         let token = $("input[name='_token']").val();
 
+        let nombre_profesional_escogido = $('.renderizar_nuevo_servicio').find("select[id^='nuevo_profesional_'] option:selected").text();
+
         let datos_nuevo_servicio = {
             '_token': token,
+            'nombre_profesional': nombre_profesional_escogido,
             'id_evento': nro_evento,
             'tupla_servicio_escogido': tupla_servicio_escogido
         };
@@ -606,6 +646,9 @@ $(document).ready(function () {
             }         
         });
     })
+
+
+
 
     /* CREACIÓN Y AGREGACIÓN DEL MODAL NUEVO PROCESO AL CONTENEDOR DE REDENRIZAMIENTO */
     $(document).on('mouseover', "a[id^='btn_nuevo_proceso_']", function(){
@@ -672,7 +715,8 @@ $(document).ready(function () {
                                         <div class="form-group row">\
                                             <label for="" class="col-sm-3 col-form-label">Profesional</label>\
                                             <div class="col-sm-9">\
-                                                <input type="text" readonly class="form-control" name="nuevo_profesional_nuevo_proceso" id="nuevo_profesional_nuevo_proceso_'+id_evento_nuevo_proceso+'" value="Nombre Profesional">\
+                                                <select class="nuevo_profesional_nuevo_proceso_'+id_evento_nuevo_proceso+' custom-select" name="nuevo_profesional_nuevo_proceso" id="nuevo_profesional_nuevo_proceso_'+id_evento_nuevo_proceso+'" style="width:100%;"></select>\
+                                                <strong class="mensaje_no_hay_profesionales_proceso text-danger text-sm d-none" role="alert">No hay usuarios relacionados al proceso seleccionado.</strong>\
                                             </div>\
                                         </div>\
                                         <div class="form-group row">\
@@ -784,10 +828,17 @@ $(document).ready(function () {
     
             }
         });
+
+
+        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO PROFESIONALES DEPENDIENDO DEL PROCESO. */
+        $("select[id^='nuevo_profesional_nuevo_proceso_']").select2({
+            placeholder: "Seleccione una opción",
+            allowClear: false
+        });
         
     });
 
-    /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Servicios que dependen del proceso. */
+    /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Servicios y Profesionales que dependen del proceso. */
     $(document).on('change', "select[id^='selector_nuevo_proceso_']", function(){
         let id_servicio_actual_nuevo_proceso = $('.renderizar_nuevo_proceso').find("input[id^='id_servicio_actual_']").val();
         let nro_evento_nuevo_proceso = $('.renderizar_nuevo_proceso').find("input[id^='nro_evento_nuevo_proceso_']").val();
@@ -795,6 +846,7 @@ $(document).ready(function () {
         let id_proceso_escogido = $(this).val();
 
         var selector_nuevo_servicio = $('.renderizar_nuevo_proceso').find("select[id^='selector_nuevo_servicio_']").attr("id");
+        let selector_nuevo_profesional_nuevo_proceso = $('.renderizar_nuevo_proceso').find("select[id^='nuevo_profesional_nuevo_proceso_']").attr("id");
 
         let datos_listado_servicios_nuevo_proceso = {
             '_token': token,
@@ -815,6 +867,32 @@ $(document).ready(function () {
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
                     $("#"+selector_nuevo_servicio).append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
+                }
+            }
+        });
+
+        let datos_listado_profesionales_proceso = {
+            '_token': token,
+            'id_proceso' : id_proceso_escogido,
+        };
+
+        // CARGUE DE PROFESIONALES ACORDE AL PROCESO.
+        $.ajax({
+            type:'POST',
+            url:'/ProfesionalesXProceso',
+            data: datos_listado_profesionales_proceso,
+            success:function(data) {
+                if (data.length > 0) {
+                    $("#"+selector_nuevo_profesional_nuevo_proceso).empty();
+                    $("#"+selector_nuevo_profesional_nuevo_proceso).append('<option value="" selected>Seleccione</option>');
+        
+                    let claves = Object.keys(data);
+                    for (let i = 0; i < claves.length; i++) {
+                        $("#"+selector_nuevo_profesional_nuevo_proceso).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["name"]+'</option>');
+                    }
+                    $('.mensaje_no_hay_profesionales_proceso').addClass("d-none");
+                }else{
+                    $('.mensaje_no_hay_profesionales_proceso').removeClass("d-none");
                 }
             }
         });
@@ -968,8 +1046,11 @@ $(document).ready(function () {
         let tupla_proceso_escogido = $('.renderizar_nuevo_proceso').find("input[id^='tupla_proceso_evento_']").val();
         let token = $("input[name='_token']").val();
 
+        let nombre_profesional_escogido = $('.renderizar_nuevo_proceso').find("select[id^='nuevo_profesional_nuevo_proceso_'] option:selected").text();
+
         let datos_nuevo_proceso = {
             "_token": token,
+            'nombre_profesional_nuevo_proceso': nombre_profesional_escogido,
             "id_evento": nro_evento_nuevo_proceso,
             "tupla_proceso_escogido": tupla_proceso_escogido
         };

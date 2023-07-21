@@ -14,10 +14,11 @@ return new class extends Migration
  
         Schema::connection('sigmel_gestiones')->create('sigmel_grupos_trabajos', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nombre', 150);
+            $table->unsignedInteger('Id_proceso_equipo');
+            $table->text('nombre');
             $table->unsignedInteger('lider');
             $table->enum('estado', ['activo', 'inactivo'])->default('activo');
-            $table->text('observacion')->nullable();
+            $table->text('descripcion');
             $table->timestamps();
         });
     }
