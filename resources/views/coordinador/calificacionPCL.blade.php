@@ -125,8 +125,9 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
-                                                    <label for="servicio">Servicio</label>
-                                                    <input type="text" class="form-control" name="servicio" id="servicio" value="{{$array_datos_calificacionPcl[0]->Nombre_servicio}}" disabled>
+                                                    <label for="servicio">Servicio</label><br>
+                                                    <a href="#" id="servicio_Pcl"><i class="fa fa-puzzle-piece text-info"></i> <strong class="text-dark">{{$array_datos_calificacionPcl[0]->Nombre_servicio}}</strong></a>
+                                                    <input type="hidden" class="form-control" name="servicio" id="servicio" value="{{$array_datos_calificacionPcl[0]->Nombre_servicio}}">
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -180,7 +181,7 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="tipo_profesional_calificador">Tipo Profesional calificador</label>
-                                                    <input type="text" class="form-control" name="tipo_profesional_calificador" id="tipo_profesional_calificador" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                                    <input type="text" class="form-control" name="tipo_profesional_calificador" id="tipo_profesional_calificador" value="{{$array_datos_calificacionPcl[0]->Tipo_Profesional_calificador}}" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -207,6 +208,12 @@
                                                     <select class="custom-select" name="modalidad_calificacion" id="modalidad_calificacion" required>
                                                         <option value="{{$array_datos_calificacionPcl[0]->Modalidad_calificacion}}" selected>{{$array_datos_calificacionPcl[0]->Nombre_Modalidad_calificacion}}</option>                                                 
                                                     </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="modalidad_calificacion">Documentos adjuntos</label><br>
+                                                    <a href="javascript:void(0);" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -259,7 +266,7 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="fecha_alerta">Fecha de alerta</label>
-                                                    <input type="date" class="form-control" name="fecha_alerta" id="fecha_alerta" min="{{now()->format('Y-m-d')}}" value="{{$array_datos_calificacionPcl[0]->F_Alerta_accion}}">
+                                                    <input type="date" class="form-control" name="fecha_alerta" id="fecha_alerta" min="{{now()->format('Y-m-d')}}" value="{{$array_datos_calificacionPcl[0]->F_alerta}}">
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -295,42 +302,56 @@
             <div class="card-footer">
                 <div class="grupo_botones" style="float: left;">
                     <input type="reset" id="Borrar" class="btn btn-info" value="Restablecer">
-                    <input type="submit" id="Edicion" class="btn btn-info" value="Guardar" onclick="OcultarbotonGuardar()">
+                    @if (empty($array_datos_calificacionPcl[0]->Nombre_Modalidad_calificacion))
+                        <input type="submit" id="Edicion" class="btn btn-info" value="Guardar" onclick="OcultarbotonGuardar()">
+                        <input type="hidden" name="bandera_accion_guardar_actualizar" value="Guardar">
+                    @else 
+                        <input type="submit" id="Edicion" class="btn btn-info" value="Actualizar" onclick="OcultarbotonGuardar()">
+                        <input type="hidden" name="bandera_accion_guardar_actualizar" value="Actualizar">
+                    @endif                    
                 </div>
                 <div class="text-center" id="mostrar-barra2"  style="display:none;">                                
                     <button class="btn btn-info" type="button" disabled>
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                        Guardando Calificación PCl...
+                        Guardando/Actualizando Calificación PCl...
                     </button>
                 </div>
             </div>           
         </form>
-    </div>
-    {{-- Modal solicitud documentos - seguimientos --}}
-    <div class="row">
-        <div class="contenedor_sol_Docuementos_seguimiento" style="float: left;">
-            <x-adminlte-modal id="modalSolicitudDocSeguimiento" title="Solicitud Documentos - Seguimientos" theme="info" icon="fas fa-book-open" size='xl' disable-animations>
-                <form id="formulario_empresa">
-                    @csrf
-                    <div class="row text-center">
-                        
-                    </div>
-                    <div class="container">
-                        
-                    </div>
-                    <x-slot name="footerSlot">
-                        <x-adminlte-button class="mr-auto" id="guardar_otra_empresa" theme="info" label="Guardar"/>
-                        <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
-                    </x-slot>
-                </form>
-            </x-adminlte-modal>
+        {{-- Modal solicitud documentos - seguimientos --}}
+        <div class="row">
+            <div class="contenedor_sol_Docuementos_seguimiento" style="float: left;">
+                <x-adminlte-modal id="modalSolicitudDocSeguimiento" title="Solicitud Documentos - Seguimientos" theme="info" icon="fas fa-book-open" size='xl' disable-animations>
+                    <form id="formulario_empresa">
+                        @csrf
+                        <div class="row text-center">
+                            
+                        </div>
+                        <div class="container">
+                            
+                        </div>
+                        <x-slot name="footerSlot">
+                            <x-adminlte-button class="mr-auto" id="guardar_otra_empresa" theme="info" label="Guardar"/>
+                            <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
+                        </x-slot>
+                    </form>
+                </x-adminlte-modal>
+            </div>
         </div>
-    </div>
+        {{-- Modal para agregar documentos adjuntos --}}
+        <?php $aperturaModal = 'Edicion'; ?>
+        @include('administrador.modalcarguedocumentos')      
+        <?php 
+        /* echo'<pre>';
+        print_r($arraylistado_documentos) ;
+        echo'</pre>'; */
+        ?>
+    </div>    
 @stop
 @section('js')
 
     <script src="/js/calificacionpcl.js"></script>
-
+    
     <script>
         //funcion para habilitar el historial de acciones
         function historialDeAcciones() {
