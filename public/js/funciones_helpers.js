@@ -97,6 +97,16 @@ $(document).ready(function () {
         $(this).val(LetraMayusCadaPalabra(textoEscrito));
     });
 
+    /* INPUTS Y TEXT AREAS DEL MODAL Solicitud Documentos - Seguimientos Módulo Calificación PCL*/
+    $(document).on('keyup', "input[id^='nombre_otro_doc_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusCadaPalabra(textoEscrito));
+    });
+    $(document).on('keyup', "textarea[id^='descripcion_fila_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusCadaPalabra(textoEscrito));
+    });
+
     /* Función para colocar la primera letra en mayúscula de cada palabra que se escriba */
     function LetraMayusCadaPalabra(textoEscrito) {
         var palabras = textoEscrito.split(' ');

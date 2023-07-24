@@ -275,6 +275,8 @@ Route::get('/calificacionPCL', [CalificacionPCLController::class, 'mostrarVistaC
 Route::post('/selectoresModuloCalificacionPCL', [CalificacionPCLController::class, 'cargueListadoSelectoresModuloCalifcacionPcl']);
 // Accion: Registrar Califcación PCL
 Route::post('/registrarCalificacionPCL', [CalificacionPCLController::class, 'guardarCalificacionPCL'])->name('registrarCalificacionPCL');
+// Acción: Traer listado de documentos solicitados para el selector de documentos solicitados (Modal Solicitud de Documentos Seguimientos)
+Route::post('/CargarDocsSolicitados', [CalificacionPCLController::class, 'CargarDocsSolicitados']);
 
 
 

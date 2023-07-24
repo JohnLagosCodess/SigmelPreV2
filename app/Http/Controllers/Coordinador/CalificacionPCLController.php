@@ -119,6 +119,24 @@ class CalificacionPCLController extends Controller
         
     }
 
+    // Cargue de listado de Documentos Solicitados para el modal Solicitud Documentos-Seguimientos
+    public function CargarDocsSolicitados(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $parametro = $request->parametro;
+
+        if ($parametro == 'listado_documentos_solicitados') {
+            $datos_docs_solicitados = sigmel_lista_documentos::on('sigmel_gestiones')
+            ->select('Id_Documento', 'Nro_documento', 'Nombre_documento')
+            ->whereIn('Nro_documento', [4,31,9,28,29,30,37])->get();
+
+            $informacion_docs_solicitados = json_decode(json_encode($datos_docs_solicitados), true);
+            return response()->json($informacion_docs_solicitados);
+        }
+    }
+
     /* public function cargaListadoDocumentosInicialNuevo(Request $request){
         
         $time = time();
