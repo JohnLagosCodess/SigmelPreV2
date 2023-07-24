@@ -310,27 +310,42 @@
     <div class="row">
         <div class="contenedor_sol_Docuementos_seguimiento" style="float: left;">
             <x-adminlte-modal id="modalSolicitudDocSeguimiento" title="Solicitud Documentos - Seguimientos" theme="info" icon="fas fa-book-open" size='xl' disable-animations>
-                <form id="formulario_empresa">
-                    @csrf
-                    <div class="row text-center">
-                        
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card-info" style="border: 1.5px solid black; border-radius: 2px;">
+                            <div class="card-header text-center">
+                                <h5>Listado de documentos solicitados</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="listado_docs_solicitados" class="table table-striped table-bordered" style="width:100%">
+                                        <thead>
+                                            <tr class="bg-info">
+                                                <th>Fecha solicitud documento</th>
+                                                <th>Documento</th>
+                                                <th>Descripción</th>
+                                                <th>Solicitada a</th>
+                                                <th>Fecha recepción de documento</th>
+                                                <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_fila"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="container">
-                        
-                    </div>
-                    <x-slot name="footerSlot">
-                        <x-adminlte-button class="mr-auto" id="guardar_otra_empresa" theme="info" label="Guardar"/>
-                        <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
-                    </x-slot>
-                </form>
+                </div>
+                <x-slot name="footerSlot">
+                    <x-adminlte-button class="mr-auto" id="guardar_otra_empresa" theme="info" label="Guardar"/>
+                    <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
+                </x-slot>
             </x-adminlte-modal>
+            
         </div>
     </div>
 @stop
 @section('js')
-
-    <script src="/js/calificacionpcl.js"></script>
-
     <script>
         //funcion para habilitar el historial de acciones
         function historialDeAcciones() {
@@ -401,5 +416,58 @@
             location.reload();
         });
     </script>
-        
+
+    {{-- SCRIPT DE PRUEBA PARA LA TABLA DE AGREGAR REGISTROS --}}
+    
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".centrar").css('text-align', 'center');
+                var listado_docs_solicitados =  $('#listado_docs_solicitados').DataTable({
+                "paging": false,
+                "info": false,
+                "searching": false,
+                "ordering": false,
+                "language":{
+                    "emptyTable": "No se encontró información"
+                },
+
+                createdRow: function (row, data, dataIndex) {
+                    // Inicializar el Select2 para cada elemento de Select2 en la fila
+                    $(row).find('td.select2-container').each(function () {
+                    var select = $(this).find('select');
+                    select.select2();
+                    });
+                }
+            });
+
+            var contador = 0;
+            $('#btn_agregar_fila').click(function(){
+                contador = contador + 1;
+                
+                var nueva_fila = [
+                    "<?php echo date('Y-m-d');?>",
+                    '<select id="lista_docs_fila_'+contador+'" class="custom-select lista_docs_fila_'+contador+'" name="documento"><option></option></select><div id="contenedor_otro_doc_fila_'+contador+'" class="mt-1"></div>',
+                    '<textarea id="descripcion_fila_'+contador+'" class="form-control" name="descripcion" cols="90" rows="4"></textarea>',
+                    'dato col 4',
+                    'dato col 5',
+                    '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila" class="text-info" data-fila="fila_'+contador+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
+                    'fila_'+contador
+                ]
+
+                var agregar_fila = listado_docs_solicitados.row.add(nueva_fila).draw().node();
+                $(agregar_fila).addClass('fila_'+contador);
+
+                funciones_elementos_fila(contador);
+            });
+            
+            $(document).on('click', '#btn_remover_fila', function(){
+                var nombre_fila = $(this).data("fila");
+                listado_docs_solicitados.row("."+nombre_fila).remove().draw();
+            });
+
+        });
+    </script>
+
+    <script type="text/javascript" src="/js/calificacionpcl.js"></script>
+    <script type="text/javascript" src="/js/funciones_helpers.js"></script>
 @stop
