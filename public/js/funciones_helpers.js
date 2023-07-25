@@ -100,11 +100,16 @@ $(document).ready(function () {
     /* INPUTS Y TEXT AREAS DEL MODAL Solicitud Documentos - Seguimientos Módulo Calificación PCL*/
     $(document).on('keyup', "input[id^='nombre_otro_doc_']", function(){
         var textoEscrito = $(this).val();
-        $(this).val(LetraMayusCadaPalabra(textoEscrito));
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
     });
     $(document).on('keyup', "textarea[id^='descripcion_fila_']", function(){
         var textoEscrito = $(this).val();
-        $(this).val(LetraMayusCadaPalabra(textoEscrito));
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "input[id^='nombre_otro_solicitante_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
     });
 
     /* Función para colocar la primera letra en mayúscula de cada palabra que se escriba */
@@ -117,6 +122,12 @@ $(document).ready(function () {
         }
         var resultado_texto_final = palabras.join(' ');
         return resultado_texto_final;
+    }
+
+    function LetraMayusPrimeraLetraTexto(textoEscrito){
+        var firstLetter = textoEscrito.charAt(0).toUpperCase();
+        var restOfWord = textoEscrito.slice(1);
+        return firstLetter + restOfWord;
     }
 
     /* Función para validar que un correo esté bien escrito */
