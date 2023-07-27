@@ -124,6 +124,7 @@ $(document).ready(function () {
         return resultado_texto_final;
     }
 
+    /* Función para colocar solamente la primera letra en Mayuscula */
     function LetraMayusPrimeraLetraTexto(textoEscrito){
         var firstLetter = textoEscrito.charAt(0).toUpperCase();
         var restOfWord = textoEscrito.slice(1);
@@ -139,5 +140,14 @@ $(document).ready(function () {
             return false;
         }
     }
+    
+});
 
-})
+/* Función para ajustar un Datatable cuando este tenga un scroll vertical */
+function autoAdjustColumns(table) {
+    var container = table.table().container();
+    var resizeObserver = new ResizeObserver(function () {
+        table.columns.adjust();
+    });
+    resizeObserver.observe(container);
+}

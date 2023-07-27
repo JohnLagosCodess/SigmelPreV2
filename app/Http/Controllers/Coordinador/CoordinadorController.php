@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 //llamado de modelos para formulario BandejaPCL y captura de data
 use App\Models\sigmel_lista_procesos_servicios;
-use App\Models\cndatos_bandeja_pcls;
+use App\Models\cndatos_bandeja_eventos;
 use App\Models\cndatos_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\User;
@@ -67,13 +67,13 @@ class CoordinadorController extends Controller
 
         if($BandejaPClTotal == 'CargaBandejaPCl'){
 
-            $bandejaPCLsin_Pro_ant = cndatos_bandeja_pcls::on('sigmel_gestiones')
+            $bandejaPCLsin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
             ->where([
                 ['Nombre_proceso_actual', '=', 'Calificación PCL']
             ])
             ->whereNull('Nombre_proceso_anterior');
 
-            $bandejaPCL = cndatos_bandeja_pcls::on('sigmel_gestiones')
+            $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
             ->where([
                 ['Nombre_proceso_actual', '=', 'Calificación PCL'],
                 ['Id_proceso_anterior', '<>', 2]
@@ -96,7 +96,7 @@ class CoordinadorController extends Controller
         switch (true) {
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and !empty($consultar_g_dias)):
 
-                    $bandejaPCLsin_Pro_ant = cndatos_bandeja_pcls::on('sigmel_gestiones')
+                    $bandejaPCLsin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Calificación PCL'],
                         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
@@ -104,7 +104,7 @@ class CoordinadorController extends Controller
                     ->whereNull('Nombre_proceso_anterior')
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
                     
-                    $bandejaPCLFiltros = cndatos_bandeja_pcls::on('sigmel_gestiones')
+                    $bandejaPCLFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                             ['Nombre_proceso_actual', '=', 'Calificación PCL'],
                             ['Id_proceso_anterior', '<>', 2],
@@ -128,14 +128,14 @@ class CoordinadorController extends Controller
             break;
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and empty($consultar_g_dias)):
                     
-                    $bandejaPCLsin_Pro_ant = cndatos_bandeja_pcls::on('sigmel_gestiones')
+                    $bandejaPCLsin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Calificación PCL']
                     ])
                     ->whereNull('Nombre_proceso_anterior')
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
 
-                    $bandejaPCLFiltros = cndatos_bandeja_pcls::on('sigmel_gestiones')
+                    $bandejaPCLFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                             ['Nombre_proceso_actual', '=', 'Calificación PCL'],
                             ['Id_proceso_anterior', '<>', 2],
@@ -158,14 +158,14 @@ class CoordinadorController extends Controller
             break;
             case (empty($consultar_f_desde) and empty($consultar_f_hasta) and !empty($consultar_g_dias)):
                     
-                    $bandejaPCLsin_Pro_ant = cndatos_bandeja_pcls::on('sigmel_gestiones')
+                    $bandejaPCLsin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Calificación PCL'],
                         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
                     ])
                     ->whereNull('Nombre_proceso_anterior');
                     
-                    $bandejaPCLFiltros = cndatos_bandeja_pcls::on('sigmel_gestiones')
+                    $bandejaPCLFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                             ['Nombre_proceso_actual', '=', 'Calificación PCL'],
                             ['Id_proceso_anterior', '<>', 2],

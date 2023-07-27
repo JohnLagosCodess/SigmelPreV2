@@ -46,6 +46,7 @@
                                                     <input type="text" class="form-control" name="cliente" id="cliente" value="{{$array_datos_calificacionPcl[0]->Nombre_Cliente}}" disabled>
                                                     <input hidden="hidden" type="text" class="form-control" name="newId_evento" id="newId_evento" value="{{$array_datos_calificacionPcl[0]->ID_evento}}">
                                                     <input hidden="hidden" type="text" class="form-control" name="newId_asignacion" id="newId_asignacion" value="{{$array_datos_calificacionPcl[0]->Id_Asignacion}}">
+                                                    <input hidden="hidden" type="text" class="form-control" name="Id_proceso" id="Id_proceso" value="{{$array_datos_calificacionPcl[0]->Id_proceso}}">
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -225,7 +226,7 @@
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="form-group">                                                  
-                                                    <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalSolicitudDocSeguimiento"><i class="fas fa-book-open text-info"></i> <strong>Solicitud documentos - Seguimientos</strong></a>
+                                                    <a href="#" id="clicGuardado" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal" data-target="#modalSolicitudDocSeguimiento"><i class="fas fa-book-open text-info"></i> <strong>Solicitud documentos - Seguimientos</strong></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -317,27 +318,43 @@
                                 <h5>Listado de documentos solicitados</h5>
                             </div>
                             <div class="card-body">
+                                <div class="alert d-none" id="resultado_insercion" role="alert">
+                                </div>
                                 <div class="table-responsive">
-                                    <table id="listado_docs_solicitados" class="table table-striped table-bordered" style="width:100%">
+                                    <table id="listado_docs_solicitados" class="table table-striped table-bordered" width="100%">
                                         <thead>
                                             <tr class="bg-info">
                                                 <th>Fecha solicitud documento</th>
-                                                <th>Documento</th>
-                                                <th>Descripción</th>
+                                                <th style="width:164.719px !important;">Documento</th>
+                                                <th style="width:200px !important;">Descripción</th>
                                                 <th>Solicitada a</th>
                                                 <th>Fecha recepción de documento</th>
                                                 <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_fila"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                             </tr>
                                         </thead>
-                                        <tbody></tbody>
+                                        <tbody>
+                                            @foreach ($listado_documentos_solicitados as $prueba)
+                                            <tr class="fila_visual_{{$prueba->Id_Documento_Solicitado}}">
+                                                <td>{{$prueba->F_solicitud_documento}}</td>
+                                                <td>{{$prueba->Nombre_documento}}</td>
+                                                <td>{{$prueba->Descripcion}}</td>
+                                                <td>{{$prueba->Nombre_solicitante}}</td>
+                                                <td>{{$prueba->F_recepcion_documento}}</td>
+                                                <td>
+                                                    <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila_visual_{{$prueba->Id_Documento_Solicitado}}" data-id_fila_quitar="{{$prueba->Id_Documento_Solicitado}}" data-clase_fila="fila_visual_{{$prueba->Id_Documento_Solicitado}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
                                     </table>
-                                </div>
+                                </div><br>
+                                <x-adminlte-button class="mr-auto" id="guardar_datos_tabla" theme="info" label="Guardar"/>
                             </div>
                         </div>
                     </div>
                 </div>
                 <x-slot name="footerSlot">
-                    <x-adminlte-button class="mr-auto" id="guardar_otra_empresa" theme="info" label="Guardar"/>
+                    
                     <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
                 </x-slot>
             </x-adminlte-modal>
@@ -417,46 +434,44 @@
         });
     </script>
 
-    {{-- SCRIPT DE PRUEBA PARA LA TABLA DE AGREGAR REGISTROS --}}
-    
+    {{-- SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE LISTADOS DE DOCUMENTOS SOLICITADOS --}}
     <script type="text/javascript">
         $(document).ready(function(){
             $(".centrar").css('text-align', 'center');
-                var listado_docs_solicitados =  $('#listado_docs_solicitados').DataTable({
-                "paging": false,
+            var listado_docs_solicitados = $('#listado_docs_solicitados').DataTable({
+                "responsive": true,
                 "info": false,
                 "searching": false,
                 "ordering": false,
+                "scrollCollapse": true,
+                "scrollY": "50vh",
+                "paging": false,
                 "language":{
                     "emptyTable": "No se encontró información"
-                },
-
-                createdRow: function (row, data, dataIndex) {
-                    // Inicializar el Select2 para cada elemento de Select2 en la fila
-                    $(row).find('td.select2-container').each(function () {
-                    var select = $(this).find('select');
-                    select.select2();
-                    });
                 }
             });
+
+            autoAdjustColumns(listado_docs_solicitados);
 
             var contador = 0;
             $('#btn_agregar_fila').click(function(){
                 contador = contador + 1;
                 
                 var nueva_fila = [
-                    "<?php echo date('Y-m-d');?>",
-                    '<select id="lista_docs_fila_'+contador+'" class="custom-select lista_docs_fila_'+contador+'" name="documento"><option></option></select><div id="contenedor_otro_doc_fila_'+contador+'" class="mt-1"></div>',
+                    '<?php echo date("Y-m-d");?> <input type="hidden" id="fecha_solicitud_fila_'+contador+'" name="fecha_solicitud" value="{{date("Y-m-d")}}" />',
+                    '<select id="lista_docs_fila_'+contador+'" class="form-comtrol custom-select lista_docs_fila_'+contador+'" name="documento"><option></option></select><div id="contenedor_otro_doc_fila_'+contador+'" class="mt-1"></div>',
                     '<textarea id="descripcion_fila_'+contador+'" class="form-control" name="descripcion" cols="90" rows="4"></textarea>',
-                    'dato col 4',
-                    'dato col 5',
+                    '<select id="lista_solicitante_fila_'+contador+'" class="custom-select lista_solicitante_fila_'+contador+'" name="solicitante"><option></option></select><div id="contenedor_otro_solicitante_fila_'+contador+'" class="mt-1"></div>',
+                    '<input type="date" class="form-control" id="fecha_recepcion_fila_'+contador+'" name="fecha_recepcion" max="{{date("Y-m-d")}}"/>',
                     '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila" class="text-info" data-fila="fila_'+contador+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
                     'fila_'+contador
-                ]
+                ];
 
                 var agregar_fila = listado_docs_solicitados.row.add(nueva_fila).draw().node();
                 $(agregar_fila).addClass('fila_'+contador);
+                $(agregar_fila).attr("id", 'fila_'+contador);
 
+                // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionpcl.js)
                 funciones_elementos_fila(contador);
             });
             
@@ -465,9 +480,14 @@
                 listado_docs_solicitados.row("."+nombre_fila).remove().draw();
             });
 
+            $(document).on('click', "a[id^='btn_remover_fila_visual_']", function(){
+                var nombre_fila = $(this).data("clase_fila");
+                listado_docs_solicitados.row("."+nombre_fila).remove().draw();
+            });
+
         });
     </script>
-
+    
     <script type="text/javascript" src="/js/calificacionpcl.js"></script>
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>
 @stop

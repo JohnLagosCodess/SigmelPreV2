@@ -276,8 +276,13 @@ Route::post('/selectoresModuloCalificacionPCL', [CalificacionPCLController::clas
 // Accion: Registrar Califcación PCL
 Route::post('/registrarCalificacionPCL', [CalificacionPCLController::class, 'guardarCalificacionPCL'])->name('registrarCalificacionPCL');
 // Acción: Traer listado de documentos solicitados para el selector de documentos solicitados (Modal Solicitud de Documentos Seguimientos)
-Route::post('/CargarDocsSolicitados', [CalificacionPCLController::class, 'CargarDocsSolicitados']);
-
+Route::post('/CargarDatosSolicitados', [CalificacionPCLController::class, 'CargarDatosSolicitados']);
+// Acción: Guardar Datos Listado de documentos solicitados
+Route::post('/GuardarDocumentosSolicitados',[CalificacionPCLController::class, 'GuardarDocumentosSolicitados']);
+// Acción: Cargar Datos Listado de documentos solicitados
+Route::post('/CargarDocumentosSolicitados',[CalificacionPCLController::class, 'CargarDocumentosSolicitados']);
+// Acción: Eliminar Fila (Cambiar a estado inactivo)
+Route::post('/EliminarFila', [CalificacionPCLController::class, 'EliminarFila'])->name('EliminarFila');
 
 
 // Acción: Traer el listado de historial de acciones del evento
