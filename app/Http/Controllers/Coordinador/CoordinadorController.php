@@ -40,6 +40,7 @@ class CoordinadorController extends Controller
         if ($parametro == 'lista_profesional_pcl') {
             
             $listado_profesional_pcl = DB::table('users')->select('id', 'name')
+            ->where('estado', 'Activo')
             ->whereRaw("FIND_IN_SET(2, id_procesos_usuario) > 0")->get();
 
             $info_listado_profesional_PCL = json_decode(json_encode($listado_profesional_pcl, true));
@@ -233,16 +234,25 @@ class CoordinadorController extends Controller
         $usuario = Auth::user()->name;        
         //print_r($request->json);
         $IdEventoBandejaPCl = $request->array;
-        $profesional = $request->json['profesional'];
+        $Id_profesional = $request->json['profesional'];
         $Id_Servicio_redireccionar = $request->json['redireccionar'];
+
+        $profesional = DB::table('users')
+        ->select('name')->where('id',$Id_profesional)
+        ->get();
+        $nombre = json_decode(json_encode($profesional));
+        $nombre_profesional= $nombre[0]->name;
+
         $actualizar_bandejaPCL = [
             'Nombre_usuario' => $usuario,
-            'Nombre_profesional' => $profesional,
+            'Id_profesional' => $Id_profesional,
+            'Nombre_profesional' => $nombre_profesional,
             'Id_servicio' => $Id_Servicio_redireccionar
         ];         
         $actualizar_bandejaPCL_Profesional = [
             'Nombre_usuario' => $usuario,
-            'Nombre_profesional' => $profesional
+            'Id_profesional' => $Id_profesional,
+            'Nombre_profesional' => $nombre_profesional
         ]; 
         $actualizar_bandejaPCL_Servicio = [
             'Nombre_usuario' => $usuario,
@@ -250,7 +260,7 @@ class CoordinadorController extends Controller
         ]; 
         
         switch (true) {
-            case (!empty($IdEventoBandejaPCl) and !empty($profesional) and !empty($Id_Servicio_redireccionar)):
+            case (!empty($IdEventoBandejaPCl) and !empty($Id_profesional) and !empty($Id_Servicio_redireccionar)):
         
                     sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->whereIn('Id_Asignacion', $IdEventoBandejaPCl)
                     ->update($actualizar_bandejaPCL);
@@ -263,7 +273,7 @@ class CoordinadorController extends Controller
                     return json_decode(json_encode($mensajes, true));
                 
             break;
-            case (!empty($IdEventoBandejaPCl) and empty($profesional) and !empty($Id_Servicio_redireccionar)):
+            case (!empty($IdEventoBandejaPCl) and empty($Id_profesional) and !empty($Id_Servicio_redireccionar)):
 
                     sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->whereIn('Id_Asignacion', $IdEventoBandejaPCl)
                     ->update($actualizar_bandejaPCL_Servicio);
@@ -277,7 +287,7 @@ class CoordinadorController extends Controller
 
             break;
             
-            case (!empty($IdEventoBandejaPCl) and !empty($profesional) and empty($Id_Servicio_redireccionar)):
+            case (!empty($IdEventoBandejaPCl) and !empty($Id_profesional) and empty($Id_Servicio_redireccionar)):
 
                     sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->whereIn('Id_Asignacion', $IdEventoBandejaPCl)
                     ->update($actualizar_bandejaPCL_Profesional);
@@ -291,7 +301,7 @@ class CoordinadorController extends Controller
 
             break;
 
-            case (!empty($IdEventoBandejaPCl) and empty($profesional) and empty($Id_Servicio_redireccionar)):
+            case (!empty($IdEventoBandejaPCl) and empty($Id_profesional) and empty($Id_Servicio_redireccionar)):
                     $mensajes = array(
                         "parametro" => 'NOactualizado_B_PCL',
                         "mensaje" => 'Debe seleccionar el Profesional o Redireccionar a, para Actualizar'

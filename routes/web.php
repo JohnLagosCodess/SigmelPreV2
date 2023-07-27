@@ -273,7 +273,7 @@ Route::post('/calificacionPCL', [CalificacionPCLController::class, 'mostrarVista
 Route::get('/calificacionPCL', [CalificacionPCLController::class, 'mostrarVistaCalificacionPCL'])->name('calificacionPCL');
 // Accion: Selectores Módulo calificación PCl
 Route::post('/selectoresModuloCalificacionPCL', [CalificacionPCLController::class, 'cargueListadoSelectoresModuloCalifcacionPcl']);
-// Accion: Registrar Califcación PCL
+// Accion: Insertar Califcación PCL
 Route::post('/registrarCalificacionPCL', [CalificacionPCLController::class, 'guardarCalificacionPCL'])->name('registrarCalificacionPCL');
 // Acción: Traer listado de documentos solicitados para el selector de documentos solicitados (Modal Solicitud de Documentos Seguimientos)
 Route::post('/CargarDatosSolicitados', [CalificacionPCLController::class, 'CargarDatosSolicitados']);
@@ -282,7 +282,10 @@ Route::post('/GuardarDocumentosSolicitados',[CalificacionPCLController::class, '
 // Acción: Cargar Datos Listado de documentos solicitados
 Route::post('/CargarDocumentosSolicitados',[CalificacionPCLController::class, 'CargarDocumentosSolicitados']);
 // Acción: Eliminar Fila (Cambiar a estado inactivo)
-Route::post('/EliminarFila', [CalificacionPCLController::class, 'EliminarFila'])->name('EliminarFila');
+Route::post('/EliminarFila', [CalificacionPCLController::class, 'EliminarFila'])->name('EliminarFila');// Acción: Insertar Agregar Seguimiento
+Route::post('/registrarCausalSeguimiento', [CalificacionPCLController::class, 'guardarAgregarSeguimiento']);
+// Acción: Capturar datos para el dataTable Historial de seguimientos
+Route::post('/historialSeguimientoPCL', [CalificacionPCLController::class, 'historialSeguimientosPCL']);
 
 
 // Acción: Traer el listado de historial de acciones del evento

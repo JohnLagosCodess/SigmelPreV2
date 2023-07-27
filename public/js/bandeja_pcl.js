@@ -92,6 +92,7 @@ $(document).ready(function () {
                                 '<input type="hidden" name="_token" value="'+token+'">'+
                                 '<input class="btn btn-sm text-info" id="modulo_califi_pcl_'+data[i]["Id_Asignacion"]+'" value="Modulo PCL" type="submit" style="font-weight: bold; padding-left: inherit;">'+ 
                                 '<input type="hidden" name="newIdAsignacion" value="'+data[i]["Id_Asignacion"]+'">'+
+                                '<input type="hidden" name="newIdEvento" id="newIdEvento" value="'+data[i]["ID_evento"]+'">'+
                                 '</form>';
                     data[i]['moduloPCL'] = modulocalificacionpcl;
                     
@@ -212,6 +213,7 @@ $(document).ready(function () {
                                             '<input type="hidden" name="_token" value="'+token+'">'+
                                             '<input class="btn btn-sm text-info" id="modulo_califi_pcl_'+data[i]["Id_Asignacion"]+'" value="Modulo PCL" type="submit" style="font-weight: bold; padding-left: inherit;">'+ 
                                             '<input type="hidden" name="newIdAsignacion" value="'+data[i]["Id_Asignacion"]+'">'+
+                                            '<input type="hidden" name="newIdEvento" id="newIdEvento" value="'+data[i]["ID_evento"]+'">'+
                                             '</form>';
                                 data[i]['moduloPCL'] = modulocalificacionpcl;
                                 
@@ -436,7 +438,7 @@ $(document).ready(function () {
         var contendorBotoFiltrar = botonFiltrar[1].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[0].classList[0];
         //console.log(contendorBotoFiltrar);
         $('.'+contendorBotoFiltrar).addClass('d-none');
-    }, 5000);
+    }, 7000);
         
     $('#btn_expor_datos').click(function () {
         var infobtnExcel = $(this).parents();
