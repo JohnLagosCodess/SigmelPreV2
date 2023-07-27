@@ -46,6 +46,7 @@
                                                     <input type="text" class="form-control" name="cliente" id="cliente" value="{{$array_datos_calificacionPcl[0]->Nombre_Cliente}}" disabled>
                                                     <input hidden="hidden" type="text" class="form-control" name="newId_evento" id="newId_evento" value="{{$array_datos_calificacionPcl[0]->ID_evento}}">
                                                     <input hidden="hidden" type="text" class="form-control" name="newId_asignacion" id="newId_asignacion" value="{{$array_datos_calificacionPcl[0]->Id_Asignacion}}">
+                                                    <input hidden="hidden" type="text" class="form-control" name="Id_proceso" id="Id_proceso" value="{{$array_datos_calificacionPcl[0]->Id_proceso}}">
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -206,7 +207,11 @@
                                                 <div class="form-group">
                                                     <label for="modalidad_calificacion">Modalidad Calificación <span style="color: red;">(*)</span></label>
                                                     <select class="custom-select" name="modalidad_calificacion" id="modalidad_calificacion" required>
-                                                        <option value="{{$array_datos_calificacionPcl[0]->Modalidad_calificacion}}" selected>{{$array_datos_calificacionPcl[0]->Nombre_Modalidad_calificacion}}</option>                                                 
+                                                        @if ($array_datos_calificacionPcl[0]->Modalidad_calificacion > 0)
+                                                            <option value="{{$array_datos_calificacionPcl[0]->Modalidad_calificacion}}" selected>{{$array_datos_calificacionPcl[0]->Nombre_Modalidad_calificacion}}</option>
+                                                        @else
+                                                            <option value="">Seleccione una opción</option>
+                                                        @endif
                                                     </select>
                                                 </div>
                                             </div>
@@ -232,7 +237,7 @@
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="form-group">                                                  
-                                                    <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalSolicitudDocSeguimiento"><i class="fas fa-book-open text-info"></i> <strong>Solicitud documentos - Seguimientos</strong></a>
+                                                    <a href="#" id="clicGuardado" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalSolicitudDocSeguimiento"><i class="fas fa-book-open text-info"></i> <strong>Solicitud documentos - Seguimientos</strong></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -345,6 +350,50 @@
                                         <tbody></tbody>
                                     </table>
                                 </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="formgroup">
+                                            <label for="No_aporta_documentos">No aporta documentos</label>
+                                            <input class="scales" type="checkbox" name="No_aporta_documentos" id="No_aporta_documentos" style="margin-left: revert;">
+                                        </div> 
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            {{-- <a href="javascript:void(0);" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a> --}}
+                                            <a href="#" class="text-dark text-md"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalGenerarComunicado"><i class="fas fa-paperclip text-info"></i> <strong>Generar Comunicado</strong></a>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalAgregarSeguimiento"><i class="fas fa-folder-open text-info"></i> <strong>Agregar Seguimiento</strong></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-header text-center">
+                                <h5>Historial de seguimientos</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="listado_agregar_seguimientos" class="table table-striped table-bordered" style="width: 100%">
+                                        <thead>
+                                            <tr class="bg-info">
+                                                <th>Fecha de seguimiento</th>
+                                                <th>Causal de seguimiento</th>
+                                                <th>Descripción del seguimiento</th>
+                                                <th>Realizado por</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -357,6 +406,110 @@
             
         </div>
     </div>
+
+    {{-- Modal Agregar seguimiento --}}
+    <div class="row">
+        <div class="contenedor_sol_Agregar_seguimiento" style="float: left;">
+            <x-adminlte-modal id="modalAgregarSeguimiento" title="Agregar Seguimiento" theme="info" icon="fas fa-folder-open" size='xl' disable-animations>
+                <div class="row">
+                    <div class="col-12">
+                        <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
+                        <div class="card-info" style="border: 1.5px solid black; border-radius: 2px;">
+                            <div class="card-header text-center">
+                                <h5>Agregar Seguimiento</h5>
+                            </div>
+                            <form id="form_agregar_seguimientoPcl" method="POST">
+                                @csrf
+                                <div class="card-body">                                
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label for="fecha_seguimiento">Fecha Seguimiento <span style="color: red;">(*)</span></label>
+                                                <input class="form-control" type="date" name="fecha_seguimiento" id="fecha_seguimiento" value="{{now()->format('Y-m-d')}}" required>
+                                            </div> 
+                                        </div>                                    
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label for="causal_seguimiento">Causal de seguimiento <span style="color: red;">(*)</span></label><br>
+                                                <select class="causal_seguimiento custom-select" name="causal_seguimiento" id="causal_seguimiento" required>
+                                                    <option value="">Seleccione una opción</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="descripcion_seguimiento">Descripción del seguimiento <span style="color: red;">(*)</span></label>
+                                                <textarea class="form-control" name="descripcion_seguimiento" id="descripcion_seguimiento" cols="30" rows="5" style="resise:none;" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <input type="submit" id="Guardar_seguimientos" class="btn btn-info" value="Guardar">
+                                                <div class="alerta_seguimiento alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>                            
+                        </div>
+                    </div>
+                </div>
+                <x-slot name="footerSlot">
+                    <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
+                </x-slot>
+            </x-adminlte-modal>
+            
+        </div>
+    </div>
+
+    {{-- Modal  Generar comunicado --}}
+
+    <div class="row">
+        <div class="contenedor_sol_Generar_comunicado" style="float: left;">
+            <x-adminlte-modal id="modalGenerarComunicado" title="Generar comunicado" theme="info" icon="fas fa-folder-open" size='xl' disable-animations>
+                <div class="row">
+                    <div class="col-12">
+                        <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
+                        <div class="card-info" style="border: 1.5px solid black; border-radius: 2px;">
+                            <div class="card-header text-center">
+                                <h5>Generar comunicado</h5>
+                            </div>
+                            <form id="form_agregar_seguimientoPcl" method="POST">
+                                @csrf
+                                <div class="card-body">                                
+                                    <div class="row">                                        
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <input type="submit" id="Generar_comunicados" class="btn btn-info" value="Guardar">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>                            
+                        </div>
+                    </div>
+                </div>
+                <x-slot name="footerSlot">
+                    <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
+                </x-slot>
+            </x-adminlte-modal>
+            
+        </div>
+    </div>
+
+
+    {{-- Modal cargue documentos --}}
+    <?php $aperturaModal = 'Edicion'; ?>
+    @include('//.administrador.modalcarguedocumentos')
+    
 @stop
 @section('js')
     <script>
@@ -398,7 +551,7 @@
         // Agregar el event listener al botón
         boton.addEventListener('click', clicUnico); 
 
-        //funcion para poner la primera en mayuscula en el texarea descipcion de Acion a realizar
+        //funcion para poner la primera en mayuscula en el texarea descipcion de Accion a realizar
 
         // Obtén el elemento de textarea
         var descripcionAccion = document.getElementById('descripcion_accion');
@@ -428,6 +581,9 @@
         $('#Borrar').click(function(){
             location.reload();
         });
+
+        
+        
     </script>
 
     {{-- SCRIPT DE PRUEBA PARA LA TABLA DE AGREGAR REGISTROS --}}
