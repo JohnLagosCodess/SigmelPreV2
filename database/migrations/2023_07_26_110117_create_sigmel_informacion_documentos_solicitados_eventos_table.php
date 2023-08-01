@@ -13,17 +13,18 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_documentos_solicitados_eventos', function (Blueprint $table) {
             $table->increments('Id_Documento_Solicitado');
-            $table->string('ID_evento', 10);
-            $table->integer('Id_Asignacion');
-            $table->integer('Id_proceso');
-            $table->date('F_solicitud_documento');
-            $table->integer('Id_Documento');
-            $table->text('Nombre_documento');
-            $table->text('Descripcion');
-            $table->integer('Id_solicitante');
-            $table->text('Nombre_solicitante');
-            $table->date('F_recepcion_documento');
-            $table->enum('Estado', ['Activo','Inactivo'])->default('Activo');
+            $table->string('ID_evento', 10)->nullable();
+            $table->integer('Id_Asignacion')->nullable();
+            $table->integer('Id_proceso')->nullable();
+            $table->date('F_solicitud_documento')->nullable();
+            $table->integer('Id_Documento')->nullable();
+            $table->text('Nombre_documento')->nullable();
+            $table->text('Descripcion')->nullable();
+            $table->integer('Id_solicitante')->nullable();
+            $table->text('Nombre_solicitante')->nullable();
+            $table->date('F_recepcion_documento')->nullable();
+            $table->enum('Aporta_documento', ['Si','No'])->nullable();
+            $table->enum('Estado', ['Activo','Inactivo'])->default('Activo')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

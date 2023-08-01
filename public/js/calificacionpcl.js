@@ -199,7 +199,6 @@ $(document).ready(function(){
     });
 
     // DataTable Historial de seguimientos
-
     function capturar_informacion_historial_seguimiento(response, index, value) {
         $('#listado_agregar_seguimientos').DataTable({
             orderCellsTop:true,
@@ -233,6 +232,42 @@ $(document).ready(function(){
         });
     }
 
+    /*  FUNCIONALIDAD: HABILITAR O DESHABILITAR: BOTÓN AGREGAR FILA, BOTÓN GUARDAR, BOTÓN CARGUE DOCUMENTOS
+    CUANDO SE HACE CHECK EN LA OPCIÓN NO APORTA DOCUMENTOS */
+    $("#No_aporta_documentos").click(function () {
+       if ($(this).is(':checked')) {
+            $("#btn_agregar_fila").css('display', 'none');
+            $("#cargue_docs_modal_listado_docs").prop('disabled', true);
+            $("#cargue_docs_modal_listado_docs").hover(function(){
+                $(this).css('cursor', 'not-allowed');
+            });
+
+       } else {
+            $("#btn_agregar_fila").css('display', 'block');
+            $("#cargue_docs_modal_listado_docs").prop('disabled', false);
+            $("#cargue_docs_modal_listado_docs").hover(function(){
+                $(this).css('cursor', 'pointer');
+            });
+       }
+    });
+
+    /* FUNCIONALIDAD PARA VALIDAR SI APORTÓ O NO APORTÓ DOCUMENTOS PARA SETEAR EL CHECK */
+    if($("#validacion_aporta_doc").val() == "No"){
+        $("#No_aporta_documentos").prop("checked", true);
+        $("#btn_agregar_fila").css('display', 'none');
+        $("#cargue_docs_modal_listado_docs").prop('disabled', true);
+        $("#cargue_docs_modal_listado_docs").hover(function(){
+            $(this).css('cursor', 'not-allowed');
+        });
+
+    }else{
+        $("#No_aporta_documentos").prop("checked", false);
+        $("#btn_agregar_fila").css('display', 'block');
+        $("#cargue_docs_modal_listado_docs").prop('disabled', false);
+        $("#cargue_docs_modal_listado_docs").hover(function(){
+            $(this).css('cursor', 'pointer');
+        });
+    }
       
 });
 
@@ -318,83 +353,158 @@ $(document).on('change', "select[id^='lista_solicitante_fila_']", function(){
 $(document).ready(function(){
     $("#guardar_datos_tabla").click(function(){
 
-        var guardar_datos = [];
-        var datos_finales_documentos_solicitados = [];
-        var coincidencia_1 = "lista_docs_fila_";
-        var coincidencia_2 = "lista_solicitante_fila_";
-
-        var array_id_filas = [];
-        // RECORREMOS LOS TD DE LA TABLA PARA EXTRAER LOS DATOS E INSERTARLOS EN UN ARREGLO (LA INSERCIÓN LA HACE POR CADA FILA, POR ENDE, ES UN ARRAY MULTIDIMENSIONAL)
-        $('#listado_docs_solicitados tbody tr').each(function (index) {
-            array_id_filas.push($(this).attr('id'));
-            if ($(this).attr('id') !== "datos_visuales") {
-                $(this).children("td").each(function (index2) {
-                    
-                    var nombres_ids = $(this).find('*').attr("id");
+        // Validación: Se checkea la opción no aporta documentos y se intenta enviar pero ya con registros existentes en la tabla
+        if ($("#No_aporta_documentos").is(':checked') == true && $("#conteo_listado_documentos_solicitados").val() > 0) {
+            $("#No_aporta_documentos").prop("checked", false);
+            $('#resultado_insercion').removeClass('d-none');
+            $('#resultado_insercion').addClass('alert-danger');
+            $('#resultado_insercion').append('<strong>No puede seleccionar la opción No aporta documentos debido a que existe información guardada en el sistema.</strong>');
+            setTimeout(() => {
+                $('#resultado_insercion').addClass('d-none');
+                $('#resultado_insercion').removeClass('alert-danger');
+                $('#resultado_insercion').empty();
+            }, 4000);
+        }else{
+            
+            let token = $("input[name='_token']").val();
+            var guardar_datos = [];
+            var datos_finales_documentos_solicitados = [];
+            var coincidencia_1 = "lista_docs_fila_";
+            var coincidencia_2 = "lista_solicitante_fila_";
     
-                    if (nombres_ids != undefined) {
-    
-                        guardar_datos.push($('#'+nombres_ids).val());
-    
-                        if (nombres_ids.startsWith(coincidencia_1)) {
-    
-                            if ($('#'+nombres_ids).val() == 37) {
-                                guardar_datos.push($(this).find("input[id^='nombre_otro_doc_']").val());
-                            }else{
-                                guardar_datos.push($('#'+nombres_ids).find('option:selected').text());
+            var array_id_filas = [];
+            // RECORREMOS LOS TD DE LA TABLA PARA EXTRAER LOS DATOS E INSERTARLOS EN UN ARREGLO (LA INSERCIÓN LA HACE POR CADA FILA, POR ENDE, ES UN ARRAY MULTIDIMENSIONAL)
+            $('#listado_docs_solicitados tbody tr').each(function (index) {
+                array_id_filas.push($(this).attr('id'));
+                if ($(this).attr('id') !== "datos_visuales") {
+                    $(this).children("td").each(function (index2) {
+                        var nombres_ids = $(this).find('*').attr("id");
+                        if (nombres_ids != undefined) {
+                            guardar_datos.push($('#'+nombres_ids).val());
+                            if (nombres_ids.startsWith(coincidencia_1)) {
+        
+                                if ($('#'+nombres_ids).val() == 37) {
+                                    guardar_datos.push($(this).find("input[id^='nombre_otro_doc_']").val());
+                                }else{
+                                    guardar_datos.push($('#'+nombres_ids).find('option:selected').text());
+                                }
+                            }
+                            if (nombres_ids.startsWith(coincidencia_2)) {
+                                if ($('#'+nombres_ids).val() == 8) {
+                                    guardar_datos.push($(this).find("input[id^='nombre_otro_solicitante_']").val());
+                                }else{
+                                    guardar_datos.push($('#'+nombres_ids).find('option:selected').text());
+                                }
                             }
                         }
-    
-                        if (nombres_ids.startsWith(coincidencia_2)) {
-                            if ($('#'+nombres_ids).val() == 8) {
-                                guardar_datos.push($(this).find("input[id^='nombre_otro_solicitante_']").val());
-                            }else{
-                                guardar_datos.push($('#'+nombres_ids).find('option:selected').text());
-                            }
+                        if((index2+1) % 5 === 0){
+                            datos_finales_documentos_solicitados.push(guardar_datos);
+                            guardar_datos = [];
                         }
-                    }
-                    if((index2+1) % 5 === 0){
-                        datos_finales_documentos_solicitados.push(guardar_datos);
-                        guardar_datos = [];
+                    });
+                }
+            });
+    
+            // ENVÍO POR AJAX LA INFORMACIÓN FINAL DE LA TABLA, JUNTO CON EL ID EVENTO, ID ASIGNACION, ID PROCESO
+            if (datos_finales_documentos_solicitados.length > 0) {
+                // Validacion: Se desmarca la opción no aporta documentos y se inserta registros.
+                if ($('#validacion_aporta_doc').data("id_tupla_no_aporta") != undefined) {
+                    var tupla_no_aporta = $('#validacion_aporta_doc').data("id_tupla_no_aporta");
+                }else{
+                    var tupla_no_aporta = 0;
+                }
+                let envio_datos = {
+                    '_token': token,
+                    'datos_finales_documentos_solicitados' : datos_finales_documentos_solicitados,
+                    'Id_evento': $('#newId_evento').val(),
+                    'Id_Asignacion': $('#newId_asignacion').val(),
+                    'Id_proceso': $('#Id_proceso').val(),
+                    'tupla_no_aporta': tupla_no_aporta,
+                    'parametro': "datos_bitacora"
+                };
+                
+                $.ajax({
+                    type:'POST',
+                    url:'/GuardarDocumentosSolicitados',
+                    data: envio_datos,
+                    success:function(response){
+                        // console.log(response);
+                        if (response.parametro == "inserto_informacion") {
+                            $('#resultado_insercion').removeClass('d-none');
+                            $('#resultado_insercion').addClass('alert-success');
+                            $('#resultado_insercion').append('<strong>'+response.mensaje+'</strong>');
+                            setTimeout(() => {
+                                $('#resultado_insercion').addClass('d-none');
+                                $('#resultado_insercion').removeClass('alert-success');
+                                $('#resultado_insercion').empty();
+                            }, 3000);
+                        }
                     }
                 });
+        
+                localStorage.setItem("#guardar_datos_tabla", true);
+        
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
                 
-            }
-        });
-
-        // ENVÍO POR AJAX LA INFORMACIÓN FINAL DE LA TABLA, JUNTO CON EL ID EVENTO, ID ASIGNACION, ID PROCESO
-        let token = $("input[name='_token']").val();
-        let envio_datos = {
-            '_token': token,
-            'datos_finales_documentos_solicitados' : datos_finales_documentos_solicitados,
-            'Id_evento': $('#newId_evento').val(),
-            'Id_Asignacion': $('#newId_asignacion').val(),
-            'Id_proceso': $('#Id_proceso').val()
-        };
-
-        $.ajax({
-            type:'POST',
-            url:'/GuardarDocumentosSolicitados',
-            data: envio_datos,
-            success:function(response){
-                if (response.parametro == "inserto_informacion") {
+            }else{
+    
+                // Validación: No se inserta datos y selecciona el checkbox de No aporta documentos
+                if ($("#No_aporta_documentos").is(':checked')) {
+                    let envio_datos = {
+                        '_token': token,
+                        'Id_evento': $('#newId_evento').val(),
+                        'Id_Asignacion': $('#newId_asignacion').val(),
+                        'Id_proceso': $('#Id_proceso').val(),
+                        'parametro': "no_aporta"
+                    };
+            
+                    $.ajax({
+                        type:'POST',
+                        url:'/GuardarDocumentosSolicitados',
+                        data: envio_datos,
+                        success:function(response){
+                            if (response.parametro == "inserto_informacion") {
+                                $('#resultado_insercion').removeClass('d-none');
+                                $('#resultado_insercion').addClass('alert-success');
+                                $('#resultado_insercion').append('<strong>'+response.mensaje+'</strong>');
+                                setTimeout(() => {
+                                    $('#resultado_insercion').addClass('d-none');
+                                    $('#resultado_insercion').removeClass('alert-success');
+                                    $('#resultado_insercion').empty();
+                                }, 3000);
+                            }else{
+                                $('#resultado_insercion').removeClass('d-none');
+                                $('#resultado_insercion').addClass('alert-danger');
+                                $('#resultado_insercion').append('<strong>'+response.mensaje+'</strong>');
+                                setTimeout(() => {
+                                    $('#resultado_insercion').addClass('d-none');
+                                    $('#resultado_insercion').removeClass('alert-danger');
+                                    $('#resultado_insercion').empty();
+                                }, 3000);
+                            }
+                        }
+                    });
+    
+                    localStorage.setItem("#guardar_datos_tabla", true);
+        
+                    setTimeout(() => {
+                        location.reload();
+                    }, 3000);
+    
+                }else{
                     $('#resultado_insercion').removeClass('d-none');
-                    $('#resultado_insercion').addClass('alert-success');
-                    $('#resultado_insercion').append('<strong>'+response.mensaje+'</strong>');
+                    $('#resultado_insercion').addClass('alert-danger');
+                    $('#resultado_insercion').append('<strong>No se encontró información para guardar en el sistema.</strong>');
                     setTimeout(() => {
                         $('#resultado_insercion').addClass('d-none');
-                        $('#resultado_insercion').removeClass('alert-success');
+                        $('#resultado_insercion').removeClass('alert-danger');
                         $('#resultado_insercion').empty();
                     }, 3000);
                 }
             }
-        });
-
-        localStorage.setItem("#guardar_datos_tabla", true);
-
-        setTimeout(() => {
-            location.reload();
-        }, 3000);
+        }
 
     });
 
@@ -418,6 +528,7 @@ $(document).ready(function(){
         let datos_fila_quitar = {
             '_token': token,
             'fila' : $(this).data("id_fila_quitar"),
+            'Id_evento': $('#newId_evento').val()
         };
         
         $.ajax({
@@ -425,8 +536,9 @@ $(document).ready(function(){
             url:'/EliminarFila',
             data: datos_fila_quitar,
             success:function(response){
-
+                // console.log(response);
                 if (response.parametro == "fila_eliminada") {
+                    $('#resultado_insercion').empty();
                     $('#resultado_insercion').removeClass('d-none');
                     $('#resultado_insercion').addClass('alert-success');
                     $('#resultado_insercion').append('<strong>'+response.mensaje+'</strong>');
@@ -436,6 +548,9 @@ $(document).ready(function(){
                         $('#resultado_insercion').removeClass('alert-success');
                         $('#resultado_insercion').empty();
                     }, 3000);
+                }
+                if (response.total_registros == 0) {
+                    $("#conteo_listado_documentos_solicitados").val(response.total_registros);
                 }
 
                 // localStorage.setItem("#"+id_seleccion, true);
@@ -459,3 +574,5 @@ $(document).ready(function(){
     });
     
 });
+
+

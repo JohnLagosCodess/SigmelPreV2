@@ -47,6 +47,10 @@
                                                     <input hidden="hidden" type="text" class="form-control" name="newId_evento" id="newId_evento" value="{{$array_datos_calificacionPcl[0]->ID_evento}}">
                                                     <input hidden="hidden" type="text" class="form-control" name="newId_asignacion" id="newId_asignacion" value="{{$array_datos_calificacionPcl[0]->Id_Asignacion}}">
                                                     <input hidden="hidden" type="text" class="form-control" name="Id_proceso" id="Id_proceso" value="{{$array_datos_calificacionPcl[0]->Id_proceso}}">
+                                                    @if (count($dato_validacion_no_aporta_docs) > 0)
+                                                        <input hidden="hidden" type="text" class="form-control" data-id_tupla_no_aporta="{{$dato_validacion_no_aporta_docs[0]->Id_Documento_Solicitado}}" id="validacion_aporta_doc" value="{{$dato_validacion_no_aporta_docs[0]->Aporta_documento}}">
+                                                    @endif
+                                                    <input type="hidden" class="form-control" id="conteo_listado_documentos_solicitados" value="{{count($listado_documentos_solicitados)}}">
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -335,7 +339,17 @@
                                 <h5>Listado de documentos solicitados</h5>
                             </div>
                             <div class="card-body">
+                                <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de agregar una fila nueva es necesario
+                                    que diligencie en su totalidad los campos.
+                                </div>
                                 <div class="alert d-none" id="resultado_insercion" role="alert">
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label for="No_aporta_documentos">No aporta documentos</label> &nbsp;
+                                        <input class="scales" type="checkbox" name="No_aporta_documentos" id="No_aporta_documentos" style="margin-left: revert;">
+                                    </div> 
                                 </div>
                                 <div class="table-responsive">
                                     <table id="listado_docs_solicitados" class="table table-striped table-bordered" width="100%">
@@ -351,7 +365,7 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($listado_documentos_solicitados as $prueba)
-                                            <tr class="fila_visual_{{$prueba->Id_Documento_Solicitado}}">
+                                            <tr class="fila_visual_{{$prueba->Id_Documento_Solicitado}}" id="datos_visuales">
                                                 <td>{{$prueba->F_solicitud_documento}}</td>
                                                 <td>{{$prueba->Nombre_documento}}</td>
                                                 <td>{{$prueba->Descripcion}}</td>
@@ -366,27 +380,20 @@
                                     </table>
                                 </div><br>
                                 <x-adminlte-button class="mr-auto" id="guardar_datos_tabla" theme="info" label="Guardar"/>
-                                <br>
+                                <br><br>
                                 <div class="row">
-                                    <div class="col-3">
-                                        <div class="formgroup">
-                                            <label for="No_aporta_documentos">No aporta documentos</label>
-                                            <input class="scales" type="checkbox" name="No_aporta_documentos" id="No_aporta_documentos" style="margin-left: revert;">
-                                        </div> 
-                                    </div>
-                                    <div class="col-3">
+                                    <div class="col-4 text-center">
                                         <div class="form-group">
-                                            {{-- <a href="javascript:void(0);" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a> --}}
-                                            <a href="#" class="text-dark text-md"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
+                                            <a href="javascript:void(0);" id="cargue_docs_modal_listado_docs" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
                                         </div>
                                     </div>
-                                    <div class="col-3">
+                                    <div class="col-4 text-center">
                                         <div class="form-group">
                                             <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalGenerarComunicado"><i class="fas fa-paperclip text-info"></i> <strong>Generar Comunicado</strong></a>
 
                                         </div>
                                     </div>
-                                    <div class="col-3">
+                                    <div class="col-4 text-center">
                                         <div class="form-group">
                                             <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalAgregarSeguimiento"><i class="fas fa-folder-open text-info"></i> <strong>Agregar Seguimiento</strong></a>
                                         </div>
@@ -612,7 +619,7 @@
                 "searching": false,
                 "ordering": false,
                 "scrollCollapse": true,
-                "scrollY": "50vh",
+                "scrollY": "30vh",
                 "paging": false,
                 "language":{
                     "emptyTable": "No se encontró información"
@@ -623,8 +630,9 @@
 
             var contador = 0;
             $('#btn_agregar_fila').click(function(){
+                $('#guardar_datos_tabla').removeClass('d-none');
+
                 contador = contador + 1;
-                
                 var nueva_fila = [
                     '<?php echo date("Y-m-d");?> <input type="hidden" id="fecha_solicitud_fila_'+contador+'" name="fecha_solicitud" value="{{date("Y-m-d")}}" />',
                     '<select id="lista_docs_fila_'+contador+'" class="form-comtrol custom-select lista_docs_fila_'+contador+'" name="documento"><option></option></select><div id="contenedor_otro_doc_fila_'+contador+'" class="mt-1"></div>',

@@ -39,8 +39,15 @@ class CalificacionPCLController extends Controller
         ->where('Estado', 'Activo')
         ->get();
 
-        // return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl'));
-        return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'listado_documentos_solicitados'));
+        $dato_validacion_no_aporta_docs = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
+        ->select('Id_Documento_Solicitado', 'Aporta_documento')
+        ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion],
+            ['Estado', 'Inactivo'], ['F_solicitud_documento', '0000-00-00']])
+        ->get();
+
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento));
+
+        return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'listado_documentos_solicitados', 'arraylistado_documentos', 'dato_validacion_no_aporta_docs'));
     }
 
     public function cargueListadoSelectoresModuloCalifcacionPcl(Request $request){
@@ -123,8 +130,20 @@ class CalificacionPCLController extends Controller
             $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newIdAsignacion));
 
             $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento)); 
+
+            $listado_documentos_solicitados = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
+            ->select('Id_Documento_Solicitado', 'F_solicitud_documento', 'Nombre_documento', 
+            'Descripcion', 'Nombre_solicitante', 'F_recepcion_documento')
+            ->where('Estado', 'Activo')
+            ->get();
+
+            $dato_validacion_no_aporta_docs = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
+            ->select('Id_Documento_Solicitado', 'Aporta_documento')
+            ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion],['Estado', 'Inactivo']])
+            ->get();
     
-            return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'arraylistado_documentos'));
+            // return redirect('/calificacionPCL')->with('user','array_datos_calificacionPcl', 'arraylistado_documentos', 'listado_documentos_solicitados', 'dato_validacion_no_aporta_docs');
+            return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'arraylistado_documentos', 'listado_documentos_solicitados', 'dato_validacion_no_aporta_docs'));
         }elseif ($request->bandera_accion_guardar_actualizar == 'Actualizar') {
             
             // actualizacion de datos a la tabla de sigmel_informacion_accion_eventos
@@ -159,8 +178,19 @@ class CalificacionPCLController extends Controller
             $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newIdAsignacion));
 
             $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento));
+
+            $listado_documentos_solicitados = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
+            ->select('Id_Documento_Solicitado', 'F_solicitud_documento', 'Nombre_documento', 
+            'Descripcion', 'Nombre_solicitante', 'F_recepcion_documento')
+            ->where('Estado', 'Activo')
+            ->get();
     
-            return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'arraylistado_documentos'));
+            $dato_validacion_no_aporta_docs = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
+            ->select('Id_Documento_Solicitado', 'Aporta_documento')
+            ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion],['Estado', 'Inactivo']])
+            ->get();
+    
+            return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'arraylistado_documentos', 'listado_documentos_solicitados', 'dato_validacion_no_aporta_docs'));
         }
         
     }
@@ -205,42 +235,105 @@ class CalificacionPCLController extends Controller
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
 
-        // Captura del array de los datos de la tabla
-        $array_datos = $request->datos_finales_documentos_solicitados;
+        $parametro = $request->parametro;
 
-        // Iteración para extraer los datos de la tabla y adicionar los datos de Id evento, Id asignacion y Id proceso
-        $array_datos_organizados = [];
-        foreach ($array_datos as $subarray_datos) {
+        if ($parametro == "datos_bitacora") {
 
-            array_unshift($subarray_datos, $request->Id_proceso);
-            array_unshift($subarray_datos, $request->Id_Asignacion);
-            array_unshift($subarray_datos, $request->Id_evento);
+            // Seteo del autoincrement para mantener el primary key siempre consecutivo.
+            $max_id = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
+            ->max('Id_Documento_Solicitado');
+            if ($max_id <> "") {
+                DB::connection('sigmel_gestiones')
+                ->statement("ALTER TABLE sigmel_informacion_documentos_solicitados_eventos AUTO_INCREMENT = ".($max_id));
+            }
 
-            $subarray_datos[] = $nombre_usuario;
-            $subarray_datos[] = $date;
-
-            array_push($array_datos_organizados, $subarray_datos);
+            // Validacion: Se desmarca la opción no aporta documentos y se inserta registros.
+            if ($request->tupla_no_aporta <> 0) {
+                sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
+                ->where('Id_Documento_Solicitado', $request->tupla_no_aporta)->delete();
+            }
+            
+            $aporta_documento = 'Si';
+            // Captura del array de los datos de la tabla
+            $array_datos = $request->datos_finales_documentos_solicitados;
+    
+            // Iteración para extraer los datos de la tabla y adicionar los datos de Id evento, Id asignacion y Id proceso
+            $array_datos_organizados = [];
+            foreach ($array_datos as $subarray_datos) {
+    
+                array_unshift($subarray_datos, $request->Id_proceso);
+                array_unshift($subarray_datos, $request->Id_Asignacion);
+                array_unshift($subarray_datos, $request->Id_evento);
+    
+                $subarray_datos[] = $aporta_documento;
+                $subarray_datos[] = $nombre_usuario;
+                $subarray_datos[] = $date;
+    
+                array_push($array_datos_organizados, $subarray_datos);
+            }
+    
+            // Creación de array con los campos de la tabla: sigmel_informacion_documentos_solicitados_eventos
+            $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso','F_solicitud_documento','Id_Documento','Nombre_documento',
+            'Descripcion','Id_solicitante','Nombre_solicitante','F_recepcion_documento', 'Aporta_documento', 'Nombre_usuario','F_registro'];
+            
+            // Combinación de los campos de la tabla con los datos
+            $array_datos_con_keys = [];
+            foreach ($array_datos_organizados as $subarray_datos_organizados) {
+                array_push($array_datos_con_keys, array_combine($array_keys_tabla, $subarray_datos_organizados));
+            }
+    
+            // Inserción de la información
+            foreach ($array_datos_con_keys as $insertar) {
+                sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')->insert($insertar);
+            }
+    
+            $mensajes = array(
+                "parametro" => 'inserto_informacion',
+                "mensaje" => 'Información guardada satisfactoriamente.'
+            );
         }
 
-        // Creación de array con los campos de la tabla: sigmel_informacion_documentos_solicitados_eventos
-        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso','F_solicitud_documento','Id_Documento','Nombre_documento',
-        'Descripcion','Id_solicitante','Nombre_solicitante','F_recepcion_documento','Nombre_usuario','F_registro'];
-        
-        // Combinación de los campos de la tabla con los datos
-        $array_datos_con_keys = [];
-        foreach ($array_datos_organizados as $subarray_datos_organizados) {
-            array_push($array_datos_con_keys, array_combine($array_keys_tabla, $subarray_datos_organizados));
-        }
+        // Validación: No se inserta datos y selecciona el checkbox de No aporta documentos
+        if ($parametro == "no_aporta") {
 
-        // Inserción de la información
-        foreach ($array_datos_con_keys as $insertar) {
-            sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')->insert($insertar);
-        }
+            $dato_validacion_no_aporta_docs = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
+            ->select('Id_Documento_Solicitado', 'Aporta_documento')
+            ->where([['ID_evento', $request->Id_evento],['Id_Asignacion', $request->Id_Asignacion],
+                ['Estado', 'Inactivo'], ['F_solicitud_documento', '0000-00-00']])
+            ->get();
 
-        $mensajes = array(
-            "parametro" => 'inserto_informacion',
-            "mensaje" => 'Información guardada satisfactoriamente.'
-        );
+            if (count($dato_validacion_no_aporta_docs)> 0) {
+                $mensajes = array(
+                    "parametro" => 'replicando_no_aporta',
+                    "mensaje" => 'No puede registrar esta opción de nuevo.'
+                );
+            }else{
+                $insertar = [
+                    'ID_evento' => $request->Id_evento,
+                    'Id_Asignacion' => $request->Id_Asignacion,
+                    'Id_proceso' => $request->Id_proceso,
+                    'F_solicitud_documento' => "",
+                    'Id_Documento' => 0,
+                    'Nombre_documento' => "N/A",
+                    'Descripcion' => "N/A",
+                    'Id_solicitante' => 0,
+                    'Nombre_solicitante' => "N/A",
+                    'F_recepcion_documento' => "",
+                    'Aporta_documento' => "No",
+                    'Estado' => "Inactivo",
+                    'Nombre_usuario' => $nombre_usuario,
+                    'F_registro' => $date
+                ];
+             
+                sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')->insert($insertar);
+                $mensajes = array(
+                    "parametro" => 'inserto_informacion',
+                    "mensaje" => 'Información guardada satisfactoriamente.'
+                );
+
+            }
+
+        }
 
         return json_decode(json_encode($mensajes, true));
 
@@ -272,8 +365,12 @@ class CalificacionPCLController extends Controller
         sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')->where('Id_Documento_Solicitado', $id_fila)
         ->update($dato_actualizar);
 
+        $total_registros = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento', $request->Id_evento],['Estado', 'Activo']])->count();
+
         $mensajes = array(
             "parametro" => 'fila_eliminada',
+            'total_registros' => $total_registros,
             "mensaje" => 'Información eliminada satisfactoriamente.'
         );
 
