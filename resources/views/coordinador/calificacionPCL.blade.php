@@ -614,14 +614,14 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="departamento_destinatario">Departamento <span style="color: red;">(*)</span></label><br>
-                                                    <select class="departamento_destinatario custom-select" name="departamento_destinatario" id="departamento_destinatario" required>                                                        
+                                                    <select class="departamento_destinatario custom-select" name="departamento_destinatario" id="departamento_destinatario" style="width: 100%;" required>                                                        
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="ciudad_destinatario">Ciudad <span style="color: red;">(*)</span></label><br>
-                                                    <select class="ciudad_destinatario custom-select" name="ciudad_destinatario" id="ciudad_destinatario" required>
+                                                    <select class="ciudad_destinatario custom-select" name="ciudad_destinatario" id="ciudad_destinatario" style="width: 100%;" required>
                                                     </select>
                                                 </div>
                                             </div>
@@ -651,7 +651,7 @@
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <label for="forma_envio">Forma de envío <span style="color: red;">(*)</span></label><br>
-                                                <select class="forma_envio custom-select" name="forma_envio" id="forma_envio" required>                                                    
+                                                <select class="forma_envio custom-select" name="forma_envio" id="forma_envio" style="width: 100%;" required>                                                    
                                                     <option value="">Seleccione una opción</option>
                                                 </select>
                                             </div>
@@ -665,7 +665,7 @@
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <label for="reviso">Revisó</label><br>
-                                                <select class="reviso custom-select" name="reviso" id="reviso" required>                                                    
+                                                <select class="reviso custom-select" name="reviso" id="reviso" style="width: 100%;" required>                                                    
                                                     <option value="">Seleccione una opción</option>
                                                 </select>
                                             </div>
