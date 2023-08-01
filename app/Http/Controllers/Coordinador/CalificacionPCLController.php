@@ -19,6 +19,7 @@ use App\Models\sigmel_informacion_seguimientos_eventos;
 use App\Models\sigmel_registro_documentos_eventos;
 use App\Models\sigmel_lista_documentos;
 use App\Models\sigmel_lista_solicitantes;
+use App\Models\sigmel_lista_departamentos_municipios;
 use App\Models\sigmel_informacion_documentos_solicitados_eventos;
 
 class CalificacionPCLController extends Controller
@@ -29,15 +30,31 @@ class CalificacionPCLController extends Controller
         }
         $user = Auth::user();
         $newIdAsignacion=$request->newIdAsignacion;
-        $newIdEvento = $request->newIdEvento;
+        $newIdEvento = $request->newIdEvento;       
 
         $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newIdAsignacion));
+        $array_datos_destinatarios = DB::select('CALL psrcomunicados(?)', array($newIdEvento));
 
         $listado_documentos_solicitados = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
         ->select('Id_Documento_Solicitado', 'F_solicitud_documento', 'Nombre_documento', 
         'Descripcion', 'Nombre_solicitante', 'F_recepcion_documento')
         ->where('Estado', 'Activo')
         ->get();
+
+
+       /*  // creación de consecutivo para el comunicado
+        $fechaActual = date("Ymd");
+        // Obtener el último valor de la base de datos o archivo
+        $ultimoConsecutivo = 'SAL-PCL20230728000000'; 
+        $ultimoDigito = substr($ultimoConsecutivo, -6);
+        $nuevoConsecutivo = $ultimoDigito + 1;
+        // Reiniciar el consecutivo si es un nuevo día
+        if (date("Ymd") != $fechaActual) {
+            $nuevoConsecutivo = 0;
+        }
+        // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
+        $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
+        $consecutivo = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted;     */    
 
         $dato_validacion_no_aporta_docs = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
         ->select('Id_Documento_Solicitado', 'Aporta_documento')
@@ -47,7 +64,7 @@ class CalificacionPCLController extends Controller
 
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento));
 
-        return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'listado_documentos_solicitados', 'arraylistado_documentos', 'dato_validacion_no_aporta_docs'));
+        return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos'));
     }
 
     public function cargueListadoSelectoresModuloCalifcacionPcl(Request $request){
@@ -79,6 +96,47 @@ class CalificacionPCLController extends Controller
 
             $info_listado_causal_seguimiento= json_decode(json_encode($listado_causal_seguimiento, true));
             return response()->json($info_listado_causal_seguimiento);
+        }
+
+        // Listados generar comunicado
+
+        if ($parametro == "departamentos_generar_comunicado") {
+            
+            $listado_departamentos_generar_comunicado = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
+                ->select('Id_departamento', 'Nombre_departamento')
+                ->where('Estado', 'activo')
+                ->groupBy('Nombre_departamento')
+                ->get();
+            
+            $info_lista_departamentos_generar_comunicado = json_decode(json_encode($listado_departamentos_generar_comunicado, true));
+            return response()->json($info_lista_departamentos_generar_comunicado);
+        }
+
+        if($parametro == "municipios_generar_comunicado"){
+            $listado_municipios_generar_comunicado = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
+                ->select('Id_municipios', 'Nombre_municipio')
+                ->where([
+                    ['Id_departamento', '=', $request->id_departamento_destinatario],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
+
+            $info_lista_municipios_generar_comunicado = json_decode(json_encode($listado_municipios_generar_comunicado, true));
+            return response()->json($info_lista_municipios_generar_comunicado);
+        }
+
+        if($parametro == 'lista_forma_envio'){
+            $listado_modalidad_calificacion = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro', 'Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Forma de envio'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_modalidad_calificacion = json_decode(json_encode($listado_modalidad_calificacion, true));
+            return response()->json($info_listado_modalidad_calificacion);
+
         }
     }
 
@@ -143,7 +201,7 @@ class CalificacionPCLController extends Controller
             ->get();
     
             // return redirect('/calificacionPCL')->with('user','array_datos_calificacionPcl', 'arraylistado_documentos', 'listado_documentos_solicitados', 'dato_validacion_no_aporta_docs');
-            return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'arraylistado_documentos', 'listado_documentos_solicitados', 'dato_validacion_no_aporta_docs'));
+            return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'listado_documentos_solicitados', 'arraylistado_documentos', 'listado_documentos_solicitados', 'dato_validacion_no_aporta_docs'));
         }elseif ($request->bandera_accion_guardar_actualizar == 'Actualizar') {
             
             // actualizacion de datos a la tabla de sigmel_informacion_accion_eventos
@@ -178,7 +236,8 @@ class CalificacionPCLController extends Controller
             $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newIdAsignacion));
 
             $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento));
-
+            return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'listado_documentos_solicitados', 'arraylistado_documentos'));
+        
             $listado_documentos_solicitados = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
             ->select('Id_Documento_Solicitado', 'F_solicitud_documento', 'Nombre_documento', 
             'Descripcion', 'Nombre_solicitante', 'F_recepcion_documento')
@@ -432,6 +491,68 @@ class CalificacionPCLController extends Controller
             return response()->json(($arrayhistorialSeguimiento));
 
         }
+    }
+
+    //Captura de datos para insertar el comunicado
+
+    public function captuarDestinatariosPrincipal(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombreusuario = Auth::user()->name; 
+        $destinatarioPrincipal = $request->destinatarioPrincipal;
+        $newIdAsignacion = $request->newId_asignacion;
+        $newIdEvento = $request->newId_evento;
+        $Id_proceso = $request->Id_proceso; 
+
+        switch (true) {
+            case ($destinatarioPrincipal == 'Afiliado'):                
+                $array_datos_destinatarios = DB::select('CALL psrcomunicados(?)', array($newIdEvento)); 
+                $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+                ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+                ->select('sgt.Id_proceso_equipo', 'ssu.name')
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                
+                return response()->json([
+                    'nombreusuario' => $nombreusuario,
+                    'destinatarioPrincipal' => $destinatarioPrincipal,
+                    'array_datos_destinatarios' => $array_datos_destinatarios,
+                    'array_datos_lider' => $array_datos_lider
+                ]);
+            break;
+            case ($destinatarioPrincipal == 'Empresa'):                
+                $array_datos_destinatarios = DB::select('CALL psrcomunicados(?)', array($newIdEvento)); 
+                $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+                ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+                ->select('sgt.Id_proceso_equipo', 'ssu.name')
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                return response()->json([
+                    'nombreusuario' => $nombreusuario,
+                    'destinatarioPrincipal' => $destinatarioPrincipal,
+                    'array_datos_destinatarios' => $array_datos_destinatarios,                    
+                    'array_datos_lider' => $array_datos_lider
+
+                ]);
+            break;
+            case ($destinatarioPrincipal == 'Otro'):  
+                $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+                ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+                ->select('sgt.Id_proceso_equipo', 'ssu.name')
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                return response()->json([
+                    'nombreusuario' => $nombreusuario,
+                    'destinatarioPrincipal' => $destinatarioPrincipal,
+                    'array_datos_lider' => $array_datos_lider
+                ]);
+            break;
+                         
+            default:                
+            break;
+        }
+
     }
 
 }

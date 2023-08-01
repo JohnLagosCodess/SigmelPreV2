@@ -282,10 +282,13 @@ Route::post('/GuardarDocumentosSolicitados',[CalificacionPCLController::class, '
 // Acción: Cargar Datos Listado de documentos solicitados
 Route::post('/CargarDocumentosSolicitados',[CalificacionPCLController::class, 'CargarDocumentosSolicitados']);
 // Acción: Eliminar Fila (Cambiar a estado inactivo)
-Route::post('/EliminarFila', [CalificacionPCLController::class, 'EliminarFila'])->name('EliminarFila');// Acción: Insertar Agregar Seguimiento
+Route::post('/EliminarFila', [CalificacionPCLController::class, 'EliminarFila'])->name('EliminarFila');
+// Acción: Insertar Agregar Seguimiento
 Route::post('/registrarCausalSeguimiento', [CalificacionPCLController::class, 'guardarAgregarSeguimiento']);
 // Acción: Capturar datos para el dataTable Historial de seguimientos
 Route::post('/historialSeguimientoPCL', [CalificacionPCLController::class, 'historialSeguimientosPCL']);
+// Acción: Capturar de datos para el formulario generar comunicado destinatario final
+Route::post('/captuarDestinatario', [CalificacionPCLController::class, 'captuarDestinatariosPrincipal']);
 
 
 // Acción: Traer el listado de historial de acciones del evento
