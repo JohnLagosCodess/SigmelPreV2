@@ -327,7 +327,7 @@
     {{-- Modal solicitud documentos - seguimientos --}}
     <div class="row">
         <div class="contenedor_sol_Docuementos_seguimiento" style="float: left;">
-            <x-adminlte-modal id="modalSolicitudDocSeguimiento" title="Solicitud Documentos - Seguimientos" theme="info" icon="fas fa-book-open" size='xl' disable-animations>
+            <x-adminlte-modal id="modalSolicitudDocSeguimiento" class="modalscroll" title="Solicitud Documentos - Seguimientos" theme="info" icon="fas fa-book-open" size='xl' disable-animations>
                 <div class="row">
                     <div class="col-12">
                         <div class="card-info" style="border: 1.5px solid black; border-radius: 2px;">
@@ -382,7 +382,7 @@
                                     </div>
                                     <div class="col-3">
                                         <div class="form-group">
-                                            <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalGenerarComunicado"><i class="fas fa-paperclip text-info"></i> <strong>Generar Comunicado</strong></a>
+                                            <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalGenerarComunicado"><i class="fas fa-file-pdf text-info"></i> <strong>Generar Comunicado</strong></a>
 
                                         </div>
                                     </div>
@@ -486,7 +486,7 @@
 
     <div class="row">
         <div class="contenedor_sol_Generar_comunicado" style="float: left;">
-            <x-adminlte-modal id="modalGenerarComunicado" title="Generar comunicado" theme="info" icon="fas fa-folder-open" size='xl' disable-animations>
+            <x-adminlte-modal id="modalGenerarComunicado" title="Generar comunicado" theme="info" icon="fas fa-file-pdf" size='xl' disable-animations>
                 <div class="row">
                     <div class="col-12">
                         <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
@@ -494,16 +494,195 @@
                             <div class="card-header text-center">
                                 <h5>Generar comunicado</h5>
                             </div>
-                            <form id="form_agregar_seguimientoPcl" method="POST">
-                                @csrf
+                            <form>                                
                                 <div class="card-body">                                
-                                    <div class="row">                                        
+                                    <div class="row">  
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="ciudad_comunicado">Ciudad <span style="color: red;">(*)</span></label>
+                                                <input class="form-control" type="text" name="ciudad_comunicado" id="ciudad" value="Bogotá D.C" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="fecha_comunicado">Fecha</label>
+                                                <input class="form-control" type="date" name="fecha_comunicado" id="fecha_comunicado" value="{{now()->format('Y-m-d')}}" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="radicado">N° Radicado</label>
+                                                <input class="form-control" type="text" name="radicado" id="radicado" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="cliente_comunicado">Cliente</label>
+                                                <input class="form-control" type="text" name="cliente_comunicado" id="cliente_comunicado" value="{{$array_datos_calificacionPcl[0]->Nombre_Cliente}}" disabled>
+                                            </div>
+                                        </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="nombre_afiliado_comunicado">Nombre del afiliado</label>
+                                                <input class="form-control" type="text" name="nombre_afiliado_comunicado" id="nombre_afiliado_comunicado" value="{{$array_datos_calificacionPcl[0]->Nombre_afiliado}}" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="tipo_documento_comunicado">Tipo de documento</label>
+                                                <input class="form-control" type="text" name="tipo_documento_comunicado" id="tipo_documento_comunicado" value="{{$array_datos_calificacionPcl[0]->Nombre_tipo_documento}}" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="identificacion_comunicado">N° de identificación</label>
+                                                <input class="form-control" type="text" name="identificacion_comunicado" id="identificacion_comunicado" value="{{$array_datos_calificacionPcl[0]->Nro_identificacion}}" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="id_evento_comunicado">ID evento</label>
+                                                <input class="form-control" type="text" name="id_evento_comunicado" id="id_evento_comunicado" value="{{$array_datos_calificacionPcl[0]->ID_evento}}" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row text-center">
+                                        <label for="destinatario_principal" style="margin-left: 7px;">Destinatario Principal: <span style="color: red;">(*)</span></label>
+                                        
+                                            <div class="col-3">
+                                                <label for="afiliado_comunicado"><strong>Afiliado</strong></label>
+                                                <input class="scales" type="radio" name="afiliado_comunicado" id="afiliado_comunicado" value="Afiliado" style="margin-left: revert;" required>
+                                            </div>
+                                            <div class="col-3">
+                                                <label for="empresa_comunicado"><strong>Empresa</strong></label>
+                                                <input class="scales" type="radio" name="afiliado_comunicado" id="empresa_comunicado" value="Empresa" style="margin-left: revert;" required>
+                                            </div>
+                                            <div class="col-3">
+                                                <label for="Otro"><strong>Otro</strong></label>
+                                                <input class="scales" type="radio" name="afiliado_comunicado" id="Otro" value="Otro" style="margin-left: revert;" required>
+                                            </div>
+                                        <?php    
+                                        ?>
+                                    </div>     
+                                    {{-- <div id="destinatarioPrincipal">
+                                    </div>
+                                    <div id="datos"></div> --}}
+                                    {{-- @foreach ($array_datos_destinatarios as $item)
+                                        <div>{{$item->Nombre_afiliado}}</div>
+                                        <div>{{$item->Nombre_afiliado}}</div>                                        
+                                    @endforeach   --}}                                                                                                                       
+                                    <div class="row">                                        
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="nombre_destinatario"> Nombre destinatario <span style="color: red;">(*)</span></label>
+                                                    <input class="form-control" type="text" name="nombre_destinatario" id="nombre_destinatario"  required>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="nic_cc">NIT / CC <span style="color: red;">(*)</span></label>
+                                                    <input class="form-control" type="text" name="nic_cc" id="nic_cc" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="direccion_destinatario">Dirección destinatario <span style="color: red;">(*)</span></label>
+                                                    <input class="form-control" type="text" name="direccion_destinatario" id="direccion_destinatario" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="telefono_destinatario">Telefono destinatario <span style="color: red;">(*)</span></label>
+                                                    <input class="form-control" type="number" min="7" max="10" name="telefono_destinatario" id="telefono_destinatario" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="email_destinatario">E-mail destinatario <span style="color: red;">(*)</span></label>
+                                                    <input class="form-control" type="email" name="email_destinatario" id="email_destinatario" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="departamento_destinatario">Departamento <span style="color: red;">(*)</span></label><br>
+                                                    <select class="departamento_destinatario custom-select" name="departamento_destinatario" id="departamento_destinatario" required>                                                        
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="ciudad_destinatario">Ciudad <span style="color: red;">(*)</span></label><br>
+                                                    <select class="ciudad_destinatario custom-select" name="ciudad_destinatario" id="ciudad_destinatario" required>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        
+                                        <div class="col-8">
+                                            <div class="form-group">
+                                                <label for="asunto">Asunto <span style="color: red;">(*)</span></label>
+                                                <input class="form-control" type="text" name="asunto" id="asunto" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="cuerpo_comunicado">Cuerpo del comunicado <span style="color: red;">(*)</span></label>
+                                                <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" cols="30" rows="5" style="resize:none;" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="anexos">Anexos</label>
+                                                <input class="form-control" type="number" name="anexos" id="anexos">
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="forma_envio">Forma de envío <span style="color: red;">(*)</span></label><br>
+                                                <select class="forma_envio custom-select" name="forma_envio" id="forma_envio" required>                                                    
+                                                    <option value="">Seleccione una opción</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="elaboro">Elaboró</label>
+                                                <input class="form-control" type="text" name="elaboro" id="elaboro" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="reviso">Revisó</label><br>
+                                                <select class="reviso custom-select" name="reviso" id="reviso" required>                                                    
+                                                    <option value="">Seleccione una opción</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group" id="contenedorCopia">
+                                                <label for="agregar_copia">Agregar copia</label>
+                                                <input class="form-control" type="text" name="agregar_copia" id="agregar_copia"><br>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group" style="padding-top: 31px;"> 
+                                                <button class="btn btn-info" type="button" onclick="duplicate()">Duplicar</button>
+                                            </div>
+                                        </div>
+                                    </div>                                                                        
                                 </div>
                                 <div class="card-footer">
                                     <div class="row">
                                         <div class="col-4">
                                             <div class="form-group">
+                                                {{-- <a href="#" class="text-dark text-md" download><i class="fas fa-print text-info"></i> <strong>Ver comunicado</strong></a> --}}
                                                 <input type="submit" id="Generar_comunicados" class="btn btn-info" value="Guardar">
                                             </div>
                                         </div>
@@ -566,26 +745,6 @@
         }
         // Agregar el event listener al botón
         boton.addEventListener('click', clicUnico); 
-
-        //funcion para poner la primera en mayuscula en el texarea descipcion de Accion a realizar
-
-        // Obtén el elemento de textarea
-        var descripcionAccion = document.getElementById('descripcion_accion');
-        
-        // Escucha el evento de entrada de texto en el textarea
-        descripcionAccion.addEventListener('input', function() {
-            // Obtén el contenido del textarea
-            var mayuscula = descripcionAccion.value;
-            
-            // Verifica si hay texto en el textarea
-            if (mayuscula.length > 0) {
-                // Convierte la primera letra a mayúscula
-                var textoMayuscula = mayuscula.charAt(0).toUpperCase() + mayuscula.slice(1);
-                
-                // Establece el contenido del textarea con la primera letra en mayúscula
-                descripcionAccion.value = textoMayuscula;
-            }
-        });
 
         //funcion para ocultar el boton guardar
         function OcultarbotonGuardar(){

@@ -16,3 +16,20 @@ textarea{
     overflow: hidden;
     transition: width 0.5s ease;
 } 
+
+.modalscroll {
+    overflow-y: scroll;
+}
+
+.select2-custom-width {
+    width: 345px;
+}
+
+.select2-custom-width2 {
+    width: 525px;
+}
+
+.select2-custom-width3 {
+    width: 255px;
+}
+

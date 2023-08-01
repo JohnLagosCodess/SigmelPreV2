@@ -111,6 +111,32 @@ $(document).ready(function () {
         var textoEscrito = $(this).val();
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
     });
+    // Text-area de modal agregar seguimiento
+    $(document).on('keyup', "textarea[id^='descripcion_seguimiento']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+    // Inputs Text-area de modal generar comunicado
+    $(document).on('keyup', "input[id^='nombre_afiliado_comunicado']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "input[id^='asunto']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });  
+    
+    $(document).on('keyup', "textarea[id^='cuerpo_comunicado']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "textarea[id^='descripcion_accion']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
 
     /* Función para colocar la primera letra en mayúscula de cada palabra que se escriba */
     function LetraMayusCadaPalabra(textoEscrito) {
@@ -139,7 +165,7 @@ $(document).ready(function () {
         } else {
             return false;
         }
-    }
+    }    
     
 });
 
@@ -151,3 +177,4 @@ function autoAdjustColumns(table) {
     });
     resizeObserver.observe(container);
 }
+
