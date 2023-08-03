@@ -290,6 +290,12 @@ Route::post('/historialSeguimientoPCL', [CalificacionPCLController::class, 'hist
 // Acción: Capturar de datos para el formulario generar comunicado destinatario final
 Route::post('/captuarDestinatario', [CalificacionPCLController::class, 'captuarDestinatariosPrincipal']);
 
+// 01/08/2023
+// SUBMÓDULO CALIFICACIÓN TÉCNICA PCL
+// Acción: MOstrar vista Calificación Técnica PCL
+Route::get('/CalficacionTecnicaPCL', [CalificacionPCLController::class, 'mostrarVistaCalificacionTecnicaPCL'])->name('CalficacionTecnicaPCL');
+// Acción: Consulta Campimetría por fila
+Route::post('/ConsultaCampimetriaXFila', [CalificacionPCLController::class, 'ConsultaCampimetriaXFila']);
 
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);

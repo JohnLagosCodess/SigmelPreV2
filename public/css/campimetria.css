@@ -1,0 +1,329 @@
+#tabla_campimetria_ojo_izquierdo{
+    background: rgb(229, 237, 242);
+}
+
+#tabla_suma_columnas_ojo_izq, #tabla_suma_columnas_ojo_der{
+    background: #17a2b8;
+    color:white;
+    text-align: center;
+}
+
+#tabla_suma_columnas_ojo_izq tr td, #tabla_suma_columnas_ojo_der tr td {
+    border: 1.3px solid black;
+}
+
+#tabla_calculos_deficiencia_visual_modal thead{
+    background: #17a2b8;
+    color:white;
+}
+
+#tabla_calculos_deficiencia_visual_modal thead tr th{
+    border: 1.3px solid black;
+}
+
+#tabla_calculos_deficiencia_visual_modal tbody tr td{
+    border: 1.3px solid black;
+}
+
+.inhabilitar{
+    background: red !important;
+}
+
+/* TODO LO REFERENTE AL OJO IZQUIERDO */
+
+/* OCULTAMIENTO DE CHECKBOX OJO IZQUIERDO QUE NO SE MOSTRARÁN */
+.checkbox_izq_1_1, .checkbox_izq_1_2, .checkbox_izq_1_3, .checkbox_izq_1_8, .checkbox_izq_1_9, .checkbox_izq_1_10{
+    display: none;
+}
+
+.checkbox_izq_2_1, .checkbox_izq_2_2, .checkbox_izq_2_9, .checkbox_izq_2_10{
+    display: none;
+}
+
+.checkbox_izq_3_1, .checkbox_izq_3_10{
+    display: none;
+}
+
+.checkbox_izq_8_1, .checkbox_izq_8_10{
+    display: none;
+} 
+
+.checkbox_izq_9_1, .checkbox_izq_9_2, .checkbox_izq_9_9, .checkbox_izq_9_10{
+    display: none;
+}
+
+.checkbox_izq_10_1, .checkbox_izq_10_2, .checkbox_izq_10_3, .checkbox_izq_10_8, .checkbox_izq_10_9, .checkbox_izq_10_10{
+    display: none;
+}
+
+/* PONER UN FONDO BLANCO A TD'S POR FUERA */
+.coordenadas_izq_1_4, .coordenadas_izq_1_5, .coordenadas_izq_1_6, .coordenadas_izq_1_7{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_2_3, .coordenadas_izq_2_4, .coordenadas_izq_2_5, .coordenadas_izq_2_6,
+.coordenadas_izq_2_7, .coordenadas_izq_2_8{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_3_2, .coordenadas_izq_3_3, .coordenadas_izq_3_4, .coordenadas_izq_3_7,
+.coordenadas_izq_3_8, .coordenadas_izq_3_9{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_4_1, .coordenadas_izq_4_2, .coordenadas_izq_4_3, .coordenadas_izq_4_8,
+.coordenadas_izq_4_9, .coordenadas_izq_4_10{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_5_1, .coordenadas_izq_5_2, .coordenadas_izq_5_9, .coordenadas_izq_5_10{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_6_1, .coordenadas_izq_6_2, .coordenadas_izq_6_9, .coordenadas_izq_6_10{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_7_1, .coordenadas_izq_7_2, .coordenadas_izq_7_3, .coordenadas_izq_7_8,
+.coordenadas_izq_7_9, .coordenadas_izq_7_10{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_8_2, .coordenadas_izq_8_3, .coordenadas_izq_8_4, .coordenadas_izq_8_7,
+.coordenadas_izq_8_8, .coordenadas_izq_8_9{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_9_3, .coordenadas_izq_9_4, .coordenadas_izq_9_5, .coordenadas_izq_9_6,
+.coordenadas_izq_9_7, .coordenadas_izq_9_8{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_10_4, .coordenadas_izq_10_5, .coordenadas_izq_10_6, .coordenadas_izq_10_7{
+    background: white;
+    border: 1.3px solid black;
+}
+
+/* PONER UN FONDO AZUL OSCURO A TD'S DEL MEDIO */
+.coordenadas_izq_3_5, .coordenadas_izq_3_6{
+    background: rgb(61, 133, 198);
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_4_4, .coordenadas_izq_4_7{
+    background: rgb(61, 133, 198);
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_5_3, .coordenadas_izq_5_8{
+    background: rgb(61, 133, 198);
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_6_3, .coordenadas_izq_6_8{
+    background: rgb(61, 133, 198);
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_7_4, .coordenadas_izq_7_7{
+    background: rgb(61, 133, 198);
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_8_5, .coordenadas_izq_8_6{
+    background: rgb(61, 133, 198);
+    border: 1.3px solid black;
+}
+
+/* PONER UN FONDO AZUL CLARO A TD'S DEL MEDIO-CENTRO */
+.coordenadas_izq_4_5, .coordenadas_izq_4_6{
+    background: rgb(164, 194, 244);
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_5_4, .coordenadas_izq_5_7{
+    background: rgb(164, 194, 244);
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_6_4, .coordenadas_izq_6_7{
+    background: rgb(164, 194, 244);
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_7_5, .coordenadas_izq_7_6{
+    background: rgb(164, 194, 244);
+    border: 1.3px solid black;
+}
+
+/* PONER UN FONDO NEGRO A TD'S DEL CENTRO (PUPILA) */
+.coordenadas_izq_5_5, .coordenadas_izq_5_6{
+    background: rgb(67, 67, 67);
+    border: 1.3px solid black;
+}
+
+.coordenadas_izq_6_5, .coordenadas_izq_6_6{
+    background: rgb(67, 67, 67);
+    border: 1.3px solid black;
+}
+
+
+#tabla_campimetria_ojo_derecho{
+    background: rgb(229, 237, 242);
+}
+
+/* TODO LO REFERENTE AL OJO derecho */
+
+/* OCULTAMIENTO DE CHECKBOX OJO derecho QUE NO SE MOSTRARÁN */
+.checkbox_der_1_1, .checkbox_der_1_2, .checkbox_der_1_3, .checkbox_der_1_8, .checkbox_der_1_9, .checkbox_der_1_10{
+    display: none;
+}
+
+.checkbox_der_2_1, .checkbox_der_2_2, .checkbox_der_2_9, .checkbox_der_2_10{
+    display: none;
+}
+
+.checkbox_der_3_1, .checkbox_der_3_10{
+    display: none;
+}
+
+.checkbox_der_8_1, .checkbox_der_8_10{
+    display: none;
+} 
+
+.checkbox_der_9_1, .checkbox_der_9_2, .checkbox_der_9_9, .checkbox_der_9_10{
+    display: none;
+}
+
+.checkbox_der_10_1, .checkbox_der_10_2, .checkbox_der_10_3, .checkbox_der_10_8, .checkbox_der_10_9, .checkbox_der_10_10{
+    display: none;
+}
+
+/* PONER UN FONDO BLANCO A TD'S POR FUERA */
+.coordenadas_der_1_4, .coordenadas_der_1_5, .coordenadas_der_1_6, .coordenadas_der_1_7{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_2_3, .coordenadas_der_2_4, .coordenadas_der_2_5, .coordenadas_der_2_6,
+.coordenadas_der_2_7, .coordenadas_der_2_8{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_3_2, .coordenadas_der_3_3, .coordenadas_der_3_4, .coordenadas_der_3_7,
+.coordenadas_der_3_8, .coordenadas_der_3_9{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_4_1, .coordenadas_der_4_2, .coordenadas_der_4_3, .coordenadas_der_4_8,
+.coordenadas_der_4_9, .coordenadas_der_4_10{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_5_1, .coordenadas_der_5_2, .coordenadas_der_5_9, .coordenadas_der_5_10{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_6_1, .coordenadas_der_6_2, .coordenadas_der_6_9, .coordenadas_der_6_10{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_7_1, .coordenadas_der_7_2, .coordenadas_der_7_3, .coordenadas_der_7_8,
+.coordenadas_der_7_9, .coordenadas_der_7_10{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_8_2, .coordenadas_der_8_3, .coordenadas_der_8_4, .coordenadas_der_8_7,
+.coordenadas_der_8_8, .coordenadas_der_8_9{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_9_3, .coordenadas_der_9_4, .coordenadas_der_9_5, .coordenadas_der_9_6,
+.coordenadas_der_9_7, .coordenadas_der_9_8{
+    background: white;
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_10_4, .coordenadas_der_10_5, .coordenadas_der_10_6, .coordenadas_der_10_7{
+    background: white;
+    border: 1.3px solid black;
+}
+
+/* PONER UN FONDO AZUL OSCURO A TD'S DEL MEDIO */
+.coordenadas_der_3_5, .coordenadas_der_3_6{
+    background: rgb(61, 133, 198);
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_4_4, .coordenadas_der_4_7{
+    background: rgb(61, 133, 198);
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_5_3, .coordenadas_der_5_8{
+    background: rgb(61, 133, 198);
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_6_3, .coordenadas_der_6_8{
+    background: rgb(61, 133, 198);
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_7_4, .coordenadas_der_7_7{
+    background: rgb(61, 133, 198);
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_8_5, .coordenadas_der_8_6{
+    background: rgb(61, 133, 198);
+    border: 1.3px solid black;
+}
+
+/* PONER UN FONDO AZUL CLARO A TD'S DEL MEDIO-CENTRO */
+.coordenadas_der_4_5, .coordenadas_der_4_6{
+    background: rgb(164, 194, 244);
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_5_4, .coordenadas_der_5_7{
+    background: rgb(164, 194, 244);
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_6_4, .coordenadas_der_6_7{
+    background: rgb(164, 194, 244);
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_7_5, .coordenadas_der_7_6{
+    background: rgb(164, 194, 244);
+    border: 1.3px solid black;
+}
+
+/* PONER UN FONDO NEGRO A TD'S DEL CENTRO (PUPILA) */
+.coordenadas_der_5_5, .coordenadas_der_5_6{
+    background: rgb(67, 67, 67);
+    border: 1.3px solid black;
+}
+
+.coordenadas_der_6_5, .coordenadas_der_6_6{
+    background: rgb(67, 67, 67);
+    border: 1.3px solid black;
+}
