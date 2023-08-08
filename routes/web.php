@@ -294,6 +294,9 @@ Route::post('/captuarDestinatario', [CalificacionPCLController::class, 'captuarD
 // SUBMÓDULO CALIFICACIÓN TÉCNICA PCL
 // Acción: MOstrar vista Calificación Técnica PCL
 Route::get('/CalficacionTecnicaPCL', [CalificacionPCLController::class, 'mostrarVistaCalificacionTecnicaPCL'])->name('CalficacionTecnicaPCL');
+Route::post('/CalficacionTecnicaPCL', [CalificacionPCLController::class, 'mostrarVistaCalificacionTecnicaPCL'])->name('CalficacionTecnicaPCL');
+// Accion: Selectores Módulo calificación PCl
+Route::post('/selectoresCalificacionTecnicaPCL', [CalificacionPCLController::class, 'cargueListadoSelectoresCalifcacionTecnicaPcl']);
 // Acción: Consulta Campimetría por fila
 Route::post('/ConsultaCampimetriaXFila', [CalificacionPCLController::class, 'ConsultaCampimetriaXFila']);
 

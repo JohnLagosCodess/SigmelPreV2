@@ -22,6 +22,11 @@ use App\Models\sigmel_lista_solicitantes;
 use App\Models\sigmel_lista_departamentos_municipios;
 use App\Models\sigmel_informacion_documentos_solicitados_eventos;
 use App\Models\sigmel_campimetria_visuales;
+use App\Models\sigmel_lista_califi_decretos;
+use App\Models\sigmel_lista_motivo_solicitudes;
+use App\Models\cndatos_eventos;
+use App\Models\sigmel_informacion_afiliado_eventos;
+
 
 class CalificacionPCLController extends Controller
 {
@@ -31,7 +36,8 @@ class CalificacionPCLController extends Controller
         }
         $user = Auth::user();
         $newIdAsignacion=$request->newIdAsignacion;
-        $newIdEvento = $request->newIdEvento;       
+        $newIdEvento = $request->newIdEvento;
+        $SubModulo='CalficacionTecnicaPCL'; //Enviar a la vista del SubModulo    
 
         $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newIdAsignacion));
         $array_datos_destinatarios = DB::select('CALL psrcomunicados(?)', array($newIdEvento));
@@ -65,7 +71,7 @@ class CalificacionPCLController extends Controller
 
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento));
 
-        return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos'));
+        return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos','SubModulo'));
     }
 
     public function cargueListadoSelectoresModuloCalifcacionPcl(Request $request){
@@ -558,13 +564,87 @@ class CalificacionPCLController extends Controller
 
 
     /* TODO LO REFERENTE AL SUBMÓDULO DE CALIFICACIÓN TÉNCICA PCL */
-    public function mostrarVistaCalificacionTecnicaPCL(){
+    public function mostrarVistaCalificacionTecnicaPCL(Request $request){
         if(!Auth::check()){
             return redirect('/');
         }
         $user = Auth::user();
+        $Id_evento_calitec=$request->Id_evento_calitec;
+        $Id_asignacion_calitec = $request->Id_asignacion_calitec;
+    
+        $array_datos_calificacionPclTecnica = DB::select('CALL psrcalificacionpcl(?)', array($Id_asignacion_calitec));
+        //Traer Motivo de solicitud,Dominancia actual
+        $motivo_solicitud_actual = cndatos_eventos::on('sigmel_gestiones')
+        ->select('Id_motivo_solicitud','Nombre_solicitud','Id_dominancia','Nombre_dominancia')
+        ->where([
+            ['ID_evento', '=', $Id_evento_calitec]
+        ])
+        ->get();
+        //Traer Información apoderado 
+        $datos_apoderado_actual = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+        ->select('Nombre_apoderado','Nro_identificacion_apoderado')
+        ->where([
+            ['ID_evento', '=', $Id_evento_calitec]
+        ])
+        ->get();
 
-        return view('coordinador.calificacionTecnicaPCL', compact('user'));
+        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual'));
+    }
+
+    public function cargueListadoSelectoresCalifcacionTecnicaPcl(Request $request){
+        $parametro = $request->parametro;
+        // Listado Origen Firme calificacion PCL
+        if($parametro == 'lista_origen_firme_pcl'){
+            $listado_origen_firme = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro', 'Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Firme'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_origen_firme = json_decode(json_encode($listado_origen_firme, true));
+            return response()->json($info_listado_origen_firme);
+        }
+        // Listado Cobertura calificacion PCL
+        if($parametro == 'lista_origen_cobertura_pcl'){
+            $listado_origen_cobertura = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro', 'Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Cobertura'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_origen_cobertura = json_decode(json_encode($listado_origen_cobertura, true));
+            return response()->json($info_listado_origen_cobertura);
+        }
+        // Listado decreto calificacion PCL
+        if($parametro == 'lista_cali_decreto_pcl'){
+            $listado_cali_decreto = sigmel_lista_califi_decretos::on('sigmel_gestiones')
+            ->select('Id_Decreto', 'Nombre_decreto')
+            ->where([
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_cali_decreto = json_decode(json_encode($listado_cali_decreto, true));
+            return response()->json($info_listado_cali_decreto);
+        }
+        // Listado motivo solicitud PCL
+        if($parametro == 'lista_motivo_solicitud'){
+            $listado_motivo_solicitud = sigmel_lista_motivo_solicitudes::on('sigmel_gestiones')
+            ->select('Id_Solicitud', 'Nombre_solicitud')
+            ->where([
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_motivo_solicitud = json_decode(json_encode($listado_motivo_solicitud, true));
+            return response()->json($info_listado_motivo_solicitud);
+        }
+        
+
     }
 
     public function ConsultaCampimetriaXFila(Request $request){

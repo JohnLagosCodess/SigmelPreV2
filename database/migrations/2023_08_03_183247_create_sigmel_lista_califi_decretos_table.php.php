@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('sigmel_gestiones')->create('sigmel_lista_tipo_eventos', function (Blueprint $table) {
-            $table->increments('Id_Evento');
-            $table->string('Nombre_evento',10);
+        Schema::connection('sigmel_gestiones')->create('sigmel_lista_califi_decretos', function (Blueprint $table) {
+            $table->increments('Id_Decreto');
+            $table->string('Nombre_decreto',50);
             $table->enum('Estado', ['activo', 'inactivo'])->default('activo');
             $table->date('F_registro');
         });
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sigmel_lista_tipo_eventos');
+        //
     }
 };
