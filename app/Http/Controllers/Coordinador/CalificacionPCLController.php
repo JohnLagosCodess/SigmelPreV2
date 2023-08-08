@@ -21,6 +21,7 @@ use App\Models\sigmel_lista_documentos;
 use App\Models\sigmel_lista_solicitantes;
 use App\Models\sigmel_lista_departamentos_municipios;
 use App\Models\sigmel_informacion_documentos_solicitados_eventos;
+use App\Models\sigmel_campimetria_visuales;
 
 class CalificacionPCLController extends Controller
 {
@@ -554,5 +555,33 @@ class CalificacionPCLController extends Controller
         }
 
     }
+
+
+    /* TODO LO REFERENTE AL SUBMÓDULO DE CALIFICACIÓN TÉNCICA PCL */
+    public function mostrarVistaCalificacionTecnicaPCL(){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+
+        return view('coordinador.calificacionTecnicaPCL', compact('user'));
+    }
+
+    public function ConsultaCampimetriaXFila(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $Id_Fila = $request->Id_Fila;
+
+        $listado_campimetria = sigmel_campimetria_visuales::on('sigmel_gestiones')
+        ->select('Fila1', 'Fila2', 'Fila3', 'Fila4', 'Fila5', 'Fila6', 'Fila7', 'Fila8', 'Fila9', 'Fila10')
+        ->get();
+
+        $info_listado_campimetria = json_decode(json_encode($listado_campimetria, true));
+        return response()->json($info_listado_campimetria);
+
+    }
+
 
 }

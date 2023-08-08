@@ -131,7 +131,7 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="servicio">Servicio</label><br>
-                                                    <a href="#" id="servicio_Pcl"><i class="fa fa-puzzle-piece text-info"></i> <strong class="text-dark">{{$array_datos_calificacionPcl[0]->Nombre_servicio}}</strong></a>
+                                                    <a href="{{ route('CalficacionTecnicaPCL') }}" id="servicio_Pcl"><i class="fa fa-puzzle-piece text-info"></i> <strong class="text-dark">{{$array_datos_calificacionPcl[0]->Nombre_servicio}}</strong></a>
                                                     <input type="hidden" class="form-control" name="servicio" id="servicio" value="{{$array_datos_calificacionPcl[0]->Nombre_servicio}}">
                                                 </div>
                                             </div>
