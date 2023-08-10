@@ -1,4 +1,13 @@
 <x-adminlte-modal id="modal_grilla_ojos" class="modalscroll" title="Agudeza Visual" theme="info" icon="fas fa-plus-circle" size='xl' disable-animations>
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Tenga en cuenta que hacer clic en la opción
+                <strong>Ceguera Toal</strong> el sistema seteará el formulario.
+                
+            </div>
+        </div>
+    </div>
     <form>
         <div class="row text-center">
             <div class="col-12">

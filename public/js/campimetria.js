@@ -34,18 +34,11 @@ $(document).ready(function() {
                 for (let j = 0; j < 10; j++) {
                     var conteo_izq2 = j + 1;
                     var cell = $('<td class="text-center coordenadas_izq_'+conteo_izq+'_'+conteo_izq2+'"></td>');
-
-                    // var match = regex.exec(data[i][nombre_filas_bd[j]]);
-                    // if (match) {
-                    //     var checkbox = $('<input type="checkbox" id="checkbox_izq_'+conteo_izq+'_'+conteo_izq2+'" class="checkbox_izq_'+conteo_izq+'_'+conteo_izq2+'" checked style="transform: scale(1.2);">');
-                    //     checkbox.val(parseFloat(match[2])); // setear valores a inputs
-                    // }else{
-                    // }
                     var checkbox = $('<input type="checkbox" id="checkbox_izq_'+conteo_izq+'_'+conteo_izq2+'" class="checkbox_izq_'+conteo_izq+'_'+conteo_izq2+'" style="transform: scale(1.2);">');
+                    
                     checkbox.val(data[i][nombre_filas_bd[j]]); // setear valores a inputs
                     
-                    
-                    cell.append(checkbox); // Append the checkbox to the cell
+                    cell.append(checkbox); // Inserción del checkbox al td
                     row.append(cell);
                 }
 
@@ -61,9 +54,9 @@ $(document).ready(function() {
                     var cell = $('<td class="text-center coordenadas_der_'+conteo_der+'_'+conteo_der2+'"></td>');
                     var checkbox = $('<input type="checkbox" id="checkbox_der_'+conteo_der+'_'+conteo_der2+'" class="checkbox_der_'+conteo_der+'_'+conteo_der2+'" style="transform: scale(1.2);">');
                     
-                    checkbox.val(data[a][nombre_filas_bd[m]]); // Extract the value from data
+                    checkbox.val(data[a][nombre_filas_bd[m]]); // setear valores a inputs
                     
-                    cell.append(checkbox); // Append the checkbox to the cell
+                    cell.append(checkbox); // Inserción del checkbox al td
                     row.append(cell);
                 }
 

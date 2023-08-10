@@ -108,4 +108,128 @@ $(document).ready(function(){
         }
     });
 
+    /* VALIDACIÓN MOSTRAR ITEMS DE ACUERDO A DECRETO  */ 
+    var opt_decreto;
+    var opt_origen;
+    var opt_cobertura;
+    $("#origen_firme").change(function(){
+        opt_origen = parseInt($(this).val());
+        $("#origen_firme").val(opt_origen);
+        iniciarIntervalo_decreto();
+    }); 
+    $("#origen_cobertura").change(function(){
+        opt_cobertura = parseInt($(this).val());
+        $("#origen_cobertura").val(opt_cobertura);
+        iniciarIntervalo_decreto();
+    }); 
+    $("#decreto_califi").change(function(){
+        opt_decreto = parseInt($(this).val());
+        $("#decreto_califi").val(opt_decreto);
+        iniciarIntervalo_decreto();
+        //console.log(opt_decreto)
+    }); 
+
+    // Función para validar items a mostrar
+    const tiempoDeslizamiento = 'slow';
+    const tiempoDeslizamiento2 = 'slow';
+    const tiempoDeslizamiento3 = 'slow';
+
+    function iniciarIntervalo_decreto() {
+        // Selección de los elementos que se deslizarán
+        const elementosDeslizar = [
+            '.columna_row1_afiliado',
+            '.columna_row1_dictamen',
+            '.columna_row1_documentos',
+            '.columna_row1_fundamentos',
+            '.columna_row1_interconsulta',
+            '.columna_row1_motivo_cali',
+            '.columna_row1_deficiencia',
+            '.columna_row1_dictamen'
+        ];
+        
+       const elementosDeslizar2 = [
+            '.columna_row1_auditivo',
+            '.columna_row1_visual',
+            '.columna_row1_valoracion_laboral'
+        ];
+        const elementosDeslizar3 = [
+            '.columna_row1_discapacidades',
+            '.columna_row1_minusvalias'
+        ];
+
+        intervalo = setInterval(() => {
+            
+            if(opt_origen == 48 && opt_cobertura == 50) { // si origen y cobertura es SI
+
+                switch (opt_decreto) {
+                    case 1:
+                        elementosDeslizar.forEach(elemento => {
+                            $(elemento).slideDown(tiempoDeslizamiento);
+                        }); 
+                        elementosDeslizar2.forEach(elemento => {
+                            $(elemento).slideDown(tiempoDeslizamiento2);
+                        });
+                        elementosDeslizar3.forEach(elemento => {
+                            $(elemento).slideUp(tiempoDeslizamiento3);
+                        });
+                    break;
+                    
+                    case 2: 
+                        elementosDeslizar.forEach(elemento => {
+                            $(elemento).slideDown(tiempoDeslizamiento);
+                        });
+                        // Deslizar hacia arriba (ocultar) los elementos
+                        elementosDeslizar2.forEach(elemento => {
+                            $(elemento).slideUp(tiempoDeslizamiento2);
+                        });
+                        elementosDeslizar3.forEach(elemento => {
+                            $(elemento).slideUp(tiempoDeslizamiento3);
+                        });
+                    break;
+    
+                    case 3: 
+                        elementosDeslizar.forEach(elemento => {
+                            $(elemento).slideDown(tiempoDeslizamiento);
+                        });
+                        elementosDeslizar3.forEach(elemento => {
+                            $(elemento).slideDown(tiempoDeslizamiento3);
+                        });
+                        // Deslizar hacia arriba (ocultar) los elementos
+                        elementosDeslizar2.forEach(elemento => {
+                            $(elemento).slideUp(tiempoDeslizamiento2);
+                        });
+                    break;
+                
+                    default:
+                        // Deslizar hacia arriba (ocultar) los elementos
+                        elementosDeslizar.forEach(elemento => {
+                            $(elemento).slideUp(tiempoDeslizamiento);
+                        });
+                        elementosDeslizar2.forEach(elemento => {
+                            $(elemento).slideUp(tiempoDeslizamiento2);
+                        });
+                        elementosDeslizar3.forEach(elemento => {
+                            $(elemento).slideUp(tiempoDeslizamiento3);
+                        });
+                    break;
+                }
+
+            } else {
+                // Deslizar hacia arriba (ocultar) los elementos
+                elementosDeslizar.forEach(elemento => {
+                    $(elemento).slideUp(tiempoDeslizamiento);
+                });
+                elementosDeslizar2.forEach(elemento => {
+                    $(elemento).slideUp(tiempoDeslizamiento2);
+                });
+                elementosDeslizar3.forEach(elemento => {
+                    $(elemento).slideUp(tiempoDeslizamiento3);
+                });
+            }
+        }, 500);
+    }
+
+
+
+
 });
