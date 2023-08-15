@@ -26,7 +26,9 @@ use App\Models\sigmel_lista_califi_decretos;
 use App\Models\sigmel_lista_motivo_solicitudes;
 use App\Models\cndatos_eventos;
 use App\Models\sigmel_informacion_afiliado_eventos;
-
+use App\Models\sigmel_info_campimetria_ojo_izq_eventos;
+use App\Models\sigmel_info_campimetria_ojo_der_eventos;
+use App\Models\sigmel_informacion_agudeza_visual_eventos;
 
 class CalificacionPCLController extends Controller
 {
@@ -571,7 +573,10 @@ class CalificacionPCLController extends Controller
         $user = Auth::user();
         $Id_evento_calitec=$request->Id_evento_calitec;
         $Id_asignacion_calitec = $request->Id_asignacion_calitec;
-    
+
+        $hay_agudeza_visual = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
+        ->where('ID_evento', $Id_evento_calitec)->get();
+
         $array_datos_calificacionPclTecnica = DB::select('CALL psrcalificacionpcl(?)', array($Id_asignacion_calitec));
         //Traer Motivo de solicitud,Dominancia actual
         $motivo_solicitud_actual = cndatos_eventos::on('sigmel_gestiones')
@@ -588,7 +593,7 @@ class CalificacionPCLController extends Controller
         ])
         ->get();
 
-        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual'));
+        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 'hay_agudeza_visual'));
     }
 
     public function cargueListadoSelectoresCalifcacionTecnicaPcl(Request $request){
@@ -644,6 +649,19 @@ class CalificacionPCLController extends Controller
             return response()->json($info_listado_motivo_solicitud);
         }
         
+        // Listado selectores agudeza visual (modal agudeza visual)
+        if ($parametro == "agudeza_visual") {
+            $listado_agudeza_visual = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'agudeza_visual'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_agudeza_visual = json_decode(json_encode($listado_agudeza_visual, true));
+            return response()->json($info_listado_agudeza_visual);
+        }
 
     }
 
@@ -652,15 +670,131 @@ class CalificacionPCLController extends Controller
             return redirect('/');
         }
 
-        $Id_Fila = $request->Id_Fila;
+        $parametro = $request->parametro;
+        if ($parametro == "nuevo") {
+            $Id_Fila = $request->Id_Fila;
+            $listado_campimetria = sigmel_campimetria_visuales::on('sigmel_gestiones')
+            ->select('Fila1', 'Fila2', 'Fila3', 'Fila4', 'Fila5', 'Fila6', 'Fila7', 'Fila8', 'Fila9', 'Fila10')
+            ->get();
+            $info = json_decode(json_encode($listado_campimetria, true));
+        };
 
-        $listado_campimetria = sigmel_campimetria_visuales::on('sigmel_gestiones')
-        ->select('Fila1', 'Fila2', 'Fila3', 'Fila4', 'Fila5', 'Fila6', 'Fila7', 'Fila8', 'Fila9', 'Fila10')
+        if ($parametro == "edicion_ojo_izq") {
+            $listado_campimetria_ojo_izq = sigmel_info_campimetria_ojo_izq_eventos::on('sigmel_gestiones')
+            ->select('InfoFila1', 'InfoFila2', 'InfoFila3', 'InfoFila4', 'InfoFila5', 'InfoFila6', 'InfoFila7', 'InfoFila8', 'InfoFila9', 'InfoFila10')
+            ->where('Id_agudeza', $request->Id_agudeza)
+            ->get();
+            $info = json_decode(json_encode($listado_campimetria_ojo_izq, true));
+        };
+
+        if ($parametro == "edicion_ojo_der") {
+            $listado_campimetria_ojo_der = sigmel_info_campimetria_ojo_der_eventos::on('sigmel_gestiones')
+            ->select('InfoFila1', 'InfoFila2', 'InfoFila3', 'InfoFila4', 'InfoFila5', 'InfoFila6', 'InfoFila7', 'InfoFila8', 'InfoFila9', 'InfoFila10')
+            ->where('Id_agudeza', $request->Id_agudeza)
+            ->get();
+            $info = json_decode(json_encode($listado_campimetria_ojo_der, true));
+        };
+
+
+        return response()->json($info);
+
+    }
+
+    public function guardarAgudezaVisual(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $usuario = Auth::user()->name;
+
+        /* Inserción de información del formulario */
+        sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')->insert($request->info_formulario);
+
+        // Extraemos el id insertado para almacenar los datos de la campimetria
+        $id_agudeza = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')->select('Id_agudeza')->latest('Id_agudeza')->first();
+
+        /* Envío de la información de la campimetría para ojo izquierdo */
+        $grilla_ojo_izq = $request->grilla_ojo_izq;
+        foreach ($grilla_ojo_izq as $key => $insertar_info_grid_ojo_izq) {
+            $insertar_info_grid_ojo_izq = array("Id_agudeza" => $id_agudeza['Id_agudeza']) + $insertar_info_grid_ojo_izq;
+            sigmel_info_campimetria_ojo_izq_eventos::on('sigmel_gestiones')->insert($insertar_info_grid_ojo_izq);
+        }
+
+        /* Envío de la información de la campimetría para ojo derecho */
+        $grilla_ojo_der = $request->grilla_ojo_der;
+        foreach ($grilla_ojo_der as $key => $insertar_info_grid_ojo_der) {
+            $insertar_info_grid_ojo_der = array("Id_agudeza" => $id_agudeza['Id_agudeza']) + $insertar_info_grid_ojo_der;
+            sigmel_info_campimetria_ojo_der_eventos::on('sigmel_gestiones')->insert($insertar_info_grid_ojo_der);
+        }
+
+        $mensajes = array(
+            "parametro" => 'guardo',
+            "mensaje" => 'Información de Agudeza visual agregada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+    }
+
+    public function infoAgudezaVisual(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $informacion_agudeza_visual = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
+        ->where("ID_evento", $request->ID_evento)
         ->get();
 
-        $info_listado_campimetria = json_decode(json_encode($listado_campimetria, true));
-        return response()->json($info_listado_campimetria);
+        $info_agudeza = json_decode(json_encode($informacion_agudeza_visual, true));
+        return response()->json($info_agudeza);
 
+    }
+
+    public function actualizarAgudezaVisual (Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $usuario = Auth::user()->name;
+
+        /* Actualización de información del formulario */
+        sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
+        ->where([
+            ['Id_agudeza', '=', $request->Id_agudeza],
+            ['ID_evento', '=', $request->ID_evento]
+            ])
+        ->update($request->info_formulario);
+
+
+        /* Envío de la información de la campimetría para ojo izquierdo  */
+        sigmel_info_campimetria_ojo_izq_eventos::on('sigmel_gestiones')
+        ->where('Id_agudeza', $request->Id_agudeza)->delete();
+
+        $grilla_ojo_izq = $request->grilla_ojo_izq;
+        foreach ($grilla_ojo_izq as $key => $insertar_info_grid_ojo_izq) {
+            $insertar_info_grid_ojo_izq = array("Id_agudeza" => $request->Id_agudeza) + $insertar_info_grid_ojo_izq;
+            sigmel_info_campimetria_ojo_izq_eventos::on('sigmel_gestiones')->insert($insertar_info_grid_ojo_izq);
+        }
+
+        /* Envío de la información de la campimetría para ojo derecho */
+        sigmel_info_campimetria_ojo_der_eventos::on('sigmel_gestiones')
+        ->where('Id_agudeza', $request->Id_agudeza)->delete();
+        $grilla_ojo_der = $request->grilla_ojo_der;
+        foreach ($grilla_ojo_der as $key => $insertar_info_grid_ojo_der) {
+            $insertar_info_grid_ojo_der = array("Id_agudeza" => $request->Id_agudeza) + $insertar_info_grid_ojo_der;
+            sigmel_info_campimetria_ojo_der_eventos::on('sigmel_gestiones')->insert($insertar_info_grid_ojo_der);
+        }
+
+        $mensajes = array(
+            "parametro" => 'actualizo',
+            "mensaje" => 'Información de Agudeza visual actualizada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+        
     }
 
 

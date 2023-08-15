@@ -1,4 +1,4 @@
-<x-adminlte-modal id="modal_nueva_agudeza_visual" class="modalscroll" title="Agudeza Visual" theme="info" icon="fas fa-plus-circle" size='xl' disable-animations>
+<x-adminlte-modal id="modal_editar_agudeza_visual" class="modalscroll" title="Edición Agudeza Visual" theme="info" icon="fas fa-plus-circle" size='xl' disable-animations>
     <div class="row">
         <div class="col-12">
             <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
@@ -7,19 +7,23 @@
             </div>
         </div>
     </div>
-    <form id="form_agudeza_visual" method="POST">
+    <form id="form_editar_agudeza_visual" method="POST">
         @csrf
         <div class="d-none">
-            <input type="text" id="ID_evento" name="ID_evento" value="{{$array_datos_calificacionPclTecnica[0]->ID_evento}}">
-            <input type="text" id="Id_Asignacion" name="Id_Asignacion" value="{{$array_datos_calificacionPclTecnica[0]->Id_Asignacion}}">
-            <input type="text" id="Id_proceso" name="Id_proceso" value="{{$array_datos_calificacionPclTecnica[0]->Id_proceso}}">
+            <input type="text" id="ID_evento" name="ID_evento" value="{{$info_agudeza->ID_evento}}">
+            <input type="text" id="Id_Asignacion" name="Id_Asignacion" value="{{$info_agudeza->Id_Asignacion}}">
+            <input type="text" id="Id_proceso" name="Id_proceso" value="{{$info_agudeza->Id_proceso}}">
             <input type="text" id="nombre_usuario" name="nombre_usuario" value="{{$user->name}}">
             <input type="text" id="dia_actual" name="dia_actual" value="{{date('Y-m-d')}}">
+            <input type="text" id="dato_id_agudeza" value="{{$info_agudeza->Id_agudeza}}">
+            <input type="text" id="dato_agudeza_ojo_izq" value="{{$info_agudeza->Agudeza_Ojo_Izq}}">
+            <input type="text" id="dato_agudeza_ojo_der" value="{{$info_agudeza->Agudeza_Ojo_Der}}">
+            <input type="text" id="dato_ceguera_total" value="{{$info_agudeza->Ceguera_Total}}">
         </div>
         <div class="row text-center">
             <div class="col-12">
                 <div class="custom-control custom-checkbox">
-                    <input class="custom-control-input" type="checkbox" id="ceguera_total" name="ceguera_total">
+                    <input class="custom-control-input" type="checkbox" id="ceguera_total">
                     <label for="ceguera_total" class="custom-control-label">Ceguera Total</label>
                 </div>
             </div>
@@ -28,31 +32,8 @@
             <div class="col-4">
                 <div class="form-group">
                     <label for="" class="col-form-label">Agudeza Ojo Izquierdo</label>
-                    <select class="custom-select agudeza_ojo_izq" name="agudeza_ojo_izq" id="agudeza_ojo_izq" style="width: 100% !important;">
+                    <select class="custom-select agudeza_ojo_izq" id="agudeza_ojo_izq" style="width: 100% !important;">
                          <option></option>
-                        {{--<option value="110">110</option>
-                        <option value="105">105</option>
-                        <option value="100">100</option>
-                        <option value="95">95</option>
-                        <option value="90">90</option>
-                        <option value="85">85</option>
-                        <option value="80">80</option>
-                        <option value="75">75</option>
-                        <option value="70">70</option>
-                        <option value="65">65</option>
-                        <option value="60">60</option>
-                        <option value="55">55</option>
-                        <option value="50">50</option>
-                        <option value="45">45</option>
-                        <option value="40">40</option>
-                        <option value="35">35</option>
-                        <option value="30">30</option>
-                        <option value="25">25</option>
-                        <option value="20">20</option>
-                        <option value="15">15</option>
-                        <option value="10">10</option>
-                        <option value="5">5</option>
-                        <option value="0">0</option> --}}
                     </select>
                 </div>
             </div>
@@ -61,35 +42,13 @@
                     <label for="" class="col-form-label">Agudeza Ojo Derecho</label>
                     <select class="custom-select agudeza_ojo_der" name="agudeza_ojo_der" id="agudeza_ojo_der" style="width: 100% !important;">
                         <option></option>
-                        {{-- <option value="110">110</option>
-                        <option value="105">105</option>
-                        <option value="100">100</option>
-                        <option value="95">95</option>
-                        <option value="90">90</option>
-                        <option value="85">85</option>
-                        <option value="80">80</option>
-                        <option value="75">75</option>
-                        <option value="70">70</option>
-                        <option value="65">65</option>
-                        <option value="60">60</option>
-                        <option value="55">55</option>
-                        <option value="50">50</option>
-                        <option value="45">45</option>
-                        <option value="40">40</option>
-                        <option value="35">35</option>
-                        <option value="30">30</option>
-                        <option value="25">25</option>
-                        <option value="20">20</option>
-                        <option value="15">15</option>
-                        <option value="10">10</option>
-                        <option value="5">5</option>
-                        <option value="0">0</option> --}}
                     </select>
                 </div>
             </div>
             <div class="col-4">
                 <div class="form-group">
                     <label for="" class="col-form-label">Agudeza Ambos Ojos</label>
+                    {{-- <input type="number" class="form-control" name="agudeza_ambos_ojos" id="agudeza_ambos_ojos" value="{{$info_agudeza->Agudeza_Ambos_Ojos}}"> --}}
                     <input type="number" class="form-control" name="agudeza_ambos_ojos" id="agudeza_ambos_ojos">
                     <strong class="mensaje_fuera_rango text-danger text-sm d-none" role="alert">El valor debe encontrarse entre un rango de 0 a 110.</strong>
                 </div>
@@ -181,18 +140,18 @@
                                         </thead>
                                         <tbody>
                                             <tr class="text-center">
-                                                <td><input type="text" id="resultado_agudeza_ojo_izquierdo" name="resultado_agudeza_ojo_izquierdo" class="text-center" readonly></td>
-                                                <td><input type="text" id="resultado_agudeza_ojo_derecho" name="resultado_agudeza_ojo_derecho" class="text-center" readonly></td>
-                                                <td><input type="text" id="resultado_agudeza_ambos_ojos" name="resultado_agudeza_ambos_ojos" class="text-center" readonly></td>
-                                                <td><input type="text" id="resultado_pavf" name="resultado_pavf" class="text-center" readonly></td>
-                                                <td><input type="text" id="resultado_dav" name="resultado_dav" class="text-center" readonly></td>
-                                                <td><input type="text" id="resultado_campo_visual_ojo_izq" name="resultado_campo_visual_ojo_izq" class="text-center" readonly></td>
-                                                <td><input type="text" id="resultado_campo_visual_ojo_der" name="resultado_campo_visual_ojo_der" class="text-center" readonly></td>
-                                                <td><input type="text" id="resultado_campo_visual_ambos_ojos" name="resultado_campo_visual_ambos_ojos" class="text-center" readonly></td>
-                                                <td><input type="text" id="resultado_cvf" name="resultado_cvf" class="text-center" readonly></td>
-                                                <td><input type="text" id="resultado_dcv" name="resultado_dcv" class="text-center" readonly></td>
-                                                <td><input type="text" id="resultado_dsv" name="resultado_dsv" class="text-center" readonly></td>
-                                                <td><input type="text" id="resultado_deficiencia" name="resultado_deficiencia" class="text-center" readonly></td>
+                                                <td><input type="text" id="resultado_agudeza_ojo_izquierdo" name="resultado_agudeza_ojo_izquierdo" class="text-center" readonly value="{{$info_agudeza->Agudeza_Ojo_Izq}}"></td>
+                                                <td><input type="text" id="resultado_agudeza_ojo_derecho" name="resultado_agudeza_ojo_derecho" class="text-center" readonly value="{{$info_agudeza->Agudeza_Ojo_Der}}"></td>
+                                                <td><input type="text" id="resultado_agudeza_ambos_ojos" name="resultado_agudeza_ambos_ojos" class="text-center" readonly value="{{$info_agudeza->Agudeza_Ambos_Ojos}}"></td>
+                                                <td><input type="text" id="resultado_pavf" name="resultado_pavf" class="text-center" readonly value="{{$info_agudeza->PAVF}}"></td>
+                                                <td><input type="text" id="resultado_dav" name="resultado_dav" class="text-center" readonly value="{{$info_agudeza->DAV}}"></td>
+                                                <td><input type="text" id="resultado_campo_visual_ojo_izq" name="resultado_campo_visual_ojo_izq" class="text-center" readonly value="{{$info_agudeza->Campo_Visual_Ojo_Izq}}"></td>
+                                                <td><input type="text" id="resultado_campo_visual_ojo_der" name="resultado_campo_visual_ojo_der" class="text-center" readonly value="{{$info_agudeza->Campo_Visual_Ojo_Der}}"></td>
+                                                <td><input type="text" id="resultado_campo_visual_ambos_ojos" name="resultado_campo_visual_ambos_ojos" class="text-center" readonly value="{{$info_agudeza->Campo_Visual_Ambos_Ojos}}"></td>
+                                                <td><input type="text" id="resultado_cvf" name="resultado_cvf" class="text-center" readonly value="{{$info_agudeza->CVF}}"></td>
+                                                <td><input type="text" id="resultado_dcv" name="resultado_dcv" class="text-center" readonly value="{{$info_agudeza->DCV}}"></td>
+                                                <td><input type="text" id="resultado_dsv" name="resultado_dsv" class="text-center" readonly value="{{$info_agudeza->DSV}}"></td>
+                                                <td><input type="text" id="resultado_deficiencia" name="resultado_deficiencia" class="text-center" readonly value="{{$info_agudeza->Deficiencia}}"></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -218,6 +177,6 @@
     </form>
 </x-adminlte-modal>
 
-@section('js')
-<script type="text/javascript" src="/js/campimetria.js"></script>
-@stop
+{{-- @section('js')
+<script type="text/javascript" src="/js/edicion_campimetria.js"></script>
+@stop --}}

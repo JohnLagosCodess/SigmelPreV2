@@ -299,6 +299,12 @@ Route::post('/CalficacionTecnicaPCL', [CalificacionPCLController::class, 'mostra
 Route::post('/selectoresCalificacionTecnicaPCL', [CalificacionPCLController::class, 'cargueListadoSelectoresCalifcacionTecnicaPcl']);
 // Acción: Consulta Campimetría por fila
 Route::post('/ConsultaCampimetriaXFila', [CalificacionPCLController::class, 'ConsultaCampimetriaXFila']);
+// Acción: Guardar Información Agudeza Visual
+Route::post('/guardarAgudezaVisual', [CalificacionPCLController::class, 'guardarAgudezaVisual']);
+// Acción: Traer información de Agudeza visual cuando se guarde la información
+Route::post('/infoAgudezaVisual', [CalificacionPCLController::class, 'infoAgudezaVisual']);
+// Acción: Guardar Información Agudeza Visual
+Route::post('/actualizarAgudezaVisual', [CalificacionPCLController::class, 'actualizarAgudezaVisual']);
 
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);

@@ -373,13 +373,66 @@
                             </div>
                         </div>
                         <div class="card-info">
-                            <a href="#" id="" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal" data-target="#modal_grilla_ojos"><i class="fas fa-plus-circle text-info"></i> <strong>Agudeza Visual</strong></a>
+                            <a href="javascript:void(0);" id="btn_abrir_modal_agudeza" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal" 
+                                @if (count($hay_agudeza_visual) > 0)
+                                    style="cursor:not-allowed"
+                                @else
+                                    data-target="#modal_nueva_agudeza_visual"
+                                @endif ><i class="fas fa-plus-circle text-info">
+                                </i> <strong>Agudeza Visual</strong>
+                            </a>
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Tabla 11.3 Deficiencias por Alteraciones del Sistema Visual</h5>
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive">
-                                    <table></table>
+                                <div class="table-responsive" >
+                                    <table id="listado_agudeza_visual" class="table table-striped table-bordered" width="100%">
+                                        <thead>
+                                            <tr class="bg-info text-center">
+                                                <th>Agudeza Ojo Izquierdo</th>
+                                                <th>Agudeza Ojo Derecho</th>
+                                                <th>Agudeza Ambos Ojos</th>
+                                                <th>Puntaje de Agudeza Visual Funcional (PAVF)</th>
+                                                <th>Deficiencia por Agudeza Visual (DAV)</th>
+                                                <th>Campo Visual Ojo Izquierdo</th>
+                                                <th>Campo Visual Ojo Derecho</th>
+                                                <th>Campo Visual Ambos Ojos</th>
+                                                <th>Puntaje Campo Visual Funcional (CVF)</th>
+                                                <th>Deficiencia por Campo Visual (DCV)</th>
+                                                <th>Deficiencia Global del Sistema Visual (DSV)</th>
+                                                <th>Dx Principal</th>
+                                                <th>Deficiencia</th>
+                                                <th>Opciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="llenar_info_agudeza_visual">
+                                            @foreach ($hay_agudeza_visual as $info_agudeza)
+                                                <tr class="fila_visual_agudeza_{{$info_agudeza->Id_agudeza}}">
+                                                    <td>{{$info_agudeza->Agudeza_Ojo_Izq}}</td>
+                                                    <td>{{$info_agudeza->Agudeza_Ojo_Der}}</td>
+                                                    <td>{{$info_agudeza->Agudeza_Ambos_Ojos}}</td>
+                                                    <td>{{$info_agudeza->PAVF}}</td>
+                                                    <td>{{$info_agudeza->DAV}}</td>
+                                                    <td>{{$info_agudeza->Campo_Visual_Ojo_Izq}}</td>
+                                                    <td>{{$info_agudeza->Campo_Visual_Ojo_Der}}</td>
+                                                    <td>{{$info_agudeza->Campo_Visual_Ambos_Ojos}}</td>
+                                                    <td>{{$info_agudeza->CVF}}</td>
+                                                    <td>{{$info_agudeza->DCV}}</td>
+                                                    <td>{{$info_agudeza->DSV}}</td>
+                                                    <td><input type="checkbox" name="" id=""></td>
+                                                    <td>{{$info_agudeza->Deficiencia}}</td>
+                                                    <td>
+                                                        <div style="text-align:center;">
+                                                            <a href="javascript:void(0);" id="btn_editar_agudeza_visual" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modal_editar_agudeza_visual">
+                                                                <i class="fa fa-pen text-primary"></i>
+                                                            </a>
+                                                            <a href="javascript:void(0);" id="btn_remover_fila_{{$info_agudeza->Id_agudeza}}" data-fila_agudeza="fila_visual_agudeza_{{$info_agudeza->Id_agudeza}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -608,8 +661,13 @@
         <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="{{$array_datos_calificacionPclTecnica[0]->Id_Asignacion}}">
         <button type="submit" id="botonEnvioVista"></button>
     </form> 
-    {{-- MODAL CALCULO DE DEFICIENCIA VISUAL --}}
-    @include('coordinador.campimetriaPCL')
+    {{-- MODAL DEFICIENCIA VISUAL --}}
+    @if (count($hay_agudeza_visual) == 0)
+        @include('coordinador.campimetriaPCL')
+    @else
+        {{-- MODAL EDICIÓN DEFICIENCIA VISUAL --}}
+        @include('coordinador.edicionCampimetriaPCL')
+    @endif
  @stop
  
 
@@ -621,109 +679,136 @@
         document.getElementById('formularioEnvio').submit();
     });
 
+    //  SCRIPT PARA ELIMINAR LA FILA DE LA AGUDEZA VISUAL CUANDO EL USUARIO REALICE LA ACCIÓN
+    $(document).ready(function(){
+        var tabla_agudeza_visual = $('#listado_agudeza_visual').DataTable({
+            "responsive": true,
+            "info": false,
+            "searching": false,
+            "ordering": false,
+            "scrollCollapse": true,
+            "scrollY": "30vh",
+            "paging": false,
+            "language":{
+                "emptyTable": "No se encontró información"
+            }
+        });
+
+        autoAdjustColumns(tabla_agudeza_visual);
+        $(document).on('click', "a[id^='btn_remover_fila_']", function(){
+            var nombre_fila_agudeza = $(this).data("fila_agudeza");
+            tabla_agudeza_visual.row("."+nombre_fila_agudeza).remove().draw();
+        });
+
+    });
+
+
     //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE EXAMENES E INTERCONSULTAS
     $(document).ready(function(){
         $(".centrar").css('text-align', 'center');
-            var listado_examenes_interconsultas = $('#listado_examenes_interconsultas').DataTable({
-                "responsive": true,
-                "info": false,
-                "searching": false,
-                "ordering": false,
-                "scrollCollapse": true,
-                "scrollY": "30vh",
-                "paging": false,
-                "language":{
-                    "emptyTable": "No se encontró información"
-                }
-            });
+        var listado_examenes_interconsultas = $('#listado_examenes_interconsultas').DataTable({
+            "responsive": true,
+            "info": false,
+            "searching": false,
+            "ordering": false,
+            "scrollCollapse": true,
+            "scrollY": "30vh",
+            "paging": false,
+            "language":{
+                "emptyTable": "No se encontró información"
+            }
+        });
 
-            autoAdjustColumns(listado_examenes_interconsultas);
+        autoAdjustColumns(listado_examenes_interconsultas);
 
-            var contador_examen = 0;
-            $('#btn_agregar_examen_fila').click(function(){
-                $('#guardar_datos_examenes').removeClass('d-none');
+        var contador_examen = 0;
+        $('#btn_agregar_examen_fila').click(function(){
+            $('#guardar_datos_examenes').removeClass('d-none');
 
-                contador_examen = contador_examen + 1;
-                var nueva_fila_examen = [
-                    '<input type="date" class="form-control" id="fecha_examen_fila_'+contador_examen+'" name="fecha_examen" max="{{date("Y-m-d")}}"/>',
-                    '<input type="text" class="form-control" id="nombre_examen_fila_'+contador_examen+'" name="nombre_examen"/>',
-                    '<textarea id="descripcion_resultado_fila_'+contador_examen+'" class="form-control" name="descripcion_resultado" cols="90" rows="4"></textarea>',
-                    '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_examen_fila" class="text-info" data-fila="fila_'+contador_examen+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
-                    'fila_'+contador_examen
-                ];
+            contador_examen = contador_examen + 1;
+            var nueva_fila_examen = [
+                '<input type="date" class="form-control" id="fecha_examen_fila_'+contador_examen+'" name="fecha_examen" max="{{date("Y-m-d")}}"/>',
+                '<input type="text" class="form-control" id="nombre_examen_fila_'+contador_examen+'" name="nombre_examen"/>',
+                '<textarea id="descripcion_resultado_fila_'+contador_examen+'" class="form-control" name="descripcion_resultado" cols="90" rows="4"></textarea>',
+                '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_examen_fila" class="text-info" data-fila="fila_'+contador_examen+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
+                'fila_'+contador_examen
+            ];
 
-                var agregar_examen_fila = listado_examenes_interconsultas.row.add(nueva_fila_examen).draw().node();
-                $(agregar_examen_fila).addClass('fila_'+contador_examen);
-                $(agregar_examen_fila).attr("id", 'fila_'+contador_examen);
+            var agregar_examen_fila = listado_examenes_interconsultas.row.add(nueva_fila_examen).draw().node();
+            $(agregar_examen_fila).addClass('fila_'+contador_examen);
+            $(agregar_examen_fila).attr("id", 'fila_'+contador_examen);
 
-                // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionpcl.js)
-                funciones_elementos_fila(contador_examen);
-            });
-            
-            $(document).on('click', '#btn_remover_examen_fila', function(){
-                var nombre_exame_fila = $(this).data("fila");
-                listado_examenes_interconsultas.row("."+nombre_exame_fila).remove().draw();
-            });
+            // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionpcl.js)
+            funciones_elementos_fila(contador_examen);
+        });
+        
+        $(document).on('click', '#btn_remover_examen_fila', function(){
+            var nombre_exame_fila = $(this).data("fila");
+            listado_examenes_interconsultas.row("."+nombre_exame_fila).remove().draw();
+        });
 
-            $(document).on('click', "a[id^='btn_remover_examen_fila_visual_']", function(){
-                var nombre_exame_fila = $(this).data("clase_fila");
-                listado_examenes_interconsultas.row("."+nombre_exame_fila).remove().draw();
-            });
+        $(document).on('click', "a[id^='btn_remover_examen_fila_visual_']", function(){
+            var nombre_exame_fila = $(this).data("clase_fila");
+            listado_examenes_interconsultas.row("."+nombre_exame_fila).remove().draw();
+        });
 
         //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE DIAGNOSTCO CIE10
         $(".centrar").css('text-align', 'center');
-            var listado_diagnostico_cie10 = $('#listado_diagnostico_cie10').DataTable({
-                "responsive": true,
-                "info": false,
-                "searching": false,
-                "ordering": false,
-                "scrollCollapse": true,
-                "scrollY": "30vh",
-                "paging": false,
-                "language":{
-                    "emptyTable": "No se encontró información"
-                }
-            });
+        var listado_diagnostico_cie10 = $('#listado_diagnostico_cie10').DataTable({
+            "responsive": true,
+            "info": false,
+            "searching": false,
+            "ordering": false,
+            "scrollCollapse": true,
+            "scrollY": "30vh",
+            "paging": false,
+            "language":{
+                "emptyTable": "No se encontró información"
+            }
+        });
 
-            autoAdjustColumns(listado_diagnostico_cie10);
+        autoAdjustColumns(listado_diagnostico_cie10);
 
-            var contador_cie10 = 0;
-            $('#btn_agregar_cie10_fila').click(function(){
-                $('#guardar_datos_cie10').removeClass('d-none');
+        var contador_cie10 = 0;
+        $('#btn_agregar_cie10_fila').click(function(){
+            $('#guardar_datos_cie10').removeClass('d-none');
 
-                contador_cie10 = contador_cie10 + 1;
-                var nueva_fila_cie10 = [
-                    '<select id="lista_Cie10_fila_'+contador_cie10+'" class="custom-select lista_Cie10_fila_'+contador_cie10+'" name="lista_Cie10"><option></option></select>',
-                    '<input type="text" class="form-control" id="nombre_cie10_fila_'+contador_cie10+'" name="nombre_cie10"/>',
-                    '<select id="lista_origenCie10_fila_'+contador_cie10+'" class="custom-select lista_origenCie10_fila_'+contador_cie10+'" name="lista_origenCie10"><option></option></select>',
-                    '<textarea id="descripcion_cie10_fila_'+contador_cie10+'" class="form-control" name="descripcion_cie10" cols="90" rows="4"></textarea>',
-                    '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_cie10_fila" class="text-info" data-fila="fila_'+contador_cie10+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
-                    'fila_'+contador_cie10
-                ];
+            contador_cie10 = contador_cie10 + 1;
+            var nueva_fila_cie10 = [
+                '<select id="lista_Cie10_fila_'+contador_cie10+'" class="custom-select lista_Cie10_fila_'+contador_cie10+'" name="lista_Cie10"><option></option></select>',
+                '<input type="text" class="form-control" id="nombre_cie10_fila_'+contador_cie10+'" name="nombre_cie10"/>',
+                '<select id="lista_origenCie10_fila_'+contador_cie10+'" class="custom-select lista_origenCie10_fila_'+contador_cie10+'" name="lista_origenCie10"><option></option></select>',
+                '<textarea id="descripcion_cie10_fila_'+contador_cie10+'" class="form-control" name="descripcion_cie10" cols="90" rows="4"></textarea>',
+                '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_cie10_fila" class="text-info" data-fila="fila_'+contador_cie10+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
+                'fila_'+contador_cie10
+            ];
 
-                var agregar_cie10_fila = listado_diagnostico_cie10.row.add(nueva_fila_cie10).draw().node();
-                $(agregar_cie10_fila).addClass('fila_'+contador_cie10);
-                $(agregar_cie10_fila).attr("id", 'fila_'+contador_cie10);
+            var agregar_cie10_fila = listado_diagnostico_cie10.row.add(nueva_fila_cie10).draw().node();
+            $(agregar_cie10_fila).addClass('fila_'+contador_cie10);
+            $(agregar_cie10_fila).attr("id", 'fila_'+contador_cie10);
 
-                // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionpcl.js)
-                funciones_elementos_fila(contador_cie10);
-            });
+            // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionpcl.js)
+            funciones_elementos_fila(contador_cie10);
+        });
             
-            $(document).on('click', '#btn_remover_cie10_fila', function(){
-                var nombre_cie10_fila = $(this).data("fila");
-                listado_diagnostico_cie10.row("."+nombre_cie10_fila).remove().draw();
-            });
+        $(document).on('click', '#btn_remover_cie10_fila', function(){
+            var nombre_cie10_fila = $(this).data("fila");
+            listado_diagnostico_cie10.row("."+nombre_cie10_fila).remove().draw();
+        });
 
-            $(document).on('click', "a[id^='btn_remover_cie10_fila_visual_']", function(){
-                var nombre_cie10_fila = $(this).data("clase_fila");
-                listado_diagnostico_cie10.row("."+nombre_cie10_fila).remove().draw();
-            });
+        $(document).on('click', "a[id^='btn_remover_cie10_fila_visual_']", function(){
+            var nombre_cie10_fila = $(this).data("clase_fila");
+            listado_diagnostico_cie10.row("."+nombre_cie10_fila).remove().draw();
+        });
         //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE DEFICIENCIA POR FACTOR
         //Falta agregar función
+
+
     });
 
 </script>
 <script type="text/javascript" src="/js/calificacionpcl_tecnica.js"></script>
-<script type="text/javascript" src="/js/campimetria.js"></script>
+{{-- <script type="text/javascript" src="/js/campimetria.js"></script> --}}
+<script type="text/javascript" src="/js/edicion_campimetria.js"></script>
 <script type="text/javascript" src="/js/funciones_helpers.js"></script>
 @stop
