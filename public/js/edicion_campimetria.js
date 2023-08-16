@@ -1,5 +1,4 @@
 $(document).ready(function(){
-
     let token = $("input[name='_token']").val();
 
     /* INICIALIZACIÓN SELECT 2 SELECTOR Agudeza Ojo Izquierdo */

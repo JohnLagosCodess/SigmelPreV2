@@ -34,7 +34,7 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="origen_firme">Origen en firme<span style="color: red;">(*)</span></label>
-                                    <select class="custom-select" name="origen_firme" id="origen_firme" required>
+                                    <select class="custom-select origen_firme" name="origen_firme" id="origen_firme" required>
                                         <option value="">Seleccione una opción</option>
                                     </select>
                                 </div>
@@ -42,7 +42,7 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="origen_cobertura">Cobertura<span style="color: red;">(*)</span></label>
-                                    <select class="custom-select" name="origen_cobertura" id="origen_cobertura" required>
+                                    <select class="custom-select origen_cobertura" name="origen_cobertura" id="origen_cobertura" required>
                                         <option value="">Seleccione una opción</option>
                                     </select>
                                 </div>
@@ -50,7 +50,7 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="decreto_califi">Decreto de Calificación<span style="color: red;">(*)</span></label>
-                                    <select class="custom-select" name="decreto_califi" id="decreto_califi" required>
+                                    <select class="custom-select decreto_califi" name="decreto_califi" id="decreto_califi" required>
                                         <option value="">Seleccione una opción</option>
                                     </select>
                                 </div>
@@ -107,7 +107,7 @@
                                 <div class="col-4">
                                     <div class="form-group">
                                         <label for="motivo_solicitud">Motivo Solicitud<span style="color: red;">(*)</span></label>
-                                        <select class="custom-select" name="motivo_solicitud" id="motivo_solicitud" required>
+                                        <select class="custom-select motivo_solicitud" name="motivo_solicitud" id="motivo_solicitud" required>
                                             @if ($motivo_solicitud_actual[0]->Id_motivo_solicitud > 0)
                                                 <option value="{{$motivo_solicitud_actual[0]->Id_motivo_solicitud}}" selected>{{$motivo_solicitud_actual[0]->Nombre_solicitud}}</option>
                                             @else
@@ -3777,7 +3777,7 @@
         @csrf
         <input hidden="hidden" type="text" name="newIdEvento" id="newIdEvento" value="{{$array_datos_calificacionPclTecnica[0]->ID_evento}}">
         <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="{{$array_datos_calificacionPclTecnica[0]->Id_Asignacion}}">
-        <button type="submit" id="botonEnvioVista"></button>
+        <button type="submit" id="botonEnvioVista" style="display:none !important;"></button>
     </form> 
 
     @if (count($hay_agudeza_visual) == 0)
@@ -3799,7 +3799,6 @@
     });
 
     //  SCRIPT PARA ELIMINAR LA FILA DE LA AGUDEZA VISUAL CUANDO EL USUARIO REALICE LA ACCIÓN
-
     $(document).ready(function(){
         var tabla_agudeza_visual = $('#listado_agudeza_visual').DataTable({
             "responsive": true,
@@ -3957,7 +3956,5 @@
 
 </script>
 <script type="text/javascript" src="/js/calificacionpcl_tecnica.js"></script>
-{{-- <script type="text/javascript" src="/js/campimetria.js"></script> --}}
-<script type="text/javascript" src="/js/edicion_campimetria.js"></script>
 <script type="text/javascript" src="/js/funciones_helpers.js"></script>
 @stop

@@ -4,14 +4,17 @@ $(document).ready(function(){
         placeholder:"Seleccione una opción",
         allowClear:false
     });
+
     $(".origen_cobertura").select2({
         placeholder:"Seleccione una opción",
         allowClear:false
     });
-    $(".origen_cobertura").select2({
+    
+    $(".decreto_califi").select2({
         placeholder:"Seleccione una opción",
         allowClear:false
     });
+
     $(".motivo_solicitud").select2({
         placeholder:"Seleccione una opción",
         allowClear:false

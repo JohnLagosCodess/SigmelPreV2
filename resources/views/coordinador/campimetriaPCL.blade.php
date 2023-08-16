@@ -218,6 +218,6 @@
     </form>
 </x-adminlte-modal>
 
-@section('js')
+@section('js_nueva_agudeza')
 <script type="text/javascript" src="/js/campimetria.js"></script>
 @stop
