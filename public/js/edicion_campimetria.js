@@ -1,4 +1,6 @@
-$(document).ready(function() {
+$(document).ready(function(){
+
+    let token = $("input[name='_token']").val();
 
     /* INICIALIZACIÓN SELECT 2 SELECTOR Agudeza Ojo Izquierdo */
     $(".agudeza_ojo_izq").select2({
@@ -12,8 +14,6 @@ $(document).ready(function() {
         allowClear:false
     });
 
-    let token = $("input[name='_token']").val();
-
     let datos_listado_selectores_agudeza = {
         '_token': token,
         'parametro':"agudeza_visual"
@@ -25,9 +25,13 @@ $(document).ready(function() {
         url:'/selectoresCalificacionTecnicaPCL',
         data: datos_listado_selectores_agudeza,
         success:function(data){
-            //console.log(data);
+            ;
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
+                // if (data[claves[i]]['Nombre_parametro'] == $("#dato_agudeza_ojo_izq").val()) {
+                //     $('#agudeza_ojo_izq').append('<option value="'+data[claves[i]]['Nombre_parametro']+'" selected>'+data[claves[i]]['Nombre_parametro']+'</option>');
+                // } else {
+                // }
                 $('#agudeza_ojo_izq').append('<option value="'+data[claves[i]]['Nombre_parametro']+'">'+data[claves[i]]['Nombre_parametro']+'</option>');
             }
         }
@@ -39,28 +43,32 @@ $(document).ready(function() {
         url:'/selectoresCalificacionTecnicaPCL',
         data: datos_listado_selectores_agudeza,
         success:function(data){
-            //console.log(data);
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
+                // if (data[claves[i]]['Nombre_parametro'] == $("#dato_agudeza_ojo_der").val()) {
+                //     $('#agudeza_ojo_der').append('<option value="'+data[claves[i]]['Nombre_parametro']+'" selected>'+data[claves[i]]['Nombre_parametro']+'</option>');
+                // }else{
+                // }
                 $('#agudeza_ojo_der').append('<option value="'+data[claves[i]]['Nombre_parametro']+'">'+data[claves[i]]['Nombre_parametro']+'</option>');
             }
         }
     });
 
-    /* LLAMADO DE DATOS PARA CONSTRUIR LA CAMPIMETRIA DE OJO IZQUIERDO Y DERECHO */
-    let consulta_campimetria = {
+    /* LLAMADO DE DATOS PARA CONSTRUIR LA CAMPIMETRIA DE OJO IZQUIERDO */
+    let bd_campimetria_ojo_izq = {
         '_token': token,
-        'parametro': "nuevo"
+        'parametro': "edicion_ojo_izq",
+        'Id_agudeza': $("#dato_id_agudeza").val()
     };
-
     $.ajax({
         type:'POST',
         url:'/ConsultaCampimetriaXFila',
-        data: consulta_campimetria,
+        data: bd_campimetria_ojo_izq,
         success:function(data) {
 
             var nombre_filas_bd = Object.keys(data[0]);
-            var regex = /(\w)-(\d+\.\d+)/;
+            // var regex = /(\w)-(\d+\.\d+)/;
+            var regex = /(\w)-(\d+(.\d+)?)/;
             // Construcción de la grilla para el ojo izquierdo
             for (let i = 0; i < 10; i++) {
                 var conteo_izq = i + 1;
@@ -69,9 +77,15 @@ $(document).ready(function() {
                 for (let j = 0; j < 10; j++) {
                     var conteo_izq2 = j + 1;
                     var cell = $('<td class="text-center coordenadas_izq_'+conteo_izq+'_'+conteo_izq2+'"></td>');
-                    var checkbox = $('<input type="checkbox" id="checkbox_izq_'+conteo_izq+'_'+conteo_izq2+'" class="checkbox_izq_'+conteo_izq+'_'+conteo_izq2+'" name="checkbox_izq_'+conteo_izq+'_'+conteo_izq2+'" style="transform: scale(1.2);">');
 
-                    checkbox.val(data[i][nombre_filas_bd[j]]); // setear valores a inputs
+                    var match = regex.exec(data[i][nombre_filas_bd[j]]);
+                    if (match) {
+                        var checkbox = $('<input type="checkbox" id="checkbox_izq_'+conteo_izq+'_'+conteo_izq2+'" class="checkbox_izq_'+conteo_izq+'_'+conteo_izq2+'" name="checkbox_izq_'+conteo_izq+'_'+conteo_izq2+'" checked style="transform: scale(1.2);">');
+                        checkbox.val(parseFloat(match[2])); // setear valores a inputs
+                    } else {
+                        var checkbox = $('<input type="checkbox" id="checkbox_izq_'+conteo_izq+'_'+conteo_izq2+'" class="checkbox_izq_'+conteo_izq+'_'+conteo_izq2+'" name="checkbox_izq_'+conteo_izq+'_'+conteo_izq2+'" style="transform: scale(1.2);">');
+                        checkbox.val(data[i][nombre_filas_bd[j]]); // setear valores a inputs
+                    }
                     
                     cell.append(checkbox); // Inserción del checkbox al td
                     row.append(cell);
@@ -79,6 +93,24 @@ $(document).ready(function() {
 
                 $('#tabla_campimetria_ojo_izquierdo').append(row);
             }
+        }
+    });
+
+    /* LLAMADO DE DATOS PARA CONSTRUIR LA CAMPIMETRIA DE OJO DERECHO */
+    let bd_campimetria_ojo_der = {
+        '_token': token,
+        'parametro': "edicion_ojo_der",
+        'Id_agudeza': $("#dato_id_agudeza").val()
+    };
+    $.ajax({
+        type:'POST',
+        url:'/ConsultaCampimetriaXFila',
+        data: bd_campimetria_ojo_der,
+        success:function(data) {
+
+            var nombre_filas_bd = Object.keys(data[0]);
+            // var regex = /(\w)-(\d+\.\d+)/;
+            var regex = /(\w)-(\d+(.\d+)?)/;
             // Construcción de la grilla para el ojo derecho
             for (let a = 0; a < 10; a++) {
                 var conteo_der = a + 1;
@@ -87,10 +119,16 @@ $(document).ready(function() {
                 for (let m = 0; m < 10; m++) {
                     var conteo_der2 = m + 1;
                     var cell = $('<td class="text-center coordenadas_der_'+conteo_der+'_'+conteo_der2+'"></td>');
-                    var checkbox = $('<input type="checkbox" id="checkbox_der_'+conteo_der+'_'+conteo_der2+'" class="checkbox_der_'+conteo_der+'_'+conteo_der2+'" name="checkbox_der_'+conteo_der+'_'+conteo_der2+'" style="transform: scale(1.2);">');
-                    
-                    checkbox.val(data[a][nombre_filas_bd[m]]); // setear valores a inputs
-                    
+
+                    var match_ojo_der = regex.exec(data[a][nombre_filas_bd[m]]);
+                    if (match_ojo_der) {
+                        var checkbox = $('<input type="checkbox" id="checkbox_der_'+conteo_der+'_'+conteo_der2+'" class="checkbox_der_'+conteo_der+'_'+conteo_der2+'" name="checkbox_der_'+conteo_der+'_'+conteo_der2+'" checked style="transform: scale(1.2);">');
+                        checkbox.val(parseFloat(match_ojo_der[2])); // setear valores a inputs
+                    }else{
+                        var checkbox = $('<input type="checkbox" id="checkbox_der_'+conteo_der+'_'+conteo_der2+'" class="checkbox_der_'+conteo_der+'_'+conteo_der2+'" name="checkbox_der_'+conteo_der+'_'+conteo_der2+'" style="transform: scale(1.2);">');
+                        checkbox.val(data[a][nombre_filas_bd[m]]); // setear valores a inputs
+                    }
+
                     cell.append(checkbox); // Inserción del checkbox al td
                     row.append(cell);
                 }
@@ -99,14 +137,283 @@ $(document).ready(function() {
             }
         }
     });
- 
-    /* AJUSTAR EL ANCHO DE LA TABLA LINEAL PARA LAS CAMPIMETRIAS DE OJO IZQUIERDO Y DERECHO */
-    setTimeout(() => {
-        var ancho_px = $(".coordenadas_izq_7_1").width();
-        ancho_px = ancho_px + 2.0;
-        $(".ajustar_ancho").css("width", ancho_px+"px");
-    }, 2000);
 
+    /* CREACIÓN DE GRILLAS OJO IZQ Y DER PARA ENVIARLAS A LA BASE DE DATOS (PARA TEMAS DE EDICIÓN) */
+    var grilla_ojo_izq = [];
+    var grilla_ojo_der = [];
+    /* CREACIÓN DE ARRAYS CON TODOS LOS ID DE LOS CHECKBOX DE OJO IZQ Y OJO DER PARA USARLOS CUANDO SE SELCCIONEN TODOS DE UNA VEZ
+    Y SIRVAN PARA INDICAR CUALES FUERON MARCADOS (PARA TEMAS DE EDICIÓN) */
+    var ids_todos_checkboxs_ojo_izq = [];
+    var ids_todos_checkboxs_ojo_der = [];
+    setTimeout(() => {
+        for (var x = 1; x <= 10; x++) {
+            var fila_ojo_izq = {
+                // "ID_evento": $("#ID_evento").val(),
+                // "Id_Asignacion": $("#Id_Asignacion").val(),
+                // "Id_proceso": $("#Id_proceso").val(),
+            };
+            var fila_ojo_der = {
+                // "ID_evento": $("#ID_evento").val(),
+                // "Id_Asignacion": $("#Id_Asignacion").val(),
+                // "Id_proceso": $("#Id_proceso").val(),
+            };
+    
+            for (var z = 1; z <= 10; z++) {
+                var nombre_checkbox_ojo_izq = "checkbox_izq_" + x + "_" + z;
+                var nombre_checkbox_ojo_der = "checkbox_der_" + x + "_" + z;
+                var key_ojo_izq = "InfoFila"+z;
+                var key_ojo_der = "InfoFila"+z;
+
+                fila_ojo_izq[key_ojo_izq] = $("#"+nombre_checkbox_ojo_izq).val();
+                fila_ojo_der[key_ojo_der] = $("#"+nombre_checkbox_ojo_der).val();
+                
+                ids_todos_checkboxs_ojo_izq.push(nombre_checkbox_ojo_izq);
+                ids_todos_checkboxs_ojo_der.push(nombre_checkbox_ojo_der);
+
+            }
+
+            fila_ojo_izq["Nombre_usuario"] = $("#nombre_usuario").val();
+            fila_ojo_izq["F_registro"] = $("#dia_actual").val();
+
+            fila_ojo_der["Nombre_usuario"] = $("#nombre_usuario").val();
+            fila_ojo_der["F_registro"] = $("#dia_actual").val();
+    
+            grilla_ojo_izq.push(fila_ojo_izq);
+            grilla_ojo_der.push(fila_ojo_der);
+        };
+    }, 500);
+
+    /* FUNCIONALIDAD PARA EL BOTÓN DE EDITAR AGUDEZA VISUAL */
+    var bandera_boton = 1;
+    $("#btn_editar_agudeza_visual").click(function() {
+        /* AJUSTAR EL ANCHO DE LA TABLA LINEAL PARA LAS CAMPIMETRIAS DE OJO IZQUIERDO Y DERECHO */
+        setTimeout(() => {
+            var ancho_px = $(".coordenadas_izq_7_1").width();
+            ancho_px = ancho_px + 2.0;
+            $(".ajustar_ancho").css("width", ancho_px+"px");
+        }, 200);
+
+        if (bandera_boton == 1) {
+            /* REALIZAR SUMATORIA AUTOMATICA DE LOS CHECKBOX OJO IZQUIERDO QUE FUERON SELECCIONADOS. */
+            var cantidad_checkbox_izq = 0;
+            $("input[id^='checkbox_izq_']:checked").each(function() {
+                var id_check_izq_seleccionado = $(this).attr("id");
+                cantidad_checkbox_izq = cantidad_checkbox_izq + 1;
+                // COLUMNA N° 1
+                if (id_check_izq_seleccionado == "checkbox_izq_4_1" || id_check_izq_seleccionado == "checkbox_izq_5_1" ||
+                    id_check_izq_seleccionado == "checkbox_izq_6_1" || id_check_izq_seleccionado == "checkbox_izq_7_1") {
+    
+                    suma_por_columna(id_check_izq_seleccionado, "resultado_suma_ojo_izq_col_1");
+                    datos_grilla_ojo_izq(id_check_izq_seleccionado, grilla_ojo_izq, "editar");
+                }
+    
+                // COLUMNA N° 2
+                if (id_check_izq_seleccionado == "checkbox_izq_3_2" || id_check_izq_seleccionado == "checkbox_izq_4_2" ||
+                    id_check_izq_seleccionado == "checkbox_izq_5_2" || id_check_izq_seleccionado == "checkbox_izq_6_2" ||
+                    id_check_izq_seleccionado == "checkbox_izq_7_2" || id_check_izq_seleccionado == "checkbox_izq_8_2") {
+    
+                    suma_por_columna(id_check_izq_seleccionado, "resultado_suma_ojo_izq_col_2");
+                    datos_grilla_ojo_izq(id_check_izq_seleccionado, grilla_ojo_izq, "editar");
+                }
+                
+                // COLUMNA N° 3
+                if (id_check_izq_seleccionado == "checkbox_izq_2_3" || id_check_izq_seleccionado == "checkbox_izq_3_3" || 
+                    id_check_izq_seleccionado == "checkbox_izq_4_3" || id_check_izq_seleccionado == "checkbox_izq_5_3" || 
+                    id_check_izq_seleccionado == "checkbox_izq_6_3" || id_check_izq_seleccionado == "checkbox_izq_7_3" || 
+                    id_check_izq_seleccionado == "checkbox_izq_8_3" || id_check_izq_seleccionado == "checkbox_izq_9_3") {
+                    
+                    suma_por_columna(id_check_izq_seleccionado, "resultado_suma_ojo_izq_col_3");
+                    datos_grilla_ojo_izq(id_check_izq_seleccionado, grilla_ojo_izq, "editar");
+                }
+    
+                // COLUMNA N° 4
+                if (id_check_izq_seleccionado == "checkbox_izq_1_4" || id_check_izq_seleccionado == "checkbox_izq_2_4" ||
+                    id_check_izq_seleccionado == "checkbox_izq_3_4" || id_check_izq_seleccionado == "checkbox_izq_4_4" ||
+                    id_check_izq_seleccionado == "checkbox_izq_5_4" || id_check_izq_seleccionado == "checkbox_izq_6_4" ||
+                    id_check_izq_seleccionado == "checkbox_izq_7_4" || id_check_izq_seleccionado == "checkbox_izq_8_4" ||
+                    id_check_izq_seleccionado == "checkbox_izq_9_4" || id_check_izq_seleccionado == "checkbox_izq_10_4") {
+                    
+                    suma_por_columna(id_check_izq_seleccionado, "resultado_suma_ojo_izq_col_4");
+                    datos_grilla_ojo_izq(id_check_izq_seleccionado, grilla_ojo_izq, "editar");
+                }
+    
+                // COLUMNA N° 5
+                if (id_check_izq_seleccionado == "checkbox_izq_1_5" || id_check_izq_seleccionado == "checkbox_izq_2_5" ||
+                    id_check_izq_seleccionado == "checkbox_izq_3_5" || id_check_izq_seleccionado == "checkbox_izq_4_5" ||
+                    id_check_izq_seleccionado == "checkbox_izq_5_5" || id_check_izq_seleccionado == "checkbox_izq_6_5" ||
+                    id_check_izq_seleccionado == "checkbox_izq_7_5" || id_check_izq_seleccionado == "checkbox_izq_8_5" ||
+                    id_check_izq_seleccionado == "checkbox_izq_9_5" || id_check_izq_seleccionado == "checkbox_izq_10_5") {
+    
+                    suma_por_columna(id_check_izq_seleccionado, "resultado_suma_ojo_izq_col_5");
+                    datos_grilla_ojo_izq(id_check_izq_seleccionado, grilla_ojo_izq, "editar");
+                }
+    
+                // COLUMNA N° 6
+                if (id_check_izq_seleccionado == "checkbox_izq_1_6" ||id_check_izq_seleccionado == "checkbox_izq_2_6" ||
+                    id_check_izq_seleccionado == "checkbox_izq_3_6" || id_check_izq_seleccionado == "checkbox_izq_4_6" ||
+                    id_check_izq_seleccionado == "checkbox_izq_5_6" || id_check_izq_seleccionado == "checkbox_izq_6_6" ||
+                    id_check_izq_seleccionado == "checkbox_izq_7_6" || id_check_izq_seleccionado == "checkbox_izq_8_6" ||
+                    id_check_izq_seleccionado == "checkbox_izq_9_6" || id_check_izq_seleccionado == "checkbox_izq_10_6") {
+                    
+                    suma_por_columna(id_check_izq_seleccionado, "resultado_suma_ojo_izq_col_6");
+                    datos_grilla_ojo_izq(id_check_izq_seleccionado, grilla_ojo_izq, "editar");
+                }
+                
+                // COLUMNA N° 7
+                if (id_check_izq_seleccionado == "checkbox_izq_1_7" || id_check_izq_seleccionado == "checkbox_izq_2_7" ||
+                    id_check_izq_seleccionado == "checkbox_izq_3_7" || id_check_izq_seleccionado == "checkbox_izq_4_7" ||
+                    id_check_izq_seleccionado == "checkbox_izq_5_7" || id_check_izq_seleccionado == "checkbox_izq_6_7" ||
+                    id_check_izq_seleccionado == "checkbox_izq_7_7" || id_check_izq_seleccionado == "checkbox_izq_8_7" ||
+                    id_check_izq_seleccionado == "checkbox_izq_9_7" || id_check_izq_seleccionado == "checkbox_izq_10_7") {
+    
+                    suma_por_columna(id_check_izq_seleccionado, "resultado_suma_ojo_izq_col_7");
+                    datos_grilla_ojo_izq(id_check_izq_seleccionado, grilla_ojo_izq, "editar");
+                }
+    
+                // COLUMNA N° 8
+                if (id_check_izq_seleccionado == "checkbox_izq_2_8" ||id_check_izq_seleccionado == "checkbox_izq_3_8" ||
+                    id_check_izq_seleccionado == "checkbox_izq_4_8" || id_check_izq_seleccionado == "checkbox_izq_5_8" ||
+                    id_check_izq_seleccionado == "checkbox_izq_6_8" || id_check_izq_seleccionado == "checkbox_izq_7_8" ||
+                    id_check_izq_seleccionado == "checkbox_izq_8_8" || id_check_izq_seleccionado == "checkbox_izq_9_8") {
+                    
+                    suma_por_columna(id_check_izq_seleccionado, "resultado_suma_ojo_izq_col_8");
+                    datos_grilla_ojo_izq(id_check_izq_seleccionado, grilla_ojo_izq, "editar");
+                }
+                
+                // COLUMNA N° 9
+                if (id_check_izq_seleccionado == "checkbox_izq_3_9" || id_check_izq_seleccionado == "checkbox_izq_4_9" ||
+                    id_check_izq_seleccionado == "checkbox_izq_5_9" || id_check_izq_seleccionado == "checkbox_izq_6_9" ||
+                    id_check_izq_seleccionado == "checkbox_izq_7_9" || id_check_izq_seleccionado == "checkbox_izq_8_9") {
+                    
+                    suma_por_columna(id_check_izq_seleccionado, "resultado_suma_ojo_izq_col_9");
+                    datos_grilla_ojo_izq(id_check_izq_seleccionado, grilla_ojo_izq, "editar");
+                }
+    
+                // COLUMNA N° 10
+                if (id_check_izq_seleccionado == "checkbox_izq_4_10" || id_check_izq_seleccionado == "checkbox_izq_5_10" ||
+                    id_check_izq_seleccionado == "checkbox_izq_6_10" || id_check_izq_seleccionado == "checkbox_izq_7_10") {
+                    
+                    suma_por_columna(id_check_izq_seleccionado, "resultado_suma_ojo_izq_col_10");
+                    datos_grilla_ojo_izq(id_check_izq_seleccionado, grilla_ojo_izq, "editar");
+                }
+            });
+    
+            /* REALIZAR SUMATORIA AUTOMATICA DE LOS CHECKBOX OJO DERECHO QUE FUERON SELECCIONADOS. */
+            var cantidad_checkbox_der = 0;
+            $("input[id^='checkbox_der_']:checked").each(function() {
+                var id_check_der_seleccionado = $(this).attr("id");
+                cantidad_checkbox_der = cantidad_checkbox_der + 1;
+                // COLUMNA N° 1
+                if (id_check_der_seleccionado == "checkbox_der_4_1" || id_check_der_seleccionado == "checkbox_der_5_1" ||
+                    id_check_der_seleccionado == "checkbox_der_6_1" || id_check_der_seleccionado == "checkbox_der_7_1") {
+                    
+                    suma_por_columna(id_check_der_seleccionado, "resultado_suma_ojo_der_col_1");
+                    datos_grilla_ojo_der(id_check_der_seleccionado, grilla_ojo_der, "editar");
+                }
+    
+                // COLUMNA N° 2
+                if (id_check_der_seleccionado == "checkbox_der_3_2" || id_check_der_seleccionado == "checkbox_der_4_2" ||
+                    id_check_der_seleccionado == "checkbox_der_5_2" || id_check_der_seleccionado == "checkbox_der_6_2" ||
+                    id_check_der_seleccionado == "checkbox_der_7_2" || id_check_der_seleccionado == "checkbox_der_8_2") {
+                    
+                    suma_por_columna(id_check_der_seleccionado, "resultado_suma_ojo_der_col_2");
+                    datos_grilla_ojo_der(id_check_der_seleccionado, grilla_ojo_der, "editar");
+                }
+                
+                // COLUMNA N° 3
+                if (id_check_der_seleccionado == "checkbox_der_2_3" || id_check_der_seleccionado == "checkbox_der_3_3" || 
+                    id_check_der_seleccionado == "checkbox_der_4_3" || id_check_der_seleccionado == "checkbox_der_5_3" || 
+                    id_check_der_seleccionado == "checkbox_der_6_3" || id_check_der_seleccionado == "checkbox_der_7_3" || 
+                    id_check_der_seleccionado == "checkbox_der_8_3" || id_check_der_seleccionado == "checkbox_der_9_3") {
+                    
+                    suma_por_columna(id_check_der_seleccionado, "resultado_suma_ojo_der_col_3");
+                    datos_grilla_ojo_der(id_check_der_seleccionado, grilla_ojo_der, "editar");
+                }
+    
+                // COLUMNA N° 4
+                if (id_check_der_seleccionado == "checkbox_der_1_4" || id_check_der_seleccionado == "checkbox_der_2_4" ||
+                    id_check_der_seleccionado == "checkbox_der_3_4" || id_check_der_seleccionado == "checkbox_der_4_4" ||
+                    id_check_der_seleccionado == "checkbox_der_5_4" || id_check_der_seleccionado == "checkbox_der_6_4" ||
+                    id_check_der_seleccionado == "checkbox_der_7_4" || id_check_der_seleccionado == "checkbox_der_8_4" ||
+                    id_check_der_seleccionado == "checkbox_der_9_4" || id_check_der_seleccionado == "checkbox_der_10_4") {
+                    
+                    suma_por_columna(id_check_der_seleccionado, "resultado_suma_ojo_der_col_4");
+                    datos_grilla_ojo_der(id_check_der_seleccionado, grilla_ojo_der, "editar");
+                }
+    
+                // COLUMNA N° 5
+                if (id_check_der_seleccionado == "checkbox_der_1_5" || id_check_der_seleccionado == "checkbox_der_2_5" ||
+                    id_check_der_seleccionado == "checkbox_der_3_5" || id_check_der_seleccionado == "checkbox_der_4_5" ||
+                    id_check_der_seleccionado == "checkbox_der_5_5" || id_check_der_seleccionado == "checkbox_der_6_5" ||
+                    id_check_der_seleccionado == "checkbox_der_7_5" || id_check_der_seleccionado == "checkbox_der_8_5" ||
+                    id_check_der_seleccionado == "checkbox_der_9_5" || id_check_der_seleccionado == "checkbox_der_10_5") {
+    
+                    suma_por_columna(id_check_der_seleccionado, "resultado_suma_ojo_der_col_5");
+                    datos_grilla_ojo_der(id_check_der_seleccionado, grilla_ojo_der, "editar");
+                }
+    
+                // COLUMNA N° 6
+                if (id_check_der_seleccionado == "checkbox_der_1_6" ||id_check_der_seleccionado == "checkbox_der_2_6" ||
+                    id_check_der_seleccionado == "checkbox_der_3_6" || id_check_der_seleccionado == "checkbox_der_4_6" ||
+                    id_check_der_seleccionado == "checkbox_der_5_6" || id_check_der_seleccionado == "checkbox_der_6_6" ||
+                    id_check_der_seleccionado == "checkbox_der_7_6" || id_check_der_seleccionado == "checkbox_der_8_6" ||
+                    id_check_der_seleccionado == "checkbox_der_9_6" || id_check_der_seleccionado == "checkbox_der_10_6") {
+                    
+                    suma_por_columna(id_check_der_seleccionado, "resultado_suma_ojo_der_col_6");
+                    datos_grilla_ojo_der(id_check_der_seleccionado, grilla_ojo_der, "editar");
+                }
+                
+                // COLUMNA N° 7
+                if (id_check_der_seleccionado == "checkbox_der_1_7" || id_check_der_seleccionado == "checkbox_der_2_7" ||
+                    id_check_der_seleccionado == "checkbox_der_3_7" || id_check_der_seleccionado == "checkbox_der_4_7" ||
+                    id_check_der_seleccionado == "checkbox_der_5_7" || id_check_der_seleccionado == "checkbox_der_6_7" ||
+                    id_check_der_seleccionado == "checkbox_der_7_7" || id_check_der_seleccionado == "checkbox_der_8_7" ||
+                    id_check_der_seleccionado == "checkbox_der_9_7" || id_check_der_seleccionado == "checkbox_der_10_7") {
+    
+                    suma_por_columna(id_check_der_seleccionado, "resultado_suma_ojo_der_col_7");
+                    datos_grilla_ojo_der(id_check_der_seleccionado, grilla_ojo_der, "editar");
+                    
+                }
+    
+                // COLUMNA N° 8
+                if (id_check_der_seleccionado == "checkbox_der_2_8" ||id_check_der_seleccionado == "checkbox_der_3_8" ||
+                    id_check_der_seleccionado == "checkbox_der_4_8" || id_check_der_seleccionado == "checkbox_der_5_8" ||
+                    id_check_der_seleccionado == "checkbox_der_6_8" || id_check_der_seleccionado == "checkbox_der_7_8" ||
+                    id_check_der_seleccionado == "checkbox_der_8_8" || id_check_der_seleccionado == "checkbox_der_9_8") {
+                    
+                    suma_por_columna(id_check_der_seleccionado, "resultado_suma_ojo_der_col_8");
+                    datos_grilla_ojo_der(id_check_der_seleccionado, grilla_ojo_der, "editar");
+                }
+                
+                // COLUMNA N° 9
+                if (id_check_der_seleccionado == "checkbox_der_3_9" || id_check_der_seleccionado == "checkbox_der_4_9" ||
+                    id_check_der_seleccionado == "checkbox_der_5_9" || id_check_der_seleccionado == "checkbox_der_6_9" ||
+                    id_check_der_seleccionado == "checkbox_der_7_9" || id_check_der_seleccionado == "checkbox_der_8_9") {
+                    
+                    suma_por_columna(id_check_der_seleccionado, "resultado_suma_ojo_der_col_9");
+                    datos_grilla_ojo_der(id_check_der_seleccionado, grilla_ojo_der, "editar");
+                }
+    
+                // COLUMNA N° 10
+                if (id_check_der_seleccionado == "checkbox_der_4_10" || id_check_der_seleccionado == "checkbox_der_5_10" ||
+                    id_check_der_seleccionado == "checkbox_der_6_10" || id_check_der_seleccionado == "checkbox_der_7_10") {
+    
+                    suma_por_columna(id_check_der_seleccionado, "resultado_suma_ojo_der_col_10");
+                    datos_grilla_ojo_der(id_check_der_seleccionado, grilla_ojo_der, "editar");
+                }
+            });
+        }
+        bandera_boton = 0;
+
+        if (cantidad_checkbox_izq == 76) {
+            $("#todo_ojo_izquierdo").prop("checked", true);
+        };
+        if (cantidad_checkbox_der == 76) {
+            $("#todo_ojo_derecho").prop("checked", true);
+        }
+    });
+
+    /* DESDE AQUÍ */
 
     /* VALIDACIÓN SELECCIÓN CHECKBOX CEGUERA TOTAL */
     var confirmacion_ceguera_total;
@@ -197,6 +504,22 @@ $(document).ready(function() {
         }
     });
 
+    setTimeout(() => {
+        
+        if ($("#dato_ceguera_total").val() === "Si") {
+            $("#ceguera_total").trigger('click');
+            $("input[class^='checkbox_izq_']").each(function() {
+                $(this).prop("disabled", true);
+                $(this).prop("checked", false);
+            });
+
+            $("input[class^='checkbox_der_']").each(function() {
+                $(this).prop("disabled", true);
+                $(this).prop("checked", false);
+            });
+        }
+    }, 500);
+
     /* FUNCIONALIDADES CON LOS SELECTORES DE AGUDEZA OJO IZQUIERDO Y DERECHO */
     var agudeza_izq_seleccionada, bandera_agudeza_izq_seleccionada = 0;
     var agudeza_der_seleccionada, bandera_agudeza_der_seleccionada = 0;
@@ -208,13 +531,15 @@ $(document).ready(function() {
         bandera_agudeza_izq_seleccionada = 1;
 
         setTimeout(() => {
-            if($("#resultado_pavf").val() > 100){
+            if(agudeza_izq_seleccionada > 100){
+                
                 $("#resultado_insercion").empty();
                 $("#btn_guardar_agudeza").prop('disabled', true);
                 $("#resultado_insercion").removeClass('d-none');
                 $("#resultado_insercion").addClass('alert-warning');
                 $("#resultado_insercion").append('<i class="fas fa-info-circle"></i> <strong>Importante:</strong> El máximo valor que se puede asignar a la PAVF es de 100');
             }else{
+                
                 $("#btn_guardar_agudeza").prop('disabled', false);
                 $("#resultado_insercion").addClass('d-none');
                 $("#resultado_insercion").removeClass('alert-warning');
@@ -233,7 +558,7 @@ $(document).ready(function() {
             iniciarIntervalo();
         }
         setTimeout(() => {
-            if($("#resultado_pavf").val() > 100){
+            if(agudeza_der_seleccionada > 100){
                 $("#resultado_insercion").empty();
                 $("#btn_guardar_agudeza").prop('disabled', true);
                 $("#resultado_insercion").removeClass('d-none');
@@ -277,7 +602,6 @@ $(document).ready(function() {
                 
         }, 500);
     };
-    
 
     /* FUNCIONALIDAD PARA REALIZAR LOS CALCULOS */
     var valor_mayor_agudeza,valor_pavf,valor_dav, campo_visual_ambos_ojos,valor_dcv,valor_cvf, valor_dsv, valor_deficiencia;
@@ -286,9 +610,9 @@ $(document).ready(function() {
 
         if (!$("#ceguera_total").is(":checked")) {
             
-            
             // Puntaje Agudeza Visual Funcional (PAVF)
             valor_pavf = (valor_mayor_agudeza*3 + agudeza_izq_seleccionada + agudeza_der_seleccionada)/5;
+            
             if (!isNaN(valor_pavf)) {
                 $("#resultado_pavf").val(parseFloat(redondear(valor_pavf)));
             }
@@ -354,51 +678,6 @@ $(document).ready(function() {
             
         } 
 
-    }, 500);
-
-    /* CREACIÓN DE GRILLAS OJO IZQ Y DER PARA ENVIARLAS A LA BASE DE DATOS (PARA TEMAS DE EDICIÓN) */
-    var grilla_ojo_izq = [];
-    var grilla_ojo_der = [];
-    /* CREACIÓN DE ARRAYS CON TODOS LOS ID DE LOS CHECKBOX DE OJO IZQ Y OJO DER PARA USARLOS CUANDO SE SELCCIONEN TODOS DE UNA VEZ
-    Y SIRVAN PARA INDICAR CUALES FUERON MARCADOS (PARA TEMAS DE EDICIÓN) */
-    var ids_todos_checkboxs_ojo_izq = [];
-    var ids_todos_checkboxs_ojo_der = [];
-    setTimeout(() => {
-        for (var x = 1; x <= 10; x++) {
-            var fila_ojo_izq = {
-                // "ID_evento": $("#ID_evento").val(),
-                // "Id_Asignacion": $("#Id_Asignacion").val(),
-                // "Id_proceso": $("#Id_proceso").val(),
-            };
-            var fila_ojo_der = {
-                // "ID_evento": $("#ID_evento").val(),
-                // "Id_Asignacion": $("#Id_Asignacion").val(),
-                // "Id_proceso": $("#Id_proceso").val(),
-            };
-    
-            for (var z = 1; z <= 10; z++) {
-                var nombre_checkbox_ojo_izq = "checkbox_izq_" + x + "_" + z;
-                var nombre_checkbox_ojo_der = "checkbox_der_" + x + "_" + z;
-                var key_ojo_izq = "InfoFila"+z;
-                var key_ojo_der = "InfoFila"+z;
-
-                fila_ojo_izq[key_ojo_izq] = $("#"+nombre_checkbox_ojo_izq).val();
-                fila_ojo_der[key_ojo_der] = $("#"+nombre_checkbox_ojo_der).val();
-                
-                ids_todos_checkboxs_ojo_izq.push(nombre_checkbox_ojo_izq);
-                ids_todos_checkboxs_ojo_der.push(nombre_checkbox_ojo_der);
-
-            }
-
-            fila_ojo_izq["Nombre_usuario"] = $("#nombre_usuario").val();
-            fila_ojo_izq["F_registro"] = $("#dia_actual").val();
-
-            fila_ojo_der["Nombre_usuario"] = $("#nombre_usuario").val();
-            fila_ojo_der["F_registro"] = $("#dia_actual").val();
-    
-            grilla_ojo_izq.push(fila_ojo_izq);
-            grilla_ojo_der.push(fila_ojo_der);
-        };
     }, 500);
 
     /* FUNCIONALIDAD SELECCIÓN DE TODOS LOS CHECKBOXS DEL GRID OJO IZQUIERDO */
@@ -854,15 +1133,8 @@ $(document).ready(function() {
 
     /* ENVÍO DE DATOS DE AGUDEZA VISUAL */
     $(".modal-footer").remove();
-    $(document).on('submit', "form[id^='form_agudeza_visual']", function(e){
+    $(document).on('submit', "form[id^='form_editar_agudeza_visual']", function(e){
         e.preventDefault();
-        
-        $("#btn_guardar_agudeza").prop('disabled', true);
-        $("#btn_abrir_modal_agudeza").prop('disabled', true);
-        $("#btn_abrir_modal_agudeza").hover(function(){
-            $(this).css('cursor', 'not-allowed');
-        });
-
         
         if (confirmacion_ceguera_total == "" || confirmacion_ceguera_total == undefined) {
             confirmacion_ceguera_total = "No";
@@ -889,72 +1161,21 @@ $(document).ready(function() {
             "F_registro": $("#dia_actual").val()
         };
         
-        let datos_guardar_agudeza_visual = {
+        let datos_actualizar_agudeza_visual = {
             '_token': token,
+            'Id_agudeza': $("#dato_id_agudeza").val(),
+            "ID_evento": $("#ID_evento").val(),
             'info_formulario': info_formulario,
             'grilla_ojo_izq': grilla_ojo_izq,
             'grilla_ojo_der': grilla_ojo_der
         };
 
         $.ajax({
-            url: "/guardarAgudezaVisual",
+            url: "/actualizarAgudezaVisual",
             type: "post",
-            data: datos_guardar_agudeza_visual,
+            data: datos_actualizar_agudeza_visual,
             success:function(response){
-
-                // MOstrar resultado de información de agudeza visual
-                /* let info_agudeza_visual = {
-                    '_token': token,
-                    "ID_evento": $("#ID_evento").val(),
-                };
-                $.ajax({
-                    url: "/infoAgudezaVisual",
-                    type: "post",
-                    data: info_agudeza_visual,
-                    success:function(response){
-                        // console.log(response);
-
-                        // Datatable info agudeza visual
-                        $.each(response, function(index, row) {
-                            tr = $('<tr>').appendTo('#llenar_info_agudeza_visual');
-                            tr.append('<td>' + row.Agudeza_Ojo_Izq + '</td>');
-                            tr.append('<td>' + row.Agudeza_Ojo_Der + '</td>');
-                            tr.append('<td>' + row.Agudeza_Ambos_Ojos + '</td>');
-                            tr.append('<td>' + row.PAVF + '</td>');
-                            tr.append('<td>' + row.DAV + '</td>');
-                            tr.append('<td>' + row.Campo_Visual_Ojo_Izq + '</td>');
-                            tr.append('<td>' + row.Campo_Visual_Ojo_Der + '</td>');
-                            tr.append('<td>' + row.Campo_Visual_Ambos_Ojos + '</td>');
-                            tr.append('<td>' + row.CVF + '</td>');
-                            tr.append('<td>' + row.DCV + '</td>');
-                            tr.append('<td>' + row.DSV + '</td>');
-                            tr.append('<td><input type="checkbox" name="" id=""></td>');
-                            tr.append('<td>' + row.Deficiencia + '</td>');
-                            tr.append('<td><div style="text-align:center;">\
-                                <a href="javascript:void(0);" id="btn_editar_agudeza_visual" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modal_editar_agudeza_visual">\
-                                    <i class="fa fa-pen text-primary"></i>\
-                                </a>\
-                                <a href="javascript:void(0);" id="btn_remover_fila_'+row.Id_agudeza+'" data-fila_agudeza="fila_visual_agudeza_'+row.Id_agudeza+'" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a>\
-                                </div>\
-                            </td>');
-                        });
-                      
-                        var tabla_agudeza_visual = $('#listado_agudeza_visual').DataTable({
-                            "responsive": true,
-                            "info": false,
-                            "searching": false,
-                            "ordering": false,
-                            "scrollCollapse": true,
-                            "scrollY": "30vh",
-                            "paging": false,
-                            "language":{
-                                "emptyTable": "No se encontró información"
-                            }
-                        });
-                    }         
-                }); */
-                
-                if(response.parametro == "guardo"){
+                if(response.parametro == "actualizo"){
                     $("#resultado_insercion").removeClass('d-none');
                     $("#resultado_insercion").addClass('alert-success');
                     $("#resultado_insercion").append('<strong>'+response.mensaje+'</strong>');
@@ -962,16 +1183,13 @@ $(document).ready(function() {
                         $("#resultado_insercion").addClass('d-none');
                         $("#resultado_insercion").removeClass('alert-success');
                         $("#resultado_insercion").empty();
-                        $("#btn_cerrar_modal_agudeza").trigger('click');
-                        location.reload();
-                    }, 4000);
+                    }, 7000);
                 }
             }         
         });
         
     });
 
-    $(window).scrollTop(2758);
 });
 
 /* FUNCIÓN PARA REALIZAR LA SUMA POR COLUMNA DE CADA CHECKBOX SELECCIONADO: APLICA PARA GRILLA OJO IZQ Y OJO DER */

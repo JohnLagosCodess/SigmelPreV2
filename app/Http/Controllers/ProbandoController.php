@@ -22,6 +22,8 @@ use App\Imports\ProbandoImportXslxSinEncabezados;
 use App\Models\sigmel_lista_solicitantes;
 use Maatwebsite\Excel\Facades\Excel;
 
+use PDF;
+
 class ProbandoController extends Controller
 {
     public function index(){
@@ -110,7 +112,6 @@ class ProbandoController extends Controller
 
     /* EJEMPLO 2 PHP SPREADSHEET */
     public function generar(){
-
         
         $datos_pruebas = sigmel_probando::on('mysql2')->get();
         // $datos_pruebas = sigmel_probando::on('mysql2')->where('id', '2')->get();
@@ -145,6 +146,17 @@ class ProbandoController extends Controller
         $writer = IOFactory::createWriter($documento, 'Xlsx');
         $writer->save('php://output');
 
+    }
+
+    public function generarPDF(){
+        $data = [
+            "nombre_persona"=> "Mauro Ramírez"
+        ];
+
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('/planti', $data);
+        $fileName = 'pdfsito.pdf';
+        return $pdf->download($fileName);
     }
 
     /* EJEMPLO 1 LARAVEL EXCEL (LIBRERIA) */
