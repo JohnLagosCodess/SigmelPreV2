@@ -103,7 +103,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="servicio">Servicio</label><br>
-                                                <a href="#" id="servicio_Pcl"><i class="fa fa-puzzle-piece text-info"></i> <strong class="text-dark">{{$array_datos_calificacionPcl[0]->Nombre_servicio}}</strong></a>
+                                                <a onclick="document.getElementById('botonFormulario2').click();" style="cursor:pointer;" id="servicio_Pcl"><i class="fa fa-puzzle-piece text-info"></i> <strong class="text-dark">{{$array_datos_calificacionPcl[0]->Nombre_servicio}}</strong></a>
                                                 <input type="hidden" class="form-control" name="servicio" id="servicio" value="{{$array_datos_calificacionPcl[0]->Nombre_servicio}}">
                                             </div>
                                         </div>
@@ -319,8 +319,14 @@
                         <div class="alerta_calificacion alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                         <input type="hidden" id="bandera_accion_guardar_actualizar" value="Actualizar">
                     @endif                    
-                </div>                
+                </div>
             </div>           
+        </form>
+        <form action="{{route($SubModulo)}}" id="formulario2" method="POST">            
+            @csrf
+            <input hidden="hidden" type="text" name="Id_evento_calitec" id="Id_evento_calitec" value="{{$array_datos_calificacionPcl[0]->ID_evento}}">
+            <input hidden="hidden" type="text" name="Id_asignacion_calitec" id="Id_asignacion_calitec" value="{{$array_datos_calificacionPcl[0]->Id_Asignacion}}">
+            <button type="submit" id="botonFormulario2"></button>
         </form>
     </div>
     {{-- Modal solicitud documentos - seguimientos --}}
@@ -993,7 +999,11 @@
             location.reload();
         });
 
-        
+        document.getElementById('botonFormulario2').addEventListener('click', function(event) {
+            event.preventDefault();
+            // Realizar las acciones que quieres al hacer clic en el botón
+            document.getElementById('formulario2').submit();
+        });
         
     </script>
 

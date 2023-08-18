@@ -37,6 +37,7 @@ use App\Models\sigmel_lista_tablas_1507_decretos;
 use App\Models\cndatos_info_comunicado_eventos;
 use App\Models\sigmel_historial_acciones_eventos;
 
+
 class CalificacionPCLController extends Controller
 {
     public function mostrarVistaCalificacionPCL(Request $request){
@@ -1224,6 +1225,7 @@ class CalificacionPCLController extends Controller
         return json_decode(json_encode($mensajes, true));
         
     }
+    
     public function eliminarAgudezaVisual(Request $request){
         if(!Auth::check()){
             return redirect('/');
@@ -1279,7 +1281,7 @@ class CalificacionPCLController extends Controller
 
         if ($parametro == "nombre_tabla") {
             $nombre_tabla = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
-            ->select('Nombre_tabla')
+            ->select('Nombre_tabla', 'Ident_tabla')
             ->where('Id_tabla', $request->Id_tabla)->get();
 
             $info_nombre_tabla = json_decode(json_encode($nombre_tabla, true));
@@ -1295,7 +1297,43 @@ class CalificacionPCLController extends Controller
             return response()->json($info_selector_FP);
         }
 
+        if ($parametro == "selector_CFM1") {
+            $selector_CFM1 = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
+            ->select('CFM1')
+            ->where('Id_tabla', $request->Id_tabla)->get();
+
+            $info_selector_CFM1 = json_decode(json_encode($selector_CFM1, true));
+            return response()->json($info_selector_CFM1);
+        }
+
+        if ($parametro == "selector_CFM2") {
+            $selector_CFM2 = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
+            ->select('CFM2')
+            ->where('Id_tabla', $request->Id_tabla)->get();
+
+            $info_selector_CFM2 = json_decode(json_encode($selector_CFM2, true));
+            return response()->json($info_selector_CFM2);
+        }
+
+        if ($parametro == "selector_FU") {
+            $selector_FU = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
+            ->select('FU')
+            ->where('Id_tabla', $request->Id_tabla)->get();
+
+            $info_selector_FU = json_decode(json_encode($selector_FU, true));
+            return response()->json($info_selector_FU);
+        }
+
+        if ($parametro == "selector_CAT") {
+            $selector_CAT = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
+            ->select('CAT')
+            ->where('Id_tabla', $request->Id_tabla)->get();
+
+            $info_selector_CAT = json_decode(json_encode($selector_CAT, true));
+            return response()->json($info_selector_CAT);
+        }
+
     }
 
-    
+
 }
