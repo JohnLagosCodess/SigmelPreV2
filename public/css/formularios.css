@@ -21,15 +21,22 @@ textarea{
     overflow-y: scroll;
 }
 
-.select2-custom-width {
-    width: 345px;
+.icono {
+    position: relative;
+    display: inline-block;
+    transform: rotate(45deg);
+    height: 1px;
+    left: 5px;
 }
 
-.select2-custom-width2 {
-    width: 525px;
-}
+.icono {
+    animation: spin 2s infinite linear; 
+  }
+  
+  @keyframes spin {
+    25% { transform: rotate(15deg); }
+    50% { transform: rotate(-15deg); }
+    75% { transform: rotate(15deg); }
+  }
 
-.select2-custom-width3 {
-    width: 255px;
-}
 
