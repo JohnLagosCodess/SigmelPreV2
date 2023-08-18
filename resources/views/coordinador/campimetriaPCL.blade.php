@@ -206,9 +206,9 @@
         <hr>
         <div class="row">
             <div class="col-12">
-                <div class="alert d-none" id="resultado_insercion" role="alert">
+                <div class="alert d-none" id="resultado_insercion" role="alert"></div>
             </div>
-            <div>
+            <div class="col-12">
                 <input type="submit" id="btn_guardar_agudeza" class="mr-auto btn btn-info" value="Guardar">
                 <button type="button" id="btn_cerrar_modal_agudeza" class="btn btn-danger" style="float:right !important;" data-dismiss="modal">Cerrar</button>
             </div>
@@ -218,6 +218,6 @@
     </form>
 </x-adminlte-modal>
 
-@section('js')
+@section('js_nueva_agudeza')
 <script type="text/javascript" src="/js/campimetria.js"></script>
 @stop

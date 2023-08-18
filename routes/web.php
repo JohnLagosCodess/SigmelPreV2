@@ -303,6 +303,25 @@ Route::post('/generarPdf', [CalificacionPCLController::class, 'generarPdf']);
 Route::post('/consultarHistorialAcciones', [CalificacionPCLController::class, 'historialAcciones']);
 
 
+// 01/08/2023
+// SUBMÓDULO CALIFICACIÓN TÉCNICA PCL
+// Acción: MOstrar vista Calificación Técnica PCL
+Route::get('/CalficacionTecnicaPCL', [CalificacionPCLController::class, 'mostrarVistaCalificacionTecnicaPCL'])->name('CalficacionTecnicaPCL');
+Route::post('/CalficacionTecnicaPCL', [CalificacionPCLController::class, 'mostrarVistaCalificacionTecnicaPCL'])->name('CalficacionTecnicaPCL');
+// Accion: Selectores Módulo calificación PCl
+Route::post('/selectoresCalificacionTecnicaPCL', [CalificacionPCLController::class, 'cargueListadoSelectoresCalifcacionTecnicaPcl']);
+// Acción: Consulta Campimetría por fila
+Route::post('/ConsultaCampimetriaXFila', [CalificacionPCLController::class, 'ConsultaCampimetriaXFila']);
+// Acción: Guardar Información Agudeza Visual
+Route::post('/guardarAgudezaVisual', [CalificacionPCLController::class, 'guardarAgudezaVisual']);
+// Acción: Traer información de Agudeza visual cuando se guarde la información
+Route::post('/infoAgudezaVisual', [CalificacionPCLController::class, 'infoAgudezaVisual']);
+// Acción: Guardar Información Agudeza Visual
+Route::post('/actualizarAgudezaVisual', [CalificacionPCLController::class, 'actualizarAgudezaVisual']);
+// Acción: Borrar Información Agudeza Visual
+Route::post('/eliminarAgudezaVisual', [CalificacionPCLController::class, 'eliminarAgudezaVisual']);
+// Acción: Traer listado de selectores para el calculo de DEFICIENCIA POR ALTERACIONES DE LOS SISTEMAS GENERALES
+Route::post('/ListadoSelectoresDefiAlteraciones', [CalificacionPCLController::class, 'ListadoSelectoresDefiAlteraciones']);
 
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);
@@ -322,7 +341,8 @@ Route::post('/mantenerDatosBusquedaEvento', [BuscarEventoController::class, 'man
 
 Route::get('/Sigmel/pruebas', [ProbandoController::class, 'index']);
 // GENERAR EXCEL CON PHPSPREADSHEET
-Route::post('/Sigmel/pruebas', [ProbandoController::class, 'generar'])->name('generarExcel');
+// Route::post('/Sigmel/pruebas', [ProbandoController::class, 'generar'])->name('generarExcel');
+Route::post('/Sigmel/pruebas', [ProbandoController::class, 'generarPDF'])->name('generarPDF');
 // GENERAR EXCEL CON LARAVEL EXCEL
 Route::controller(ProbandoController::class)->group(function(){
     Route::post('/Sigmel/probando-export', 'ExportarArchivo')->name('ExportarArchivo');

@@ -1,5 +1,5 @@
 $(document).ready(function() {
-
+    
     /* INICIALIZACIÓN SELECT 2 SELECTOR Agudeza Ojo Izquierdo */
     $(".agudeza_ojo_izq").select2({
         placeholder:"Seleccione una opción",
@@ -903,7 +903,7 @@ $(document).ready(function() {
             success:function(response){
 
                 // MOstrar resultado de información de agudeza visual
-                let info_agudeza_visual = {
+                /* let info_agudeza_visual = {
                     '_token': token,
                     "ID_evento": $("#ID_evento").val(),
                 };
@@ -952,7 +952,7 @@ $(document).ready(function() {
                             }
                         });
                     }         
-                });
+                }); */
                 
                 if(response.parametro == "guardo"){
                     $("#resultado_insercion").removeClass('d-none');
@@ -963,13 +963,15 @@ $(document).ready(function() {
                         $("#resultado_insercion").removeClass('alert-success');
                         $("#resultado_insercion").empty();
                         $("#btn_cerrar_modal_agudeza").trigger('click');
-                    }, 5000);
+                        location.reload();
+                    }, 4000);
                 }
             }         
         });
         
     });
-
+    
+    //$(window).scrollTop(2758);
 });
 
 /* FUNCIÓN PARA REALIZAR LA SUMA POR COLUMNA DE CADA CHECKBOX SELECCIONADO: APLICA PARA GRILLA OJO IZQ Y OJO DER */

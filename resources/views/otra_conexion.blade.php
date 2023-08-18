@@ -26,11 +26,19 @@
         </div>
         <div class="col-12">
             <br>
+            <h3>GENERAR PDF</h3>
+            <form action="{{route('generarPDF')}}" method="POST">
+                @csrf
+                <input type="submit" class="btn btn-outline-danger" value="GENERAR">
+            </form><br>
+        </div>
+        <div class="col-12">
+            <br>
             <h3>GENERAR EXCEL CON PHPSPREADSHEET</h3>
-            <form action="{{route('generarExcel')}}" method="POST">
+            {{-- <form action="{{route('generarExcel')}}" method="POST">
                 @csrf
                 <input type="submit" class="btn btn-outline-warning" value="GENERAR">
-            </form><br>
+            </form><br> --}}
         </div>
 
         <div class="col-12" style="border: 3px solid purple;">

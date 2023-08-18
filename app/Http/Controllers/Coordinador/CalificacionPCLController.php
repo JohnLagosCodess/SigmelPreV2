@@ -6,10 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Dompdf\Dompdf;
-use Dompdf\Options;
+/* use Dompdf\Dompdf;
+use Dompdf\Options; */
 use PDF;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\File;
@@ -18,17 +17,25 @@ use App\Models\cndatos_bandeja_eventos;
 use App\Models\sigmel_lista_parametros;
 use App\Models\sigmel_informacion_accion_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
-use App\Models\sigmel_informacion_comunicado_eventos;
 use App\Models\sigmel_lista_causal_seguimiento;
 use App\Models\sigmel_informacion_seguimientos_eventos;
 use App\Models\sigmel_registro_documentos_eventos;
 use App\Models\sigmel_lista_documentos;
 use App\Models\sigmel_lista_solicitantes;
 use App\Models\sigmel_lista_departamentos_municipios;
+use App\Models\sigmel_informacion_comunicado_eventos;
 use App\Models\sigmel_informacion_documentos_solicitados_eventos;
+use App\Models\sigmel_campimetria_visuales;
+use App\Models\sigmel_lista_califi_decretos;
+use App\Models\sigmel_lista_motivo_solicitudes;
+use App\Models\cndatos_eventos;
+use App\Models\sigmel_informacion_afiliado_eventos;
+use App\Models\sigmel_info_campimetria_ojo_izq_eventos;
+use App\Models\sigmel_info_campimetria_ojo_der_eventos;
+use App\Models\sigmel_informacion_agudeza_visual_eventos;
+use App\Models\sigmel_lista_tablas_1507_decretos;
 use App\Models\cndatos_info_comunicado_eventos;
 use App\Models\sigmel_historial_acciones_eventos;
-
 
 class CalificacionPCLController extends Controller
 {
@@ -40,7 +47,8 @@ class CalificacionPCLController extends Controller
         $time = time();
         $date = date("Y-m-d", $time);
         $newIdAsignacion=$request->newIdAsignacion;
-        $newIdEvento = $request->newIdEvento;       
+        $newIdEvento = $request->newIdEvento;
+        $SubModulo='CalficacionTecnicaPCL'; //Enviar a la vista del SubModulo    
 
         $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newIdAsignacion));
         $array_datos_destinatarios = DB::select('CALL psrcomunicados(?)', array($newIdEvento));
@@ -51,48 +59,49 @@ class CalificacionPCLController extends Controller
         ->where('Estado', 'Activo')
         ->get();
 
-        // creación de consecutivo para el comunicado
-        $radicadocomunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-        ->select('N_radicado')
-        ->where([
-            ['ID_evento',$newIdEvento],
-            ['F_comunicado',$date],
-            ['Id_proceso','2']
-        ])
-        ->orderBy('N_radicado', 'desc')
-        ->limit(1)
-        ->get();
-        
-        if(count($radicadocomunicado)==0){
-            $fechaActual = date("Ymd");
-            // Obtener el último valor de la base de datos o archivo
-            $consecutivoP1 = "SAL-PCL";
-            $consecutivoP2 = $fechaActual;
-            $consecutivoP3 = '000000';
-            $ultimoDigito = substr($consecutivoP3, -6);
-            $consecutivoInicial = $consecutivoP1.$consecutivoP2.$consecutivoP3; 
-            $nuevoConsecutivo = $ultimoDigito + 1;
-            // Reiniciar el consecutivo si es un nuevo día
-            if (date("Ymd") != $fechaActual) {
-                $nuevoConsecutivo = 0;
-            }
-            // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-            $consecutivo = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted; 
-            
-        }else{
-            $fechaActual = date("Ymd");
-            $ultimoConsecutivo = $radicadocomunicado[0]->N_radicado;
-            $ultimoDigito = substr($ultimoConsecutivo, -6);
-            $nuevoConsecutivo = $ultimoDigito + 1;
-            // Reiniciar el consecutivo si es un nuevo día
-            if (date("Ymd") != $fechaActual) {
-                $nuevoConsecutivo = 0;
-            }
-            // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-            $consecutivo = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted;
-        }
+
+       // creación de consecutivo para el comunicado
+       $radicadocomunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+       ->select('N_radicado')
+       ->where([
+           ['ID_evento',$newIdEvento],
+           ['F_comunicado',$date],
+           ['Id_proceso','2']
+       ])
+       ->orderBy('N_radicado', 'desc')
+       ->limit(1)
+       ->get();
+       
+       if(count($radicadocomunicado)==0){
+           $fechaActual = date("Ymd");
+           // Obtener el último valor de la base de datos o archivo
+           $consecutivoP1 = "SAL-PCL";
+           $consecutivoP2 = $fechaActual;
+           $consecutivoP3 = '000000';
+           $ultimoDigito = substr($consecutivoP3, -6);
+           $consecutivoInicial = $consecutivoP1.$consecutivoP2.$consecutivoP3; 
+           $nuevoConsecutivo = $ultimoDigito + 1;
+           // Reiniciar el consecutivo si es un nuevo día
+           if (date("Ymd") != $fechaActual) {
+               $nuevoConsecutivo = 0;
+           }
+           // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
+           $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
+           $consecutivo = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted; 
+           
+       }else{
+           $fechaActual = date("Ymd");
+           $ultimoConsecutivo = $radicadocomunicado[0]->N_radicado;
+           $ultimoDigito = substr($ultimoConsecutivo, -6);
+           $nuevoConsecutivo = $ultimoDigito + 1;
+           // Reiniciar el consecutivo si es un nuevo día
+           if (date("Ymd") != $fechaActual) {
+               $nuevoConsecutivo = 0;
+           }
+           // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
+           $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
+           $consecutivo = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted;
+       }
 
         $dato_validacion_no_aporta_docs = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
         ->select('Id_Documento_Solicitado', 'Aporta_documento')
@@ -108,8 +117,8 @@ class CalificacionPCLController extends Controller
             ['Estado', 'Activo'],
         ])
         ->get();
-
-        return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos','consecutivo','arraycampa_documento_solicitado'));
+        
+        return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos','SubModulo','consecutivo','arraycampa_documento_solicitado'));
     }
 
     public function cargueListadoSelectoresModuloCalifcacionPcl(Request $request){
@@ -193,19 +202,19 @@ class CalificacionPCLController extends Controller
         $date = date("Y-m-d", $time);
         $user = Auth::user();
         $nombre_usuario = Auth::user()->name;
-        $newId_evento = $request->newId_evento;
-        $newId_asignacion = $request->newId_asignacion;
+        $newIdAsignacion = $request->newId_asignacion;
+        $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
 
         // validacion de bandera para guardar o actualizar
-        if ($request->banderaguardar == 'Guardar') {
+        if ($request->bandera_accion_guardar_actualizar == 'Guardar') {
                
             // insercion de datos a la tabla de sigmel_informacion_accion_eventos
     
             $datos_info__registrarCalifcacionPcl= [
-                'ID_evento' => $newId_evento,
-                'Id_Asignacion' => $newId_asignacion,
-                'Id_proceso' => $Id_proceso,
+                'ID_evento' => $request->newId_evento,
+                'Id_Asignacion' => $request->newId_asignacion,
+                'Id_proceso' => $request->Id_proceso,
                 'Modalidad_calificacion' => $request->modalidad_calificacion,
                 'F_accion' => $request->f_accion,
                 'Accion' => $request->accion,
@@ -228,12 +237,12 @@ class CalificacionPCLController extends Controller
             sleep(2);
 
             sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-            ->where('Id_Asignacion', $newId_asignacion)->update($datos_info_actualizarAsignacionEvento);
+            ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_actualizarAsignacionEvento);
 
             sleep(2);
 
             $datos_info_historial_acciones = [
-                'ID_evento' => $newId_evento,
+                'ID_evento' => $newIdEvento,
                 'F_accion' => $date,
                 'Nombre_usuario' => $nombre_usuario,
                 'Accion_realizada' => "Guardado Modulo Calificacion Pcl.",
@@ -241,22 +250,22 @@ class CalificacionPCLController extends Controller
             ];
 
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
-
+            
             $mensajes = array(
                 "parametro" => 'agregar_calificacionPcl',
                 "mensaje" => 'Registros guardados/actualizados satisfactoriamente.'
             );
-    
+
             return json_decode(json_encode($mensajes, true));
-    
-        }elseif ($request->banderaguardar == 'Actualizar') {
+
+        }elseif ($request->bandera_accion_guardar_actualizar == 'Actualizar') {
             
             // actualizacion de datos a la tabla de sigmel_informacion_accion_eventos
 
             $datos_info_actualizarCalifcacionPcl= [
-                'ID_evento' => $newId_evento,
-                'Id_Asignacion' => $newId_asignacion,
-                'Id_proceso' => $Id_proceso,
+                'ID_evento' => $request->newId_evento,
+                'Id_Asignacion' => $request->newId_asignacion,
+                'Id_proceso' => $request->Id_proceso,
                 'Modalidad_calificacion' => $request->modalidad_calificacion,
                 'F_accion' => $request->f_accion,
                 'Accion' => $request->accion,
@@ -275,15 +284,15 @@ class CalificacionPCLController extends Controller
             ];
 
             sigmel_informacion_accion_eventos::on('sigmel_gestiones')
-            ->where('Id_Asignacion', $newId_asignacion)->update($datos_info_actualizarCalifcacionPcl);
+            ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_actualizarCalifcacionPcl);
             sleep(2);
             sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-            ->where('Id_Asignacion', $newId_asignacion)->update($datos_info_actualizarAsignacionEvento);
+            ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_actualizarAsignacionEvento);
 
             sleep(2);
 
             $datos_info_historial_acciones = [
-                'ID_evento' => $newId_evento,
+                'ID_evento' => $newIdEvento,
                 'F_accion' => $date,
                 'Nombre_usuario' => $nombre_usuario,
                 'Accion_realizada' => "Actualizado Modulo Calificacion Pcl.",
@@ -300,9 +309,9 @@ class CalificacionPCLController extends Controller
             return json_decode(json_encode($mensajes, true));
         }
 
-        $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newId_asignacion));
+        $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newIdAsignacion));
 
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newId_evento));
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento));
     
         $listado_documentos_solicitados = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
         ->select('Id_Documento_Solicitado', 'F_solicitud_documento', 'Nombre_documento', 
@@ -312,12 +321,12 @@ class CalificacionPCLController extends Controller
 
         $dato_validacion_no_aporta_docs = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
         ->select('Id_Documento_Solicitado', 'Aporta_documento')
-        ->where([['ID_evento', $newId_evento],['Id_Asignacion', $newId_asignacion],['Estado', 'Inactivo']])
+        ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion],['Estado', 'Inactivo']])
         ->get();
 
         $arraycampa_documento_solicitado = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
         ->where([
-            ['ID_evento', $newId_evento],
+            ['ID_evento', $newIdEvento],
             ['Estado', 'Activo'],
         ])
         ->get();
@@ -414,14 +423,9 @@ class CalificacionPCLController extends Controller
             }
     
             // Inserción de la información
-            foreach ($array_datos_con_keys as $insertar) {   
-                //print_r($insertar);
+            foreach ($array_datos_con_keys as $insertar) {
                 sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')->insert($insertar);
             }
-
-            /* foreach ($array_datos_con_keys as $insertar2) {                
-                echo $insertar2['Descripcion'];
-            } */
     
             $mensajes = array(
                 "parametro" => 'inserto_informacion',
@@ -541,11 +545,7 @@ class CalificacionPCLController extends Controller
         ];
 
         sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')->insert($datos_info_causalSeguimiento);
-
-        $mensajes = array(
-            "parametro" => 'agregar_seguimiento',
-            "mensaje" => 'Seguimiento agregado satisfactoriamente.'
-        );
+        
         sleep(2);
         $datos_info_historial_acciones = [
             'ID_evento' => $newIdEvento,
@@ -556,6 +556,11 @@ class CalificacionPCLController extends Controller
         ];
 
         sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+
+        $mensajes = array(
+            "parametro" => 'agregar_seguimiento',
+            "mensaje" => 'Seguimiento agregado satisfactoriamente.'
+        );
 
         return json_decode(json_encode($mensajes, true));
         
@@ -935,11 +940,11 @@ class CalificacionPCLController extends Controller
         ];
         // Crear una instancia de Dompdf
 
-        /* $pdf = app('dompdf.wrapper');
+        $pdf = app('dompdf.wrapper');
         $pdf->loadView('/coordinador/comunicadoPdf', $data);
         $fileName = 'Comunicado.pdf';
-        return $pdf->download($fileName); */
-        $pdf = new Dompdf();
+        return $pdf->download($fileName);
+        /* $pdf = new Dompdf();
         // Renderizar la plantilla Blade a HTML
         //$html = view('coordinado.modaleditarcomunicado', compact('data'))->render();
         $html = view('coordinador.comunicadoPdf', $data, $data2);
@@ -963,7 +968,7 @@ class CalificacionPCLController extends Controller
         header('Content-Disposition: attachment; filename="'.$fileName.'"');
         header('Content-Length:'.filesize($filePath));
         readfile($filePath);
-        exit();    
+        exit();   */  
     }
 
     public function historialAcciones(Request $request){
@@ -976,4 +981,321 @@ class CalificacionPCLController extends Controller
 
         return response()->json($datos_info_historial_acciones);
     }
+
+
+    /* TODO LO REFERENTE AL SUBMÓDULO DE CALIFICACIÓN TÉNCICA PCL */
+    public function mostrarVistaCalificacionTecnicaPCL(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        $Id_evento_calitec=$request->Id_evento_calitec;
+        $Id_asignacion_calitec = $request->Id_asignacion_calitec;
+
+        $hay_agudeza_visual = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
+        ->where('ID_evento', $Id_evento_calitec)->get();
+
+        $array_datos_calificacionPclTecnica = DB::select('CALL psrcalificacionpcl(?)', array($Id_asignacion_calitec));
+        //Traer Motivo de solicitud,Dominancia actual
+        $motivo_solicitud_actual = cndatos_eventos::on('sigmel_gestiones')
+        ->select('Id_motivo_solicitud','Nombre_solicitud','Id_dominancia','Nombre_dominancia')
+        ->where([
+            ['ID_evento', '=', $Id_evento_calitec]
+        ])
+        ->get();
+        //Traer Información apoderado 
+        $datos_apoderado_actual = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+        ->select('Nombre_apoderado','Nro_identificacion_apoderado')
+        ->where([
+            ['ID_evento', '=', $Id_evento_calitec]
+        ])
+        ->get();
+
+        //Traer Informacion ya registrada tecnica
+        $datos_demos= array(
+            "Origen" => "48",
+            "NombreOrigen" => "Si",
+            "Cobertura" => "50",
+            "NombreCobertura" => "Si",
+            "Decreto" => "1",
+            "NombreDecreto" => "MUCI - 1507 de 2014",
+        );
+        
+        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 'hay_agudeza_visual','datos_demos'));
+    }
+
+    public function cargueListadoSelectoresCalifcacionTecnicaPcl(Request $request){
+        $parametro = $request->parametro;
+        // Listado Origen Firme calificacion PCL
+        if($parametro == 'lista_origen_firme_pcl'){
+            $listado_origen_firme = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro', 'Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Firme'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_origen_firme = json_decode(json_encode($listado_origen_firme, true));
+            return response()->json($info_listado_origen_firme);
+        }
+        // Listado Cobertura calificacion PCL
+        if($parametro == 'lista_origen_cobertura_pcl'){
+            $listado_origen_cobertura = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro', 'Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Cobertura'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_origen_cobertura = json_decode(json_encode($listado_origen_cobertura, true));
+            return response()->json($info_listado_origen_cobertura);
+        }
+        // Listado decreto calificacion PCL
+        if($parametro == 'lista_cali_decreto_pcl'){
+            $listado_cali_decreto = sigmel_lista_califi_decretos::on('sigmel_gestiones')
+            ->select('Id_Decreto', 'Nombre_decreto')
+            ->where([
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_cali_decreto = json_decode(json_encode($listado_cali_decreto, true));
+            return response()->json($info_listado_cali_decreto);
+        }
+        // Listado motivo solicitud PCL
+        if($parametro == 'lista_motivo_solicitud'){
+            $listado_motivo_solicitud = sigmel_lista_motivo_solicitudes::on('sigmel_gestiones')
+            ->select('Id_Solicitud', 'Nombre_solicitud')
+            ->where([
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_motivo_solicitud = json_decode(json_encode($listado_motivo_solicitud, true));
+            return response()->json($info_listado_motivo_solicitud);
+        }
+        
+        // Listado selectores agudeza visual (modal agudeza visual)
+        if ($parametro == "agudeza_visual") {
+            $listado_agudeza_visual = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'agudeza_visual'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_agudeza_visual = json_decode(json_encode($listado_agudeza_visual, true));
+            return response()->json($info_listado_agudeza_visual);
+        }
+
+    }
+
+    public function ConsultaCampimetriaXFila(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $parametro = $request->parametro;
+        if ($parametro == "nuevo") {
+            $Id_Fila = $request->Id_Fila;
+            $listado_campimetria = sigmel_campimetria_visuales::on('sigmel_gestiones')
+            ->select('Fila1', 'Fila2', 'Fila3', 'Fila4', 'Fila5', 'Fila6', 'Fila7', 'Fila8', 'Fila9', 'Fila10')
+            ->get();
+            $info = json_decode(json_encode($listado_campimetria, true));
+        };
+
+        if ($parametro == "edicion_ojo_izq") {
+            $listado_campimetria_ojo_izq = sigmel_info_campimetria_ojo_izq_eventos::on('sigmel_gestiones')
+            ->select('InfoFila1', 'InfoFila2', 'InfoFila3', 'InfoFila4', 'InfoFila5', 'InfoFila6', 'InfoFila7', 'InfoFila8', 'InfoFila9', 'InfoFila10')
+            ->where('Id_agudeza', $request->Id_agudeza)
+            ->get();
+            $info = json_decode(json_encode($listado_campimetria_ojo_izq, true));
+        };
+
+        if ($parametro == "edicion_ojo_der") {
+            $listado_campimetria_ojo_der = sigmel_info_campimetria_ojo_der_eventos::on('sigmel_gestiones')
+            ->select('InfoFila1', 'InfoFila2', 'InfoFila3', 'InfoFila4', 'InfoFila5', 'InfoFila6', 'InfoFila7', 'InfoFila8', 'InfoFila9', 'InfoFila10')
+            ->where('Id_agudeza', $request->Id_agudeza)
+            ->get();
+            $info = json_decode(json_encode($listado_campimetria_ojo_der, true));
+        };
+
+
+        return response()->json($info);
+
+    }
+
+    public function guardarAgudezaVisual(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $usuario = Auth::user()->name;
+
+        /* Inserción de información del formulario */
+        sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')->insert($request->info_formulario);
+
+        // Extraemos el id insertado para almacenar los datos de la campimetria
+        $id_agudeza = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')->select('Id_agudeza')->latest('Id_agudeza')->first();
+
+        /* Envío de la información de la campimetría para ojo izquierdo */
+        $grilla_ojo_izq = $request->grilla_ojo_izq;
+        foreach ($grilla_ojo_izq as $key => $insertar_info_grid_ojo_izq) {
+            $insertar_info_grid_ojo_izq = array("Id_agudeza" => $id_agudeza['Id_agudeza']) + $insertar_info_grid_ojo_izq;
+            sigmel_info_campimetria_ojo_izq_eventos::on('sigmel_gestiones')->insert($insertar_info_grid_ojo_izq);
+        }
+
+        /* Envío de la información de la campimetría para ojo derecho */
+        $grilla_ojo_der = $request->grilla_ojo_der;
+        foreach ($grilla_ojo_der as $key => $insertar_info_grid_ojo_der) {
+            $insertar_info_grid_ojo_der = array("Id_agudeza" => $id_agudeza['Id_agudeza']) + $insertar_info_grid_ojo_der;
+            sigmel_info_campimetria_ojo_der_eventos::on('sigmel_gestiones')->insert($insertar_info_grid_ojo_der);
+        }
+
+        $mensajes = array(
+            "parametro" => 'guardo',
+            "mensaje" => 'Información de Agudeza visual agregada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+    }
+
+    public function infoAgudezaVisual(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $informacion_agudeza_visual = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
+        ->where("ID_evento", $request->ID_evento)
+        ->get();
+
+        $info_agudeza = json_decode(json_encode($informacion_agudeza_visual, true));
+        return response()->json($info_agudeza);
+
+    }
+
+    public function actualizarAgudezaVisual (Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $usuario = Auth::user()->name;
+
+        /* Actualización de información del formulario */
+        sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
+        ->where([
+            ['Id_agudeza', '=', $request->Id_agudeza],
+            ['ID_evento', '=', $request->ID_evento]
+        ])
+        ->update($request->info_formulario);
+
+
+        /* Envío de la información de la campimetría para ojo izquierdo  */
+        sigmel_info_campimetria_ojo_izq_eventos::on('sigmel_gestiones')
+        ->where('Id_agudeza', $request->Id_agudeza)->delete();
+
+        $grilla_ojo_izq = $request->grilla_ojo_izq;
+        foreach ($grilla_ojo_izq as $key => $insertar_info_grid_ojo_izq) {
+            $insertar_info_grid_ojo_izq = array("Id_agudeza" => $request->Id_agudeza) + $insertar_info_grid_ojo_izq;
+            sigmel_info_campimetria_ojo_izq_eventos::on('sigmel_gestiones')->insert($insertar_info_grid_ojo_izq);
+        }
+
+        /* Envío de la información de la campimetría para ojo derecho */
+        sigmel_info_campimetria_ojo_der_eventos::on('sigmel_gestiones')
+        ->where('Id_agudeza', $request->Id_agudeza)->delete();
+        $grilla_ojo_der = $request->grilla_ojo_der;
+        foreach ($grilla_ojo_der as $key => $insertar_info_grid_ojo_der) {
+            $insertar_info_grid_ojo_der = array("Id_agudeza" => $request->Id_agudeza) + $insertar_info_grid_ojo_der;
+            sigmel_info_campimetria_ojo_der_eventos::on('sigmel_gestiones')->insert($insertar_info_grid_ojo_der);
+        }
+
+        $mensajes = array(
+            "parametro" => 'actualizo',
+            "mensaje" => 'Información de Agudeza visual actualizada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+        
+    }
+    public function eliminarAgudezaVisual(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $usuario = Auth::user()->name;
+
+        $id_agudeza = $request->Id_agudeza;
+        $id_evento = $request->ID_evento;
+
+        /* Borrado de la información general */
+        sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
+        ->where([
+            ['Id_agudeza', '=', $id_agudeza],
+            ['ID_evento', '=', $id_evento]
+        ])->delete();
+
+        /* Borrado de la información de la campimetría para ojo izquierdo  */
+        sigmel_info_campimetria_ojo_izq_eventos::on('sigmel_gestiones')
+        ->where('Id_agudeza', $id_agudeza)->delete();
+
+        /* Borrado de la información de la campimetría para ojo derecho */
+        sigmel_info_campimetria_ojo_der_eventos::on('sigmel_gestiones')
+        ->where('Id_agudeza', $id_agudeza)->delete();
+
+        $mensajes = array(
+            "parametro" => 'borro',
+            "mensaje" => 'Información de Agudeza visual eliminada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+    }
+
+    /* TODO LO REFERENTE DEFICIENCIA POR ALTERACIONES DE LOS SISTEMAS GENERALES */
+    public function ListadoSelectoresDefiAlteraciones(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $parametro = $request->parametro;
+
+        if($parametro == 'listado_tablas_decreto'){
+
+            $listado_tablas_decreto_1507 = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
+            ->select('Id_tabla', 'Ident_tabla', 'Nombre_tabla')->where([['Estado', '=', 'Activo']])->get();
+            
+
+            $info_listado_tablas_decreto_1507 = json_decode(json_encode($listado_tablas_decreto_1507, true));
+            return response()->json($info_listado_tablas_decreto_1507);
+        };
+
+        if ($parametro == "nombre_tabla") {
+            $nombre_tabla = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
+            ->select('Nombre_tabla')
+            ->where('Id_tabla', $request->Id_tabla)->get();
+
+            $info_nombre_tabla = json_decode(json_encode($nombre_tabla, true));
+            return response()->json($info_nombre_tabla);
+        };
+
+        if ($parametro == "selector_FP") {
+            $selector_FP = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
+            ->select('FP')
+            ->where('Id_tabla', $request->Id_tabla)->get();
+
+            $info_selector_FP = json_decode(json_encode($selector_FP, true));
+            return response()->json($info_selector_FP);
+        }
+
+    }
+
+    
 }

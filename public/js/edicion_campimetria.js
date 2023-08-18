@@ -1,5 +1,4 @@
 $(document).ready(function(){
-
     let token = $("input[name='_token']").val();
 
     /* INICIALIZACIÓN SELECT 2 SELECTOR Agudeza Ojo Izquierdo */
@@ -504,13 +503,21 @@ $(document).ready(function(){
         }
     });
 
-    if ($("#dato_ceguera_total").val() === "Si") {
-        $("#ceguera_total").trigger('click');
-        $("input[class^='checkbox_izq_']").prop("disabled", true);
-            $("input[class^='checkbox_izq_']").prop("checked", false);
-            $("input[class^='checkbox_der_']").prop("disabled", true);
-            $("input[class^='checkbox_der_']").prop("checked", false);
-    }
+    setTimeout(() => {
+        
+        if ($("#dato_ceguera_total").val() === "Si") {
+            $("#ceguera_total").trigger('click');
+            $("input[class^='checkbox_izq_']").each(function() {
+                $(this).prop("disabled", true);
+                $(this).prop("checked", false);
+            });
+
+            $("input[class^='checkbox_der_']").each(function() {
+                $(this).prop("disabled", true);
+                $(this).prop("checked", false);
+            });
+        }
+    }, 500);
 
     /* FUNCIONALIDADES CON LOS SELECTORES DE AGUDEZA OJO IZQUIERDO Y DERECHO */
     var agudeza_izq_seleccionada, bandera_agudeza_izq_seleccionada = 0;

@@ -177,6 +177,6 @@
     </form>
 </x-adminlte-modal>
 
-{{-- @section('js')
+@section('js_edicion_agudeza')
 <script type="text/javascript" src="/js/edicion_campimetria.js"></script>
-@stop --}}
+@stop
