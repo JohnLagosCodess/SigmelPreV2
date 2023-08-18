@@ -307,6 +307,8 @@ Route::post('/infoAgudezaVisual', [CalificacionPCLController::class, 'infoAgudez
 Route::post('/actualizarAgudezaVisual', [CalificacionPCLController::class, 'actualizarAgudezaVisual']);
 // Acción: Borrar Información Agudeza Visual
 Route::post('/eliminarAgudezaVisual', [CalificacionPCLController::class, 'eliminarAgudezaVisual']);
+// Acción: Traer listado de selectores para el calculo de DEFICIENCIA POR ALTERACIONES DE LOS SISTEMAS GENERALES
+Route::post('/ListadoSelectoresDefiAlteraciones', [CalificacionPCLController::class, 'ListadoSelectoresDefiAlteraciones']);
 
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);

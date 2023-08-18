@@ -336,17 +336,17 @@
                                             <table id="listado_deficiencia_porfactor" class="table table-striped table-bordered" width="100%">
                                                 <thead>
                                                     <tr class="bg-info">
-                                                        <th>Tabla</th>
-                                                        <th>Titulo tabla</th>
-                                                        <th>Clase principal<br>(FP)</th>
-                                                        <th>CFM1</th>
-                                                        <th>CFM2</th>
-                                                        <th>FU</th>
-                                                        <th>CAT</th>
-                                                        <th>Clase final</th>
-                                                        <th>DX<br>principal</th>
-                                                        <th>MSD</th>
-                                                        <th>Deficiencia</th>
+                                                        <th style="width: 140px !important;">Tabla</th>
+                                                        <th style="width: 140px !important;">Titulo tabla</th>
+                                                        <th style="width: 140px !important;">Clase principal<br>(FP)</th>
+                                                        <th style="width: 140px !important;">CFM1</th>
+                                                        <th style="width: 140px !important;">CFM2</th>
+                                                        <th style="width: 140px !important;">FU</th>
+                                                        <th style="width: 140px !important;">CAT</th>
+                                                        <th style="width: 140px !important;">Clase final</th>
+                                                        <th style="width: 140px !important;">DX<br>principal</th>
+                                                        <th style="width: 140px !important;">MSD</th>
+                                                        <th style="width: 140px !important;">Deficiencia</th>
                                                         <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_deficiencia_porfactor"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                     </tr>
                                                 </thead>
@@ -355,7 +355,7 @@
                                                 </tbody>
                                             </table>
                                         </div><br>
-                                        <x-adminlte-button class="mr-auto" id="guardar_datos_deficiencia" theme="info" label="Guardar" disabled/>
+                                        <x-adminlte-button class="mr-auto d-none" id="guardar_datos_deficiencia_alteraciones" theme="info" label="Guardar"/>
                                         <br>
                                     </div>
                                 </div>
@@ -3798,59 +3798,6 @@
         document.getElementById('formularioEnvio').submit();
     });
 
-    //  SCRIPT PARA ELIMINAR LA FILA DE LA AGUDEZA VISUAL CUANDO EL USUARIO REALICE LA ACCIÓN
-    $(document).ready(function(){
-        var tabla_agudeza_visual = $('#listado_agudeza_visual').DataTable({
-            "responsive": true,
-            "info": false,
-            "searching": false,
-            "ordering": false,
-            "scrollCollapse": true,
-            "scrollY": "30vh",
-            "paging": false,
-            "language":{
-                "emptyTable": "No se encontró información"
-            }
-        });
-
-        autoAdjustColumns(tabla_agudeza_visual);
-        $(document).on('click', "a[id^='btn_remover_fila_']", function(){
-            var nombre_fila_agudeza = $(this).data("fila_agudeza");
-            var regex =  /\d+/;
-            var id_agudeza = nombre_fila_agudeza.match(regex)[0];
-            
-            let datos_eliminar_info_agudeza = {
-                '_token':  $("input[name='_token']").val(),
-                'Id_agudeza': id_agudeza,
-                'ID_evento': {{$array_datos_calificacionPclTecnica[0]->ID_evento}}
-            };
-
-            $.ajax({
-                url: "/eliminarAgudezaVisual",
-                type: "post",
-                data: datos_eliminar_info_agudeza,
-                success:function(response){
-                    tabla_agudeza_visual.row("."+nombre_fila_agudeza).remove().draw();
-                    if(response.parametro == "borro"){
-                        $("#btn_abrir_modal_agudeza").prop('disabled', false);
-                        $("#btn_abrir_modal_agudeza").hover(function(){
-                            $(this).css('cursor', 'pointer');
-                        });
-                        $("#btn_abrir_modal_agudeza").attr("data-target", "#modal_nueva_agudeza_visual");
-                        location.reload();
-                    }
-                }         
-            });
-
-            
-            
-        });
-
-        $(window).scrollTop(2758);
-
-    });
-
-
     //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE EXAMENES E INTERCONSULTAS
     $(document).ready(function(){
         $(".centrar").css('text-align', 'center');
@@ -3956,5 +3903,9 @@
 
 </script>
 <script type="text/javascript" src="/js/calificacionpcl_tecnica.js"></script>
+{{-- JS: Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores --}}
+<script type="text/javascript" src="/js/datatable_deficiencias_alteraciones_sistemas.js"></script>
+{{-- JS: DATATABLE AGUDEZA VISUAL --}}
+<script type="text/javascript" src="/js/datatable_agudeza_visual.js"></script>
 <script type="text/javascript" src="/js/funciones_helpers.js"></script>
 @stop

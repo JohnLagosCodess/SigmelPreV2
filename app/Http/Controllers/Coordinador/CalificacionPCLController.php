@@ -29,6 +29,7 @@ use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_info_campimetria_ojo_izq_eventos;
 use App\Models\sigmel_info_campimetria_ojo_der_eventos;
 use App\Models\sigmel_informacion_agudeza_visual_eventos;
+use App\Models\sigmel_lista_tablas_1507_decretos;
 
 class CalificacionPCLController extends Controller
 {
@@ -796,6 +797,7 @@ class CalificacionPCLController extends Controller
         return json_decode(json_encode($mensajes, true));
         
     }
+    
     public function eliminarAgudezaVisual(Request $request){
         if(!Auth::check()){
             return redirect('/');
@@ -829,6 +831,80 @@ class CalificacionPCLController extends Controller
         );
 
         return json_decode(json_encode($mensajes, true));
+    }
+
+    /* TODO LO REFERENTE DEFICIENCIA POR ALTERACIONES DE LOS SISTEMAS GENERALES */
+    public function ListadoSelectoresDefiAlteraciones(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $parametro = $request->parametro;
+
+        if($parametro == 'listado_tablas_decreto'){
+
+            $listado_tablas_decreto_1507 = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
+            ->select('Id_tabla', 'Ident_tabla', 'Nombre_tabla')->where([['Estado', '=', 'Activo']])->get();
+            
+
+            $info_listado_tablas_decreto_1507 = json_decode(json_encode($listado_tablas_decreto_1507, true));
+            return response()->json($info_listado_tablas_decreto_1507);
+        };
+
+        if ($parametro == "nombre_tabla") {
+            $nombre_tabla = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
+            ->select('Nombre_tabla', 'Ident_tabla')
+            ->where('Id_tabla', $request->Id_tabla)->get();
+
+            $info_nombre_tabla = json_decode(json_encode($nombre_tabla, true));
+            return response()->json($info_nombre_tabla);
+        };
+
+        if ($parametro == "selector_FP") {
+            $selector_FP = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
+            ->select('FP')
+            ->where('Id_tabla', $request->Id_tabla)->get();
+
+            $info_selector_FP = json_decode(json_encode($selector_FP, true));
+            return response()->json($info_selector_FP);
+        }
+
+        if ($parametro == "selector_CFM1") {
+            $selector_CFM1 = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
+            ->select('CFM1')
+            ->where('Id_tabla', $request->Id_tabla)->get();
+
+            $info_selector_CFM1 = json_decode(json_encode($selector_CFM1, true));
+            return response()->json($info_selector_CFM1);
+        }
+
+        if ($parametro == "selector_CFM2") {
+            $selector_CFM2 = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
+            ->select('CFM2')
+            ->where('Id_tabla', $request->Id_tabla)->get();
+
+            $info_selector_CFM2 = json_decode(json_encode($selector_CFM2, true));
+            return response()->json($info_selector_CFM2);
+        }
+
+        if ($parametro == "selector_FU") {
+            $selector_FU = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
+            ->select('FU')
+            ->where('Id_tabla', $request->Id_tabla)->get();
+
+            $info_selector_FU = json_decode(json_encode($selector_FU, true));
+            return response()->json($info_selector_FU);
+        }
+
+        if ($parametro == "selector_CAT") {
+            $selector_CAT = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
+            ->select('CAT')
+            ->where('Id_tabla', $request->Id_tabla)->get();
+
+            $info_selector_CAT = json_decode(json_encode($selector_CAT, true));
+            return response()->json($info_selector_CAT);
+        }
+
     }
 
 
