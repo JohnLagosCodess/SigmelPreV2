@@ -594,7 +594,17 @@ class CalificacionPCLController extends Controller
         ])
         ->get();
 
-        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 'hay_agudeza_visual'));
+        //Traer Informacion ya registrada tecnica
+        $datos_demos= array(
+            "Origen" => "48",
+            "NombreOrigen" => "Si",
+            "Cobertura" => "50",
+            "NombreCobertura" => "Si",
+            "Decreto" => "1",
+            "NombreDecreto" => "MUCI - 1507 de 2014",
+        );
+        
+        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 'hay_agudeza_visual','datos_demos'));
     }
 
     public function cargueListadoSelectoresCalifcacionTecnicaPcl(Request $request){

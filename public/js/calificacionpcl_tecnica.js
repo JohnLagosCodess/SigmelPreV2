@@ -1,4 +1,21 @@
 $(document).ready(function(){
+    // Obtener sessionStorage del navegador
+    var posicionActual = $(window).scrollTop(); // Guarda cuando recarga la pagina
+    var posicionMemoria = sessionStorage.getItem("scrollTop"); // Guarda session scrollTop
+
+    if (posicionMemoria != null) {
+        $(window).scrollTop(posicionMemoria);
+        sessionStorage.removeItem("scrollTop");
+        console.log("Se ha restaurado la posición guardada en memoria");
+    } else {
+        console.log("No se ha encontrado una posición guardada en memoria");
+    }
+    //guardar la posición de desplazamiento actual en la memoria
+    $(window).on("beforeunload", function() {
+        sessionStorage.setItem("scrollTop", $(window).scrollTop());
+    });
+    console.log("Posición al refrescar la página: " + posicionActual + "-" + posicionMemoria);
+    
     // Inicializacion del select2 de listados  Módulo Calificacion Tecnica PCL
     $(".origen_firme").select2({
         placeholder:"Seleccione una opción",
