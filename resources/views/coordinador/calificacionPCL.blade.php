@@ -1048,8 +1048,7 @@
                 var nombre_fila = $(this).data("clase_fila");
                 listado_docs_solicitados.row("."+nombre_fila).remove().draw();
             });
-            //Elimina sessionStorage
-            sessionStorage.removeItem("scrollTop");
+
         });
     </script>
     
