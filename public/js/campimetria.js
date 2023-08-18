@@ -1,5 +1,5 @@
 $(document).ready(function() {
-
+    
     /* INICIALIZACIÓN SELECT 2 SELECTOR Agudeza Ojo Izquierdo */
     $(".agudeza_ojo_izq").select2({
         placeholder:"Seleccione una opción",
@@ -970,8 +970,8 @@ $(document).ready(function() {
         });
         
     });
-
-    $(window).scrollTop(2758);
+    
+    //$(window).scrollTop(2758);
 });
 
 /* FUNCIÓN PARA REALIZAR LA SUMA POR COLUMNA DE CADA CHECKBOX SELECCIONADO: APLICA PARA GRILLA OJO IZQ Y OJO DER */

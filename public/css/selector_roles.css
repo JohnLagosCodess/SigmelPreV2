@@ -65,6 +65,10 @@
     scale: 2;
 }
 
+.scalesR{
+    scale: 1.4;
+}
+
 .select2-selection__choice{
     background: transparent !important;
     color: black !important;

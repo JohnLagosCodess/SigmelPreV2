@@ -46,6 +46,6 @@ $(document).ready(function(){
         
     });
 
-    $(window).scrollTop(2758);
+    //$(window).scrollTop(2758);
 
 });

@@ -274,7 +274,7 @@ Route::get('/calificacionPCL', [CalificacionPCLController::class, 'mostrarVistaC
 // Accion: Selectores Módulo calificación PCl
 Route::post('/selectoresModuloCalificacionPCL', [CalificacionPCLController::class, 'cargueListadoSelectoresModuloCalifcacionPcl']);
 // Accion: Insertar Califcación PCL
-Route::post('/registrarCalificacionPCL', [CalificacionPCLController::class, 'guardarCalificacionPCL'])->name('registrarCalificacionPCL');
+Route::post('/registrarCalificacionPCL', [CalificacionPCLController::class, 'guardarCalificacionPCL']);
 // Acción: Traer listado de documentos solicitados para el selector de documentos solicitados (Modal Solicitud de Documentos Seguimientos)
 Route::post('/CargarDatosSolicitados', [CalificacionPCLController::class, 'CargarDatosSolicitados']);
 // Acción: Guardar Datos Listado de documentos solicitados
@@ -289,6 +289,19 @@ Route::post('/registrarCausalSeguimiento', [CalificacionPCLController::class, 'g
 Route::post('/historialSeguimientoPCL', [CalificacionPCLController::class, 'historialSeguimientosPCL']);
 // Acción: Capturar de datos para el formulario generar comunicado destinatario final
 Route::post('/captuarDestinatario', [CalificacionPCLController::class, 'captuarDestinatariosPrincipal']);
+// Acción Insertar comunicado
+Route::post('/registrarComunicado', [CalificacionPCLController::class, 'guardarComunicado']);
+// Acción: Capturar datos para el dataTable Comunicados
+Route::post('/historialComunicadoPcl', [CalificacionPCLController::class, 'historialComunicadosPCL']);
+// Acción: Abrir modal para editar comunicado
+Route::post('/modalComunicado', [CalificacionPCLController::class, 'mostrarModalComunicadoPCL'])->name('modalComunicado');
+// Acción: Actualizar comunicado
+Route::post('/actualizarComunicado', [CalificacionPCLController::class, 'actualizarComunicado']);
+// Acción: Generar pdf comunicado
+Route::post('/generarPdf', [CalificacionPCLController::class, 'generarPdf']);
+// Acción: Historia de Acciones del evento desde calificacion Pcl
+Route::post('/consultarHistorialAcciones', [CalificacionPCLController::class, 'historialAcciones']);
+
 
 // 01/08/2023
 // SUBMÓDULO CALIFICACIÓN TÉCNICA PCL

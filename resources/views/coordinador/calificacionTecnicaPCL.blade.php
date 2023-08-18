@@ -35,7 +35,11 @@
                                 <div class="form-group">
                                     <label for="origen_firme">Origen en firme<span style="color: red;">(*)</span></label>
                                     <select class="custom-select origen_firme" name="origen_firme" id="origen_firme" required>
-                                        <option value="">Seleccione una opción</option>
+                                        @if ($datos_demos["Origen"] > 0)
+                                            <option value="{{$datos_demos["Origen"]}}" selected>{{$datos_demos["NombreOrigen"]}}</option>
+                                        @else
+                                            <option value="">Seleccione una opción</option>
+                                        @endif
                                     </select>
                                 </div>
                             </div>
@@ -43,7 +47,11 @@
                                 <div class="form-group">
                                     <label for="origen_cobertura">Cobertura<span style="color: red;">(*)</span></label>
                                     <select class="custom-select origen_cobertura" name="origen_cobertura" id="origen_cobertura" required>
-                                        <option value="">Seleccione una opción</option>
+                                        @if ($datos_demos["Cobertura"] > 0)
+                                            <option value="{{$datos_demos["Cobertura"]}}" selected>{{$datos_demos["NombreCobertura"]}}</option>
+                                        @else
+                                            <option value="">Seleccione una opción</option>
+                                        @endif
                                     </select>
                                 </div>
                             </div>
@@ -51,14 +59,26 @@
                                 <div class="form-group">
                                     <label for="decreto_califi">Decreto de Calificación<span style="color: red;">(*)</span></label>
                                     <select class="custom-select decreto_califi" name="decreto_califi" id="decreto_califi" required>
-                                        <option value="">Seleccione una opción</option>
+                                        @if ($datos_demos["Decreto"] > 0)
+                                            <option value="{{$datos_demos["Decreto"]}}" selected>{{$datos_demos["NombreDecreto"]}}</option>
+                                        @else
+                                            <option value="">Seleccione una opción</option>
+                                        @endif
                                     </select>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <!-- Parametro para mostrar ITEM ya gestionados -->
+                    <?php
+                    if($datos_demos["Origen"] ='48' && $datos_demos["Cobertura"] ='50'):
+                        $decreto_1507='1';
+                    else:
+                        $decreto_1507='0';
+                    endif
+                    ?>
                     <!-- Informacion Afiliado-->
-                    <div class="card-info columna_row1_afiliado" style="display:none">
+                    <div class="card-info columna_row1_afiliado" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif>
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Información del afiliado</h5>
                         </div>
@@ -86,7 +106,7 @@
                         </div>
                     </div>
                     <!-- Informacion Ditacmen-->
-                    <div class="card-info columna_row1_dictamen" style="display:none">
+                    <div class="card-info columna_row1_dictamen" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif>
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Información del Dictamen</h5>
                         </div>
@@ -134,7 +154,7 @@
                         </div>
                     </div>
                     <!-- Relacion de documetos-->
-                    <div class="card-info columna_row1_documentos" style="display:none" >
+                    <div class="card-info columna_row1_documentos" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif >
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Relación de documentos / Examenes fisico - (Descripción)</h5>
                         </div>
@@ -217,7 +237,7 @@
                         </div>
                     </div>
                     <!-- Fundamentos para la calificacion-->
-                    <div class="card-info columna_row1_fundamentos" style="display:none">
+                    <div class="card-info columna_row1_fundamentos" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif>
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Fundamentos para la calificación de la Pérdida de Capacidad Laboral y ocupacional</h5>
                         </div>
@@ -239,7 +259,7 @@
                         </div>
                     </div>
                     <!-- examen interconsulta-->
-                    <div class="card-info columna_row1_interconsulta" style="display:none">
+                    <div class="card-info columna_row1_interconsulta" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif>
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Exámanes e interconsultas</h5>
                         </div>
@@ -276,7 +296,7 @@
                         </div>
                     </div>
                     <!-- Diagnostico motivo cali-->
-                    <div class="card-info columna_row1_motivo_cali" style="display:none">
+                    <div class="card-info columna_row1_motivo_cali" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif>
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Diagnóstico motivo de calificación</h5>
                         </div>
@@ -314,7 +334,7 @@
                         </div>
                     </div>
                     <!-- Deficiencia-->
-                    <div class="card-info columna_row1_deficiencia" style="display:none">
+                    <div class="card-info columna_row1_deficiencia" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif>
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Titulo I Calificación / Valoración de las Deficiencias (50%)</h5>
                         </div>
@@ -361,7 +381,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-info columna_row1_auditivo" style="display:none">
+                        <div class="card-info columna_row1_auditivo" @if ($decreto_1507='1' && $datos_demos["Decreto"]<>'3') style="display:block" @else style="display:none" @endif>
                             <a href="#" id="" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal" data-target="#modal_grilla_auditivo"><i class="fas fa-plus-circle text-info"></i> <strong>Agudeza auditiva</strong></a>
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Tabla 9.3 Deficiencia por Alteraciones del Sistema Auditivo</h5>
@@ -372,7 +392,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-info columna_row1_visual" style="display:none">
+                        <div class="card-info columna_row1_visual"  @if ($decreto_1507='1' && $datos_demos["Decreto"]<>'3') style="display:block" @else style="display:none" @endif>
                             <a href="javascript:void(0);" id="btn_abrir_modal_agudeza" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal" 
                                 @if (count($hay_agudeza_visual) > 0)
                                     style="cursor:not-allowed"
@@ -438,7 +458,7 @@
                         </div>
                     </div>
                     <!-- Valoracion Laboral-->
-                    <div class="card-info columna_row1_valoracion_laboral" style="display:none">
+                    <div class="card-info columna_row1_valoracion_laboral"  @if ($decreto_1507='1' && $datos_demos["Decreto"]<>'3') style="display:block" @else style="display:none" @endif>
                         <div class="card-header " style="border: 1.5px solid black;">
                             <h5>Título II Valoración del Rol Laboral, Rol ocupacional y otras Áreas ocupacionales (50%)</h5>
                         </div>
@@ -2817,7 +2837,7 @@
                         </div>
                     </div>
                     <!-- Libro II Calificación de las discapacidades (20%) Decreto Muci-->
-                    <div class="card-info columna_row1_discapacidades" style="display:none">
+                    <div class="card-info columna_row1_discapacidades"  @if ($decreto_1507='1' && $datos_demos["Decreto"]==='3') style="display:block" @else style="display:none" @endif>
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Libro II Calificación de las discapacidades (20%)</h5>
                         </div>
@@ -3303,7 +3323,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-info columna_row1_minusvalias" style="display:none">
+                    <div class="card-info columna_row1_minusvalias" @if ($decreto_1507=='1' && $datos_demos["Decreto"]==='3') style="display:block" @else style="display:none" @endif>
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Libro III Calificación de minusvalías (30%)</h5>
                         </div>
@@ -3646,7 +3666,7 @@
                         </div>
                     </div>
                     <!--Concepto final del Dictamen Pericial-->
-                    <div class="card-info columna_row1_dictamen" style="display:none">
+                    <div class="card-info columna_row1_dictamen" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif>
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Concepto final del Dictamen Pericial</h5>
                         </div>
