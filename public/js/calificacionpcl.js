@@ -182,7 +182,10 @@ $(document).ready(function(){
     // llenado del formulario para la captura de datos del modulo de calificacion Pcl
 
     $('#form_calificacionPcl').submit(function (e) {
-        e.preventDefault();    
+        e.preventDefault();  
+        
+        document.querySelector("#Edicion").disabled = true;
+        document.querySelector("#Borrar").disabled = true;
 
         var newId_evento = $('#newId_evento').val();
         var newId_asignacion = $('#newId_asignacion').val();
@@ -195,8 +198,6 @@ $(document).ready(function(){
         var causal_devolucion_comite = $('#causal_devolucion_comite').val();
         var descripcion_accion = $('#descripcion_accion').val();
         var banderaguardar =$('#bandera_accion_guardar_actualizar').val();
-
-        //console.log(banderaguardar);
 
         let token = $('input[name=_token]').val();
         
@@ -221,24 +222,30 @@ $(document).ready(function(){
             data: datos_agregarCalificacionPcl,
             success:function(response){
                 if (response.parametro == 'agregarCalificacionPcl') {
-                    document.querySelector("#Edicion").disabled = true;
-                    document.querySelector("#Borrar").disabled = true;
                     $('.alerta_calificacion').removeClass('d-none');
-                    $('.alerta_calificacion').append('<strong>'+response.mensaje+'</strong>');
+                    if (response.parametro_1 == "guardo") {
+                        $('.alerta_calificacion').append('<strong>'+response.mensaje_1+'</strong>');
+                    } else {
+                        $('.alerta_calificacion').append('<strong>'+response.mensaje+'</strong>');
+                    }
                     setTimeout(function(){
                         $('.alerta_calificacion').addClass('d-none');
-                        $('.alerta_calificacion').empty();                        
-                    }, 7000);
+                        $('.alerta_calificacion').empty(); 
+                        location.reload();                       
+                    }, 3000);
                 }                
             }
         })        
-        location.reload();
+        // location.reload();
     }) 
 
     // llenado del formulario para la captura de la modal de Agregar Seguimiento
 
     $('#form_agregar_seguimientoPcl').submit(function (e) {
-        e.preventDefault();    
+        e.preventDefault(); 
+
+        document.querySelector("#Guardar_seguimientos").disabled = true;  
+
         var fecha_seguimiento = $('#fecha_seguimiento').val();
         var causal_seguimiento = $('#causal_seguimiento').val();
         var descripcion_seguimiento = $('#descripcion_seguimiento').val();
@@ -264,15 +271,15 @@ $(document).ready(function(){
             data: datos_agregarSeguimiento,
             success:function(response){
                 if (response.parametro == 'agregar_seguimiento') {
-                    document.querySelector("#Guardar_seguimientos").disabled = true;                    
+                                     
                     $('.alerta_seguimiento').removeClass('d-none');
                     $('.alerta_seguimiento').append('<strong>'+response.mensaje+'</strong>');
                     setTimeout(function(){
                         $('.alerta_seguimiento').addClass('d-none');
                         $('.alerta_seguimiento').empty();
                         $("#Guardar_seguimientos").removeClass('d-none');
-                        document.querySelector("#Guardar_seguimientos").disabled = true;                        
-                    }, 7000);
+                                             
+                    }, 3000);
                 }
             }
         })
@@ -897,20 +904,20 @@ $(document).ready(function(){
             'agregar_copia_editar':arrayinputs,
         }
 
+        document.querySelector("#Editar_comunicados").disabled = true;     
         $.ajax({
             type:'POST',
             url:'/actualizarComunicado',
             data: datos_actualizarComunicado,            
             success:function(response){
                 if (response.parametro == 'actualizar_comunicado') {
-                    document.querySelector("#Editar_comunicados").disabled = true;                        
                     $('.alerta_editar_comunicado').removeClass('d-none');
                     $('.alerta_editar_comunicado').append('<strong>'+response.mensaje+'</strong>');
                     setTimeout(function(){
                         $('.alerta_editar_comunicado').addClass('d-none');
                         $('.alerta_editar_comunicado').empty();
                         document.querySelector("#Editar_comunicados").disabled = false;
-                    }, 9000);
+                    }, 3000);
                 }
             }
         })
@@ -1273,20 +1280,20 @@ $(document).ready(function(){
             'reviso':reviso,
             'agregar_copia':arrayinputs,
         }
-
+        
+        document.querySelector("#Generar_comunicados").disabled = true;   
         $.ajax({
             type:'POST',
             url:'/registrarComunicado',
             data: datos_generarComunicado,            
             success:function(response){
                 if (response.parametro == 'agregar_comunicado') {
-                    document.querySelector("#Generar_comunicados").disabled = true;                        
                     $('.alerta_comunicado').removeClass('d-none');
                     $('.alerta_comunicado').append('<strong>'+response.mensaje+'</strong>');
                     setTimeout(function(){
                         $('.alerta_comunicado').addClass('d-none');
                         $('.alerta_comunicado').empty();
-                    }, 15000);
+                    }, 3000);
                 }
             }
         })

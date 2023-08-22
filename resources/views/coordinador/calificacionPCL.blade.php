@@ -308,15 +308,19 @@
                 </div>                    
             </div>
             <div class="card-footer">
-                <div class="grupo_botones" style="float: left;">
+                <div class="grupo_botones">
                     <input type="reset" id="Borrar" class="btn btn-info" value="Restablecer">
                     @if (empty($array_datos_calificacionPcl[0]->Nombre_Modalidad_calificacion))
                         <input type="submit" id="Edicion" class="btn btn-info" value="Guardar">
-                        <div class="alerta_calificacion alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                        <div class="col-12">
+                            <div class="alerta_calificacion alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                        </div>
                         <input type="hidden" id="bandera_accion_guardar_actualizar" value="Guardar">
                     @else 
                         <input type="submit" id="Edicion" class="btn btn-info" value="Actualizar">
-                        <div class="alerta_calificacion alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                        <div class="col-12">
+                            <div class="alerta_calificacion alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                        </div>
                         <input type="hidden" id="bandera_accion_guardar_actualizar" value="Actualizar">
                     @endif                    
                 </div>

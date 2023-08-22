@@ -254,7 +254,8 @@ class CalificacionPCLController extends Controller
             sleep(2);
             $mensajes = array(
                 "parametro" => 'agregarCalificacionPcl',
-                "mensaje" => 'Seguimiento agregado satisfactoriamente.'
+                "parametro_1" => 'guardo',
+                "mensaje_1" => 'Registro agregado satisfactoriamente.'
             );
 
             return json_decode(json_encode($mensajes, true));
@@ -304,7 +305,7 @@ class CalificacionPCLController extends Controller
             sleep(2);
             $mensajes = array(
                 "parametro" => 'agregarCalificacionPcl',
-                "mensaje" => 'Seguimiento agregado satisfactoriamente.'
+                "mensaje" => 'Registro actualizado satisfactoriamente.'
             );
     
             return json_decode(json_encode($mensajes, true));            
