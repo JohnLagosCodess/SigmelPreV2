@@ -162,10 +162,10 @@
                         <td class="justificado">Elaboró: {{$Elaboro}}</td>
                     </tr>
                     <tr>
-                        <td class="justificado">Revisó: {{$Reviso_lider}}</td>
+                        <td class="justificado">Revisó: {{$Reviso}}</td>
                     </tr>
                     <tr>
-                        <td class="justificado">Forma de envió: {{$Forma_envios}}</td>
+                        <td class="justificado">Forma de envió: {{$Forma_envio}}</td>
                     </tr>
                 </table>
             </div>
