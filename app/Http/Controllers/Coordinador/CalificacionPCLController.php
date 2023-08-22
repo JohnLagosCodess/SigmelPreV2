@@ -36,7 +36,7 @@ use App\Models\sigmel_informacion_agudeza_visual_eventos;
 use App\Models\sigmel_lista_tablas_1507_decretos;
 use App\Models\cndatos_info_comunicado_eventos;
 use App\Models\sigmel_historial_acciones_eventos;
-
+use App\Models\sigmel_lista_clases_decretos;
 
 class CalificacionPCLController extends Controller
 {
@@ -1335,5 +1335,17 @@ class CalificacionPCLController extends Controller
 
     }
 
+    public function consultaValorDeficiencia(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $string_deficiencia = sigmel_lista_clases_decretos::on('sigmel_gestiones')
+        ->select($request->columna)->where('Id_tabla', $request->Id_tabla)->get();
+
+        $info_string_deficiencia = json_decode(json_encode($string_deficiencia, true));
+        return response()->json($info_string_deficiencia);
+        
+    }
 
 }

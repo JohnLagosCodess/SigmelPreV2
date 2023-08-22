@@ -32,10 +32,10 @@ $(document).ready(function(){
           '<div id="CFM2_fila_alteraciones_'+contador_alteraciones+'"></div>',
           '<div id="FU_fila_alteraciones_'+contador_alteraciones+'"></div>',
           '<div id="CAT_fila_alteraciones_'+contador_alteraciones+'"></div>',
+          '<div id="ClaseFinal_fila_alteraciones_'+contador_alteraciones+'"></div>',
           '',
           '',
-          '',
-          '',
+          '<div id="Deficiencia_fila_alteraciones_'+contador_alteraciones+'"></div>',
           '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila_alteraciones" class="text-info" data-fila="fila_alteraciones_'+contador_alteraciones+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
           'fila_alteraciones_'+contador_alteraciones
         ];
@@ -52,7 +52,7 @@ $(document).ready(function(){
 
 function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
     let token = $("input[name='_token']").val();
-    var ident_tabla;
+    // var ident_tabla;
     /* SELECT 2 LISTADO DE TABLAS */  
     $(".listado_tablas_fila_alteraciones_"+num_consecutivo_alteraciones).select2({
         width: '140px',
@@ -82,7 +82,6 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
         var id_tabla_seleccionado = $(this).val();
 
         // Nombre de la tabla
-        
         let listado_nombre_tabla = {
             '_token': token,
             'parametro' : "nombre_tabla",
@@ -95,7 +94,11 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
             success:function(data){
                 $("#titulo_tabla_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
                 $("#titulo_tabla_fila_alteraciones_"+num_consecutivo_alteraciones).append(data[0]["Nombre_tabla"]);
-                ident_tabla = data[1]["Ident_tabla"];
+                // ident_tabla = data[0]["Ident_tabla"];
+                sessionStorage.removeItem("num_tabla")
+                sessionStorage.removeItem("id_tabla")
+                sessionStorage.setItem("num_tabla", data[0]["Ident_tabla"]);
+                sessionStorage.setItem("id_tabla", id_tabla_seleccionado);
             }
         });
 
@@ -316,36 +319,66 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
 
     });
 
+};
 
-    /* DISEÑO DE CÁLCULOS */
-    var valor_FP_selecciondo;
-    $("#resultado_FP_"+num_consecutivo_alteraciones).change(function(){
-        valor_FP_selecciondo = $(this).val();
-    });
+$(document).on('change', "select[id^='resultado_FP_'], select[id^='resultado_CFM1_'], select[id^='resultado_CFM2_'], select[id^='resultado_FU_'], select[id^='resultado_CAT_']", function(){
+    var nombre_tabla_seleccionada = sessionStorage.getItem("num_tabla");
+    var id_tabla_seleccionada = sessionStorage.getItem("id_tabla");
+    var valor_FP_selecciondo = $("select[id^='resultado_FP_']").val();
+    var valor_CFM1_seleccionado = $("select[id^='resultado_CFM1_']").val();
+    var valor_CFM2_seleccionado = $("select[id^='resultado_CFM2_']").val();
+    var valor_FU_seleccionado = $("select[id^='resultado_FU_']").val();
+    var valor_CAT_seleccionado = $("select[id^='resultado_CAT_']").val();
 
-    var valor_CFM1_seleccionado;
-    $(".resultado_CFM1_"+num_consecutivo_alteraciones).change(function(){
-        valor_CFM1_seleccionado = $(this).val();
-    });
+    var string_id_fila_alteraciones = $(this).attr("id");
+    var regex = /[0-9]+/g;
+    var id_fila_alteraciones = regex.exec(string_id_fila_alteraciones);
 
-    var valor_CFM2_seleccionado;
-    $(".resultado_CFM2_"+num_consecutivo_alteraciones).change(function(){
-        valor_CFM2_seleccionado = $(this).val();
-    });
+    calculosDeficienciasAlteracionesSistemas(id_fila_alteraciones[0], id_tabla_seleccionada, nombre_tabla_seleccionada, valor_FP_selecciondo, valor_CFM1_seleccionado, valor_CFM2_seleccionado, valor_FU_seleccionado, valor_CAT_seleccionado)
+    
+});
 
-    var valor_FU_seleccionado;
-    $(".resultado_FU_"+num_consecutivo_alteraciones).change(function(){
-        valor_FU_seleccionado = $(this).val();
-    });
+function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabla, tabla, FP_selecciondo, CFM1_seleccionado, CFM2_seleccionado, FU_seleccionado, CAT_seleccionado) {
+    let token = $("input[name='_token']").val();
+    /* Tabla 1.3 */
+    if (tabla === "Tabla 1.3") {
+        // Calculo del Ajuste
+        var ajuste = parseInt(CFM1_seleccionado) - parseInt(FP_selecciondo);
+        // Calculo del Literal
+        var literal;
+        if (ajuste <= -1) {
+            literal = "A";
+        }else if (ajuste == 0) {
+            literal = "B";
+        }else if (ajuste >= 1) {
+            literal = "C";
+        }
+        // Calculo de la Clase Final
+        var clase_final = FP_selecciondo+literal;
+        // Calculo de la deficiencia y MSD
+        if (!isNaN(ajuste) && literal != undefined) {
+            
+            let datos_consulta_deficiencia = {
+                '_token': token,
+                'columna': clase_final,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
 
-    var valor_CAT_seleccionado;
-    $(".resultado_CAT_"+num_consecutivo_alteraciones).change(function(){
-        valor_CAT_seleccionado = $(this).val();
-    });
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final]);
+                }         
+            });
+        }
 
-    // Tabla 1.3
-    setInterval(() => {
-        
-    }, interval);
-
+        // console.log("El ajuste es: "+ ajuste);
+        // console.log("El literal es: "+ literal);
+        // console.log("La clase final es: "+ clase_final);
+    }
 };
