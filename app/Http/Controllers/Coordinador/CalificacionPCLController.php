@@ -251,10 +251,10 @@ class CalificacionPCLController extends Controller
             ];
 
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
-            
+            sleep(2);
             $mensajes = array(
-                "parametro" => 'agregar_calificacionPcl',
-                "mensaje" => 'Registros guardados/actualizados satisfactoriamente.'
+                "parametro" => 'agregarCalificacionPcl',
+                "mensaje" => 'Seguimiento agregado satisfactoriamente.'
             );
 
             return json_decode(json_encode($mensajes, true));
@@ -301,13 +301,13 @@ class CalificacionPCLController extends Controller
             ];
 
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
-
+            sleep(2);
             $mensajes = array(
-                "parametro" => 'agregar_calificacionPcl',
-                "mensaje" => 'Registros guardados/actualizados satisfactoriamente.'
+                "parametro" => 'agregarCalificacionPcl',
+                "mensaje" => 'Seguimiento agregado satisfactoriamente.'
             );
     
-            return json_decode(json_encode($mensajes, true));
+            return json_decode(json_encode($mensajes, true));            
         }
 
         $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newIdAsignacion));
@@ -572,8 +572,6 @@ class CalificacionPCLController extends Controller
     public function historialSeguimientosPCL(Request $request){
         $HistorialSeguimientoPcl = $request->HistorialSeguimientoPcl;
 
-        //echo $HistorialSeguimientoPcl;
-
         if ($HistorialSeguimientoPcl == 'CargaHistorialSeguimiento') {
             
             $hitorialAgregarSeguimiento = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
@@ -664,7 +662,6 @@ class CalificacionPCLController extends Controller
         $agregar_copia = $request->agregar_copia;
         $total_agregarcopias = implode(", ", $agregar_copia);
 
-        echo $request->forma_envio;
         if(!empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && empty($radioOtro)){
             $destinatario = 'Afiliado';
         }elseif(empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado) && empty($radioOtro)){
@@ -728,8 +725,6 @@ class CalificacionPCLController extends Controller
     public function historialComunicadosPCL(Request $request){
 
         $HistorialComunicadosPcl = $request->HistorialComunicadosPcl;
-
-        //echo $HistorialSeguimientoPcl;
 
         if ($HistorialComunicadosPcl == 'CargarComunicados') {
             
@@ -854,122 +849,142 @@ class CalificacionPCLController extends Controller
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
         $cargo_profesional = Auth::user()->cargo;
-        $Id_comunicado_editar = $request->Id_comunicado_editar;
-        $Id_evento_editar = $request->Id_evento_editar;
-        $Id_asignacion_editar = $request->Id_asignacion_editar;
-        $Id_procesos_editar = $request->Id_procesos_editar;
-        $radioafiliado_comunicado_editar = $request->radioafiliado_comunicado_editar;
-        $radioempresa_comunicado_editar = $request->radioempresa_comunicado_editar;
-        $radioOtro_editar = $request->radioOtro_editar;
-        $agregar_copia_editar = $request->agregar_copia_editar;
-        $total_agregarcopias = implode(", ", $agregar_copia_editar);
-        $departamento = $request->departamento_destinatario_editar;
-        $ciudad = $request->ciudad_destinatario_editar;
-        $reviso = $request->reviso_editar;
-        $envio = $request->forma_envio_editar;
+        $departamento_pdf = $request->departamento_pdf;
+        $departamento_destinatario_act = $request->departamento_destinatario_act;
+        $ciudad_pdf = $request->ciudad_pdf;
+        $ciudad_destinatario_act = $request->ciudad_destinatario_act;
+        $Forma_envio = $request->forma_envio_act;
+        $Reviso = $request->reviso_act;
+        $nombre_destinatario = $request->nombre_destinatario_act2;
+        $nit_cc = $request->nic_cc_act2;
+        $direccion_destinatario = $request->direccion_destinatario_act2;
+        $telefono_destinatario = $request->telefono_destinatario_act2;
+        $email_destinatario = $request->email_destinatario_act2;
 
-        if(!empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar) && empty($radioOtro_editar)){
-            $destinatario = 'Afiliado';
-        }elseif(empty($radioafiliado_comunicado_editar) && !empty($radioempresa_comunicado_editar) && empty($radioOtro_editar)){
-            $destinatario = 'Empresa';
-        }elseif(empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar) && !empty($radioOtro_editar)){
-            $destinatario = 'Otro';
+        if (empty($departamento_destinatario_act) && empty($ciudad_destinatario_act)) {
+            $Id_departamento = $departamento_pdf;
+            $Id_municipio = $ciudad_pdf;
+        }elseif(!empty($departamento_destinatario_act) && !empty($ciudad_destinatario_act)){
+            $Id_departamento = $departamento_destinatario_act;
+            $Id_municipio = $ciudad_destinatario_act;
         }
 
-        // Obtener los datos del formulario
-        $data = [
-            'ID_evento' => $Id_evento_editar,
-            'Id_Asignacion' => $Id_asignacion_editar,
-            'Id_proceso' => $Id_procesos_editar,
-            'Ciudad' => $request->ciudad_editar,
-            'F_comunicado' => $request->fecha_comunicado2_editar,
-            'N_radicado' => $request->radicado2_editar,
-            'Cliente' => $request->cliente_comunicado2_editar,
-            'Nombre_afiliado' => $request->nombre_afiliado_comunicado2_editar,
-            'T_documento' => $request->tipo_documento_comunicado2_editar,
-            'N_identificacion' => $request->identificacion_comunicado2_editar,
-            'Destinatario' => $destinatario,
-            'Nombre_destinatario' => $request->nombre_destinatario_editar,
-            'Nit_cc' => $request->nic_cc_editar,
-            'Direccion_destinatario' => $request->direccion_destinatario_editar,
-            'Telefono_destinatario' => $request->telefono_destinatario_editar,
-            'Email_destinatario' => $request->email_destinatario_editar,
-            'Id_departamento' => $request->departamento_destinatario_editar,
-            'Id_municipio' => $request->ciudad_destinatario_editar,
-            'Asunto' => $request->asunto_editar,
-            'Cuerpo_comunicado' => $request->cuerpo_comunicado_editar,
-            'Anexos' => $request->anexos_editar,
-            'Forma_envio' => $request->forma_envio_editar,
-            'Elaboro' => $request->elaboro2_editar,
-            'Cargo' => $cargo_profesional,
-            'Reviso' => $request->reviso_editar,
-            'Agregar_copia' => $total_agregarcopias,
-            'Nombre_usuario' => $nombre_usuario,
-            'F_registro' => $date,
-        ];
+        if (empty($nombre_destinatario) && empty($nit_cc) && empty($direccion_destinatario) && 
+            empty($telefono_destinatario) && empty($email_destinatario)) {
+                $Nombre_destinatario = $request->nombre_destinatario_act;
+                $Nit_cc = $request->nic_cc_editar;
+                $Direccion_destinatario = $request->direccion_destinatario_act;
+                $Telefono_destinatario = $request->telefono_destinatario_act;
+                $Email_destinatario = $request->email_destinatario_act;
+
+        }elseif(!empty($nombre_destinatario) && !empty($nit_cc) && !empty($direccion_destinatario) && 
+            !empty($telefono_destinatario) && !empty($email_destinatario)){
+                $Nombre_destinatario = $nombre_destinatario;
+                $Nit_cc = $nit_cc;
+                $Direccion_destinatario = $direccion_destinatario;
+                $Telefono_destinatario = $telefono_destinatario;
+                $Email_destinatario = $email_destinatario;
+         }
 
         $departamentos_info_comunicado = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
         ->select('Nombre_departamento')
-        ->where('Id_departamento',$departamento)
+        ->where('Id_departamento',$Id_departamento)
         ->get();
-
+        sleep(2);
         $ciudad_info_comunicado = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
         ->select('Nombre_municipio')
-        ->where('Id_municipios',$ciudad)
+        ->where('Id_municipios',$Id_municipio)
         ->get();
- 
+        sleep(2);         
         $reviso_info_lider = DB::table('users')
         ->select('name')
-        ->where('id', $reviso)
+        ->where('id', $Reviso)
         ->get();
-
+        sleep(2);
         $forma_info_envio = sigmel_lista_parametros::on('sigmel_gestiones')
         ->select('Nombre_parametro')
-        ->where('Id_parametro', $envio)
+        ->where('Id_parametro', $Forma_envio)
         ->get();
-
+        sleep(2);
         $nombre_departamento = $departamentos_info_comunicado[0]->Nombre_departamento;
         $nombre_ciudad = $ciudad_info_comunicado[0]->Nombre_municipio;
         $reviso_lider = $reviso_info_lider[0]->name;
         $forma_envio = $forma_info_envio[0]->Nombre_parametro;
 
-        $data2=[
-            'Nombre_departamento' => $nombre_departamento,
-            'Nombre_ciudad' => $nombre_ciudad,
-            'Reviso_lider' => $reviso_lider,
-            'Forma_envios' => $forma_envio,
+        $total_copias = [];
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST') {            
+            // Obtén el valor de todos los inputs dentro de un div con el ID "myDiv"
+            foreach ($_POST as $key => $value) {
+                // Verifica si el nombre del input contiene "myDiv" en su nombre
+                if (strpos($key, 'input') !== false) {                    
+                    array_push($total_copias, $value);                    
+                }
+            }
+        }
+        sleep(2);              
+        $Id_comunicado = $request->Id_comunicado_act;
+        $ID_evento = $request->Id_evento_act;
+        $Id_Asignacion = $request->Id_asignacion_act;
+        $Id_proceso = $request->Id_procesos_act;
+        $Ciudad = $request->ciudad_comunicado_act;
+        $F_comunicado = $request->fecha_comunicado2_act;
+        $N_radicado = $request->radicado2_act;
+        $Cliente = $request->cliente_comunicado2_act;
+        $Nombre_afiliado = $request->nombre_afiliado_comunicado2_act;
+        $T_documento = $request->tipo_documento_comunicado2_act;
+        $N_identificacion = $request->identificacion_comunicado2_act;
+        $Destinatario = $request->afiliado_comunicado_act;
+        $Nombre_departamento = $nombre_departamento;
+        $Nombre_ciudad = $nombre_ciudad;
+        $Asunto = $request->asunto_act;
+        $Cuerpo_comunicado = $request->cuerpo_comunicado_act;
+        $Anexos = $request->anexos_act;
+        $Forma_envios = $forma_envio;
+        $Elaboro = $request->elaboro2_act;
+        $Cargo = $cargo_profesional;
+        $Reviso_lider = $reviso_lider;
+        $Agregar_copias = implode(",",$total_copias);
+        $Nombre_usuario = $nombre_usuario;
+        $F_registro = $date;
+ 
+        // Obtener los datos del formulario
+        $data = [
+            'ID_evento' => $ID_evento,
+            'Id_Asignacion' => $Id_Asignacion,
+            'Id_proceso' => $Id_proceso,
+            'Ciudad' => $Ciudad,
+            'F_comunicado' => $F_comunicado,
+            'N_radicado' => $N_radicado,
+            'Cliente' => $Cliente,
+            'Nombre_afiliado' => $Nombre_afiliado,
+            'T_documento' => $T_documento,
+            'N_identificacion' => $N_identificacion,
+            'Destinatario' => $Destinatario,
+            'Nombre_destinatario' => $Nombre_destinatario,
+            'Nit_cc' => $Nit_cc,
+            'Direccion_destinatario' => $Direccion_destinatario,
+            'Telefono_destinatario' => $Telefono_destinatario,
+            'Email_destinatario' => $Email_destinatario,
+            'Nombre_departamento' => $Nombre_departamento,
+            'Nombre_ciudad' => $Nombre_ciudad,
+            'Asunto' => $Asunto,
+            'Cuerpo_comunicado' => $Cuerpo_comunicado,
+            'Anexos' => $Anexos,
+            'Forma_envio' => $Forma_envios,
+            'Elaboro' => $Elaboro,
+            'Cargo' => $Cargo,
+            'Reviso' => $Reviso_lider,
+            'Agregar_copia' => $Agregar_copias,
+            'Nombre_usuario' => $Nombre_usuario,
+            'F_registro' => $F_registro,
         ];
         // Crear una instancia de Dompdf
 
         $pdf = app('dompdf.wrapper');
         $pdf->loadView('/coordinador/comunicadoPdf', $data);
         $fileName = 'Comunicado.pdf';
-        return $pdf->download($fileName);
-        /* $pdf = new Dompdf();
-        // Renderizar la plantilla Blade a HTML
-        //$html = view('coordinado.modaleditarcomunicado', compact('data'))->render();
-        $html = view('coordinador.comunicadoPdf', $data, $data2);
-
-        $options = new Options();
-        $options->set('isRemoteEnabled', true);
-        $pdf->setOptions($options);
-        // Cargar el contenido HTML al PDF
-        $pdf->loadHtml($html);
-        // Opcional: ajustar el tamaño y la orientación del papel        
-        $pdf->setPaper('A4', 'portrait');
-        // Renderizar el PDF
-        $pdf->render();
-        $fileName = 'Comunicado.pdf';
-        //$pdf->downloadInvoice($fileName);
-        // Guardar el PDF en una ubicación específica
-        $output = $pdf->output();
-        $filePath = public_path('pdfs_eventos/'.$fileName);
-        file_put_contents($filePath, $output);        
-        header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename="'.$fileName.'"');
-        header('Content-Length:'.filesize($filePath));
-        readfile($filePath);
-        exit();   */  
+        return $pdf->download($fileName);        
     }
 
     public function historialAcciones(Request $request){

@@ -298,7 +298,7 @@ Route::post('/modalComunicado', [CalificacionPCLController::class, 'mostrarModal
 // Acción: Actualizar comunicado
 Route::post('/actualizarComunicado', [CalificacionPCLController::class, 'actualizarComunicado']);
 // Acción: Generar pdf comunicado
-Route::post('/generarPdf', [CalificacionPCLController::class, 'generarPdf']);
+Route::post('/generarPdf', [CalificacionPCLController::class, 'generarPdf'])->name('descargarPdf');
 // Acción: Historia de Acciones del evento desde calificacion Pcl
 Route::post('/consultarHistorialAcciones', [CalificacionPCLController::class, 'historialAcciones']);
 

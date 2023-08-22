@@ -26,7 +26,7 @@
     <div class="card-info" style="border: 1px solid black;">
         <div class="card-header text-center">
             <h4>Calificación PCL - Evento: {{$array_datos_calificacionPcl[0]->ID_evento}}</h4>
-            {{-- <input type="hidden" id="action_actualizar_comunicado" value="{{ route('modalComunicado') }}"> --}}
+            <input type="hidden" id="action_actualizar_comunicado" value="{{ route('descargarPdf') }}">
         </div>
         <form id="form_calificacionPcl" method="POST">
             @csrf
@@ -326,7 +326,7 @@
             @csrf
             <input hidden="hidden" type="text" name="Id_evento_calitec" id="Id_evento_calitec" value="{{$array_datos_calificacionPcl[0]->ID_evento}}">
             <input hidden="hidden" type="text" name="Id_asignacion_calitec" id="Id_asignacion_calitec" value="{{$array_datos_calificacionPcl[0]->Id_Asignacion}}">
-            <button type="submit" id="botonFormulario2"></button>
+            <button type="submit" id="botonFormulario2" style="display: none; !important"></button>
         </form>
     </div>
     {{-- Modal solicitud documentos - seguimientos --}}
@@ -739,7 +739,8 @@
                             <div class="card-header text-center">
                                 <h5>Generar comunicado</h5>
                             </div>
-                            <form id="form_actualizarComunicadoPcl" method="POST">
+                            <form name="formu_comunicado" method="POST">
+                                @csrf
                                 <div class="card-body">                                
                                     <div class="row">  
                                         <div class="col-3">
@@ -828,30 +829,37 @@
                                             <div class="form-group">
                                                 <label for="nombre_destinatario_act"> Nombre destinatario <span style="color: red;">(*)</span></label>
                                                 <input class="form-control" type="text" name="nombre_destinatario_act" id="nombre_destinatario_editar" required>
+                                                <input hidden="hidden" class="form-control" type="text" name="nombre_destinatario_act2" id="nombre_destinatario_editar2" required>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="nic_cc_act">NIT / CC <span style="color: red;">(*)</span></label>
                                                 <input class="form-control" type="text" name="nic_cc_act" id="nic_cc_editar" required>
+                                                <input hidden="hidden" class="form-control" type="text" name="nic_cc_act2" id="nic_cc_editar2" required>
+
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="direccion_destinatario_act">Dirección destinatario <span style="color: red;">(*)</span></label>
                                                 <input class="form-control" type="text" name="direccion_destinatario_act" id="direccion_destinatario_editar" required>
+                                                <input hidden="hidden" class="form-control" type="text" name="direccion_destinatario_act2" id="direccion_destinatario_editar2" required>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="telefono_destinatario_act">Telefono destinatario <span style="color: red;">(*)</span></label>
                                                 <input class="form-control" type="number" min="999999" max="9999999999" name="telefono_destinatario_act" id="telefono_destinatario_editar" required>
+                                                <input hidden="hidden" class="form-control" type="number" min="999999" max="9999999999" name="telefono_destinatario_act2" id="telefono_destinatario_editar2" required>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="email_destinatario_act">E-mail destinatario <span style="color: red;">(*)</span></label>
                                                 <input class="form-control" type="email" name="email_destinatario_act" id="email_destinatario_editar" required>
+                                                <input hidden="hidden" class="form-control" type="email" name="email_destinatario_act2" id="email_destinatario_editar2" required>
+
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -859,6 +867,7 @@
                                                 <label for="departamento_destinatario_act">Departamento <span style="color: red;">(*)</span></label><br>
                                                 <select class="departamento_destinatario custom-select" name="departamento_destinatario_act" id="departamento_destinatario_editar" style="width: 100%;" required>                                                        
                                                 </select>
+                                                <input hidden="hidden" type="text" name="departamento_pdf" id="departamento_pdf">
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -866,6 +875,7 @@
                                                 <label for="ciudad_destinatario_act">Ciudad <span style="color: red;">(*)</span></label><br>
                                                 <select class="ciudad_destinatario custom-select" name="ciudad_destinatario_act" id="ciudad_destinatario_editar" style="width: 100%;" required>
                                                 </select>
+                                                <input hidden="hidden" type="text" name="ciudad_pdf" id="ciudad_pdf">
                                             </div>
                                         </div>                                        
                                         <div class="col-8">
@@ -935,8 +945,8 @@
                                     <div class="row">
                                         <div class="col-6">
                                             <div class="form-group">
-                                                <input type="submit" id="Editar_comunicados" class="btn btn-info" value="Actualizar">
-                                                <input type="button" id="Pdf" class="btn btn-info" value="Pdf">                            
+                                                <input type="button" id="Editar_comunicados" class="btn btn-info" value="Actualizar">
+                                                <input type="submit" id="Pdf" class="btn btn-info" value="Pdf">                            
                                                 <div class="alerta_editar_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                             </div>
                                         </div>
@@ -1058,6 +1068,9 @@
                 var nombre_fila = $(this).data("clase_fila");
                 listado_docs_solicitados.row("."+nombre_fila).remove().draw();
             });
+
+            //Elimina sessionStorage
+            sessionStorage.removeItem("scrollTop");
 
         });
     </script>
