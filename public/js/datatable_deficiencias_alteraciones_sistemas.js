@@ -341,7 +341,7 @@ $(document).on('change', "select[id^='resultado_FP_'], select[id^='resultado_CFM
 function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabla, tabla, FP_selecciondo, CFM1_seleccionado, CFM2_seleccionado, FU_seleccionado, CAT_seleccionado) {
     let token = $("input[name='_token']").val();
     /* Tabla 1.3 */
-    if (tabla === "Tabla 1.3") {
+    if (tabla == "Tabla 1.3") {
         // Calculo del Ajuste
         var ajuste = parseInt(CFM1_seleccionado) - parseInt(FP_selecciondo);
         // Calculo del Literal
