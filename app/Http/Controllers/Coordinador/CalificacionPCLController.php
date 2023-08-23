@@ -104,10 +104,10 @@ class CalificacionPCLController extends Controller
            $consecutivo = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted;
        }
 
-        $dato_validacion_no_aporta_docs = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
-        ->select('Id_Documento_Solicitado', 'Aporta_documento')
-        ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion], ['Estado', 'Inactivo'], ['Aporta_documento', 'No']])
-        ->get();
+       $dato_validacion_no_aporta_docs = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
+       ->select('Id_Documento_Solicitado', 'Aporta_documento')
+       ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion], ['Estado', 'Inactivo'], ['Aporta_documento', 'No']])
+       ->get();
 
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento));
 
@@ -453,13 +453,13 @@ class CalificacionPCLController extends Controller
                     'ID_evento' => $request->Id_evento,
                     'Id_Asignacion' => $request->Id_Asignacion,
                     'Id_proceso' => $request->Id_proceso,
-                    // 'F_solicitud_documento' => "0000-00-00",
+                    //'F_solicitud_documento' => "",
                     'Id_Documento' => 0,
                     'Nombre_documento' => "N/A",
                     'Descripcion' => "N/A",
                     'Id_solicitante' => 0,
                     'Nombre_solicitante' => "N/A",
-                    // 'F_recepcion_documento' => "0000-00-00",
+                    //'F_recepcion_documento' => "",
                     'Aporta_documento' => "No",
                     'Estado' => "Inactivo",
                     'Nombre_usuario' => $nombre_usuario,
@@ -944,7 +944,7 @@ class CalificacionPCLController extends Controller
         $Elaboro = $request->elaboro2_act;
         $Cargo = $cargo_profesional;
         $Reviso_lider = $reviso_lider;
-        $Agregar_copias = implode(",",$total_copias);
+        $Agregar_copias = implode(", ",$total_copias);
         $Nombre_usuario = $nombre_usuario;
         $F_registro = $date;
  
@@ -983,7 +983,7 @@ class CalificacionPCLController extends Controller
 
         $pdf = app('dompdf.wrapper');
         $pdf->loadView('/coordinador/comunicadoPdf', $data);
-        $fileName = 'Comunicado.pdf';
+        $fileName = 'Comunicado_'.$N_radicado.'.pdf';
         return $pdf->download($fileName);        
     }
 

@@ -165,7 +165,7 @@
         <hr>
         <div class="row">
             <div class="col-12">
-                <div class="alert d-none" id="resultado_insercion" role="alert">
+                <div class="alert d-none" id="resultado_insercion" role="alert"></div>
             </div>
             <div>
                 <input type="submit" id="btn_guardar_agudeza" class="mr-auto btn btn-info" value="Guardar">
