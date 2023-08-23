@@ -106,8 +106,7 @@ class CalificacionPCLController extends Controller
 
         $dato_validacion_no_aporta_docs = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
         ->select('Id_Documento_Solicitado', 'Aporta_documento')
-        ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion],
-            ['Estado', 'Inactivo'], ['F_solicitud_documento', '0000-00-00']])
+        ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion], ['Estado', 'Inactivo'], ['Aporta_documento', 'No']])
         ->get();
 
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento));
@@ -323,8 +322,9 @@ class CalificacionPCLController extends Controller
 
         $dato_validacion_no_aporta_docs = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
         ->select('Id_Documento_Solicitado', 'Aporta_documento')
-        ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion],['Estado', 'Inactivo']])
+        ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion], ['Estado', 'Inactivo'], ['Aporta_documento', 'No']])
         ->get();
+        
 
         $arraycampa_documento_solicitado = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
         ->where([
@@ -440,8 +440,7 @@ class CalificacionPCLController extends Controller
 
             $dato_validacion_no_aporta_docs = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
             ->select('Id_Documento_Solicitado', 'Aporta_documento')
-            ->where([['ID_evento', $request->Id_evento],['Id_Asignacion', $request->Id_Asignacion],
-                ['Estado', 'Inactivo'], ['F_solicitud_documento', '0000-00-00']])
+            ->where([['ID_evento', $request->Id_evento],['Id_Asignacion', $request->Id_Asignacion], ['Estado', 'Inactivo'], ['Aporta_documento', 'No']])
             ->get();
 
             if (count($dato_validacion_no_aporta_docs)> 0) {
@@ -454,13 +453,13 @@ class CalificacionPCLController extends Controller
                     'ID_evento' => $request->Id_evento,
                     'Id_Asignacion' => $request->Id_Asignacion,
                     'Id_proceso' => $request->Id_proceso,
-                    'F_solicitud_documento' => "",
+                    // 'F_solicitud_documento' => "0000-00-00",
                     'Id_Documento' => 0,
                     'Nombre_documento' => "N/A",
                     'Descripcion' => "N/A",
                     'Id_solicitante' => 0,
                     'Nombre_solicitante' => "N/A",
-                    'F_recepcion_documento' => "",
+                    // 'F_recepcion_documento' => "0000-00-00",
                     'Aporta_documento' => "No",
                     'Estado' => "Inactivo",
                     'Nombre_usuario' => $nombre_usuario,
@@ -1306,7 +1305,7 @@ class CalificacionPCLController extends Controller
 
         if ($parametro == "selector_FP") {
             $selector_FP = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
-            ->select('FP')
+            ->select('Id_tabla', 'Ident_tabla', 'FP')
             ->where('Id_tabla', $request->Id_tabla)->get();
 
             $info_selector_FP = json_decode(json_encode($selector_FP, true));
@@ -1315,7 +1314,7 @@ class CalificacionPCLController extends Controller
 
         if ($parametro == "selector_CFM1") {
             $selector_CFM1 = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
-            ->select('CFM1')
+            ->select('Id_tabla', 'Ident_tabla', 'CFM1')
             ->where('Id_tabla', $request->Id_tabla)->get();
 
             $info_selector_CFM1 = json_decode(json_encode($selector_CFM1, true));
@@ -1324,7 +1323,7 @@ class CalificacionPCLController extends Controller
 
         if ($parametro == "selector_CFM2") {
             $selector_CFM2 = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
-            ->select('CFM2')
+            ->select('Id_tabla', 'Ident_tabla', 'CFM2')
             ->where('Id_tabla', $request->Id_tabla)->get();
 
             $info_selector_CFM2 = json_decode(json_encode($selector_CFM2, true));
@@ -1333,7 +1332,7 @@ class CalificacionPCLController extends Controller
 
         if ($parametro == "selector_FU") {
             $selector_FU = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
-            ->select('FU')
+            ->select('Id_tabla', 'Ident_tabla', 'FU')
             ->where('Id_tabla', $request->Id_tabla)->get();
 
             $info_selector_FU = json_decode(json_encode($selector_FU, true));
@@ -1342,12 +1341,20 @@ class CalificacionPCLController extends Controller
 
         if ($parametro == "selector_CAT") {
             $selector_CAT = sigmel_lista_tablas_1507_decretos::on('sigmel_gestiones')
-            ->select('CAT')
+            ->select('Id_tabla', 'Ident_tabla', 'CAT')
             ->where('Id_tabla', $request->Id_tabla)->get();
 
             $info_selector_CAT = json_decode(json_encode($selector_CAT, true));
             return response()->json($info_selector_CAT);
         }
+
+        if ($parametro == "MSD") {
+            $msd = sigmel_lista_clases_decretos::on('sigmel_gestiones')
+            ->select('MSD')->where('Id_tabla', $request->Id_tabla)->get();
+        }
+
+        $info_msd = json_decode(json_encode($msd, true));
+        return response()->json($info_msd);
 
     }
 
