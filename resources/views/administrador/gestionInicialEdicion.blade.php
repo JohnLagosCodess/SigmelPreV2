@@ -100,7 +100,7 @@
                                         <div class="row">
                                             <div class="col-sm-3">
                                                 <div class="form-group">
-                                                    <label for="tipo_evento" class="col-form-label">Tipo de evento <!--<span style="color:red;">(*)</span>--></label>
+                                                    <label for="tipo_evento" class="col-form-label">Tipo de evento <!-- <span style="color:red;">(*)</span> --></label>
                                                     <select class="tipo_evento custom-select" name="tipo_evento" id="tipo_evento">
                                                         <option value="{{$array_datos_info_evento[0]->Tipo_evento}}" selected>{{$array_datos_info_evento[0]->Nombre_evento}}</option>
                                                     </select>
@@ -115,7 +115,7 @@
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group">
-                                                    <label for="fecha_evento" class="col-form-label">Fecha de evento <!--<span style="color:red;">(*)</span>--></label>
+                                                    <label for="fecha_evento" class="col-form-label">Fecha de evento <!-- <span style="color:red;">(*)</span> --></label>
                                                     <input type="date" class="fecha_evento form-control" name="fecha_evento" id="fecha_evento" value="{{$array_datos_info_evento[0]->F_evento}}"  max="{{date("Y-m-d")}}">
                                                 </div>
                                             </div>
