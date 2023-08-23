@@ -1093,6 +1093,20 @@ class CalificacionPCLController extends Controller
             $info_listado_motivo_solicitud = json_decode(json_encode($listado_motivo_solicitud, true));
             return response()->json($info_listado_motivo_solicitud);
         }
+
+         // Listado poblacion a calificar PCL
+         if($parametro == 'lista_poblacion_calificar'){
+            $listado_poblacion_califi = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro', 'Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Poblacion a calificar'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_poblacion_califi = json_decode(json_encode($listado_poblacion_califi, true));
+            return response()->json($info_listado_poblacion_califi);
+        }
         
         // Listado selectores agudeza visual (modal agudeza visual)
         if ($parametro == "agudeza_visual") {
