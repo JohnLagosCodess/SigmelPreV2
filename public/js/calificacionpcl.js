@@ -1293,12 +1293,14 @@ $(document).ready(function(){
                     setTimeout(function(){
                         $('.alerta_comunicado').addClass('d-none');
                         $('.alerta_comunicado').empty();
+                        localStorage.setItem("#Generar_comunicados", true);
+                        location.reload();
                     }, 3000);
                 }
             }
         })
-        localStorage.setItem("#Generar_comunicados", true);
-        location.reload();
+        // localStorage.setItem("#Generar_comunicados", true);
+        // location.reload();
     }) 
 
     // Abrir modal de agregar solictudes despues de guardar 
