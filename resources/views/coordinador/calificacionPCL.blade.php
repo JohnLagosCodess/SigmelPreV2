@@ -494,8 +494,10 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <input type="submit" id="Guardar_seguimientos" class="btn btn-info" value="Guardar">
-                                                <div class="alerta_seguimiento alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                             </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="alerta_seguimiento alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -716,8 +718,10 @@
                                         <div class="col-6">
                                             <div class="form-group">
                                                 <input type="submit" id="Generar_comunicados" class="btn btn-info" value="Guardar">
-                                                <div class="alerta_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                             </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="alerta_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -951,8 +955,10 @@
                                             <div class="form-group">
                                                 <input type="button" id="Editar_comunicados" class="btn btn-info" value="Actualizar">
                                                 <input type="submit" id="Pdf" class="btn btn-info" value="Pdf">                            
-                                                <div class="alerta_editar_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                             </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="alerta_editar_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                         </div>
                                     </div>
                                 </div>                                

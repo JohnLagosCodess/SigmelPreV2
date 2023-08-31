@@ -379,14 +379,14 @@
                                                 <thead>
                                                     <tr class="bg-info">
                                                         <th style="width: 140px !important;">Tabla</th>
-                                                        <th style="width: 140px !important;">Titulo tabla</th>
-                                                        <th style="width: 140px !important;">Clase principal<br>(FP)</th>
+                                                        <th style="width: 140px !important;">Título tabla</th>
+                                                        <th style="width: 140px !important;">Clase principal (FP)</th>
                                                         <th style="width: 140px !important;">CFM1</th>
                                                         <th style="width: 140px !important;">CFM2</th>
                                                         <th style="width: 140px !important;">FU</th>
                                                         <th style="width: 140px !important;">CAT</th>
                                                         <th style="width: 140px !important;">Clase final</th>
-                                                        <th style="width: 140px !important;">DX<br>principal</th>
+                                                        <th style="width: 140px !important;">DX principal</th>
                                                         <th style="width: 140px !important;">MSD</th>
                                                         <th style="width: 140px !important;">Deficiencia</th>
                                                         <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_deficiencia_porfactor"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>

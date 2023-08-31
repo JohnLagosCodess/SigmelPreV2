@@ -42,7 +42,7 @@ $(document).ready(function(){
           '<input type="checkbox" id="checkbox_dx_principal_DefiAlteraciones_'+contador_alteraciones+'" class="checkbox_dx_principal_DefiAlteraciones_'+contador_alteraciones+'" style="transform: scale(1.2);">',
           '<div id="MSD_fila_alteraciones_'+contador_alteraciones+'"></div>',
           '<div id="Deficiencia_fila_alteraciones_'+contador_alteraciones+'"></div>',
-          '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila_alteraciones" class="text-info" data-fila="fila_alteraciones_'+contador_alteraciones+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
+          '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_quitar_fila_alteraciones" class="text-info" data-fila="fila_alteraciones_'+contador_alteraciones+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
           'fila_alteraciones_'+contador_alteraciones
         ];
 
@@ -54,6 +54,13 @@ $(document).ready(function(){
         // Esta función realiza los controles de cada elemento por fila
         funciones_elementos_fila_alteraciones(contador_alteraciones);
     });
+
+    $(document).on('click', '#btn_quitar_fila_alteraciones', function(){
+        var nombre_fila_alteraciones = $(this).data("fila");
+        tabla_alteraciones_sistemas.row("."+nombre_fila_alteraciones).remove().draw();
+    });
+
+
 });
 
 function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
@@ -100,13 +107,6 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
             success:function(data){
                 $("#titulo_tabla_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
                 $("#titulo_tabla_fila_alteraciones_"+num_consecutivo_alteraciones).append(data[0]["Nombre_tabla"]);
-                
-                /* sessionStorage.removeItem("consecutivo")
-                sessionStorage.removeItem("num_tabla")
-                sessionStorage.removeItem("id_tabla")
-                sessionStorage.setItem("consecutivo", num_consecutivo_alteraciones);
-                sessionStorage.setItem("num_tabla", data[0]["Ident_tabla"]);
-                sessionStorage.setItem("id_tabla", id_tabla_seleccionado); */
             }
         });
 
@@ -142,12 +142,12 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                             select_FP.append(option_FP);
                         });
 
-                        $("#FP_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input id="guardar_FP_fila_'+num_consecutivo_alteraciones+'">');
+                        $("#FP_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input type="hidden" id="guardar_FP_fila_'+num_consecutivo_alteraciones+'">');
                         $("#FP_fila_alteraciones_"+num_consecutivo_alteraciones).append(select_FP);
 
                         /* SELECT 2 LISTADO FP */  
                         $(".resultado_FP_"+num_consecutivo_alteraciones).select2({
-                            width: '100%',
+                            width: '100px',
                             placeholder: "Seleccione",
                             allowClear: false
                         });
@@ -187,12 +187,12 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                             select_CFM1.append(option_CFM1);
                         });
         
-                        $("#CFM1_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input id="guardar_CFM1_fila_'+num_consecutivo_alteraciones+'">');
+                        $("#CFM1_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input type="hidden" id="guardar_CFM1_fila_'+num_consecutivo_alteraciones+'">');
                         $("#CFM1_fila_alteraciones_"+num_consecutivo_alteraciones).append(select_CFM1);
         
                         /* SELECT 2 LISTADO CFM1 */  
                         $(".resultado_CFM1_"+num_consecutivo_alteraciones).select2({
-                            width: '100%',
+                            width: '100px',
                             placeholder: "Seleccione",
                             allowClear: false
                         });
@@ -232,12 +232,12 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                             select_CFM2.append(option_CFM2);
                         });
         
-                        $("#CFM2_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input id="guardar_CFM2_fila_'+num_consecutivo_alteraciones+'">');
+                        $("#CFM2_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input type="hidden" id="guardar_CFM2_fila_'+num_consecutivo_alteraciones+'">');
                         $("#CFM2_fila_alteraciones_"+num_consecutivo_alteraciones).append(select_CFM2);
         
                         /* SELECT 2 LISTADO CFM2 */  
                         $(".resultado_CFM2_"+num_consecutivo_alteraciones).select2({
-                            width: '100%',
+                            width: '100px',
                             placeholder: "Seleccione",
                             allowClear: false
                         });
@@ -277,12 +277,12 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                             select_FU.append(option_FU);
                         });
         
-                        $("#FU_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input id="guardar_FU_fila_'+num_consecutivo_alteraciones+'">');
+                        $("#FU_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input type="hidden" id="guardar_FU_fila_'+num_consecutivo_alteraciones+'">');
                         $("#FU_fila_alteraciones_"+num_consecutivo_alteraciones).append(select_FU);
         
                         /* SELECT 2 LISTADO FU */  
                         $(".resultado_FU_"+num_consecutivo_alteraciones).select2({
-                            width: '100%',
+                            width: '100px',
                             placeholder: "Seleccione",
                             allowClear: false
                         });
@@ -322,12 +322,12 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                             select_CAT.append(option_CAT);
                         });
         
-                        $("#CAT_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input id="guardar_CAT_fila_'+num_consecutivo_alteraciones+'">');
+                        $("#CAT_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input type="hidden" id="guardar_CAT_fila_'+num_consecutivo_alteraciones+'">');
                         $("#CAT_fila_alteraciones_"+num_consecutivo_alteraciones).append(select_CAT);
         
                         /* SELECT 2 LISTADO CAT */  
                         $(".resultado_CAT_"+num_consecutivo_alteraciones).select2({
-                            width: '100%',
+                            width: '100px',
                             placeholder: "Seleccione",
                             allowClear: false
                         });
@@ -362,12 +362,23 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
             }
         });
 
-
+        /* INSERTAR CAMPOS DE CLASE Y DEFICIENCIAS PARA LAS TABLAS ABIERTAS */
+        if (id_tabla_seleccionado == 37 || id_tabla_seleccionado == 58 || id_tabla_seleccionado == 59 || id_tabla_seleccionado == 61 || id_tabla_seleccionado == 75 ||
+            id_tabla_seleccionado == 76 || id_tabla_seleccionado == 77 || id_tabla_seleccionado == 78 || id_tabla_seleccionado == 79 || id_tabla_seleccionado == 80 ||
+            id_tabla_seleccionado == 81 || id_tabla_seleccionado == 82 || id_tabla_seleccionado == 99 || id_tabla_seleccionado == 100 || id_tabla_seleccionado == 101 ||
+            id_tabla_seleccionado == 102 || id_tabla_seleccionado == 103 || id_tabla_seleccionado == 104 || id_tabla_seleccionado == 105 || id_tabla_seleccionado == 106 ||
+            id_tabla_seleccionado == 107 || id_tabla_seleccionado == 108 || id_tabla_seleccionado == 109 || id_tabla_seleccionado == 110 || id_tabla_seleccionado == 111 ||
+            id_tabla_seleccionado == 112 || id_tabla_seleccionado == 113 || id_tabla_seleccionado == 114 || id_tabla_seleccionado == 115 || id_tabla_seleccionado == 116
+            ) {
+            $("#ClaseFinal_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input type="number" class="form-control" id="resultado_ClaseFinal_'+num_consecutivo_alteraciones+'">');
+            $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input type="number" class="form-control" id="resultado_Deficiencia_'+num_consecutivo_alteraciones+'">');
+        };
+        
+        
+        
     });
 
 };
-
-
 
 $(document).on('change', "select[id^='resultado_FP_']", function(){
     var id_FP_seleccionado = $(this).attr("id");
@@ -415,9 +426,6 @@ $(document).on('change', "select[id^='resultado_CAT_']", function(){
 });
 
 setInterval(() => {
-    // var nombre_tabla_seleccionada = sessionStorage.getItem("num_tabla");
-    // var id_tabla_seleccionada = sessionStorage.getItem("id_tabla");
-
     // console.log("FILA A LA QUE PERTENECE: "+fila_pertenece);
     // console.log("ID TABLA: "+id_tabla_pertenece);
     // console.log("NOMBRE TABLA: "+nombre_tabla_pertenece);
@@ -430,7 +438,7 @@ setInterval(() => {
     // calculosDeficienciasAlteracionesSistemas(fila_pertenece, id_tabla_pertenece, nombre_tabla_pertenece, valor_FP_selecciondo, valor_CFM1_seleccionado, valor_CFM2_seleccionado, valor_FU_seleccionado, valor_CAT_seleccionado);
     calculosDeficienciasAlteracionesSistemas(fila_pertenece, id_tabla_pertenece, nombre_tabla_pertenece);
 
-}, 5000);
+}, 500);
 
 function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabla, tabla) {
     let token = $("input[name='_token']").val();
@@ -510,7 +518,7 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             // Calculo de la deficiencia
             if (!isNaN(ajuste_tabla_2_1) && literal_tabla_2_1 != undefined) {
                 
-                let datos_consulta_deficiencia = {
+                let datos_consulta_deficiencia_tabla_2_1 = {
                     '_token': token,
                     'columna': clase_final_tabla_2_1,
                     'Id_tabla': id_tabla
@@ -518,10 +526,8 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
                 $.ajax({
                     url: "/consultaValorDeficiencia",
                     type: "post",
-                    data: datos_consulta_deficiencia,
+                    data: datos_consulta_deficiencia_tabla_2_1,
                     success:function(response){
-  
-                        // console.log(id_fila_insertar_dato);
                         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
                         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
   
@@ -531,12 +537,4535 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
                 });
             }
         break;
+
+        case "Tabla 2.2":
+            // Calculo del Ajuste
+            var valor_FP_tabla_2_2 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_2_2 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_2_2 = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_2_2 = (parseInt(valor_CFM1_tabla_2_2) - parseInt(valor_FP_tabla_2_2)) + (parseInt(valor_CFM2_tabla_2_2) - parseInt(valor_FP_tabla_2_2));
+            // Calculo del Literal
+            var literal_tabla_2_2;
+            
+            if (ajuste_tabla_2_2 <= -2) {
+                literal_tabla_2_2 = "A";
+            }else if (ajuste_tabla_2_2 == -1) {
+                literal_tabla_2_2 = "B";
+            }else if (ajuste_tabla_2_2 == 0) {
+                literal_tabla_2_2 = "C";
+            }else if(ajuste_tabla_2_2 == 1){
+                literal_tabla_2_2 = "D";
+            }
+            else if(ajuste_tabla_2_2 >= 2){
+                literal_tabla_2_2 = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_2_2;
+            if (parseInt(valor_FP_tabla_2_2) == 4 && parseInt(valor_CFM1_tabla_2_2) == 4 && parseInt(valor_CFM2_tabla_2_2) == 4) {
+                clase_final_tabla_2_2 = "4E"; 
+            }else{
+                clase_final_tabla_2_2 = valor_FP_tabla_2_2+literal_tabla_2_2;
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_2_2) && literal_tabla_2_2 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_2_2 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_2_2,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_2_2,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_2_2);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_2_2]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 2.3":
+            // Calculo del Ajuste
+            var valor_FP_tabla_2_3 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_2_3 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_2_3 = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_2_3 = (parseInt(valor_CFM1_tabla_2_3) - parseInt(valor_FP_tabla_2_3)) + (parseInt(valor_CFM2_tabla_2_3) - parseInt(valor_FP_tabla_2_3));
+            // Calculo del Literal
+            var literal_tabla_2_3;
+            
+            if (ajuste_tabla_2_3 <= -2) {
+                literal_tabla_2_3 = "A";
+            }else if (ajuste_tabla_2_3 == -1) {
+                literal_tabla_2_3 = "B";
+            }else if (ajuste_tabla_2_3 == 0) {
+                literal_tabla_2_3 = "C";
+            }else if(ajuste_tabla_2_3 == 1){
+                literal_tabla_2_3 = "D";
+            }
+            else if(ajuste_tabla_2_3 >= 2){
+                literal_tabla_2_3 = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_2_3;
+            if (parseInt(valor_FP_tabla_2_3) == 4 && parseInt(valor_CFM1_tabla_2_3) == 4 && parseInt(valor_CFM2_tabla_2_3) == 4) {
+                clase_final_tabla_2_3 = "4E"; 
+            }else{
+                clase_final_tabla_2_3 = valor_FP_tabla_2_3+literal_tabla_2_3;
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_2_3) && literal_tabla_2_3 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_2_3 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_2_3,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_2_3,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_2_3);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_2_3]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 2.4":
+            // Calculo del Ajuste
+            var valor_FP_tabla_2_4 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_2_4 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_2_4 = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_2_4 = (parseInt(valor_CFM1_tabla_2_4) - parseInt(valor_FP_tabla_2_4)) + (parseInt(valor_CFM2_tabla_2_4) - parseInt(valor_FP_tabla_2_4));
+            // Calculo del Literal
+            var literal_tabla_2_4;
+            
+            if (ajuste_tabla_2_4 <= -2) {
+                literal_tabla_2_4 = "A";
+            }else if (ajuste_tabla_2_4 == -1) {
+                literal_tabla_2_4 = "B";
+            }else if (ajuste_tabla_2_4 == 0) {
+                literal_tabla_2_4 = "C";
+            }else if(ajuste_tabla_2_4 == 1){
+                literal_tabla_2_4 = "D";
+            }
+            else if(ajuste_tabla_2_4 >= 2){
+                literal_tabla_2_4 = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_2_4;
+            if (parseInt(valor_FP_tabla_2_4) == 4 && parseInt(valor_CFM1_tabla_2_4) == 4 && parseInt(valor_CFM2_tabla_2_4) == 4) {
+                clase_final_tabla_2_4 = "4E"; 
+            }else{
+                clase_final_tabla_2_4 = valor_FP_tabla_2_4+literal_tabla_2_4;
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_2_4) && literal_tabla_2_4 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_2_4 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_2_4,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_2_4,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_2_4);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_2_4]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 2.5":
+            // Calculo del Ajuste
+            var valor_FP_tabla_2_5 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_2_5 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_2_5 = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_2_5 = (parseInt(valor_CFM1_tabla_2_5) - parseInt(valor_FP_tabla_2_5)) + (parseInt(valor_CFM2_tabla_2_5) - parseInt(valor_FP_tabla_2_5));
+            // Calculo del Literal
+            var literal_tabla_2_5;
+            
+            if (ajuste_tabla_2_5 <= -2) {
+                literal_tabla_2_5 = "A";
+            }else if (ajuste_tabla_2_5 == -1) {
+                literal_tabla_2_5 = "B";
+            }else if (ajuste_tabla_2_5 == 0) {
+                literal_tabla_2_5 = "C";
+            }else if(ajuste_tabla_2_5 == 1){
+                literal_tabla_2_5 = "D";
+            }
+            else if(ajuste_tabla_2_5 >= 2){
+                literal_tabla_2_5 = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_2_5;
+            if (parseInt(valor_FP_tabla_2_5) == 4 && parseInt(valor_CFM1_tabla_2_5) == 4 && parseInt(valor_CFM2_tabla_2_5) == 4) {
+                clase_final_tabla_2_5 = "4E"; 
+            }else{
+                clase_final_tabla_2_5 = valor_FP_tabla_2_5+literal_tabla_2_5;
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_2_5) && literal_tabla_2_5 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_2_5 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_2_5,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_2_5,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_2_5);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_2_5]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 2.6":
+            // Calculo del Ajuste
+            var valor_FP_tabla_2_6 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_2_6 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_2_6 = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_2_6 = (parseInt(valor_CFM1_tabla_2_6) - parseInt(valor_FP_tabla_2_6)) + (parseInt(valor_CFM2_tabla_2_6) - parseInt(valor_FP_tabla_2_6));
+            // Calculo del Literal
+            var literal_tabla_2_6;
+            
+            if (ajuste_tabla_2_6 <= -2) {
+                literal_tabla_2_6 = "A";
+            }else if (ajuste_tabla_2_6 == -1) {
+                literal_tabla_2_6 = "B";
+            }else if (ajuste_tabla_2_6 == 0) {
+                literal_tabla_2_6 = "C";
+            }else if(ajuste_tabla_2_6 == 1){
+                literal_tabla_2_6 = "D";
+            }
+            else if(ajuste_tabla_2_6 >= 2){
+                literal_tabla_2_6 = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_2_6;
+            if (parseInt(valor_FP_tabla_2_6) == 4 && parseInt(valor_CFM1_tabla_2_6) == 4 && parseInt(valor_CFM2_tabla_2_6) == 4) {
+                clase_final_tabla_2_6 = "4E"; 
+            }else{
+                clase_final_tabla_2_6 = valor_FP_tabla_2_6+literal_tabla_2_6;
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_2_6) && literal_tabla_2_6 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_2_6 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_2_6,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_2_6,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_2_6);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_2_6]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 2.7":
+            // Calculo del Ajuste
+            var valor_FP_tabla_2_7 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_2_7 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_2_7 = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_2_7 = (parseInt(valor_CFM1_tabla_2_7) - parseInt(valor_FP_tabla_2_7)) + (parseInt(valor_CFM2_tabla_2_7) - parseInt(valor_FP_tabla_2_7));
+            // Calculo del Literal
+            var literal_tabla_2_7;
+            
+            if (ajuste_tabla_2_7 <= -2) {
+                literal_tabla_2_7 = "A";
+            }else if (ajuste_tabla_2_7 == -1) {
+                literal_tabla_2_7 = "B";
+            }else if (ajuste_tabla_2_7 == 0) {
+                literal_tabla_2_7 = "C";
+            }else if(ajuste_tabla_2_7 == 1){
+                literal_tabla_2_7 = "D";
+            }
+            else if(ajuste_tabla_2_7 >= 2){
+                literal_tabla_2_7 = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_2_7;
+            if (parseInt(valor_FP_tabla_2_7) == 4 && parseInt(valor_CFM1_tabla_2_7) == 4 && parseInt(valor_CFM2_tabla_2_7) == 4) {
+                clase_final_tabla_2_7 = "4E"; 
+            }else{
+                clase_final_tabla_2_7 = valor_FP_tabla_2_7+literal_tabla_2_7;
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_2_7) && literal_tabla_2_7 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_2_7 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_2_7,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_2_7,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_2_7);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_2_7]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 2.8":
+            // Calculo del Ajuste
+            var valor_FP_tabla_2_8 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_2_8 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_2_8 = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_2_8 = (parseInt(valor_CFM1_tabla_2_8) - parseInt(valor_FP_tabla_2_8)) + (parseInt(valor_CFM2_tabla_2_8) - parseInt(valor_FP_tabla_2_8));
+            // Calculo del Literal
+            var literal_tabla_2_8;
+            
+            if (ajuste_tabla_2_8 <= -2) {
+                literal_tabla_2_8 = "A";
+            }else if (ajuste_tabla_2_8 == -1) {
+                literal_tabla_2_8 = "B";
+            }else if (ajuste_tabla_2_8 == 0) {
+                literal_tabla_2_8 = "C";
+            }else if(ajuste_tabla_2_8 == 1){
+                literal_tabla_2_8 = "D";
+            }
+            else if(ajuste_tabla_2_8 >= 2){
+                literal_tabla_2_8 = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_2_8;
+            if (parseInt(valor_FP_tabla_2_8) == 4 && parseInt(valor_CFM1_tabla_2_8) == 4 && parseInt(valor_CFM2_tabla_2_8) == 4) {
+                clase_final_tabla_2_8 = "4E"; 
+            }else{
+                clase_final_tabla_2_8 = valor_FP_tabla_2_8+literal_tabla_2_8;
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_2_8) && literal_tabla_2_8 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_2_8 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_2_8,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_2_8,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_2_8);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_2_8]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 2.9":
+            // Calculo del Ajuste
+            var valor_FP_tabla_2_9 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_2_9 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_2_9 = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_2_9 = (parseInt(valor_CFM1_tabla_2_9) - parseInt(valor_FP_tabla_2_9)) + (parseInt(valor_CFM2_tabla_2_9) - parseInt(valor_FP_tabla_2_9));
+            // Calculo del Literal
+            var literal_tabla_2_9;
+            
+            if (ajuste_tabla_2_9 <= -2) {
+                literal_tabla_2_9 = "A";
+            }else if (ajuste_tabla_2_9 == -1) {
+                literal_tabla_2_9 = "B";
+            }else if (ajuste_tabla_2_9 == 0) {
+                literal_tabla_2_9 = "C";
+            }else if(ajuste_tabla_2_9 == 1){
+                literal_tabla_2_9 = "D";
+            }
+            else if(ajuste_tabla_2_9 >= 2){
+                literal_tabla_2_9 = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_2_9;
+            if (parseInt(valor_FP_tabla_2_9) == 4 && parseInt(valor_CFM1_tabla_2_9) == 4 && parseInt(valor_CFM2_tabla_2_9) == 4) {
+                clase_final_tabla_2_9 = "4E"; 
+            }else{
+                clase_final_tabla_2_9 = valor_FP_tabla_2_9+literal_tabla_2_9;
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_2_9) && literal_tabla_2_9 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_2_9 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_2_9,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_2_9,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_2_9);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_2_9]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 3.2":
+            // Calculo del Ajuste
+            var valor_FP_tabla_3_2 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_3_2 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_3_2 = parseInt(valor_CFM1_tabla_3_2) - parseInt(valor_FP_tabla_3_2);
+            // Calculo del Literal
+            var literal_tabla_3_2;
+            
+            if (ajuste_tabla_3_2 <= -1) {
+                literal_tabla_3_2 = "A";
+            }else if (ajuste_tabla_3_2 == 0) {
+                literal_tabla_3_2 = "B";
+            }else if (ajuste_tabla_3_2 >= 1) {
+                literal_tabla_3_2 = "C";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_3_2 = valor_FP_tabla_3_2+literal_tabla_3_2;
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_3_2) && literal_tabla_3_2 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_3_2 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_3_2,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_3_2,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_3_2);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_3_2]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 3.3":
+            // Calculo del Ajuste
+            var valor_FP_tabla_3_3 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_3_3 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_3_3 = parseInt(valor_CFM1_tabla_3_3) - parseInt(valor_FP_tabla_3_3);
+            // Calculo del Literal
+            var literal_tabla_3_3;
+            
+            if (ajuste_tabla_3_3 <= -1) {
+                literal_tabla_3_3 = "A";
+            }else if (ajuste_tabla_3_3 == 0) {
+                literal_tabla_3_3 = "B";
+            }else if (ajuste_tabla_3_3 >= 1) {
+                literal_tabla_3_3 = "C";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_3_3 = valor_FP_tabla_3_3+literal_tabla_3_3;
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_3_3) && literal_tabla_3_3 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_3_3 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_3_3,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_3_3,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_3_3);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_3_3]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 3.4":
+            // Calculo del Ajuste
+            var valor_FP_tabla_3_4 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_3_4 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_3_4 = parseInt(valor_CFM1_tabla_3_4) - parseInt(valor_FP_tabla_3_4);
+            // Calculo del Literal
+            var literal_tabla_3_4;
+            
+            if (ajuste_tabla_3_4 <= -1) {
+                literal_tabla_3_4 = "A";
+            }else if (ajuste_tabla_3_4 == 0) {
+                literal_tabla_3_4 = "B";
+            }else if (ajuste_tabla_3_4 >= 1) {
+                literal_tabla_3_4 = "C";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_3_4 = valor_FP_tabla_3_4+literal_tabla_3_4;
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_3_4) && literal_tabla_3_4 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_3_4 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_3_4,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_3_4,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_3_4);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_3_4]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 4.5":
+            // Calculo del Ajuste
+            var valor_FP_tabla_4_5 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_4_5 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_4_5 = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_4_5 = (parseInt(valor_CFM1_tabla_4_5) - parseInt(valor_FP_tabla_4_5)) + (parseInt(valor_CFM2_tabla_4_5) - parseInt(valor_FP_tabla_4_5));
+            // Calculo del Literal
+            var literal_tabla_4_5;
+            
+            if (ajuste_tabla_4_5 <= -2) {
+                literal_tabla_4_5 = "A";
+            }else if (ajuste_tabla_4_5 == -1) {
+                literal_tabla_4_5 = "B";
+            }else if (ajuste_tabla_4_5 == 0) {
+                literal_tabla_4_5 = "C";
+            }else if(ajuste_tabla_4_5 == 1){
+                literal_tabla_4_5 = "D";
+            }
+            else if(ajuste_tabla_4_5 >= 2){
+                literal_tabla_4_5 = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_4_5 = valor_FP_tabla_4_5+literal_tabla_4_5;
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_4_5) && literal_tabla_4_5 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_4_5 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_4_5,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_4_5,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_4_5);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_4_5]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 4.6":
+            // Calculo del Ajuste
+            var valor_FP_tabla_4_6 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_4_6 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_4_6 = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_4_6 = (parseInt(valor_CFM1_tabla_4_6) - parseInt(valor_FP_tabla_4_6)) + (parseInt(valor_CFM2_tabla_4_6) - parseInt(valor_FP_tabla_4_6));
+            // Calculo del Literal
+            var literal_tabla_4_6;
+            
+            if (ajuste_tabla_4_6 <= -2) {
+                literal_tabla_4_6 = "A";
+            }else if (ajuste_tabla_4_6 == -1) {
+                literal_tabla_4_6 = "B";
+            }else if (ajuste_tabla_4_6 == 0) {
+                literal_tabla_4_6 = "C";
+            }else if(ajuste_tabla_4_6 == 1){
+                literal_tabla_4_6 = "D";
+            }
+            else if(ajuste_tabla_4_6 >= 2){
+                literal_tabla_4_6 = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_4_6;
+            if (parseInt(valor_FP_tabla_4_6) == 4 && parseInt(valor_CFM1_tabla_4_6) == 4 && parseInt(valor_CFM2_tabla_4_6) == 4) {
+                clase_final_tabla_4_6 = valor_FP_tabla_4_6+"E"; 
+            }else if(parseInt(valor_FP_tabla_4_6) == 4 && parseInt(valor_CFM1_tabla_4_6) == 4){
+                clase_final_tabla_4_6 = valor_FP_tabla_4_6+"A"; 
+            }else if(parseInt(valor_FP_tabla_4_6) == 4 && parseInt(valor_CFM2_tabla_4_6) == 4){
+                clase_final_tabla_4_6 = valor_FP_tabla_4_6+"A"; 
+            }
+            else{
+                clase_final_tabla_4_6 = valor_FP_tabla_4_6+literal_tabla_4_6;
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_4_6) && literal_tabla_4_6 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_4_6 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_4_6,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_4_6,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_4_6);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_4_6]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 4.7":
+            // Calculo del Ajuste
+            var valor_FP_tabla_4_7 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_4_7 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_4_7 = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_4_7 = (parseInt(valor_CFM1_tabla_4_7) - parseInt(valor_FP_tabla_4_7)) + (parseInt(valor_CFM2_tabla_4_7) - parseInt(valor_FP_tabla_4_7));
+            // Calculo del Literal
+            var literal_tabla_4_7;
+            
+            if (ajuste_tabla_4_7 <= -2) {
+                literal_tabla_4_7 = "A";
+            }else if (ajuste_tabla_4_7 == -1) {
+                literal_tabla_4_7 = "B";
+            }else if (ajuste_tabla_4_7 == 0) {
+                literal_tabla_4_7 = "C";
+            }else if(ajuste_tabla_4_7 == 1){
+                literal_tabla_4_7 = "D";
+            }
+            else if(ajuste_tabla_4_7 >= 2){
+                literal_tabla_4_7 = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_4_7;
+            if (parseInt(valor_CFM1_tabla_4_7) == 4 || parseInt(valor_CFM2_tabla_4_7) == 4) {
+                // clase_final_tabla_4_7 = valor_FP_tabla_4_7+"E"; 
+                clase_final_tabla_4_7 = "4E"; 
+            }else{
+                clase_final_tabla_4_7 = valor_FP_tabla_4_7+literal_tabla_4_7;
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_4_7) && literal_tabla_4_7 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_4_7 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_4_7,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_4_7,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_4_7);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_4_7]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 4.8":
+            // Calculo del Ajuste
+            var valor_FP_tabla_4_8 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_4_8 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_4_8 = parseInt(valor_CFM1_tabla_4_8) - parseInt(valor_FP_tabla_4_8);
+            // Calculo del Literal
+            var literal_tabla_4_8;
+            
+            if (ajuste_tabla_4_8 <= -1) {
+                literal_tabla_4_8 = "A";
+            }else if (ajuste_tabla_4_8 == 0) {
+                literal_tabla_4_8 = "B";
+            }else if (ajuste_tabla_4_8 >= 1) {
+                literal_tabla_4_8 = "C";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_4_8;
+            
+            clase_final_tabla_4_8 = valor_FP_tabla_4_8+literal_tabla_4_8;
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_4_8) && literal_tabla_4_8 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_4_8 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_4_8,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_4_8,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_4_8);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_4_8]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 4.9":
+            // deficiencia
+            var valor_FU_tabla_4_9 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_4_9;
+            if (valor_FU_tabla_4_9 == 20) {
+                clase_final_tabla_4_9 = "1A";
+            }else{
+                clase_final_tabla_4_9 = "1B";
+            }
+
+            let datos_consulta_deficiencia_tabla_4_9 = {
+                '_token': token,
+                'columna': clase_final_tabla_4_9,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_4_9,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_4_9);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_4_9]);
+                }         
+            });
+
+        break;
+        
+        case "Tabla 4.10":
+            // Calculo del Ajuste
+            var valor_FP_tabla_4_10 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_4_10 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_4_10 = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_4_10 = (parseInt(valor_CFM1_tabla_4_10) - parseInt(valor_FP_tabla_4_10)) + (parseInt(valor_CFM2_tabla_4_10) - parseInt(valor_FP_tabla_4_10));
+            // Calculo del Literal
+            var literal_tabla_4_10;
+            
+            if (ajuste_tabla_4_10 <= -2) {
+                literal_tabla_4_10 = "A";
+            }else if (ajuste_tabla_4_10 == -1) {
+                literal_tabla_4_10 = "B";
+            }else if (ajuste_tabla_4_10 == 0) {
+                literal_tabla_4_10 = "C";
+            }else if(ajuste_tabla_4_10 == 1){
+                literal_tabla_4_10 = "D";
+            }
+            else if(ajuste_tabla_4_10 >= 2){
+                literal_tabla_4_10 = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_4_10;
+            
+            // SI el FP y los FM=4, se asigna el mayor valor de deficiencia
+            // Si uno de los FM=4 se toma el valor más alto dentro de la clase
+
+            if (parseInt(valor_FP_tabla_4_10) == 4 && parseInt(valor_CFM1_tabla_4_10) == 4 && parseInt(valor_CFM2_tabla_4_10) == 4) {
+                clase_final_tabla_4_10 = "4C"; 
+            }else if(parseInt(valor_CFM1_tabla_4_10) == 4 || parseInt(valor_CFM2_tabla_4_10) == 4){
+                clase_final_tabla_4_10 = "4C"; 
+            }
+            else{
+                clase_final_tabla_4_10 = valor_FP_tabla_4_10+literal_tabla_4_10;
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_4_10) && literal_tabla_4_10 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_4_10 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_4_10,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_4_10,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_4_10);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_4_10]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 4.11":
+            // Calculo del Ajuste
+            var valor_FP_tabla_4_11 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_4_11 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_4_11 = parseInt(valor_CFM1_tabla_4_11) - parseInt(valor_FP_tabla_4_11);
+            // Calculo del Literal
+            var literal_tabla_4_11;
+            
+            if (ajuste_tabla_4_11 <= -1) {
+                literal_tabla_4_11 = "A";
+            }else if (ajuste_tabla_4_11 == 0) {
+                literal_tabla_4_11 = "B";
+            }else if (ajuste_tabla_4_11 >= 1) {
+                literal_tabla_4_11 = "C";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_4_11;
+            
+            clase_final_tabla_4_11 = valor_FP_tabla_4_11+literal_tabla_4_11;
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_4_11) && literal_tabla_4_11 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_4_11 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_4_11,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_4_11,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_4_11);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_4_11]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 4.12":
+            // deficiencia
+            var valor_FU_tabla_4_12 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_4_12;
+
+            if (valor_FU_tabla_4_12 == 5) {
+                clase_final_tabla_4_12 = "1A";
+            }else if(valor_FU_tabla_4_12 == 10){
+                clase_final_tabla_4_12 = "1B";
+            }else if(valor_FU_tabla_4_12 == 15){
+                clase_final_tabla_4_12 = "1C";
+            }else if(valor_FU_tabla_4_12 == 20){
+                clase_final_tabla_4_12 = "1D";
+            }else if(valor_FU_tabla_4_12 == 40){
+                clase_final_tabla_4_12 = "1E";
+            }else if(valor_FU_tabla_4_12 == 50){
+                clase_final_tabla_4_12 = "2A";
+            }
+            
+
+            let datos_consulta_deficiencia_tabla_4_12 = {
+                '_token': token,
+                'columna': clase_final_tabla_4_12,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_4_12,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_4_12);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_4_12]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 5.2A":
+            // Calculo del Ajuste
+            var valor_FP_tabla_5_2A = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_5_2A = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_5_2A = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_5_2A = (parseInt(valor_CFM1_tabla_5_2A) - parseInt(valor_FP_tabla_5_2A)) + (parseInt(valor_CFM2_tabla_5_2A) - parseInt(valor_FP_tabla_5_2A));
+            // Calculo del Literal
+            var literal_tabla_5_2A;
+            
+            if (ajuste_tabla_5_2A <= -2) {
+                literal_tabla_5_2A = "A";
+            }else if (ajuste_tabla_5_2A == -1) {
+                literal_tabla_5_2A = "B";
+            }else if (ajuste_tabla_5_2A == 0) {
+                literal_tabla_5_2A = "C";
+            }else if(ajuste_tabla_5_2A == 1){
+                literal_tabla_5_2A = "D";
+            }
+            else if(ajuste_tabla_5_2A >= 2){
+                literal_tabla_5_2A = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_5_2A;
+            
+            // SI el FP y los FM=4, se asigna el mayor valor de deficiencia
+
+            if (parseInt(valor_FP_tabla_5_2A) == 4 && parseInt(valor_CFM1_tabla_5_2A) == 4 && parseInt(valor_CFM2_tabla_5_2A) == 4) {
+                clase_final_tabla_5_2A = "4E"; 
+            }
+            else{
+                clase_final_tabla_5_2A = valor_FP_tabla_5_2A+literal_tabla_5_2A;
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_5_2A) && literal_tabla_5_2A != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_5_2A = {
+                    '_token': token,
+                    'columna': clase_final_tabla_5_2A,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_5_2A,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_5_2A);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_5_2A]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 5.2B":
+            // deficiencia
+            var valor_FU_tabla_5_2B = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+            var valor_CAT_tabla_5_2B = parseInt($("#guardar_CAT_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_5_2B;
+            		
+            if (valor_FU_tabla_5_2B == 60) {
+                clase_final_tabla_5_2B = "1A";
+            }else if(valor_FU_tabla_5_2B == 75){
+                clase_final_tabla_5_2B = "1B";
+            }else if(valor_FU_tabla_5_2B == 90){
+                clase_final_tabla_5_2B = "1C";
+            }
+            
+            // calculo deficiencia
+            let datos_consulta_deficiencia_tabla_5_2B = {
+                '_token': token,
+                'columna': clase_final_tabla_5_2B,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_5_2B,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_5_2B);
+                    
+                    if (!isNaN(valor_CAT_tabla_5_2B)) {
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        var defi_tabla_5_2_B = parseInt(response[0][clase_final_tabla_5_2B]) + parseInt(valor_CAT_tabla_5_2B);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(defi_tabla_5_2_B);
+                    } else {
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_5_2B]);
+                    }
+
+                }         
+            });
+
+        break;
+
+        case "Tabla 5.3":
+            // deficiencia
+            var valor_FU_tabla_5_3 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_5_3;
+            if (valor_FU_tabla_5_3 == 20) {
+                clase_final_tabla_5_3 = "1A";
+            }else{
+                clase_final_tabla_5_3 = "1B";
+            }
+
+            let datos_consulta_deficiencia_tabla_5_3 = {
+                '_token': token,
+                'columna': clase_final_tabla_5_3,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_5_3,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_5_3);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_5_3]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 5.4":
+            // Calculo del Ajuste
+            var valor_FP_tabla_5_4 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_5_4 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_5_4 = parseInt(valor_CFM1_tabla_5_4) - parseInt(valor_FP_tabla_5_4);
+            // Calculo del Literal
+            var literal_tabla_5_4;
+            
+            if (ajuste_tabla_5_4 <= -1) {
+                literal_tabla_5_4 = "A";
+            }else if (ajuste_tabla_5_4 == 0) {
+                literal_tabla_5_4 = "B";
+            }else if (ajuste_tabla_5_4 >= 1) {
+                literal_tabla_5_4 = "C";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_5_4;
+            
+            if (parseInt(valor_FP_tabla_5_4) < 4 ) {
+                clase_final_tabla_5_4 = valor_FP_tabla_5_4+literal_tabla_5_4;
+            }else{
+                clase_final_tabla_5_4 = "4C";
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_5_4) && literal_tabla_5_4 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_5_4 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_5_4,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_5_4,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_5_4);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_5_4]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 5.5":
+            // Calculo del Ajuste
+            var valor_FP_tabla_5_5 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_5_5 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_5_5 = parseInt(valor_CFM1_tabla_5_5) - parseInt(valor_FP_tabla_5_5);
+            // Calculo del Literal
+            var literal_tabla_5_5;
+            
+            if (ajuste_tabla_5_5 <= -1) {
+                literal_tabla_5_5 = "A";
+            }else if (ajuste_tabla_5_5 == 0) {
+                literal_tabla_5_5 = "B";
+            }else if (ajuste_tabla_5_5 >= 1) {
+                literal_tabla_5_5 = "C";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_5_5;
+            // SI el FP y el FM=4, se asigna el mayor valor de deficiencia
+            if (parseInt(valor_FP_tabla_5_5) == 4 && parseInt(valor_CFM1_tabla_5_5) == 4) {
+                clase_final_tabla_5_5 = "4C";
+            }else{
+                clase_final_tabla_5_5 = valor_FP_tabla_5_5+literal_tabla_5_5;
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_5_5) && literal_tabla_5_5 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_5_5 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_5_5,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_5_5,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_5_5);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_5_5]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 5.6":
+            // Calculo del Ajuste
+            var valor_FP_tabla_5_6 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_5_6 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_5_6 = parseInt(valor_CFM1_tabla_5_6) - parseInt(valor_FP_tabla_5_6);
+            // Calculo del Literal
+            var literal_tabla_5_6;
+            
+            if (ajuste_tabla_5_6 <= -1) {
+                literal_tabla_5_6 = "A";
+            }else if (ajuste_tabla_5_6 == 0) {
+                literal_tabla_5_6 = "B";
+            }else if (ajuste_tabla_5_6 >= 1) {
+                literal_tabla_5_6 = "C";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_5_6 = valor_FP_tabla_5_6+literal_tabla_5_6;
+            
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_5_6) && literal_tabla_5_6 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_5_6 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_5_6,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_5_6,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_5_6);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_5_6]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 5.7":
+            // Calculo del Ajuste
+            var valor_FP_tabla_5_7 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_5_7 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_5_7 = parseInt(valor_CFM1_tabla_5_7) - parseInt(valor_FP_tabla_5_7);
+            // Calculo del Literal
+            var literal_tabla_5_7;
+            
+            if (ajuste_tabla_5_7 <= -1) {
+                literal_tabla_5_7 = "A";
+            }else if (ajuste_tabla_5_7 == 0) {
+                literal_tabla_5_7 = "B";
+            }else if (ajuste_tabla_5_7 >= 1) {
+                literal_tabla_5_7 = "C";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_5_7;
+            
+            if (parseInt(valor_FP_tabla_5_7) == 3 && parseInt(valor_CFM1_tabla_5_7) == 3) {
+                clase_final_tabla_5_7 = "3C";
+            }else{
+                clase_final_tabla_5_7 = valor_FP_tabla_5_7+literal_tabla_5_7;
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_5_7) && literal_tabla_5_7 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_5_7 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_5_7,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_5_7,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_5_7);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_5_7]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 5.8":
+            // Calculo del Ajuste
+            var valor_FP_tabla_5_8 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_5_8 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_5_8 = parseInt(valor_CFM1_tabla_5_8) - parseInt(valor_FP_tabla_5_8);
+            // Calculo del Literal
+            var literal_tabla_5_8;
+            
+            if (ajuste_tabla_5_8 <= -1) {
+                literal_tabla_5_8 = "A";
+            }else if (ajuste_tabla_5_8 == 0) {
+                literal_tabla_5_8 = "B";
+            }else if (ajuste_tabla_5_8 == 1) {
+                literal_tabla_5_8 = "C";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_5_8;
+            
+            // parseInt(valor_FP_tabla_5_8) == 3 && parseInt(valor_CFM1_tabla_5_8) == 3
+            if (parseInt(valor_FP_tabla_5_8) == 3) {
+                clase_final_tabla_5_8 = "3A";
+            }else{
+                clase_final_tabla_5_8 = valor_FP_tabla_5_8+literal_tabla_5_8;
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_5_8) && literal_tabla_5_8 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_5_8 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_5_8,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_5_8,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_5_8);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_5_8]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 5.9":
+            // Calculo del Ajuste
+            var valor_FP_tabla_5_9 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_5_9 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_5_9 = parseInt(valor_CFM1_tabla_5_9) - parseInt(valor_FP_tabla_5_9);
+            // Calculo del Literal
+            var literal_tabla_5_9;
+            
+            if (ajuste_tabla_5_9 <= -1) {
+                literal_tabla_5_9 = "A";
+            }else if (ajuste_tabla_5_9 == 0) {
+                literal_tabla_5_9 = "B";
+            }else if (ajuste_tabla_5_9 >= 1) {
+                literal_tabla_5_9 = "C";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_5_9;
+            
+            // parseInt(valor_FP_tabla_5_9) == 3 && parseInt(valor_CFM1_tabla_5_9) == 3
+            if (parseInt(valor_FP_tabla_5_9) == 3) {
+                clase_final_tabla_5_9 = "3A";
+            }else{
+                clase_final_tabla_5_9 = valor_FP_tabla_5_9+literal_tabla_5_9;
+            }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_5_9) && literal_tabla_5_9 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_5_9 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_5_9,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_5_9,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_5_9);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_5_9]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 5.10A":
+            // Calculo del Ajuste
+            var valor_FP_tabla_5_10A = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_5_10A = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_5_10A = parseInt(valor_CFM1_tabla_5_10A) - parseInt(valor_FP_tabla_5_10A);
+            // Calculo del Literal
+            var literal_tabla_5_10A;
+            
+            if (ajuste_tabla_5_10A <= -1) {
+                literal_tabla_5_10A = "A";
+            }else if (ajuste_tabla_5_10A == 0) {
+                literal_tabla_5_10A = "B";
+            }else if (ajuste_tabla_5_10A >= 1) {
+                literal_tabla_5_10A = "C";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_5_10A = valor_FP_tabla_5_10A+literal_tabla_5_10A;
+            
+            // if (parseInt(valor_FP_tabla_5_10A) == 2 && parseInt(valor_CFM1_tabla_5_10A) == 3) {
+            //     clase_final_tabla_5_10A = "2C";
+            // }else{
+            //     clase_final_tabla_5_10A = valor_FP_tabla_5_10A+literal_tabla_5_10A;
+            // }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_5_10A) && literal_tabla_5_10A != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_5_10A = {
+                    '_token': token,
+                    'columna': clase_final_tabla_5_10A,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_5_10A,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_5_10A);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_5_10A]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 5.10B":
+            // deficiencia
+            var valor_FU_tabla_5_11B = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_5_11B;
+            if (valor_FU_tabla_5_11B == 11) {
+                clase_final_tabla_5_11B = "1A";
+            }else{
+                clase_final_tabla_5_11B = "1B";
+            }
+
+            let datos_consulta_deficiencia_tabla_5_11B = {
+                '_token': token,
+                'columna': clase_final_tabla_5_11B,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_5_11B,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_5_11B);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_5_11B]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 5.11":
+            // Calculo del Ajuste
+            var valor_FP_tabla_5_11 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_5_11 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_5_11 = parseInt(valor_CFM1_tabla_5_11) - parseInt(valor_FP_tabla_5_11);
+            // Calculo del Literal
+            var literal_tabla_5_11;
+            
+            if (ajuste_tabla_5_11 <= -1) {
+                literal_tabla_5_11 = "A";
+            }else if (ajuste_tabla_5_11 == 0) {
+                literal_tabla_5_11 = "B";
+            }else if (ajuste_tabla_5_11 >= 1) {
+                literal_tabla_5_11 = "C";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_5_11 = valor_FP_tabla_5_11+literal_tabla_5_11;
+            
+            // if (parseInt(valor_FP_tabla_5_11) == 2 && parseInt(valor_CFM1_tabla_5_11) == 3) {
+            //     clase_final_tabla_5_11 = "2C";
+            // }else{
+            //     clase_final_tabla_5_11 = valor_FP_tabla_5_11+literal_tabla_5_11;
+            // }
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_5_11) && literal_tabla_5_11 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_5_11 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_5_11,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_5_11,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_5_11);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_5_11]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 5.12":
+            // Calculo del Ajuste
+            var valor_FP_tabla_5_12 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_5_12 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_5_12 = parseInt(valor_CFM1_tabla_5_12) - parseInt(valor_FP_tabla_5_12);
+            // Calculo del Literal
+            var literal_tabla_5_12;
+            
+            if (ajuste_tabla_5_12 <= -1) {
+                literal_tabla_5_12 = "A";
+            }else if (ajuste_tabla_5_12 == 0) {
+                literal_tabla_5_12 = "B";
+            }else if (ajuste_tabla_5_12 >= 1) {
+                literal_tabla_5_12 = "C";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_5_12 = valor_FP_tabla_5_12+literal_tabla_5_12;
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_5_12) && literal_tabla_5_12 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_5_12 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_5_12,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_5_12,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_5_12);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_5_12]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 6.1":
+            // Calculo del Ajuste
+            var valor_FP_tabla_6_1 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_6_1 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CAT_tabla_6_1 = parseInt($("#guardar_CAT_fila_"+id_fila_insertar_dato).val());
+
+            var ajuste_tabla_6_1 = (parseInt(valor_CFM1_tabla_6_1) - parseInt(valor_FP_tabla_6_1)) + (parseInt(valor_CAT_tabla_6_1) - parseInt(valor_FP_tabla_6_1));
+
+            // Calculo clase final
+            var literal_tabla_6_1;
+            
+            if (ajuste_tabla_6_1 <= -2) {
+                literal_tabla_6_1 = "A";
+            }else if (ajuste_tabla_6_1 == -1) {
+                literal_tabla_6_1 = "B";
+            }else if (ajuste_tabla_6_1 == 0) {
+                literal_tabla_6_1 = "C";
+            }else if(ajuste_tabla_6_1 == 1){
+                literal_tabla_6_1 = "D";
+            }
+            else if(ajuste_tabla_6_1 >= 2){
+                literal_tabla_6_1 = "E";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_6_1 = valor_FP_tabla_6_1+literal_tabla_6_1;
+
+            // calculo deficiencia
+            if (!isNaN(ajuste_tabla_6_1) && literal_tabla_6_1 != undefined) {
+                let datos_consulta_deficiencia_tabla_6_1 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_6_1,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_6_1,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
     
-        default:
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_6_1);
+    
+                        if (valor_CAT_tabla_6_1 != "") {
+                            var defi_tabla_6_1 = parseInt(response[0][clase_final_tabla_6_1]) + parseInt(valor_CAT_tabla_6_1);
+                            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(defi_tabla_6_1);
+                        } else {
+                            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_6_1]);
+                        }
+    
+                    }         
+                });
+            }
+
+        break;
+
+        case "Tabla 6.2":
+            // Calculo del Ajuste
+            var valor_FP_tabla_6_2 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_6_2 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_6_2 = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_6_2 = (parseInt(valor_CFM1_tabla_6_2) - parseInt(valor_FP_tabla_6_2)) + (parseInt(valor_CFM2_tabla_6_2) - parseInt(valor_FP_tabla_6_2));
+            // Calculo del Literal
+            var literal_tabla_6_2;
+            
+            if (ajuste_tabla_6_2 <= -2) {
+                literal_tabla_6_2 = "A";
+            }else if (ajuste_tabla_6_2 == -1) {
+                literal_tabla_6_2 = "B";
+            }else if (ajuste_tabla_6_2 == 0) {
+                literal_tabla_6_2 = "C";
+            }else if(ajuste_tabla_6_2 == 1){
+                literal_tabla_6_2 = "D";
+            }
+            else if(ajuste_tabla_6_2 >= 2){
+                literal_tabla_6_2 = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_6_2 = valor_FP_tabla_6_2+literal_tabla_6_2;
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_6_2) && literal_tabla_6_2 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_6_2 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_6_2,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_6_2,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_6_2);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_6_2]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 7.2":
+            // Calculo del Ajuste
+            var valor_FP_tabla_7_2 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_7_2 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_FU_tabla_7_2 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+            var valor_CAT_tabla_7_2 = parseInt($("#resultado_CAT_"+id_fila_insertar_dato).val());
+
+            var ajuste_tabla_7_2 = parseInt(valor_CFM1_tabla_7_2) - parseInt(valor_FP_tabla_7_2);
+
+            // Calculo clase final
+            var literal_tabla_7_2;
+            
+            if (ajuste_tabla_7_2 <= -2) {
+                literal_tabla_7_2 = "A";
+            }else if (ajuste_tabla_7_2 == -1) {
+                literal_tabla_7_2 = "B";
+            }else if (ajuste_tabla_7_2 == 0) {
+                literal_tabla_7_2 = "C";
+            }else if(ajuste_tabla_7_2 == 1){
+                literal_tabla_7_2 = "D";
+            }
+            else if(ajuste_tabla_7_2 >= 2){
+                literal_tabla_7_2 = "E";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_7_2 = valor_FP_tabla_7_2+literal_tabla_7_2;
+            
+            // calculo deficiencia
+            if (!isNaN(ajuste_tabla_7_2) && literal_tabla_7_2 != undefined) {
+                $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_2);
+                $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                if ((parseInt(valor_FP_tabla_7_2) == 4) && (parseInt(valor_CFM1_tabla_7_2) == 4 || parseInt(valor_CFM1_tabla_7_2) == 3)) {
+                    if (!isNaN(valor_FU_tabla_7_2)) {
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_FU_tabla_7_2));
+
+                    }
+                    // console.log(valor_CAT_tabla_7_2);
+                    if (!isNaN(valor_CAT_tabla_7_2)) {
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        var defi_tabla_7_2 = parseInt(valor_FU_tabla_7_2) + parseInt(valor_CAT_tabla_7_2);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(defi_tabla_7_2);
+                    } 
+                    // else {
+                    //     $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_FU_tabla_7_2));
+                    // }
+                }else{
+                    let datos_consulta_deficiencia_tabla_7_2 = {
+                        '_token': token,
+                        'columna': clase_final_tabla_7_2,
+                        'Id_tabla': id_tabla
+                    };
+                    $.ajax({
+                        url: "/consultaValorDeficiencia",
+                        type: "post",
+                        data: datos_consulta_deficiencia_tabla_7_2,
+                        success:function(response){
+                            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_7_2]);
+                            if (!isNaN(valor_CAT_tabla_7_2)) {
+                                $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                                if (response[0][clase_final_tabla_7_2] != "") {
+                                    var defi_tabla_7_2 = parseInt(response[0][clase_final_tabla_7_2]) + parseInt(valor_CAT_tabla_7_2);
+                                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(defi_tabla_7_2);
+                                } else {
+                                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_CAT_tabla_7_2));
+                                }
+                            }
+                        }         
+                    });
+                };
+
+            }
+        break;
+
+        case "Tabla 7.3":
+            // Calculo del Ajuste
+            var valor_FP_tabla_7_3 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_7_3 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_FU_tabla_7_3 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+            var valor_CAT_tabla_7_3 = parseInt($("#resultado_CAT_"+id_fila_insertar_dato).val());
+
+            var ajuste_tabla_7_3 = parseInt(valor_CFM1_tabla_7_3) - parseInt(valor_FP_tabla_7_3);
+
+            // Calculo clase final
+            var literal_tabla_7_3;
+            
+            if (ajuste_tabla_7_3 <= -2) {
+                literal_tabla_7_3 = "A";
+            }else if (ajuste_tabla_7_3 == -1) {
+                literal_tabla_7_3 = "B";
+            }else if (ajuste_tabla_7_3 == 0) {
+                literal_tabla_7_3 = "C";
+            }else if(ajuste_tabla_7_3 == 1){
+                literal_tabla_7_3 = "D";
+            }
+            else if(ajuste_tabla_7_3 >= 2){
+                literal_tabla_7_3 = "E";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_7_3 = valor_FP_tabla_7_3+literal_tabla_7_3;
+            
+            // calculo deficiencia
+            if (!isNaN(ajuste_tabla_7_3) && literal_tabla_7_3 != undefined) {
+                $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_3);
+                $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                if ((parseInt(valor_FP_tabla_7_3) == 4) && (parseInt(valor_CFM1_tabla_7_3) == 4 || parseInt(valor_CFM1_tabla_7_3) == 3)) {
+                    if (!isNaN(valor_FU_tabla_7_3)) {
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_FU_tabla_7_3));
+
+                    }
+                    // console.log(valor_CAT_tabla_7_3);
+                    if (!isNaN(valor_CAT_tabla_7_3)) {
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        var defi_tabla_7_3 = parseInt(valor_FU_tabla_7_3) + parseInt(valor_CAT_tabla_7_3);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(defi_tabla_7_3);
+                    } 
+                    // else {
+                    //     $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_FU_tabla_7_3));
+                    // }
+                }else{
+                    let datos_consulta_deficiencia_tabla_7_3 = {
+                        '_token': token,
+                        'columna': clase_final_tabla_7_3,
+                        'Id_tabla': id_tabla
+                    };
+                    $.ajax({
+                        url: "/consultaValorDeficiencia",
+                        type: "post",
+                        data: datos_consulta_deficiencia_tabla_7_3,
+                        success:function(response){
+                            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_7_3]);
+                            if (!isNaN(valor_CAT_tabla_7_3)) {
+                                $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                                if (response[0][clase_final_tabla_7_3] != "") {
+                                    var defi_tabla_7_3 = parseInt(response[0][clase_final_tabla_7_3]) + parseInt(valor_CAT_tabla_7_3);
+                                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(defi_tabla_7_3);
+                                } else {
+                                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_CAT_tabla_7_3));
+                                }
+                            }
+                        }         
+                    });
+                };
+
+            }
+        break;
+
+        case "Tabla 7.4":
+            // Calculo del Ajuste
+            var valor_FP_tabla_7_4 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_7_4 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_FU_tabla_7_4 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+            var valor_CAT_tabla_7_4 = parseInt($("#resultado_CAT_"+id_fila_insertar_dato).val());
+
+            var ajuste_tabla_7_4 = parseInt(valor_CFM1_tabla_7_4) - parseInt(valor_FP_tabla_7_4);
+
+            // Calculo clase final
+            var literal_tabla_7_4;
+            
+            if (ajuste_tabla_7_4 <= -2) {
+                literal_tabla_7_4 = "A";
+            }else if (ajuste_tabla_7_4 == -1) {
+                literal_tabla_7_4 = "B";
+            }else if (ajuste_tabla_7_4 == 0) {
+                literal_tabla_7_4 = "C";
+            }else if(ajuste_tabla_7_4 == 1){
+                literal_tabla_7_4 = "D";
+            }
+            else if(ajuste_tabla_7_4 >= 2){
+                literal_tabla_7_4 = "E";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_7_4 = valor_FP_tabla_7_4+literal_tabla_7_4;
+            
+            // calculo deficiencia
+            if (!isNaN(ajuste_tabla_7_4) && literal_tabla_7_4 != undefined) {
+                $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_4);
+                $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                if ((parseInt(valor_FP_tabla_7_4) == 4) && (parseInt(valor_CFM1_tabla_7_4) == 4 || parseInt(valor_CFM1_tabla_7_4) == 3)) {
+                    if (!isNaN(valor_FU_tabla_7_4)) {
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_FU_tabla_7_4));
+
+                    }
+                    // console.log(valor_CAT_tabla_7_4);
+                    if (!isNaN(valor_CAT_tabla_7_4)) {
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        var defi_tabla_7_4 = parseInt(valor_FU_tabla_7_4) + parseInt(valor_CAT_tabla_7_4);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(defi_tabla_7_4);
+                    } 
+                    // else {
+                    //     $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_FU_tabla_7_4));
+                    // }
+                }else{
+                    let datos_consulta_deficiencia_tabla_7_4 = {
+                        '_token': token,
+                        'columna': clase_final_tabla_7_4,
+                        'Id_tabla': id_tabla
+                    };
+                    $.ajax({
+                        url: "/consultaValorDeficiencia",
+                        type: "post",
+                        data: datos_consulta_deficiencia_tabla_7_4,
+                        success:function(response){
+                            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_7_4]);
+                            if (!isNaN(valor_CAT_tabla_7_4)) {
+                                $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                                if (response[0][clase_final_tabla_7_4] != "") {
+                                    var defi_tabla_7_4 = parseInt(response[0][clase_final_tabla_7_4]) + parseInt(valor_CAT_tabla_7_4);
+                                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(defi_tabla_7_4);
+                                } else {
+                                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_CAT_tabla_7_4));
+                                }
+                            }
+                        }         
+                    });
+                };
+
+            }
+        break;
+
+        case "Tabla 7.5":
+            // Calculo del Ajuste
+            var valor_FP_tabla_7_5 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_7_5 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_FU_tabla_7_5 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+            var valor_CAT_tabla_7_5 = parseInt($("#resultado_CAT_"+id_fila_insertar_dato).val());
+
+            var ajuste_tabla_7_5 = parseInt(valor_CFM1_tabla_7_5) - parseInt(valor_FP_tabla_7_5);
+
+            // Calculo clase final
+            var literal_tabla_7_5;
+            
+            if (ajuste_tabla_7_5 <= -2) {
+                literal_tabla_7_5 = "A";
+            }else if (ajuste_tabla_7_5 == -1) {
+                literal_tabla_7_5 = "B";
+            }else if (ajuste_tabla_7_5 == 0) {
+                literal_tabla_7_5 = "C";
+            }else if(ajuste_tabla_7_5 == 1){
+                literal_tabla_7_5 = "D";
+            }
+            else if(ajuste_tabla_7_5 >= 2){
+                literal_tabla_7_5 = "E";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_7_5 = valor_FP_tabla_7_5+literal_tabla_7_5;
+            
+            // calculo deficiencia
+            if (!isNaN(ajuste_tabla_7_5) && literal_tabla_7_5 != undefined) {
+                $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_5);
+                $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                if ((parseInt(valor_FP_tabla_7_5) == 4) && (parseInt(valor_CFM1_tabla_7_5) == 4 || parseInt(valor_CFM1_tabla_7_5) == 3)) {
+                    if (!isNaN(valor_FU_tabla_7_5)) {
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_FU_tabla_7_5));
+
+                    }
+                    // console.log(valor_CAT_tabla_7_5);
+                    if (!isNaN(valor_CAT_tabla_7_5)) {
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        var defi_tabla_7_5 = parseInt(valor_FU_tabla_7_5) + parseInt(valor_CAT_tabla_7_5);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(defi_tabla_7_5);
+                    } 
+                    // else {
+                    //     $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_FU_tabla_7_5));
+                    // }
+                }else{
+                    let datos_consulta_deficiencia_tabla_7_5 = {
+                        '_token': token,
+                        'columna': clase_final_tabla_7_5,
+                        'Id_tabla': id_tabla
+                    };
+                    $.ajax({
+                        url: "/consultaValorDeficiencia",
+                        type: "post",
+                        data: datos_consulta_deficiencia_tabla_7_5,
+                        success:function(response){
+                            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_7_5]);
+                            if (!isNaN(valor_CAT_tabla_7_5)) {
+                                $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                                if (response[0][clase_final_tabla_7_5] != "") {
+                                    var defi_tabla_7_5 = parseInt(response[0][clase_final_tabla_7_5]) + parseInt(valor_CAT_tabla_7_5);
+                                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(defi_tabla_7_5);
+                                } else {
+                                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_CAT_tabla_7_5));
+                                }
+                            }
+                        }         
+                    });
+                };
+
+            }
+        break;
+
+        case "Tabla 7.6":
+            // Calculo del Ajuste
+            var valor_FP_tabla_7_6 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_7_6 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_7_6 = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+            var valor_FU_tabla_7_6 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+            var valor_CAT_tabla_7_6 = parseInt($("#resultado_CAT_"+id_fila_insertar_dato).val());
+
+            var ajuste_tabla_7_6 = (parseInt(valor_CFM1_tabla_7_6) - parseInt(valor_FP_tabla_7_6)) + (parseInt(valor_CFM2_tabla_7_6) - parseInt(valor_FP_tabla_7_6));
+
+            // Calculo clase final
+            var literal_tabla_7_6;
+            
+            if (ajuste_tabla_7_6 <= -2) {
+                literal_tabla_7_6 = "A";
+            }else if (ajuste_tabla_7_6 == -1) {
+                literal_tabla_7_6 = "B";
+            }else if (ajuste_tabla_7_6 == 0) {
+                literal_tabla_7_6 = "C";
+            }else if(ajuste_tabla_7_6 == 1){
+                literal_tabla_7_6 = "D";
+            }
+            else if(ajuste_tabla_7_6 >= 2){
+                literal_tabla_7_6 = "E";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_7_6 = valor_FP_tabla_7_6+literal_tabla_7_6;
+            
+            // calculo deficiencia
+            if (!isNaN(ajuste_tabla_7_6) && literal_tabla_7_6 != undefined) {
+                $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_6);
+                $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                if (parseInt(valor_FP_tabla_7_6) == 3 && parseInt(valor_CFM1_tabla_7_6) == 3 && parseInt(valor_CFM2_tabla_7_6) == 3) {
+                    if (!isNaN(valor_FU_tabla_7_6)) {
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_FU_tabla_7_6));
+                    }
+
+                    if (!isNaN(valor_CAT_tabla_7_6)) {
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        var defi_tabla_7_6 = parseInt(valor_FU_tabla_7_6) + parseInt(valor_CAT_tabla_7_6);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(defi_tabla_7_6);
+                    } 
+                    // else {
+                    //     $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_FU_tabla_7_6));
+                    // }
+                }else{
+                    let datos_consulta_deficiencia_tabla_7_6 = {
+                        '_token': token,
+                        'columna': clase_final_tabla_7_6,
+                        'Id_tabla': id_tabla
+                    };
+                    $.ajax({
+                        url: "/consultaValorDeficiencia",
+                        type: "post",
+                        data: datos_consulta_deficiencia_tabla_7_6,
+                        success:function(response){
+                            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_7_6]);
+                            if (!isNaN(valor_CAT_tabla_7_6)) {
+                                $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                                if (response[0][clase_final_tabla_7_6] != "") {
+                                    var defi_tabla_7_6 = parseInt(response[0][clase_final_tabla_7_6]) + parseInt(valor_CAT_tabla_7_6);
+                                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(defi_tabla_7_6);
+                                } else {
+                                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_CAT_tabla_7_6));
+                                }
+                            }
+                        }         
+                    });
+                };
+
+            }
+        break;
+
+        case "Tabla 7.7":
+            // Calculo del Ajuste
+            var valor_FP_tabla_7_7 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_7_7 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CAT_tabla_7_7 = parseInt($("#resultado_CAT_"+id_fila_insertar_dato).val());
+
+            var ajuste_tabla_7_7;
+            if (parseInt(valor_CFM1_tabla_7_7) == "" && parseInt(valor_FP_tabla_7_7) == 4) {
+                ajuste_tabla_7_7 = -1;
+            } else {
+                ajuste_tabla_7_7 = parseInt(valor_CFM1_tabla_7_7) - parseInt(valor_FP_tabla_7_7);
+            }
+
+            // Calculo clase final
+            var literal_tabla_7_7;
+            
+
+            if (ajuste_tabla_7_7 <= -1) {
+                literal_tabla_7_7 = "A";
+            }else if (ajuste_tabla_7_7 == 0) {
+                literal_tabla_7_7 = "B";
+            }else if (ajuste_tabla_7_7 >= 1) {
+                literal_tabla_7_7 = "C";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_7_7 = valor_FP_tabla_7_7+literal_tabla_7_7;
+
+            if (!isNaN(ajuste_tabla_7_7) && literal_tabla_7_7 != undefined) {
+                // calculo deficiencia
+                let datos_consulta_deficiencia_tabla_7_7 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_7_7,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_7_7,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+    
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_7);
+    
+                        if (!isNaN(valor_CAT_tabla_7_7)) {
+                            var defi_tabla_7_7 = parseInt(response[0][clase_final_tabla_7_7]) + valor_CAT_tabla_7_7;
+                            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(defi_tabla_7_7);
+                        } else {
+                            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_7_7]);
+                        }
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 7.8":
+            // Calculo del Ajuste
+            var valor_FP_tabla_7_8 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_7_8 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CAT_tabla_7_8 = parseInt($("#resultado_CAT_"+id_fila_insertar_dato).val());
+
+            var ajuste_tabla_7_8;
+            if (parseInt(valor_CFM1_tabla_7_8) == "" && parseInt(valor_FP_tabla_7_8) == 3) {
+                ajuste_tabla_7_8 = -1;
+            } else {
+                ajuste_tabla_7_8 = parseInt(valor_CFM1_tabla_7_8) - parseInt(valor_FP_tabla_7_8);
+            }
+
+            // Calculo clase final
+            var literal_tabla_7_8;
+            
+
+            if (ajuste_tabla_7_8 <= -1) {
+                literal_tabla_7_8 = "A";
+            }else if (ajuste_tabla_7_8 == 0) {
+                literal_tabla_7_8 = "B";
+            }else if (ajuste_tabla_7_8 >= 1) {
+                literal_tabla_7_8 = "C";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_7_8 = valor_FP_tabla_7_8+literal_tabla_7_8;
+
+            if (!isNaN(ajuste_tabla_7_8) && literal_tabla_7_8 != undefined) {
+                // calculo deficiencia
+                let datos_consulta_deficiencia_tabla_7_8 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_7_8,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_7_8,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+    
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_8);
+    
+                        if (!isNaN(valor_CAT_tabla_7_8)) {
+                            var defi_tabla_7_8 = parseInt(response[0][clase_final_tabla_7_8]) + parseInt(valor_CAT_tabla_7_8);
+                            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(defi_tabla_7_8);
+                        } else {
+                            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_7_8]);
+                        }
+    
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 8.5":
+            // Calculo del Ajuste
+            var valor_FP_tabla_8_5 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CAT_tabla_8_5 = parseInt($("#guardar_CAT_fila_"+id_fila_insertar_dato).val());
+
+            var ajuste_tabla_8_5 = parseInt(valor_CAT_tabla_8_5) - parseInt(valor_FP_tabla_8_5);
+
+            // Calculo clase final
+            var literal_tabla_8_5;
+            
+            if (ajuste_tabla_8_5 <= -1) {
+                literal_tabla_8_5 = "A";
+            }else if (ajuste_tabla_8_5 == 0) {
+                literal_tabla_8_5 = "B";
+            }else if (ajuste_tabla_8_5 >= 1) {
+                literal_tabla_8_5 = "C";
+            }
+  
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_8_5 = valor_FP_tabla_8_5+literal_tabla_8_5;
+            
+            if (!isNaN(ajuste_tabla_8_5) && literal_tabla_8_5 != undefined) {
+                // calculo deficiencia
+                let datos_consulta_deficiencia_tabla_8_5 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_8_5,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_8_5,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+    
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_8_5);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_8_5]);
+    
+                    }         
+                });
+            }
+
+        break;
+
+        case "Tabla 8.6":
+            // Calculo del Ajuste
+            var valor_FP_tabla_8_6 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_8_6 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CAT_tabla_8_6 = parseInt($("#guardar_CAT_fila_"+id_fila_insertar_dato).val());
+
+            var ajuste_tabla_8_6 = (parseInt(valor_CFM1_tabla_8_6) - parseInt(valor_FP_tabla_8_6)) + (parseInt(valor_CAT_tabla_8_6) - parseInt(valor_FP_tabla_8_6));
+
+            // Calculo clase final
+            var literal_tabla_8_6;
+            
+            if (ajuste_tabla_8_6 <= -2) {
+                literal_tabla_8_6 = "A";
+            }else if (ajuste_tabla_8_6 == -1) {
+                literal_tabla_8_6 = "B";
+            }else if (ajuste_tabla_8_6 == 0) {
+                literal_tabla_8_6 = "C";
+            }else if(ajuste_tabla_8_6 == 1){
+                literal_tabla_8_6 = "D";
+            }
+            else if(ajuste_tabla_8_6 >= 2){
+                literal_tabla_8_6 = "E";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_8_6 = valor_FP_tabla_8_6+literal_tabla_8_6;
+            
+            if (!isNaN(ajuste_tabla_8_6) && literal_tabla_8_6 != undefined) {
+                // calculo deficiencia
+                let datos_consulta_deficiencia_tabla_8_6 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_8_6,
+                    'Id_tabla': id_tabla
+                };
+                
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_8_6,
+                    success:function(response){
+                        
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+    
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_8_6);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_8_6]);
+    
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 8.7":
+            // Calculo del Ajuste
+            var valor_FP_tabla_8_7 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_8_7 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CAT_tabla_8_7 = parseInt($("#guardar_CAT_fila_"+id_fila_insertar_dato).val());
+
+            var ajuste_tabla_8_7 = (parseInt(valor_CFM1_tabla_8_7) - parseInt(valor_FP_tabla_8_7)) + (parseInt(valor_CAT_tabla_8_7) - parseInt(valor_FP_tabla_8_7));
+
+            // Calculo clase final
+            var literal_tabla_8_7;
+            
+            if (ajuste_tabla_8_7 <= -2) {
+                literal_tabla_8_7 = "A";
+            }else if (ajuste_tabla_8_7 == -1) {
+                literal_tabla_8_7 = "B";
+            }else if (ajuste_tabla_8_7 == 0) {
+                literal_tabla_8_7 = "C";
+            }else if(ajuste_tabla_8_7 == 1){
+                literal_tabla_8_7 = "D";
+            }
+            else if(ajuste_tabla_8_7 >= 2){
+                literal_tabla_8_7 = "E";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_8_7 = valor_FP_tabla_8_7+literal_tabla_8_7;
+            
+            if (!isNaN(ajuste_tabla_8_7) && literal_tabla_8_7 != undefined) {
+                // calculo deficiencia
+                let datos_consulta_deficiencia_tabla_8_7 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_8_7,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_8_7,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+    
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_8_7);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_8_7]);
+    
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 8.8":
+            // Calculo del Ajuste
+            var valor_FP_tabla_8_8 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CAT_tabla_8_8 = parseInt($("#guardar_CAT_fila_"+id_fila_insertar_dato).val());
+
+            var ajuste_tabla_8_8 = parseInt(valor_CAT_tabla_8_8) - parseInt(valor_FP_tabla_8_8);
+
+            // Calculo clase final
+            var literal_tabla_8_8;
+            
+            if (ajuste_tabla_8_8 <= -1) {
+                literal_tabla_8_8 = "A";
+            }else if (ajuste_tabla_8_8 == 0) {
+                literal_tabla_8_8 = "B";
+            }else if (ajuste_tabla_8_8 >= 1) {
+                literal_tabla_8_8 = "C";
+            }
+  
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_8_8 = valor_FP_tabla_8_8+literal_tabla_8_8;
+            
+            if (!isNaN(ajuste_tabla_8_8) && literal_tabla_8_8 != undefined) {
+                // calculo deficiencia
+                let datos_consulta_deficiencia_tabla_8_8 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_8_8,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_8_8,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+    
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_8_8);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_8_8]);
+    
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 8.9":
+            // Calculo del Ajuste
+            var valor_FP_tabla_8_9 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CAT_tabla_8_9 = parseInt($("#guardar_CAT_fila_"+id_fila_insertar_dato).val());
+
+            var ajuste_tabla_8_9 = parseInt(valor_CAT_tabla_8_9) - parseInt(valor_FP_tabla_8_9);
+
+            // Calculo clase final
+            var literal_tabla_8_9;
+            
+            if (ajuste_tabla_8_9 <= -1) {
+                literal_tabla_8_9 = "A";
+            }else if (ajuste_tabla_8_9 == 0) {
+                literal_tabla_8_9 = "B";
+            }else if (ajuste_tabla_8_9 >= 1) {
+                literal_tabla_8_9 = "C";
+            }
+  
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_8_9 = valor_FP_tabla_8_9+literal_tabla_8_9;
+            
+            if (!isNaN(ajuste_tabla_8_9) && literal_tabla_8_9 != undefined) {
+                // calculo deficiencia
+                let datos_consulta_deficiencia_tabla_8_9 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_8_9,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_8_9,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+    
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_8_9);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_8_9]);
+    
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 8.10":
+            // Calculo del Ajuste
+            var valor_FP_tabla_8_10 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_8_10 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CAT_tabla_8_10 = parseInt($("#guardar_CAT_fila_"+id_fila_insertar_dato).val());
+
+            var ajuste_tabla_8_10 = (parseInt(valor_CFM1_tabla_8_10) - parseInt(valor_FP_tabla_8_10)) + (parseInt(valor_CAT_tabla_8_10) - parseInt(valor_FP_tabla_8_10));
+
+            // Calculo clase final
+            var literal_tabla_8_10;
+            
+            if (ajuste_tabla_8_10 <= -2) {
+                literal_tabla_8_10 = "A";
+            }else if (ajuste_tabla_8_10 == -1) {
+                literal_tabla_8_10 = "B";
+            }else if (ajuste_tabla_8_10 == 0) {
+                literal_tabla_8_10 = "C";
+            }else if(ajuste_tabla_8_10 == 1){
+                literal_tabla_8_10 = "D";
+            }
+            else if(ajuste_tabla_8_10 >= 2){
+                literal_tabla_8_10 = "E";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_8_10 = valor_FP_tabla_8_10+literal_tabla_8_10;
+            
+            if (!isNaN(ajuste_tabla_8_10) && literal_tabla_8_10 != undefined) {
+                // calculo deficiencia
+                let datos_consulta_deficiencia_tabla_8_10 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_8_10,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_8_10,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+    
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_8_10);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_8_10]);
+    
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 8.11":
+            // Calculo del Ajuste
+            var valor_FP_tabla_8_11 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_8_11 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CAT_tabla_8_11 = parseInt($("#guardar_CAT_fila_"+id_fila_insertar_dato).val());
+
+            var ajuste_tabla_8_11 = (parseInt(valor_CFM1_tabla_8_11) - parseInt(valor_FP_tabla_8_11)) + (parseInt(valor_CAT_tabla_8_11) - parseInt(valor_FP_tabla_8_11));
+
+            // Calculo clase final
+            var literal_tabla_8_11;
+            
+            if (ajuste_tabla_8_11 <= -2) {
+                literal_tabla_8_11 = "A";
+            }else if (ajuste_tabla_8_11 == -1) {
+                literal_tabla_8_11 = "B";
+            }else if (ajuste_tabla_8_11 == 0) {
+                literal_tabla_8_11 = "C";
+            }else if(ajuste_tabla_8_11 == 1){
+                literal_tabla_8_11 = "D";
+            }
+            else if(ajuste_tabla_8_11 >= 2){
+                literal_tabla_8_11 = "E";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_8_11 = valor_FP_tabla_8_11+literal_tabla_8_11;
+            
+            if (!isNaN(ajuste_tabla_8_11) && literal_tabla_8_11 != undefined) {
+                // calculo deficiencia
+                let datos_consulta_deficiencia_tabla_8_11 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_8_11,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_8_11,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+    
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_8_11);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_8_11]);
+    
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 8.12":
+            // Calculo del Ajuste
+            var valor_FP_tabla_8_12 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_8_12 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CAT_tabla_8_12 = parseInt($("#guardar_CAT_fila_"+id_fila_insertar_dato).val());
+
+            var ajuste_tabla_8_12 = (parseInt(valor_CFM1_tabla_8_12) - parseInt(valor_FP_tabla_8_12)) + (parseInt(valor_CAT_tabla_8_12) - parseInt(valor_FP_tabla_8_12));
+
+            // Calculo clase final
+            var literal_tabla_8_12;
+
+            // Si FP=1 sólo se cuenta con 3 opciones de deficiencia a diferencia de las demás clases
+            /*
+            SI(Y(I55=1;N55<=-1);"A";
+                SI(Y(I55=1;N55=0);"B";
+                    SI(Y(I55=1;N55>=1);"C";
+                        SI(N55<=-2;"A";
+                            SI(N55=-1;"B";
+                                SI(N55=0;"C";
+                                    SI(N55=1;"D";
+                                        SI(N55>=2;"E")
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            ) 
+            */
+            if (ajuste_tabla_8_12 <= -2) {
+                literal_tabla_8_12 = "A";
+            }else if (ajuste_tabla_8_12 == -1) {
+                literal_tabla_8_12 = "B";
+            }else if (ajuste_tabla_8_12 == 0) {
+                literal_tabla_8_12 = "C";
+            }else if(ajuste_tabla_8_12 == 1){
+                literal_tabla_8_12 = "D";
+            }
+            else if(ajuste_tabla_8_12 >= 2){
+                literal_tabla_8_12 = "E";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_8_12 = valor_FP_tabla_8_12+literal_tabla_8_12;
+            
+            if (!isNaN(ajuste_tabla_8_12) && literal_tabla_8_12 != undefined) {
+                // calculo deficiencia
+                let datos_consulta_deficiencia_tabla_8_12 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_8_12,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_8_12,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+    
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_8_12);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_8_12]);
+    
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 8.13":
+            // Calculo del Ajuste
+            var valor_FP_tabla_8_13 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_8_13 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_8_13 = parseInt(valor_CFM1_tabla_8_13) - parseInt(valor_FP_tabla_8_13);
+
+            // Calculo del Literal
+            var literal_tabla_8_13;
+            if (ajuste_tabla_8_13 <= -1) {
+                literal_tabla_8_13 = "A";
+            }else if (ajuste_tabla_8_13 == 0) {
+                literal_tabla_8_13 = "B";
+            }else if (ajuste_tabla_8_13 >= 1) {
+                literal_tabla_8_13 = "C";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_8_13;
+            if (parseInt(valor_FP_tabla_8_13) == 2 &&  parseInt(valor_CFM1_tabla_8_13) == 1) {
+                clase_final_tabla_8_13 = valor_FP_tabla_8_13+"A";
+            }else if(parseInt(valor_FP_tabla_8_13) == 2 &&  parseInt(valor_CFM1_tabla_8_13) == 2){
+                clase_final_tabla_8_13 = valor_FP_tabla_8_13+"C";
+            }else{
+                clase_final_tabla_8_13 = valor_FP_tabla_8_13+literal_tabla_8_13;
+            }
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_8_13) && literal_tabla_8_13 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_8_13 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_8_13,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_8_13,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_8_13);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_8_13]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 8.14":
+            // Calculo del Ajuste
+            var valor_FP_tabla_8_14 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_8_14 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_8_14 = parseInt(valor_CFM1_tabla_8_14) - parseInt(valor_FP_tabla_8_14);
+
+            // Calculo del Literal
+            var literal_tabla_8_14;
+            if (ajuste_tabla_8_14 <= -1) {
+                literal_tabla_8_14 = "A";
+            }else if (ajuste_tabla_8_14 == 0) {
+                literal_tabla_8_14 = "B";
+            }else if (ajuste_tabla_8_14 >= 1) {
+                literal_tabla_8_14 = "C";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_8_14;
+            if (parseInt(valor_FP_tabla_8_14) == 2 &&  parseInt(valor_CFM1_tabla_8_14) == 1) {
+                clase_final_tabla_8_14 = valor_FP_tabla_8_14+"A";
+            }else if(parseInt(valor_FP_tabla_8_14) == 2 &&  parseInt(valor_CFM1_tabla_8_14) == 2){
+                clase_final_tabla_8_14 = valor_FP_tabla_8_14+"C";
+            }else{
+                clase_final_tabla_8_14 = valor_FP_tabla_8_14+literal_tabla_8_14;
+            }
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_8_14) && literal_tabla_8_14 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_8_14 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_8_14,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_8_14,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_8_14);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_8_14]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 9.4":
+            // Calculo del Ajuste
+            var valor_FP_tabla_9_4 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_9_4 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_9_4 = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_9_4 = (parseInt(valor_CFM1_tabla_9_4) - parseInt(valor_FP_tabla_9_4)) + (parseInt(valor_CFM2_tabla_9_4) - parseInt(valor_FP_tabla_9_4));
+            // Calculo del Literal
+            var literal_tabla_9_4;
+            
+            if (ajuste_tabla_9_4 <= -2) {
+                literal_tabla_9_4 = "A";
+            }else if (ajuste_tabla_9_4 == -1) {
+                literal_tabla_9_4 = "B";
+            }else if (ajuste_tabla_9_4 == 0) {
+                literal_tabla_9_4 = "C";
+            }else if(ajuste_tabla_9_4 == 1){
+                literal_tabla_9_4 = "D";
+            }
+            else if(ajuste_tabla_9_4 >= 1){
+                literal_tabla_9_4 = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_9_4 = valor_FP_tabla_9_4+literal_tabla_9_4;
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_9_4) && literal_tabla_9_4 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_9_4 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_9_4,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_9_4,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_9_4);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_9_4]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 10.1":
+            // deficiencia
+            var valor_FU_tabla_10_1 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_10_1;
+            if (valor_FU_tabla_10_1 == 3) {
+                clase_final_tabla_10_1 = "1A";
+            }else{
+                clase_final_tabla_10_1 = "1B";
+            }
+
+            let datos_consulta_deficiencia_tabla_10_1 = {
+                '_token': token,
+                'columna': clase_final_tabla_10_1,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_10_1,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_10_1);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_10_1]);
+                }         
+            });
+        break;
+
+        case "Tabla 10.2":
+            // deficiencia
+            var valor_FU_tabla_10_2 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_10_2;
+            if (valor_FU_tabla_10_2 == 3) {
+                clase_final_tabla_10_2 = "1A";
+            }else{
+                clase_final_tabla_10_2 = "1B";
+            }
+
+            let datos_consulta_deficiencia_tabla_10_2 = {
+                '_token': token,
+                'columna': clase_final_tabla_10_2,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_10_2,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_10_2);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_10_2]);
+                }         
+            });
+
+        break;
+        case "Tabla 10.5":
+            // Calculo del Ajuste
+            var valor_FP_tabla_10_5 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_10_5 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_10_5 = parseInt(valor_CFM1_tabla_10_5) - parseInt(valor_FP_tabla_10_5);
+
+            // Calculo del Literal
+            var literal_tabla_10_5;
+            
+            if (ajuste_tabla_10_5 <= -1) {
+                literal_tabla_10_5 = "A";
+            }else if (ajuste_tabla_10_5 == 0) {
+                literal_tabla_10_5 = "B";
+            }else if (ajuste_tabla_10_5 >= 1) {
+                literal_tabla_10_5 = "C";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_10_5 = valor_FP_tabla_10_5+literal_tabla_10_5;
+  
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_10_5) && literal_tabla_10_5 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_10_5 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_10_5,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_10_5,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_10_5);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_10_5]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 11.4":
+            // deficiencia
+            var valor_FU_tabla_11_4 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_11_4;
+
+            if (valor_FU_tabla_11_4 == 8) {
+                clase_final_tabla_11_4 = "1A";
+            }else if (valor_FU_tabla_11_4 == 15) {
+                clase_final_tabla_11_4 = "1B";
+            }else if (valor_FU_tabla_11_4 == 18) {
+                clase_final_tabla_11_4 = "1C";
+            }
+            else if (valor_FU_tabla_11_4 == 23) {
+                clase_final_tabla_11_4 = "1D";
+            };
+
+            let datos_consulta_deficiencia_tabla_11_4 = {
+                '_token': token,
+                'columna': clase_final_tabla_11_4,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_11_4,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_11_4);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_11_4]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 11.5":
+            // deficiencia
+            var valor_FU_tabla_11_5 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_11_5;
+
+            if (valor_FU_tabla_11_5 == 5) {
+                clase_final_tabla_11_5 = "1A";
+            }else if (valor_FU_tabla_11_5 == 7) {
+                clase_final_tabla_11_5 = "1B";
+            }else if (valor_FU_tabla_11_5 == 10) {
+                clase_final_tabla_11_5 = "1C";
+            }else if (valor_FU_tabla_11_5 == 15) {
+                clase_final_tabla_11_5 = "1D";
+            }else if (valor_FU_tabla_11_5 == 20) {
+                clase_final_tabla_11_5 = "1E";
+            }else if (valor_FU_tabla_11_5 == 23) {
+                clase_final_tabla_11_5 = "2A";
+            }else if (valor_FU_tabla_11_5 == 30) {
+                clase_final_tabla_11_5 = "2B";
+            }
+
+            let datos_consulta_deficiencia_tabla_11_5 = {
+                '_token': token,
+                'columna': clase_final_tabla_11_5,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_11_5,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_11_5);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_11_5]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 12.1":
+            // deficiencia
+            var valor_FU_tabla_12_1 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_12_1;
+            
+            if (valor_FU_tabla_12_1 == 25) {
+                clase_final_tabla_12_1 = "1A";
+            }else if (valor_FU_tabla_12_1 == 50) {
+                clase_final_tabla_12_1 = "1B";
+            }else if (valor_FU_tabla_12_1 == 75) {
+                clase_final_tabla_12_1 = "1C";
+            }else if (valor_FU_tabla_12_1 == 100) {
+                clase_final_tabla_12_1 = "1D";
+            }
+
+            let datos_consulta_deficiencia_tabla_12_1 = {
+                '_token': token,
+                'columna': clase_final_tabla_12_1,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_12_1,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_1);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_1]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 12.2":
+            // deficiencia
+            var valor_FU_tabla_12_2 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_12_2;
+
+            if (valor_FU_tabla_12_2 == 20) {
+                clase_final_tabla_12_2 = "1A";
+            }else if (valor_FU_tabla_12_2 == 40) {
+                clase_final_tabla_12_2 = "1B";
+            }else if (valor_FU_tabla_12_2 == 50) {
+                clase_final_tabla_12_2 = "1C";
+            }else if (valor_FU_tabla_12_2 == 60) {
+                clase_final_tabla_12_2 = "1D";
+            }
+
+            let datos_consulta_deficiencia_tabla_12_2 = {
+                '_token': token,
+                'columna': clase_final_tabla_12_2,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_12_2,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_2);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_2]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 12.3":
+            // deficiencia
+            var valor_FU_tabla_12_3 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_12_3;
+            
+            if (valor_FU_tabla_12_3 == 10) {
+                clase_final_tabla_12_3 = "1A";
+            }else if (valor_FU_tabla_12_3 == 20) {
+                clase_final_tabla_12_3 = "1B";
+            }else if (valor_FU_tabla_12_3 == 35) {
+                clase_final_tabla_12_3 = "1C";
+            }else if (valor_FU_tabla_12_3 == 50) {
+                clase_final_tabla_12_3 = "1D";
+            }
+
+            let datos_consulta_deficiencia_tabla_12_3 = {
+                '_token': token,
+                'columna': clase_final_tabla_12_3,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_12_3,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_3);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_3]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 12.4A":
+            // deficiencia
+            var valor_FU_tabla_12_4A = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_12_4A;
+            	
+            if (valor_FU_tabla_12_4A == 10) {
+                clase_final_tabla_12_4A = "1A";
+            }else if (valor_FU_tabla_12_4A == 15) {
+                clase_final_tabla_12_4A = "1B";
+            }else if (valor_FU_tabla_12_4A == 20) {
+                clase_final_tabla_12_4A = "1C";
+            }else if (valor_FU_tabla_12_4A == 25) {
+                clase_final_tabla_12_4A = "1D";
+            }
+
+            let datos_consulta_deficiencia_tabla_12_4A = {
+                '_token': token,
+                'columna': clase_final_tabla_12_4A,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_12_4A,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_4A);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_4A]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 12.4B":
+            // deficiencia
+            var valor_FU_tabla_12_4B = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_12_4B;
+            
+            if (valor_FU_tabla_12_4B == 5) {
+                clase_final_tabla_12_4B = "1A";
+            }else if (valor_FU_tabla_12_4B == 10) {
+                clase_final_tabla_12_4B = "1B";
+            }else if (valor_FU_tabla_12_4B == 15) {
+                clase_final_tabla_12_4B = "1C";
+            }else if (valor_FU_tabla_12_4B == 20) {
+                clase_final_tabla_12_4B = "1D";
+            }
+
+            let datos_consulta_deficiencia_tabla_12_4B = {
+                '_token': token,
+                'columna': clase_final_tabla_12_4B,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_12_4B,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_4B);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_4B]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 12.4C":
+            // deficiencia
+            var valor_FU_tabla_12_4C = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_12_4C;
+            
+            if (valor_FU_tabla_12_4C == 5) {
+                clase_final_tabla_12_4C = "1A";
+            }else if (valor_FU_tabla_12_4C == 10) {
+                clase_final_tabla_12_4C = "1B";
+            }else if (valor_FU_tabla_12_4C == 15) {
+                clase_final_tabla_12_4C = "1C";
+            }else if (valor_FU_tabla_12_4C == 0) {
+                clase_final_tabla_12_4C = "NADA";
+            }
+
+            if (clase_final_tabla_12_4C == "NADA") {
+                $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(0);
+            }else{
+                let datos_consulta_deficiencia_tabla_12_4C = {
+                    '_token': token,
+                    'columna': clase_final_tabla_12_4C,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_12_4C,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+    
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_4C);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_4C]);
+                    }         
+                });
+            }
+
+        break;
+
+        case "Tabla 12.4D":
+            // deficiencia
+            var valor_FU_tabla_12_4D = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_12_4D;
+            
+            if (valor_FU_tabla_12_4D == 10) {
+                clase_final_tabla_12_4D = "1A";
+            }else if (valor_FU_tabla_12_4D == 20) {
+                clase_final_tabla_12_4D = "1B";
+            }else if (valor_FU_tabla_12_4D == 40) {
+                clase_final_tabla_12_4D = "1C";
+            }else if (valor_FU_tabla_12_4D == 60) {
+                clase_final_tabla_12_4D = "1D";
+            }else if (valor_FU_tabla_12_4D == 80) {
+                clase_final_tabla_12_4D = "1E";
+            }
+
+            let datos_consulta_deficiencia_tabla_12_4D = {
+                '_token': token,
+                'columna': clase_final_tabla_12_4D,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_12_4D,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_4D);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_4D]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 12.5":
+            // deficiencia
+            var valor_FU_tabla_12_5 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_12_5;
+            
+            if (valor_FU_tabla_12_5 == 10) {
+                clase_final_tabla_12_5 = "1A";
+            }else if (valor_FU_tabla_12_5 == 15) {
+                clase_final_tabla_12_5 = "1B";
+            }else if (valor_FU_tabla_12_5 == 20) {
+                clase_final_tabla_12_5 = "1C";
+            }
+
+            let datos_consulta_deficiencia_tabla_12_5 = {
+                '_token': token,
+                'columna': clase_final_tabla_12_5,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_12_5,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_5);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_5]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 12.6":
+            // deficiencia
+            var valor_FU_tabla_12_6 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_12_6;
+            
+            if (valor_FU_tabla_12_6 == 2) {
+                clase_final_tabla_12_6 = "1A";
+            }else if (valor_FU_tabla_12_6 == 3) {
+                clase_final_tabla_12_6 = "1B";
+            }else if (valor_FU_tabla_12_6 == 4) {
+                clase_final_tabla_12_6 = "1C";
+            }else if (valor_FU_tabla_12_6 == 5) {
+                clase_final_tabla_12_6 = "1D";
+            }
+
+            let datos_consulta_deficiencia_tabla_12_6 = {
+                '_token': token,
+                'columna': clase_final_tabla_12_6,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_12_6,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_6);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_6]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 12.7":
+            // deficiencia
+            var valor_FU_tabla_12_7 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_12_7;
+            // 		
+            if (valor_FU_tabla_12_7 == 1) {
+                clase_final_tabla_12_7 = "1A";
+            }else if (valor_FU_tabla_12_7 == 5) {
+                clase_final_tabla_12_7 = "1B";
+            }else if (valor_FU_tabla_12_7 == 10) {
+                clase_final_tabla_12_7 = "1C";
+            }
+
+            let datos_consulta_deficiencia_tabla_12_7 = {
+                '_token': token,
+                'columna': clase_final_tabla_12_7,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_12_7,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_7);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_7]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 12.8":
+            // deficiencia
+            var valor_FU_tabla_12_8 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_12_8;
+            // 		
+            if (valor_FU_tabla_12_8 == 1) {
+                clase_final_tabla_12_8 = "1A";
+            }else if (valor_FU_tabla_12_8 == 5) {
+                clase_final_tabla_12_8 = "1B";
+            }else if (valor_FU_tabla_12_8 == 10) {
+                clase_final_tabla_12_8 = "1C";
+            }
+
+            let datos_consulta_deficiencia_tabla_12_8 = {
+                '_token': token,
+                'columna': clase_final_tabla_12_8,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_12_8,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_8);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_8]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 12.18":
+            // Calculo del Ajuste
+            var valor_FP_tabla_12_18 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_12_18 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_12_18 = parseInt(valor_CFM1_tabla_12_18) - parseInt(valor_FP_tabla_12_18);
+
+            // Calculo del Literal
+            var literal_tabla_12_18;
+            
+            if (ajuste_tabla_12_18 <= -1) {
+                literal_tabla_12_18 = "A";
+            }else if (ajuste_tabla_12_18 == 0) {
+                literal_tabla_12_18 = "B";
+            }else if (ajuste_tabla_12_18 >= 1) {
+                literal_tabla_12_18 = "C";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_12_18 = valor_FP_tabla_12_18+literal_tabla_12_18;
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_12_18) && literal_tabla_12_18 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_12_18 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_12_18,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_12_18,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_18);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_18]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 12.19":
+            // Calculo del Ajuste
+            var valor_FP_tabla_12_19 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_12_19 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_12_19 = parseInt(valor_CFM1_tabla_12_19) - parseInt(valor_FP_tabla_12_19);
+
+            // Calculo del Literal
+            var literal_tabla_12_19;
+            
+            if (ajuste_tabla_12_19 <= -1) {
+                literal_tabla_12_19 = "A";
+            }else if (ajuste_tabla_12_19 == 0) {
+                literal_tabla_12_19 = "B";
+            }else if (ajuste_tabla_12_19 >= 1) {
+                literal_tabla_12_19 = "C";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_12_19 = valor_FP_tabla_12_19+literal_tabla_12_19;
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_12_19) && literal_tabla_12_19 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_12_19 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_12_19,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_12_19,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_19);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_19]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 12.20A":
+            // deficiencia
+            var valor_FU_tabla_12_20A = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_12_20A;
+
+            if (valor_FU_tabla_12_20A == 1) {
+                clase_final_tabla_12_20A = "1A";
+            }else if (valor_FU_tabla_12_20A == 3) {
+                clase_final_tabla_12_20A = "1B";
+            }
+
+            let datos_consulta_deficiencia_tabla_12_20A = {
+                '_token': token,
+                'columna': clase_final_tabla_12_20A,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_12_20A,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_20A);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_20A]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 12.20B":
+            // deficiencia
+            var valor_FU_tabla_12_20B = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_12_20B;
+
+            if (valor_FU_tabla_12_20B == 5) {
+                clase_final_tabla_12_20B = "1A";
+            }else if (valor_FU_tabla_12_20B == 10) {
+                clase_final_tabla_12_20B = "1B";
+            }else if (valor_FU_tabla_12_20B == 35) {
+                clase_final_tabla_12_20B = "1C";
+            }else if (valor_FU_tabla_12_20B == 45) {
+                clase_final_tabla_12_20B = "1D";
+            }
+
+            let datos_consulta_deficiencia_tabla_12_20B = {
+                '_token': token,
+                'columna': clase_final_tabla_12_20B,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_12_20B,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_20B);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_20B]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 12.20C":
+            // deficiencia
+            var valor_FU_tabla_12_20C = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_12_20C;
+            	
+
+            if (valor_FU_tabla_12_20C == 15) {
+                clase_final_tabla_12_20C = "1A";
+            }else if (valor_FU_tabla_12_20C == 45) {
+                clase_final_tabla_12_20C = "1B";
+            }
+            let datos_consulta_deficiencia_tabla_12_20C = {
+                '_token': token,
+                'columna': clase_final_tabla_12_20C,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_12_20C,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_20C);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_20C]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 12.20D":
+            // deficiencia
+            var valor_FU_tabla_12_20D = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_12_20D;
+
+            if (valor_FU_tabla_12_20D == 5) {
+                clase_final_tabla_12_20D = "1A";
+            }else if (valor_FU_tabla_12_20D == 7) {
+                clase_final_tabla_12_20D = "1B";
+            }
+
+            let datos_consulta_deficiencia_tabla_12_20D = {
+                '_token': token,
+                'columna': clase_final_tabla_12_20D,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_12_20D,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_20D);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_12_20D]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 13.2A":
+            // deficiencia
+            var valor_FU_tabla_13_2A = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_13_2A;
+
+            if (valor_FU_tabla_13_2A == 20) {
+                clase_final_tabla_13_2A = "1A";
+            }else if (valor_FU_tabla_13_2A == 40) {
+                clase_final_tabla_13_2A = "1B";
+            }else if (valor_FU_tabla_13_2A == 60) {
+                clase_final_tabla_13_2A = "1C";
+            }else if (valor_FU_tabla_13_2A == 80) {
+                clase_final_tabla_13_2A = "1D";
+            }else if (valor_FU_tabla_13_2A == 100) {
+                clase_final_tabla_13_2A = "1E";
+            }
+
+            let datos_consulta_deficiencia_tabla_13_2A = {
+                '_token': token,
+                'columna': clase_final_tabla_13_2A,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_13_2A,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_2A);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_13_2A]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 13.2B":
+            // deficiencia
+            var valor_FU_tabla_13_2B = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_13_2B;
+
+            if (valor_FU_tabla_13_2B == 20) {
+                clase_final_tabla_13_2B = "1A";
+            }else if (valor_FU_tabla_13_2B == 40) {
+                clase_final_tabla_13_2B = "1B";
+            }else if (valor_FU_tabla_13_2B == 60) {
+                clase_final_tabla_13_2B = "1C";
+            }else if (valor_FU_tabla_13_2B == 80) {
+                clase_final_tabla_13_2B = "1D";
+            }else if (valor_FU_tabla_13_2B == 100) {
+                clase_final_tabla_13_2B = "1E";
+            }
+
+            let datos_consulta_deficiencia_tabla_13_2B = {
+                '_token': token,
+                'columna': clase_final_tabla_13_2B,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_13_2B,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_2B);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_13_2B]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 13.3A":
+            // deficiencia
+            var valor_FU_tabla_13_3A = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_13_3A;
+
+            if (valor_FU_tabla_13_3A == 20) {
+                clase_final_tabla_13_3A = "1A";
+            }else if (valor_FU_tabla_13_3A == 40) {
+                clase_final_tabla_13_3A = "1B";
+            }
+
+            let datos_consulta_deficiencia_tabla_13_3A = {
+                '_token': token,
+                'columna': clase_final_tabla_13_3A,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_13_3A,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_3A);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_13_3A]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 13.3B":
+            // deficiencia
+            var valor_FU_tabla_13_3B = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_13_3B;
+
+            if (valor_FU_tabla_13_3B == 20) {
+                clase_final_tabla_13_3B = "1A";
+            }else if (valor_FU_tabla_13_3B == 40) {
+                clase_final_tabla_13_3B = "1B";
+            }
+
+            let datos_consulta_deficiencia_tabla_13_3B = {
+                '_token': token,
+                'columna': clase_final_tabla_13_3B,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_13_3B,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_3B);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_13_3B]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 13.4A":
+            // deficiencia
+            var valor_FU_tabla_13_4A = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_13_4A;
+
+            if (valor_FU_tabla_13_4A == 20) {
+                clase_final_tabla_13_4A = "1A";
+            }else if (valor_FU_tabla_13_4A == 40) {
+                clase_final_tabla_13_4A = "1B";
+            }
+
+            let datos_consulta_deficiencia_tabla_13_4A = {
+                '_token': token,
+                'columna': clase_final_tabla_13_4A,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_13_4A,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_4A);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_13_4A]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 13.4B":
+            // deficiencia
+            var valor_FU_tabla_13_4B = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_13_4B;
+
+            if (valor_FU_tabla_13_4B == 20) {
+                clase_final_tabla_13_4B = "1A";
+            }else if (valor_FU_tabla_13_4B == 40) {
+                clase_final_tabla_13_4B = "1B";
+            }
+
+            let datos_consulta_deficiencia_tabla_13_4B = {
+                '_token': token,
+                'columna': clase_final_tabla_13_4B,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_13_4B,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_4B);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_13_4B]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 13.5":
+            // deficiencia
+            var valor_FU_tabla_13_5 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_13_5;
+
+            if (valor_FU_tabla_13_5 == 20) {
+                clase_final_tabla_13_5 = "1A";
+            }else if (valor_FU_tabla_13_5 == 40) {
+                clase_final_tabla_13_5 = "1B";
+            }
+
+            let datos_consulta_deficiencia_tabla_13_5 = {
+                '_token': token,
+                'columna': clase_final_tabla_13_5,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_13_5,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_5);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_13_5]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 13.6":
+            // deficiencia
+            var valor_FU_tabla_13_6 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_13_6;
+
+            if (valor_FU_tabla_13_6 == 20) {
+                clase_final_tabla_13_6 = "1A";
+            }else if (valor_FU_tabla_13_6 == 40) {
+                clase_final_tabla_13_6 = "1B";
+            }else if (valor_FU_tabla_13_6 == 70) {
+                clase_final_tabla_13_6 = "1C";
+            }else if (valor_FU_tabla_13_6 == 90) {
+                clase_final_tabla_13_6 = "1D";
+            }else if (valor_FU_tabla_13_6 == 100) {
+                clase_final_tabla_13_6 = "1E";
+            }
+
+            let datos_consulta_deficiencia_tabla_13_6 = {
+                '_token': token,
+                'columna': clase_final_tabla_13_6,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_13_6,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_6);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_13_6]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 13.7":
+            // deficiencia
+            var valor_FU_tabla_13_7 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_13_7;
+            			
+            if (valor_FU_tabla_13_7 == 20) {
+                clase_final_tabla_13_7 = "1A";
+            }else if (valor_FU_tabla_13_7 == 40) {
+                clase_final_tabla_13_7 = "1B";
+            }else if (valor_FU_tabla_13_7 == 60) {
+                clase_final_tabla_13_7 = "1C";
+            }else if (valor_FU_tabla_13_7 == 70) {
+                clase_final_tabla_13_7 = "1D";
+            }
+
+            let datos_consulta_deficiencia_tabla_13_7 = {
+                '_token': token,
+                'columna': clase_final_tabla_13_7,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_13_7,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_7);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_13_7]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 13.8":
+            // deficiencia
+            var valor_FU_tabla_13_8 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+
+            // Calculo clase final
+            var clase_final_tabla_13_8;
+            			
+            if (valor_FU_tabla_13_8 == 20) {
+                clase_final_tabla_13_8 = "1A";
+            }
+
+            let datos_consulta_deficiencia_tabla_13_8 = {
+                '_token': token,
+                'columna': clase_final_tabla_13_8,
+                'Id_tabla': id_tabla
+            };
+            $.ajax({
+                url: "/consultaValorDeficiencia",
+                type: "post",
+                data: datos_consulta_deficiencia_tabla_13_8,
+                success:function(response){
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_8);
+                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_13_8]);
+                }         
+            });
+
+        break;
+
+        case "Tabla 14.15":
+            // Calculo del Ajuste
+            var valor_FP_tabla_14_15 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_14_15 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_14_15 = parseInt(valor_CFM1_tabla_14_15) - parseInt(valor_FP_tabla_14_15);
+
+            // Calculo del Literal
+            var literal_tabla_14_15;
+            
+            if (ajuste_tabla_14_15 <= -1) {
+                literal_tabla_14_15 = "A";
+            }else if (ajuste_tabla_14_15 == 0) {
+                literal_tabla_14_15 = "B";
+            }else if (ajuste_tabla_14_15 >= 1) {
+                literal_tabla_14_15 = "C";
+            }
+
+            // Calculo de la Clase Final
+            var clase_final_tabla_14_15 = valor_FP_tabla_14_15+literal_tabla_14_15;
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_14_15) && literal_tabla_14_15 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_14_15 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_14_15,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_14_15,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_14_15);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_14_15]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 15.1A":
+            // Calculo del Ajuste
+            var valor_FP_tabla_15_1A = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_15_1A = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_15_1A = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_15_1A = (parseInt(valor_CFM1_tabla_15_1A) - parseInt(valor_FP_tabla_15_1A)) + (parseInt(valor_CFM2_tabla_15_1A) - parseInt(valor_FP_tabla_15_1A));
+            // Calculo del Literal
+            var literal_tabla_15_1A;
+            
+            if (ajuste_tabla_15_1A <= -2) {
+                literal_tabla_15_1A = "A";
+            }else if (ajuste_tabla_15_1A == -1) {
+                literal_tabla_15_1A = "B";
+            }else if (ajuste_tabla_15_1A == 0) {
+                literal_tabla_15_1A = "C";
+            }else if(ajuste_tabla_15_1A == 1){
+                literal_tabla_15_1A = "D";
+            }
+            else if(ajuste_tabla_15_1A >= 2){
+                literal_tabla_15_1A = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_15_1A = valor_FP_tabla_15_1A+literal_tabla_15_1A;
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_15_1A) && literal_tabla_15_1A != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_15_1A = {
+                    '_token': token,
+                    'columna': clase_final_tabla_15_1A,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_15_1A,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_15_1A);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_15_1A]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 15.1B":
+            // Calculo del Ajuste
+            var valor_FP_tabla_15_1B = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_15_1B = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_15_1B = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_15_1B = (parseInt(valor_CFM1_tabla_15_1B) - parseInt(valor_FP_tabla_15_1B)) + (parseInt(valor_CFM2_tabla_15_1B) - parseInt(valor_FP_tabla_15_1B));
+            // Calculo del Literal
+            var literal_tabla_15_1B;
+            
+            if (ajuste_tabla_15_1B <= -2) {
+                literal_tabla_15_1B = "A";
+            }else if (ajuste_tabla_15_1B == -1) {
+                literal_tabla_15_1B = "B";
+            }else if (ajuste_tabla_15_1B == 0) {
+                literal_tabla_15_1B = "C";
+            }else if(ajuste_tabla_15_1B == 1){
+                literal_tabla_15_1B = "D";
+            }
+            else if(ajuste_tabla_15_1B >= 2){
+                literal_tabla_15_1B = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_15_1B = valor_FP_tabla_15_1B+literal_tabla_15_1B;
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_15_1B) && literal_tabla_15_1B != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_15_1B = {
+                    '_token': token,
+                    'columna': clase_final_tabla_15_1B,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_15_1B,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_15_1B);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_15_1B]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 15.1C":
+            // Calculo del Ajuste
+            var valor_FP_tabla_15_1C = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_15_1C = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_15_1C = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_15_1C = (parseInt(valor_CFM1_tabla_15_1C) - parseInt(valor_FP_tabla_15_1C)) + (parseInt(valor_CFM2_tabla_15_1C) - parseInt(valor_FP_tabla_15_1C));
+            // Calculo del Literal
+            var literal_tabla_15_1C;
+            
+            if (ajuste_tabla_15_1C <= -2) {
+                literal_tabla_15_1C = "A";
+            }else if (ajuste_tabla_15_1C == -1) {
+                literal_tabla_15_1C = "B";
+            }else if (ajuste_tabla_15_1C == 0) {
+                literal_tabla_15_1C = "C";
+            }else if(ajuste_tabla_15_1C == 1){
+                literal_tabla_15_1C = "D";
+            }
+            else if(ajuste_tabla_15_1C >= 2){
+                literal_tabla_15_1C = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_15_1C = valor_FP_tabla_15_1C+literal_tabla_15_1C;
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_15_1C) && literal_tabla_15_1C != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_15_1C = {
+                    '_token': token,
+                    'columna': clase_final_tabla_15_1C,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_15_1C,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_15_1C);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_15_1C]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 15.2A":
+            // Calculo del Ajuste
+            var valor_FP_tabla_15_2A = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_15_2A = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_15_2A = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_15_2A = (parseInt(valor_CFM1_tabla_15_2A) - parseInt(valor_FP_tabla_15_2A)) + (parseInt(valor_CFM2_tabla_15_2A) - parseInt(valor_FP_tabla_15_2A));
+            // Calculo del Literal
+            var literal_tabla_15_2A;
+            
+            if (ajuste_tabla_15_2A <= -2) {
+                literal_tabla_15_2A = "A";
+            }else if (ajuste_tabla_15_2A == -1) {
+                literal_tabla_15_2A = "B";
+            }else if (ajuste_tabla_15_2A == 0) {
+                literal_tabla_15_2A = "C";
+            }else if(ajuste_tabla_15_2A == 1){
+                literal_tabla_15_2A = "D";
+            }
+            else if(ajuste_tabla_15_2A >= 2){
+                literal_tabla_15_2A = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_15_2A = valor_FP_tabla_15_2A+literal_tabla_15_2A;
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_15_2A) && literal_tabla_15_2A != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_15_2A = {
+                    '_token': token,
+                    'columna': clase_final_tabla_15_2A,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_15_2A,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_15_2A);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_15_2A]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 15.2B":
+            // Calculo del Ajuste
+            var valor_FP_tabla_15_2B = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_15_2B = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_15_2B = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_15_2B = (parseInt(valor_CFM1_tabla_15_2B) - parseInt(valor_FP_tabla_15_2B)) + (parseInt(valor_CFM2_tabla_15_2B) - parseInt(valor_FP_tabla_15_2B));
+            // Calculo del Literal
+            var literal_tabla_15_2B;
+            
+            if (ajuste_tabla_15_2B <= -2) {
+                literal_tabla_15_2B = "A";
+            }else if (ajuste_tabla_15_2B == -1) {
+                literal_tabla_15_2B = "B";
+            }else if (ajuste_tabla_15_2B == 0) {
+                literal_tabla_15_2B = "C";
+            }else if(ajuste_tabla_15_2B == 1){
+                literal_tabla_15_2B = "D";
+            }
+            else if(ajuste_tabla_15_2B >= 2){
+                literal_tabla_15_2B = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_15_2B = valor_FP_tabla_15_2B+literal_tabla_15_2B;
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_15_2B) && literal_tabla_15_2B != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_15_2B = {
+                    '_token': token,
+                    'columna': clase_final_tabla_15_2B,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_15_2B,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_15_2B);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_15_2B]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 15.2C":
+            // Calculo del Ajuste
+            var valor_FP_tabla_15_2C = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_15_2C = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_15_2C = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_15_2C = (parseInt(valor_CFM1_tabla_15_2C) - parseInt(valor_FP_tabla_15_2C)) + (parseInt(valor_CFM2_tabla_15_2C) - parseInt(valor_FP_tabla_15_2C));
+            // Calculo del Literal
+            var literal_tabla_15_2C;
+            
+            if (ajuste_tabla_15_2C <= -2) {
+                literal_tabla_15_2C = "A";
+            }else if (ajuste_tabla_15_2C == -1) {
+                literal_tabla_15_2C = "B";
+            }else if (ajuste_tabla_15_2C == 0) {
+                literal_tabla_15_2C = "C";
+            }else if(ajuste_tabla_15_2C == 1){
+                literal_tabla_15_2C = "D";
+            }
+            else if(ajuste_tabla_15_2C >= 2){
+                literal_tabla_15_2C = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_15_2C = valor_FP_tabla_15_2C+literal_tabla_15_2C;
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_15_2C) && literal_tabla_15_2C != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_15_2C = {
+                    '_token': token,
+                    'columna': clase_final_tabla_15_2C,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_15_2C,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_15_2C);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_15_2C]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 15.3A":
+            // Calculo del Ajuste
+            var valor_FP_tabla_15_3A = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_15_3A = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_15_3A = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_15_3A = (parseInt(valor_CFM1_tabla_15_3A) - parseInt(valor_FP_tabla_15_3A)) + (parseInt(valor_CFM2_tabla_15_3A) - parseInt(valor_FP_tabla_15_3A));
+            // Calculo del Literal
+            var literal_tabla_15_3A;
+            
+            if (ajuste_tabla_15_3A <= -2) {
+                literal_tabla_15_3A = "A";
+            }else if (ajuste_tabla_15_3A == -1) {
+                literal_tabla_15_3A = "B";
+            }else if (ajuste_tabla_15_3A == 0) {
+                literal_tabla_15_3A = "C";
+            }else if(ajuste_tabla_15_3A == 1){
+                literal_tabla_15_3A = "D";
+            }
+            else if(ajuste_tabla_15_3A >= 2){
+                literal_tabla_15_3A = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_15_3A = valor_FP_tabla_15_3A+literal_tabla_15_3A;
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_15_3A) && literal_tabla_15_3A != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_15_3A = {
+                    '_token': token,
+                    'columna': clase_final_tabla_15_3A,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_15_3A,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_15_3A);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_15_3A]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 15.3B":
+            // Calculo del Ajuste
+            var valor_FP_tabla_15_3B = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_15_3B = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_15_3B = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_15_3B = (parseInt(valor_CFM1_tabla_15_3B) - parseInt(valor_FP_tabla_15_3B)) + (parseInt(valor_CFM2_tabla_15_3B) - parseInt(valor_FP_tabla_15_3B));
+            // Calculo del Literal
+            var literal_tabla_15_3B;
+            
+            if (ajuste_tabla_15_3B <= -2) {
+                literal_tabla_15_3B = "A";
+            }else if (ajuste_tabla_15_3B == -1) {
+                literal_tabla_15_3B = "B";
+            }else if (ajuste_tabla_15_3B == 0) {
+                literal_tabla_15_3B = "C";
+            }else if(ajuste_tabla_15_3B == 1){
+                literal_tabla_15_3B = "D";
+            }
+            else if(ajuste_tabla_15_3B >= 2){
+                literal_tabla_15_3B = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_15_3B = valor_FP_tabla_15_3B+literal_tabla_15_3B;
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_15_3B) && literal_tabla_15_3B != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_15_3B = {
+                    '_token': token,
+                    'columna': clase_final_tabla_15_3B,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_15_3B,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_15_3B);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_15_3B]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 15.3C":
+            // Calculo del Ajuste
+            var valor_FP_tabla_15_3C = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_15_3C = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_15_3C = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_15_3C = (parseInt(valor_CFM1_tabla_15_3C) - parseInt(valor_FP_tabla_15_3C)) + (parseInt(valor_CFM2_tabla_15_3C) - parseInt(valor_FP_tabla_15_3C));
+            // Calculo del Literal
+            var literal_tabla_15_3C;
+            
+            if (ajuste_tabla_15_3C <= -2) {
+                literal_tabla_15_3C = "A";
+            }else if (ajuste_tabla_15_3C == -1) {
+                literal_tabla_15_3C = "B";
+            }else if (ajuste_tabla_15_3C == 0) {
+                literal_tabla_15_3C = "C";
+            }else if(ajuste_tabla_15_3C == 1){
+                literal_tabla_15_3C = "D";
+            }
+            else if(ajuste_tabla_15_3C >= 2){
+                literal_tabla_15_3C = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_15_3C = valor_FP_tabla_15_3C+literal_tabla_15_3C;
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_15_3C) && literal_tabla_15_3C != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_15_3C = {
+                    '_token': token,
+                    'columna': clase_final_tabla_15_3C,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_15_3C,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_15_3C);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_15_3C]);
+                    }         
+                });
+            }
+        break;
+
+        case "Tabla 15.4":
+            // Calculo del Ajuste
+            var valor_FP_tabla_15_4 = $("#guardar_FP_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM1_tabla_15_4 = $("#guardar_CFM1_fila_"+id_fila_insertar_dato).val();
+            var valor_CFM2_tabla_15_4 = $("#guardar_CFM2_fila_"+id_fila_insertar_dato).val();
+
+            var ajuste_tabla_15_4 = (parseInt(valor_CFM1_tabla_15_4) - parseInt(valor_FP_tabla_15_4)) + (parseInt(valor_CFM2_tabla_15_4) - parseInt(valor_FP_tabla_15_4));
+            // Calculo del Literal
+            var literal_tabla_15_4;
+            
+            if (ajuste_tabla_15_4 <= -2) {
+                literal_tabla_15_4 = "A";
+            }else if (ajuste_tabla_15_4 == -1) {
+                literal_tabla_15_4 = "B";
+            }else if (ajuste_tabla_15_4 == 0) {
+                literal_tabla_15_4 = "C";
+            }else if(ajuste_tabla_15_4 == 1){
+                literal_tabla_15_4 = "D";
+            }
+            else if(ajuste_tabla_15_4 >= 2){
+                literal_tabla_15_4 = "E";
+            }
+  
+            // Calculo de la Clase Final
+            var clase_final_tabla_15_4 = valor_FP_tabla_15_4+literal_tabla_15_4;
+            
+            // Calculo de la deficiencia
+            if (!isNaN(ajuste_tabla_15_4) && literal_tabla_15_4 != undefined) {
+                
+                let datos_consulta_deficiencia_tabla_15_4 = {
+                    '_token': token,
+                    'columna': clase_final_tabla_15_4,
+                    'Id_tabla': id_tabla
+                };
+                $.ajax({
+                    url: "/consultaValorDeficiencia",
+                    type: "post",
+                    data: datos_consulta_deficiencia_tabla_15_4,
+                    success:function(response){
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+  
+                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_15_4);
+                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(response[0][clase_final_tabla_15_4]);
+                    }         
+                });
+            }
         break;
     }
     
 };
 
+
+/* FUNCIONALIDAD PARA RECOPILAR LOS DATOS POR CADA FILA DE LA TABLA */
+$(document).ready(function(){
+    $('#guardar_datos_deficiencia_alteraciones').click(function(){
+        let token = $("input[name='_token']").val();
+        var guardar_datos_alteraciones = [];
+        var datos_finales_deficiencias_alteraciones = [];
+        $("#listado_deficiencia_porfactor tbody tr").each(function (index){
+            $(this).children("td").each(function (index2) {
+
+                // extraemos todos los id
+                var nombres_ids_alteraciones = $(this).find('*').attr("id");
+
+                if (nombres_ids_alteraciones != undefined) {
+                    
+                    // Extraemos el id de la tabla
+                    if (nombres_ids_alteraciones.startsWith("listado_tablas_fila_alteraciones_")) {
+                        var idtabla = $("#"+nombres_ids_alteraciones).val();
+                        // console.log(idtabla);
+                        guardar_datos_alteraciones.push(idtabla);
+                    }
+
+                    // Analizamos si existe un select, input o text para extraer la información.
+                    if ($("#"+nombres_ids_alteraciones).val() == "") {
+                        var hay_select = '#'+nombres_ids_alteraciones+' select';
+                        var hay_input = '#'+nombres_ids_alteraciones+' input';
+                        var hay_msd = '#'+nombres_ids_alteraciones+' input';
+
+                        if ($(hay_select).attr("id") != undefined) {
+                            var selector = $(hay_select).attr("id");
+                            var valor_select = $("#"+selector).val();
+                        }else if($(hay_input).attr("id") != undefined){
+                            var entrada_texto = $(hay_input).attr("id");
+                            var valor_input = $("#"+entrada_texto).val();
+                        }else{
+                            var valor_texto = $("#"+nombres_ids_alteraciones).text();
+                        }
+
+                        if (valor_select != undefined) {
+                            // console.log(valor_select);
+                            guardar_datos_alteraciones.push(valor_select);
+                        }
+                        if (valor_input != undefined && valor_input != "on") {
+                            // console.log(valor_input);
+                            guardar_datos_alteraciones.push(valor_input);
+                        }
+
+                        if (valor_texto) {
+                            // console.log(valor_texto);
+                            guardar_datos_alteraciones.push(valor_texto);
+                        }
+
+                        // Se extrae la info si se eligió o no el checkbox MSD
+                        if ($(hay_msd).attr("id") != undefined) {
+                            var check_msd = $(hay_msd).attr("id");
+                            if (check_msd.startsWith("resultado_MSD_")) {
+                                if($("#"+check_msd).is(':checked')){
+                                    // console.log("si msd");
+                                    guardar_datos_alteraciones.push("Si");
+                                }else{
+                                    // console.log("no msd");
+                                    guardar_datos_alteraciones.push("No");
+                                }
+                            }
+                        }
+                      
+                    }
+                
+
+                    // Se extrae la info si se eligió o no el checkbox DX PRINCIPAL
+                    if (nombres_ids_alteraciones.startsWith("checkbox_dx_principal_DefiAlteraciones_")) {
+                        if($("#"+nombres_ids_alteraciones).is(':checked')){
+                            // console.log("si dx");
+                            guardar_datos_alteraciones.push("Si");
+                        }else{
+                            // console.log("no dx");
+                            guardar_datos_alteraciones.push("No");
+                        }
+                    }
+                    
+                }
+
+                if((index2+1) % 11 === 0){
+                    guardar_datos_alteraciones.splice(1,1);
+                    datos_finales_deficiencias_alteraciones.push(guardar_datos_alteraciones);
+                    guardar_datos_alteraciones = [];
+                }
+            });
+        });
+
+        let envio_datos_alteraciones = {
+            '_token': token,
+            'datos_finales_deficiencias_alteraciones' : datos_finales_deficiencias_alteraciones,
+            'Id_evento': $('#newIdEvento').val(),
+            'Id_Asignacion': $('#newIdAsignacion').val(),
+            'Id_proceso': 23
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/GuardarDeficienciaAlteraciones',
+            data: envio_datos_alteraciones,
+            success:function(response){
+                
+                /* FALTA: GENERAR EL MENSAJE DE GUARDADO PARA QUE EL USUARIO LO VEA */
+
+                // if (response.parametro == "inserto_informacion") {
+                //     $('#resultado_insercion').removeClass('d-none');
+                //     $('#resultado_insercion').addClass('alert-success');
+                //     $('#resultado_insercion').append('<strong>'+response.mensaje+'</strong>');
+                //     setTimeout(() => {
+                //         $('#resultado_insercion').addClass('d-none');
+                //         $('#resultado_insercion').removeClass('alert-success');
+                //         $('#resultado_insercion').empty();
+                //     }, 3000);
+                // }
+            }
+        });
+    });
+});
 
 

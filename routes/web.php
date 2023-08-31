@@ -324,7 +324,8 @@ Route::post('/eliminarAgudezaVisual', [CalificacionPCLController::class, 'elimin
 Route::post('/ListadoSelectoresDefiAlteraciones', [CalificacionPCLController::class, 'ListadoSelectoresDefiAlteraciones']);
 // Acción: Consultar Deficiencia acorde al clase final y la tabla
 Route::post('/consultaValorDeficiencia', [CalificacionPCLController::class, 'consultaValorDeficiencia']);
-
+// Acción: Guardar Datos Listado de documentos solicitados
+Route::post('/GuardarDeficienciaAlteraciones',[CalificacionPCLController::class, 'GuardarDeficienciaAlteraciones']);
 
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);
