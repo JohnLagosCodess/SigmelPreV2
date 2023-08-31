@@ -304,7 +304,7 @@ class EntidadesController extends Controller
          /* REGISTRO ACTIVIDAD PARA AUDITORIA */
          $accion_realizada = "Actuliza Entidad° {$id_entidad}";
          $registro_actividad = [
-             'Id_Entidad' => $id_entidad,
+             'Id_Entidad' => $request->edi_tipo_entidad,
              'IdTipo_entidad' => $request->tipo_entidad,
              'Otro_entidad' => $request->otra_entidad,
              'Nombre_entidad' => $request->nombre_entidad,
