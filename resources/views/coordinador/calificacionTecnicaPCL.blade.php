@@ -475,14 +475,14 @@
                                                 <thead>
                                                     <tr class="bg-info">
                                                         <th style="width: 140px !important;">Tabla</th>
-                                                        <th style="width: 140px !important;">Titulo tabla</th>
-                                                        <th style="width: 140px !important;">Clase principal<br>(FP)</th>
+                                                        <th style="width: 140px !important;">Título tabla</th>
+                                                        <th style="width: 140px !important;">Clase principal (FP)</th>
                                                         <th style="width: 140px !important;">CFM1</th>
                                                         <th style="width: 140px !important;">CFM2</th>
                                                         <th style="width: 140px !important;">FU</th>
                                                         <th style="width: 140px !important;">CAT</th>
                                                         <th style="width: 140px !important;">Clase final</th>
-                                                        <th style="width: 140px !important;">DX<br>principal</th>
+                                                        <th style="width: 140px !important;">DX principal</th>
                                                         <th style="width: 140px !important;">MSD</th>
                                                         <th style="width: 140px !important;">Deficiencia</th>
                                                         <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_deficiencia_porfactor"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
@@ -1142,7 +1142,8 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <label for="identificacion">Total: 0</label>
+                                            <label for="tabla6_aprendizaje">Total:</label>
+                                            <input type="text" id="resultado_tabla6" name="resultado_tabla6"  readonly="">
                                         </div>
                                     </div>
                                     <!--Tabla 7 - Categorías del área ocupacional de comunicación-->
@@ -1446,13 +1447,14 @@
                                                         <td>
                                                             <div class="form-check custom-control custom-radio">
                                                                 <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="utiliza_dispositivos" id="tareas_simples_04" value="0.4">
-                                                                <label class="form-check-label custom-control-label" for="utiliza_dispositivos_04"></label>
+                                                                <label class="form-check-label custom-control-label" for="tareas_simples_04"></label>
                                                             </div>
                                                         </td>
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <label for="identificacion">Total: 0</label>
+                                            <label for="tabla7_comuni">Total:</label>
+                                            <input type="text" id="resultado_tabla7" name="resultado_tabla7"  readonly="">
                                         </div>
                                     </div>
                                     <!--Tabla 8 - Relación de categorías del área ocupacional de movilidad-->
@@ -1628,7 +1630,7 @@
                                                         <td>
                                                             <div class="form-check custom-control custom-radio">
                                                                 <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="desplazarse_entorno" id="desplazarse_entorno_02" value="0.2">
-                                                                <label class="form-check-label custom-control-label" for="desplazarse_entorno02"></label>
+                                                                <label class="form-check-label custom-control-label" for="desplazarse_entorno_02"></label>
                                                             </div>
                                                         </td>
                                                         <td>
@@ -1762,7 +1764,8 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <label for="identificacion">Total: 0</label>
+                                            <label for="tabla8_movilidad">Total:</label>
+                                            <input type="text" id="resultado_tabla8" name="resultado_tabla8"  readonly="">
                                         </div>
                                     </div>
                                     <!--Tabla 9 - Relación por categorías para el área ocupacional del cuidado personal-->
@@ -2072,7 +2075,8 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <label for="identificacion">Total: 0</label>
+                                            <label for="tabla9_areas">Total:</label>
+                                            <input type="text" id="resultado_tabla9" name="resultado_tabla9"  readonly="">
                                         </div>
                                     </div>
                                     <!--Tabla 10 - Relación por categorías para el área ocupacional del cuidado personal-->
@@ -2382,7 +2386,8 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <label for="identificacion">Total: 0</label>
+                                            <label for="tabla10_domestica">Total:</label>
+                                            <input type="text" id="resultado_tabla10" name="resultado_tabla10"  readonly="">
                                         </div>
                                     </div>
                                 </div>
@@ -2390,8 +2395,11 @@
                                 <div class="row" style="text-align: right">
                                     <div class="col-12">
                                         <div class="form-group" style="align-content: center">
-                                            <label for="total_otras">Total otras areas(20%): 0</label><br>
-                                            <label for="total_rol_areas">Total rol laboral y otras areas(50%): 0</label>
+                                            <label for="total_otras">Total otras areas(20%):</label>
+                                            <input type="text" id="total_otras" name="total_otras"  readonly="">
+                                            <br>
+                                            <label for="total_rol_areas">Total rol laboral y otras areas(50%):</label>
+                                            <input type="text" id="total_rol_areas" name="total_rol_areas"  readonly="">
                                         </div>
                                     </div>
                                 </div>
@@ -2870,7 +2878,8 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <label for="identificacion">Total: 0</label>
+                                            <label for="total_tabla12">Total:</label>
+                                            <input type="text" id="total_tabla12" name="total_tabla12"  readonly="">
                                         </div>
                                     </div>
                                 </div>
@@ -2931,6 +2940,8 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+                                            <label for="total_tabla13">Total rol ocupacional (50%):</label>
+                                            <input type="text" id="total_tabla13" name="total_tabla13"  readonly="">
                                         </div>
                                     </div>
                                 </div>
@@ -2960,38 +2971,39 @@
                                                     <tbody>
                                                         <td>
                                                             <div class="form-check custom-control custom-radio">
-                                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="roles_ocupacionales_adultos" id="claseA_dificulta_01" value="0">
-                                                                <label class="form-check-label custom-control-label" for="claseA_dificulta_01">0</label>
+                                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="roles_ocupacionales_adultos" id="claseA_dificultaAdulto_01" value="0">
+                                                                <label class="form-check-label custom-control-label" for="claseA_dificultaAdulto_01">0</label>
                                                             </div>
                                                         </td>
                                                         <td>
                                                             <div class="form-check custom-control custom-radio">
-                                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="roles_ocupacionales_adultos" id="claseB_dificulta_01" value="10">
-                                                                <label class="form-check-label custom-control-label" for="claseB_dificulta_01">10</label>
+                                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="roles_ocupacionales_adultos" id="claseB_dificultaAdulto_01" value="10">
+                                                                <label class="form-check-label custom-control-label" for="claseB_dificultaAdulto_01">10</label>
                                                             </div>
                                                         </td>
                                                         <td>
                                                             <div class="form-check custom-control custom-radio">
-                                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="roles_ocupacionales_adultos" id="claseC_dificulta_01" value="25">
-                                                                <label class="form-check-label custom-control-label" for="claseC_dificulta_01">25</label>
+                                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="roles_ocupacionales_adultos" id="claseC_dificultaAdulto_01" value="25">
+                                                                <label class="form-check-label custom-control-label" for="claseC_dificultaAdulto_01">25</label>
                                                             </div>
                                                         </td>
                                                         <td>
                                                             <div class="form-check custom-control custom-radio">
-                                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="roles_ocupacionales_adultos" id="claseD_dificulta_01" value="35">
-                                                                <label class="form-check-label custom-control-label" for="claseD_dificulta_01">35</label>
+                                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="roles_ocupacionales_adultos" id="claseD_dificultaAdulto_01" value="35">
+                                                                <label class="form-check-label custom-control-label" for="claseD_dificultaAdulto_01">35</label>
                                                             </div>
                                                         </td>
                                                         <td>
                                                             <div class="form-check custom-control custom-radio">
-                                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="roles_ocupacionales_adultos" id="claseE_dificulta_01" value="50">
-                                                                <label class="form-check-label custom-control-label" for="claseE_dificulta_01">50</label>
+                                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="roles_ocupacionales_adultos" id="claseE_dificultaAdulto_01" value="50">
+                                                                <label class="form-check-label custom-control-label" for="claseE_dificultaAdulto_01">50</label>
                                                             </div>
                                                         </td>
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <label for="identificacion">Total rol ocupacional (50%): 0</label>
+                                            <label for="total_tabla14">Total rol ocupacional (50%):</label>
+                                            <input type="text" id="total_tabla14" name="total_tabla14"  readonly="">
                                         </div>
                                     </div>
                                 </div>
@@ -3082,7 +3094,7 @@
                                                         </th>
                                                         <th width="8%">
                                                             <p class="text-center">Total</p>
-                                                            <input type="text" class="form-control" name="total_conducta" id="total_conducta" value="" disabled>
+                                                            <input type="text" class="form-control" name="total_conducta" id="total_conducta" readonly>
                                                         </th>
                                                     </tr>
                                                     <tr>
@@ -3148,7 +3160,7 @@
                                                             </select> 
                                                         </th>
                                                         <th width="8%">
-                                                            <input type="text" class="form-control" name="total_comunicacion" id="total_comunicacion" value="" disabled>
+                                                            <input type="text" class="form-control" name="total_comunicacion" id="total_comunicacion" readonly>
                                                         </th>
                                                     </tr>
                                                     <tr>
@@ -3214,7 +3226,7 @@
                                                             </select> 
                                                         </th>
                                                         <th width="8%">
-                                                            <input type="text" class="form-control" name="total_cuidado_personal" id="total_cuidado_personal" value="" disabled>
+                                                            <input type="text" class="form-control" name="total_cuidado_personal" id="total_cuidado_personal" readonly>
                                                         </th>
                                                     </tr>
                                                     <tr>
@@ -3280,7 +3292,7 @@
                                                             </select> 
                                                         </th>
                                                         <th width="8%">
-                                                            <input type="text" class="form-control" name="total_lomocion" id="total_lomocion" value="" disabled>
+                                                            <input type="text" class="form-control" name="total_lomocion" id="total_lomocion" readonly>
                                                         </th>
                                                     </tr>
                                                     <tr>
@@ -3346,7 +3358,7 @@
                                                             </select> 
                                                         </th>
                                                         <th width="8%">
-                                                            <input type="text" class="form-control" name="total_diposicion" id="total_diposicion" value="" disabled>
+                                                            <input type="text" class="form-control" name="total_disposicion" id="total_disposicion" readonly>
                                                         </th>
                                                     </tr>
                                                     <tr>
@@ -3412,7 +3424,7 @@
                                                             </select> 
                                                         </th>
                                                         <th width="8%">
-                                                            <input type="text" class="form-control" name="total_destreza" id="total_destreza" value="" disabled>
+                                                            <input type="text" class="form-control" name="total_destreza" id="total_destreza" readonly>
                                                         </th>
                                                     </tr>
                                                     <tr>
@@ -3473,14 +3485,15 @@
                                                         </th>
                                                         <th></th>
                                                         <th width="8%">
-                                                            <input type="text" class="form-control" name="total_situacion" id="total_situacion" value="" disabled>
+                                                            <input type="text" class="form-control" name="total_situacion" id="total_situacion" readonly>
                                                         </th>
                                                     </tr>
                                                 </thead>
                                             </table>
                                         </div>
-                                        <label for="identificacion">Total Discapacidades: 0</label>
                                     </div>
+                                    <label for="total_discapacidades">Total Discapacidades:</label>
+                                    <input type="text" name="total_discapacidades" id="total_discapacidades" readonly>
                                 </div>
                             </div>
                         </div>
@@ -3821,8 +3834,9 @@
                                                 </thead>
                                             </table>
                                         </div>
-                                        <label for="identificacion">Total Minusvalía: 0</label>
                                     </div>
+                                    <label for="total_minusvalia">Total Minusvalía:</label>
+                                    <input type="text" name="total_minusvalia" id="total_minusvalia" readonly>
                                 </div>
                             </div>
                         </div>

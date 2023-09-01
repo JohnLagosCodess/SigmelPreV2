@@ -284,6 +284,8 @@ $(document).ready(function(){
         opt_tipo_laboral = $('#laboral_actual').val();
         $("#laboral_actual").val(opt_tipo_laboral);
         iniciarIntervalo_laboral();
+        iniciarIntervaloOtrasAreas();
+        iniciarIntervaloLaboralOtras();
     }); 
     $("#rol_ocupacional").change(function(){
         opt_tipo_laboral = $('#rol_ocupacional').val();
@@ -310,6 +312,7 @@ $(document).ready(function(){
         const elementosDeslizar2 = [
             '.columna_row1_rol_ocupacional'
         ];
+        
         intervalo = setInterval(() => {
             switch (opt_tipo_laboral) {
                 case "Laboralmente_activo":
@@ -408,33 +411,10 @@ $(document).ready(function(){
 
     }
     /* VALIDACIÓN MOSTRAR LA SUMA TOTAL Rol Laboral (30%)  */
-    /*var opt_tabla_1;
-    var opt_tabla_2;
-    var opt_total_laboral30;
-    $("[name='restricion_rol']").on("change", function(){
-        opt_tabla_1 = $(this).val();
-        $(this).val(opt_tabla_1);
-        iniciarIntervalo_total_laboral30();
-    });
-    $("[name='auto_suficiencia']").on("change", function(){
-        opt_tabla_2 = $(this).val();
-        $(this).val(opt_tabla_2);
-        iniciarIntervalo_total_laboral30();
-    });
-
-    //Realiza la suma
-    function iniciarIntervalo_total_laboral30() {
-        intervalo = setInterval(() => {
-            opt_total_laboral30 = opt_tabla_1 + opt_tabla_2;
-            console.log(opt_total_laboral30);
-        }, 500);
-    
-    }*/
-
     let opt_tabla_1 = 0;
     let opt_tabla_2 = 0;
     let opt_tabla_3 = 0;
-    let opt_total_laboral30;
+    let opt_total_laboral30 = 0;
 
     $("[name='restricion_rol']").on("change", function(){
         opt_tabla_1 = $(this).val();
@@ -460,14 +440,955 @@ $(document).ready(function(){
         intervalo = setInterval(() => {
             opt_total_laboral30 = Number(opt_tabla_1) + Number(opt_tabla_2)+ Number(opt_tabla_3);
             if(!isNaN(opt_total_laboral30)){
-                //console.log(opt_total_laboral30);
-                $('#resultado_rol_laboral_30').val(opt_total_laboral30); //Coloca resultado Rol Laboral (30%)
+                $('#resultado_rol_laboral_30').val(redondear(opt_total_laboral30)); //Coloca resultado Rol Laboral (30%)
             }
         }, 500);
     }
     //Tabla 6 - Aprendizaje y aplicación del conocimiento
+    let opt_tabla6_mirar = 0;
+    let opt_tabla6_escuchar = 0;
+    let opt_tabla6_aprender = 0;
+    let opt_tabla6_calcular = 0;
+    let opt_tabla6_pensar = 0;
+    let opt_tabla6_leer = 0;
+    let opt_tabla6_escribir = 0;
+    let opt_tabla6_matematicos = 0;
+    let opt_tabla6_decisiones = 0;
+    let opt_tabla6_tareas_simples = 0;
+    var opt_total_tabla6 = 0;
 
+    $("[name='mirar']").on("change", function(){
+        opt_tabla6_mirar = $(this).val();
+        $(this).val(opt_tabla6_mirar);
+        iniciarIntervaloTotaltabla6();
+    });
 
+    $("[name='escuchar']").on("change", function(){
+        opt_tabla6_escuchar = $(this).val();
+        $(this).val(opt_tabla6_escuchar);
+        iniciarIntervaloTotaltabla6();
+    });
+
+    $("[name='aprender']").on("change", function(){
+        opt_tabla6_aprender = $(this).val();
+        $(this).val(opt_tabla6_aprender);
+        iniciarIntervaloTotaltabla6();
+    });
+
+    $("[name='calcular']").on("change", function(){
+        opt_tabla6_calcular = $(this).val();
+        $(this).val(opt_tabla6_calcular);
+        iniciarIntervaloTotaltabla6();
+    });
+
+    $("[name='pensar']").on("change", function(){
+        opt_tabla6_pensar = $(this).val();
+        $(this).val(opt_tabla6_pensar);
+        iniciarIntervaloTotaltabla6();
+    });
+
+    $("[name='leer']").on("change", function(){
+        opt_tabla6_leer = $(this).val();
+        $(this).val(opt_tabla6_leer);
+        iniciarIntervaloTotaltabla6();
+    });
+
+    $("[name='escribir']").on("change", function(){
+        opt_tabla6_escribir = $(this).val();
+        $(this).val(opt_tabla6_escribir);
+        iniciarIntervaloTotaltabla6();
+    });
+
+    $("[name='matematicos']").on("change", function(){
+        opt_tabla6_matematicos = $(this).val();
+        $(this).val(opt_tabla6_matematicos);
+        iniciarIntervaloTotaltabla6();
+    });
+
+    $("[name='decisiones']").on("change", function(){
+        opt_tabla6_decisiones = $(this).val();
+        $(this).val(opt_tabla6_decisiones);
+        iniciarIntervaloTotaltabla6();
+    });
+
+    $("[name='tareas_simples']").on("change", function(){
+        opt_tabla6_tareas_simples = $(this).val();
+        $(this).val(opt_tabla6_tareas_simples);
+        iniciarIntervaloTotaltabla6();
+    });
+
+    //Realiza suma de tabla 6
+    function iniciarIntervaloTotaltabla6() {
+        clearInterval(intervalo);
+        intervalo = setInterval(() => {
+            opt_total_tabla6 = Number(opt_tabla6_mirar) + Number(opt_tabla6_escuchar)+ Number(opt_tabla6_aprender)
+            + Number(opt_tabla6_calcular)+ Number(opt_tabla6_pensar)+ Number(opt_tabla6_leer)+ Number(opt_tabla6_escribir)
+            + Number(opt_tabla6_matematicos)+ Number(opt_tabla6_decisiones)+ Number(opt_tabla6_tareas_simples);
+            if(!isNaN(opt_total_tabla6)){
+                $('#resultado_tabla6').val(redondear(opt_total_tabla6)); 
+            }
+        }, 500);
+    }
+    //Tabla 7 - Categorías del área ocupacional de comunicación
+    let opt_tabla7_comuni_verbal = 0;
+    let opt_tabla7_no_comuni_verbal = 0;
+    let opt_tabla7_comuni_signos = 0;
+    let opt_tabla7_comuni_escrito = 0;
+    let opt_tabla7_habla = 0;
+    let opt_tabla7_no_verbales = 0;
+    let opt_tabla7_mensajes_escritos = 0;
+    let opt_tabla7_sostener_conversa = 0;
+    let opt_tabla7_iniciar_discusiones = 0;
+    let opt_tabla7_utiliza_dispositivos = 0;
+    let opt_total_tabla7 = 0;
+    
+    $("[name='comunicarse_mensaje']").on("change", function(){
+        opt_tabla7_comuni_verbal = $(this).val();
+        $(this).val(opt_tabla7_comuni_verbal);
+        iniciarIntervaloTotaltabla7();
+    });
+
+    $("[name='no_comunicarse_mensaje']").on("change", function(){
+        opt_tabla7_no_comuni_verbal = $(this).val();
+        $(this).val(opt_tabla7_no_comuni_verbal);
+        iniciarIntervaloTotaltabla7();
+    });
+
+    $("[name='comunicarse_signos']").on("change", function(){
+        opt_tabla7_comuni_signos = $(this).val();
+        $(this).val(opt_tabla7_comuni_signos);
+        iniciarIntervaloTotaltabla7();
+    });
+
+    $("[name='comunicarse_escrito']").on("change", function(){
+        opt_tabla7_comuni_escrito = $(this).val();
+        $(this).val(opt_tabla7_comuni_escrito);
+        iniciarIntervaloTotaltabla7();
+    });
+
+    $("[name='habla']").on("change", function(){
+        opt_tabla7_habla = $(this).val();
+        $(this).val(opt_tabla7_habla);
+        iniciarIntervaloTotaltabla7();
+    });
+
+    $("[name='no_verbales']").on("change", function(){
+        opt_tabla7_no_verbales = $(this).val();
+        $(this).val(opt_tabla7_no_verbales);
+        iniciarIntervaloTotaltabla7();
+    });
+
+    $("[name='mensajes_escritos']").on("change", function(){
+        opt_tabla7_mensajes_escritos = $(this).val();
+        $(this).val(opt_tabla7_mensajes_escritos);
+        iniciarIntervaloTotaltabla7();
+    });
+
+    $("[name='sostener_conversa']").on("change", function(){
+        opt_tabla7_sostener_conversa = $(this).val();
+        $(this).val(opt_tabla7_sostener_conversa);
+        iniciarIntervaloTotaltabla7();
+    });
+
+    $("[name='iniciar_discusiones']").on("change", function(){
+        opt_tabla7_iniciar_discusiones = $(this).val();
+        $(this).val(opt_tabla7_iniciar_discusiones);
+        iniciarIntervaloTotaltabla7();
+    });
+
+    $("[name='utiliza_dispositivos']").on("change", function(){
+        opt_tabla7_utiliza_dispositivos = $(this).val();
+        $(this).val(opt_tabla7_utiliza_dispositivos);
+        iniciarIntervaloTotaltabla7();
+    });
+
+    //Realiza suma de tabla 7
+    function iniciarIntervaloTotaltabla7() {
+        clearInterval(intervalo);
+        intervalo = setInterval(() => {
+            opt_total_tabla7 = Number(opt_tabla7_comuni_verbal) + Number(opt_tabla7_no_comuni_verbal)+ Number(opt_tabla7_comuni_signos)
+            + Number(opt_tabla7_comuni_escrito)+ Number(opt_tabla7_habla)+ Number(opt_tabla7_no_verbales)+ Number(opt_tabla7_mensajes_escritos)
+            + Number(opt_tabla7_sostener_conversa)+ Number(opt_tabla7_iniciar_discusiones)+ Number(opt_tabla7_utiliza_dispositivos);
+            if(!isNaN(opt_total_tabla7)){
+                $('#resultado_tabla7').val(redondear(opt_total_tabla7));
+            }
+        }, 500);
+    }
+    //Tabla 8 - Relación de categorías del área ocupacional de movilidad
+    let opt_tabla8_cambiar_posturas = 0;
+    let opt_tabla8_posicion_cuerpo = 0;
+    let opt_tabla8_llevar_objetos = 0;
+    let opt_tabla8_uso_fino_mano = 0;
+    let opt_tabla8_uso_mano_brazo = 0;
+    let opt_tabla8_desplazarse_entorno = 0;
+    let opt_tabla8_distintos_lugares = 0;
+    let opt_tabla8_desplaza_con_equipo = 0;
+    let opt_tabla8_transporte_pasajero = 0;
+    let  opt_tabla8_conduccion = 0;
+    let opt_total_tabla8 = 0;
+    
+    $("[name='cambiar_posturas']").on("change", function(){
+        opt_tabla8_cambiar_posturas = $(this).val();
+        $(this).val(opt_tabla8_cambiar_posturas);
+        iniciarIntervaloTotaltabla8();
+    });
+
+    $("[name='posicion_cuerpo']").on("change", function(){
+        opt_tabla8_posicion_cuerpos = $(this).val();
+        $(this).val(opt_tabla8_posicion_cuerpo);
+        iniciarIntervaloTotaltabla8();
+    });
+
+    $("[name='llevar_objetos']").on("change", function(){
+        opt_tabla8_llevar_objetos = $(this).val();
+        $(this).val(opt_tabla8_llevar_objetos);
+        iniciarIntervaloTotaltabla8();
+    });
+
+    $("[name='uso_fino_mano']").on("change", function(){
+        opt_tabla8_uso_fino_mano = $(this).val();
+        $(this).val(opt_tabla8_uso_fino_mano);
+        iniciarIntervaloTotaltabla8();
+    });
+
+    $("[name='uso_mano_brazo']").on("change", function(){
+        opt_tabla8_uso_mano_brazo = $(this).val();
+        $(this).val(opt_tabla8_uso_mano_brazo);
+        iniciarIntervaloTotaltabla8();
+    });
+
+    $("[name='desplazarse_entorno']").on("change", function(){
+        opt_tabla8_desplazarse_entorno = $(this).val();
+        $(this).val(opt_tabla8_desplazarse_entorno);
+        iniciarIntervaloTotaltabla8();
+    });
+
+    $("[name='distintos_lugares']").on("change", function(){
+        opt_tabla8_distintos_lugares = $(this).val();
+        $(this).val(opt_tabla8_distintos_lugares);
+        iniciarIntervaloTotaltabla8();
+    });
+
+    $("[name='desplazarse_con_equipo']").on("change", function(){
+        opt_tabla8_desplaza_con_equipo = $(this).val();
+        $(this).val(opt_tabla8_desplaza_con_equipo);
+        iniciarIntervaloTotaltabla8();
+    });
+
+    $("[name='transporte_pasajero']").on("change", function(){
+        opt_tabla8_transporte_pasajero= $(this).val();
+        $(this).val(opt_tabla8_transporte_pasajero);
+        iniciarIntervaloTotaltabla8();
+    });
+
+    $("[name='conduccion']").on("change", function(){
+        opt_tabla8_conduccion= $(this).val();
+        $(this).val(opt_tabla8_conduccion);
+        iniciarIntervaloTotaltabla8();
+    });
+
+    //Realiza suma de tabla 8
+    function iniciarIntervaloTotaltabla8() {
+        clearInterval(intervalo);
+        intervalo = setInterval(() => {
+            opt_total_tabla8 = Number(opt_tabla8_cambiar_posturas) + Number(opt_tabla8_posicion_cuerpo)+ Number(opt_tabla8_llevar_objetos)
+            + Number(opt_tabla8_uso_fino_mano)+ Number(opt_tabla8_uso_mano_brazo)+ Number(opt_tabla8_desplazarse_entorno)+ Number(opt_tabla8_distintos_lugares)
+            + Number(opt_tabla8_desplaza_con_equipo)+ Number(opt_tabla8_transporte_pasajero)+ Number(opt_tabla8_conduccion);
+            if(!isNaN(opt_total_tabla8)){
+                $('#resultado_tabla8').val(redondear(opt_total_tabla8));
+            }
+        }, 500);
+    }
+    //Tabla 9 - Relación por categorías para el área ocupacional del cuidado personal
+    let opt_tabla9_lavarse = 0;
+    let opt_tabla9_cuidado_cuerpo = 0;
+    let opt_tabla9_higiene_personal = 0;
+    let opt_tabla9_vestirse = 0;
+    let opt_tabla9_quitarse_ropa = 0;
+    let opt_tabla9_ponerse_calzado = 0;
+    let opt_tabla9_comer = 0;
+    let opt_tabla9_beber = 0;
+    let opt_tabla9_cuidado_salud = 0;
+    let opt_tabla9_control_dieta = 0;
+    let opt_total_tabla9 = 0;
+
+    $("[name='lavarse']").on("change", function(){
+        opt_tabla9_lavarse = $(this).val();
+        $(this).val(opt_tabla9_lavarse);
+        iniciarIntervaloTotaltabla9();
+    });
+
+    $("[name='cuidado_cuerpo']").on("change", function(){
+        opt_tabla9_cuidado_cuerpo = $(this).val();
+        $(this).val(opt_tabla9_cuidado_cuerpo);
+        iniciarIntervaloTotaltabla9();
+    });
+
+    $("[name='higiene_personal']").on("change", function(){
+        opt_tabla9_higiene_personal = $(this).val();
+        $(this).val(opt_tabla9_cuidado_cuerpo);
+        iniciarIntervaloTotaltabla9();
+    });
+
+    $("[name='vestirse']").on("change", function(){
+        opt_tabla9_vestirse = $(this).val();
+        $(this).val(opt_tabla9_vestirse);
+        iniciarIntervaloTotaltabla9();
+    });
+
+    $("[name='quitarse_ropa']").on("change", function(){
+        opt_tabla9_quitarse_ropa = $(this).val();
+        $(this).val(opt_tabla9_quitarse_ropa);
+        iniciarIntervaloTotaltabla9();
+    });
+    
+    $("[name='ponerse_calzado']").on("change", function(){
+        opt_tabla9_ponerse_calzado = $(this).val();
+        $(this).val(opt_tabla9_ponerse_calzado);
+        iniciarIntervaloTotaltabla9();
+    });
+    
+    $("[name='comer']").on("change", function(){
+        opt_tabla9_comer = $(this).val();
+        $(this).val(opt_tabla9_comer);
+        iniciarIntervaloTotaltabla9();
+    });
+
+    $("[name='beber']").on("change", function(){
+        opt_tabla9_beber = $(this).val();
+        $(this).val(opt_tabla9_beber);
+        iniciarIntervaloTotaltabla9();
+    });
+    
+    $("[name='cuidado_salud']").on("change", function(){
+        opt_tabla9_cuidado_salud= $(this).val();
+        $(this).val(opt_tabla9_cuidado_salud);
+        iniciarIntervaloTotaltabla9();
+    });
+
+    $("[name='control_dieta']").on("change", function(){
+        opt_tabla9_control_dieta= $(this).val();
+        $(this).val(opt_tabla9_control_dieta);
+        iniciarIntervaloTotaltabla9();
+    });
+    //Realiza suma de tabla 9
+    function iniciarIntervaloTotaltabla9() {
+        clearInterval(intervalo);
+        intervalo = setInterval(() => {
+            opt_total_tabla9 = Number(opt_tabla9_lavarse) + Number(opt_tabla9_cuidado_cuerpo)+ Number(opt_tabla9_higiene_personal)
+            + Number(opt_tabla9_vestirse)+ Number(opt_tabla9_quitarse_ropa)+ Number(opt_tabla9_ponerse_calzado)+ Number(opt_tabla9_comer)
+            + Number(opt_tabla9_beber)+ Number(opt_tabla9_cuidado_salud)+ Number(opt_tabla9_control_dieta);
+            if(!isNaN(opt_total_tabla9)){
+                $('#resultado_tabla9').val(redondear(opt_total_tabla9));
+            }
+        }, 500);
+    }
+    
+    //Tabla 10 - Relación de las categorías para el área ocupacional de la vida doméstica
+    let opt_tabla10_adquisi_vivir = 0;
+    let opt_tabla10_bienes_servicios = 0;
+    let opt_tabla10_comprar = 0;
+    let opt_tabla10_preparar_comida = 0;
+    let opt_tabla10_quehaceres_casa = 0;
+    let opt_tabla10_limpieza_vivienda = 0;
+    let opt_tabla10_objetos_hogar = 0;
+    let opt_tabla10_ayudar_los_demas = 0;
+    let opt_tabla10_mante_dispositivos = 0;
+    let opt_tabla10_cuidado_animales = 0;
+    let opt_total_tabla10 = 0;
+    let opt_sumaTotal_20 = 0;
+
+    $("[name='adquisicion_para_vivir']").on("change", function(){
+        opt_tabla10_adquisi_vivir = $(this).val();
+            $(this).val(opt_tabla10_adquisi_vivir);
+            iniciarIntervaloTotaltabla10();
+    });
+
+    $("[name='bienes_servicios']").on("change", function(){
+        opt_tabla10_bienes_servicios = $(this).val();
+            $(this).val(opt_tabla10_bienes_servicios);
+            iniciarIntervaloTotaltabla10();
+    });
+
+    $("[name='comprar']").on("change", function(){
+        opt_tabla10_comprar = $(this).val();
+            $(this).val(opt_tabla10_comprar);
+            iniciarIntervaloTotaltabla10();
+    });
+
+    $("[name='preparar_comida']").on("change", function(){
+        opt_tabla10_preparar_comida = $(this).val();
+            $(this).val(opt_tabla10_preparar_comida);
+            iniciarIntervaloTotaltabla10();
+    });
+
+    $("[name='quehaceres_casa']").on("change", function(){
+        opt_tabla10_quehaceres_casa = $(this).val();
+            $(this).val(opt_tabla10_quehaceres_casa);
+            iniciarIntervaloTotaltabla10();
+    });
+
+    $("[name='limpieza_vivienda']").on("change", function(){
+        opt_tabla10_limpieza_vivienda = $(this).val();
+            $(this).val(opt_tabla10_limpieza_vivienda);
+            iniciarIntervaloTotaltabla10();
+    });
+
+    $("[name='objetos_hogar']").on("change", function(){
+        opt_tabla10_objetos_hogar = $(this).val();
+            $(this).val(opt_tabla10_objetos_hogar);
+            iniciarIntervaloTotaltabla10();
+    });
+
+    $("[name='ayudar_los_demas']").on("change", function(){
+        opt_tabla10_ayudar_los_demas = $(this).val();
+            $(this).val(opt_tabla10_ayudar_los_demas);
+            iniciarIntervaloTotaltabla10();
+    });
+
+    $("[name='mantenimiento_dispositivos']").on("change", function(){
+        opt_tabla10_mante_dispositivos = $(this).val();
+            $(this).val(opt_tabla10_mante_dispositivos);
+            iniciarIntervaloTotaltabla10();
+    });
+
+    $("[name='cuidado_animales']").on("change", function(){
+        opt_tabla10_cuidado_animales = $(this).val();
+            $(this).val(opt_tabla10_cuidado_animales);
+            iniciarIntervaloTotaltabla10();
+    });
+
+     //Realiza suma de tabla 10
+     function iniciarIntervaloTotaltabla10() {
+        clearInterval(intervalo);
+        intervalo = setInterval(() => {
+            opt_total_tabla10 = Number(opt_tabla10_adquisi_vivir) + Number(opt_tabla10_bienes_servicios)+ Number(opt_tabla10_comprar)
+            + Number(opt_tabla10_preparar_comida)+ Number(opt_tabla10_quehaceres_casa)+ Number(opt_tabla10_limpieza_vivienda)+ Number(opt_tabla10_objetos_hogar)
+            + Number(opt_tabla10_ayudar_los_demas)+ Number(opt_tabla10_mante_dispositivos)+ Number(opt_tabla10_cuidado_animales);
+            if(!isNaN(opt_total_tabla10)){
+                $('#resultado_tabla10').val(redondear(opt_total_tabla10));
+            }
+        }, 500);
+    }
+    // Suma Total otras areas(20%)
+    function iniciarIntervaloOtrasAreas() {
+        intervaloOtras = setInterval(() => {
+            let opt_sumaTotal_20=opt_total_tabla6 + opt_total_tabla7 + opt_total_tabla8 + opt_total_tabla9 + opt_total_tabla10;
+            //console.log(opt_sumaTotal_20);
+            if(!isNaN(opt_sumaTotal_20)){
+                $('#total_otras').val(redondear(opt_sumaTotal_20));
+            }
+        }, 500);
+    }
+    // Suma Total rol laboral y otras areas(50%)
+    function iniciarIntervaloLaboralOtras() {
+        intervaloLaboral= setInterval(() => {
+            let opt_sumaTotal_50= opt_sumaTotal_20 + opt_total_laboral30;
+            if(!isNaN(opt_sumaTotal_50)){
+                $('#total_rol_areas').val(redondear(opt_sumaTotal_50));
+            }
+        }, 500);
+    }
+
+    //Tabla 12 - Criterios desarrollo neuroevolutivo Niños y Niñas 0 a 3 años
+    let opt_tabla12_mantiene_postura = 0;
+    let opt_tabla12_activi_espontanea = 0;
+    let opt_tabla12_sujeta_cabeza = 0;
+    let opt_tabla12_sienta_apoyo = 0;
+    let opt_tabla12_sobre_mismo = 0;
+    let opt_tabla12_sentado_sin_apoyo = 0;
+    let opt_tabla12_tumbado_sentado = 0;
+    let opt_tabla12_pie_apoyo = 0;
+    let opt_tabla12_pasos_apoyo = 0;
+    let opt_tabla12_mantiene_sin_apoyo = 0;
+    let opt_tabla12_anda_solo = 0;
+    let opt_tabla12_empuja_pelota = 0;
+    let opt_tabla12_sorteando_obstaculos = 0;
+    let opt_tabla12_succiona = 0;
+    let opt_tabla12_fija_mirada = 0;
+    let opt_tabla12_trayectoria_objeto = 0;
+    let opt_tabla12_sostiene_sonajero = 0;
+    let opt_tabla12_hacia_objeto = 0;
+    let opt_tabla12_sostiene_objeto = 0;
+    let opt_tabla12_abre_cajones = 0;
+    let opt_tabla12_bebe_solo = 0;
+    let opt_tabla12_quita_prenda = 0;
+    let opt_tabla12_espacios_casa = 0;
+    let opt_tabla12_imita_trazaso = 0;
+    let opt_tabla12_abre_puerta = 0;
+    let opt_total_tabla12 = 0;
+    
+    $("[name='mantiene_postura']").on("change", function(){
+        opt_tabla12_mantiene_postura = $(this).val();
+        $(this).val(opt_tabla12_mantiene_postura);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='actividad_espontanea']").on("change", function(){
+        opt_tabla12_activi_espontanea = $(this).val();
+        $(this).val(opt_tabla12_activi_espontanea);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='sujeta_cabeza']").on("change", function(){
+        opt_tabla12_sujeta_cabeza= $(this).val();
+        $(this).val(opt_tabla12_sujeta_cabeza);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='sienta_apoyo']").on("change", function(){
+        opt_tabla12_sienta_apoyo= $(this).val();
+        $(this).val(opt_tabla12_sienta_apoyo);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='sobre_mismo']").on("change", function(){
+        opt_tabla12_sobre_mismo= $(this).val();
+        $(this).val(opt_tabla12_sobre_mismo);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='sentado_sin_apoyo']").on("change", function(){
+        opt_tabla12_sentado_sin_apoyo= $(this).val();
+        $(this).val(opt_tabla12_sentado_sin_apoyo);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='tumbado_sentado']").on("change", function(){
+        opt_tabla12_tumbado_sentado= $(this).val();
+        $(this).val(opt_tabla12_tumbado_sentado);
+        iniciarIntervaloTotaltabla12();
+    });
+    
+    $("[name='pie_apoyo']").on("change", function(){
+        opt_tabla12_pie_apoyo= $(this).val();
+        $(this).val(opt_tabla12_pie_apoyo);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='pasos_apoyo']").on("change", function(){
+        opt_tabla12_pasos_apoyo= $(this).val();
+        $(this).val(opt_tabla12_pasos_apoyo);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='mantiene_sin_apoyo']").on("change", function(){
+        opt_tabla12_mantiene_sin_apoyo= $(this).val();
+        $(this).val(opt_tabla12_mantiene_sin_apoyo);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='anda_solo']").on("change", function(){
+        opt_tabla12_anda_solo= $(this).val();
+        $(this).val(opt_tabla12_anda_solo);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='empuja_pelota']").on("change", function(){
+        opt_tabla12_empuja_pelota= $(this).val();
+        $(this).val(opt_tabla12_empuja_pelota);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='sorteando_obstaculos']").on("change", function(){
+        opt_tabla12_sorteando_obstaculos= $(this).val();
+        $(this).val(opt_tabla12_sorteando_obstaculos);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='succiona']").on("change", function(){
+        opt_tabla12_succiona= $(this).val();
+        $(this).val(opt_tabla12_succiona);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='fija_mirada']").on("change", function(){
+        opt_tabla12_fija_mirada= $(this).val();
+        $(this).val(opt_tabla12_fija_mirada);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='trayectoria_objeto']").on("change", function(){
+        opt_tabla12_trayectoria_objeto= $(this).val();
+        $(this).val(opt_tabla12_trayectoria_objeto);
+        iniciarIntervaloTotaltabla12();
+    });
+    
+    $("[name='sostiene_sonajero']").on("change", function(){
+        opt_tabla12_sostiene_sonajero= $(this).val();
+        $(this).val(opt_tabla12_sostiene_sonajero);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='hacia_objeto']").on("change", function(){
+        opt_tabla12_hacia_objeto= $(this).val();
+        $(this).val(opt_tabla12_hacia_objeto);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='sostiene_objeto']").on("change", function(){
+        opt_tabla12_sostiene_objeto= $(this).val();
+        $(this).val(opt_tabla12_sostiene_objeto);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='abre_cajones']").on("change", function(){
+        opt_tabla12_abre_cajones= $(this).val();
+        $(this).val(opt_tabla12_abre_cajones);
+        iniciarIntervaloTotaltabla12();
+    });
+    
+    $("[name='bebe_solo']").on("change", function(){
+        opt_tabla12_bebe_solo= $(this).val();
+        $(this).val(opt_tabla12_bebe_solo);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='quita_prenda']").on("change", function(){
+        opt_tabla12_quita_prenda= $(this).val();
+        $(this).val(opt_tabla12_quita_prenda);
+        iniciarIntervaloTotaltabla12();
+    });
+    
+    $("[name='espacios_casa']").on("change", function(){
+        opt_tabla12_espacios_casa= $(this).val();
+        $(this).val(opt_tabla12_espacios_casa);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='imita_trazaso']").on("change", function(){
+        opt_tabla12_imita_trazaso= $(this).val();
+        $(this).val(opt_tabla12_imita_trazaso);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    $("[name='abre_puerta']").on("change", function(){
+        opt_tabla12_abre_puerta= $(this).val();
+        $(this).val(opt_tabla12_abre_puerta);
+        iniciarIntervaloTotaltabla12();
+    });
+
+    //Realiza suma de tabla 12
+    function iniciarIntervaloTotaltabla12() {
+        clearInterval(intervalo);
+        intervalo = setInterval(() => {
+            opt_total_tabla12 = Number(opt_tabla12_mantiene_postura) + Number(opt_tabla12_activi_espontanea)+ Number(opt_tabla12_sujeta_cabeza)
+            + Number(opt_tabla12_sienta_apoyo)+ Number(opt_tabla12_sobre_mismo)+ Number(opt_tabla12_sentado_sin_apoyo)+ Number(opt_tabla12_tumbado_sentado)
+            + Number(opt_tabla12_pie_apoyo)+ Number(opt_tabla12_pasos_apoyo)+ Number(opt_tabla12_mantiene_sin_apoyo)+ Number(opt_tabla12_anda_solo)
+            + Number(opt_tabla12_empuja_pelota)+ Number(opt_tabla12_sorteando_obstaculos)+ Number(opt_tabla12_succiona)+ Number(opt_tabla12_fija_mirada)
+            + Number(opt_tabla12_trayectoria_objeto)+ Number(opt_tabla12_sostiene_sonajero)+ Number(opt_tabla12_hacia_objeto)+ Number(opt_tabla12_sostiene_objeto)+ Number(opt_tabla12_abre_cajones)
+            + Number(opt_tabla12_bebe_solo)+ Number(opt_tabla12_quita_prenda)+ Number(opt_tabla12_espacios_casa)+ Number(opt_tabla12_imita_trazaso)+ Number(opt_tabla12_abre_puerta);
+            if(!isNaN(opt_total_tabla12)){
+                $('#total_tabla12').val(redondear(opt_total_tabla12));
+            }
+        }, 500);
+    }
+
+    //Tabla 13 - Valoración de los roles ocupacionales de juego
+    let opt_tabla13_ocupacionales_juego = 0;
+    let opt_total_tabla13 = 0;
+    $("[name='roles_ocupacionales_juego']").on("change", function(){
+        opt_tabla13_ocupacionales_juego = $(this).val();
+        $(this).val(opt_tabla13_ocupacionales_juego);
+        iniciarIntervaloTotaltabla13();
+    });
+    //Realiza suma de tabla 13
+    function iniciarIntervaloTotaltabla13() {
+        clearInterval(intervalo);
+        intervalo = setInterval(() => {
+            opt_total_tabla13 = opt_tabla13_ocupacionales_juego;
+            if(!isNaN(opt_total_tabla13)){
+                $('#total_tabla13').val(redondear(opt_total_tabla13));
+            }
+        }, 500);
+    }
+    //Tabla 14 - Valoración de los roles ocupacional relacionado
+    let opt_tabla14_ocupacionales_adultos = 0;
+    let opt_total_tabla14 = 0;
+    $("[name='roles_ocupacionales_adultos']").on("change", function(){
+        opt_tabla14_ocupacionales_adultos = $(this).val();
+        $(this).val(opt_tabla14_ocupacionales_adultos);
+        iniciarIntervaloTotaltabla14();
+    });
+    //Realiza suma de tabla 14
+    function iniciarIntervaloTotaltabla14() {
+        clearInterval(intervalo);
+        intervalo = setInterval(() => {
+            opt_total_tabla14 = opt_tabla14_ocupacionales_adultos;
+            if(!isNaN(opt_total_tabla14)){
+                $('#total_tabla14').val(redondear(opt_total_tabla14));
+            }
+        }, 500);
+    }
+
+    //Cargar opciones de selectores Libro II Calificación de las discapacidades (20%) 
+    var options = ['0.1', '0.2', '0.3'];
+    var options2 = ['0.1', '0.2'];
+    var select = $('[id^="conducta_"],[id^="comunicacion_"],[id^="cuidado_personal_"],[id^="lomocion_"],[id^="disposicion_"],[id^="destreza_"]');
+    var select2 = $('[id^="situacion_"]');
+
+    function appendOptions(selectElement, optionsArray) {
+        optionsArray.forEach(function(value) {
+            selectElement.append($('<option>').text(value).attr('value', value));
+        });
+    }
+
+    appendOptions(select, options);
+    appendOptions(select2,options2);
+  
+    //Suma de valores conducta
+    let opt_conducta = [];
+    let opt_total_conducta = 0;
+
+    for(let i = 10; i <= 19; i++) {
+        opt_conducta[i] = 0;
+        
+        $("[name='conducta_" + i + "']").on("change", function(){
+            opt_conducta[i] = $(this).val();
+            $(this).val(opt_conducta[i]);
+            iniciarIntervaloTotalConducta();
+            iniciarIntervaloDiscapacida();
+        });
+    }
+
+    // Realiza suma de conducta
+    function iniciarIntervaloTotalConducta() {
+        clearInterval(intervalo);
+        intervalo = setInterval(() => {
+            opt_total_conducta = opt_conducta.reduce((total, opt) => total + Number(opt), 0);
+            if(!isNaN(opt_total_conducta)){
+                $('#total_conducta').val(redondear(opt_total_conducta));
+            }
+        }, 500);
+    }
+
+    //Suma de valores Comunicación
+    let opt_comunicacion = [];
+    let opt_total_comunicacion = 0;
+
+    for(let i = 20; i <= 29; i++) {
+        opt_comunicacion[i] = 0;
+        
+        $("[name='comunicacion_" + i + "']").on("change", function(){
+            opt_comunicacion[i] = $(this).val();
+            $(this).val(opt_comunicacion[i]);
+            iniciarIntervaloTotalcomunicacion();
+            iniciarIntervaloDiscapacida();
+        });
+    }
+
+    // Realiza suma de comunicacion
+    function iniciarIntervaloTotalcomunicacion() {
+        clearInterval(intervalo);
+        intervalo = setInterval(() => {
+            opt_total_comunicacion = opt_comunicacion.reduce((total, opt) => total + Number(opt), 0);
+            if(!isNaN(opt_total_comunicacion)){
+                $('#total_comunicacion').val(redondear(opt_total_comunicacion));
+            }
+        }, 500);
+    }
+
+    //Suma de valores Cuidado personal
+    let opt_cuidado_personal = [];
+    let opt_total_cuidado_personal = 0;
+
+    for(let i = 30; i <= 39; i++) {
+        opt_cuidado_personal[i] = 0;
+        
+        $("[name='cuidado_personal_" + i + "']").on("change", function(){
+            opt_cuidado_personal[i] = $(this).val();
+            $(this).val(opt_cuidado_personal[i]);
+            iniciarIntervaloTotalcuidado_personal();
+            iniciarIntervaloDiscapacida();
+        });
+    }
+
+    // Realiza suma de cuidado_personal
+    function iniciarIntervaloTotalcuidado_personal() {
+        clearInterval(intervalo);
+        intervalo = setInterval(() => {
+            opt_total_cuidado_personal = opt_cuidado_personal.reduce((total, opt) => total + Number(opt), 0);
+            if(!isNaN(opt_total_cuidado_personal)){
+                $('#total_cuidado_personal').val(redondear(opt_total_cuidado_personal));
+            }
+        }, 500);
+    }
+
+     //Suma de valores Locomoción
+     let opt_lomocion= [];
+     let opt_total_lomocion = 0;
+ 
+     for(let i = 40; i <= 49; i++) {
+        opt_lomocion[i] = 0;
+         
+         $("[name='lomocion_" + i + "']").on("change", function(){
+            opt_lomocion[i] = $(this).val();
+             $(this).val(opt_lomocion[i]);
+             iniciarIntervaloTotallomocion ();
+             iniciarIntervaloDiscapacida();
+         });
+     }
+ 
+     // Realiza suma de lomocion
+     function iniciarIntervaloTotallomocion() {
+         clearInterval(intervalo);
+         intervalo = setInterval(() => {
+                opt_total_lomocion = opt_lomocion.reduce((total, opt) => total + Number(opt), 0);
+             if(!isNaN(opt_total_lomocion)){
+                 $('#total_lomocion').val(redondear(opt_total_lomocion));
+             }
+         }, 500);
+     }
+
+     //Suma de valores Disposición del cuerpo
+     let opt_disposicion= [];
+     let opt_total_disposicion = 0;
+ 
+     for(let i = 50; i <= 59; i++) {
+        opt_disposicion[i] = 0;
+         $("[name='disposicion_" + i + "']").on("change", function(){
+            opt_disposicion[i] = $(this).val();
+             $(this).val(opt_disposicion[i]);
+             iniciarIntervaloTotaldisposicion();
+             iniciarIntervaloDiscapacida();
+         });
+     }
+ 
+     // Realiza suma de disposicion
+     function iniciarIntervaloTotaldisposicion() {
+         clearInterval(intervalo);
+         intervalo = setInterval(() => {
+                opt_total_disposicion = opt_disposicion.reduce((total, opt) => total + Number(opt), 0);
+             if(!isNaN(opt_total_disposicion)){
+                 $('#total_disposicion').val(redondear(opt_total_disposicion));
+             }
+         }, 500);
+     }
+
+      //Suma de valores Destreza
+      let opt_destreza= [];
+      let opt_total_destreza = 0;
+  
+      for(let i = 60; i <= 69; i++) {
+         opt_destreza[i] = 0;
+          $("[name='destreza_" + i + "']").on("change", function(){
+             opt_destreza[i] = $(this).val();
+              $(this).val(opt_destreza[i]);
+              iniciarIntervaloTotaldestreza();
+              iniciarIntervaloDiscapacida();
+          });
+      }
+  
+      // Realiza suma de destreza
+      function iniciarIntervaloTotaldestreza() {
+          clearInterval(intervalo);
+          intervalo = setInterval(() => {
+                opt_total_destreza = opt_destreza.reduce((total, opt) => total + Number(opt), 0);
+              if(!isNaN(opt_total_destreza)){
+                  $('#total_destreza').val(redondear(opt_total_destreza));
+              }
+          }, 500);
+      }
+
+    //Suma de valores Situación
+    let opt_situacion= [];
+    let opt_total_situacion = 0;
+
+    for(let i = 70; i <= 78; i++) {
+        opt_situacion[i] = 0;
+        
+        $("[name='situacion_" + i + "']").on("change", function(){
+            opt_situacion[i] = $(this).val();
+            $(this).val(opt_situacion[i]);
+            iniciarIntervaloTotalsituacion();
+            iniciarIntervaloDiscapacida();
+        });
+    }
+
+    // Realiza suma de situacion
+    function iniciarIntervaloTotalsituacion() {
+        clearInterval(intervalo);
+        intervalo = setInterval(() => {
+            opt_total_situacion = opt_situacion.reduce((total, opt) => total + Number(opt), 0);
+            if(!isNaN(opt_total_situacion)){
+                $('#total_situacion').val(redondear(opt_total_situacion));
+            }
+        }, 500);
+    }
+
+    //Total Discapacidades
+    var opt_sumaTotal_disca = 0;
+    function iniciarIntervaloDiscapacida() {
+        intervaloDisca= setInterval(() => {
+            opt_sumaTotal_disca= opt_total_conducta + opt_total_comunicacion + opt_total_cuidado_personal + opt_total_lomocion + opt_total_disposicion + opt_total_destreza + opt_total_situacion;
+            if(!isNaN(opt_sumaTotal_disca)){
+                $('#total_discapacidades').val(redondear(opt_sumaTotal_disca));
+            }
+        }, 500);
+    }
+   
+    // total_minusvalia
+    let opt_orientacion = 0;
+    let opt_indepen_fisica = 0;
+    let opt_desplazamiento = 0;
+    let opt_ocupacional = 0;
+    let opt_social = 0;
+    let opt_economica = 0;
+    let opt_cronologica = 0;
+    let opt_sumaTotal_valia = 0;
+
+    $("[name='orientacion']").on("change", function(){
+        opt_orientacion = Number($(this).val());
+        $(this).val(opt_orientacion);
+        iniciarIntervaloMinusvalia();
+    });
+
+    $("[name='indepen_fisica']").on("change", function(){
+        opt_indepen_fisica = Number($(this).val());
+        $(this).val(opt_indepen_fisica);
+        iniciarIntervaloMinusvalia();
+    });
+
+    $("[name='desplazamiento']").on("change", function(){
+        opt_desplazamiento = Number($(this).val());
+        $(this).val(opt_desplazamiento);
+        iniciarIntervaloMinusvalia();
+    });
+
+    $("[name='ocupacional']").on("change", function(){
+        opt_ocupacional = Number($(this).val());
+        $(this).val(opt_ocupacional);
+        iniciarIntervaloMinusvalia();
+    });
+
+    $("[name='social']").on("change", function(){
+        opt_social = Number($(this).val());
+        $(this).val(opt_social);
+        iniciarIntervaloMinusvalia();
+    });
+
+    $("[name='economica']").on("change", function(){
+        opt_economica = Number($(this).val());
+        $(this).val(opt_economica);
+        iniciarIntervaloMinusvalia();
+    });
+
+    $("[name='cronologica']").on("change", function(){
+        opt_cronologica = Number($(this).val());
+        $(this).val(opt_cronologica);
+        iniciarIntervaloMinusvalia();
+    });
+
+    function iniciarIntervaloMinusvalia() {
+        clearInterval(intervalo);
+        intervalo = setInterval(() => {
+            opt_sumaTotal_valia = opt_orientacion + opt_indepen_fisica + opt_desplazamiento + opt_ocupacional
+            + opt_social + opt_economica + opt_cronologica;
+            if (!isNaN(opt_sumaTotal_valia)){
+                $('#total_minusvalia').val(redondear(opt_sumaTotal_valia));
+            }
+        }, 500);
+    }
 
 
     $('#form_CaliTecDecreto').submit(function (e){
@@ -853,8 +1774,7 @@ $(document).ready(function(){
         var dxPrincipal = $('#dx_principal_auditiva').val();
         var banderaDxPrincipal = $('#banderaDxPrincipal').val();
         if (checkboxDxPrincipal.checked) {
-            console.log("El checkbox está marcado");
-            console.log(banderaDxPrincipal);
+            //console.log(banderaDxPrincipal);
             var datos_actualizar_dxPrincial = {
                 '_token': token,
                 'dxPrincipal' : dxPrincipal,
@@ -883,9 +1803,8 @@ $(document).ready(function(){
                     }                
                 }
             }); 
-        } else {            
-            console.log("El checkbox no está marcado");
-            console.log(banderaDxPrincipal);
+        } else {                        
+            //console.log(banderaDxPrincipal);
             var datos_actualizar_dxPrincial = {
                 '_token': token,
                 'dxPrincipal' : dxPrincipal,

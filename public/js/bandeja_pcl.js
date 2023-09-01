@@ -438,7 +438,7 @@ $(document).ready(function () {
         var contendorBotoFiltrar = botonFiltrar[1].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[0].classList[0];
         //console.log(contendorBotoFiltrar);
         $('.'+contendorBotoFiltrar).addClass('d-none');
-    }, 7000);
+    }, 2000);
         
     $('#btn_expor_datos').click(function () {
         var infobtnExcel = $(this).parents();
@@ -511,7 +511,7 @@ $(document).ready(function () {
                         setTimeout(function(){
                             $('.mostrar_mensaje_No_actualizo_bandeja').addClass('d-none');
                             $('.mostrar_mensaje_No_actualizo_bandeja').empty();                            
-                        }, 9000);
+                        }, 2000);
                     }  
                 }
             });
@@ -521,7 +521,7 @@ $(document).ready(function () {
             setTimeout(function(){
                 $('.mostrar_mensaje_No_actualizo_bandeja').addClass('d-none');
                 $('.mostrar_mensaje_No_actualizo_bandeja').empty();
-            }, 9000);
+            }, 2000);
         }
     });
 });

@@ -43,6 +43,7 @@ use App\Models\sigmel_informacion_examenes_interconsultas_eventos;
 use App\Models\sigmel_informacion_pericial_eventos;
 use App\Models\sigmel_lista_cie_diagnosticos;
 use App\Models\sigmel_lista_clases_decretos;
+use App\Models\sigmel_informacion_deficiencias_alteraciones_eventos;
 use Svg\Tag\Rect;
 
 class CalificacionPCLController extends Controller
@@ -1992,6 +1993,56 @@ class CalificacionPCLController extends Controller
         $info_string_deficiencia = json_decode(json_encode($string_deficiencia, true));
         return response()->json($info_string_deficiencia);
         
+    }
+
+    public function GuardarDeficienciaAlteraciones(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+    
+        /* CAPTURA DE DATOS DE LA DEFICIENCIA */
+        $array_datos = $request->datos_finales_deficiencias_alteraciones;
+
+        // Iteración para extraer los datos de la tabla y adicionar los datos de Id evento, Id asignacion y Id proceso
+        $array_datos_organizados = [];
+
+        foreach ($array_datos as $subarray_datos) {
+
+            array_unshift($subarray_datos, $request->Id_proceso);
+            array_unshift($subarray_datos, $request->Id_Asignacion);
+            array_unshift($subarray_datos, $request->Id_evento);
+
+            $subarray_datos[] = $nombre_usuario;
+            $subarray_datos[] = $date;
+
+            array_push($array_datos_organizados, $subarray_datos);
+        }
+
+        // Creación de array con los campos de la tabla: sigmel_informacion_deficiencias_alteraciones_eventos
+        
+        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Id_tabla', 'FP', 'CFM1', 'CFM2', 'FU',	'CAT', 'Clase_Final', 
+        'Dx_Principal', 'MSD', 'Deficiencia', 'Nombre_usuario','F_registro'];
+        
+        // Combinación de los campos de la tabla con los datos
+        $array_datos_con_keys = [];
+        foreach ($array_datos_organizados as $subarray_datos_organizados) {
+            array_push($array_datos_con_keys, array_combine($array_keys_tabla, $subarray_datos_organizados));
+        }
+
+        // Inserción de la información
+        foreach ($array_datos_con_keys as $insertar) {
+            sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')->insert($insertar);
+        }
+
+        $mensajes = array(
+            "parametro" => 'inserto_informacion',
+            "mensaje" => 'Información guardada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
     }
 
 }

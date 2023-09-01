@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Administrador\AdministradorController;
+use App\Http\Controllers\Administrador\EntidadesController;
 use App\Http\Controllers\Administrador\BuscarEventoController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Autenticacion\LoginController;
@@ -342,7 +343,8 @@ Route::post('/eliminarAgudezaVisual', [CalificacionPCLController::class, 'elimin
 Route::post('/ListadoSelectoresDefiAlteraciones', [CalificacionPCLController::class, 'ListadoSelectoresDefiAlteraciones']);
 // Acción: Consultar Deficiencia acorde al clase final y la tabla
 Route::post('/consultaValorDeficiencia', [CalificacionPCLController::class, 'consultaValorDeficiencia']);
-
+// Acción: Guardar Datos Listado de documentos solicitados
+Route::post('/GuardarDeficienciaAlteraciones',[CalificacionPCLController::class, 'GuardarDeficienciaAlteraciones']);
 
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);
@@ -356,6 +358,22 @@ Route::post('/crearNuevoServicio', [BuscarEventoController::class, 'crearNuevoSe
 Route::post('/crearNuevoProceso', [BuscarEventoController::class, 'crearNuevoProceso']);
 // Acción: Mantener datos de búsqueda del formulario
 Route::post('/mantenerDatosBusquedaEvento', [BuscarEventoController::class, 'mantenerDatosBusquedaEvento']);
+
+// 28/08/2023 - CRUD ENTIDADES
+// Vista: Formulario para crear una entidad
+Route::get('/Sigmel/NuevoEntidad', [EntidadesController::class, 'mostrarVistaNuevoEntidad'])->name('crearEntidades');
+// Vista: Formulario para editar una entidad
+Route::post('/Sigmel/EditarEntidad', [EntidadesController::class, 'mostrarVistaEditarEntidad'])->name('EditarEntidades');
+// Vista: Listar entidades
+Route::get('/Sigmel/listarEntidades', [EntidadesController::class, 'mostrarVistaListarEntidades'])->name('listarEntidades');
+// Accion: Selectores Módulo Entidades
+Route::post('/selectoresEntidad', [EntidadesController::class, 'cargueListadoSelectoresEntidad']);
+// Acción: Crear un nuevo entidad
+Route::post('/Sigmel/CrearNuevoEntidad', [EntidadesController::class, 'guardar_entidad'])->name('CrearNuevoEntidad');
+// Vista: formulario para editar la información de una identidad
+Route::post('/Sigmel/Entidad/editarEntidad', [EntidadesController::class, 'mostrarVistaEditarEntidad'])->name('EditarEntidad');
+// Acción: Actualización de la información de entidad
+Route::post('/Sigmel/Entidad/actualizarEntidad', [EntidadesController::class, 'actualizarEntidad'])->name('ActualizacionEntidad');
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 

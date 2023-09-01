@@ -1008,7 +1008,19 @@ class AdministradorController extends Controller
             for ($i=0; $i < count($listado_id_servicios_evento); $i++) { 
                 array_push($string_ids_servicios, $listado_id_servicios_evento[$i]->Id_servicio);
             }
-
+            
+            /* MODIFICACIÓN PARA QUE SE PUEDA CREAR MUCHOS SERVICIOS DE RECALIFICACIÓN 25-08-2023 
+                EL SERVICIO DE Recalificación TIENE EL ID 7 en la tabla sigmel_lista_procesos_servicios
+            */
+            $tamanio = count($string_ids_servicios) + 1; 
+            for ($a=0; $a < $tamanio ; $a++) { 
+                if (in_array(7, $string_ids_servicios)) {
+                    // Eliminar el valor 7 del array
+                    $index = array_search(7, $string_ids_servicios);
+                    unset($string_ids_servicios[$index]);
+                } 
+            }
+            
             $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
             ->select('Id_Servicio', 'Nombre_servicio')
             ->where([
