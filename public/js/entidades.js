@@ -421,7 +421,7 @@ $(document).ready(function(){
                 success:function(data) {
                     let NombreEntidad = $('select[name=edi_entidad_medio_noti]').val();
                     let motivoNotiActual = Object.keys(data);
-                    console.log(data)
+                    //console.log(data)
                     for (let i = 0; i < motivoNotiActual.length; i++) {
                         if (data[motivoNotiActual[i]['Id_Parametro'] != NombreEntidad]) {
                             $('#edi_entidad_medio_noti').append('<option value="'+data[motivoNotiActual[i]]["Id_Parametro"]+'">'+data[motivoNotiActual[i]]["Nombre_parametro"]+'</option>');                            
