@@ -242,7 +242,7 @@ $(document).ready(function(){
                                                 
                     ],
                     exportOptions: {
-                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]
                     }
                 }
             ]
@@ -429,7 +429,7 @@ $(document).ready(function(){
                     }
                 }
             });
-        }, 10000);
+        }, 1000);
     });
     /* Validación opción Otro/¿Cual? del selector Tipo Entidad edicion */
     $('#edi_tipo_entidad').change(function(){
