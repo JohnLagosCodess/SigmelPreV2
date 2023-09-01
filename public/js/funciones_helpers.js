@@ -170,6 +170,20 @@ $(document).ready(function () {
             return false;
         }
     }    
+
+     /* INPUTS DEL FORMULARIO DE CREACIÓN ENTIDAD */
+    $('.mayus_entidad').keyup(function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusCadaPalabra(textoEscrito));
+    });
+
+    /* SOLO PERMITE INGRESAR NUMEROS */
+    $('.soloNumeros').keypress(function(event) {
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if (keycode < 48 || keycode > 57) {
+        event.preventDefault();
+        }
+    });
     
 });
 
