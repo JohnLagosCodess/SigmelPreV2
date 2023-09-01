@@ -136,11 +136,33 @@ $(document).ready(function () {
         var textoEscrito = $(this).val();
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
     });
-
+    // Text areas vista calificacion tecnica
     $(document).on('keyup', "textarea[id^='descripcion_otros']", function(){
         var textoEscrito = $(this).val();
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
     });
+
+    $(document).on('keyup', "textarea[id^='descripcion_enfermedad']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "input[id^='nombre_examen_fila_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
+    });
+
+    $(document).on('keyup', "textarea[id^='descripcion_resultado_fila_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
+    });
+
+    $(document).on('keyup', "textarea[id^='descripcion_cie10_fila_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
+    });
+
+    
 
     /* Función para colocar la primera letra en mayúscula de cada palabra que se escriba */
     function LetraMayusCadaPalabra(textoEscrito) {

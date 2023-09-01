@@ -36,7 +36,14 @@ use App\Models\sigmel_informacion_agudeza_visual_eventos;
 use App\Models\sigmel_lista_tablas_1507_decretos;
 use App\Models\cndatos_info_comunicado_eventos;
 use App\Models\sigmel_historial_acciones_eventos;
+use App\Models\sigmel_informacion_agudeza_auditiva_eventos;
+use App\Models\sigmel_informacion_decreto_eventos;
+use App\Models\sigmel_informacion_diagnosticos_eventos;
+use App\Models\sigmel_informacion_examenes_interconsultas_eventos;
+use App\Models\sigmel_informacion_pericial_eventos;
+use App\Models\sigmel_lista_cie_diagnosticos;
 use App\Models\sigmel_lista_clases_decretos;
+use Svg\Tag\Rect;
 
 class CalificacionPCLController extends Controller
 {
@@ -659,9 +666,14 @@ class CalificacionPCLController extends Controller
         $radioafiliado_comunicado = $request->radioafiliado_comunicado;
         $radioempresa_comunicado = $request->radioempresa_comunicado;
         $radioOtro = $request->radioOtro;
+        $total_agregarcopias = '';
         $agregar_copia = $request->agregar_copia;
-        $total_agregarcopias = implode(", ", $agregar_copia);
-
+        $agregarcopias = implode(", ", $agregar_copia);
+        if ($agregarcopias == 'CopiaVacia') {
+            $total_agregarcopias = '';
+        }else{
+            $total_agregarcopias = $agregarcopias;
+        }
         if(!empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && empty($radioOtro)){
             $destinatario = 'Afiliado';
         }elseif(empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado) && empty($radioOtro)){
@@ -776,9 +788,14 @@ class CalificacionPCLController extends Controller
         $radioafiliado_comunicado_editar = $request->radioafiliado_comunicado_editar;
         $radioempresa_comunicado_editar = $request->radioempresa_comunicado_editar;
         $radioOtro_editar = $request->radioOtro_editar;
+        $total_agregarcopias = '';
         $agregar_copia_editar = $request->agregar_copia_editar;
-        $total_agregarcopias = implode(", ", $agregar_copia_editar);
-
+        $agregarcopias = implode(", ", $agregar_copia_editar);
+        if ($agregarcopias == 'CopiaVacia') {
+            $total_agregarcopias = '';
+        }else{
+            $total_agregarcopias = $agregarcopias;
+        }
         if(!empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar) && empty($radioOtro_editar)){
             $destinatario = 'Afiliado';
         }elseif(empty($radioafiliado_comunicado_editar) && !empty($radioempresa_comunicado_editar) && empty($radioOtro_editar)){
@@ -1036,8 +1053,104 @@ class CalificacionPCLController extends Controller
             "Decreto" => "1",
             "NombreDecreto" => "MUCI - 1507 de 2014",
         );
+
+        // Obtener el último consecutivo de la base de datos
+        $consecutivoDictamen = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
+        ->max('Numero_dictamen');
+
+        if ($consecutivoDictamen > 0) {
+            $numero_consecutivo = $consecutivoDictamen + 1;
+        }else{
+            $numero_consecutivo = 0000000 + 1;
+        }
+        // Formatear el número consecutivo a 7 dígitos
+        $numero_consecutivo = str_pad($numero_consecutivo, 7, "0", STR_PAD_LEFT);
+
+        $array_info_decreto_evento = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')        
+        ->where([
+            ['ID_Evento', $Id_evento_calitec]
+        ])
+        ->get();
+        if (count($array_info_decreto_evento) > 0) {
+
+            $Historiaclínicacompleta  = "Historia clínica completa";
+            $Exámenespreocupacionales = "Exámenes preocupacionales";
+            $Epicrisis = "Epicrisis";
+            $Exámenesperiódicosocupacionales  = "Exámenes periódicos ocupacionales";
+            $Exámenesparaclinicos  = "Exámenes paraclinicos";
+            $ExámenesPostocupacionales  = "Exámenes Post-ocupacionales";
+            $Conceptosdesaludocupacional   = "Conceptos de salud ocupacional";
+
+            $arraytotalRealcionDocumentos = [
+                'Historia clínica completa',
+                'Exámenes preocupacionales',
+                'Epicrisis',
+                'Exámenes periódicos ocupacionales',
+                'Exámenes paraclinicos',
+                'Exámenes Post-ocupacionales',
+                'Conceptos de salud ocupacional',
+            ];
+
+            foreach ($arraytotalRealcionDocumentos as &$valor) {    
+                $valor = trim($valor);
+                $valor = str_replace("-", "", $valor);  
+                //$valor = strtr($valor, 'áéíóúÁÉÍÓÚ', 'aeiouAEIOU'); 
+                $valor = preg_replace("/\s+/", "", $valor); 
+            }
+            $relacionDocuementos = $array_info_decreto_evento[0]->Relacion_documentos;
+            $separaRelacionDocumentos = explode(", ",$relacionDocuementos);  
+            
+            foreach ($separaRelacionDocumentos as &$valor) {    
+                $valor = trim($valor);
+                $valor = str_replace("-", "", $valor);  
+                //$valor = strtr($valor, 'áéíóúÁÉÍÓÚ', 'aeiouAEIOU'); 
+                $valor = preg_replace("/\s+/", "", $valor);     
+            }
+            foreach ($arraytotalRealcionDocumentos as $index => $value) {
+                if (!in_array($value, $separaRelacionDocumentos)) {
+                    ${$value} = "vacio";
+                }
+            }                       
+        }else{
+            list(
+                $Historiaclínicacompleta, 
+                $Exámenespreocupacionales, 
+                $Epicrisis, 
+                $Exámenesperiódicosocupacionales, 
+                $Exámenesparaclinicos, 
+                $ExámenesPostocupacionales, 
+                $Conceptosdesaludocupacional
+            ) = array_fill(0, 7, 'vacio');
+        }
+        $array_datos_relacion_documentos = [
+            'Historiaclinicacompleta' => $Historiaclínicacompleta, 
+            'Examenespreocupacionales' => $Exámenespreocupacionales, 
+            'Epicrisis' => $Epicrisis, 
+            'Examenesperiodicosocupacionales' => $Exámenesperiódicosocupacionales, 
+            'Examenesparaclinicos' => $Exámenesparaclinicos, 
+            'ExamenesPostocupacionales' => $ExámenesPostocupacionales, 
+            'Conceptosdesaludocupacion' => $Conceptosdesaludocupacional,
+        ];
+
+        $array_datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+        ->where('Estado', 'Activo')
+        ->get();
+
+        $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+        ->select('side.Id_Diagnosticos_motcali', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
+        'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones')
+        ->where([['side.Estado', '=', 'Activo']])->get();  
         
-        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 'hay_agudeza_visual','datos_demos'));
+        $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
+        ->where([
+            ['ID_evento',$Id_evento_calitec],
+            ['Estado', 'Activo']
+        ])
+        ->get();
+
+        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo','array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva'));
     }
 
     public function cargueListadoSelectoresCalifcacionTecnicaPcl(Request $request){
@@ -1121,6 +1234,502 @@ class CalificacionPCLController extends Controller
             return response()->json($info_listado_agudeza_visual);
         }
 
+        // Listado cie diagnosticos motivo calificacion (Calificacion Tecnica)
+        if ($parametro == 'listado_CIE10') {
+            $listado_cie_diagnostico = sigmel_lista_cie_diagnosticos::on('sigmel_gestiones')
+            ->select('Id_Cie_diagnostico', 'CIE10')
+            ->where([
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_cie_diagnostico = json_decode(json_encode($listado_cie_diagnostico, true));
+            return response()->json($info_listado_cie_diagnostico);
+        }
+
+        // Listado Origen CIE10 diagnosticos motivo calificacion (Calificacion Tecnica)
+        if ($parametro == 'listado_OrgienCIE10') {
+            $listado_Origen_CIE10 = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro', 'Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Origen Cie10'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_Origen_CIE10 = json_decode(json_encode($listado_Origen_CIE10, true));
+            return response()->json($info_listado_Origen_CIE10);
+        }
+
+        //Nombre diagnostico CIE10
+        $Id_CIE = $request->seleccion;
+        
+        if ($parametro == 'listado_NombreCIE10') {
+            $listado_Nombre_CIE10 = sigmel_lista_cie_diagnosticos::on('sigmel_gestiones')
+            ->select('Descripcion_diagnostico')
+            ->where([
+                ['Id_Cie_diagnostico', '=', $Id_CIE],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_Nombre_CIE10 = json_decode(json_encode($listado_Nombre_CIE10, true));
+            return response()->json($info_listado_Nombre_CIE10);
+            
+        }
+
+        // Listados agudeza auditiva
+        if ($parametro == 'agudeza_auditiva') {
+            $listado_Agudeza_auditiva = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro', 'Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'agudeza auditiva'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_Agudeza_auditiva = json_decode(json_encode($listado_Agudeza_auditiva, true));
+            return response()->json($info_listado_Agudeza_auditiva);
+            
+        }
+        
+
+    }
+
+    public function guardarDecretoDicRelaDocFund(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $usuario = Auth::user()->name;
+        $id_Evento_decreto = $request->Id_Evento_decreto;
+        $id_Proceso_decreto = $request->Id_Proceso_decreto;
+        $id_Asignacion_decreto = $request->Id_Asignacion_decreto;
+
+        if ($request->bandera_decreto_guardar_actualizar == 'Guardar') {
+            
+            $origen_firme = $request->origen_firme;
+            $origen_cobertura = $request->origen_cobertura;
+            $decreto_califi = $request->decreto_califi;
+            $numeroDictamen = $request->numeroDictamen;
+            $motivo_solicitud = $request->motivo_solicitud;         
+            $relacion_documentos = $request->Relacion_Documentos;            
+            if (!empty($relacion_documentos)) {
+                $total_relacion_documentos = implode(", ", $relacion_documentos);                
+            }else{
+                $total_relacion_documentos = '';
+            }
+            $descripcion_otros = $request->descripcion_otros;
+            $descripcion_enfermedad = $request->descripcion_enfermedad;
+            $datos_info_decreto_eventos = [
+                'ID_Evento' => $id_Evento_decreto,
+                'Id_proceso' => $id_Proceso_decreto,
+                'Id_Asignacion' => $id_Asignacion_decreto,
+                'Origen_firme' => $origen_firme,
+                'Cobertura' => $origen_cobertura,
+                'Decreto_calificacion' => $decreto_califi,
+                'Numero_dictamen' => $numeroDictamen,
+                'Relacion_documentos' => $total_relacion_documentos,
+                'Otros_relacion_doc' => $descripcion_otros,
+                'Descripcion_enfermedad_actual' => $descripcion_enfermedad,
+                'Nombre_usuario' => $usuario,
+                'F_registro' => $date,
+            ];
+
+            $dato_info_pericial_eventos = [
+                'Id_motivo_solicitud' => $motivo_solicitud,
+            ];
+    
+            sigmel_informacion_decreto_eventos::on('sigmel_gestiones')->insert($datos_info_decreto_eventos);
+            sleep(2);
+            sigmel_informacion_pericial_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento', $id_Evento_decreto]
+            ])->update($dato_info_pericial_eventos);
+            
+            $mensajes = array(
+                "parametro" => 'agregar_decreto_parte',
+                "parametro2" => 'guardo',
+                "mensaje" => 'Guardado satisfactoriamente.'
+            );        
+    
+            return json_decode(json_encode($mensajes, true));
+
+        }elseif($request->bandera_decreto_guardar_actualizar == 'Actualizar'){
+
+            $origen_firme = $request->origen_firme;
+            $origen_cobertura = $request->origen_cobertura;
+            $decreto_califi = $request->decreto_califi;
+            $numeroDictamen = $request->numeroDictamen;
+            $motivo_solicitud = $request->motivo_solicitud;         
+            $relacion_documentos = $request->Relacion_Documentos;
+            if (!empty($relacion_documentos)) {
+                $total_relacion_documentos = implode(", ", $relacion_documentos);                
+            }else{
+                $total_relacion_documentos = '';
+            }
+            $descripcion_otros = $request->descripcion_otros;
+            $descripcion_enfermedad = $request->descripcion_enfermedad;
+            $datos_info_decreto_eventos = [
+                'ID_Evento' => $id_Evento_decreto,
+                'Id_proceso' => $id_Proceso_decreto,
+                'Id_Asignacion' => $id_Asignacion_decreto,
+                'Origen_firme' => $origen_firme,
+                'Cobertura' => $origen_cobertura,
+                'Decreto_calificacion' => $decreto_califi,
+                'Numero_dictamen' => $numeroDictamen,
+                'Relacion_documentos' => $total_relacion_documentos,
+                'Otros_relacion_doc' => $descripcion_otros,
+                'Descripcion_enfermedad_actual' => $descripcion_enfermedad,
+                'Nombre_usuario' => $usuario,
+                'F_registro' => $date,
+            ];
+
+            $dato_info_pericial_eventos = [
+                'Id_motivo_solicitud' => $motivo_solicitud,
+            ];
+    
+            sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
+            ->where('ID_Evento', $id_Evento_decreto)->update($datos_info_decreto_eventos);
+            sleep(2);
+            sigmel_informacion_pericial_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento', $id_Evento_decreto]
+            ])->update($dato_info_pericial_eventos);
+    
+            $mensajes = array(
+                "parametro" => 'update_decreto_parte',
+                "mensaje2" => 'Actualizado satisfactoriamente.'
+            ); 
+
+            return json_decode(json_encode($mensajes, true));
+
+        }
+
+    }
+
+    public function guardarExamenesInterconsulta(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+
+        // Seteo del autoincrement para mantener el primary key siempre consecutivo.
+        $max_id = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+        ->max('Id_Examenes_interconsultas');
+        if ($max_id <> "") {
+            DB::connection('sigmel_gestiones')
+            ->statement("ALTER TABLE sigmel_informacion_examenes_interconsultas_eventos AUTO_INCREMENT = ".($max_id));
+        }
+        // Captura del array de los datos de la tabla
+        $array_examenes_interconsultas = $request->datos_finales_examenes_interconsultas;
+
+        // Iteración para extraer los datos de la tabla y adicionar los datos de Id evento, Id asignacion y Id proceso
+        $array_datos_organizados = [];
+        foreach ($array_examenes_interconsultas as $subarray_datos) {
+
+            array_unshift($subarray_datos, $request->Id_proceso);
+            array_unshift($subarray_datos, $request->Id_Asignacion);
+            array_unshift($subarray_datos, $request->Id_evento);
+
+            $subarray_datos[] = $nombre_usuario;
+            $subarray_datos[] = $date;
+
+            array_push($array_datos_organizados, $subarray_datos);
+        }
+
+        // Creación de array con los campos de la tabla: sigmel_informacion_examenes_interconsultas_eventos
+        $array_tabla_examen_interconsulta = ['ID_evento','Id_Asignacion','Id_proceso',
+        'F_examen_interconsulta','Nombre_examen_interconsulta','Descripcion_resultado',
+        'Nombre_usuario','F_registro'];
+
+        // Combinación de los campos de la tabla con los datos
+        $array_datos_con_keys = [];
+        foreach ($array_datos_organizados as $subarray_datos_organizados) {
+            array_push($array_datos_con_keys, array_combine($array_tabla_examen_interconsulta, $subarray_datos_organizados));
+        }
+
+        // Inserción de la información
+        foreach ($array_datos_con_keys as $insertar_examen) {
+            sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')->insert($insertar_examen);
+        } 
+
+        $mensajes = array(
+            "parametro" => 'inserto_informacion',
+            "mensaje" => 'Exámen e interconsulta guardado satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+    }
+
+    public function eliminarExamenInterconsulta(Request $request){
+        $id_fila_examen = $request->fila;
+        $fila_actualizar = [
+            'Estado' => 'Inactivo'
+        ];
+
+        sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')->where('Id_Examenes_interconsultas', $id_fila_examen)
+        ->update($fila_actualizar);
+
+        $total_registros_examen = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento', $request->Id_evento],['Estado', 'Activo']])->count();
+
+        $mensajes = array(
+            "parametro" => 'fila_examen_eliminada',
+            'total_registros' => $total_registros_examen,
+            "mensaje" => 'Exámen e Interconsulta eliminada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+
+    }
+
+    public function guardarDiagnosticoMotivoCalificacion(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+
+        // Seteo del autoincrement para mantener el primary key siempre consecutivo.
+        $max_id = sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
+        ->max('Id_Diagnosticos_motcali');
+        if ($max_id <> "") {
+            DB::connection('sigmel_gestiones')
+            ->statement("ALTER TABLE sigmel_informacion_diagnosticos_eventos AUTO_INCREMENT = ".($max_id));
+        }
+
+        // Captura del array de los datos de la tabla
+        $array_diagnosticos_motivo_calificacion = $request->datos_finales_diagnosticos_moticalifi;
+
+        // Iteración para extraer los datos de la tabla y adicionar los datos de Id evento, Id asignacion y Id proceso
+        $array_datos_organizados = [];
+        foreach ($array_diagnosticos_motivo_calificacion as $subarray_datos) {
+
+            array_unshift($subarray_datos, $request->Id_proceso);
+            array_unshift($subarray_datos, $request->Id_Asignacion);
+            array_unshift($subarray_datos, $request->Id_evento);
+
+            $subarray_datos[] = $nombre_usuario;
+            $subarray_datos[] = $date;
+
+            array_push($array_datos_organizados, $subarray_datos);
+        }
+
+        // Creación de array con los campos de la tabla: sigmel_informacion_diagnosticos_eventos
+        $array_tabla_diagnosticos_motivo_calificacion = ['ID_evento','Id_Asignacion','Id_proceso',
+        'CIE10','Nombre_CIE10','Origen_CIE10','Deficiencia_motivo_califi_condiciones',
+        'Nombre_usuario','F_registro'];
+
+        // Combinación de los campos de la tabla con los datos
+        $array_datos_con_keys = [];
+        foreach ($array_datos_organizados as $subarray_datos_organizados) {
+            array_push($array_datos_con_keys, array_combine($array_tabla_diagnosticos_motivo_calificacion, $subarray_datos_organizados));
+        }
+
+        // Inserción de la información
+        foreach ($array_datos_con_keys as $insertar_diagnostico) {
+            sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')->insert($insertar_diagnostico);
+        } 
+
+        $mensajes = array(
+            "parametro" => 'inserto_diagnostico',
+            "mensaje" => 'Diagnóstico motivo de calificación guardado satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+
+    }
+
+    public function eliminarDiagnosticoMotivoCalificacion(Request $request){
+        $id_fila_diagnostico = $request->fila;
+        $fila_actualizar = [
+            'Estado' => 'Inactivo'
+        ];
+
+        sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')->where('Id_Diagnosticos_motcali', $id_fila_diagnostico)
+        ->update($fila_actualizar);
+
+        $total_registros_diagnostico = sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento', $request->Id_evento],['Estado', 'Activo']])->count();
+
+        $mensajes = array(
+            "parametro" => 'fila_diagnostico_eliminada',
+            'total_registros' => $total_registros_diagnostico,
+            "mensaje" => 'Diagnóstico motivo de calificación eliminado satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+
+    }    
+
+    public function guardarDeficienciasAgudezaAuditivas(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+
+        $ID_evento = $request->ID_evento;
+        $Id_Asignacion = $request->Id_Asignacion;
+        $Id_proceso = $request->Id_proceso;
+        $oido_izquierdo = $request->oido_izquierdo;
+        $oido_derecho = $request->oido_derecho;
+        $Agudeza_Auditivas = $request->Agudeza_Auditivas;
+        
+        foreach ($Agudeza_Auditivas as $auditiva) {
+            $auditiva;            
+            foreach ($auditiva as $columna => $deficiencia) {
+                $$columna = $deficiencia;
+            }
+        }
+                    
+        $datos_agudeza_auditiva = [
+            'ID_evento' => $ID_evento,
+            'Id_Asignacion' => $Id_Asignacion,
+            'Id_proceso' => $Id_proceso,
+            'Oido_Izquierdo' => $oido_izquierdo,
+            'Oido_Derecho' => $oido_derecho,
+            'Deficiencia_monoaural_izquierda' => $columna0,
+            'Deficiencia_monoaural_derecha' => $columna1,
+            'Deficiencia_binaural' => $columna2,
+            'Adicion_tinnitus' => $columna3,
+            'Deficiencia' => $columna4,
+            'Nombre_usuario' => $nombre_usuario,
+            'F_registro' => $date,
+        ];
+        
+        sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')->insert($datos_agudeza_auditiva);
+        
+        $mensajes = array(
+            "parametro" => 'insertar_agudeza_auditiva',
+            "mensaje" => 'Agudeza auditiva guardada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+    }
+
+    public function eliminarAgudezaAuditiva(Request $request){
+
+        $id_fila_agudeza_auditiva = $request->fila;
+        $fila_actualizar = [
+            'Estado' => 'Inactivo'
+        ];
+
+        sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')->where('Id_Agudeza_auditiva', $id_fila_agudeza_auditiva)
+        ->update($fila_actualizar);
+
+        $total_registros_agudeza_auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento', $request->Id_evento],['Estado', 'Activo']])->count();
+
+        $mensajes = array(
+            "parametro" => 'fila_agudeza_auditiva_eliminada',
+            'total_registros' => $total_registros_agudeza_auditiva,
+            "mensaje" => 'Agudeza auditiva eliminada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+        
+    }
+
+    public function actualizarDxPrincipalAdudezaAuditiva(Request $request){
+        
+        $dxPrincipal = $request->dxPrincipal;
+        $Id_evento = $request->Id_evento;
+        $banderaDxPrincipal = $request->banderaDxPrincipal;
+
+        if ($banderaDxPrincipal == 'SiDxPrincipal') {
+            $fila_actulizar = [
+                'Dx_Principal' => 'Si'
+            ];
+    
+            sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento', $Id_evento],
+                ['Estado', 'Activo']
+            ])->update($fila_actulizar);
+    
+            $mensajes = array(
+                "parametro" => 'fila_dxPrincipalagudeza_auditiva_agregado',
+                "mensaje" => 'Dx Principal Agudeza auditiva agreagado satisfactoriamente.'
+            );
+    
+            return json_decode(json_encode($mensajes, true));            
+        } elseif($banderaDxPrincipal == 'NoDxPrincipal'){
+            $fila_actulizar = [
+                'Dx_Principal' => 'No'
+            ];
+    
+            sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento', $Id_evento],
+                ['Estado', 'Activo']
+            ])->update($fila_actulizar);
+    
+            $mensajes = array(
+                "parametro" => 'fila_dxPrincipalagudeza_auditiva_agregado',
+                "mensaje" => 'Dx Principal Agudeza auditiva eliminado satisfactoriamente.'
+            );
+    
+            return json_decode(json_encode($mensajes, true));            
+        }
+    }
+
+    public function actualizarDeficienciasAgudezaAuditivas(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+
+        $ID_evento_editar = $request->ID_evento_editar;
+        $Id_Asignacion_editar = $request->Id_Asignacion_editar;
+        $Id_proceso_editar = $request->Id_proceso_editar;
+        $oido_izquierdo_editar = $request->oido_izquierdo_editar;
+        $oido_derecho_editar = $request->oido_derecho_editar;
+        $Agudeza_Auditivas_editar = $request->Agudeza_Auditivas_editar;
+        
+        foreach ($Agudeza_Auditivas_editar as $auditiva_editar) {
+            $auditiva_editar;            
+            foreach ($auditiva_editar as $columna => $deficiencia_editar) {
+                $$columna = $deficiencia_editar;
+            }
+        }
+                    
+        $datos_agudeza_auditiva_editar = [
+            'ID_evento' => $ID_evento_editar,
+            'Id_Asignacion' => $Id_Asignacion_editar,
+            'Id_proceso' => $Id_proceso_editar,
+            'Oido_Izquierdo' => $oido_izquierdo_editar,
+            'Oido_Derecho' => $oido_derecho_editar,
+            'Deficiencia_monoaural_izquierda' => $columnaEditar0,
+            'Deficiencia_monoaural_derecha' => $columnaEditar1,
+            'Deficiencia_binaural' => $columnaEditar2,
+            'Adicion_tinnitus' => $columnaEditar3,
+            'Deficiencia' => $columnaEditar4,
+            'Nombre_usuario' => $nombre_usuario,
+            'F_registro' => $date,
+        ];
+        
+        sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
+        ->where([
+            ['ID_evento' , $ID_evento_editar],
+            ['Estado' , 'Activo']
+        ])
+        ->unpdate($datos_agudeza_auditiva_editar);
+        
+        $mensajes = array(
+            "parametro" => 'insertar_agudeza_auditiva_editar',
+            "mensaje" => 'Agudeza auditiva actualizada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
     }
 
     public function ConsultaCampimetriaXFila(Request $request){

@@ -310,6 +310,24 @@ Route::get('/CalficacionTecnicaPCL', [CalificacionPCLController::class, 'mostrar
 Route::post('/CalficacionTecnicaPCL', [CalificacionPCLController::class, 'mostrarVistaCalificacionTecnicaPCL'])->name('CalficacionTecnicaPCL');
 // Accion: Selectores Módulo calificación PCl
 Route::post('/selectoresCalificacionTecnicaPCL', [CalificacionPCLController::class, 'cargueListadoSelectoresCalifcacionTecnicaPcl']);
+// Acción: Guardar Informacion Decreto, Dictamen, Relacion documentos, Fundamentos para la calificación de la perdida de capacidad laboral y ocupacional
+Route::post('/guardarDecretoDictamenRelacionDocFunda', [CalificacionPCLController::class, 'guardarDecretoDicRelaDocFund']);
+// Acción: Guardar registros Examenes e interconsultas
+Route::post('/guardarExamenesInterconsultas', [CalificacionPCLController::class, 'guardarExamenesInterconsulta']);
+// Acción: Eliminar registro de Examenes e interconsultar visualmente e inactiva en la DB
+Route::post('/eliminarExamenesInterconsultas', [CalificacionPCLController::class, 'eliminarExamenInterconsulta']);
+// Acción: Guardar registros Diagnosticos motivo de calificación
+Route::post('/guardarDiagnosticosMotivoCalificacion', [CalificacionPCLController::class, 'guardarDiagnosticoMotivoCalificacion']);
+// Acción: Eliminar registros Diagnosticos motivo de calificacion visualmente e inactiva en la DB
+Route::post('/eliminarDiagnosticosMotivoCalificacion', [CalificacionPCLController::class, 'eliminarDiagnosticoMotivoCalificacion']);
+// Acción: Guardar Deficiencia Agudeza Auditiva
+Route::post('/guardarDeficienciaAgudezaAuditiva', [CalificacionPCLController::class, 'guardarDeficienciasAgudezaAuditivas']);
+// Acción: Eliminar registros Agudeza Auditiva visualmente  e inactiva en la DB
+Route::post('/eliminarAgudezasAuditivas', [CalificacionPCLController::class, 'eliminarAgudezaAuditiva']);
+// Acción: Actualizar Dx Principal de Agudeza Auditiva
+Route::post('/actualizarDxPrincipalAdudezaAuditivas', [CalificacionPCLController::class, 'actualizarDxPrincipalAdudezaAuditiva']);
+// Acción: Actualizar Deficiencia Agudeza Auditiva
+Route::post('/actualizarDeficienciaAgudezaAuditiva', [CalificacionPCLController::class, 'actualizarDeficienciasAgudezaAuditivas']);
 // Acción: Consulta Campimetría por fila
 Route::post('/ConsultaCampimetriaXFila', [CalificacionPCLController::class, 'ConsultaCampimetriaXFila']);
 // Acción: Guardar Información Agudeza Visual

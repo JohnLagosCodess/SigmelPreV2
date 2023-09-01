@@ -868,6 +868,11 @@ $(document).ready(function(){
                 var valor = inputs[i].value;
             arrayinputs.push(valor)
             }
+            if (arrayinputs.length === 0) {
+                arrayinputs = ['CopiaVacia'];
+            }else{
+                arrayinputs;  
+            }
         }    
         capturarValores();
         //console.log(arrayinputs);        
@@ -1246,7 +1251,12 @@ $(document).ready(function(){
                 var valor = inputs[i].value;
             arrayinputs.push(valor)
             }
-        }    
+            if (arrayinputs.length === 0) {
+                arrayinputs = ['CopiaVacia'];
+            }else{
+                arrayinputs;  
+            }
+        }
         capturarValores();
         //console.log(arrayinputs);        
         let token = $('input[name=_token]').val();        
@@ -1293,12 +1303,12 @@ $(document).ready(function(){
                     setTimeout(function(){
                         $('.alerta_comunicado').addClass('d-none');
                         $('.alerta_comunicado').empty();
+                        localStorage.setItem("#Generar_comunicados", true);
+                        location.reload();
                     }, 3000);
                 }
             }
-        })
-        localStorage.setItem("#Generar_comunicados", true);
-        location.reload();
+        })        
     }) 
 
     // Abrir modal de agregar solictudes despues de guardar 

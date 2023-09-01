@@ -28,108 +28,46 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-12">
-                    <!--Calificacón PCL-->
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-4">
-                                <div class="form-group">
-                                    <label for="origen_firme">Origen en firme<span style="color: red;">(*)</span></label>
-                                    <select class="custom-select origen_firme" name="origen_firme" id="origen_firme" required>
-                                        @if ($datos_demos["Origen"] > 0)
-                                            <option value="{{$datos_demos["Origen"]}}" selected>{{$datos_demos["NombreOrigen"]}}</option>
-                                        @else
-                                            <option value="">Seleccione una opción</option>
-                                        @endif
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="form-group">
-                                    <label for="origen_cobertura">Cobertura<span style="color: red;">(*)</span></label>
-                                    <select class="custom-select origen_cobertura" name="origen_cobertura" id="origen_cobertura" required>
-                                        @if ($datos_demos["Cobertura"] > 0)
-                                            <option value="{{$datos_demos["Cobertura"]}}" selected>{{$datos_demos["NombreCobertura"]}}</option>
-                                        @else
-                                            <option value="">Seleccione una opción</option>
-                                        @endif
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="form-group">
-                                    <label for="decreto_califi">Decreto de Calificación<span style="color: red;">(*)</span></label>
-                                    <select class="custom-select decreto_califi" name="decreto_califi" id="decreto_califi" required>
-                                        @if ($datos_demos["Decreto"] > 0)
-                                            <option value="{{$datos_demos["Decreto"]}}" selected>{{$datos_demos["NombreDecreto"]}}</option>
-                                        @else
-                                            <option value="">Seleccione una opción</option>
-                                        @endif
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Parametro para mostrar ITEM ya gestionados -->
-                    <?php
-                    if($datos_demos["Origen"] ='48' && $datos_demos["Cobertura"] ='50'):
-                        $decreto_1507='1';
-                    else:
-                        $decreto_1507='0';
-                    endif
-                    ?>
-                    <!-- Informacion Afiliado-->
-                    <div class="card-info columna_row1_afiliado" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif>
-                        <div class="card-header text-center" style="border: 1.5px solid black;">
-                            <h5>Información del afiliado</h5>
-                        </div>
+                    <form id="form_CaliTecDecreto" method="POST">
+                        <!--Calificacón PCL-->
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="nombre_afiliado">Nombre de afiliado</label>
-                                        <input type="text" class="form-control" name="nombre_afiliado" id="nombre_afiliado" value="{{$array_datos_calificacionPclTecnica[0]->Nombre_afiliado}}" disabled>
+                                        <label for="origen_firme">Origen en firme<span style="color: red;">(*)</span></label>
+                                        <select class="custom-select origen_firme" name="origen_firme" id="origen_firme" required>
+                                            @if ($datos_demos["Origen"] > 0)
+                                                <option value="{{$datos_demos["Origen"]}}" selected>{{$datos_demos["NombreOrigen"]}}</option>
+                                            @else
+                                                <option value="">Seleccione una opción</option>
+                                            @endif
+                                        </select>
+                                        <input hidden="hidden" type="text" name="Id_Evento_decreto" id="Id_Evento_decreto" value="{{$array_datos_calificacionPclTecnica[0]->ID_evento}}">
+                                        <input hidden="hidden" type="text" name="Id_Proceso_decreto" id="Id_Proceso_decreto" value="{{$array_datos_calificacionPclTecnica[0]->Id_proceso}}">
+                                        <input hidden="hidden" type="text" name="Id_Asignacion_decreto" id="Id_Asignacion_decreto" value="{{$array_datos_calificacionPclTecnica[0]->Id_Asignacion}}">
+                                        <input hidden="hidden" type="text" class="form-control" id="conteo_listado_examenes_interconsulta" value="{{count($array_datos_examenes_interconsultas)}}">
+                                        <input hidden="hidden" type="text" class="form-control" id="conteo_listado_diagnosticos_moticalifi" value="{{count($array_datos_diagnostico_motcalifi)}}">
+                                        <input hidden="hidden" type="text" class="form-control" id="conteo_listado_agudeza_auditiva" value="{{count($array_agudeza_Auditiva)}}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="identificacion">N° Identificación</label>
-                                        <input type="text" class="form-control" name="identificacion" id="identificacion" value="{{$array_datos_calificacionPclTecnica[0]->Nro_identificacion}}" disabled>
+                                        <label for="origen_cobertura">Cobertura<span style="color: red;">(*)</span></label>
+                                        <select class="custom-select origen_cobertura" name="origen_cobertura" id="origen_cobertura" required>
+                                            @if ($datos_demos["Cobertura"] > 0)
+                                                <option value="{{$datos_demos["Cobertura"]}}" selected>{{$datos_demos["NombreCobertura"]}}</option>
+                                            @else
+                                                <option value="">Seleccione una opción</option>
+                                            @endif
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="id_evento">ID evento</label>
-                                        <input type="text" class="form-control" name="id_evento" id="id_evento" value="{{$array_datos_calificacionPclTecnica[0]->ID_evento}}" disabled>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Informacion Ditacmen-->
-                    <div class="card-info columna_row1_dictamen" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif>
-                        <div class="card-header text-center" style="border: 1.5px solid black;">
-                            <h5>Información del Dictamen</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label for="fecha_dictamen">Fecha Dictamen</label>
-                                        <input type="text" class="form-control" name="fecha_dictamen" id="fecha_dictamen" style="color: red;" value="NO ESTA DEFINIDO BACKEND" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label for="numero_dictamen">N° Dictamen</label>
-                                        <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" style="color: red;" value="NO ESTA DEFINIDO BACKEND" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label for="motivo_solicitud">Motivo Solicitud<span style="color: red;">(*)</span></label>
-                                        <select class="custom-select motivo_solicitud" name="motivo_solicitud" id="motivo_solicitud" required>
-                                            @if ($motivo_solicitud_actual[0]->Id_motivo_solicitud > 0)
-                                                <option value="{{$motivo_solicitud_actual[0]->Id_motivo_solicitud}}" selected>{{$motivo_solicitud_actual[0]->Nombre_solicitud}}</option>
+                                        <label for="decreto_califi">Decreto de Calificación<span style="color: red;">(*)</span></label>
+                                        <select class="custom-select decreto_califi" name="decreto_califi" id="decreto_califi" required>
+                                            @if ($datos_demos["Decreto"] > 0)
+                                                <option value="{{$datos_demos["Decreto"]}}" selected>{{$datos_demos["NombreDecreto"]}}</option>
                                             @else
                                                 <option value="">Seleccione una opción</option>
                                             @endif
@@ -137,149 +75,288 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="nombre_apoderado">Nombre apoderado</label>
-                                        <input type="text" class="form-control" name="nombre_apoderado" id="nombre_apoderado" value="{{$datos_apoderado_actual[0]->Nombre_apoderado}}" disabled>
+                        </div>
+                        <!-- Parametro para mostrar ITEM ya gestionados -->
+                        <?php
+                        if($datos_demos["Origen"] ='48' && $datos_demos["Cobertura"] ='50'):
+                            $decreto_1507='1';
+                        else:
+                            $decreto_1507='0';
+                        endif
+                        ?>                    
+                        <!-- Informacion Afiliado-->
+                        <div class="card-info columna_row1_afiliado" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif>
+                            <div class="card-header text-center" style="border: 1.5px solid black;">
+                                <h5>Información del afiliado</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="nombre_afiliado">Nombre de afiliado</label>
+                                            <input type="text" class="form-control" name="nombre_afiliado" id="nombre_afiliado" value="{{$array_datos_calificacionPclTecnica[0]->Nombre_afiliado}}" disabled>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="identificacion_apoderado">N° identificación apoderado</label>
-                                        <input type="text" class="form-control" name="identificacion_apoderado" id="identificacion_apoderado" value="{{$datos_apoderado_actual[0]->Nro_identificacion_apoderado}}" disabled>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="identificacion">N° Identificación</label>
+                                            <input type="text" class="form-control" name="identificacion" id="identificacion" value="{{$array_datos_calificacionPclTecnica[0]->Nro_identificacion}}" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="id_evento">ID evento</label>
+                                            <input type="text" class="form-control" name="id_evento" id="id_evento" value="{{$array_datos_calificacionPclTecnica[0]->ID_evento}}" disabled>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- Relacion de documetos-->
-                    <div class="card-info columna_row1_documentos" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif >
-                        <div class="card-header text-center" style="border: 1.5px solid black;">
-                            <h5>Relación de documentos / Examenes fisico - (Descripción)</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <h6 class="text-center"><b>Documentos tenidos en cuenta para la calificación</b><h6>
-                                    </div>
-                                </div>
+                        <!-- Informacion Ditacmen-->
+                        <div class="card-info columna_row1_dictamen" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif>
+                            <div class="card-header text-center" style="border: 1.5px solid black;">
+                                <h5>Información del Dictamen</h5>
                             </div>
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="hitoria_clinica" name="hitoria_clinica">
-                                            <label for="hitoria_clinica" class="custom-control-label">Historia clínica completa</label>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="fecha_dictamen">Fecha Dictamen</label>
+                                            <input type="text" class="form-control" name="fecha_dictamen" id="fecha_dictamen" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="numero_dictamen">N° Dictamen</label>
+                                            @if (empty($array_info_decreto_evento[0]->Numero_dictamen))
+                                                <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" style="color: red;" value="{{$numero_consecutivo}}" disabled>                                                
+                                            @else
+                                                <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" style="color: red;" value="{{$array_info_decreto_evento[0]->Numero_dictamen}}" disabled>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="motivo_solicitud">Motivo Solicitud<span style="color: red;">(*)</span></label>
+                                            <select class="custom-select motivo_solicitud" name="motivo_solicitud" id="motivo_solicitud" required>
+                                                @if ($motivo_solicitud_actual[0]->Id_motivo_solicitud > 0)
+                                                    <option value="{{$motivo_solicitud_actual[0]->Id_motivo_solicitud}}" selected>{{$motivo_solicitud_actual[0]->Nombre_solicitud}}</option>
+                                                @else
+                                                    <option value="">Seleccione una opción</option>
+                                                @endif
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="examanes_preocupacionales" name="examanes_preocupacionales">
-                                            <label for="examanes_preocupacionales" class="custom-control-label">Exámenes preocupacionales</label>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="nombre_apoderado">Nombre apoderado</label>
+                                            <input type="text" class="form-control" name="nombre_apoderado" id="nombre_apoderado" value="{{$datos_apoderado_actual[0]->Nombre_apoderado}}" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="identificacion_apoderado">N° identificación apoderado</label>
+                                            <input type="text" class="form-control" name="identificacion_apoderado" id="identificacion_apoderado" value="{{$datos_apoderado_actual[0]->Nro_identificacion_apoderado}}" disabled>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="epicrisis" name="epicrisis">
-                                            <label for="epicrisis" class="custom-control-label">Epicrisis</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="examanes_periodicos" name="examanes_periodicos">
-                                            <label for="examanes_periodicos" class="custom-control-label">Examanes periódicos ocupacionales</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="examanes_paraclinicos" name="examanes_paraclinicos">
-                                            <label for="examanes_paraclinicos" class="custom-control-label">Exámenes paraclinicos</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="examanes_post_ocupacionales" name="examanes_post_ocupacionales">
-                                            <label for="examanes_post_ocupacionales" class="custom-control-label">Exámanes Post-ocupacionales</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="salud_ocupacionales" name="salud_ocupacionales">
-                                            <label for="salud_ocupacionales" class="custom-control-label">Conceptos de salud ocupacional</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label for="descripcion_otros">Otros:</label>
-                                        <textarea class="form-control" name="descripcion_otros" id="descripcion_otros" cols="30" rows="5" style="resize: none;"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--Guardar Relación documentos-->
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
-                                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong>Al momento de diligenciar el modulo dar clic en el botón guardar.
-                                        </div>
-                                    </div>
-                                </div>
-                                <input type="submit" id="GuardarRelacion" name="GuardarRelacion" class="btn btn-info" value="Guardar">
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Fundamentos para la calificacion-->
-                    <div class="card-info columna_row1_fundamentos" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif>
-                        <div class="card-header text-center" style="border: 1.5px solid black;">
-                            <h5>Fundamentos para la calificación de la Pérdida de Capacidad Laboral y ocupacional</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label for="descripcion_enfermedad">Descripción de la enfermedad actual<span style="color: red;">(*)</span>:</label>
-                                        <textarea class="form-control" name="descripcion_enfermedad" id="descripcion_enfermedad" cols="30" rows="5" style="resize: none;" required></textarea>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label for="dominancia">Dominancia</label>
-                                        <input type="text" class="form-control" name="dominancia" id="dominancia" value="{{$motivo_solicitud_actual[0]->Nombre_dominancia}}" disabled>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--Guardar Historial Enfermedad-->
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
-                                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong>Al momento de diligenciar el modulo dar clic en el botón guardar.
-                                        </div>
-                                    </div>
-                                </div>
-                                <input type="submit" id="GuardarPerdida" name="GuardarPerdida" class="btn btn-info" value="Guardar">
                             </div>
                         </div>
-                    </div>
+                        <!-- Relacion de documetos-->
+                        <div class="card-info columna_row1_documentos" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif >
+                            <div class="card-header text-center" style="border: 1.5px solid black;">
+                                <h5>Relación de documentos / Examenes fisico - (Descripción)</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <h6 class="text-center"><b>Documentos tenidos en cuenta para la calificación</b><h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                @if ($array_datos_relacion_documentos['Historiaclinicacompleta'] == 'vacio')
+                                                    <input class="custom-control-input" type="checkbox" id="hitoria_clinica" name="hitoria_clinica" value="Historia clínica completa">
+                                                    <label for="hitoria_clinica" class="custom-control-label">Historia clínica completa</label>                 
+                                                @else
+                                                    <input class="custom-control-input" type="checkbox" id="hitoria_clinica" name="hitoria_clinica" value="Historia clínica completa" checked>
+                                                    <label for="hitoria_clinica" class="custom-control-label">Historia clínica completa</label>
+                                                @endif
+                                                {{-- <input class="custom-control-input" type="checkbox" id="hitoria_clinica" name="hitoria_clinica" value="Historia clínica completa" >
+                                                <label for="hitoria_clinica" class="custom-control-label">Historia clínica completa</label> --}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                @if ($array_datos_relacion_documentos['Examenespreocupacionales'] == 'vacio')
+                                                    <input class="custom-control-input" type="checkbox" id="examanes_preocupacionales" name="examanes_preocupacionales" value="Exámenes preocupacionales">
+                                                    <label for="examanes_preocupacionales" class="custom-control-label">Exámenes preocupacionales</label>                                                    
+                                                @else
+                                                    <input class="custom-control-input" type="checkbox" id="examanes_preocupacionales" name="examanes_preocupacionales" value="Exámenes preocupacionales" checked>
+                                                    <label for="examanes_preocupacionales" class="custom-control-label">Exámenes preocupacionales</label>
+                                                @endif
+                                                {{-- <input class="custom-control-input" type="checkbox" id="examanes_preocupacionales" name="examanes_preocupacionales" value="Exámenes preocupacionales" >
+                                                <label for="examanes_preocupacionales" class="custom-control-label">Exámenes preocupacionales</label> --}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                @if ($array_datos_relacion_documentos['Epicrisis'] == 'vacio')
+                                                    <input class="custom-control-input" type="checkbox" id="epicrisis" name="epicrisis" value="Epicrisis">
+                                                    <label for="epicrisis" class="custom-control-label">Epicrisis</label>                                                    
+                                                @else
+                                                    <input class="custom-control-input" type="checkbox" id="epicrisis" name="epicrisis" value="Epicrisis" checked>
+                                                    <label for="epicrisis" class="custom-control-label">Epicrisis</label>
+                                                @endif
+                                                {{-- <input class="custom-control-input" type="checkbox" id="epicrisis" name="epicrisis" value="Epicrisis" >
+                                                <label for="epicrisis" class="custom-control-label">Epicrisis</label> --}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                @if ($array_datos_relacion_documentos['Examenesperiodicosocupacionales'] == 'vacio')
+                                                    <input class="custom-control-input" type="checkbox" id="examanes_periodicos" name="examanes_periodicos" value="Exámenes periódicos ocupacionales">
+                                                    <label for="examanes_periodicos" class="custom-control-label">Exámenes periódicos ocupacionales</label>                                                    
+                                                @else
+                                                    <input class="custom-control-input" type="checkbox" id="examanes_periodicos" name="examanes_periodicos" value="Exámenes periódicos ocupacionales" checked>
+                                                    <label for="examanes_periodicos" class="custom-control-label">Exámenes periódicos ocupacionales</label>
+                                                @endif
+                                                {{-- <input class="custom-control-input" type="checkbox" id="examanes_periodicos" name="examanes_periodicos" value="Exámenes periódicos ocupacionales" >
+                                                <label for="examanes_periodicos" class="custom-control-label">Exámenes periódicos ocupacionales</label> --}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                @if ($array_datos_relacion_documentos['Examenesparaclinicos'] == 'vacio')
+                                                    <input class="custom-control-input" type="checkbox" id="examanes_paraclinicos" name="examanes_paraclinicos" value="Exámenes paraclinicos">
+                                                    <label for="examanes_paraclinicos" class="custom-control-label">Exámenes paraclinicos</label>                                                    
+                                                @else
+                                                    <input class="custom-control-input" type="checkbox" id="examanes_paraclinicos" name="examanes_paraclinicos" value="Exámenes paraclinicos" checked>
+                                                    <label for="examanes_paraclinicos" class="custom-control-label">Exámenes paraclinicos</label>
+                                                @endif
+                                                {{-- <input class="custom-control-input" type="checkbox" id="examanes_paraclinicos" name="examanes_paraclinicos" value="Exámenes paraclinicos" >
+                                                <label for="examanes_paraclinicos" class="custom-control-label">Exámenes paraclinicos</label> --}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                @if ($array_datos_relacion_documentos['ExamenesPostocupacionales'] == 'vacio')
+                                                    <input class="custom-control-input" type="checkbox" id="examanes_post_ocupacionales" name="examanes_post_ocupacionales" value="Exámenes Post-ocupacionales">
+                                                    <label for="examanes_post_ocupacionales" class="custom-control-label">Exámenes Post-ocupacionales</label>                                                    
+                                                @else
+                                                    <input class="custom-control-input" type="checkbox" id="examanes_post_ocupacionales" name="examanes_post_ocupacionales" value="Exámenes Post-ocupacionales" checked>
+                                                    <label for="examanes_post_ocupacionales" class="custom-control-label">Exámenes Post-ocupacionales</label>
+                                                @endif
+                                                {{-- <input class="custom-control-input" type="checkbox" id="examanes_post_ocupacionales" name="examanes_post_ocupacionales" value="Exámenes Post-ocupacionales" >
+                                                <label for="examanes_post_ocupacionales" class="custom-control-label">Exámenes Post-ocupacionales</label> --}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                @if ($array_datos_relacion_documentos['Conceptosdesaludocupacion'] == 'vacio')
+                                                    <input class="custom-control-input" type="checkbox" id="salud_ocupacionales" name="salud_ocupacionales" value="Conceptos de salud ocupacional">
+                                                    <label for="salud_ocupacionales" class="custom-control-label">Conceptos de salud ocupacional</label>
+                                                @else
+                                                    <input class="custom-control-input" type="checkbox" id="salud_ocupacionales" name="salud_ocupacionales" value="Conceptos de salud ocupacional" checked>
+                                                    <label for="salud_ocupacionales" class="custom-control-label">Conceptos de salud ocupacional</label>
+                                                @endif
+                                                {{-- <input class="custom-control-input" type="checkbox" id="salud_ocupacionales" name="salud_ocupacionales" value="Conceptos de salud ocupacional" >
+                                                <label for="salud_ocupacionales" class="custom-control-label">Conceptos de salud ocupacional</label> --}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="descripcion_otros">Otros:</label> 
+                                            @if (empty($array_info_decreto_evento[0]->Otros_relacion_doc))
+                                                <textarea class="form-control" name="descripcion_otros" id="descripcion_otros" cols="30" rows="5" style="resize: none;"></textarea>                                                
+                                            @else
+                                                <textarea class="form-control" name="descripcion_otros" id="descripcion_otros" cols="30" rows="5" style="resize: none;">{{$array_info_decreto_evento[0]->Otros_relacion_doc}}</textarea>                                                
+                                            @endif                                           
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Fundamentos para la calificacion-->
+                        <div class="card-info columna_row1_fundamentos" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif>
+                            <div class="card-header text-center" style="border: 1.5px solid black;">
+                                <h5>Fundamentos para la calificación de la Pérdida de Capacidad Laboral y ocupacional</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="descripcion_enfermedad">Descripción de la enfermedad actual<span style="color: red;">(*)</span>:</label>
+                                            @if (empty($array_info_decreto_evento[0]->Descripcion_enfermedad_actual))
+                                                <textarea class="form-control" name="descripcion_enfermedad" id="descripcion_enfermedad" cols="30" rows="5" style="resize: none;" required></textarea>                                                
+                                            @else
+                                                <textarea class="form-control" name="descripcion_enfermedad" id="descripcion_enfermedad" cols="30" rows="5" style="resize: none;" required>{{$array_info_decreto_evento[0]->Descripcion_enfermedad_actual}}</textarea>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="dominancia">Dominancia</label>
+                                            <input type="text" class="form-control" name="dominancia" id="dominancia" value="{{$motivo_solicitud_actual[0]->Nombre_dominancia}}" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Guardar Historial Enfermedad-->
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                                                @if (empty($array_info_decreto_evento[0]->ID_Evento))
+                                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de diligenciar los formularios anteriores dar clic en el botón Guardar.                                                    
+                                                @else
+                                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Si realizo algún cambio en los formularios anteriores dar clic en el botón Actualizar.
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            @if (empty($array_info_decreto_evento[0]->ID_Evento))
+                                                <input type="submit" id="GuardarDecreto" name="GuardarDecreto" class="btn btn-info" value="Guardar">                                                
+                                                <input hidden="hidden" type="text" id="bandera_decreto_guardar_actualizar" value="Guardar">
+                                            @else
+                                                <input type="submit" id="ActualizarDecreto" name="ActualizarDecreto" class="btn btn-info" value="Actualizar">
+                                                <input hidden="hidden" type="text" id="bandera_decreto_guardar_actualizar" value="Actualizar">
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div id="div_alerta_decreto" class="col-12 d-none">
+                                        <div class="form-group">
+                                            <div class="alerta_decreto alert alert-success mt-2 mr-auto" role="alert"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                     <!-- examen interconsulta-->
                     <div class="card-info columna_row1_interconsulta" @if ($decreto_1507='1') style="display:block" @else style="display:none" @endif>
                         <div class="card-header text-center" style="border: 1.5px solid black;">
@@ -299,18 +376,27 @@
                                             <table id="listado_examenes_interconsultas" class="table table-striped table-bordered" width="100%">
                                                 <thead>
                                                     <tr class="bg-info">
-                                                        <th>Fecha examen e interconsulta</th>
-                                                        <th>Nombre de examen e interconsulta</th>
+                                                        <th>Fecha exámen e interconsulta</th>
+                                                        <th>Nombre de exámen e interconsulta</th>
                                                         <th>Descripción resultado</th>
                                                         <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_examen_fila"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <!--Traer los datos ya registrados en la BD -->
+                                                    @foreach ($array_datos_examenes_interconsultas as $examenes)
+                                                    <tr class="fila_examenes_{{$examenes->Id_Examenes_interconsultas}}" id="datos_examenes_interconsulta">
+                                                        <td>{{$examenes->F_examen_interconsulta}}</td>
+                                                        <td>{{$examenes->Nombre_examen_interconsulta}}</td>
+                                                        <td>{{$examenes->Descripcion_resultado}}</td>
+                                                        <td>
+                                                            <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_examen_fila_examenes_{{$examenes->Id_Examenes_interconsultas}}" data-id_fila_quitar="{{$examenes->Id_Examenes_interconsultas}}" data-clase_fila="fila_examenes_{{$examenes->Id_Examenes_interconsultas}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
+                                                        </td>
+                                                    </tr>                                                        
+                                                    @endforeach
                                                 </tbody>
                                             </table>
                                         </div><br>
-                                        <x-adminlte-button class="mr-auto" id="guardar_datos_examenes" theme="info" label="Guardar" disabled/>
+                                        <x-adminlte-button class="mr-auto" id="guardar_datos_examenes" theme="info" label="Guardar"/>
                                         <br>
                                     </div>
                                 </div>
@@ -344,11 +430,21 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <!--Traer los datos ya registrados en la BD -->
+                                                    @foreach ($array_datos_diagnostico_motcalifi as $diagnostico)
+                                                    <tr class="fila_diagnosticos_{{$diagnostico->Id_Diagnosticos_motcali}}" id="datos_diagnostico">
+                                                        <td>{{$diagnostico->Codigo}}</td>
+                                                        <td>{{$diagnostico->Nombre_CIE10}}</td>
+                                                        <td>{{$diagnostico->Nombre_parametro}}</td>
+                                                        <td>{{$diagnostico->Deficiencia_motivo_califi_condiciones}}</td>
+                                                        <td>
+                                                            <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_diagnosticos_moticalifi{{$diagnostico->Id_Diagnosticos_motcali}}" data-id_fila_quitar="{{$diagnostico->Id_Diagnosticos_motcali}}" data-clase_fila="fila_diagnosticos_{{$diagnostico->Id_Diagnosticos_motcali}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
+                                                        </td>
+                                                    </tr> 
+                                                    @endforeach
                                                 </tbody>
                                             </table>
                                         </div><br>
-                                        <x-adminlte-button class="mr-auto" id="guardar_datos_cie10" theme="info" label="Guardar" disabled/>
+                                        <x-adminlte-button class="mr-auto" id="guardar_datos_cie10" theme="info" label="Guardar"/>
                                         <br>
                                     </div>
                                 </div>
@@ -409,8 +505,45 @@
                                 <h5>Tabla 9.3 Deficiencia por Alteraciones del Sistema Auditivo</h5>
                             </div>
                             <div class="card-body">
+                                <div class="alert d-none" id="eliminar_agudeza_auditiva" role="alert">
+                                </div>
                                 <div class="table-responsive">
-                                    <table></table>
+                                    <table id="listado_Agudeza_auditiva" class="table table-striped table-bordered" width="100%">
+                                        <thead>
+                                            <tr class="bg-info">
+                                                <th>Deficiencia Monoaural Izquierda</th>
+                                                <th>Deficiencia Monoaural Derecha</th>
+                                                <th>Deficiencia Binaural</th>
+                                                <th>Adicion por Tinnitus</th>
+                                                <th>Dx principal</th>
+                                                <th>Deficiencia</th>
+                                                <th>Eliminar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($array_agudeza_Auditiva as $agudeza_auditiva)
+                                                <tr class="fila_agudeza_{{$agudeza_auditiva->Id_Agudeza_auditiva}}" id="datos_agudeza_visual">
+                                                    <td>{{$agudeza_auditiva->Deficiencia_monoaural_izquierda}}</td>
+                                                    <td>{{$agudeza_auditiva->Deficiencia_monoaural_derecha}}</td>
+                                                    <td>{{$agudeza_auditiva->Deficiencia_binaural}}</td>
+                                                    <td>{{$agudeza_auditiva->Adicion_tinnitus}}</td>
+                                                    <td>
+                                                        @if ($agudeza_auditiva->Dx_Principal == 'Si') 
+                                                            <input class="scalesR" type="checkbox" name="dx_principal_auditiva" id="dx_principal_auditiva" checked>
+                                                            <input hidden="hidden" type="text" name="banderaDxPrincipal" id="banderaDxPrincipal" value="NoDxPrincipal">
+                                                        @else
+                                                            <input class="scalesR" type="checkbox" name="dx_principal_auditiva" id="dx_principal_auditiva">
+                                                            <input hidden="hidden" type="text" name="banderaDxPrincipal" id="banderaDxPrincipal" value="SiDxPrincipal">
+                                                        @endif
+                                                    </td>
+                                                    <td>{{$agudeza_auditiva->Deficiencia}}</td>
+                                                    <td>
+                                                        <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_examen_fila_agudeza{{$agudeza_auditiva->Id_Agudeza_auditiva}}" data-id_fila_quitar="{{$agudeza_auditiva->Id_Agudeza_auditiva}}" data-clase_fila="fila_agudeza_{{$agudeza_auditiva->Id_Agudeza_auditiva}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
+                                                    </td>
+                                                </tr>   
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -3758,7 +3891,7 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="enfermedad_catastrofica" name="enfermedad_catastrofica">
+                                            <input class="custom-control-input" type="checkbox" id="enfermedad_catastrofica" name="enfermedad_catastrofica" value="Enfermedad Catastrófica">
                                             <label for="enfermedad_catastrofica" class="custom-control-label">Enfermedad Catastrófica</label>
                                         </div>
                                     </div>
@@ -3766,7 +3899,7 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="enfermedad_congenita" name="enfermedad_congenita">
+                                            <input class="custom-control-input" type="checkbox" id="enfermedad_congenita" name="enfermedad_congenita" value="Enfermedad Congénita o cercana al nacimiento">
                                             <label for="enfermedad_congenita" class="custom-control-label">Enfermedad Congénita o cercana al nacimiento</label>
                                         </div>
                                     </div>
@@ -3787,7 +3920,7 @@
                                 <div class="col-4">
                                     <div class="form-group">
                                         <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="requiere_persona" name="requiere_persona">
+                                            <input class="custom-control-input" type="checkbox" id="requiere_persona" name="requiere_persona" value="Requiere tercera persona">
                                             <label for="requiere_persona" class="custom-control-label">Requiere tercera persona</label>
                                         </div>
                                     </div>
@@ -3795,7 +3928,7 @@
                                 <div class="col-4">
                                     <div class="form-group">
                                         <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="requiere_decisiones_persona" name="requiere_decisiones_persona">
+                                            <input class="custom-control-input" type="checkbox" id="requiere_decisiones_persona" name="requiere_decisiones_persona" value="Requiere de tercera persona para la toma de decisiones">
                                             <label for="requiere_decisiones_persona" class="custom-control-label">Requiere de tercera persona para la toma de decisiones</label>
                                         </div>
                                     </div>
@@ -3803,7 +3936,7 @@
                                 <div class="col-4">
                                     <div class="form-group">
                                         <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="requiere_dispositivo_apoyo" name="requiere_dispositivo_apoyo">
+                                            <input class="custom-control-input" type="checkbox" id="requiere_dispositivo_apoyo" name="requiere_dispositivo_apoyo" value="Requiere de dispositivo de apoyo">
                                             <label for="requiere_dispositivo_apoyo" class="custom-control-label">Requiere de dispositivo de apoyo</label>
                                         </div>
                                     </div>
@@ -3835,6 +3968,11 @@
     @else
         {{-- MODAL EDICIÓN DEFICIENCIA VISUAL --}}
         @include('coordinador.edicionCampimetriaPCL')
+    @endif
+    @if (count($array_agudeza_Auditiva) == 0)
+        @include('coordinador.modalagudezaAuditiva'); 
+    {{-- @else
+        @include('coordinador.modalagudezaAuditivaEdicion'); --}}                 
     @endif
  @stop
  
@@ -3871,7 +4009,7 @@
 
             contador_examen = contador_examen + 1;
             var nueva_fila_examen = [
-                '<input type="date" class="form-control" id="fecha_examen_fila_'+contador_examen+'" name="fecha_examen" max="{{date("Y-m-d")}}"/>',
+                '<input type="date" class="form-control" id="fecha_examen_fila_'+contador_examen+'" name="fecha_examen" max="{{date("Y-m-d")}}" required/>',
                 '<input type="text" class="form-control" id="nombre_examen_fila_'+contador_examen+'" name="nombre_examen"/>',
                 '<textarea id="descripcion_resultado_fila_'+contador_examen+'" class="form-control" name="descripcion_resultado" cols="90" rows="4"></textarea>',
                 '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_examen_fila" class="text-info" data-fila="fila_'+contador_examen+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
@@ -3882,8 +4020,6 @@
             $(agregar_examen_fila).addClass('fila_'+contador_examen);
             $(agregar_examen_fila).attr("id", 'fila_'+contador_examen);
 
-            // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionpcl.js)
-            funciones_elementos_fila(contador_examen);
         });
         
         $(document).on('click', '#btn_remover_examen_fila', function(){
@@ -3891,7 +4027,7 @@
             listado_examenes_interconsultas.row("."+nombre_exame_fila).remove().draw();
         });
 
-        $(document).on('click', "a[id^='btn_remover_examen_fila_visual_']", function(){
+        $(document).on('click', "a[id^='btn_remover_examen_fila_examenes_']", function(){
             var nombre_exame_fila = $(this).data("clase_fila");
             listado_examenes_interconsultas.row("."+nombre_exame_fila).remove().draw();
         });
@@ -3932,7 +4068,7 @@
             $(agregar_cie10_fila).attr("id", 'fila_'+contador_cie10);
 
             // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionpcl.js)
-            funciones_elementos_fila(contador_cie10);
+            funciones_elementos_fila_diagnosticos(contador_cie10);
         });
             
         $(document).on('click', '#btn_remover_cie10_fila', function(){
@@ -3940,10 +4076,38 @@
             listado_diagnostico_cie10.row("."+nombre_cie10_fila).remove().draw();
         });
 
-        $(document).on('click', "a[id^='btn_remover_cie10_fila_visual_']", function(){
+        $(document).on('click', "a[id^='btn_remover_diagnosticos_moticalifi']", function(){
             var nombre_cie10_fila = $(this).data("clase_fila");
             listado_diagnostico_cie10.row("."+nombre_cie10_fila).remove().draw();
         });
+
+        //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE AGUDEZA AUDITIVA
+        $(".centrar").css('text-align', 'center');
+        var listado_Agudeza_auditiva = $('#listado_Agudeza_auditiva').DataTable({
+            "responsive": true,
+            "info": false,
+            "searching": false,
+            "ordering": false,
+            "scrollCollapse": true,
+            "scrollY": "30vh",
+            "paging": false,
+            "language":{
+                "emptyTable": "No se encontró información"
+            }
+        });
+
+        autoAdjustColumns(listado_Agudeza_auditiva);
+
+        $(document).on('click', '#btn_remover_examen_fila', function(){
+            var nombre_exame_fila = $(this).data("fila");
+            listado_Agudeza_auditiva.row("."+nombre_exame_fila).remove().draw();
+        });
+
+        $(document).on('click', "a[id^='btn_remover_examen_fila_agudeza']", function(){
+            var nombre_exame_fila = $(this).data("clase_fila");
+            listado_Agudeza_auditiva.row("."+nombre_exame_fila).remove().draw();
+        });
+
         //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE DEFICIENCIA POR FACTOR
         //Falta agregar función
 
@@ -3954,6 +4118,7 @@
 <script type="text/javascript" src="/js/calificacionpcl_tecnica.js"></script>
 {{-- JS: Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores --}}
 <script type="text/javascript" src="/js/datatable_deficiencias_alteraciones_sistemas.js"></script>
+<script type="text/javascript" src="/js/agudeza_auditiva.js"></script>
 {{-- JS: DATATABLE AGUDEZA VISUAL --}}
 <script type="text/javascript" src="/js/datatable_agudeza_visual.js"></script>
 <script type="text/javascript" src="/js/funciones_helpers.js"></script>

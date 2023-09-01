@@ -148,10 +148,18 @@
             <div class="row">
                 <table>
                     <tr>
-                        <td class="justificado">Anexo: {{$Anexos}} folios</td>
+                        @if ($Anexos == '')
+                            <td class="justificado">Anexo: 0 folios</td>                         
+                        @else
+                            <td class="justificado">Anexo: {{$Anexos}} folios</td>                                                     
+                        @endif
                     </tr>
                     <tr>
-                        <td class="justificado">Copia: {{$Agregar_copia}}</td>
+                        @if ($Agregar_copia == '')
+                            <td class="justificado">Copia: No se registran copias</td>                            
+                        @else
+                            <td class="justificado">Copia: {{$Agregar_copia}}</td>                            
+                        @endif
                     </tr>
                 </table>
             </div>
