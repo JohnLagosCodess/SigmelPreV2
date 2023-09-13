@@ -45,6 +45,7 @@ use App\Models\sigmel_lista_cie_diagnosticos;
 use App\Models\sigmel_lista_clases_decretos;
 use App\Models\sigmel_informacion_deficiencias_alteraciones_eventos;
 use Svg\Tag\Rect;
+use App\Models\sigmel_lista_procesos_servicios;
 
 class CalificacionPCLController extends Controller
 {
@@ -57,10 +58,16 @@ class CalificacionPCLController extends Controller
         $date = date("Y-m-d", $time);
         $newIdAsignacion=$request->newIdAsignacion;
         $newIdEvento = $request->newIdEvento;
-        $SubModulo='CalficacionTecnicaPCL'; //Enviar a la vista del SubModulo    
 
         $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newIdAsignacion));
         $array_datos_destinatarios = DB::select('CALL psrcomunicados(?)', array($newIdEvento));
+        //Consulta Vista a mostrar
+        $TraeVista= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_lista_procesos_servicios as p')
+        ->select('v.nombre_renderizar')
+        ->leftJoin('sigmel_sys.sigmel_vistas as v', 'p.Id_vista', '=', 'v.id')
+        ->where('p.Id_Servicio',  '=', $array_datos_calificacionPcl[0]->Id_Servicio)
+        ->get();
+        $SubModulo=$TraeVista[0]->nombre_renderizar; //Enviar a la vista del SubModulo    
 
         $listado_documentos_solicitados = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
         ->select('Id_Documento_Solicitado', 'F_solicitud_documento', 'Nombre_documento', 
@@ -1142,7 +1149,12 @@ class CalificacionPCLController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
         ->select('side.Id_Diagnosticos_motcali', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
         'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones')
-        ->where([['side.Estado', '=', 'Activo']])->get();  
+        ->where([
+            ['side.Estado', '=', 'Activo'],
+            ['side.ID_evento', '=', $Id_evento_calitec],
+            ['side.Id_Asignacion', '=', $Id_asignacion_calitec]
+            ])
+        ->get();  
         
         $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
         ->where([

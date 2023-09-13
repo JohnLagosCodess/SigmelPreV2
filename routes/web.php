@@ -12,6 +12,7 @@ use App\Http\Controllers\ProbandoController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\Coordinador\CoordinadorController;
 use App\Http\Controllers\Coordinador\SolicitudDocumentoSeguimientosPCLController;
+use App\Http\Controllers\Coordinador\PronunciamientoPCLController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -374,6 +375,18 @@ Route::post('/Sigmel/CrearNuevoEntidad', [EntidadesController::class, 'guardar_e
 Route::post('/Sigmel/Entidad/editarEntidad', [EntidadesController::class, 'mostrarVistaEditarEntidad'])->name('EditarEntidad');
 // Acción: Actualización de la información de entidad
 Route::post('/Sigmel/Entidad/actualizarEntidad', [EntidadesController::class, 'actualizarEntidad'])->name('ActualizacionEntidad');
+
+// 01/09/2023
+// Vista: Módulo Pronunciamiento PCL
+Route::post('/calificacionPCL/pronunciamiento', [PronunciamientoPCLController::class, 'mostrarVistaPronunciamiento'])->name('pronunciamientoPCL');
+Route::get('/calificacionPCL/pronunciamiento', [PronunciamientoPCLController::class, 'mostrarVistaPronunciamiento'])->name('pronunciamientoPCL');
+// Accion: Selectores Módulo pronunciamiento
+Route::post('/selectoresPronunciamiento', [PronunciamientoPCLController::class, 'cargueListadoSelectoresPronunciamiento']);
+// Acción: Guardar Informacion Servicio Pronunciamiento
+Route::post('/guardarInfoServiPronuncia', [PronunciamientoPCLController::class, 'guardarInfoServiPronuncia']);
+// Ver documento Pronunciamiento
+//Route::get('/VerDocumentoPronuncia', [PronunciamientoPCLController::class, 'VerDocumentoPronuncia']);
+Route::get('/VerDocumentoPronuncia', [PronunciamientoPCLController::class, 'VerDocumentoPronuncia'])->name('VerDocumentoPronuncia');
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
