@@ -13,6 +13,7 @@ use App\Http\Controllers\RolesController;
 use App\Http\Controllers\Coordinador\CoordinadorController;
 use App\Http\Controllers\Coordinador\SolicitudDocumentoSeguimientosPCLController;
 use App\Http\Controllers\Coordinador\PronunciamientoPCLController;
+use App\Http\Controllers\Coordinador\BandejaOrigenController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -387,6 +388,18 @@ Route::post('/guardarInfoServiPronuncia', [PronunciamientoPCLController::class, 
 // Ver documento Pronunciamiento
 //Route::get('/VerDocumentoPronuncia', [PronunciamientoPCLController::class, 'VerDocumentoPronuncia']);
 Route::get('/VerDocumentoPronuncia', [PronunciamientoPCLController::class, 'VerDocumentoPronuncia'])->name('VerDocumentoPronuncia');
+
+//13/09/2023
+//Vista: Bandeja Origen Coordinador
+Route::get('/Sigmel/RolCoordinador/BandejaOrigen', [BandejaOrigenController::class, 'mostrarVistaBandejaOrigen'])->name('bandejaOrigen');
+// Accion: Selectores Bandeja Origen
+Route::post('/selectoresBandejaOrigen', [BandejaOrigenController::class, 'cargueListadoSelectoresBandejaOrigen']);
+// Accion: Capturar data sin filtros
+Route::post('/sinfiltrosBandejaOrigen', [BandejaOrigenController::class, 'sinFiltroBandejaOrigen']);
+// Accion: Capturar data según los filtros
+Route::post('/filtrosBandejaOrigen', [BandejaOrigenController::class, 'filtrosBandejaOrigen']);
+// Accion: Actualizar el profesional y redireccionar el servicio
+Route::post('/actualizarProfesionalServicio', [BandejaOrigenController::class, 'actualizarBandejaOrigen']);
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
