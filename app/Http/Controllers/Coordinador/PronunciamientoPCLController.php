@@ -23,7 +23,6 @@ use App\Models\sigmel_informacion_pronunciamiento_eventos;
 use App\Models\sigmel_informacion_diagnosticos_eventos;
 use App\Models\sigmel_informacion_comunicado_eventos;
 use App\Models\sigmel_auditorias_pronunciamiento_eventos;
-use SebastianBergmann\Environment\Console;
 
 class PronunciamientoPCLController extends Controller
 {
@@ -307,8 +306,13 @@ class PronunciamientoPCLController extends Controller
             ->select('Archivo_pronuncia')
             ->where([
                 ['ID_evento', '=', $request->Id_EventoPronuncia],
+                ['Id_Asignacion', '=', $request->Id_Asignacion_Pronuncia]
             ])->get();
-            $nombre_final_documento_en_carpeta=$Archivo_Actual[0]->Archivo_pronuncia;
+            if(count($Archivo_Actual)>0){
+                $nombre_final_documento_en_carpeta=$Archivo_Actual[0]->Archivo_pronuncia;
+            }else{
+                $nombre_final_documento_en_carpeta='N/A';
+            }
         }
         //valida la acción del botón
         if ($request->bandera_pronuncia_guardar_actualizar == 'Guardar') {

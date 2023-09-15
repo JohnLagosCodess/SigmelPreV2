@@ -84,7 +84,7 @@ $(document).ready(function () {
 
                     modulocalificacionOrigen = '<form id="form_modulo_calificacion_Origen_'+data[i]["Id_Asignacion"]+'" action="" method="POST">'+
                                 '<input type="hidden" name="_token" value="'+token+'">'+
-                               // '<input class="btn btn-sm text-info" id="modulo_califi_Origen_'+data[i]["Id_Asignacion"]+'" value="Modulo Origen" type="submit" style="font-weight: bold; padding-left: inherit;">'+ 
+                                '<input class="btn btn-sm text-info" id="modulo_califi_Origen_'+data[i]["Id_Asignacion"]+'" value="Modulo Origen" type="submit" style="font-weight: bold; padding-left: inherit;">'+ 
                                 '<input type="hidden" name="newIdAsignacion" value="'+data[i]["Id_Asignacion"]+'">'+
                                 '<input type="hidden" name="newIdEvento" id="newIdEvento" value="'+data[i]["ID_evento"]+'">'+
                                 '</form>';
@@ -196,7 +196,7 @@ $(document).ready(function () {
             
                                 modulocalificacionOrigen = '<form id="form_modulo_calificacion_Origen_'+data[i]["Id_Asignacion"]+'" action="" method="POST">'+
                                             '<input type="hidden" name="_token" value="'+token+'">'+
-                                           // '<input class="btn btn-sm text-info" id="modulo_califi_Origen_'+data[i]["Id_Asignacion"]+'" value="Modulo Origen" type="submit" style="font-weight: bold; padding-left: inherit;">'+ 
+                                            '<input class="btn btn-sm text-info" id="modulo_califi_Origen_'+data[i]["Id_Asignacion"]+'" value="Modulo Origen" type="submit" style="font-weight: bold; padding-left: inherit;">'+ 
                                             '<input type="hidden" name="newIdAsignacion" value="'+data[i]["Id_Asignacion"]+'">'+
                                             '<input type="hidden" name="newIdEvento" id="newIdEvento" value="'+data[i]["ID_evento"]+'">'+
                                             '</form>';
@@ -431,10 +431,10 @@ $(document).ready(function () {
 
     });
 
-    //Asignar ruta del formulario de modulo calificacion pcl
+    //Asignar ruta del formulario de modulo calificacion Origen
     $(document).on('mouseover',"input[id^='modulo_califi_Origen_']", function(){
         let url_editar_evento = $('#action_modulo_calificacion_Origen').val();
-        $("form[id^='form_modulo_calificacion_PCL_']").attr("action", url_editar_evento);    
+        $("form[id^='form_modulo_calificacion_Origen_']").attr("action", url_editar_evento);    
     });
 
     // Función para eliminar el elemento del array al desmarcar checkbox

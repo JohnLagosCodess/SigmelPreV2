@@ -231,7 +231,7 @@ $(document).ready(function(){
                     setTimeout(function(){
                         $('.alerta_calificacion').addClass('d-none');
                         $('.alerta_calificacion').empty(); 
-                        location.reload();                       
+                        //location.reload();                       
                     }, 3000);
                 }                
             }

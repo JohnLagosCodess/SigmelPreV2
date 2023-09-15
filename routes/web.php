@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Autenticacion\LoginController;
 use App\Http\Controllers\Autenticacion\LogoutController;
 use App\Http\Controllers\Coordinador\CalificacionPCLController;
+use App\Http\Controllers\Coordinador\CalificacionOrigenController;
 use App\Http\Controllers\Ingenieria\IngenieriaController;
 use App\Http\Controllers\ProbandoController;
 use App\Http\Controllers\RolesController;
@@ -401,6 +402,12 @@ Route::post('/filtrosBandejaOrigen', [BandejaOrigenController::class, 'filtrosBa
 // Accion: Actualizar el profesional y redireccionar el servicio
 Route::post('/actualizarProfesionalServicio', [BandejaOrigenController::class, 'actualizarBandejaOrigen']);
 
+// 14/09/2023
+// Vista: Módulo Calificación Origen Coordinador
+Route::get('/calificacionOrigen', [CalificacionOrigenController::class, 'mostrarVistaCalificacionOrigen'])->name('calificacionOrigen');
+Route::post('/calificacionOrigen', [CalificacionOrigenController::class, 'mostrarVistaCalificacionOrigen'])->name('calificacionOrigen');
+// Accion: Insertar Califcación Origen
+Route::post('/registrarCalificacionOrigen', [CalificacionOrigenController::class, 'guardarCalificacionOrigen']);
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 

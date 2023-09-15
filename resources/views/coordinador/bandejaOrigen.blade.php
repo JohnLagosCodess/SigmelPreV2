@@ -12,7 +12,7 @@
     <div class="card-info Origenbandeja" style="border: 1px solid black;">
         <div class="card-header text-center">
             <h4>Bandeja Origen ATEL</h4>
-            <input type="hidden" id="action_modulo_calificacion_Origen" value="#">
+            <input type="hidden" id="action_modulo_calificacion_Origen" value="{{ route('calificacionOrigen') }}">
         </div>
         <form id="form_filtro_bandejaOrigen" method="POST">
             @csrf
