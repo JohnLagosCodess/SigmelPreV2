@@ -212,6 +212,11 @@ $(document).ready(function () {
         $(this).val(LetraMayusCadaPalabra(textoEscrito));
     });
 
+    $('.mayus_general').keyup(function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusCadaPalabra(textoEscrito));
+    });
+
     /* SOLO PERMITE INGRESAR NUMEROS */
     $('.soloNumeros').keypress(function(event) {
         var keycode = (event.keyCode ? event.keyCode : event.which);

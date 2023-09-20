@@ -7,11 +7,14 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Autenticacion\LoginController;
 use App\Http\Controllers\Autenticacion\LogoutController;
 use App\Http\Controllers\Coordinador\CalificacionPCLController;
+use App\Http\Controllers\Coordinador\CalificacionOrigenController;
 use App\Http\Controllers\Ingenieria\IngenieriaController;
 use App\Http\Controllers\ProbandoController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\Coordinador\CoordinadorController;
 use App\Http\Controllers\Coordinador\SolicitudDocumentoSeguimientosPCLController;
+use App\Http\Controllers\Coordinador\PronunciamientoPCLController;
+use App\Http\Controllers\Coordinador\BandejaOrigenController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -388,6 +391,36 @@ Route::post('/Sigmel/Entidad/editarEntidad', [EntidadesController::class, 'mostr
 // Acción: Actualización de la información de entidad
 Route::post('/Sigmel/Entidad/actualizarEntidad', [EntidadesController::class, 'actualizarEntidad'])->name('ActualizacionEntidad');
 
+// 01/09/2023
+// Vista: Módulo Pronunciamiento PCL
+Route::post('/calificacionPCL/pronunciamiento', [PronunciamientoPCLController::class, 'mostrarVistaPronunciamiento'])->name('pronunciamientoPCL');
+Route::get('/calificacionPCL/pronunciamiento', [PronunciamientoPCLController::class, 'mostrarVistaPronunciamiento'])->name('pronunciamientoPCL');
+// Accion: Selectores Módulo pronunciamiento
+Route::post('/selectoresPronunciamiento', [PronunciamientoPCLController::class, 'cargueListadoSelectoresPronunciamiento']);
+// Acción: Guardar Informacion Servicio Pronunciamiento
+Route::post('/guardarInfoServiPronuncia', [PronunciamientoPCLController::class, 'guardarInfoServiPronuncia']);
+// Ver documento Pronunciamiento
+//Route::get('/VerDocumentoPronuncia', [PronunciamientoPCLController::class, 'VerDocumentoPronuncia']);
+Route::get('/VerDocumentoPronuncia', [PronunciamientoPCLController::class, 'VerDocumentoPronuncia'])->name('VerDocumentoPronuncia');
+
+//13/09/2023
+//Vista: Bandeja Origen Coordinador
+Route::get('/Sigmel/RolCoordinador/BandejaOrigen', [BandejaOrigenController::class, 'mostrarVistaBandejaOrigen'])->name('bandejaOrigen');
+// Accion: Selectores Bandeja Origen
+Route::post('/selectoresBandejaOrigen', [BandejaOrigenController::class, 'cargueListadoSelectoresBandejaOrigen']);
+// Accion: Capturar data sin filtros
+Route::post('/sinfiltrosBandejaOrigen', [BandejaOrigenController::class, 'sinFiltroBandejaOrigen']);
+// Accion: Capturar data según los filtros
+Route::post('/filtrosBandejaOrigen', [BandejaOrigenController::class, 'filtrosBandejaOrigen']);
+// Accion: Actualizar el profesional y redireccionar el servicio
+Route::post('/actualizarProfesionalServicio', [BandejaOrigenController::class, 'actualizarBandejaOrigen']);
+
+// 14/09/2023
+// Vista: Módulo Calificación Origen Coordinador
+Route::get('/calificacionOrigen', [CalificacionOrigenController::class, 'mostrarVistaCalificacionOrigen'])->name('calificacionOrigen');
+Route::post('/calificacionOrigen', [CalificacionOrigenController::class, 'mostrarVistaCalificacionOrigen'])->name('calificacionOrigen');
+// Accion: Insertar Califcación Origen
+Route::post('/registrarCalificacionOrigen', [CalificacionOrigenController::class, 'guardarCalificacionOrigen']);
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 

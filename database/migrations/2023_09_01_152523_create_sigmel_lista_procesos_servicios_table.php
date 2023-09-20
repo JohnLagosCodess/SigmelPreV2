@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('Id_proceso');
             $table->string('Nombre_proceso', 20);
             $table->text('Nombre_servicio');
+            $table->integer('Id_vista')->nullable();
             $table->enum('Estado', ['activo', 'inactivo'])->default('activo');
             $table->date('F_registro');
         });
