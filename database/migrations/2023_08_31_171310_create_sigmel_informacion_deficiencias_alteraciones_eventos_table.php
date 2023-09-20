@@ -26,6 +26,7 @@ return new class extends Migration
             $table->enum('Dx_Principal', ['Si','No'])->nullable();
             $table->enum('MSD', ['Si','No', 'N/A'])->nullable();
             $table->text('Deficiencia')->nullable();
+            $table->enum('Estado', ['Activo','Inactivo'])->default('Activo')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

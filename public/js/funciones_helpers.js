@@ -162,7 +162,20 @@ $(document).ready(function () {
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
     });
 
-    
+    $(document).on('keyup', "textarea[id^='sustenta_fecha']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
+    });
+
+    $(document).on('keyup', "textarea[id^='detalle_califi']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
+    });
+
+    $(document).on('keyup', "textarea[id^='justi_dependencia']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
+    });    
 
     /* Función para colocar la primera letra en mayúscula de cada palabra que se escriba */
     function LetraMayusCadaPalabra(textoEscrito) {

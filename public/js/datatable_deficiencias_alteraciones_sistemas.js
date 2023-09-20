@@ -39,7 +39,7 @@ $(document).ready(function(){
           '<div id="FU_fila_alteraciones_'+contador_alteraciones+'"></div>',
           '<div id="CAT_fila_alteraciones_'+contador_alteraciones+'"></div>',
           '<div id="ClaseFinal_fila_alteraciones_'+contador_alteraciones+'"></div>',
-          '<input type="checkbox" id="checkbox_dx_principal_DefiAlteraciones_'+contador_alteraciones+'" class="checkbox_dx_principal_DefiAlteraciones_'+contador_alteraciones+'" style="transform: scale(1.2);">',
+          '<input type="checkbox" id="checkbox_dx_principal_DefiAlteraciones_'+contador_alteraciones+'" class="checkbox_dx_principal_DefiAlteraciones_'+contador_alteraciones+'" data-id_fila_checkbox_dx_principal_DefiAlteraciones="'+contador_alteraciones+'" style="transform: scale(1.2);">',
           '<div id="MSD_fila_alteraciones_'+contador_alteraciones+'"></div>',
           '<div id="Deficiencia_fila_alteraciones_'+contador_alteraciones+'"></div>',
           '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_quitar_fila_alteraciones" class="text-info" data-fila="fila_alteraciones_'+contador_alteraciones+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
@@ -60,6 +60,10 @@ $(document).ready(function(){
         tabla_alteraciones_sistemas.row("."+nombre_fila_alteraciones).remove().draw();
     });
 
+    $(document).on('click', "a[id^='btn_remover_deficiencia_alteraciones']", function(){
+        var nombre_fila_alteraciones = $(this).data("clase_fila");
+        tabla_alteraciones_sistemas.row("."+nombre_fila_alteraciones).remove().draw();
+    });
 
 });
 
@@ -5040,9 +5044,9 @@ $(document).ready(function(){
         let envio_datos_alteraciones = {
             '_token': token,
             'datos_finales_deficiencias_alteraciones' : datos_finales_deficiencias_alteraciones,
-            'Id_evento': $('#newIdEvento').val(),
-            'Id_Asignacion': $('#newIdAsignacion').val(),
-            'Id_proceso': 23
+            'Id_evento': $('#Id_Evento_decreto').val(),
+            'Id_Asignacion': $('#Id_Asignacion_decreto').val(),
+            'Id_proceso': $('#Id_Proceso_decreto').val(),
         };
 
         $.ajax({
@@ -5050,22 +5054,130 @@ $(document).ready(function(){
             url:'/GuardarDeficienciaAlteraciones',
             data: envio_datos_alteraciones,
             success:function(response){
-                
-                /* FALTA: GENERAR EL MENSAJE DE GUARDADO PARA QUE EL USUARIO LO VEA */
-
-                // if (response.parametro == "inserto_informacion") {
-                //     $('#resultado_insercion').removeClass('d-none');
-                //     $('#resultado_insercion').addClass('alert-success');
-                //     $('#resultado_insercion').append('<strong>'+response.mensaje+'</strong>');
-                //     setTimeout(() => {
-                //         $('#resultado_insercion').addClass('d-none');
-                //         $('#resultado_insercion').removeClass('alert-success');
-                //         $('#resultado_insercion').empty();
-                //     }, 3000);
-                // }
+                //console.log(response);
+                if (response.parametro == "inserto_informacion_deficiencias") {
+                    $('#resultado_insercion_deficiencia').removeClass('d-none');
+                    $('#resultado_insercion_deficiencia').addClass('alert-success');
+                    $('#resultado_insercion_deficiencia').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(() => {
+                        $('#resultado_insercion_deficiencia').addClass('d-none');
+                        $('#resultado_insercion_deficiencia').removeClass('alert-success');
+                        $('#resultado_insercion_deficiencia').empty();
+                        location.reload();
+                    }, 3000);
+                }
             }
         });
     });
 });
 
+$(document).ready(function(){
+    $(document).on('click', "a[id^='btn_remover_deficiencia_alteraciones']", function(){
 
+        let token = $("input[name='_token']").val();
+        var datos_fila_quitar_examen = {
+            '_token': token,
+            'fila' : $(this).data("id_fila_quitar"),
+            'Id_evento': $('#Id_Evento_decreto').val(),
+            'Id_Asignacion': $('#Id_Asignacion_decreto').val(),
+            'Id_proceso': $('#Id_Proceso_decreto').val()
+        };
+        $.ajax({
+            type:'POST',
+            url:'/eliminarDeficienciasAteraciones',
+            data: datos_fila_quitar_examen,
+            success:function(response){
+                // console.log(response);
+                if (response.parametro == "fila_deficiencia_alteracion_eliminada") {
+                    $('#resultado_insercion_deficiencia').empty();
+                    $('#resultado_insercion_deficiencia').removeClass('d-none');
+                    $('#resultado_insercion_deficiencia').addClass('alert-success');
+                    $('#resultado_insercion_deficiencia').append('<strong>'+response.mensaje+'</strong>');
+                    
+                    setTimeout(() => {
+                        $('#resultado_insercion_deficiencia').addClass('d-none');
+                        $('#resultado_insercion_deficiencia').removeClass('alert-success');
+                        $('#resultado_insercion_deficiencia').empty();
+                        location.reload();
+                    }, 3000);
+                }
+                if (response.total_registros == 0) {
+                    $("#conteo_listado_deficiencia_alteraciones").val(response.total_registros);
+                }
+            }
+        });        
+
+    });
+});
+
+$(document).ready(function(){
+    $(document).on('click', "input[id^='dx_principal_deficiencia_alteraciones_']", function(){        
+        var fila = $(this).data("id_fila_dx_principal");
+        var checkboxDxPrincipal = document.getElementById('dx_principal_deficiencia_alteraciones_'+fila);        
+        let token = $("input[name='_token']").val();      
+        var banderaDxPrincipalDA = $('#banderaDxPrincipalDA').val();   
+        
+        if (checkboxDxPrincipal.checked) {
+            var datos_actualizar_dxPrincial_deficiencias_alteraciones = {
+                '_token': token,
+                'fila':fila,
+                'banderaDxPrincipalDA': banderaDxPrincipalDA,
+                'Id_evento': $('#Id_Evento_decreto').val()
+            };       
+            $.ajax({
+                type:'POST',
+                url:'/actualizarDxPrincipalDeficienciaAlteraciones',
+                data: datos_actualizar_dxPrincial_deficiencias_alteraciones,
+                success:function(response){
+                    // console.log(response);
+                    if (response.parametro == "fila_dxPrincipalDeficienciaAlteracion_agregado") {
+                        $('#resultado_insercion_deficiencia').empty();
+                        $('#resultado_insercion_deficiencia').removeClass('d-none');
+                        $('#resultado_insercion_deficiencia').addClass('alert-success');
+                        $('#resultado_insercion_deficiencia').append('<strong>'+response.mensaje+'</strong>');
+                        
+                        setTimeout(() => {
+                            $('#resultado_insercion_deficiencia').addClass('d-none');
+                            $('#resultado_insercion_deficiencia').removeClass('alert-success');
+                            $('#resultado_insercion_deficiencia').empty();
+                            $('#banderaDxPrincipalDA').val("");
+                            location.reload();
+                        }, 3000);
+                    }                
+                }
+            });
+        }else {     
+            banderaDxPrincipalDA = 'NoDxPrincipal_deficiencia_alteraciones';            
+            var datos_actualizar_dxPrincial_deficiencias_alteraciones = {
+                '_token': token,
+                'fila':fila,
+                'banderaDxPrincipalDA': banderaDxPrincipalDA,
+                'Id_evento': $('#Id_Evento_decreto').val()
+            };      
+            
+            $.ajax({
+                type:'POST',
+                url:'/actualizarDxPrincipalDeficienciaAlteraciones',
+                data: datos_actualizar_dxPrincial_deficiencias_alteraciones,
+                success:function(response){
+                    // console.log(response);
+                    if (response.parametro == "fila_dxPrincipalDeficienciaAlteracion_eliminado") {
+                        $('#resultado_insercion_deficiencia').empty();
+                        $('#resultado_insercion_deficiencia').removeClass('d-none');
+                        $('#resultado_insercion_deficiencia').addClass('alert-success');
+                        $('#resultado_insercion_deficiencia').append('<strong>'+response.mensaje+'</strong>');
+                        
+                        setTimeout(() => {
+                            $('#resultado_insercion_deficiencia').addClass('d-none');
+                            $('#resultado_insercion_deficiencia').removeClass('alert-success');
+                            $('#resultado_insercion_deficiencia').empty();
+                            $('#banderaDxPrincipalDA').val("");
+                            location.reload();
+                        }, 3000);
+                    }                
+                }
+            }); 
+        }
+
+    });
+});

@@ -28,6 +28,7 @@ class sigmel_informacion_agudeza_visual_eventos extends Model
        'CVF',
        'DCV',
        'DSV',
+       'Dx_Principal',
        'Deficiencia',
        'Nombre_usuario',
        'F_registro'

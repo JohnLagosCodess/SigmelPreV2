@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('CVF',7)->nullable();
             $table->string('DCV',7)->nullable();
             $table->string('DSV',7)->nullable();
+            $table->string('Dx_Principal',2)->nullable();
             $table->string('Deficiencia',7)->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');

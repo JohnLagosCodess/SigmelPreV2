@@ -240,25 +240,29 @@ class CoordinadorController extends Controller
         $profesional = DB::table('users')
         ->select('name')->where('id',$Id_profesional)
         ->get();
-        $nombre = json_decode(json_encode($profesional));
-        $nombre_profesional= $nombre[0]->name;
-
-        $actualizar_bandejaPCL = [
-            'Nombre_usuario' => $usuario,
-            'Id_profesional' => $Id_profesional,
-            'Nombre_profesional' => $nombre_profesional,
-            'Id_servicio' => $Id_Servicio_redireccionar
-        ];         
-        $actualizar_bandejaPCL_Profesional = [
-            'Nombre_usuario' => $usuario,
-            'Id_profesional' => $Id_profesional,
-            'Nombre_profesional' => $nombre_profesional
-        ]; 
-        $actualizar_bandejaPCL_Servicio = [
-            'Nombre_usuario' => $usuario,
-            'Id_servicio' => $Id_Servicio_redireccionar
-        ]; 
         
+        if (count($profesional) > 0) {
+            $nombre = json_decode(json_encode($profesional));
+            $nombre_profesional= $nombre[0]->name; 
+
+            $actualizar_bandejaPCL = [
+                'Nombre_usuario' => $usuario,
+                'Id_profesional' => $Id_profesional,
+                'Nombre_profesional' => $nombre_profesional,
+                'Id_servicio' => $Id_Servicio_redireccionar
+            ];       
+
+            $actualizar_bandejaPCL_Profesional = [
+                'Nombre_usuario' => $usuario,
+                'Id_profesional' => $Id_profesional,
+                'Nombre_profesional' => $nombre_profesional
+            ]; 
+        }else{
+            $actualizar_bandejaPCL_Servicio = [
+                'Nombre_usuario' => $usuario,
+                'Id_servicio' => $Id_Servicio_redireccionar
+            ]; 
+        }   
         switch (true) {
             case (!empty($IdEventoBandejaPCl) and !empty($Id_profesional) and !empty($Id_Servicio_redireccionar)):
         
