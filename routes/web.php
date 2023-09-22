@@ -329,7 +329,7 @@ Route::post('/guardarDeficienciaAgudezaAuditiva', [CalificacionPCLController::cl
 // Acción: Eliminar registros Agudeza Auditiva visualmente  e inactiva en la DB
 Route::post('/eliminarAgudezasAuditivas', [CalificacionPCLController::class, 'eliminarAgudezaAuditiva']);
 // Acción: Actualizar Dx Principal de Agudeza Auditiva
-Route::post('/actualizarDxPrincipalAdudezaAuditivas', [CalificacionPCLController::class, 'actualizarDxPrincipalAdudezaAuditiva']);
+Route::post('/actualizarDxPrincipalAgudezaAuditiva', [CalificacionPCLController::class, 'actualizarDxPrincipalAgudezaAuditiva']);
 // Acción: Actualizar Deficiencia Agudeza Auditiva
 Route::post('/actualizarDeficienciaAgudezaAuditiva', [CalificacionPCLController::class, 'actualizarDeficienciasAgudezaAuditivas']);
 // Acción: Consulta Campimetría por fila
@@ -342,13 +342,26 @@ Route::post('/infoAgudezaVisual', [CalificacionPCLController::class, 'infoAgudez
 Route::post('/actualizarAgudezaVisual', [CalificacionPCLController::class, 'actualizarAgudezaVisual']);
 // Acción: Borrar Información Agudeza Visual
 Route::post('/eliminarAgudezaVisual', [CalificacionPCLController::class, 'eliminarAgudezaVisual']);
+// Acción: Actualizar DX Principal agudeza Visual
+Route::post('/actualizarDxPrincipalAgudezasVisual', [CalificacionPCLController::class, 'actualizarDxPrincipalAgudezaVisual']);
 // Acción: Traer listado de selectores para el calculo de DEFICIENCIA POR ALTERACIONES DE LOS SISTEMAS GENERALES
 Route::post('/ListadoSelectoresDefiAlteraciones', [CalificacionPCLController::class, 'ListadoSelectoresDefiAlteraciones']);
 // Acción: Consultar Deficiencia acorde al clase final y la tabla
 Route::post('/consultaValorDeficiencia', [CalificacionPCLController::class, 'consultaValorDeficiencia']);
 // Acción: Guardar Datos Listado de documentos solicitados
 Route::post('/GuardarDeficienciaAlteraciones',[CalificacionPCLController::class, 'GuardarDeficienciaAlteraciones']);
-
+// Acción: Eliminar la Deficiencia alteraciones en la visualmente e inactiva en la DB
+Route::post('/eliminarDeficienciasAteraciones',[CalificacionPCLController::class, 'eliminarDeficienciaAteraciones']);
+// Acción: Actualizar Dx Principal Deficiencias Alteraciones
+Route::post('/actualizarDxPrincipalDeficienciaAlteraciones', [CalificacionPCLController::class, 'actualizarDxPrincipalDeficienciasAlteraciones']);
+// Acción: Guardar y Actualizar Título II Valoración del Rol Laboral laboralmente Activo
+Route::post('/guardarLaboralmenteActivos', [CalificacionPCLController::class, 'guardarLaboralmenteActivo']); 
+// Acción: Guardar y Actualizar Título II Valoración del Rol Ocupacional
+Route::post('/guardarRolOcupacionales', [CalificacionPCLController::class, 'guardarRolOcupacional']); 
+// Acción: Guardar y Actualizar Libro II Calificación de las discapacidades (20%) y Libro III Calificación de minusvalías (30%)
+Route::post('/guardarLibros2_3', [CalificacionPCLController::class, 'guardarLibro2_3']); 
+// Acción: Guardar Dictamen Pericial
+Route::post('/guardardictamenesPericial', [CalificacionPCLController::class, 'guardardictamenPericial']); 
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);
 // Acción: Traer la información de los documentos acorde al id evento: Vista Buscador de Eventos (Modal Formulario Nuevo Servicio)

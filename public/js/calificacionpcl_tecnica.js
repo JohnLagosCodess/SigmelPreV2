@@ -1,20 +1,4 @@
-$(document).ready(function(){
-    // Obtener sessionStorage del navegador
-    //var posicionActual = $(window).scrollTop(); // Guarda cuando recarga la pagina
-    var posicionMemoria = sessionStorage.getItem("scrollTop"); // Guarda session scrollTop
-
-    if (posicionMemoria != null) {
-        $(window).scrollTop(posicionMemoria);
-        sessionStorage.removeItem("scrollTop");
-        //console.log("Se ha restaurado la posición guardada en memoria");
-    } else {
-        //console.log("No se ha encontrado una posición guardada en memoria");
-    }
-    //guardar la posición de desplazamiento actual en la memoria
-    $(window).on("beforeunload", function() {
-        sessionStorage.setItem("scrollTop", $(window).scrollTop());
-    });
-    //console.log("Posición al refrescar la página: " + posicionActual + "-" + posicionMemoria);
+$(document).ready(function(){    
     
     // Inicializacion del select2 de listados  Módulo Calificacion Tecnica PCL
     $(".origen_firme").select2({
@@ -42,9 +26,28 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    $(".poblacion_califi2").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".tipo_evento").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".tipo_origen").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".tipo_enfermedad").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
 
     // llenado de selectores
-    let token = $('input[name=_token]').val();
+    var token = $('input[name=_token]').val();
 
     //Listado de origen firmeza
     let datos_lista_origen_firme = {
@@ -156,33 +159,115 @@ $(document).ready(function(){
         }
     });
 
+    // Listado Tipo de evento Concepto final del Dictamen Pericial
+
+    let datos_lista_tipo_evento = {
+        '_token': token,
+        'parametro':"lista_tipo_evento"
+    };
+
+    $.ajax({
+        type:'POST',
+        url:'/selectoresCalificacionTecnicaPCL',
+        data: datos_lista_tipo_evento,
+        success:function(data){
+            //console.log(data);
+            let NombreTipoEvento = $('select[name=tipo_evento]').val();
+            let tipoEventocalifPcl = Object.keys(data);
+            for (let i = 0; i < tipoEventocalifPcl.length; i++) {
+                if (data[tipoEventocalifPcl[i]]['Id_Evento'] != NombreTipoEvento) {                    
+                    $('#tipo_evento').append('<option value="'+data[tipoEventocalifPcl[i]]['Id_Evento']+'">'+data[tipoEventocalifPcl[i]]['Nombre_evento']+'</option>');
+                }
+            }
+        }
+    });
+
+    //Listado Origen Concepto final del Dictamen Pericial
+    let datos_lista_Origen = {
+        '_token': token,
+        'parametro':"lista_origen"
+    };
+
+    $.ajax({
+        type:'POST',
+        url:'/selectoresCalificacionTecnicaPCL',
+        data: datos_lista_Origen,
+        success:function(data){
+            //console.log(data);
+            let NombreOrigen = $('select[name=tipo_origen]').val();
+            let origencalifiPcl = Object.keys(data);
+            for (let i = 0; i < origencalifiPcl.length; i++) {
+                if (data[origencalifiPcl[i]]['Id_Parametro'] != NombreOrigen) {                    
+                    $('#tipo_origen').append('<option value="'+data[origencalifiPcl[i]]['Id_Parametro']+'">'+data[origencalifiPcl[i]]['Nombre_parametro']+'</option>');
+                }
+            }
+        }
+    });
+
+    //Listado Tipo de enfermedad Concepto final del Dictamen Pericial
+    let datos_lista_Tipo_enfermedad = {
+        '_token': token,
+        'parametro':"lista_Tipo_enfermedad"
+    };
+
+    $.ajax({
+        type:'POST',
+        url:'/selectoresCalificacionTecnicaPCL',
+        data: datos_lista_Tipo_enfermedad,
+        success:function(data){
+            //console.log(data);
+            let TipoEnfermedad = $('select[name=tipo_enfermedad]').val();
+            let tipoEnfermedadCalifiPCl = Object.keys(data);
+            for (let i = 0; i < tipoEnfermedadCalifiPCl.length; i++) {
+                if (data[tipoEnfermedadCalifiPCl[i]]['Id_Parametro'] != TipoEnfermedad) {                    
+                    $('#tipo_enfermedad').append('<option value="'+data[tipoEnfermedadCalifiPCl[i]]['Id_Parametro']+'">'+data[tipoEnfermedadCalifiPCl[i]]['Nombre_parametro']+'</option>');
+                }
+            }
+        }
+    });
+
     /* VALIDACIÓN MOSTRAR ITEMS DE ACUERDO A DECRETO  */ 
     var opt_decreto;
     var opt_origen;
-    var opt_cobertura;
+    var opt_cobertura;    
+    
     $("#origen_firme").change(function(){
         opt_origen = parseInt($(this).val());
+        opt_cobertura = parseInt($('#origen_cobertura').val());
+        opt_decreto = parseInt($('#decreto_califi').val());        
         $("#origen_firme").val(opt_origen);
-        iniciarIntervalo_decreto();
-    }); 
+        $("#origen_cobertura").val(opt_cobertura);
+        $("#decreto_califi").val(opt_decreto);
+        iniciarIntervalo_decreto();            
+    });       
+    
     $("#origen_cobertura").change(function(){
         opt_cobertura = parseInt($(this).val());
+        opt_origen = parseInt($('#origen_firme').val());
+        opt_decreto = parseInt($('#decreto_califi').val());
         $("#origen_cobertura").val(opt_cobertura);
-        iniciarIntervalo_decreto();
-    }); 
-    $("#decreto_califi").change(function(){
-        opt_decreto = parseInt($(this).val());
+        $("#origen_firme").val(opt_origen);
         $("#decreto_califi").val(opt_decreto);
         iniciarIntervalo_decreto();
-        //console.log(opt_decreto)
-    }); 
-
+    });
+   
+    $("#decreto_califi").change(function(){
+        opt_decreto = parseInt($(this).val());
+        opt_cobertura = parseInt($('#origen_cobertura').val());
+        opt_origen = parseInt($('#origen_firme').val()) ;
+        $("#origen_cobertura").val(opt_cobertura);
+        $("#origen_firme").val(opt_origen);
+        $("#decreto_califi").val(opt_decreto);
+        iniciarIntervalo_decreto();
+    });      
+    
     // Función para validar items a mostrar
     const tiempoDeslizamiento = 'slow';
     const tiempoDeslizamiento2 = 'slow';
     const tiempoDeslizamiento3 = 'slow';
 
     function iniciarIntervalo_decreto() {
+              
         // Selección de los elementos que se deslizarán
         const elementosDeslizar = [
             '.columna_row1_afiliado',
@@ -205,11 +290,11 @@ $(document).ready(function(){
             '.columna_row1_minusvalias'
         ];
 
-        intervalo = setInterval(() => {
-            
-            if(opt_origen == 48 && opt_cobertura == 50) { // si origen y cobertura es SI
-
-                switch (opt_decreto) {
+        intervalo = setInterval(() => {          
+            if(opt_origen == 48 && opt_cobertura == 50) { // si origen y cobertura es SI                
+                $('#botonNoDecrecto').addClass('d-none');
+                $("#descripcion_enfermedad").attr("required", "required");
+                switch (opt_decreto) {                    
                     case 1:
                         elementosDeslizar.forEach(elemento => {
                             $(elemento).slideDown(tiempoDeslizamiento);
@@ -259,10 +344,25 @@ $(document).ready(function(){
                         elementosDeslizar3.forEach(elemento => {
                             $(elemento).slideUp(tiempoDeslizamiento3);
                         });
+                        
                     break;
                 }
 
-            } else {
+            } else if(opt_origen == 49 && opt_cobertura == 51){
+                // Deslizar hacia arriba (ocultar) los elementos
+                $("#descripcion_enfermedad").removeAttr("required");                
+                elementosDeslizar.forEach(elemento => {
+                    $(elemento).slideUp(tiempoDeslizamiento);
+                });
+                elementosDeslizar2.forEach(elemento => {
+                    $(elemento).slideUp(tiempoDeslizamiento2);
+                });
+                elementosDeslizar3.forEach(elemento => {
+                    $(elemento).slideUp(tiempoDeslizamiento3);
+                });                   
+            }else if(opt_origen == 48 && opt_cobertura == 51){
+                $("#descripcion_enfermedad").removeAttr("required");                 
+                $('#botonNoDecrecto').removeClass('d-none');
                 // Deslizar hacia arriba (ocultar) los elementos
                 elementosDeslizar.forEach(elemento => {
                     $(elemento).slideUp(tiempoDeslizamiento);
@@ -272,25 +372,76 @@ $(document).ready(function(){
                 });
                 elementosDeslizar3.forEach(elemento => {
                     $(elemento).slideUp(tiempoDeslizamiento3);
+                });               
+                return;
+            }else if(opt_origen == 49 && opt_cobertura == 50){
+                $("#descripcion_enfermedad").removeAttr("required");                  
+                $('#botonNoDecrecto').removeClass('d-none');
+                // Deslizar hacia arriba (ocultar) los elementos
+                elementosDeslizar.forEach(elemento => {
+                    $(elemento).slideUp(tiempoDeslizamiento);
                 });
+                elementosDeslizar2.forEach(elemento => {
+                    $(elemento).slideUp(tiempoDeslizamiento2);
+                });
+                elementosDeslizar3.forEach(elemento => {
+                    $(elemento).slideUp(tiempoDeslizamiento3);
+                });       
+                return;        
             }
         }, 500);
-    }
+    }    
 
     /* VALIDACIÓN MOSTRAR ITEMS LABORAL DE ACUERDO AL ROL  */ 
     var opt_tipo_laboral;
     var opt_tipo_poblacion;
+    if ($('input[type="radio"][name="tipo_laboral"]').is(":checked")) {  
+        opt_tipo_laboral = $('#laboral_actual').val(); 
+        iniciarIntervalo_laboral();
+        $('input[type="radio"][name="rol_ocupa"]').prop("disabled", true);         
+    }
+
+    if ($('input[type="radio"][name="rol_ocupa"]').is(":checked")) {  
+        opt_tipo_laboral = $('#rol_ocupacional').val(); 
+        iniciarIntervalo_laboral();        
+        $('input[type="radio"][name="tipo_laboral"]').prop("disabled", true);
+        var opt_tipo_poblacion = $('#poblacion_califi').val()
+        if (opt_tipo_poblacion == 75) {
+            iniciarIntervalo_poblacion();
+            $('#columna_row1_tabla_12').css('display', 'block');
+        } else if(opt_tipo_poblacion == 76){
+            iniciarIntervalo_poblacion();
+            $('#columna_row1_tabla_13').css('display', 'block');
+        } else if(opt_tipo_poblacion == 77){
+            iniciarIntervalo_poblacion();
+            $('#columna_row1_tabla_14').css('display', 'block');
+        }
+
+    }
+
     $("#laboral_actual").change(function(){
         opt_tipo_laboral = $('#laboral_actual').val();
         $("#laboral_actual").val(opt_tipo_laboral);
         iniciarIntervalo_laboral();
         iniciarIntervaloOtrasAreas();
-        iniciarIntervaloLaboralOtras();
+        iniciarIntervaloLaboralOtras();          
+        $('input[type="radio"][name="rol_ocupa"]').prop("checked", false);  
+        $('#columna_row1_tabla_12').addClass('d-none');
+        $('#columna_row1_tabla_13').addClass('d-none');
+        $('#columna_row1_tabla_14').addClass('d-none');
+      
     }); 
     $("#rol_ocupacional").change(function(){
         opt_tipo_laboral = $('#rol_ocupacional').val();
         $("#rol_ocupacional").val(opt_tipo_laboral);
         iniciarIntervalo_laboral();
+        iniciarIntervalo_poblacion();
+        $('input[type="radio"][name="tipo_laboral"]').prop("checked", false);
+        $('#columna_row1_tabla_12').removeClass('d-none');
+        $('#columna_row1_tabla_13').removeClass('d-none');
+        $('#columna_row1_tabla_14').removeClass('d-none');
+
+       
     }); 
     
     $("#poblacion_califi").change(function(){
@@ -411,11 +562,11 @@ $(document).ready(function(){
 
     }
     /* VALIDACIÓN MOSTRAR LA SUMA TOTAL Rol Laboral (30%)  */
-    let opt_tabla_1 = 0;
-    let opt_tabla_2 = 0;
-    let opt_tabla_3 = 0;
-    let opt_total_laboral30 = 0;
-
+    var opt_tabla_1 = $("[id^='restricciones_rol_']").is(":checked") ? $("[id^='restricciones_rol_']:checked").val() : 0; 
+    var opt_tabla_2 = $("[id^='autosuficiencia_']").is(":checked") ? $("[id^='autosuficiencia_']:checked").val() : 0;
+    var opt_tabla_3 = $("[name='edad_cronologica']").is(":checked") ? $("[name='edad_cronologica']:checked").val() : 0;
+    var opt_total_laboral30 =  0;
+    
     $("[name='restricion_rol']").on("change", function(){
         opt_tabla_1 = $(this).val();
         $(this).val(opt_tabla_1);
@@ -426,7 +577,7 @@ $(document).ready(function(){
         opt_tabla_2 = $(this).val();
         $(this).val(opt_tabla_2);
         iniciarIntervaloTotalLaboral30();
-    });
+    });    
 
     $("[name='edad_cronologica']").on("change", function(){
         opt_tabla_3 = $(this).val();
@@ -436,32 +587,33 @@ $(document).ready(function(){
     
     //Realiza suma de tablas 1,2,3
     function iniciarIntervaloTotalLaboral30() {
-        clearInterval(intervalo);
+        //clearInterval(intervalo);
         intervalo = setInterval(() => {
-            opt_total_laboral30 = Number(opt_tabla_1) + Number(opt_tabla_2)+ Number(opt_tabla_3);
+            opt_total_laboral30 = Number(opt_tabla_1) + Number(opt_tabla_2)+  Number(opt_tabla_3);
             if(!isNaN(opt_total_laboral30)){
                 $('#resultado_rol_laboral_30').val(redondear(opt_total_laboral30)); //Coloca resultado Rol Laboral (30%)
             }
         }, 500);
     }
     //Tabla 6 - Aprendizaje y aplicación del conocimiento
-    let opt_tabla6_mirar = 0;
-    let opt_tabla6_escuchar = 0;
-    let opt_tabla6_aprender = 0;
-    let opt_tabla6_calcular = 0;
-    let opt_tabla6_pensar = 0;
-    let opt_tabla6_leer = 0;
-    let opt_tabla6_escribir = 0;
-    let opt_tabla6_matematicos = 0;
-    let opt_tabla6_decisiones = 0;
-    let opt_tabla6_tareas_simples = 0;
-    var opt_total_tabla6 = 0;
+      
+    var opt_tabla6_mirar = $("[id^='mirar_']").is(":checked") ? $("[id^='mirar_']:checked").val() : 0;    
+    var opt_tabla6_escuchar = $("[id^='escuchar_']").is(":checked") ? $("[id^='escuchar_']:checked").val() : 0;        
+    var opt_tabla6_aprender = $("[id^='aprender_']").is(":checked") ? $("[id^='aprender_']:checked").val() : 0;
+    var opt_tabla6_calcular = $("[id^='calcular_']").is(":checked") ? $("[id^='calcular_']:checked").val() : 0;
+    var opt_tabla6_pensar = $("[id^='pensar_']").is(":checked") ? $("[id^='pensar_']:checked").val() : 0;
+    var opt_tabla6_leer = $("[id^='leer_']").is(":checked") ? $("[id^='leer_']:checked").val() : 0;
+    var opt_tabla6_escribir = $("[id^='escribir_']").is(":checked") ? $("[id^='escribir_']:checked").val() : 0;
+    var opt_tabla6_matematicos = $("[id^='matematicos_']").is(":checked") ? $("[id^='matematicos_']:checked").val() : 0;
+    var opt_tabla6_decisiones = $("[id^='decisiones_']").is(":checked") ? $("[id^='decisiones_']:checked").val() : 0;
+    var opt_tabla6_tareas_simples = $("[id^='tareas_simples_']").is(":checked") ? $("[id^='tareas_simples_']:checked").val() : 0;
+    var opt_total_tabla6 = $("[id='resultado_tabla6']").val() || 0;
 
-    $("[name='mirar']").on("change", function(){
+    $("[name='mirar']").on("change", function(){        
         opt_tabla6_mirar = $(this).val();
-        $(this).val(opt_tabla6_mirar);
+        $(this).val(opt_tabla6_mirar);        
         iniciarIntervaloTotaltabla6();
-    });
+    });    
 
     $("[name='escuchar']").on("change", function(){
         opt_tabla6_escuchar = $(this).val();
@@ -530,17 +682,17 @@ $(document).ready(function(){
         }, 500);
     }
     //Tabla 7 - Categorías del área ocupacional de comunicación
-    let opt_tabla7_comuni_verbal = 0;
-    let opt_tabla7_no_comuni_verbal = 0;
-    let opt_tabla7_comuni_signos = 0;
-    let opt_tabla7_comuni_escrito = 0;
-    let opt_tabla7_habla = 0;
-    let opt_tabla7_no_verbales = 0;
-    let opt_tabla7_mensajes_escritos = 0;
-    let opt_tabla7_sostener_conversa = 0;
-    let opt_tabla7_iniciar_discusiones = 0;
-    let opt_tabla7_utiliza_dispositivos = 0;
-    let opt_total_tabla7 = 0;
+    var opt_tabla7_comuni_verbal = $("[id^='comunicarse_mensaje_']").is(":checked") ? $("[id^='comunicarse_mensaje_']:checked").val() : 0;
+    var opt_tabla7_no_comuni_verbal = $("[id^='no_comunicarse_mensaje_']").is(":checked") ? $("[id^='no_comunicarse_mensaje_']:checked").val() : 0;
+    var opt_tabla7_comuni_signos = $("[id^='comunicarse_signos_']").is(":checked") ? $("[id^='comunicarse_signos_']:checked").val() : 0;
+    var opt_tabla7_comuni_escrito = $("[id^='comunicarse_escrito_']").is(":checked") ? $("[id^='comunicarse_escrito_']:checked").val() : 0;
+    var opt_tabla7_habla = $("[id^='habla_']").is(":checked") ? $("[id^='habla_']:checked").val() : 0;
+    var opt_tabla7_no_verbales = $("[id^='no_verbales_']").is(":checked") ? $("[id^='no_verbales_']:checked").val() : 0;
+    var opt_tabla7_mensajes_escritos = $("[id^='mensajes_escritos_']").is(":checked") ? $("[id^='mensajes_escritos_']:checked").val() : 0;
+    var opt_tabla7_sostener_conversa = $("[id^='sostener_conversa_']").is(":checked") ? $("[id^='sostener_conversa_']:checked").val() : 0;
+    var opt_tabla7_iniciar_discusiones = $("[id^='iniciar_discusiones_']").is(":checked") ? $("[id^='iniciar_discusiones_']:checked").val() : 0;
+    var opt_tabla7_utiliza_dispositivos = $("[id^='utiliza_dispositivos_']").is(":checked") ? $("[id^='utiliza_dispositivos_']:checked").val() : 0;
+    var opt_total_tabla7 = $("[id='resultado_tabla7']").val() || 0;
     
     $("[name='comunicarse_mensaje']").on("change", function(){
         opt_tabla7_comuni_verbal = $(this).val();
@@ -615,17 +767,17 @@ $(document).ready(function(){
         }, 500);
     }
     //Tabla 8 - Relación de categorías del área ocupacional de movilidad
-    let opt_tabla8_cambiar_posturas = 0;
-    let opt_tabla8_posicion_cuerpo = 0;
-    let opt_tabla8_llevar_objetos = 0;
-    let opt_tabla8_uso_fino_mano = 0;
-    let opt_tabla8_uso_mano_brazo = 0;
-    let opt_tabla8_desplazarse_entorno = 0;
-    let opt_tabla8_distintos_lugares = 0;
-    let opt_tabla8_desplaza_con_equipo = 0;
-    let opt_tabla8_transporte_pasajero = 0;
-    let  opt_tabla8_conduccion = 0;
-    let opt_total_tabla8 = 0;
+    var opt_tabla8_cambiar_posturas = $("[id^='cambiar_posturas_']").is(":checked") ? $("[id^='cambiar_posturas_']:checked").val() : 0;
+    var opt_tabla8_posicion_cuerpos = $("[id^='posicion_cuerpo_']").is(":checked") ? $("[id^='posicion_cuerpo_']:checked").val() : 0;
+    var opt_tabla8_llevar_objetos = $("[id^='llevar_objetos_']").is(":checked") ? $("[id^='llevar_objetos_']:checked").val() : 0;
+    var opt_tabla8_uso_fino_mano = $("[id^='uso_fino_mano_']").is(":checked") ? $("[id^='uso_fino_mano_']:checked").val() : 0;
+    var opt_tabla8_uso_mano_brazo = $("[id^='uso_mano_brazo_']").is(":checked") ? $("[id^='uso_mano_brazo_']:checked").val() : 0;
+    var opt_tabla8_desplazarse_entorno = $("[id^='desplazarse_entorno_']").is(":checked") ? $("[id^='desplazarse_entorno_']:checked").val() : 0;
+    var opt_tabla8_distintos_lugares = $("[id^='distintos_lugares_']").is(":checked") ? $("[id^='distintos_lugares_']:checked").val() : 0;
+    var opt_tabla8_desplaza_con_equipo = $("[id^='desplazarse_con_equipo_']").is(":checked") ? $("[id^='desplazarse_con_equipo_']:checked").val() : 0;
+    var opt_tabla8_transporte_pasajero = $("[id^='transporte_pasajero_']").is(":checked") ? $("[id^='transporte_pasajero_']:checked").val() : 0;
+    var  opt_tabla8_conduccion = $("[id^='conduccion_']").is(":checked") ? $("[id^='conduccion_']:checked").val() : 0;
+    var opt_total_tabla8 = $("[id='resultado_tabla8']").val() || 0;
     
     $("[name='cambiar_posturas']").on("change", function(){
         opt_tabla8_cambiar_posturas = $(this).val();
@@ -635,7 +787,7 @@ $(document).ready(function(){
 
     $("[name='posicion_cuerpo']").on("change", function(){
         opt_tabla8_posicion_cuerpos = $(this).val();
-        $(this).val(opt_tabla8_posicion_cuerpo);
+        $(this).val(opt_tabla8_posicion_cuerpos);
         iniciarIntervaloTotaltabla8();
     });
 
@@ -691,7 +843,7 @@ $(document).ready(function(){
     function iniciarIntervaloTotaltabla8() {
         clearInterval(intervalo);
         intervalo = setInterval(() => {
-            opt_total_tabla8 = Number(opt_tabla8_cambiar_posturas) + Number(opt_tabla8_posicion_cuerpo)+ Number(opt_tabla8_llevar_objetos)
+            opt_total_tabla8 = Number(opt_tabla8_cambiar_posturas) + Number(opt_tabla8_posicion_cuerpos)+ Number(opt_tabla8_llevar_objetos)
             + Number(opt_tabla8_uso_fino_mano)+ Number(opt_tabla8_uso_mano_brazo)+ Number(opt_tabla8_desplazarse_entorno)+ Number(opt_tabla8_distintos_lugares)
             + Number(opt_tabla8_desplaza_con_equipo)+ Number(opt_tabla8_transporte_pasajero)+ Number(opt_tabla8_conduccion);
             if(!isNaN(opt_total_tabla8)){
@@ -700,17 +852,17 @@ $(document).ready(function(){
         }, 500);
     }
     //Tabla 9 - Relación por categorías para el área ocupacional del cuidado personal
-    let opt_tabla9_lavarse = 0;
-    let opt_tabla9_cuidado_cuerpo = 0;
-    let opt_tabla9_higiene_personal = 0;
-    let opt_tabla9_vestirse = 0;
-    let opt_tabla9_quitarse_ropa = 0;
-    let opt_tabla9_ponerse_calzado = 0;
-    let opt_tabla9_comer = 0;
-    let opt_tabla9_beber = 0;
-    let opt_tabla9_cuidado_salud = 0;
-    let opt_tabla9_control_dieta = 0;
-    let opt_total_tabla9 = 0;
+    var opt_tabla9_lavarse = $("[id^='lavarse_']").is(":checked") ? $("[id^='lavarse_']:checked").val() : 0;
+    var opt_tabla9_cuidado_cuerpo = $("[id^='cuidado_cuerpo_']").is(":checked") ? $("[id^='cuidado_cuerpo_']:checked").val() : 0;
+    var opt_tabla9_higiene_personal = $("[id^='higiene_personal_']").is(":checked") ? $("[id^='higiene_personal_']:checked").val() : 0;
+    var opt_tabla9_vestirse = $("[id^='vestirse_']").is(":checked") ? $("[id^='vestirse_']:checked").val() : 0;
+    var opt_tabla9_quitarse_ropa = $("[id^='quitarse_ropa_']").is(":checked") ? $("[id^='quitarse_ropa_']:checked").val() : 0;
+    var opt_tabla9_ponerse_calzado = $("[id^='ponerse_calzado_']").is(":checked") ? $("[id^='ponerse_calzado_']:checked").val() : 0;
+    var opt_tabla9_comer = $("[id^='comer_']").is(":checked") ? $("[id^='comer_']:checked").val() : 0;
+    var opt_tabla9_beber = $("[id^='beber_']").is(":checked") ? $("[id^='beber_']:checked").val() : 0;
+    var opt_tabla9_cuidado_salud = $("[id^='cuidado_salud_']").is(":checked") ? $("[id^='cuidado_salud_']:checked").val() : 0;
+    var opt_tabla9_control_dieta = $("[id^='control_dieta_']").is(":checked") ? $("[id^='control_dieta_']:checked").val() : 0;
+    var opt_total_tabla9 = $("[id='resultado_tabla9']").val() || 0;
 
     $("[name='lavarse']").on("change", function(){
         opt_tabla9_lavarse = $(this).val();
@@ -785,18 +937,19 @@ $(document).ready(function(){
     }
     
     //Tabla 10 - Relación de las categorías para el área ocupacional de la vida doméstica
-    let opt_tabla10_adquisi_vivir = 0;
-    let opt_tabla10_bienes_servicios = 0;
-    let opt_tabla10_comprar = 0;
-    let opt_tabla10_preparar_comida = 0;
-    let opt_tabla10_quehaceres_casa = 0;
-    let opt_tabla10_limpieza_vivienda = 0;
-    let opt_tabla10_objetos_hogar = 0;
-    let opt_tabla10_ayudar_los_demas = 0;
-    let opt_tabla10_mante_dispositivos = 0;
-    let opt_tabla10_cuidado_animales = 0;
-    let opt_total_tabla10 = 0;
-    let opt_sumaTotal_20 = 0;
+    var opt_tabla10_adquisi_vivir = $("[id^='adquisicion_para_vivir_']").is(":checked") ? $("[id^='adquisicion_para_vivir_']:checked").val() : 0;
+    var opt_tabla10_bienes_servicios = $("[id^='bienes_servicios_']").is(":checked") ? $("[id^='bienes_servicios_']:checked").val() : 0;
+    var opt_tabla10_comprar = $("[id^='comprar_']").is(":checked") ? $("[id^='comprar_']:checked").val() : 0;
+    var opt_tabla10_preparar_comida = $("[id^='preparar_comida_']").is(":checked") ? $("[id^='preparar_comida_']:checked").val() : 0;
+    var opt_tabla10_quehaceres_casa = $("[id^='quehaceres_casa_']").is(":checked") ? $("[id^='quehaceres_casa_']:checked").val() : 0;
+    var opt_tabla10_limpieza_vivienda = $("[id^='limpieza_vivienda_']").is(":checked") ? $("[id^='limpieza_vivienda_']:checked").val() : 0;
+    var opt_tabla10_objetos_hogar = $("[id^='objetos_hogar_']").is(":checked") ? $("[id^='objetos_hogar_']:checked").val() : 0;
+    var opt_tabla10_ayudar_los_demas = $("[id^='ayudar_los_demas_']").is(":checked") ? $("[id^='ayudar_los_demas_']:checked").val() : 0;
+    var opt_tabla10_mante_dispositivos = $("[id^='mantenimiento_dispositivos_']").is(":checked") ? $("[id^='mantenimiento_dispositivos_']:checked").val() : 0;
+    var opt_tabla10_cuidado_animales = $("[id^='cuidado_animales_']").is(":checked") ? $("[id^='cuidado_animales_']:checked").val() : 0;
+    var opt_total_tabla10 = $("[id='resultado_tabla10']").val() || 0;
+    var opt_sumaTotal_20 = 0;
+    var opt_sumaTotal_50 = 0;
 
     $("[name='adquisicion_para_vivir']").on("change", function(){
         opt_tabla10_adquisi_vivir = $(this).val();
@@ -872,51 +1025,63 @@ $(document).ready(function(){
     }
     // Suma Total otras areas(20%)
     function iniciarIntervaloOtrasAreas() {
-        intervaloOtras = setInterval(() => {
-            let opt_sumaTotal_20=opt_total_tabla6 + opt_total_tabla7 + opt_total_tabla8 + opt_total_tabla9 + opt_total_tabla10;
-            //console.log(opt_sumaTotal_20);
+        //clearInterval(intervalo);
+        intervalo = setInterval(() => {                        
+            opt_sumaTotal_20 = Number(opt_total_tabla6) + Number(opt_total_tabla7)+ Number(opt_total_tabla8)
+            + Number(opt_total_tabla9)+ Number(opt_total_tabla10);
             if(!isNaN(opt_sumaTotal_20)){
-                $('#total_otras').val(redondear(opt_sumaTotal_20));
+                //console.log(opt_sumaTotal_20);
+                $('#total_otras').val(redondear(opt_sumaTotal_20 ));
             }
         }, 500);
     }
     // Suma Total rol laboral y otras areas(50%)
     function iniciarIntervaloLaboralOtras() {
-        intervaloLaboral= setInterval(() => {
-            let opt_sumaTotal_50= opt_sumaTotal_20 + opt_total_laboral30;
+        //clearInterval(intervalo);
+        intervalo= setInterval(() => {
+            opt_sumaTotal_50 = Number(opt_sumaTotal_20) + Number(opt_total_laboral30);
             if(!isNaN(opt_sumaTotal_50)){
                 $('#total_rol_areas').val(redondear(opt_sumaTotal_50));
             }
         }, 500);
     }
 
+    $(document).ready(function() {
+        $('[id^="activarintervalos"]').each(function() {
+            $(this).hover(function() {
+                iniciarIntervaloTotalLaboral30();
+                iniciarIntervaloOtrasAreas();
+                iniciarIntervaloLaboralOtras();
+            });
+        });
+    });
     //Tabla 12 - Criterios desarrollo neuroevolutivo Niños y Niñas 0 a 3 años
-    let opt_tabla12_mantiene_postura = 0;
-    let opt_tabla12_activi_espontanea = 0;
-    let opt_tabla12_sujeta_cabeza = 0;
-    let opt_tabla12_sienta_apoyo = 0;
-    let opt_tabla12_sobre_mismo = 0;
-    let opt_tabla12_sentado_sin_apoyo = 0;
-    let opt_tabla12_tumbado_sentado = 0;
-    let opt_tabla12_pie_apoyo = 0;
-    let opt_tabla12_pasos_apoyo = 0;
-    let opt_tabla12_mantiene_sin_apoyo = 0;
-    let opt_tabla12_anda_solo = 0;
-    let opt_tabla12_empuja_pelota = 0;
-    let opt_tabla12_sorteando_obstaculos = 0;
-    let opt_tabla12_succiona = 0;
-    let opt_tabla12_fija_mirada = 0;
-    let opt_tabla12_trayectoria_objeto = 0;
-    let opt_tabla12_sostiene_sonajero = 0;
-    let opt_tabla12_hacia_objeto = 0;
-    let opt_tabla12_sostiene_objeto = 0;
-    let opt_tabla12_abre_cajones = 0;
-    let opt_tabla12_bebe_solo = 0;
-    let opt_tabla12_quita_prenda = 0;
-    let opt_tabla12_espacios_casa = 0;
-    let opt_tabla12_imita_trazaso = 0;
-    let opt_tabla12_abre_puerta = 0;
-    let opt_total_tabla12 = 0;
+    var opt_tabla12_mantiene_postura = $("[id^='mantiene_postura']").is(":checked") ? $("[id^='mantiene_postura']:checked").val() : 0;
+    var opt_tabla12_activi_espontanea = $("[id^='actividad_espontanea']").is(":checked") ? $("[id^='actividad_espontanea']:checked").val() : 0;
+    var opt_tabla12_sujeta_cabeza = $("[id^='sujeta_cabeza']").is(":checked") ? $("[id^='sujeta_cabeza']:checked").val() : 0;
+    var opt_tabla12_sienta_apoyo = $("[id^='sienta_apoyo']").is(":checked") ? $("[id^='sienta_apoyo']:checked").val() : 0;
+    var opt_tabla12_sobre_mismo = $("[id^='sobre_mismo']").is(":checked") ? $("[id^='sobre_mismo']:checked").val() : 0;
+    var opt_tabla12_sentado_sin_apoyo = $("[id^='sentado_sin_apoyo']").is(":checked") ? $("[id^='sentado_sin_apoyo']:checked").val() : 0;
+    var opt_tabla12_tumbado_sentado = $("[id^='tumbado_sentado']").is(":checked") ? $("[id^='tumbado_sentado']:checked").val() : 0;
+    var opt_tabla12_pie_apoyo = $("[id^='pie_apoyo']").is(":checked") ? $("[id^='pie_apoyo']:checked").val() : 0;
+    var opt_tabla12_pasos_apoyo = $("[id^='pasos_apoyo']").is(":checked") ? $("[id^='pasos_apoyo']:checked").val() : 0;
+    var opt_tabla12_mantiene_sin_apoyo = $("[id^='mantiene_sin_apoyo']").is(":checked") ? $("[id^='mantiene_sin_apoyo']:checked").val() : 0;
+    var opt_tabla12_anda_solo = $("[id^='anda_solo']").is(":checked") ? $("[id^='anda_solo']:checked").val() : 0;
+    var opt_tabla12_empuja_pelota = $("[id^='empuja_pelota']").is(":checked") ? $("[id^='empuja_pelota']:checked").val() : 0;
+    var opt_tabla12_sorteando_obstaculos = $("[id^='sorteando_obstaculos']").is(":checked") ? $("[id^='sorteando_obstaculos']:checked").val() : 0;
+    var opt_tabla12_succiona = $("[id^='succiona']").is(":checked") ? $("[id^='succiona']:checked").val() : 0;
+    var opt_tabla12_fija_mirada = $("[id^='fija_mirada']").is(":checked") ? $("[id^='fija_mirada']:checked").val() : 0;
+    var opt_tabla12_trayectoria_objeto = $("[id^='trayectoria_objeto']").is(":checked") ? $("[id^='trayectoria_objeto']:checked").val() : 0;
+    var opt_tabla12_sostiene_sonajero = $("[id^='trayectoria_objeto']").is(":checked") ? $("[id^='trayectoria_objeto']:checked").val() : 0;
+    var opt_tabla12_hacia_objeto = $("[id^='sostiene_sonajero']").is(":checked") ? $("[id^='sostiene_sonajero']:checked").val() : 0;
+    var opt_tabla12_sostiene_objeto = $("[id^='sostiene_objeto']").is(":checked") ? $("[id^='sostiene_objeto']:checked").val() : 0;
+    var opt_tabla12_abre_cajones = $("[id^='abre_cajones']").is(":checked") ? $("[id^='abre_cajones']:checked").val() : 0;
+    var opt_tabla12_bebe_solo = $("[id^='bebe_solo']").is(":checked") ? $("[id^='bebe_solo']:checked").val() : 0;
+    var opt_tabla12_quita_prenda = $("[id^='quita_prenda']").is(":checked") ? $("[id^='quita_prenda']:checked").val() : 0;
+    var opt_tabla12_espacios_casa = $("[id^='espacios_casa']").is(":checked") ? $("[id^='espacios_casa']:checked").val() : 0;
+    var opt_tabla12_imita_trazaso = $("[id^='imita_trazaso']").is(":checked") ? $("[id^='imita_trazaso']:checked").val() : 0;
+    var opt_tabla12_abre_puerta = $("[id^='abre_puerta']").is(":checked") ? $("[id^='abre_puerta']:checked").val() : 0;
+    var opt_total_tabla12 = $("[id='total_tabla12']").val() || 0;
     
     $("[name='mantiene_postura']").on("change", function(){
         opt_tabla12_mantiene_postura = $(this).val();
@@ -1085,42 +1250,51 @@ $(document).ready(function(){
     }
 
     //Tabla 13 - Valoración de los roles ocupacionales de juego
-    let opt_tabla13_ocupacionales_juego = 0;
-    let opt_total_tabla13 = 0;
+    var opt_tabla13_ocupacionales_juego = $("[id^='roles_ocupacionales_juego']").is(":checked") ? $("[id^='roles_ocupacionales_juego']:checked").val() : 0;
+    var opt_total_tabla13 = $("[id='total_tabla13']").val() || 0;
     $("[name='roles_ocupacionales_juego']").on("change", function(){
         opt_tabla13_ocupacionales_juego = $(this).val();
         $(this).val(opt_tabla13_ocupacionales_juego);
         iniciarIntervaloTotaltabla13();
     });
+    if (opt_total_tabla13 === 0.0) {
+        opt_total_tabla13 = 0;
+        $('#total_tabla13').val(opt_total_tabla13);       
+    }    
     //Realiza suma de tabla 13
     function iniciarIntervaloTotaltabla13() {
-        clearInterval(intervalo);
+        //clearInterval(intervalo);
         intervalo = setInterval(() => {
-            opt_total_tabla13 = opt_tabla13_ocupacionales_juego;
+            opt_total_tabla13 = Number(opt_tabla13_ocupacionales_juego);
             if(!isNaN(opt_total_tabla13)){
                 $('#total_tabla13').val(redondear(opt_total_tabla13));
             }
         }, 500);
     }
+    //console.log(opt_total_tabla13);
+    
     //Tabla 14 - Valoración de los roles ocupacional relacionado
-    let opt_tabla14_ocupacionales_adultos = 0;
-    let opt_total_tabla14 = 0;
+    var opt_tabla14_ocupacionales_adultos = $("[id^='roles_ocupacionales_adultos']").is(":checked") ? $("[id^='roles_ocupacionales_adultos']:checked").val() : 0;
+    var opt_total_tabla14 = $("[id='total_tabla14']").val() || 0;
     $("[name='roles_ocupacionales_adultos']").on("change", function(){
         opt_tabla14_ocupacionales_adultos = $(this).val();
         $(this).val(opt_tabla14_ocupacionales_adultos);
         iniciarIntervaloTotaltabla14();
     });
+    if (opt_total_tabla14 === 0.0) {
+        opt_total_tabla14 = 0;
+        $('#total_tabla14').val(opt_total_tabla14);       
+    }  
     //Realiza suma de tabla 14
     function iniciarIntervaloTotaltabla14() {
-        clearInterval(intervalo);
+        //clearInterval(intervalo);
         intervalo = setInterval(() => {
-            opt_total_tabla14 = opt_tabla14_ocupacionales_adultos;
+            opt_total_tabla14 = Number(opt_tabla14_ocupacionales_adultos);
             if(!isNaN(opt_total_tabla14)){
                 $('#total_tabla14').val(redondear(opt_total_tabla14));
             }
         }, 500);
     }
-
     //Cargar opciones de selectores Libro II Calificación de las discapacidades (20%) 
     var options = ['0.1', '0.2', '0.3'];
     var options2 = ['0.1', '0.2'];
@@ -1132,39 +1306,42 @@ $(document).ready(function(){
             selectElement.append($('<option>').text(value).attr('value', value));
         });
     }
+    
 
     appendOptions(select, options);
     appendOptions(select2,options2);
-  
-    //Suma de valores conducta
-    let opt_conducta = [];
-    let opt_total_conducta = 0;
 
+    //Suma de valores conducta
+    var opt_conducta = [];
+    var opt_total_conducta = $("[id='total_conducta']").val() || 0; 
+    
     for(let i = 10; i <= 19; i++) {
-        opt_conducta[i] = 0;
-        
+        opt_conducta[i] = 0;        
         $("[name='conducta_" + i + "']").on("change", function(){
             opt_conducta[i] = $(this).val();
             $(this).val(opt_conducta[i]);
             iniciarIntervaloTotalConducta();
             iniciarIntervaloDiscapacida();
         });
-    }
+    } 
 
     // Realiza suma de conducta
     function iniciarIntervaloTotalConducta() {
-        clearInterval(intervalo);
+        //clearInterval(intervalo);   
         intervalo = setInterval(() => {
-            opt_total_conducta = opt_conducta.reduce((total, opt) => total + Number(opt), 0);
+            opt_total_conducta = Number($("[id='conducta_10']").val()) + Number($("[id='conducta_11']").val()) + Number($("[id='conducta_12']").val()) +
+            Number($("[id='conducta_13']").val()) + Number($("[id='conducta_14']").val()) + Number($("[id='conducta_15']").val()) +
+            Number($("[id='conducta_16']").val()) + Number($("[id='conducta_17']").val()) + Number($("[id='conducta_18']").val()) +
+            Number($("[id='conducta_19']").val());          
             if(!isNaN(opt_total_conducta)){
                 $('#total_conducta').val(redondear(opt_total_conducta));
             }
-        }, 500);
-    }
+        }, 500);        
+    } 
 
     //Suma de valores Comunicación
-    let opt_comunicacion = [];
-    let opt_total_comunicacion = 0;
+    var opt_comunicacion = [];
+    var opt_total_comunicacion = $("[id='total_comunicacion']").val() || 0; 
 
     for(let i = 20; i <= 29; i++) {
         opt_comunicacion[i] = 0;
@@ -1181,7 +1358,10 @@ $(document).ready(function(){
     function iniciarIntervaloTotalcomunicacion() {
         clearInterval(intervalo);
         intervalo = setInterval(() => {
-            opt_total_comunicacion = opt_comunicacion.reduce((total, opt) => total + Number(opt), 0);
+            opt_total_comunicacion = Number($("[id='comunicacion_20']").val()) + Number($("[id='comunicacion_21']").val()) + Number($("[id='comunicacion_22']").val()) +
+            Number($("[id='comunicacion_23']").val()) + Number($("[id='comunicacion_24']").val()) + Number($("[id='comunicacion_25']").val()) +
+            Number($("[id='comunicacion_26']").val()) + Number($("[id='comunicacion_27']").val()) + Number($("[id='comunicacion_28']").val()) +
+            Number($("[id='comunicacion_29']").val());
             if(!isNaN(opt_total_comunicacion)){
                 $('#total_comunicacion').val(redondear(opt_total_comunicacion));
             }
@@ -1189,8 +1369,8 @@ $(document).ready(function(){
     }
 
     //Suma de valores Cuidado personal
-    let opt_cuidado_personal = [];
-    let opt_total_cuidado_personal = 0;
+    var opt_cuidado_personal = [];
+    var opt_total_cuidado_personal = $("[id='total_cuidado_personal']").val() || 0; 
 
     for(let i = 30; i <= 39; i++) {
         opt_cuidado_personal[i] = 0;
@@ -1207,7 +1387,10 @@ $(document).ready(function(){
     function iniciarIntervaloTotalcuidado_personal() {
         clearInterval(intervalo);
         intervalo = setInterval(() => {
-            opt_total_cuidado_personal = opt_cuidado_personal.reduce((total, opt) => total + Number(opt), 0);
+            opt_total_cuidado_personal = Number($("[id='cuidado_personal_30']").val()) + Number($("[id='cuidado_personal_31']").val()) + Number($("[id='cuidado_personal_32']").val()) +
+            Number($("[id='cuidado_personal_33']").val()) + Number($("[id='cuidado_personal_34']").val()) + Number($("[id='cuidado_personal_35']").val()) +
+            Number($("[id='cuidado_personal_36']").val()) + Number($("[id='cuidado_personal_37']").val()) + Number($("[id='cuidado_personal_38']").val()) +
+            Number($("[id='cuidado_personal_39']").val());
             if(!isNaN(opt_total_cuidado_personal)){
                 $('#total_cuidado_personal').val(redondear(opt_total_cuidado_personal));
             }
@@ -1215,8 +1398,8 @@ $(document).ready(function(){
     }
 
      //Suma de valores Locomoción
-     let opt_lomocion= [];
-     let opt_total_lomocion = 0;
+     var opt_lomocion= [];
+     var opt_total_lomocion = $("[id='total_lomocion']").val() || 0; 
  
      for(let i = 40; i <= 49; i++) {
         opt_lomocion[i] = 0;
@@ -1233,7 +1416,10 @@ $(document).ready(function(){
      function iniciarIntervaloTotallomocion() {
          clearInterval(intervalo);
          intervalo = setInterval(() => {
-                opt_total_lomocion = opt_lomocion.reduce((total, opt) => total + Number(opt), 0);
+            opt_total_lomocion = Number($("[id='lomocion_40']").val()) + Number($("[id='lomocion_41']").val()) + Number($("[id='lomocion_42']").val()) +
+            Number($("[id='lomocion_43']").val()) + Number($("[id='lomocion_44']").val()) + Number($("[id='lomocion_45']").val()) +
+            Number($("[id='lomocion_46']").val()) + Number($("[id='lomocion_47']").val()) + Number($("[id='lomocion_48']").val()) +
+            Number($("[id='lomocion_49']").val());
              if(!isNaN(opt_total_lomocion)){
                  $('#total_lomocion').val(redondear(opt_total_lomocion));
              }
@@ -1241,8 +1427,8 @@ $(document).ready(function(){
      }
 
      //Suma de valores Disposición del cuerpo
-     let opt_disposicion= [];
-     let opt_total_disposicion = 0;
+     var opt_disposicion= [];
+     var opt_total_disposicion = $("[id='total_disposicion']").val() || 0; 
  
      for(let i = 50; i <= 59; i++) {
         opt_disposicion[i] = 0;
@@ -1258,7 +1444,10 @@ $(document).ready(function(){
      function iniciarIntervaloTotaldisposicion() {
          clearInterval(intervalo);
          intervalo = setInterval(() => {
-                opt_total_disposicion = opt_disposicion.reduce((total, opt) => total + Number(opt), 0);
+            opt_total_disposicion = Number($("[id='disposicion_50']").val()) + Number($("[id='disposicion_51']").val()) + Number($("[id='disposicion_52']").val()) +
+            Number($("[id='disposicion_53']").val()) + Number($("[id='disposicion_54']").val()) + Number($("[id='disposicion_55']").val()) +
+            Number($("[id='disposicion_56']").val()) + Number($("[id='disposicion_57']").val()) + Number($("[id='disposicion_58']").val()) +
+            Number($("[id='disposicion_59']").val());
              if(!isNaN(opt_total_disposicion)){
                  $('#total_disposicion').val(redondear(opt_total_disposicion));
              }
@@ -1266,8 +1455,8 @@ $(document).ready(function(){
      }
 
       //Suma de valores Destreza
-      let opt_destreza= [];
-      let opt_total_destreza = 0;
+      var opt_destreza= [];
+      var opt_total_destreza = $("[id='total_destreza']").val() || 0; 
   
       for(let i = 60; i <= 69; i++) {
          opt_destreza[i] = 0;
@@ -1283,7 +1472,10 @@ $(document).ready(function(){
       function iniciarIntervaloTotaldestreza() {
           clearInterval(intervalo);
           intervalo = setInterval(() => {
-                opt_total_destreza = opt_destreza.reduce((total, opt) => total + Number(opt), 0);
+            opt_total_destreza = Number($("[id='destreza_60']").val()) + Number($("[id='destreza_61']").val()) + Number($("[id='destreza_62']").val()) +
+            Number($("[id='destreza_63']").val()) + Number($("[id='destreza_64']").val()) + Number($("[id='destreza_65']").val()) +
+            Number($("[id='destreza_66']").val()) + Number($("[id='destreza_67']").val()) + Number($("[id='destreza_68']").val()) +
+            Number($("[id='destreza_69']").val());
               if(!isNaN(opt_total_destreza)){
                   $('#total_destreza').val(redondear(opt_total_destreza));
               }
@@ -1291,8 +1483,8 @@ $(document).ready(function(){
       }
 
     //Suma de valores Situación
-    let opt_situacion= [];
-    let opt_total_situacion = 0;
+    var opt_situacion= [];
+    var opt_total_situacion = $("[id='total_situacion']").val() || 0;
 
     for(let i = 70; i <= 78; i++) {
         opt_situacion[i] = 0;
@@ -1309,7 +1501,9 @@ $(document).ready(function(){
     function iniciarIntervaloTotalsituacion() {
         clearInterval(intervalo);
         intervalo = setInterval(() => {
-            opt_total_situacion = opt_situacion.reduce((total, opt) => total + Number(opt), 0);
+            opt_total_situacion = Number($("[id='situacion_70']").val()) + Number($("[id='situacion_71']").val()) + Number($("[id='situacion_72']").val()) +
+            Number($("[id='situacion_73']").val()) + Number($("[id='situacion_74']").val()) + Number($("[id='situacion_75']").val()) +
+            Number($("[id='situacion_76']").val()) + Number($("[id='situacion_77']").val()) + Number($("[id='situacion_78']").val());
             if(!isNaN(opt_total_situacion)){
                 $('#total_situacion').val(redondear(opt_total_situacion));
             }
@@ -1320,55 +1514,56 @@ $(document).ready(function(){
     var opt_sumaTotal_disca = 0;
     function iniciarIntervaloDiscapacida() {
         intervaloDisca= setInterval(() => {
-            opt_sumaTotal_disca= opt_total_conducta + opt_total_comunicacion + opt_total_cuidado_personal + opt_total_lomocion + opt_total_disposicion + opt_total_destreza + opt_total_situacion;
+            opt_sumaTotal_disca= Number(opt_total_conducta) + Number(opt_total_comunicacion) + Number(opt_total_cuidado_personal) + Number(opt_total_lomocion) + 
+            Number(opt_total_disposicion) + Number(opt_total_destreza) + Number(opt_total_situacion);
             if(!isNaN(opt_sumaTotal_disca)){
                 $('#total_discapacidades').val(redondear(opt_sumaTotal_disca));
             }
         }, 500);
     }
-   
+    
     // total_minusvalia
-    let opt_orientacion = 0;
-    let opt_indepen_fisica = 0;
-    let opt_desplazamiento = 0;
-    let opt_ocupacional = 0;
-    let opt_social = 0;
-    let opt_economica = 0;
-    let opt_cronologica = 0;
-    let opt_sumaTotal_valia = 0;
+    var opt_orientacion= $("[id^='orientacion_']").is(":checked") ? $("[id^='orientacion_']:checked").val() : 0;
+    var opt_indepen_fisica = $("[id^='indepen_fisica_']").is(":checked") ? $("[id^='indepen_fisica_']:checked").val() : 0;
+    var opt_desplazamiento = $("[id^='desplazamiento_']").is(":checked") ? $("[id^='desplazamiento_']:checked").val() : 0;
+    var opt_ocupacional = $("[id^='ocupacional_']").is(":checked") ? $("[id^='ocupacional_']:checked").val() : 0;
+    var opt_social = $("[id^='social_']").is(":checked") ? $("[id^='social_']:checked").val() : 0;
+    var opt_economica = $("[id^='economica_']").is(":checked") ? $("[id^='economica_']:checked").val() : 0;
+    var opt_cronologica = $("[name='cronologica']").is(":checked") ? $("[name='cronologica']:checked").val() : 0;
+    var opt_sumaTotal_valia = 0;
 
     $("[name='orientacion']").on("change", function(){
-        opt_orientacion = Number($(this).val());
+        opt_orientacion = $(this).val();
         $(this).val(opt_orientacion);
         iniciarIntervaloMinusvalia();
     });
 
     $("[name='indepen_fisica']").on("change", function(){
-        opt_indepen_fisica = Number($(this).val());
+        opt_indepen_fisica = $(this).val();
         $(this).val(opt_indepen_fisica);
         iniciarIntervaloMinusvalia();
     });
 
     $("[name='desplazamiento']").on("change", function(){
-        opt_desplazamiento = Number($(this).val());
+        opt_desplazamiento = $(this).val();
         $(this).val(opt_desplazamiento);
         iniciarIntervaloMinusvalia();
     });
 
     $("[name='ocupacional']").on("change", function(){
-        opt_ocupacional = Number($(this).val());
+        opt_ocupacional = $(this).val();
         $(this).val(opt_ocupacional);
         iniciarIntervaloMinusvalia();
     });
 
     $("[name='social']").on("change", function(){
-        opt_social = Number($(this).val());
+        opt_social = $(this).val();
         $(this).val(opt_social);
         iniciarIntervaloMinusvalia();
     });
 
     $("[name='economica']").on("change", function(){
-        opt_economica = Number($(this).val());
+        opt_economica = $(this).val();
         $(this).val(opt_economica);
         iniciarIntervaloMinusvalia();
     });
@@ -1380,89 +1575,824 @@ $(document).ready(function(){
     });
 
     function iniciarIntervaloMinusvalia() {
-        clearInterval(intervalo);
+        //clearInterval(intervalo);
         intervalo = setInterval(() => {
-            opt_sumaTotal_valia = opt_orientacion + opt_indepen_fisica + opt_desplazamiento + opt_ocupacional
-            + opt_social + opt_economica + opt_cronologica;
+            opt_sumaTotal_valia = Number(opt_orientacion) + Number(opt_indepen_fisica) + Number(opt_desplazamiento) + Number(opt_ocupacional)
+            + Number(opt_social) + Number(opt_economica) + Number(opt_cronologica);
             if (!isNaN(opt_sumaTotal_valia)){
                 $('#total_minusvalia').val(redondear(opt_sumaTotal_valia));
             }
         }, 500);
     }
 
+    $(document).ready(function() {
+        $('[id^="activarminusvalia_"]').each(function() {
+            $(this).hover(function() {
+                iniciarIntervaloMinusvalia();
+            });
+        });
+    });
+
 
     $('#form_CaliTecDecreto').submit(function (e){
+        e.preventDefault();
+
+        var origen_firme = $('#origen_firme').val();
+        var origen_cobertura = $('#origen_cobertura').val();
+        
+        if(origen_firme == 49 && origen_cobertura == 51 || origen_firme == 48 && origen_cobertura == 51 || origen_firme == 49 && origen_cobertura == 50){
+            
+            var banderaGuardarNoDecreto = $('#banderaGuardarNoDecreto').val();
+            var Id_EventoDecreto = $('#Id_Evento_decreto').val();
+            var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
+            var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
+            var origenFirme = $('#origen_firme').val();
+            var cobertura = $('#origen_cobertura').val();
+            var decreto = $('#decreto_califi').val();
+            let token = $('input[name=_token]').val();
+
+            var datos_agregarNoDecretoDicRelFun ={
+                '_token': token,
+                'Id_Evento_decreto':Id_EventoDecreto,
+                'Id_Proceso_decreto':Id_ProcesoDecreto,
+                'Id_Asignacion_decreto':Id_Asignacion_Dcreto,
+                'origen_firme':origenFirme,
+                'origen_cobertura':cobertura,
+                'decreto_califi':decreto,
+                'banderaGuardarNoDecreto': banderaGuardarNoDecreto,
+            }
+            $.ajax({
+                type:'POST',
+                url:'/guardarDecretoDictamenRelacionDocFunda',
+                data: datos_agregarNoDecretoDicRelFun,
+                success: function(response){
+                    if (response.parametro == 'agregar_Nodecreto_parte') {
+                        document.querySelector('#GuardarNoDecreto').disabled=true;
+                        $('#div_alerta_Nodecreto').removeClass('d-none');
+                        $('.alerta_Nodecreto').append('<strong>'+response.mensaje+'</strong>');                                            
+                        setTimeout(function(){
+                            $('#div_alerta_Nodecreto').addClass('d-none');
+                            $('.alerta_Nodecreto').empty();   
+                            location.reload();
+                        }, 3000);   
+                    }else if(response.parametro == 'actualizar_Nodecreto_parte'){
+                        document.querySelector('#ActualizarNoDecreto').disabled=true;
+                        $('#div_alerta_Nodecreto').removeClass('d-none');
+                        $('.alerta_Nodecreto').append('<strong>'+response.mensaje2+'</strong>');                                            
+                        setTimeout(function(){
+                            $('#div_alerta_Nodecreto').addClass('d-none');
+                            $('.alerta_Nodecreto').empty();
+                            document.querySelector('#ActualizarNoDecreto').disabled=false;
+                            location.reload();
+                        }, 3000);
+                    }
+                }
+            })
+        }else if(origen_firme == 48 && origen_cobertura == 50){
+            var Id_EventoDecreto = $('#Id_Evento_decreto').val();
+            var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
+            var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
+            var origenFirme = $('#origen_firme').val();
+            var cobertura = $('#origen_cobertura').val();
+            var decreto = $('#decreto_califi').val();
+            var numeroDictamen = $('#numero_dictamen').val();
+            var motivoSolicitud = $('#motivo_solicitud').val();
+            var Relacion_Documentos = [];
+            $('input[type="checkbox"]').each(function() {
+                var relacion_documento = $(this).attr('id');            
+                if (relacion_documento === 'hitoria_clinica' || relacion_documento === 'examanes_preocupacionales' || 
+                    relacion_documento === 'epicrisis' || relacion_documento === 'examanes_periodicos' || 
+                    relacion_documento === 'examanes_paraclinicos' || relacion_documento === 'examanes_post_ocupacionales' || 
+                    relacion_documento === 'salud_ocupacionales') {                
+                    if ($(this).is(':checked')) {                
+                    var relacion_documento_valor = $(this).val();
+                    Relacion_Documentos.push(relacion_documento_valor);
+                    }
+                }
+            });
+            var otros = $('#descripcion_otros').val();
+            var descripcionEnfermedad = $('#descripcion_enfermedad').val();
+            var bandera_decreto_guardar_actualizar = $('#bandera_decreto_guardar_actualizar').val();
+            let token = $('input[name=_token]').val();
+            var datos_agregarDecretoDicRelFun ={
+                '_token': token,
+                'Id_Evento_decreto':Id_EventoDecreto,
+                'Id_Proceso_decreto':Id_ProcesoDecreto,
+                'Id_Asignacion_decreto':Id_Asignacion_Dcreto,
+                'origen_firme':origenFirme,
+                'origen_cobertura':cobertura,
+                'decreto_califi':decreto,
+                'numeroDictamen':numeroDictamen,
+                'motivo_solicitud':motivoSolicitud,
+                'Relacion_Documentos':Relacion_Documentos,
+                'descripcion_otros':otros,
+                'descripcion_enfermedad':descripcionEnfermedad,
+                'bandera_decreto_guardar_actualizar':bandera_decreto_guardar_actualizar,
+            }
+            $.ajax({
+                type:'POST',
+                url:'/guardarDecretoDictamenRelacionDocFunda',
+                data: datos_agregarDecretoDicRelFun,
+                success: function(response){
+                    if (response.parametro == 'agregar_decreto_parte') {
+                        document.querySelector('#GuardarDecreto').disabled=true;
+                        $('#div_alerta_decreto').removeClass('d-none');
+                        $('.alerta_decreto').append('<strong>'+response.mensaje+'</strong>');                                            
+                        setTimeout(function(){
+                            $('#div_alerta_decreto').addClass('d-none');
+                            $('.alerta_decreto').empty();   
+                            location.reload();
+                        }, 3000);   
+                    }else if(response.parametro == 'update_decreto_parte'){
+                        document.querySelector('#ActualizarDecreto').disabled=true;
+                        $('#div_alerta_decreto').removeClass('d-none');
+                        $('.alerta_decreto').append('<strong>'+response.mensaje2+'</strong>');                                            
+                        setTimeout(function(){
+                            $('#div_alerta_decreto').addClass('d-none');
+                            $('.alerta_decreto').empty();
+                            document.querySelector('#ActualizarDecreto').disabled=false;
+                        }, 3000);
+                    }
+    
+                }
+            })
+        }
+    })
+
+    $('#form_laboralmente_activo').submit(function (e){
         e.preventDefault();
         var Id_EventoDecreto = $('#Id_Evento_decreto').val();
         var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
         var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
-        var origenFirme = $('#origen_firme').val();
-        var cobertura = $('#origen_cobertura').val();
-        var decreto = $('#decreto_califi').val();
-        var numeroDictamen = $('#numero_dictamen').val();
-        var motivoSolicitud = $('#motivo_solicitud').val();
-        var Relacion_Documentos = [];
-        $('input[type="checkbox"]').each(function() {
-            var relacion_documento = $(this).attr('id');            
-            if (relacion_documento === 'hitoria_clinica' || relacion_documento === 'examanes_preocupacionales' || 
-                relacion_documento === 'epicrisis' || relacion_documento === 'examanes_periodicos' || 
-                relacion_documento === 'examanes_paraclinicos' || relacion_documento === 'examanes_post_ocupacionales' || 
-                relacion_documento === 'salud_ocupacionales') {                
-                if ($(this).is(':checked')) {                
-                var relacion_documento_valor = $(this).val();
-                Relacion_Documentos.push(relacion_documento_valor);
-                }
-            }
-        });
-        var otros = $('#descripcion_otros').val();
-        var descripcionEnfermedad = $('#descripcion_enfermedad').val();
-        var bandera_decreto_guardar_actualizar = $('#bandera_decreto_guardar_actualizar').val();
-        let token = $('input[name=_token]').val();
-        var datos_agregarDecretoDicRelFun ={
+        var restricion_rol = $('input[name="restricion_rol"]:checked').val();
+        var auto_suficiencia = $('input[name="auto_suficiencia"]:checked').val();
+        if ($('input[type="radio"][id^="edad_cronologica_"]').is(":checked")) {                            
+            var edad_cronologica_adulto = $('input[id^="edad_cronologica_"]:checked').val();
+        }else{            
+            var edad_cronologica_menor = $('input[id^="cronologica_menor"]:checked').val();
+        }
+        var resultado_rol_laboral_30 = $('#resultado_rol_laboral_30').val();
+        var mirar = $('input[name="mirar"]:checked').val();
+        var escuchar = $('input[name="escuchar"]:checked').val();
+        var aprender = $('input[name="aprender"]:checked').val();
+        var calcular = $('input[name="calcular"]:checked').val();
+        var pensar = $('input[name="pensar"]:checked').val();
+        var leer = $('input[name="leer"]:checked').val();
+        var escribir = $('input[name="escribir"]:checked').val();
+        var matematicos = $('input[name="matematicos"]:checked').val();
+        var decisiones = $('input[name="decisiones"]:checked').val();
+        var tareas_simples = $('input[name="tareas_simples"]:checked').val();
+        var resultado_tabla6 = $('#resultado_tabla6').val();
+        var comunicarse_mensaje = $('input[name="comunicarse_mensaje"]:checked').val();
+        var no_comunicarse_mensaje = $('input[name="no_comunicarse_mensaje"]:checked').val();
+        var comunicarse_signos = $('input[name="comunicarse_signos"]:checked').val();
+        var comunicarse_escrito = $('input[name="comunicarse_escrito"]:checked').val();
+        var habla = $('input[name="habla"]:checked').val();
+        var no_verbales = $('input[name="no_verbales"]:checked').val();
+        var mensajes_escritos = $('input[name="mensajes_escritos"]:checked').val();
+        var sostener_conversa = $('input[name="sostener_conversa"]:checked').val();
+        var iniciar_discusiones = $('input[name="iniciar_discusiones"]:checked').val();
+        var utiliza_dispositivos = $('input[name="utiliza_dispositivos"]:checked').val();
+        var resultado_tabla7 = $('#resultado_tabla7').val();
+        var cambiar_posturas = $('input[name="cambiar_posturas"]:checked').val();
+        var posicion_cuerpo = $('input[name="posicion_cuerpo"]:checked').val();
+        var llevar_objetos = $('input[name="llevar_objetos"]:checked').val();
+        var uso_fino_mano = $('input[name="uso_fino_mano"]:checked').val();
+        var uso_mano_brazo = $('input[name="uso_mano_brazo"]:checked').val();
+        var desplazarse_entorno = $('input[name="desplazarse_entorno"]:checked').val();
+        var distintos_lugares = $('input[name="distintos_lugares"]:checked').val();
+        var desplazarse_con_equipo = $('input[name="desplazarse_con_equipo"]:checked').val();
+        var transporte_pasajero = $('input[name="transporte_pasajero"]:checked').val();
+        var conduccion = $('input[name="conduccion"]:checked').val();
+        var resultado_tabla8 = $('#resultado_tabla8').val();
+        var lavarse = $('input[name="lavarse"]:checked').val();
+        var cuidado_cuerpo = $('input[name="cuidado_cuerpo"]:checked').val();
+        var higiene_personal = $('input[name="higiene_personal"]:checked').val();
+        var vestirse = $('input[name="vestirse"]:checked').val();
+        var quitarse_ropa = $('input[name="quitarse_ropa"]:checked').val();
+        var ponerse_calzado = $('input[name="ponerse_calzado"]:checked').val();
+        var comer = $('input[name="comer"]:checked').val();
+        var beber = $('input[name="beber"]:checked').val();
+        var cuidado_salud = $('input[name="cuidado_salud"]:checked').val();
+        var control_dieta = $('input[name="control_dieta"]:checked').val();
+        var resultado_tabla9 = $('#resultado_tabla9').val();
+        var adquisicion_para_vivir = $('input[name="adquisicion_para_vivir"]:checked').val();
+        var bienes_servicios = $('input[name="bienes_servicios"]:checked').val();
+        var comprar = $('input[name="comprar"]:checked').val();
+        var preparar_comida = $('input[name="preparar_comida"]:checked').val();
+        var quehaceres_casa = $('input[name="quehaceres_casa"]:checked').val();
+        var limpieza_vivienda = $('input[name="limpieza_vivienda"]:checked').val();
+        var objetos_hogar = $('input[name="objetos_hogar"]:checked').val();
+        var ayudar_los_demas = $('input[name="ayudar_los_demas"]:checked').val();
+        var mantenimiento_dispositivos = $('input[name="mantenimiento_dispositivos"]:checked').val();
+        var cuidado_animales = $('input[name="cuidado_animales"]:checked').val();
+        var resultado_tabla10 = $('#resultado_tabla10').val();
+        var total_otras = $('#total_otras').val();
+        var total_rol_areas = $('#total_rol_areas').val();    
+        var bandera_LaboralActivo_guardar_actualizar =$('#bandera_LaboralActivo_guardar_actualizar').val();       
+        
+        var datos_agregarLaboralmenteActivo ={
             '_token': token,
             'Id_Evento_decreto':Id_EventoDecreto,
             'Id_Proceso_decreto':Id_ProcesoDecreto,
-            'Id_Asignacion_decreto':Id_Asignacion_Dcreto,
-            'origen_firme':origenFirme,
-            'origen_cobertura':cobertura,
-            'decreto_califi':decreto,
-            'numeroDictamen':numeroDictamen,
-            'motivo_solicitud':motivoSolicitud,
-            'Relacion_Documentos':Relacion_Documentos,
-            'descripcion_otros':otros,
-            'descripcion_enfermedad':descripcionEnfermedad,
-            'bandera_decreto_guardar_actualizar':bandera_decreto_guardar_actualizar,
+            'Id_Asignacion_decreto':Id_Asignacion_Dcreto, 
+            'restricion_rol':restricion_rol,
+            'auto_suficiencia':auto_suficiencia,
+            'edad_cronologica_adulto':edad_cronologica_adulto,
+            'edad_cronologica_menor':edad_cronologica_menor,
+            'resultado_rol_laboral_30':resultado_rol_laboral_30,
+            'mirar':mirar,
+            'escuchar':escuchar,
+            'aprender':aprender,
+            'calcular':calcular,
+            'pensar':pensar,
+            'leer':leer,
+            'escribir':escribir,
+            'matematicos':matematicos,
+            'decisiones':decisiones,
+            'tareas_simples':tareas_simples,
+            'resultado_tabla6':resultado_tabla6,
+            'comunicarse_mensaje':comunicarse_mensaje,
+            'no_comunicarse_mensaje':no_comunicarse_mensaje,
+            'comunicarse_signos':comunicarse_signos,
+            'comunicarse_escrito':comunicarse_escrito,
+            'habla':habla,
+            'no_verbales':no_verbales,
+            'mensajes_escritos':mensajes_escritos,
+            'sostener_conversa':sostener_conversa,
+            'iniciar_discusiones':iniciar_discusiones,
+            'utiliza_dispositivos':utiliza_dispositivos,
+            'resultado_tabla7':resultado_tabla7,
+            'cambiar_posturas':cambiar_posturas,
+            'posicion_cuerpo':posicion_cuerpo,
+            'llevar_objetos':llevar_objetos,
+            'uso_fino_mano':uso_fino_mano,
+            'uso_mano_brazo':uso_mano_brazo,
+            'desplazarse_entorno':desplazarse_entorno,
+            'distintos_lugares':distintos_lugares,
+            'desplazarse_con_equipo':desplazarse_con_equipo,
+            'transporte_pasajero':transporte_pasajero,
+            'conduccion':conduccion,
+            'resultado_tabla8':resultado_tabla8,
+            'lavarse':lavarse,
+            'cuidado_cuerpo':cuidado_cuerpo,
+            'higiene_personal':higiene_personal,
+            'vestirse':vestirse,
+            'quitarse_ropa':quitarse_ropa,
+            'ponerse_calzado':ponerse_calzado,
+            'comer':comer,
+            'beber':beber,
+            'cuidado_salud':cuidado_salud,
+            'control_dieta':control_dieta,
+            'resultado_tabla9':resultado_tabla9,
+            'adquisicion_para_vivir':adquisicion_para_vivir,
+            'bienes_servicios':bienes_servicios,
+            'comprar':comprar,
+            'preparar_comida':preparar_comida,
+            'quehaceres_casa':quehaceres_casa,
+            'limpieza_vivienda':limpieza_vivienda,
+            'objetos_hogar':objetos_hogar,
+            'ayudar_los_demas':ayudar_los_demas,
+            'mantenimiento_dispositivos':mantenimiento_dispositivos,
+            'cuidado_animales':cuidado_animales,
+            'resultado_tabla10':resultado_tabla10,
+            'total_otras':total_otras,
+            'total_rol_areas':total_rol_areas,
+            'bandera_LaboralActivo_guardar_actualizar': bandera_LaboralActivo_guardar_actualizar,
         }
         $.ajax({
             type:'POST',
-            url:'/guardarDecretoDictamenRelacionDocFunda',
-            data: datos_agregarDecretoDicRelFun,
+            url:'/guardarLaboralmenteActivos',
+            data: datos_agregarLaboralmenteActivo,
             success: function(response){
-                if (response.parametro == 'agregar_decreto_parte') {
-                    document.querySelector('#GuardarDecreto').disabled=true;
-                    $('#div_alerta_decreto').removeClass('d-none');
-                    $('.alerta_decreto').append('<strong>'+response.mensaje+'</strong>');                                            
+                if (response.parametro == 'insertar_laboralmente_activo') {
+                    document.querySelector('#GuardarLaboralActivo').disabled=true;
+                    $('#div_alerta_laboralmente_activo').removeClass('d-none');
+                    $('.alerta_laboralmente_activo').append('<strong>'+response.mensaje+'</strong>');                                            
                     setTimeout(function(){
-                        $('#div_alerta_decreto').addClass('d-none');
-                        $('.alerta_decreto').empty();   
+                        $('#div_alerta_laboralmente_activo').addClass('d-none');
+                        $('.alerta_laboralmente_activo').empty();   
                         location.reload();
                     }, 3000);   
-                }else if(response.parametro == 'update_decreto_parte'){
-                    document.querySelector('#ActualizarDecreto').disabled=true;
-                    $('#div_alerta_decreto').removeClass('d-none');
-                    $('.alerta_decreto').append('<strong>'+response.mensaje2+'</strong>');                                            
+                }else if(response.parametro == 'update_laboralmente_activo'){
+                    document.querySelector('#ActualizarLaboralActivo').disabled=true;
+                    $('#div_alerta_laboralmente_activo').removeClass('d-none');
+                    $('.alerta_laboralmente_activo').append('<strong>'+response.mensaje2+'</strong>');                                            
                     setTimeout(function(){
-                        $('#div_alerta_decreto').addClass('d-none');
-                        $('.alerta_decreto').empty();
-                        document.querySelector('#ActualizarDecreto').disabled=false;
+                        $('#div_alerta_laboralmente_activo').addClass('d-none');
+                        $('.alerta_laboralmente_activo').empty();
+                        document.querySelector('#ActualizarLaboralActivo').disabled=false;
+                        location.reload();
                     }, 3000);
                 }
-
             }
         })
-    })
-
+    })  
     
+    $('#form_rol_ocupacional').submit(function (e){
+        e.preventDefault();
+        var Id_EventoDecreto = $('#Id_Evento_decreto').val();
+        var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
+        var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
+        var poblacion_califi = $('#poblacion_califi').val();
+        var mantiene_postura = $('input[name="mantiene_postura"]:checked').val();        
+        var actividad_espontanea = $('input[name="actividad_espontanea"]:checked').val();        
+        var sujeta_cabeza = $('input[name="sujeta_cabeza"]:checked').val();        
+        var sienta_apoyo = $('input[name="sienta_apoyo"]:checked').val();        
+        var sobre_mismo = $('input[name="sobre_mismo"]:checked').val();        
+        var sentado_sin_apoyo = $('input[name="sentado_sin_apoyo"]:checked').val();        
+        var tumbado_sentado = $('input[name="tumbado_sentado"]:checked').val();        
+        var pie_apoyo = $('input[name="pie_apoyo"]:checked').val();        
+        var pasos_apoyo = $('input[name="pasos_apoyo"]:checked').val();        
+        var mantiene_sin_apoyo = $('input[name="mantiene_sin_apoyo"]:checked').val();        
+        var anda_solo = $('input[name="anda_solo"]:checked').val();        
+        var empuja_pelota = $('input[name="empuja_pelota"]:checked').val();        
+        var sorteando_obstaculos = $('input[name="sorteando_obstaculos"]:checked').val();                
+        var succiona = $('input[name="succiona"]:checked').val();        
+        var fija_mirada = $('input[name="fija_mirada"]:checked').val();        
+        var trayectoria_objeto = $('input[name="trayectoria_objeto"]:checked').val();        
+        var sostiene_sonajero = $('input[name="sostiene_sonajero"]:checked').val();        
+        var hacia_objeto = $('input[name="hacia_objeto"]:checked').val();        
+        var sostiene_objeto = $('input[name="sostiene_objeto"]:checked').val();        
+        var abre_cajones = $('input[name="abre_cajones"]:checked').val();        
+        var bebe_solo = $('input[name="bebe_solo"]:checked').val();        
+        var quita_prenda = $('input[name="quita_prenda"]:checked').val();        
+        var espacios_casa = $('input[name="espacios_casa"]:checked').val();        
+        var imita_trazaso = $('input[name="imita_trazaso"]:checked').val();        
+        var abre_puerta = $('input[name="abre_puerta"]:checked').val();    
+        var total_tabla12 = $('#total_tabla12').val();
+        var roles_ocupacionales_juego = $('input[name="roles_ocupacionales_juego"]:checked').val();    
+        var total_tabla13 = $('#total_tabla13').val();
+        var roles_ocupacionales_adultos = $('input[name="roles_ocupacionales_adultos"]:checked').val();            
+        var total_tabla14 = $('#total_tabla14').val();
+        var bandera_RolOcupacional_guardar_actualizar =$('#bandera_RolOcupacional_guardar_actualizar').val();
+
+        var datos_agregarRolOcupacional ={
+            '_token': token,
+            'Id_EventoDecreto':Id_EventoDecreto,
+            'Id_ProcesoDecreto':Id_ProcesoDecreto,
+            'Id_Asignacion_Dcreto':Id_Asignacion_Dcreto, 
+            'poblacion_califi':poblacion_califi,
+            'mantiene_postura':mantiene_postura,
+            'actividad_espontanea':actividad_espontanea,
+            'sujeta_cabeza':sujeta_cabeza,
+            'sienta_apoyo':sienta_apoyo,
+            'sobre_mismo':sobre_mismo,
+            'sentado_sin_apoyo':sentado_sin_apoyo,
+            'tumbado_sentado':tumbado_sentado,
+            'pie_apoyo':pie_apoyo,
+            'pasos_apoyo':pasos_apoyo,
+            'mantiene_sin_apoyo':mantiene_sin_apoyo,
+            'anda_solo':anda_solo,
+            'empuja_pelota':empuja_pelota,
+            'sorteando_obstaculos':sorteando_obstaculos,
+            'succiona':succiona,
+            'fija_mirada':fija_mirada,
+            'trayectoria_objeto':trayectoria_objeto,            
+            'sostiene_sonajero':sostiene_sonajero,
+            'hacia_objeto':hacia_objeto,
+            'sostiene_objeto':sostiene_objeto,
+            'abre_cajones':abre_cajones,
+            'bebe_solo':bebe_solo,
+            'quita_prenda':quita_prenda,
+            'espacios_casa':espacios_casa,
+            'imita_trazaso':imita_trazaso,
+            'abre_puerta':abre_puerta,
+            'total_tabla12':total_tabla12,
+            'roles_ocupacionales_juego':roles_ocupacionales_juego,
+            'total_tabla13':total_tabla13,
+            'roles_ocupacionales_adultos':roles_ocupacionales_adultos,
+            'total_tabla14':total_tabla14,
+            'bandera_RolOcupacional_guardar_actualizar':bandera_RolOcupacional_guardar_actualizar,            
+        }
+        $.ajax({
+            type:'POST',
+            url:'/guardarRolOcupacionales',
+            data: datos_agregarRolOcupacional,
+            success: function(response){
+                if (response.parametro == 'insertar_rol_ocupacional') {
+                    document.querySelector('#GuardarRolOcupacional').disabled=true;
+                    $('#div_alerta_rol_ocupacional').removeClass('d-none');
+                    $('.alerta_rol_ocupacional').append('<strong>'+response.mensaje+'</strong>');                                            
+                    setTimeout(function(){
+                        $('#div_alerta_rol_ocupacional').addClass('d-none');
+                        $('.alerta_rol_ocupacional').empty();   
+                        location.reload();
+                    }, 3000);   
+                }else if(response.parametro == 'actualizar_rol_ocupacional'){
+                    document.querySelector('#ActualizarRolOcupacional').disabled=true;
+                    $('#div_alerta_rol_ocupacional').removeClass('d-none');
+                    $('.alerta_rol_ocupacional').append('<strong>'+response.mensaje2+'</strong>');                                            
+                    setTimeout(function(){
+                        $('#div_alerta_rol_ocupacional').addClass('d-none');
+                        $('.alerta_rol_ocupacional').empty();
+                        document.querySelector('#ActualizarRolOcupacional').disabled=false;
+                        location.reload();
+                    }, 3000);
+                }
+            }
+        })
+    }) 
+
+    $('#form_libros_2_3').submit(function (e){
+        e.preventDefault();
+        var Id_EventoDecreto = $('#Id_Evento_decreto').val();
+        var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
+        var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
+        var conducta_10 = $('#conducta_10').val();
+        var conducta_11 = $('#conducta_11').val();
+        var conducta_12 = $('#conducta_12').val();
+        var conducta_13 = $('#conducta_13').val();
+        var conducta_14 = $('#conducta_14').val();
+        var conducta_15 = $('#conducta_15').val();
+        var conducta_16 = $('#conducta_16').val();
+        var conducta_17 = $('#conducta_17').val();
+        var conducta_18 = $('#conducta_18').val();
+        var conducta_19 = $('#conducta_19').val();
+        var total_conducta = $('#total_conducta').val();
+        var comunicacion_20 = $('#comunicacion_20').val();
+        var comunicacion_21 = $('#comunicacion_21').val();
+        var comunicacion_22 = $('#comunicacion_22').val();
+        var comunicacion_23 = $('#comunicacion_23').val();
+        var comunicacion_24 = $('#comunicacion_24').val();
+        var comunicacion_25 = $('#comunicacion_25').val();
+        var comunicacion_26 = $('#comunicacion_26').val();
+        var comunicacion_27 = $('#comunicacion_27').val();
+        var comunicacion_28 = $('#comunicacion_28').val();
+        var comunicacion_29 = $('#comunicacion_29').val();
+        var total_comunicacion = $('#total_comunicacion').val();
+        var cuidado_personal_30 = $('#cuidado_personal_30').val();
+        var cuidado_personal_31 = $('#cuidado_personal_31').val();
+        var cuidado_personal_32 = $('#cuidado_personal_32').val();
+        var cuidado_personal_33 = $('#cuidado_personal_33').val();
+        var cuidado_personal_34 = $('#cuidado_personal_34').val();
+        var cuidado_personal_35 = $('#cuidado_personal_35').val();
+        var cuidado_personal_36 = $('#cuidado_personal_36').val();
+        var cuidado_personal_37 = $('#cuidado_personal_37').val();
+        var cuidado_personal_38 = $('#cuidado_personal_38').val();
+        var cuidado_personal_39 = $('#cuidado_personal_39').val();
+        var total_cuidado_personal = $('#total_cuidado_personal').val();
+        var lomocion_40 = $('#lomocion_40').val();
+        var lomocion_41 = $('#lomocion_41').val();
+        var lomocion_42 = $('#lomocion_42').val();
+        var lomocion_43 = $('#lomocion_43').val();
+        var lomocion_44 = $('#lomocion_44').val();
+        var lomocion_45 = $('#lomocion_45').val();
+        var lomocion_46 = $('#lomocion_46').val();
+        var lomocion_47 = $('#lomocion_47').val();
+        var lomocion_48 = $('#lomocion_48').val();
+        var lomocion_49 = $('#lomocion_49').val();
+        var total_lomocion = $('#total_lomocion').val();
+        var disposicion_50 = $('#disposicion_50').val();
+        var disposicion_51 = $('#disposicion_51').val();
+        var disposicion_52 = $('#disposicion_52').val();
+        var disposicion_53 = $('#disposicion_53').val();
+        var disposicion_54 = $('#disposicion_54').val();
+        var disposicion_55 = $('#disposicion_55').val();
+        var disposicion_56 = $('#disposicion_56').val();
+        var disposicion_57 = $('#disposicion_57').val();
+        var disposicion_58 = $('#disposicion_58').val();
+        var disposicion_59 = $('#disposicion_59').val();
+        var total_disposicion = $('#total_disposicion').val();
+        var destreza_60 = $('#destreza_60').val();
+        var destreza_61 = $('#destreza_61').val();
+        var destreza_62 = $('#destreza_62').val();
+        var destreza_63 = $('#destreza_63').val();
+        var destreza_64 = $('#destreza_64').val();
+        var destreza_65 = $('#destreza_65').val();
+        var destreza_66 = $('#destreza_66').val();
+        var destreza_67 = $('#destreza_67').val();
+        var destreza_68 = $('#destreza_68').val();
+        var destreza_69 = $('#destreza_69').val();
+        var total_destreza = $('#total_destreza').val();
+        var situacion_70 = $('#situacion_70').val();
+        var situacion_71 = $('#situacion_71').val();
+        var situacion_72 = $('#situacion_72').val();
+        var situacion_73 = $('#situacion_73').val();
+        var situacion_74 = $('#situacion_74').val();
+        var situacion_75 = $('#situacion_75').val();
+        var situacion_76 = $('#situacion_76').val();
+        var situacion_77 = $('#situacion_77').val();
+        var situacion_78 = $('#situacion_78').val();
+        var total_situacion = $('#total_situacion').val();
+        var total_discapacidades = $('#total_discapacidades').val();
+        var orientacion = $('input[name="orientacion"]:checked').val();        
+        var indepen_fisica = $('input[name="indepen_fisica"]:checked').val();        
+        var desplazamiento = $('input[name="desplazamiento"]:checked').val();        
+        var ocupacional = $('input[name="ocupacional"]:checked').val();        
+        var social = $('input[name="social"]:checked').val();        
+        var economica = $('input[name="economica"]:checked').val();      
+        if ($('input[type="radio"][id^="cronologica_"]').is(":checked")) {                            
+            var cronologica_adulto = $('input[id^="cronologica_"]:checked').val();
+        }else{            
+            var cronologica_menor = $('input[id^="menor_18"]:checked').val();
+        }    
+        var total_minusvalia = $('#total_minusvalia').val();        
+        var bandera_Libros2_3_guardar_actualizar =$('#bandera_Libros2_3_guardar_actualizar').val();
+                
+        var datos_agregarLibros2_3={
+            '_token': token,
+            'Id_EventoDecreto':Id_EventoDecreto,
+            'Id_ProcesoDecreto':Id_ProcesoDecreto,
+            'Id_Asignacion_Dcreto':Id_Asignacion_Dcreto,
+            'conducta_10':conducta_10,
+            'conducta_11':conducta_11,
+            'conducta_12':conducta_12,
+            'conducta_13':conducta_13,
+            'conducta_14':conducta_14,
+            'conducta_15':conducta_15,
+            'conducta_16':conducta_16,
+            'conducta_17':conducta_17,
+            'conducta_18':conducta_18,
+            'conducta_19':conducta_19,
+            'total_conducta':total_conducta,
+            'comunicacion_20':comunicacion_20,
+            'comunicacion_21':comunicacion_21,
+            'comunicacion_22':comunicacion_22,
+            'comunicacion_23':comunicacion_23,
+            'comunicacion_24':comunicacion_24,
+            'comunicacion_25':comunicacion_25,
+            'comunicacion_26':comunicacion_26,
+            'comunicacion_27':comunicacion_27,
+            'comunicacion_28':comunicacion_28,
+            'comunicacion_29':comunicacion_29,
+            'total_comunicacion':total_comunicacion,
+            'cuidado_personal_30':cuidado_personal_30,
+            'cuidado_personal_31':cuidado_personal_31,
+            'cuidado_personal_32':cuidado_personal_32,
+            'cuidado_personal_33':cuidado_personal_33,
+            'cuidado_personal_34':cuidado_personal_34,
+            'cuidado_personal_35':cuidado_personal_35,
+            'cuidado_personal_36':cuidado_personal_36,
+            'cuidado_personal_37':cuidado_personal_37,
+            'cuidado_personal_38':cuidado_personal_38,
+            'cuidado_personal_39':cuidado_personal_39,
+            'total_cuidado_personal':total_cuidado_personal,
+            'lomocion_40':lomocion_40,
+            'lomocion_41':lomocion_41,
+            'lomocion_42':lomocion_42,
+            'lomocion_43':lomocion_43,
+            'lomocion_44':lomocion_44,
+            'lomocion_45':lomocion_45,
+            'lomocion_46':lomocion_46,
+            'lomocion_47':lomocion_47,
+            'lomocion_48':lomocion_48,
+            'lomocion_49':lomocion_49,
+            'total_lomocion':total_lomocion,
+            'disposicion_50':disposicion_50,
+            'disposicion_51':disposicion_51,
+            'disposicion_52':disposicion_52,
+            'disposicion_53':disposicion_53,
+            'disposicion_54':disposicion_54,
+            'disposicion_55':disposicion_55,
+            'disposicion_56':disposicion_56,
+            'disposicion_57':disposicion_57,
+            'disposicion_58':disposicion_58,
+            'disposicion_59':disposicion_59,
+            'total_disposicion':total_disposicion,
+            'destreza_60':destreza_60,
+            'destreza_61':destreza_61,
+            'destreza_62':destreza_62,
+            'destreza_63':destreza_63,
+            'destreza_64':destreza_64,
+            'destreza_65':destreza_65,
+            'destreza_66':destreza_66,
+            'destreza_67':destreza_67,
+            'destreza_68':destreza_68,
+            'destreza_69':destreza_69,
+            'total_destreza':total_destreza,
+            'situacion_70':situacion_70,
+            'situacion_71':situacion_71,
+            'situacion_72':situacion_72,
+            'situacion_73':situacion_73,
+            'situacion_74':situacion_74,
+            'situacion_75':situacion_75,
+            'situacion_76':situacion_76,
+            'situacion_77':situacion_77,
+            'situacion_78':situacion_78,
+            'total_situacion':total_situacion,
+            'total_discapacidades':total_discapacidades,
+            'orientacion':orientacion,
+            'indepen_fisica':indepen_fisica,
+            'desplazamiento':desplazamiento,
+            'ocupacional':ocupacional,
+            'social':social,
+            'economica':economica,
+            'cronologica_adulto':cronologica_adulto,
+            'cronologica_menor':cronologica_menor,
+            'total_minusvalia':total_minusvalia,
+            'bandera_Libros2_3_guardar_actualizar':bandera_Libros2_3_guardar_actualizar,            
+        }
+        $.ajax({
+            type:'POST',
+            url:'/guardarLibros2_3',
+            data: datos_agregarLibros2_3,
+            success: function(response){
+                if (response.parametro == 'insertar_libros_2_3') {
+                    document.querySelector('#GuardarLibros2_3').disabled=true;
+                    $('#div_alerta_libros2_3').removeClass('d-none');
+                    $('.alerta_libros2_3').append('<strong>'+response.mensaje+'</strong>');                                            
+                    setTimeout(function(){
+                        $('#div_alerta_libros2_3').addClass('d-none');
+                        $('.alerta_libros2_3').empty();   
+                        location.reload();
+                    }, 3000);   
+                }else if(response.parametro == 'actualizar_libros_2_3'){
+                    document.querySelector('#ActualizarLibros2_3').disabled=true;
+                    $('#div_alerta_libros2_3').removeClass('d-none');
+                    $('.alerta_libros2_3').append('<strong>'+response.mensaje2+'</strong>');                                            
+                    setTimeout(function(){
+                        $('#div_alerta_libros2_3').addClass('d-none');
+                        $('.alerta_libros2_3').empty();
+                        document.querySelector('#ActualizarLibros2_3').disabled=false;
+                        location.reload();
+                    }, 3000);
+                }
+            }
+        })
+    })    
+
+    /* Porcentaje PCl,  Rango PCL y Justificación de dependencia Concepto final del Dictamen Pericial  */
+    $(document).ready(function() {
+        total_deficiencia = $('#Total_Deficiencia50').val();
+        total_rol_ocupacional12 = $('#total_tabla12').val();
+        total_rol_ocupacional13 = $('#total_tabla13').val();
+        total_rol_ocupacional14 = $('#total_tabla14').val();        
+        total_rol_ocupacional = 0;
+        if($.trim(total_rol_ocupacional12) === "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){
+            total_rol_ocupacional = 0;
+        }else if($.trim(total_rol_ocupacional12) !== "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){
+            total_rol_ocupacional = Number(total_rol_ocupacional12);
+        }else if($.trim(total_rol_ocupacional12) === "" && $.trim(total_rol_ocupacional13) > 0 && $.trim(total_rol_ocupacional14) == 0){
+            total_rol_ocupacional = Number(total_rol_ocupacional13);
+        }else if($.trim(total_rol_ocupacional12) === "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) > 0){
+            total_rol_ocupacional = Number(total_rol_ocupacional14);
+        }
+        total_rol_laboral = $('#total_rol_areas').val();
+        if($.trim(total_deficiencia) == 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) === ""){
+            porcentajePcl = 0;
+        }else if($.trim(total_deficiencia) > 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) === ""){
+            porcentajePcl = Number(total_deficiencia);
+        }else if($.trim(total_deficiencia) == 0 && $.trim(total_rol_ocupacional) > 0 && $.trim(total_rol_laboral) === ""){
+            porcentajePcl = Number(total_rol_ocupacional);
+        }else if($.trim(total_deficiencia) == 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) > 0){
+            porcentajePcl = Number(total_rol_laboral);
+        }else if($.trim(total_deficiencia) > 0 && $.trim(total_rol_ocupacional) > "" && $.trim(total_rol_laboral) === ""){
+            porcentajePcl = Number(total_deficiencia) + Number(total_rol_ocupacional);  
+        }else if($.trim(total_deficiencia) > 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) > 0){
+            porcentajePcl = Number(total_deficiencia) + Number(total_rol_laboral);            
+        }        
+        $("#porcentaje_pcl").val(Math.round(porcentajePcl));
+        if (porcentajePcl < 5) {
+            $("#rango_pcl").val('Menor al 5%');
+        }else if(porcentajePcl >= 5 && porcentajePcl <= 14.99){
+            $("#rango_pcl").val('Entre 5 y 14,99%');            
+        }else if(porcentajePcl >= 15 && porcentajePcl <= 29.99){
+            $("#rango_pcl").val('Entre 15 y 29,99%');            
+        }else if(porcentajePcl >= 30 && porcentajePcl <= 44.99){
+            $("#rango_pcl").val('Entre 30,01 y 44,99%');            
+        }else if(porcentajePcl > 50){
+            $("#rango_pcl").val('Mayor a 50%');            
+        }
+
+        var tercerapersona = $("#requiere_persona");
+        var tomadecisiones = $("#requiere_decisiones_persona");
+        var dispositivoapoyo = $("#requiere_dispositivo_apoyo");
+        var justiDependencia = $("#justiDependencia");
+        function mostrarOcultarDependencia() {
+            if (tercerapersona.is(":checked") || tomadecisiones.is(":checked") || dispositivoapoyo.is(":checked")) {
+                $("#justiDependencia").val("");
+                justiDependencia.removeClass('d-none');
+            } else {
+                justiDependencia.addClass('d-none');
+            }
+        }        
+        tercerapersona.change(mostrarOcultarDependencia);
+        tomadecisiones.change(mostrarOcultarDependencia);
+        dispositivoapoyo.change(mostrarOcultarDependencia);
+
+        if ($('input[type="checkbox"].dependencia_justificacion').is(':checked')) {
+            justiDependencia.removeClass('d-none');
+        }
+
+        var valorFecha = $('input[type="date"].f_evento_pericial').val();        
+        if (typeof valorFecha === "undefined") {
+            $('#ActualizarLaboralActivo').prop('disabled', false);
+            $('#GuardarLaboralActivo').prop('disabled', false);
+            $('#btn_abrir_modal_agudeza').prop('disabled', false);
+            $('#btn_abrir_modal_auditivo').prop('disabled', false);
+            $('#guardar_datos_deficiencia_alteraciones').prop('disabled', false);
+            $('#guardar_datos_cie10').prop('disabled', false);
+            $('#guardar_datos_examenes').prop('disabled', false);           
+            $('#ActualizarDecreto').prop('disabled', false);
+            $('#ActualizarRolOcupacional').prop('disabled', false);
+            $('#GuardarRolOcupacional').prop('disabled', false);            
+            $('#ActualizarLibros2_3').prop('disabled', false); 
+        }else if(valorFecha !== ""){
+            $('#ActualizarLaboralActivo').prop('disabled', true);
+            $('#GuardarLaboralActivo').prop('disabled', true);            
+            $('#btn_abrir_modal_agudeza').prop('disabled', true);
+            $('#btn_abrir_modal_agudeza').css('cursor', 'not-allowed');
+            $('#btn_abrir_modal_auditivo').prop('disabled', true);
+            $('#btn_abrir_modal_auditivo').css('cursor', 'not-allowed'); 
+            $('#guardar_datos_deficiencia_alteraciones').prop('disabled', true);
+            $('#guardar_datos_cie10').prop('disabled', true);
+            $('#guardar_datos_examenes').prop('disabled', true);           
+            $('#ActualizarDecreto').prop('disabled', true);
+            $('#ActualizarRolOcupacional').prop('disabled', true);
+            $('#GuardarRolOcupacional').prop('disabled', true);            
+            $('#ActualizarLibros2_3').prop('disabled', true);  
+            $('#GuardarLibros2_3').prop('disabled', true);                        
+            $('#GuardrDictamenPericial').prop('disabled', true);                        
+        }
+
+        var textareaenfermedadactual = document.querySelector('#descripcion_enfermedad');
+        var enfermedadactual = textareaenfermedadactual.value; 
+        
+        if(enfermedadactual !== "" && valorFecha !== ""){
+          $('#GuardrDictamenPericial').prop('disabled', true);
+          $('#origen_firme').prop('disabled', true);
+        $('#origen_cobertura').prop('disabled', true);
+        $('#decreto_califi').prop('disabled', true); 
+        }else if(enfermedadactual !== ""){
+            $('#GuardrDictamenPericial').prop('disabled', false);  
+            $('#origen_firme').prop('disabled', true);
+            $('#origen_cobertura').prop('disabled', true);
+            $('#decreto_califi').prop('disabled', true);           
+        }
+
+        var valorOrigen = $('#origen_firme').val();
+        var valorCobertura = $('#origen_cobertura').val();
+        var valorDecreto = $('#decreto_califi').val();
+
+        if (valorOrigen == 48 &&  valorCobertura == 50 && valorDecreto == 1 || valorDecreto == 2 || valorDecreto == 3) {            
+            $('#botonNoDecrecto').addClass('d-none');
+        }
+
+    });   
+    
+    $('#form_dictamen_pericial').submit(function (e){
+        e.preventDefault();
+        var Id_EventoDecreto = $('#Id_Evento_decreto').val();
+        var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
+        var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
+        var porcentaje_pcl = $('#porcentaje_pcl').val();
+        var rango_pcl = $('#rango_pcl').val();
+        var tipo_evento = $('#tipo_evento').val();
+        var tipo_origen = $('#tipo_origen').val();
+        var f_evento_pericial = $('#f_evento_pericial').val();
+        var f_estructura_pericial = $('#f_estructura_pericial').val();
+        var sustenta_fecha = $('#sustenta_fecha').val();
+        var detalle_califi = $('#detalle_califi').val();
+        var enfermedad_catastrofica = $('input[name="enfermedad_catastrofica"]:checked').val(); 
+        var enfermedad_congenita = $('input[name="enfermedad_congenita"]:checked').val(); 
+        var tipo_enfermedad = $('#tipo_enfermedad').val();
+        var requiere_persona = $('input[name="requiere_persona"]:checked').val(); 
+        var requiere_decisiones_persona = $('input[name="requiere_decisiones_persona"]:checked').val(); 
+        var requiere_dispositivo_apoyo = $('input[name="requiere_dispositivo_apoyo"]:checked').val();         
+        var justi_dependencia = $('#justi_dependencia').val();   
+        
+        var datos_dictamenPericial={
+            '_token': token,
+            'Id_EventoDecreto':Id_EventoDecreto,
+            'Id_ProcesoDecreto':Id_ProcesoDecreto,
+            'Id_Asignacion_Dcreto':Id_Asignacion_Dcreto,
+            'porcentaje_pcl':porcentaje_pcl,
+            'rango_pcl':rango_pcl,
+            'tipo_evento':tipo_evento,
+            'tipo_origen':tipo_origen,
+            'f_evento_pericial':f_evento_pericial,
+            'f_estructura_pericial':f_estructura_pericial,
+            'sustenta_fecha':sustenta_fecha,
+            'detalle_califi':detalle_califi,
+            'enfermedad_catastrofica':enfermedad_catastrofica,
+            'enfermedad_congenita':enfermedad_congenita,
+            'tipo_enfermedad':tipo_enfermedad,
+            'requiere_persona':requiere_persona,
+            'requiere_decisiones_persona':requiere_decisiones_persona,
+            'requiere_dispositivo_apoyo':requiere_dispositivo_apoyo,
+            'justi_dependencia':justi_dependencia,
+        }
+
+        $.ajax({
+            type:'POST',
+            url:'/guardardictamenesPericial',
+            data: datos_dictamenPericial,
+            success: function(response){
+                if (response.parametro == 'insertar_dictamen_pericial') {
+                    document.querySelector('#GuardrDictamenPericial').disabled=true;
+                    $('#div_alerta_dictamen_pericial').removeClass('d-none');
+                    $('.alerta_dictamen_pericial').append('<strong>'+response.mensaje+'</strong>');                                            
+                    setTimeout(function(){
+                        $('#div_alerta_dictamen_pericial').addClass('d-none');
+                        $('.alerta_dictamen_pericial').empty();   
+                        location.reload();
+                    }, 3000);   
+                }
+            }          
+        })
+    }) 
+
 });
 
 $(document).ready(function(){
@@ -1784,7 +2714,7 @@ $(document).ready(function(){
             
             $.ajax({
                 type:'POST',
-                url:'/actualizarDxPrincipalAdudezaAuditivas',
+                url:'/actualizarDxPrincipalAgudezaAuditiva',
                 data: datos_actualizar_dxPrincial,
                 success:function(response){
                     // console.log(response);
@@ -1792,8 +2722,7 @@ $(document).ready(function(){
                         $('#eliminar_agudeza_auditiva').empty();
                         $('#eliminar_agudeza_auditiva').removeClass('d-none');
                         $('#eliminar_agudeza_auditiva').addClass('alert-success');
-                        $('#eliminar_agudeza_auditiva').append('<strong>'+response.mensaje+'</strong>');
-                        
+                        $('#eliminar_agudeza_auditiva').append('<strong>'+response.mensaje+'</strong>');                                              
                         setTimeout(() => {
                             $('#eliminar_agudeza_auditiva').addClass('d-none');
                             $('#eliminar_agudeza_auditiva').removeClass('alert-success');
@@ -1814,7 +2743,7 @@ $(document).ready(function(){
             
             $.ajax({
                 type:'POST',
-                url:'/actualizarDxPrincipalAdudezaAuditivas',
+                url:'/actualizarDxPrincipalAgudezaAuditiva',
                 data: datos_actualizar_dxPrincial,
                 success:function(response){
                     // console.log(response);
@@ -1838,3 +2767,439 @@ $(document).ready(function(){
     });
 });
 
+$(document).ready(function(){
+    $(document).on('click', "input[id^='dx_principal_visual']", function(){
+
+        var checkboxDxPrincipal = document.getElementById('dx_principal_visual');        
+        let token = $("input[name='_token']").val();
+        var dx_principal_visual = $('#dx_principal_visual').val();
+        var banderaDxPrincipal_visual = $('#banderaDxPrincipal_visual').val();
+        if (checkboxDxPrincipal.checked) {
+            //console.log(banderaDxPrincipal_visual);
+            var datos_actualizar_dxPrincial_visual = {
+                '_token': token,
+                'dx_principal_visual' : dx_principal_visual,
+                'banderaDxPrincipal_visual': banderaDxPrincipal_visual,
+                'Id_evento': $('#Id_Evento_decreto').val()
+            };       
+            $.ajax({
+                type:'POST',
+                url:'/actualizarDxPrincipalAgudezasVisual',
+                data: datos_actualizar_dxPrincial_visual,
+                success:function(response){
+                    // console.log(response);
+                    if (response.parametro == "fila_dxPrincipalagudeza_visual_agregado") {                                               
+                        setTimeout(() => {                            
+                            location.reload();
+                        }, 3000);
+                    }                
+                }
+            }); 
+        }else {                        
+            //console.log(banderaDxPrincipal_visual);
+            var datos_actualizar_dxPrincial_visual = {
+                '_token': token,
+                'dx_principal_visual' : dx_principal_visual,
+                'banderaDxPrincipal_visual': banderaDxPrincipal_visual,
+                'Id_evento': $('#Id_Evento_decreto').val()
+            };        
+            
+            $.ajax({
+                type:'POST',
+                url:'/actualizarDxPrincipalAgudezasVisual',
+                data: datos_actualizar_dxPrincial_visual,
+                success:function(response){
+                    // console.log(response);
+                    if (response.parametro == "fila_dxPrincipalagudeza_visual_agregado") {
+                        setTimeout(() => {                        
+                            location.reload();
+                        }, 3000);
+                    }                
+                }
+            });
+        }
+
+    });
+});
+
+$(document).ready(function() {    
+    var checkbox1 = $('#dx_principal_auditiva');
+    var checkbox2 = $('#dx_principal_visual');
+    var checkboxes = document.querySelectorAll("[id^='dx_principal_deficiencia_alteraciones_']");
+    //var checkboxes2 = document.querySelectorAll("[id^='checkbox_dx_principal_DefiAlteraciones_']"); 
+
+    // Verificar si el checkbox1 está marcado en el almacenamiento local   
+    setInterval(() => {
+        if (localStorage.getItem('checkbox1Checked') === 'true') {
+            localStorage.removeItem('checkboxDxPrincipal');
+            localStorage.removeItem('checkboxDxPrincipalNew');
+            checkbox1.prop('checked', true);
+            $("a[id^='btn_remover_examen_fila_agudeza']").css({
+                "cursor": "not-allowed",
+                "pointer-events": "none"
+            }).attr("disabled", true);          
+            checkbox2.attr('disabled', true);
+            function deshabilitarCheckboxes() {
+                for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].disabled = true;
+                }
+            }
+            
+            function checkboxCambiado() {
+                deshabilitarCheckboxes();        
+                //this.disabled = false;
+            }        
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].addEventListener("change", checkboxCambiado());
+            }    
+            
+            function validarcheckboxNuevos() {
+                
+                var checkboxes2 = $('input[id^="checkbox_dx_principal_DefiAlteraciones_"]');
+                if (checkboxes2.length === 0) {
+                    //console.log("El NodeList está vacío");
+                } else {
+                    //console.log("El NodeList no está vacío");
+        
+                    checkboxes2.prop('disabled', true);
+        
+                    checkboxes2.on("change", function() {
+                        checkboxes2.prop('disabled', true);
+                    });
+                }
+            }
+    
+            validarcheckboxNuevos();    
+        }        
+    }, 500); 
+    
+    checkbox1.change(function() {
+        localStorage.setItem('checkbox1Checked', checkbox1.is(':checked'));
+        
+        if (checkbox1.is(':checked')) {
+            checkbox2.attr('disabled', true);
+            function deshabilitarCheckboxes() {
+                for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].disabled = true;
+                }
+            }
+            
+            function checkboxCambiado() {
+                deshabilitarCheckboxes();            
+                //this.disabled = false;
+            }
+            
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].addEventListener("change", checkboxCambiado());
+            }
+            
+        } else {
+            checkbox2.attr('disabled', false);
+            function habilitarCheckboxes() {
+                for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].disabled = false;
+                }
+            }
+            
+            function checkboxCambiado() {
+                habilitarCheckboxes();            
+                //this.disabled = false;
+            }
+                        
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].addEventListener("change", checkboxCambiado());
+            }            
+
+            localStorage.removeItem('checkbox1Checked');
+            localStorage.removeItem('checkbox2Checked');
+            localStorage.removeItem('checkboxDxPrincipal');
+            localStorage.removeItem('checkboxDxPrincipalNew');
+        }
+    });   
+    
+    // Verificar si el checkbox2 está marcado en el almacenamiento local
+    setInterval(() => {
+        if (localStorage.getItem('checkbox2Checked') === 'true') {
+            localStorage.removeItem('checkboxDxPrincipal');
+            localStorage.removeItem('checkboxDxPrincipalNew');
+            checkbox2.prop('checked', true);
+            $("a[id^='btn_remover_fila_']").css({
+                "cursor": "not-allowed",
+                "pointer-events": "none"
+            }).attr("disabled", true); 
+            checkbox1.attr('disabled', true);
+
+            function deshabilitarCheckboxes() {
+                for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].disabled = true;
+                }
+            }
+            
+            function checkboxCambiado() {
+                deshabilitarCheckboxes();        
+                //this.disabled = false;
+            }        
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].addEventListener("change", checkboxCambiado());
+            }
+    
+            function validarcheckboxNuevos() {
+                    
+                var checkboxes2 = $('input[id^="checkbox_dx_principal_DefiAlteraciones_"]');
+                if (checkboxes2.length === 0) {
+                    //console.log("El NodeList está vacío");
+                } else {
+                    //console.log("El NodeList no está vacío");
+        
+                    checkboxes2.prop('disabled', true);
+        
+                    checkboxes2.on("change", function() {
+                        checkboxes2.prop('disabled', true);
+                    });
+                }
+            }
+    
+            validarcheckboxNuevos();
+        }        
+    }, 500);
+    
+    checkbox2.change(function() {
+        localStorage.setItem('checkbox2Checked', checkbox2.is(':checked'));
+        
+        if (checkbox2.is(':checked')) {
+            checkbox1.attr('disabled', true);
+            function deshabilitarCheckboxes() {
+                for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].disabled = true;
+                }
+            }
+            
+            function checkboxCambiado() {
+                deshabilitarCheckboxes();            
+                //this.disabled = false;
+            }
+            
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].addEventListener("change", checkboxCambiado());
+            }
+        } else {
+            checkbox1.attr('disabled', false);
+            function habilitarCheckboxes() {
+                for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].disabled = false;
+                }
+            }
+            
+            function checkboxCambiado() {
+                habilitarCheckboxes();            
+                //this.disabled = false;
+            }
+                        
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].addEventListener("change", checkboxCambiado());
+            }
+            localStorage.removeItem('checkbox1Checked');
+            localStorage.removeItem('checkbox2Checked');
+            localStorage.removeItem('checkboxDxPrincipal');
+            localStorage.removeItem('checkboxDxPrincipalNew');
+        }
+    });
+
+    // Verificar si el checkboxes está marcado en el almacenamiento local  
+    function desavalidarCheckboxes(checkboxId) {
+        
+        var numeroCheckboxSeleccionado = checkboxId.split('_').pop();
+        var checkboxes = document.querySelectorAll('[id^="dx_principal_deficiencia_alteraciones"]');
+        checkboxes.forEach(function(checkbox) {
+            var numeroCheckbox = checkbox.id.split('_').pop();
+            if (numeroCheckbox !== numeroCheckboxSeleccionado) {
+            checkbox.disabled = true;
+            }
+        });
+
+        checkbox1.attr('disabled', true);
+        checkbox2.attr('disabled', true);
+    }     
+
+    function habivalidarCheckboxes(checkboxId) {
+        var numeroCheckboxSeleccionado = checkboxId.split('_').pop();
+    
+        var checkboxes = document.querySelectorAll('[id^="dx_principal_deficiencia_alteraciones"]');
+        checkboxes.forEach(function(checkbox) {
+            var numeroCheckbox = checkbox.id.split('_').pop();
+            if (numeroCheckbox !== numeroCheckboxSeleccionado) {
+            checkbox.disabled = false;
+            }
+        });
+
+        checkbox1.attr('disabled', false);
+        checkbox2.attr('disabled', false);
+        
+        localStorage.removeItem('checkbox1Checked');
+        localStorage.removeItem('checkbox2Checked');
+        localStorage.removeItem('checkboxDxPrincipal');
+        localStorage.removeItem('checkboxDxPrincipalNew');
+
+    } 
+    //validarCheckboxes('dx_principal_deficiencia_alteraciones_');
+
+    $(document).on('click', "input[id^='dx_principal_deficiencia_alteraciones_']", function(){
+        var fila = $(this).data("id_fila_dx_principal");
+        localStorage.setItem("fila", fila);
+        localStorage.setItem('checkboxDxPrincipal', $(this).prop('checked'));
+        if ($(this).prop('checked')) {
+            desavalidarCheckboxes('dx_principal_deficiencia_alteraciones_'+fila);
+        }else{
+            habivalidarCheckboxes('dx_principal_deficiencia_alteraciones_'+fila);
+        }
+    });
+    setInterval(() => {
+        var filanew = localStorage.getItem("fila");
+        //var filasnews = localStorage.getItem("filas")
+        if (localStorage.getItem('checkboxDxPrincipal') === 'true') {
+            //localStorage.removeItem('checkboxDxPrincipal');
+            localStorage.removeItem('checkboxDxPrincipalNew');
+            localStorage.removeItem('filas');  
+            desavalidarCheckboxes('dx_principal_deficiencia_alteraciones_'+filanew);  
+            $('a[id^="btn_remover_deficiencia_alteraciones'+filanew+'"]').css({
+                "cursor": "not-allowed",
+                "pointer-events": "none"
+            }).attr("disabled", true); 
+                         
+            function validarcheckboxNuevos() {                    
+                var checkboxes2 = $('input[id^="checkbox_dx_principal_DefiAlteraciones_"]');
+                if (checkboxes2.length === 0) {
+                    //console.log("El NodeList está vacío");
+                } else {
+                    //console.log("El NodeList no está vacío");
+        
+                    checkboxes2.prop('disabled', true);
+        
+                    checkboxes2.on("change", function() {
+                        checkboxes2.prop('disabled', true);
+                    });
+                }
+            }    
+            validarcheckboxNuevos();
+            
+        }        
+    }, 500);
+
+    // Verificar si el checkboxes2 está marcado en el almacenamiento local  
+    function desavalidarCheckboxes2(checkbox2Id) {
+        
+        var numeroCheckbox2Seleccionado = checkbox2Id.split('_').pop();
+        var checkboxes2 = document.querySelectorAll('[id^="checkbox_dx_principal_DefiAlteraciones_"]');
+        checkboxes2.forEach(function(checkboxnew) {
+            var numeroCheckbox = checkboxnew.id.split('_').pop();
+            if (numeroCheckbox !== numeroCheckbox2Seleccionado) {
+                checkboxnew.disabled = true;
+            }
+        });       
+
+        checkbox1.attr('disabled', true);
+        checkbox2.attr('disabled', true);
+
+        $("[id^='dx_principal_deficiencia_alteraciones_']").prop('disabled', true);
+    }     
+
+    function habivalidarCheckboxes2(checkbox2Id) {
+        var numeroCheckbox2Seleccionado = checkbox2Id.split('_').pop();
+    
+        var checkboxes2 = document.querySelectorAll('[id^="checkbox_dx_principal_DefiAlteraciones_"]');
+        checkboxes2.forEach(function(checkboxnew) {
+            var numeroCheckbox = checkboxnew.id.split('_').pop();
+            if (numeroCheckbox !== numeroCheckbox2Seleccionado) {
+                checkboxnew.disabled = false;
+            }
+        });
+
+        checkbox1.attr('disabled', false);
+        checkbox2.attr('disabled', false);
+        $("[id^='dx_principal_deficiencia_alteraciones_']").prop('disabled', false);
+
+        localStorage.removeItem('checkbox1Checked');
+        localStorage.removeItem('checkbox2Checked');
+        localStorage.removeItem('checkboxDxPrincipalNew');
+        localStorage.removeItem('checkboxDxPrincipal');
+    } 
+
+    $(document).on('click', "input[id^='checkbox_dx_principal_DefiAlteraciones_']", function(){
+        var filas = $(this).data("id_fila_checkbox_dx_principal_defialteraciones");
+        localStorage.setItem("filas", filas);
+        localStorage.setItem('checkboxDxPrincipalNew', $(this).prop('checked'));
+        //localStorage.setItem('checkboxDxPrincipal', $(this).prop('checked'));
+        if ($(this).prop('checked')) {
+            desavalidarCheckboxes2('checkbox_dx_principal_DefiAlteraciones_'+filas);
+        }else{
+            habivalidarCheckboxes2('checkbox_dx_principal_DefiAlteraciones_'+filas);
+        }
+    });
+
+    var idCompleto = '';
+    function capturarIdCheckbox() {
+        $("[id^='dx_principal_deficiencia_alteraciones_']").each(function() {
+          if ($(this).is(':checked')) {
+            idCompleto = $(this).attr('id');
+            return false;
+          }
+        });    
+        return idCompleto;
+    }
+
+    setInterval(() => {
+        var filasnews = localStorage.getItem("filas")
+        if (localStorage.getItem('checkboxDxPrincipalNew') === 'true') {
+            desavalidarCheckboxes2('checkbox_dx_principal_DefiAlteraciones_'+filasnews);
+            capturarIdCheckbox();
+            var validacioncheck = $('#'+idCompleto);
+            if (validacioncheck.is(':checked') && validacioncheck.is(':disabled')) { 
+                validacioncheck.prop('disabled', false); 
+            }            
+            var matchResult = idCompleto.match(/\d+/);
+            if (matchResult && matchResult.length > 0) {
+                var newfilas = parseInt(matchResult[0]);
+                $('a[id^="btn_remover_deficiencia_alteraciones'+newfilas+'"]').css({
+                    "cursor": "not-allowed",
+                    "pointer-events": "none"
+                }).attr("disabled", true); 
+    
+            }
+            function validarcheckboxNuevos() {                    
+                var checkboxes2 = $('input[id^="checkbox_dx_principal_DefiAlteraciones_"]');
+                if (checkboxes2.length === 0) {
+                    //console.log("El NodeList está vacío");
+                } else {
+                    //console.log("El NodeList no está vacío");
+        
+                    checkboxes2.prop('disabled', true);
+        
+                    checkboxes2.on("change", function() {
+                        checkboxes2.prop('disabled', true);
+                    });
+                }
+            }    
+            validarcheckboxNuevos();    
+        }
+    }, 500);
+
+});
+
+$(document).ready(function(){
+    // Obtener sessionStorage del navegador
+    //var posicionActual = $(window).scrollTop(); // Guarda cuando recarga la pagina
+    var posicionMemoria = sessionStorage.getItem("scrollToptecnica"); // Guarda session scrollTop
+    
+    if (posicionMemoria !== null) {
+        $(window).scrollTop(posicionMemoria);
+        sessionStorage.removeItem("scrollToptecnica");
+        //console.log("Se ha restaurado la posición guardada en memoria");
+    } else {
+        //console.log("No se ha encontrado una posición guardada en memoria");
+    }
+    //guardar la posición de desplazamiento actual en la memoria
+    $(window).on("beforeunload", function() {
+        sessionStorage.setItem("scrollToptecnica", $(window).scrollTop());
+    });
+    //console.log("Posición al refrescar la página: " + posicionActual + "-" + posicionMemoria);    
+});
