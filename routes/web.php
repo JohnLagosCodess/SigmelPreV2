@@ -408,6 +408,12 @@ Route::get('/calificacionOrigen', [CalificacionOrigenController::class, 'mostrar
 Route::post('/calificacionOrigen', [CalificacionOrigenController::class, 'mostrarVistaCalificacionOrigen'])->name('calificacionOrigen');
 // Accion: Insertar Califcación Origen
 Route::post('/registrarCalificacionOrigen', [CalificacionOrigenController::class, 'guardarCalificacionOrigen']);
+// Accion: Selectores Módulo Origen
+Route::post('/selectoresOrigenAtel', [CalificacionOrigenController::class, 'cargueListadoSelectoresOrigenAtel']);
+// Acción: Guardar Documento Sugerido
+Route::post('/GuardarDocumentosSeguimiento', [CalificacionOrigenController::class, 'GuardarDocumentosSeguimiento']);
+// Acción: Eliminar Fila (Cambiar a estado inactivo)
+Route::post('/EliminarFilaSeguimiento', [CalificacionOrigenController::class, 'EliminarFilaSeguimiento'])->name('EliminarFilaSeguimiento');
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 
