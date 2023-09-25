@@ -22,7 +22,7 @@ class BandejaOrigenController extends Controller
         }
         $user = Auth::user();        
 
-        return view('Coordinador.bandejaOrigen', compact('user'));
+        return view('coordinador.bandejaOrigen', compact('user'));
     }
 
     //Selectores Bandeja Origen

@@ -181,6 +181,9 @@ $(document).ready(function(){
 
     // llenado del formulario para la captura de datos del modulo de calificacion Pcl
 
+    var newId_evento = $('#newId_evento').val();
+    var newId_asignacion = $('#newId_asignacion').val();
+    //console.log(newId_evento);
     $('#form_calificacionPcl').submit(function (e) {
         e.preventDefault();  
         
@@ -298,7 +301,9 @@ $(document).ready(function(){
 
     let datos_comunicados ={
         '_token':token,
-        'HistorialComunicadosPcl': "CargarComunicados"
+        'HistorialComunicadosPcl': "CargarComunicados",
+        'newId_evento':newId_evento,
+        'newId_asignacion':newId_asignacion,
     }
 
     $.ajax({
@@ -933,7 +938,9 @@ $(document).ready(function(){
 
     let datos_historial_seguimiento ={
         '_token':token,
-        'HistorialSeguimientoPcl': "CargaHistorialSeguimiento"
+        'HistorialSeguimientoPcl': "CargaHistorialSeguimiento",
+        'newId_evento':newId_evento,
+        'newId_asignacion':newId_asignacion,
     }
 
     $.ajax({

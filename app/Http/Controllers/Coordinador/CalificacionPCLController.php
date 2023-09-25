@@ -77,7 +77,10 @@ class CalificacionPCLController extends Controller
         $listado_documentos_solicitados = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
         ->select('Id_Documento_Solicitado', 'F_solicitud_documento', 'Nombre_documento', 
         'Descripcion', 'Nombre_solicitante', 'F_recepcion_documento')
-        ->where('Estado', 'Activo')
+        ->where([
+            ['Estado', 'Activo'], ['Id_proceso',$array_datos_calificacionPcl[0]->Id_proceso],
+            ['ID_evento', $newIdEvento]
+        ])
         ->get();
 
 
@@ -591,11 +594,16 @@ class CalificacionPCLController extends Controller
 
     public function historialSeguimientosPCL(Request $request){
         $HistorialSeguimientoPcl = $request->HistorialSeguimientoPcl;
+        $newId_evento = $request->newId_evento;
+        $newId_asignacion = $request->newId_asignacion;
 
         if ($HistorialSeguimientoPcl == 'CargaHistorialSeguimiento') {
             
             $hitorialAgregarSeguimiento = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
-            ->select('F_seguimiento','Causal_seguimiento','Descripcion_seguimiento','Nombre_usuario')
+            ->select('ID_evento','F_seguimiento','Causal_seguimiento','Descripcion_seguimiento','Nombre_usuario')
+            ->where([
+                ['ID_evento', $newId_evento]
+            ])
             ->get();
 
             $arrayhistorialSeguimiento = json_decode(json_encode($hitorialAgregarSeguimiento, true));
@@ -750,12 +758,15 @@ class CalificacionPCLController extends Controller
     public function historialComunicadosPCL(Request $request){
 
         $HistorialComunicadosPcl = $request->HistorialComunicadosPcl;
-
+        $newId_evento = $request->newId_evento;
+        $newId_asignacion = $request->newId_asignacion;        
         if ($HistorialComunicadosPcl == 'CargarComunicados') {
             
             $hitorialAgregarComunicado = cndatos_info_comunicado_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento', $newId_evento]
+            ])
             ->get();
-
             $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
             return response()->json(($arrayhitorialAgregarComunicado));
 
@@ -1064,16 +1075,6 @@ class CalificacionPCLController extends Controller
         ->select('side.ID_Evento', 'side.Id_proceso', 'side.Id_Asignacion', 'side.Origen_firme', 'slp.Nombre_parametro as Origen', 
         'side.Cobertura', 'slps.Nombre_parametro as Coberturas', 'side.Decreto_calificacion', 'slcd.Nombre_decreto')
         ->where([['side.ID_Evento',$Id_evento_calitec]])->get(); 
-
-        //Traer Informacion ya registrada tecnica
-        /* $datos_demos= array(
-            "Origen" => "",
-            "NombreOrigen" => "",
-            "Cobertura" => "",
-            "NombreCobertura" => "",
-            "Decreto" => "",
-            "NombreDecreto" => "",
-        ); */
 
         // Obtener el último consecutivo de la base de datos
         $consecutivoDictamen = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
@@ -3315,6 +3316,8 @@ class CalificacionPCLController extends Controller
         $Id_EventoDecreto = $request->Id_EventoDecreto;
         $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
         $Id_Asignacion_Dcreto = $request->Id_Asignacion_Dcreto;
+        $suma_combinada = $request->suma_combinada;
+        $Total_Deficiencia50 = $request->Total_Deficiencia50;
         $porcentaje_pcl = $request->porcentaje_pcl;        
         $rango_pcl = $request->rango_pcl;        
         $tipo_evento = $request->tipo_evento;        
@@ -3336,6 +3339,8 @@ class CalificacionPCLController extends Controller
             $justi_dependencia = $justi_dependencia;
         }
         $datos_dictamenPericial =[
+            'Suma_combinada' => $suma_combinada,
+            'Total_Deficiencia50' => $Total_Deficiencia50,
             'Porcentaje_pcl' => $porcentaje_pcl,
             'Rango_pcl' => $rango_pcl,
             'Tipo_evento' => $tipo_evento,
@@ -3364,6 +3369,21 @@ class CalificacionPCLController extends Controller
         );
 
         return json_decode(json_encode($mensajes, true));
+
+    }
+
+    // Deficiencias Decreto Cero
+
+    public function guardarDeficieciasDecretoCero(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+
+        return 'Deficiencias decreto cer';
+        
 
     }
 }

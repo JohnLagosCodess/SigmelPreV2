@@ -1080,7 +1080,7 @@
             });
 
             //Elimina sessionStorage
-            sessionStorage.removeItem("scrollTop");
+            sessionStorage.removeItem("scrollToptecnica");
 
         });
     </script>
