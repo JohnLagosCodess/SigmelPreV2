@@ -25,6 +25,8 @@ class sigmel_informacion_decreto_eventos extends Model
     'Relacion_documentos',
     'Otros_relacion_doc',
     'Descripcion_enfermedad_actual',
+    'Suma_combinada',
+    'Total_Deficiencia50',
     'Porcentaje_pcl',
     'Rango_pcl',
     'Tipo_evento',

@@ -2243,14 +2243,16 @@ $(document).ready(function(){
             porcentajePcl = Number(total_deficiencia) + Number(total_rol_laboral);            
         }        
         $("#porcentaje_pcl").val(Math.round(porcentajePcl));
-        if (porcentajePcl < 5) {
+        if (porcentajePcl == 0) {
+            $("#rango_pcl").val('PCL 0');
+        }else if (porcentajePcl < 5) {
             $("#rango_pcl").val('Menor al 5%');
         }else if(porcentajePcl >= 5 && porcentajePcl <= 14.99){
             $("#rango_pcl").val('Entre 5 y 14,99%');            
         }else if(porcentajePcl >= 15 && porcentajePcl <= 29.99){
             $("#rango_pcl").val('Entre 15 y 29,99%');            
-        }else if(porcentajePcl >= 30 && porcentajePcl <= 44.99){
-            $("#rango_pcl").val('Entre 30,01 y 44,99%');            
+        }else if(porcentajePcl >= 30 && porcentajePcl <= 49.99){
+            $("#rango_pcl").val('Entre 30,01 y 49,99%');            
         }else if(porcentajePcl > 50){
             $("#rango_pcl").val('Mayor a 50%');            
         }
@@ -2336,6 +2338,8 @@ $(document).ready(function(){
         var Id_EventoDecreto = $('#Id_Evento_decreto').val();
         var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
         var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
+        var suma_combinada = $('#suma_combinada').val();
+        var Total_Deficiencia50 = $('#Total_Deficiencia50').val();
         var porcentaje_pcl = $('#porcentaje_pcl').val();
         var rango_pcl = $('#rango_pcl').val();
         var tipo_evento = $('#tipo_evento').val();
@@ -2357,6 +2361,8 @@ $(document).ready(function(){
             'Id_EventoDecreto':Id_EventoDecreto,
             'Id_ProcesoDecreto':Id_ProcesoDecreto,
             'Id_Asignacion_Dcreto':Id_Asignacion_Dcreto,
+            'suma_combinada':suma_combinada,
+            'Total_Deficiencia50':Total_Deficiencia50,
             'porcentaje_pcl':porcentaje_pcl,
             'rango_pcl':rango_pcl,
             'tipo_evento':tipo_evento,
@@ -2656,6 +2662,102 @@ $(document).ready(function(){
         });        
 
     });
+});
+
+function funciones_elementos_fila_deficienciasDecretocero(num_decretoceroconse) {
+    // Inicializacion de select 2
+    $("#lista_tabla_"+num_decretoceroconse).select2({
+        width: '100%',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+    
+
+    //Carga de datos en los selectores
+
+    let token = $("input[name='_token']").val();
+    let datos_decretocero = {
+        '_token': token,
+        'parametro' : "listado_tablas_decreto",
+    };
+    $.ajax({
+        type:'POST',
+        url:'/ListadoSelectoresDefiAlteraciones',
+        data: datos_decretocero,
+        success:function(data){
+            // $("select[id^='lista_Cie10_fila_']").empty();
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $("#lista_tabla_"+num_decretoceroconse).append('<option value="'+data[claves[i]]["Id_tabla"]+'">'+data[claves[i]]["Ident_tabla"]+'-'+data[claves[i]]["Nombre_tabla"]+'</option>');
+            }
+        }
+    });   
+
+    $(document).on('change', '#lista_tabla_'+num_decretoceroconse, function() {        
+        let Id_tabla = $(this).val();        
+        let datos_Nombre_tabla = {
+            '_token': token,
+            'parametro' : "nombre_tabla",
+            'Id_tabla': Id_tabla,
+        };    
+        $.ajax({
+            type:'POST',
+            url:'/ListadoSelectoresDefiAlteraciones',
+            data: datos_Nombre_tabla,
+            success:function(data){
+                //console.log(data);
+                let claves = Object.keys(data);
+                //console.log(claves);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#titulotabla_"+num_decretoceroconse).val(data[claves[i]]["Nombre_tabla"]);
+                }
+            }
+        });
+    });
+}
+
+$(document).ready(function(){
+    $("#guardar_deficiencias_DecretoCero").click(function(){       
+            
+        let token = $("input[name='_token']").val();
+        var guardar_datos = [];
+        var datos_finales_deficiciencias_decreto_cero = [];
+        var array_id_filas = [];
+        // RECORREMOS LOS TD DE LA TABLA PARA EXTRAER LOS DATOS E INSERTARLOS EN UN ARREGLO (LA INSERCIÓN LA HACE POR CADA FILA, POR ENDE, ES UN ARRAY MULTIDIMENSIONAL)
+        $('#listado_deficiencias_alteraciones_decretoCero tbody tr').each(function (index) {
+            array_id_filas.push($(this).attr('id'));
+            if ($(this).attr('id') !== "datos_deficiencias") {
+                $(this).children("td").each(function (index2) {
+                    var nombres_ids = $(this).find('*').attr("id");
+                    if (nombres_ids != undefined) {
+                        guardar_datos.push($('#'+nombres_ids).val());                        
+                    }
+                    if((index2+1) % 4 === 0){
+                        datos_finales_deficiciencias_decreto_cero.push(guardar_datos);
+                        guardar_datos = [];
+                    }
+                });
+            }
+        });
+        
+        // ENVÍO POR AJAX LA INFORMACIÓN FINAL DE LA TABLA, JUNTO CON EL ID EVENTO, ID ASIGNACION, ID PROCESO
+                  
+        var envio_datos_diagnosticos = {
+            '_token': token,
+            'datos_finales_deficiciencias_decreto_cero' : datos_finales_deficiciencias_decreto_cero,
+            'Id_evento': $('#Id_Evento_decreto').val(),
+            'Id_Asignacion': $('#Id_Asignacion_decreto').val(),
+            'Id_proceso': $('#Id_Proceso_decreto').val(),                
+        };            
+        $.ajax({
+            type:'POST',
+            url:'/guardarDeficieciasDecretosCero',
+            data: envio_datos_diagnosticos,
+            
+            
+        });      
+               
+    });     
 });
 
 $(document).ready(function(){
