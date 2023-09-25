@@ -250,7 +250,7 @@ $(document).ready(function () {
                     
                     // console.log(cell_1[0].cellIndex);
 
-                    if(cell_1[0].cellIndex != 26){
+                    if(cell_1[0].cellIndex != 29){
 
                         var cell = $('.filters th').eq(
                             $(api.column(colIdx).header()).index()

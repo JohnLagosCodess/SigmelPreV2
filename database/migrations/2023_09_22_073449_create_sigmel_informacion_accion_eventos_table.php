@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('Enviar',40);
             $table->string('Causal_devolucion_comite',40)->nullable();
             $table->text('Descripcion_accion')->nullable();
+            $table->datetime('F_recepcion_doc_origen')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

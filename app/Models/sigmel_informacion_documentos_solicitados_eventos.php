@@ -24,6 +24,8 @@ class sigmel_informacion_documentos_solicitados_eventos extends Model
         'Id_solicitante',
         'Nombre_solicitante',
         'F_recepcion_documento',
+        'Articulo_12',
+        'Grupo_documental',
         'Estado',
         'Nombre_usuario',
         'F_registro'

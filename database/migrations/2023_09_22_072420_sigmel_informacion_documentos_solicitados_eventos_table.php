@@ -23,6 +23,8 @@ return new class extends Migration
             $table->integer('Id_solicitante')->nullable();
             $table->text('Nombre_solicitante')->nullable();
             $table->date('F_recepcion_documento')->nullable();
+            $table->string('Articulo_12', 45)->nullable();
+            $table->integer('Grupo_documental')->default(0)->nullable();
             $table->enum('Aporta_documento', ['Si','No'])->nullable();
             $table->enum('Estado', ['Activo','Inactivo'])->default('Activo')->nullable();
             $table->text('Nombre_usuario');

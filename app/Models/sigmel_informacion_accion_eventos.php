@@ -23,6 +23,7 @@ class sigmel_informacion_accion_eventos extends Model
     'Enviar',
     'Causal_devolucion_comite',
     'Descripcion_accion',
+    'F_recepcion_doc_origen',
     'Nombre_usuario',
     'F_registro',
     ];
