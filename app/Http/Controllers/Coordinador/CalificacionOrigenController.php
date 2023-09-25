@@ -14,6 +14,9 @@ use App\Models\sigmel_lista_tipo_evento_documentos;
 use App\Models\sigmel_lista_grupo_documentales;
 use App\Models\sigmel_informacion_documentos_solicitados_eventos;
 use App\Models\sigmel_informacion_eventos;
+use App\Models\sigmel_informacion_comunicado_eventos;
+use App\Models\cndatos_info_comunicado_eventos;
+
 
 
 
@@ -100,8 +103,51 @@ class CalificacionOrigenController extends Controller
         } 
         
         $arraycampa_documento_solicitado = count($listado_documentos_solicitados);
+
+        // creación de consecutivo para el comunicado
+       $radicadocomunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+       ->select('N_radicado')
+       ->where([
+           ['ID_evento',$newIdEvento],
+           ['F_comunicado',$date],
+           ['Id_proceso','1']
+       ])
+       ->orderBy('N_radicado', 'desc')
+       ->limit(1)
+       ->get();
+       
+       if(count($radicadocomunicado)==0){
+           $fechaActual = date("Ymd");
+           // Obtener el último valor de la base de datos o archivo
+           $consecutivoP1 = "SAL-ORI";
+           $consecutivoP2 = $fechaActual;
+           $consecutivoP3 = '000000';
+           $ultimoDigito = substr($consecutivoP3, -6);
+           $consecutivoInicial = $consecutivoP1.$consecutivoP2.$consecutivoP3; 
+           $nuevoConsecutivo = $ultimoDigito + 1;
+           // Reiniciar el consecutivo si es un nuevo día
+           if (date("Ymd") != $fechaActual) {
+               $nuevoConsecutivo = 0;
+           }
+           // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
+           $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
+           $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted; 
+           
+       }else{
+           $fechaActual = date("Ymd");
+           $ultimoConsecutivo = $radicadocomunicado[0]->N_radicado;
+           $ultimoDigito = substr($ultimoConsecutivo, -6);
+           $nuevoConsecutivo = $ultimoDigito + 1;
+           // Reiniciar el consecutivo si es un nuevo día
+           if (date("Ymd") != $fechaActual) {
+               $nuevoConsecutivo = 0;
+           }
+           // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
+           $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
+           $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted;
+       }
         
-        return view('coordinador.calificacionOrigen', compact('user','array_datos_calificacionOrigen','arraylistado_documentos','arraycampa_documento_solicitado','SubModulo','Fnuevo','listado_documentos_solicitados','dato_validacion_no_aporta_docs','dato_ultimo_grupo_doc','dato_doc_sugeridos','dato_articulo_12'));
+        return view('coordinador.calificacionOrigen', compact('user','array_datos_calificacionOrigen','arraylistado_documentos','arraycampa_documento_solicitado','SubModulo','Fnuevo','listado_documentos_solicitados','dato_validacion_no_aporta_docs','dato_ultimo_grupo_doc','dato_doc_sugeridos','dato_articulo_12','consecutivo'));
     }
 
     //Guardar informacion del modulo de Origen ATEL
@@ -398,7 +444,7 @@ class CalificacionOrigenController extends Controller
                     'Nombre_solicitante' => "N/A",
                     'Aporta_documento' => "No",
                     'Articulo_12' => "No_mas_seguimiento",
-                    'Grupo_documental' => $request->grupo_documental,
+                    //'Grupo_documental' => $request->grupo_documental,
                     'Estado' => "Inactivo",
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date
@@ -448,5 +494,164 @@ class CalificacionOrigenController extends Controller
         );
 
         return json_decode(json_encode($mensajes, true));
+    }
+
+    //Captura de datos para insertar el comunicado Orige
+
+    public function captuarDestinatariosPrincipalOrigen(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        $user = Auth::user();
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombreusuario = Auth::user()->name; 
+        $destinatarioPrincipal = $request->destinatarioPrincipal;
+        $newIdAsignacion = $request->newId_asignacion;
+        $newIdEvento = $request->newId_evento;
+        $Id_proceso = $request->Id_proceso; 
+
+        switch (true) {
+            case ($destinatarioPrincipal == 'Afiliado'):                
+                $array_datos_destinatarios = DB::select('CALL psrcomunicados(?)', array($newIdEvento)); 
+                $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+                ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+                ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                
+                return response()->json([
+                    'nombreusuario' => $nombreusuario,
+                    'destinatarioPrincipal' => $destinatarioPrincipal,
+                    'array_datos_destinatarios' => $array_datos_destinatarios,
+                    'array_datos_lider' => $array_datos_lider
+                ]);
+            break;
+            case ($destinatarioPrincipal == 'Empresa'):                
+                $array_datos_destinatarios = DB::select('CALL psrcomunicados(?)', array($newIdEvento)); 
+                $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+                ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+                ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                return response()->json([
+                    'nombreusuario' => $nombreusuario,
+                    'destinatarioPrincipal' => $destinatarioPrincipal,
+                    'array_datos_destinatarios' => $array_datos_destinatarios,                    
+                    'array_datos_lider' => $array_datos_lider
+
+                ]);
+            break;
+            case ($destinatarioPrincipal == 'Otro'):  
+                $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+                ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+                ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                return response()->json([
+                    'nombreusuario' => $nombreusuario,
+                    'destinatarioPrincipal' => $destinatarioPrincipal,
+                    'array_datos_lider' => $array_datos_lider
+                ]);
+            break;
+                         
+            default:                
+            break;
+        }
+
+    }
+    //Guardar Comunicado Desde cero
+    public function guardarComunicadoOrigen(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+        $Id_evento = $request->Id_evento;
+        $Id_asignacion = $request->Id_asignacion;
+        $Id_procesos = $request->Id_procesos;
+        $radioafiliado_comunicado = $request->radioafiliado_comunicado;
+        $radioempresa_comunicado = $request->radioempresa_comunicado;
+        $radioOtro = $request->radioOtro;
+        $copiaComunicadoTotal = $request->copiaComunicadoTotal;
+        if (!empty($copiaComunicadoTotal)) {
+            $total_copia_comunicado = implode(", ", $copiaComunicadoTotal);                
+        }else{
+            $total_copia_comunicado = '';
+        }
+
+        if(!empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && empty($radioOtro)){
+            $destinatario = 'Afiliado';
+        }elseif(empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado) && empty($radioOtro)){
+            $destinatario = 'Empresa';
+        }elseif(empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && !empty($radioOtro)){
+            $destinatario = 'Otro';
+        }
+        $datos_info_registrarComunicadoPcl=[
+
+            'ID_evento' => $Id_evento,
+            'Id_Asignacion' => $Id_asignacion,
+            'Id_proceso' => $Id_procesos,
+            'Ciudad' => $request->ciudad,
+            'F_comunicado' => $request->fecha_comunicado2,
+            'N_radicado' => $request->radicado2,
+            'Cliente' => $request->cliente_comunicado2,
+            'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
+            'T_documento' => $request->tipo_documento_comunicado2,
+            'N_identificacion' => $request->identificacion_comunicado2,
+            'Destinatario' => $destinatario,
+            'Nombre_destinatario' => $request->nombre_destinatario,
+            'Nit_cc' => $request->nic_cc,
+            'Direccion_destinatario' => $request->direccion_destinatario,
+            'Telefono_destinatario' => $request->telefono_destinatario,
+            'Email_destinatario' => $request->email_destinatario,
+            'Id_departamento' => $request->departamento_destinatario,
+            'Id_municipio' => $request->ciudad_destinatario,
+            'Asunto' => $request->asunto,
+            'Cuerpo_comunicado' => $request->cuerpo_comunicado,
+            'Anexos' => $request->anexos,
+            'Forma_envio' => $request->forma_envio,
+            'Elaboro' => $request->elaboro2,
+            'Reviso' => $request->reviso,
+            'Agregar_copia' => $total_copia_comunicado,
+            'Firmar_Comunicado' => $request->firmarcomunicado,
+            'Nombre_usuario' => $nombre_usuario,
+            'F_registro' => $date,
+        ];
+        
+        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
+
+        sleep(2);
+        $datos_info_historial_acciones = [
+            'ID_evento' => $Id_evento,
+            'F_accion' => $date,
+            'Nombre_usuario' => $nombre_usuario,
+            'Accion_realizada' => "Se genera comunicado Origen ATEL.",
+            'Descripcion' => $request->asunto,
+        ];
+
+        sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+        
+        $mensajes = array(
+            "parametro" => 'agregar_comunicado',
+            "mensaje" => 'Comunicado generado satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+
+    }
+
+    public function historialComunicadosOrigen(Request $request){
+
+        $HistorialComunicadosPcl = $request->HistorialComunicadosPcl;
+
+        if ($HistorialComunicadosPcl == 'CargarComunicados') {
+            
+            $hitorialAgregarComunicado = cndatos_info_comunicado_eventos::on('sigmel_gestiones')
+            ->get();
+
+            $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
+            return response()->json(($arrayhitorialAgregarComunicado));
+
+        }
+        
     }
 }

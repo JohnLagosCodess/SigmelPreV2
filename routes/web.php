@@ -15,8 +15,8 @@ use App\Http\Controllers\Coordinador\CoordinadorController;
 use App\Http\Controllers\Coordinador\SolicitudDocumentoSeguimientosPCLController;
 use App\Http\Controllers\Coordinador\PronunciamientoPCLController;
 use App\Http\Controllers\Coordinador\BandejaOrigenController;
+use App\Http\Controllers\Coordinador\DeterminacionOrigenATEL;
 use Illuminate\Support\Facades\Route;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -427,6 +427,14 @@ Route::post('/selectoresOrigenAtel', [CalificacionOrigenController::class, 'carg
 Route::post('/GuardarDocumentosSeguimiento', [CalificacionOrigenController::class, 'GuardarDocumentosSeguimiento']);
 // Acción: Eliminar Fila (Cambiar a estado inactivo)
 Route::post('/EliminarFilaSeguimiento', [CalificacionOrigenController::class, 'EliminarFilaSeguimiento'])->name('EliminarFilaSeguimiento');
+// Acción: Capturar de datos para el formulario generar comunicado destinatario final en Origen ATEL
+Route::post('/captuarDestinatarioOrigen', [CalificacionOrigenController::class, 'captuarDestinatariosPrincipalOrigen']);
+// Acción Insertar comunicado
+Route::post('/registrarComunicadoOrigen', [CalificacionOrigenController::class, 'guardarComunicadoOrigen']);
+// Acción: Capturar datos para el dataTable Comunicados Orogen
+Route::post('/historialComunicadoOrigen', [CalificacionOrigenController::class, 'historialComunicadosOrigen']);
+// Acción: MOstrar vista Calificación Técnica PCL
+Route::get('/determinacionOrigenATEL', [DeterminacionOrigenATEL::class, 'mostrarVistaDtoATEL'])->name('determinacionOrigenATEL');
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 
