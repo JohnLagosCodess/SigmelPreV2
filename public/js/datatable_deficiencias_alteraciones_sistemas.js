@@ -21,7 +21,8 @@ $(document).ready(function(){
     });
 
     /* FUNCIÓN PARA AJUSTAR COLUMNAS */
-    autoAdjustColumns(tabla_alteraciones_sistemas);
+    //autoAdjustColumns(tabla_alteraciones_sistemas);
+    tabla_alteraciones_sistemas.columns.adjust();
 
     /* REALIZAR LA INSERCIÓN DEL CONTENIDO EN LA FILA */
     var contador_alteraciones = 0;

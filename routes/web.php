@@ -362,8 +362,14 @@ Route::post('/guardarRolOcupacionales', [CalificacionPCLController::class, 'guar
 Route::post('/guardarLibros2_3', [CalificacionPCLController::class, 'guardarLibro2_3']); 
 // Acción: Guardar Dictamen Pericial
 Route::post('/guardardictamenesPericial', [CalificacionPCLController::class, 'guardardictamenPericial']); 
-// Acción:: Guardar deficiencias Decreto Cero
+// Acción: Guardar deficiencias Decreto Cero
 Route::post('/guardarDeficieciasDecretosCero', [CalificacionPCLController::class, 'guardarDeficieciasDecretoCero']);
+// Acción: Eliminar deficiencias Decrecto creo visualmente e inactiva en la DB
+Route::post('/eliminarDeficieciasDecretosCero', [CalificacionPCLController::class, 'eliminarDeficieciasDecretoCero']);
+// Acción: Guardar deficiencias Decreto tres
+Route::post('/guardarDeficieciasDecretosTres', [CalificacionPCLController::class, 'guardarDeficieciasDecretoTres']);
+// Acción: Elimincar deficiencias Decreto tres visualmente e inactiva en la DB
+Route::post('/eliminarDeficieciasDecretosTres', [CalificacionPCLController::class, 'eliminarDeficieciasDecretoTres']);
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);
 // Acción: Traer la información de los documentos acorde al id evento: Vista Buscador de Eventos (Modal Formulario Nuevo Servicio)

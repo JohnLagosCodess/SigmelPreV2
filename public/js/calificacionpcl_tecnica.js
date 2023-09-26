@@ -1031,7 +1031,7 @@ $(document).ready(function(){
             + Number(opt_total_tabla9)+ Number(opt_total_tabla10);
             if(!isNaN(opt_sumaTotal_20)){
                 //console.log(opt_sumaTotal_20);
-                $('#total_otras').val(redondear(opt_sumaTotal_20 ));
+                $('#total_otras').val(redondear(opt_sumaTotal_20));
             }
         }, 500);
     }
@@ -1711,6 +1711,7 @@ $(document).ready(function(){
                             $('#div_alerta_decreto').addClass('d-none');
                             $('.alerta_decreto').empty();
                             document.querySelector('#ActualizarDecreto').disabled=false;
+                            location.reload();
                         }, 3000);
                     }
     
@@ -2219,6 +2220,9 @@ $(document).ready(function(){
         total_rol_ocupacional13 = $('#total_tabla13').val();
         total_rol_ocupacional14 = $('#total_tabla14').val();        
         total_rol_ocupacional = 0;
+        dicapacidad_total = $('#total_discapacidades').val();
+        minusvalia_total = $('#total_minusvalia').val();
+
         if($.trim(total_rol_ocupacional12) === "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){
             total_rol_ocupacional = 0;
         }else if($.trim(total_rol_ocupacional12) !== "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){
@@ -2237,11 +2241,30 @@ $(document).ready(function(){
             porcentajePcl = Number(total_rol_ocupacional);
         }else if($.trim(total_deficiencia) == 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) > 0){
             porcentajePcl = Number(total_rol_laboral);
-        }else if($.trim(total_deficiencia) > 0 && $.trim(total_rol_ocupacional) > "" && $.trim(total_rol_laboral) === ""){
+        }else if($.trim(total_deficiencia) > 0 && $.trim(total_rol_ocupacional) > 0 && $.trim(total_rol_laboral) === ""){
             porcentajePcl = Number(total_deficiencia) + Number(total_rol_ocupacional);  
         }else if($.trim(total_deficiencia) > 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) > 0){
             porcentajePcl = Number(total_deficiencia) + Number(total_rol_laboral);            
-        }        
+        } 
+        
+        if ($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) === "") {
+            porcentajePcl = 0;
+        }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) === ""){
+            porcentajePcl = Number(total_deficiencia);
+        }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) === ""){
+            porcentajePcl = Number(dicapacidad_total);
+        }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) > 0){
+            porcentajePcl = Number(minusvalia_total);
+        }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) === ""){
+            porcentajePcl = Number(total_deficiencia) + Number(dicapacidad_total);
+        }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) > 0){
+            porcentajePcl = Number(total_deficiencia) + Number(minusvalia_total);
+        }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){
+            porcentajePcl = Number(dicapacidad_total) + Number(minusvalia_total);
+        }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){
+            porcentajePcl = Number(total_deficiencia) + Number(dicapacidad_total) + Number(minusvalia_total);
+        }
+
         $("#porcentaje_pcl").val(Math.round(porcentajePcl));
         if (porcentajePcl == 0) {
             $("#rango_pcl").val('PCL 0');
@@ -2298,6 +2321,8 @@ $(document).ready(function(){
             $('#btn_abrir_modal_auditivo').prop('disabled', true);
             $('#btn_abrir_modal_auditivo').css('cursor', 'not-allowed'); 
             $('#guardar_datos_deficiencia_alteraciones').prop('disabled', true);
+            $('#guardar_deficiencias_DecretoCero').prop('disabled', true);
+            $('#guardar_deficiencias_Decreto3').prop('disabled', true);
             $('#guardar_datos_cie10').prop('disabled', true);
             $('#guardar_datos_examenes').prop('disabled', true);           
             $('#ActualizarDecreto').prop('disabled', true);
@@ -2309,18 +2334,36 @@ $(document).ready(function(){
         }
 
         var textareaenfermedadactual = document.querySelector('#descripcion_enfermedad');
-        var enfermedadactual = textareaenfermedadactual.value; 
+        var enfermedadactual = textareaenfermedadactual.value;
+        
+        if(enfermedadactual == ""){
+            $('#ActualizarLaboralActivo').prop('disabled', true);
+            $('#GuardarLaboralActivo').prop('disabled', true);            
+            $('#btn_abrir_modal_agudeza').prop('disabled', true);
+            $('#btn_abrir_modal_agudeza').css('cursor', 'not-allowed');
+            $('#btn_abrir_modal_auditivo').prop('disabled', true);
+            $('#btn_abrir_modal_auditivo').css('cursor', 'not-allowed'); 
+            $('#guardar_datos_deficiencia_alteraciones').prop('disabled', true);
+            $('#guardar_deficiencias_DecretoCero').prop('disabled', true);
+            $('#guardar_datos_cie10').prop('disabled', true);
+            $('#guardar_datos_examenes').prop('disabled', true); 
+            $('#ActualizarRolOcupacional').prop('disabled', true);
+            $('#GuardarRolOcupacional').prop('disabled', true);            
+            $('#ActualizarLibros2_3').prop('disabled', true);  
+            $('#GuardarLibros2_3').prop('disabled', true);                        
+            $('#GuardrDictamenPericial').prop('disabled', true);  
+        }
         
         if(enfermedadactual !== "" && valorFecha !== ""){
-          $('#GuardrDictamenPericial').prop('disabled', true);
-          $('#origen_firme').prop('disabled', true);
-        $('#origen_cobertura').prop('disabled', true);
-        $('#decreto_califi').prop('disabled', true); 
-        }else if(enfermedadactual !== ""){
-            $('#GuardrDictamenPericial').prop('disabled', false);  
+            $('#GuardrDictamenPericial').prop('disabled', true);
             $('#origen_firme').prop('disabled', true);
             $('#origen_cobertura').prop('disabled', true);
-            $('#decreto_califi').prop('disabled', true);           
+            $('#decreto_califi').prop('disabled', true); 
+        }else if(enfermedadactual !== ""){
+            $('#origen_firme').prop('disabled', true);
+            $('#origen_cobertura').prop('disabled', true);
+            $('#decreto_califi').prop('disabled', true);
+            $('#GuardrDictamenPericial').prop('disabled', false);  
         }
 
         var valorOrigen = $('#origen_firme').val();
@@ -2705,12 +2748,9 @@ function funciones_elementos_fila_deficienciasDecretocero(num_decretoceroconse) 
             url:'/ListadoSelectoresDefiAlteraciones',
             data: datos_Nombre_tabla,
             success:function(data){
-                //console.log(data);
-                let claves = Object.keys(data);
-                //console.log(claves);
-                for (let i = 0; i < claves.length; i++) {
-                    $("#titulotabla_"+num_decretoceroconse).val(data[claves[i]]["Nombre_tabla"]);
-                }
+                //console.log(data);                
+                $("#titulotabla_"+num_decretoceroconse).empty();
+                $("#titulotabla_"+num_decretoceroconse).append(data[0]["Nombre_tabla"]);
             }
         });
     });
@@ -2720,44 +2760,136 @@ $(document).ready(function(){
     $("#guardar_deficiencias_DecretoCero").click(function(){       
             
         let token = $("input[name='_token']").val();
-        var guardar_datos = [];
-        var datos_finales_deficiciencias_decreto_cero = [];
-        var array_id_filas = [];
-        // RECORREMOS LOS TD DE LA TABLA PARA EXTRAER LOS DATOS E INSERTARLOS EN UN ARREGLO (LA INSERCIÓN LA HACE POR CADA FILA, POR ENDE, ES UN ARRAY MULTIDIMENSIONAL)
-        $('#listado_deficiencias_alteraciones_decretoCero tbody tr').each(function (index) {
-            array_id_filas.push($(this).attr('id'));
-            if ($(this).attr('id') !== "datos_deficiencias") {
-                $(this).children("td").each(function (index2) {
-                    var nombres_ids = $(this).find('*').attr("id");
-                    if (nombres_ids != undefined) {
-                        guardar_datos.push($('#'+nombres_ids).val());                        
+        var guardar_datos_alteraciones = [];
+        var datos_finales_deficiciencias_decreto_cero = [];      
+
+        $("#listado_deficiencias_alteraciones_decretoCero tbody tr").each(function (index){
+            $(this).children("td").each(function (index2) {
+
+                // extraemos todos los id
+                var nombres_ids_alteraciones = $(this).find('*').attr("id");
+
+                if (nombres_ids_alteraciones != undefined) {
+                    
+                    // Extraemos el id de la tabla
+                    if (nombres_ids_alteraciones.startsWith("lista_tabla_")) {
+                        var idtabla = $("#"+nombres_ids_alteraciones).val();
+                        // console.log(idtabla);
+                        guardar_datos_alteraciones.push(idtabla);
                     }
-                    if((index2+1) % 4 === 0){
-                        datos_finales_deficiciencias_decreto_cero.push(guardar_datos);
-                        guardar_datos = [];
-                    }
-                });
-            }
+
+                    // Analizamos si existe un select, input o text para extraer la información.
+                    if ($("#"+nombres_ids_alteraciones).val() == "") {
+                        var hay_select = '#'+nombres_ids_alteraciones+' select';
+                        var hay_input = '#'+nombres_ids_alteraciones+' input';
+                        if ($(hay_select).attr("id") != undefined) {
+                            var selector = $(hay_select).attr("id");
+                            var valor_select = $("#"+selector).val();
+                        }else if($(hay_input).attr("id") != undefined){
+                            var entrada_texto = $(hay_input).attr("id");
+                            var valor_input = $("#"+entrada_texto).val();
+                        }else{
+                            var valor_texto = $("#"+nombres_ids_alteraciones).text();
+                        }
+
+                        if (valor_select != undefined) {
+                            // console.log(valor_select);
+                            guardar_datos_alteraciones.push(valor_select);
+                        }
+                        if (valor_input != undefined && valor_input != "on") {
+                            // console.log(valor_input);
+                            guardar_datos_alteraciones.push(valor_input);
+                        }
+
+                        if (valor_texto) {
+                            // console.log(valor_texto);
+                            guardar_datos_alteraciones.push(valor_texto);
+                        }
+                      
+                    }               
+                    
+                }
+
+                if((index2+1) % 3 === 0){
+                    guardar_datos_alteraciones.splice(1,1);
+                    datos_finales_deficiciencias_decreto_cero.push(guardar_datos_alteraciones);
+                    //console.log(datos_finales_deficiciencias_decreto_cero);
+                    guardar_datos_alteraciones = [];
+                }
+            });
         });
         
         // ENVÍO POR AJAX LA INFORMACIÓN FINAL DE LA TABLA, JUNTO CON EL ID EVENTO, ID ASIGNACION, ID PROCESO
                   
-        var envio_datos_diagnosticos = {
+        var envio_datos_deficiencia_decretocero = {
             '_token': token,
             'datos_finales_deficiciencias_decreto_cero' : datos_finales_deficiciencias_decreto_cero,
             'Id_evento': $('#Id_Evento_decreto').val(),
             'Id_Asignacion': $('#Id_Asignacion_decreto').val(),
             'Id_proceso': $('#Id_Proceso_decreto').val(),                
-        };            
+        };  
+        
         $.ajax({
             type:'POST',
             url:'/guardarDeficieciasDecretosCero',
-            data: envio_datos_diagnosticos,
-            
+            data: envio_datos_deficiencia_decretocero,
+            success:function(response){
+                // console.log(response);
+                if (response.parametro == "inserto_informacion_deficiencias_decreto_cero") {
+                    $('#insercion_decreto_cero').removeClass('d-none');
+                    $('#insercion_decreto_cero').addClass('alert-success');
+                    $('#insercion_decreto_cero').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(() => {
+                        $('#insercion_decreto_cero').addClass('d-none');
+                        $('#insercion_decreto_cero').removeClass('alert-success');
+                        $('#insercion_decreto_cero').empty();
+                        location.reload();
+                    }, 3000);
+                }
+            }          
             
         });      
                
     });     
+});
+
+$(document).ready(function(){
+    $(document).on('click', "a[id^='btn_remover_deficiencias_decretocero_']", function(){
+
+        let token = $("input[name='_token']").val();
+        var datos_fila_quitar_deficiencia_cero = {
+            '_token': token,
+            'fila' : $(this).data("id_fila_quitar"),
+            'Id_evento': $('#Id_Evento_decreto').val()
+        };
+
+        //console.log(datos_fila_quitar_deficiencia_cero);
+        
+        $.ajax({
+            type:'POST',
+            url:'/eliminarDeficieciasDecretosCero',
+            data: datos_fila_quitar_deficiencia_cero,
+            success:function(response){
+                // console.log(response);
+                if (response.parametro == "fila_deficiencia_cero_eliminada") {
+                    $('#insercion_decreto_cero').empty();
+                    $('#insercion_decreto_cero').removeClass('d-none');
+                    $('#insercion_decreto_cero').addClass('alert-success');
+                    $('#insercion_decreto_cero').append('<strong>'+response.mensaje+'</strong>');
+                    
+                    setTimeout(() => {
+                        $('#insercion_decreto_cero').addClass('d-none');
+                        $('#insercion_decreto_cero').removeClass('alert-success');
+                        $('#insercion_decreto_cero').empty();
+                    }, 3000);
+                }
+                if (response.total_registros == 0) {
+                    $("#conteo_listado_deficiencia_alteraciones").val(response.total_registros);
+                }
+            }
+        });        
+
+    });
 });
 
 $(document).ready(function(){
@@ -3285,6 +3417,264 @@ $(document).ready(function() {
         }
     }, 500);
 
+});
+
+$(document).ready(function() {
+    $(".centrar").css('text-align', 'center');
+    var listado_deficiencias_decreto_tres = $('#listado_deficiencias_decreto_tres').DataTable({
+        "responsive": true,
+        "info": false,
+        "searching": false,
+        "ordering": false,
+        "scrollCollapse": true,
+        "scrollY": "30vh",
+        "paging": false,
+        "language":{
+            "emptyTable": "No se encontró información"
+        }
+    });
+
+    //autoAdjustColumns(listado_deficiencias_decreto_tres);
+    listado_deficiencias_decreto_tres.columns.adjust();   
+
+    var contador_decreto3 = 0;
+    $('#btn_agregar_deficiencia_decretotresfila').click(function(){
+        $('#guardar_deficiencias_Decreto3').removeClass('d-none');
+
+        contador_decreto3 = contador_decreto3 + 1;
+        var nueva_fila_decreto3 = [
+            '<input type="text" class="form-control" name="tabladecreto3_" id="tabladecreto3_'+contador_decreto3+'">',
+            '<input type="text" class="form-control"  name="tablatitulodecreto3_" id="tablatitulodecreto3_'+contador_decreto3+'">',
+            '<input type="number" class="form-control"  name="deficienciadecreto3_" id="deficienciadecreto3_'+contador_decreto3+'">',
+            '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_deficienciaDecreto3" class="text-info" data-fila="fila_'+contador_decreto3+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
+            'fila_'+contador_decreto3
+        ];
+
+        var agregar_deficiencia_decreto3 = listado_deficiencias_decreto_tres.row.add(nueva_fila_decreto3).draw().node();
+        $(agregar_deficiencia_decreto3).addClass('fila_'+contador_decreto3);
+        $(agregar_deficiencia_decreto3).attr("id", 'fila_'+contador_decreto3);
+
+    });
+
+       
+    $(document).on('click', '#btn_remover_deficienciaDecreto3', function(){
+        var nombre_decreto3 = $(this).data("fila");
+        listado_deficiencias_decreto_tres.row("."+nombre_decreto3).remove().draw();
+    });
+
+    $(document).on('click', "a[id^='btn_remover_deficiencias_decreto3_']", function(){
+        var nombre_decreto3 = $(this).data("clase_fila");
+        listado_deficiencias_decreto_tres.row("."+nombre_decreto3).remove().draw();
+    });
+});
+
+$(document).ready(function(){
+    $("#guardar_deficiencias_Decreto3").click(function(){       
+            
+        let token = $("input[name='_token']").val();
+        var guardar_datos_alteraciones = [];
+        var datos_finales_deficiciencias_decreto_tres = [];      
+
+        $("#listado_deficiencias_decreto_tres tbody tr").each(function (index){
+            $(this).children("td").each(function (index2) {
+
+                // extraemos todos los id
+                var nombres_ids_alteraciones = $(this).find('*').attr("id");
+
+                if (nombres_ids_alteraciones != undefined) {
+                    
+                    // Extraemos el id de la tabla
+                    if (nombres_ids_alteraciones.startsWith("tabladecreto3_")) {
+                        var idtabla = $("#"+nombres_ids_alteraciones).val();
+                        // console.log(idtabla);
+                        guardar_datos_alteraciones.push(idtabla);
+                    }
+
+                    // Analizamos si existe un select, input o text para extraer la información.
+                    if ($("#"+nombres_ids_alteraciones).val() == "") {
+                        var hay_select = '#'+nombres_ids_alteraciones+' select';
+                        var hay_input = '#'+nombres_ids_alteraciones+' input';
+                        if ($(hay_select).attr("id") != undefined) {
+                            var selector = $(hay_select).attr("id");
+                            var valor_select = $("#"+selector).val();
+                        }else if($(hay_input).attr("id") != undefined){
+                            var entrada_texto = $(hay_input).attr("id");
+                            var valor_input = $("#"+entrada_texto).val();
+                        }else{
+                            var valor_texto = $("#"+nombres_ids_alteraciones).text();
+                        }
+
+                        if (valor_select != undefined) {
+                            // console.log(valor_select);
+                            guardar_datos_alteraciones.push(valor_select);
+                        }
+                        if (valor_input != undefined && valor_input != "on") {
+                            // console.log(valor_input);
+                            guardar_datos_alteraciones.push(valor_input);
+                        }
+
+                        if (valor_texto) {
+                            // console.log(valor_texto);
+                            guardar_datos_alteraciones.push(valor_texto);
+                        }
+                      
+                    }   
+                    
+                    if (nombres_ids_alteraciones.startsWith("tablatitulodecreto3_")) {
+                        var idtabla = $("#"+nombres_ids_alteraciones).val();
+                        // console.log(idtabla);
+                        guardar_datos_alteraciones.push(idtabla);
+                    }
+
+                    // Analizamos si existe un select, input o text para extraer la información.
+                    if ($("#"+nombres_ids_alteraciones).val() == "") {
+                        var hay_select = '#'+nombres_ids_alteraciones+' select';
+                        var hay_input = '#'+nombres_ids_alteraciones+' input';
+                        if ($(hay_select).attr("id") != undefined) {
+                            var selector = $(hay_select).attr("id");
+                            var valor_select = $("#"+selector).val();
+                        }else if($(hay_input).attr("id") != undefined){
+                            var entrada_texto = $(hay_input).attr("id");
+                            var valor_input = $("#"+entrada_texto).val();
+                        }else{
+                            var valor_texto = $("#"+nombres_ids_alteraciones).text();
+                        }
+
+                        if (valor_select != undefined) {
+                            // console.log(valor_select);
+                            guardar_datos_alteraciones.push(valor_select);
+                        }
+                        if (valor_input != undefined && valor_input != "on") {
+                            // console.log(valor_input);
+                            guardar_datos_alteraciones.push(valor_input);
+                        }
+
+                        if (valor_texto) {
+                            // console.log(valor_texto);
+                            guardar_datos_alteraciones.push(valor_texto);
+                        }
+                      
+                    }
+
+                    if (nombres_ids_alteraciones.startsWith("deficienciadecreto3_")) {
+                        var idtabla = $("#"+nombres_ids_alteraciones).val();
+                        // console.log(idtabla);
+                        guardar_datos_alteraciones.push(idtabla);
+                    }
+
+                    // Analizamos si existe un select, input o text para extraer la información.
+                    if ($("#"+nombres_ids_alteraciones).val() == "") {
+                        var hay_select = '#'+nombres_ids_alteraciones+' select';
+                        var hay_input = '#'+nombres_ids_alteraciones+' input';
+                        if ($(hay_select).attr("id") != undefined) {
+                            var selector = $(hay_select).attr("id");
+                            var valor_select = $("#"+selector).val();
+                        }else if($(hay_input).attr("id") != undefined){
+                            var entrada_texto = $(hay_input).attr("id");
+                            var valor_input = $("#"+entrada_texto).val();
+                        }else{
+                            var valor_texto = $("#"+nombres_ids_alteraciones).text();
+                        }
+
+                        if (valor_select != undefined) {
+                            // console.log(valor_select);
+                            guardar_datos_alteraciones.push(valor_select);
+                        }
+                        if (valor_input != undefined && valor_input != "on") {
+                            // console.log(valor_input);
+                            guardar_datos_alteraciones.push(valor_input);
+                        }
+
+                        if (valor_texto) {
+                            // console.log(valor_texto);
+                            guardar_datos_alteraciones.push(valor_texto);
+                        }
+                      
+                    }
+                    
+                    
+                }
+
+                if((index2+1) % 3 === 0){
+                    //guardar_datos_alteraciones.splice(1,1);
+                    datos_finales_deficiciencias_decreto_tres.push(guardar_datos_alteraciones);
+                    console.log(datos_finales_deficiciencias_decreto_tres);
+                    guardar_datos_alteraciones = [];
+                }
+            });
+        });
+        
+        // ENVÍO POR AJAX LA INFORMACIÓN FINAL DE LA TABLA, JUNTO CON EL ID EVENTO, ID ASIGNACION, ID PROCESO
+                  
+        var envio_datos_deficiencia_decretotres = {
+            '_token': token,
+            'datos_finales_deficiciencias_decreto_tres' : datos_finales_deficiciencias_decreto_tres,
+            'Id_evento': $('#Id_Evento_decreto').val(),
+            'Id_Asignacion': $('#Id_Asignacion_decreto').val(),
+            'Id_proceso': $('#Id_Proceso_decreto').val(),                
+        };  
+        
+        $.ajax({
+            type:'POST',
+            url:'/guardarDeficieciasDecretosTres',
+            data: envio_datos_deficiencia_decretotres,
+            success:function(response){
+                // console.log(response);
+                if (response.parametro == "inserto_informacion_deficiencias_decreto_tres") {
+                    $('#insercion_decreto_3').removeClass('d-none');
+                    $('#insercion_decreto_3').addClass('alert-success');
+                    $('#insercion_decreto_3').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(() => {
+                        $('#insercion_decreto_3').addClass('d-none');
+                        $('#insercion_decreto_3').removeClass('alert-success');
+                        $('#insercion_decreto_3').empty();
+                        location.reload();
+                    }, 3000);
+                }
+            }          
+            
+        });      
+               
+    });     
+});
+
+$(document).ready(function(){
+    $(document).on('click', "a[id^='btn_remover_deficiencias_decreto3_']", function(){
+
+        let token = $("input[name='_token']").val();
+        var datos_fila_quitar_deficiencia_cero = {
+            '_token': token,
+            'fila' : $(this).data("id_fila_quitar"),
+            'Id_evento': $('#Id_Evento_decreto').val()
+        };
+
+        //console.log(datos_fila_quitar_deficiencia_cero);
+        
+        $.ajax({
+            type:'POST',
+            url:'/eliminarDeficieciasDecretosTres',
+            data: datos_fila_quitar_deficiencia_cero,
+            success:function(response){
+                // console.log(response);
+                if (response.parametro == "fila_deficiencia_tres_eliminada") {
+                    $('#insercion_decreto_3').empty();
+                    $('#insercion_decreto_3').removeClass('d-none');
+                    $('#insercion_decreto_3').addClass('alert-success');
+                    $('#insercion_decreto_3').append('<strong>'+response.mensaje+'</strong>');
+                    
+                    setTimeout(() => {
+                        $('#insercion_decreto_3').addClass('d-none');
+                        $('#insercion_decreto_3').removeClass('alert-success');
+                        $('#insercion_decreto_3').empty();
+                    }, 3000);
+                }
+                if (response.total_registros == 0) {
+                    $("#conteo_listado_deficiencia_alteraciones").val(response.total_registros);
+                }
+            }
+        });        
+
+    });
 });
 
 $(document).ready(function(){

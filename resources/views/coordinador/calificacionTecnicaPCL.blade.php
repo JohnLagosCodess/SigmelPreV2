@@ -131,9 +131,9 @@
                                         <div class="form-group">
                                             <label for="numero_dictamen">N° Dictamen</label>
                                             @if (empty($array_info_decreto_evento[0]->Numero_dictamen))
-                                                <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" style="color: red;" value="{{$numero_consecutivo}}" disabled>                                                
+                                                <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" value="{{$numero_consecutivo}}" disabled>                                                
                                             @else
-                                                <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" style="color: red;" value="{{$array_info_decreto_evento[0]->Numero_dictamen}}" disabled>
+                                                <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" value="{{$array_info_decreto_evento[0]->Numero_dictamen}}" disabled>
                                             @endif
                                         </div>
                                     </div>
@@ -479,7 +479,7 @@
                                                 <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de agregar una fila nueva es necesario
                                                 que diligencie en su totalidad los campos.
                                             </div>
-                                            <div class="alert d-none" id="resultado_insercion_cie10" role="alert">
+                                            <div class="alert d-none" id="insercion_decreto_cero" role="alert">
                                             </div>
                                             <div class="table-responsive">
                                                 <table id="listado_deficiencias_alteraciones_decretoCero" class="table table-striped table-bordered" width="100%">
@@ -511,6 +511,112 @@
                                     </div>
                                 </div>
                             </div>
+                        @elseif (!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 3)
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de agregar una fila nueva es necesario
+                                                que diligencie en su totalidad los campos.
+                                            </div>
+                                            <div class="alert d-none" id="insercion_decreto_3" role="alert">                                                
+                                            </div>
+                                            <div class="table-responsive">
+                                                <table id="listado_deficiencias_decreto_tres" class="table table-striped table-bordered" width="100%">
+                                                    <thead>
+                                                        <tr class="bg-info">
+                                                            <th>Tabla</th>
+                                                            <th>Titulo tabla</th>
+                                                            <th>Deficiencia</th>
+                                                            <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_deficiencia_decretotresfila"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($array_datos_deficiencias_alteraciones as $deficiencias_ateraciones)
+                                                        <tr class="fila_deficiencias3_{{$deficiencias_ateraciones->Id_Deficiencia}}" id="datos_deficiencias3">
+                                                            <td>{{$deficiencias_ateraciones->Tabla1999}}</td>
+                                                            <td>{{$deficiencias_ateraciones->Titulo_tabla1999}}</td>
+                                                            <td>{{$deficiencias_ateraciones->Deficiencia}}</td>
+                                                            <td>
+                                                                <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_deficiencias_decreto3_{{$deficiencias_ateraciones->Id_Deficiencia}}" data-id_fila_quitar="{{$deficiencias_ateraciones->Id_Deficiencia}}" data-clase_fila="fila_deficiencias3_{{$deficiencias_ateraciones->Id_Deficiencia}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
+                                                            </td>
+                                                        </tr> 
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div><br>
+                                            <x-adminlte-button class="mr-auto d-none" id="guardar_deficiencias_Decreto3" theme="info" label="Guardar"/>
+                                            <br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {{-- @elseif (!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 1)
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de agregar una fila nueva es necesario
+                                                que diligencie en su totalidad los campos. Y al eliminar la fila con el DX Principal, es necesario que NO este chequeado en DX Principal.
+                                            </div>
+                                            <div class="alert d-none" id="resultado_insercion_deficiencia" role="alert">
+                                            </div>
+                                            <div class="table-responsive">
+                                                <table id="listado_deficiencia_porfactor" class="table table-striped table-bordered" width="100%">
+                                                    <thead>
+                                                        <tr class="bg-info">
+                                                            <th style="width: 140px !important;">Tabla</th>
+                                                            <th style="width: 140px !important;">Título tabla</th>
+                                                            <th style="width: 140px !important;">Clase principal (FP)</th>
+                                                            <th style="width: 140px !important;">CFM1</th>
+                                                            <th style="width: 140px !important;">CFM2</th>
+                                                            <th style="width: 140px !important;">FU</th>
+                                                            <th style="width: 140px !important;">CAT</th>
+                                                            <th style="width: 140px !important;">Clase final</th>
+                                                            <th style="width: 140px !important;">DX principal</th>
+                                                            <th style="width: 140px !important;">MSD</th>
+                                                            <th style="width: 140px !important;">Deficiencia</th>
+                                                            <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_deficiencia_porfactor"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($array_datos_deficiencias_alteraciones as $deficiencias_ateraciones)
+                                                            <tr class="fila_deficienaAlteracion_{{$deficiencias_ateraciones->Id_Deficiencia}}" id="datos_deficiencia_alteraciones">
+                                                                <td>{{$deficiencias_ateraciones->Ident_tabla}}</td>
+                                                                <td>{{$deficiencias_ateraciones->Nombre_tabla}}</td>
+                                                                <td>{{$deficiencias_ateraciones->FP}}</td>
+                                                                <td>{{$deficiencias_ateraciones->CFM1}}</td>
+                                                                <td>{{$deficiencias_ateraciones->CFM2}}</td>
+                                                                <td>{{$deficiencias_ateraciones->FU}}</td>
+                                                                <td>{{$deficiencias_ateraciones->CAT}}</td>
+                                                                <td>{{$deficiencias_ateraciones->Clase_Final}}</td>
+                                                                <td>
+                                                                    @if ($deficiencias_ateraciones->Dx_Principal == 'Si')
+                                                                        <input class="scalesR" type="checkbox" name="dx_principal_deficiencia_alteraciones" id="dx_principal_deficiencia_alteraciones_{{$deficiencias_ateraciones->Id_Deficiencia}}" data-id_fila_dx_principal="{{$deficiencias_ateraciones->Id_Deficiencia}}" checked>
+                                                                        <input hidden="hidden" type="text" name="banderaDxPrincipalDA" id="banderaDxPrincipalDA" value="NoDxPrincipal_deficiencia_alteraciones">
+                                                                    @else
+                                                                        <input class="scalesR" type="checkbox" name="dx_principal_deficiencia_alteraciones" id="dx_principal_deficiencia_alteraciones_{{$deficiencias_ateraciones->Id_Deficiencia}}" data-id_fila_dx_principal="{{$deficiencias_ateraciones->Id_Deficiencia}}">
+                                                                        <input hidden="hidden" type="text" name="banderaDxPrincipalDA" id="banderaDxPrincipalDA" value="SiDxPrincipal_deficiencia_alteraciones">
+                                                                    @endif
+                                                                </td>
+                                                                <td>{{$deficiencias_ateraciones->MSD}}</td>
+                                                                <td>{{$deficiencias_ateraciones->Deficiencia}}</td>
+                                                                <td>
+                                                                    <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_deficiencia_alteraciones{{$deficiencias_ateraciones->Id_Deficiencia}}" data-id_fila_quitar="{{$deficiencias_ateraciones->Id_Deficiencia}}" data-clase_fila="fila_deficienaAlteracion_{{$deficiencias_ateraciones->Id_Deficiencia}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
+                                                                </td>
+                                                            </tr> 
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div><br>
+                                            <x-adminlte-button class="mr-auto d-none" id="guardar_datos_deficiencia_alteraciones" theme="info" label="Guardar"/>
+                                            <br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> --}}
                         @else
                             <div class="card-body">
                                 <div class="row">
@@ -577,7 +683,7 @@
                                 </div>
                             </div>
                         @endif
-                        <div class="card-info columna_row1_auditivo" @if ($decreto_1507=='1' && !empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion <> 2) style="display:block" @else style="display:none" @endif>                            
+                        <div class="card-info columna_row1_auditivo" @if ($decreto_1507=='1' && !empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion <> 2 && $datos_demos[0]->Decreto_calificacion <> 3) style="display:block" @else style="display:none" @endif>                            
                             <a href="#" id="btn_abrir_modal_auditivo" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal"
                                 @if (count($array_agudeza_Auditiva) > 0)
                                     style="cursor: not-allowed;"
@@ -637,7 +743,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-info columna_row1_visual"  @if ($decreto_1507=='1' && !empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion <> 2) style="display:block" @else style="display:none" @endif>
+                        <div class="card-info columna_row1_visual"  @if ($decreto_1507=='1' && !empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion <> 2 && $datos_demos[0]->Decreto_calificacion <> 3) style="display:block" @else style="display:none" @endif>
                             <a href="javascript:void(0);" id="btn_abrir_modal_agudeza" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal" 
                                 @if (count($hay_agudeza_visual) > 0)
                                     style="cursor:not-allowed"
@@ -721,6 +827,10 @@
                                         <label for="suma_combinada">Suma Combinada:</label>   
                                         @if(!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 2)
                                             <input type="text" id="suma_combinada" name="suma_combinada" value="0" readonly=""> 
+                                        @elseif(!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 3 && !empty($array_info_decreto_evento[0]->Suma_combinada))
+                                            <input type="number" id="suma_combinada" name="suma_combinada" value="{{$array_info_decreto_evento[0]->Suma_combinada}}" readonly> 
+                                        @elseif(!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 3 && empty($array_info_decreto_evento[0]->Suma_combinada))
+                                            <input type="number" id="suma_combinada" name="suma_combinada"> 
                                         @elseif(!empty($deficiencias[0]))
                                             <input type="text" id="suma_combinada" name="suma_combinada" value="{{round($deficiencias[0], 2)}}" readonly="">                                             
                                         @else
@@ -732,7 +842,11 @@
                                     <div class="form-group">
                                         <label for="Total_Deficiencia50">Total Deficiencia (50%):</label>    
                                         @if(!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 2)
-                                            <input type="text" id="Total_Deficiencia50" name="Total_Deficiencia50" value="0" readonly="">                                             
+                                            <input type="number" id="Total_Deficiencia50" name="Total_Deficiencia50" value="0" readonly="">      
+                                        @elseif(!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 3 && !empty($array_info_decreto_evento[0]->Total_Deficiencia50))
+                                            <input type="number" id="Total_Deficiencia50" name="Total_Deficiencia50" value="{{$array_info_decreto_evento[0]->Total_Deficiencia50}}" readonly> 
+                                        @elseif(!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 3 && empty($array_info_decreto_evento[0]->Total_Deficiencia50))
+                                            <input type="number" id="Total_Deficiencia50" name="Total_Deficiencia50">              
                                         @elseif (!empty($TotalDeficiencia50))
                                             <input type="text" id="Total_Deficiencia50" name="Total_Deficiencia50" value="{{round($TotalDeficiencia50, 2)}}" readonly="">                                             
                                         @else
@@ -6107,8 +6221,7 @@
                                 </div> 
                             </div>
                         </form>
-                    </div>
-                    {{-- </div>  --}}
+                    </div>                    
                 </div>
             </div>
         </div>
@@ -6284,6 +6397,8 @@
         }); 
 
         //autoAdjustColumns(listado_deficiencias_alteraciones_decretoCero);
+        listado_deficiencias_alteraciones_decretoCero.columns.adjust();
+
 
         var contador_decretocero = 0;
         $('#btn_agregar_deficiencia_decretoceroFila').click(function(){
@@ -6292,8 +6407,8 @@
             contador_decretocero = contador_decretocero + 1;
             var nueva_fila_decretoCero = [
                 '<select id="lista_tabla_'+contador_decretocero+'" class="custom-select lista_tabla_'+contador_decretocero+'" name="lista_tabla"><option></option></select>',
-                '<input type="text" class="form-control" id="titulotabla_'+contador_decretocero+'" name="titulotabla"/>',
-                '<input type="text" class="form-control" id="deficienciaDecreto_'+contador_decretocero+'" name="deficienciaDecreto" value="0" readonly/>',
+                '<div id="titulotabla_'+contador_decretocero+'"></div>',       
+                '<div id="deficienciaDecreto_'+contador_decretocero+'">0</div>',
                 '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_deficienciaDecretoCero" class="text-info" data-fila="fila_'+contador_decretocero+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
                 'fila_'+contador_decretocero
             ];
@@ -6315,7 +6430,7 @@
             var nombre_decretoCero = $(this).data("clase_fila");
             listado_deficiencias_alteraciones_decretoCero.row("."+nombre_decretoCero).remove().draw();
         });
-
+        
         //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE DEFICIENCIA POR FACTOR
         //Falta agregar función
 
@@ -6323,11 +6438,11 @@
     });
 
 </script>
+<script type="text/javascript" src="/js/funciones_helpers.js"></script>
 <script type="text/javascript" src="/js/calificacionpcl_tecnica.js"></script>
 {{-- JS: Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores --}}
 <script type="text/javascript" src="/js/datatable_deficiencias_alteraciones_sistemas.js"></script>
 <script type="text/javascript" src="/js/agudeza_auditiva.js"></script>
 {{-- JS: DATATABLE AGUDEZA VISUAL --}}
 <script type="text/javascript" src="/js/datatable_agudeza_visual.js"></script>
-<script type="text/javascript" src="/js/funciones_helpers.js"></script>
 @stop

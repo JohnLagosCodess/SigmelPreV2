@@ -136,7 +136,7 @@ $(document).ready(function () {
         var textoEscrito = $(this).val();
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
     });
-    // Text areas vista calificacion tecnica
+    // Text  y inputs areas vista calificacion tecnica
     $(document).on('keyup', "textarea[id^='descripcion_otros']", function(){
         var textoEscrito = $(this).val();
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
@@ -177,6 +177,16 @@ $(document).ready(function () {
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
     });    
 
+    $(document).on('keyup', "input[id^='tabladecreto3_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
+    });
+
+    $(document).on('keyup', "input[id^='tablatitulodecreto3_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
+    });
+
     /* Función para colocar la primera letra en mayúscula de cada palabra que se escriba */
     function LetraMayusCadaPalabra(textoEscrito) {
         var palabras = textoEscrito.split(' ');
@@ -204,7 +214,50 @@ $(document).ready(function () {
         } else {
             return false;
         }
-    }    
+    } 
+    
+    function NumerosEnteros(input) {
+        var value = $(input).val();      
+        if (!Number.isInteger(Number(value))) {
+          $(input).val("");
+        }
+      }
+    
+    $(document).on("input", '[id^="deficienciadecreto3_"]', function() {
+        NumerosEnteros(this);
+    });   
+    
+    function Maximo2Decimales(idinput){
+        $('#'+idinput).on('input', function(){
+            var inputValue = $(this).val();
+            var decimalCount = (inputValue.split('.')[1] || []).length;        
+            if (decimalCount > 2) {
+              $(this).val(parseFloat(inputValue).toFixed(2));
+            }
+        });
+    }
+
+    $(document).on("input", '[id^="suma_combinada"]', function() {
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
+    $(document).on("input", '[id^="Total_Deficiencia50"]', function() {
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
+    $(document).ready(function(){
+        $('#suma_combinada').on('input', function(){
+          var inputValue = $(this).val();
+          var decimalCount = (inputValue.split('.')[1] || []).length;
+      
+          if (decimalCount > 2) {
+            // Si el número tiene más de 2 decimales, truncar el valor
+            $(this).val(parseFloat(inputValue).toFixed(2));
+          }
+        });
+    });
 
      /* INPUTS DEL FORMULARIO DE CREACIÓN ENTIDAD */
     $('.mayus_entidad').keyup(function(){
