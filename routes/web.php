@@ -15,6 +15,7 @@ use App\Http\Controllers\Coordinador\CoordinadorController;
 use App\Http\Controllers\Coordinador\SolicitudDocumentoSeguimientosPCLController;
 use App\Http\Controllers\Coordinador\PronunciamientoPCLController;
 use App\Http\Controllers\Coordinador\BandejaOrigenController;
+use App\Http\Controllers\Coordinador\DeterminacionOrigenATEL;
 use Illuminate\Support\Facades\Route;
 
 
@@ -429,6 +430,11 @@ Route::post('/selectoresOrigenAtel', [CalificacionOrigenController::class, 'carg
 Route::post('/GuardarDocumentosSeguimiento', [CalificacionOrigenController::class, 'GuardarDocumentosSeguimiento']);
 // Acción: Eliminar Fila (Cambiar a estado inactivo)
 Route::post('/EliminarFilaSeguimiento', [CalificacionOrigenController::class, 'EliminarFilaSeguimiento'])->name('EliminarFilaSeguimiento');
+// Acción: MOstrar vista Calificación Técnica PCL
+Route::get('/determinacionOrigenATEL', [DeterminacionOrigenATEL::class, 'mostrarVistaDtoATEL'])->name('determinacionOrigenATEL');
+Route::post('/determinacionOrigenATEL', [DeterminacionOrigenATEL::class, 'mostrarVistaDtoATEL'])->name('determinacionOrigenATEL');
+// Accion: Selectores Submodulo DTO ATEL
+Route::post('/cargueListadoSelectoresDTOATEL', [DeterminacionOrigenATEL::class, 'cargueListadoSelectoresDTOATEL']);
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 
