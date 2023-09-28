@@ -283,9 +283,15 @@ $(document).ready(function () {
 /* Función para ajustar un Datatable cuando este tenga un scroll vertical */
 function autoAdjustColumns(table) {
     var container = table.table().container();
-    var resizeObserver = new ResizeObserver(function () {
+    //console.log(container);
+    if (container instanceof Element) {
+      var resizeObserver = new ResizeObserver(function () {
         table.columns.adjust();
-    });
-    resizeObserver.observe(container);
+      });
+  
+      resizeObserver.observe(container);
+    } else {
+      console.error("'container' is not a valid DOM element.");
+    }
 }
 
