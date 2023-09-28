@@ -1298,8 +1298,8 @@ $(document).ready(function(){
     //Cargar opciones de selectores Libro II Calificación de las discapacidades (20%) 
     var options = ['0.1', '0.2', '0.3'];
     var options2 = ['0.1', '0.2'];
-    var select = $('[id^="conducta_"],[id^="comunicacion_"],[id^="cuidado_personal_"],[id^="lomocion_"],[id^="disposicion_"],[id^="destreza_"]');
-    var select2 = $('[id^="situacion_"]');
+    var select = $('[id^="conducta_"],[id^="comunicacion_"],[id^="cuidado_personal_"],[id^="lomocion_"],[id^="disposicion_"],[id^="destreza_"], [id="situacion_76"], [id="situacion_77"]');
+    var select2 = $('[id="situacion_70"], [id="situacion_71"], [id="situacion_72"], [id="situacion_73"],[id="situacion_74"],[id="situacion_75"],[id="situacion_78"]');
 
     function appendOptions(selectElement, optionsArray) {
         optionsArray.forEach(function(value) {
@@ -2773,7 +2773,7 @@ $(document).ready(function(){
         var guardar_datos_alteraciones = [];
         var datos_finales_deficiciencias_decreto_cero = [];      
 
-        $("#listado_deficiencias_alteraciones_decretoCero tbody tr").each(function (index){
+        $("#listado_deficiencias_decretoCero tbody tr").each(function (index){
             $(this).children("td").each(function (index2) {
 
                 // extraemos todos los id
@@ -2828,7 +2828,7 @@ $(document).ready(function(){
                 }
             });
         });
-        
+        console.log(datos_finales_deficiciencias_decreto_cero);        
         // ENVÍO POR AJAX LA INFORMACIÓN FINAL DE LA TABLA, JUNTO CON EL ID EVENTO, ID ASIGNACION, ID PROCESO
                   
         var envio_datos_deficiencia_decretocero = {
@@ -2838,6 +2838,8 @@ $(document).ready(function(){
             'Id_Asignacion': $('#Id_Asignacion_decreto').val(),
             'Id_proceso': $('#Id_Proceso_decreto').val(),                
         };  
+
+        //console.log(envio_datos_deficiencia_decretocero);
         
         $.ajax({
             type:'POST',

@@ -559,7 +559,7 @@
                                         <div class="form-group">
                                             <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
                                                 <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de agregar una fila nueva es necesario
-                                                que diligencie en su totalidad los campos. Y al eliminar la fila con el DX Principal, es necesario que NO este chequeado en DX Principal.
+                                                que diligencie en su totalidad los campos.
                                             </div>
                                             <div class="alert d-none" id="resultado_insercion_deficiencia" role="alert">
                                             </div>
@@ -624,7 +624,7 @@
                                         <div class="form-group">
                                             <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
                                                 <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de agregar una fila nueva es necesario
-                                                que diligencie en su totalidad los campos. Y al eliminar la fila con el DX Principal, es necesario que NO este chequeado en DX Principal.
+                                                que diligencie en su totalidad los campos.
                                             </div>
                                             <div class="alert d-none" id="resultado_insercion_deficiencia" role="alert">
                                             </div>
@@ -696,11 +696,7 @@
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Tabla 9.3 Deficiencia por Alteraciones del Sistema Auditivo</h5>
                             </div>
-                            <div class="card-body">
-                                <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
-                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de eliminar una fila es necesario
-                                    que NO este chequeado en DX Principal.
-                                </div>
+                            <div class="card-body">                                
                                 <div class="alert d-none" id="eliminar_agudeza_auditiva" role="alert">
                                 </div>
                                 <div class="table-responsive">
@@ -755,11 +751,7 @@
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Tabla 11.3 Deficiencias por Alteraciones del Sistema Visual</h5>
                             </div>
-                            <div class="card-body">
-                                <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
-                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de eliminar una fila es necesario
-                                    que NO este chequeado en DX Principal.
-                                </div>
+                            <div class="card-body">                                
                                 <div class="alert d-none" id="dx_visual" role="alert">
                                 </div>
                                 <div class="table-responsive" >

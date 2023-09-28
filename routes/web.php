@@ -422,7 +422,7 @@ Route::post('/sinfiltrosBandejaOrigen', [BandejaOrigenController::class, 'sinFil
 // Accion: Capturar data según los filtros
 Route::post('/filtrosBandejaOrigen', [BandejaOrigenController::class, 'filtrosBandejaOrigen']);
 // Accion: Actualizar el profesional y redireccionar el servicio
-Route::post('/actualizarProfesionalServicio', [BandejaOrigenController::class, 'actualizarBandejaOrigen']);
+Route::post('/actualizarProfesionalServicioOrigen', [BandejaOrigenController::class, 'actualizarBandejaOrigen']);
 
 // 14/09/2023
 // Vista: Módulo Calificación Origen Coordinador

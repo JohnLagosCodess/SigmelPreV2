@@ -473,7 +473,7 @@ $(document).ready(function () {
             }
             //console.log(datos_enviar);      
             $.ajax({
-                url:'/actualizarProfesionalServicio',          
+                url:'/actualizarProfesionalServicioOrigen',          
                 type:'POST',
                 data: datos_enviar,
                 success: function (response) 
