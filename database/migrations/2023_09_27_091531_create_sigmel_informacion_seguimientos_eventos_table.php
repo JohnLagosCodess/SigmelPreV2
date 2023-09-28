@@ -17,9 +17,11 @@ return new class extends Migration
             $table->integer('Id_Asignacion');
             $table->integer('Id_proceso');
             $table->date('F_seguimiento');
+            $table->date('F_estipula_seguimiento')->nullable();
             $table->text('Causal_seguimiento');
             $table->text('Descripcion_seguimiento');
             $table->text('Nombre_usuario');
+            $table->enum('Estado', ['Activo','Inactivo'])->default('Activo')->nullable();
             $table->date('F_registro');
         });
     }
