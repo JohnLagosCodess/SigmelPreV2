@@ -187,6 +187,30 @@ $(document).ready(function () {
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
     });
 
+    // TEXTAREA DESCRIPCIÓN FURAT (DTO ATEL)
+    $(document).on('keyup', "textarea[id^='descripcion_FURAT']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito)); 
+    });
+
+    // TEXTAREA JUSTIFICACIÓN REVISION ORIGEN (DTO ATEL)
+    $(document).on('keyup', "textarea[id^='justificacion_revision_origen']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito)); 
+    });
+
+    // INPUT OTROS (DTO ATEL)
+    $(document).on('keyup', "input[id^='otros']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
+    });
+
+    // TEXTAREA SUSTENTACION CALFICACION ORIGEN (DTO ATEL)
+    $(document).on('keyup', "textarea[id^='sustentacion_califi_origen']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito)); 
+    });
+
     /* Función para colocar la primera letra en mayúscula de cada palabra que se escriba */
     function LetraMayusCadaPalabra(textoEscrito) {
         var palabras = textoEscrito.split(' ');
