@@ -105,11 +105,58 @@ class DeterminacionOrigenATEL extends Controller
         ])
         ->get();
 
+        // TRAER DATOS DE HISTORICO LABORAL (APLICA SOLAMENTE PARA EL FORMULARIO DE ENFERMEDAD)
+        $array_datos_historico_laboral = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_historico_empresas_afiliados as shea')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_arls as slarl', 'slarl.Id_Arl', '=', 'shea.Id_arl')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'shea.Id_departamento') 
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sldm1.Id_municipios', '=', 'shea.Id_municipio') 
+        ->leftJoin('sigmel_gestiones.sigmel_lista_actividad_economicas as slae', 'slae.Id_ActEco', '=', 'shea.Id_actividad_economica')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_clase_riesgos as slcr', 'slcr.Id_Riesgo', '=', 'shea.Id_clase_riesgo')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_ciuo_codigos as slcc', 'slcc.Id_Codigo', '=', 'shea.Id_codigo_ciuo')
+        ->select(
+            'shea.Tipo_empleado',
+            'shea.Id_arl',
+            'slarl.Nombre_arl',
+            'shea.Empresa',
+            'shea.Nit_o_cc',
+            'shea.Telefono_empresa',
+            'shea.Email',
+            'shea.Direccion',
+            'shea.Id_departamento',
+            'sldm.Nombre_departamento',
+            'shea.Id_municipio',
+            'sldm1.Nombre_municipio',
+            'shea.Id_actividad_economica',
+            'slae.id_codigo',
+            'slae.Nombre_actividad',
+            DB::raw("CONCAT(slae.id_codigo,' - ',slae.Nombre_actividad) as full_actividad_economica"),
+            'shea.Id_clase_riesgo',
+            'slcr.Nombre_riesgo',
+            'shea.Persona_contacto',
+            'shea.Telefono_persona_contacto',
+            'shea.Id_codigo_ciuo',
+            'slcc.id_codigo_ciuo',
+            'slcc.Nombre_ciuo',
+            DB::raw("CONCAT(slcc.id_codigo_ciuo,' - ',slcc.Nombre_ciuo) as full_ciuo"),
+            'shea.F_ingreso',
+            'shea.Cargo',
+            'shea.Funciones_cargo',
+            'shea.Antiguedad_empresa',
+            'shea.Antiguedad_cargo_empresa',
+            'shea.F_retiro',
+            'shea.Descripcion'
+        )
+        ->where([
+            ['shea.Nro_identificacion', '=', $array_datos_DTO_ATEL[0]->Nro_identificacion]
+        ])
+        ->distinct()
+        ->get();
+
         return view('coordinador.determinacionOrigenATEL', compact('user', 'array_datos_DTO_ATEL', 'numero_consecutivo', 
         'motivo_solicitud_actual', 'datos_apoderado_actual', 
         'array_datos_info_laboral', 'listado_documentos_solicitados', 
         'dato_articulo_12', 'array_datos_diagnostico_motcalifi',
-        'array_datos_examenes_interconsultas'));
+        'array_datos_examenes_interconsultas', 'array_datos_historico_laboral'));
     }
 
     public function cargueListadoSelectoresDTOATEL(Request $request){

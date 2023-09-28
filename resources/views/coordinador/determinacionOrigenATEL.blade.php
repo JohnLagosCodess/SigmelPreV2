@@ -247,6 +247,52 @@
                                             </div>
                                         </div>
                                     <?php endif?>
+                                    {{-- HISTORICO LABORAL(PARA EL FORMULARIO DE ENFERMEDAD) --}}
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="card-info">
+                                                <div class="card-header text-center" style="border: 1.5px solid black;">
+                                                    <h5>Histórico Laboral</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="table-responsive">
+                                                                <table id="historico_laboral" class="table table-striped table-bordered" width="100%">
+                                                                    <thead>
+                                                                        <tr class="bg-info">
+                                                                            <th>Empresa</th>
+                                                                            <th>Actividad económica</th>
+                                                                            <th>Clase / Riesgo</th>
+                                                                            <th>Cargo</th>
+                                                                            <th>Funciones del cargo</th>
+                                                                            <th>Antiguedad en la Empresa (meses)</th>
+                                                                            <th>Antiguedad en el cargo (meses)</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @if (!empty($array_datos_historico_laboral))
+                                                                            @foreach ($array_datos_historico_laboral as $datos_historico)
+                                                                                <tr>
+                                                                                    <td>{{$datos_historico->Empresa}}</td>
+                                                                                    <td>{{$datos_historico->full_actividad_economica}}</td>
+                                                                                    <td>{{$datos_historico->Nombre_riesgo}}</td>
+                                                                                    <td>{{$datos_historico->Cargo}}</td>
+                                                                                    <td>{{$datos_historico->Funciones_cargo}}</td>
+                                                                                    <td>{{$datos_historico->Antiguedad_empresa}}</td>
+                                                                                    <td>{{$datos_historico->Antiguedad_cargo_empresa}}</td>
+                                                                                </tr>
+                                                                            @endforeach
+                                                                        @endif
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
     

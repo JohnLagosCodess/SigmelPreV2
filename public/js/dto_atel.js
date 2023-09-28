@@ -275,6 +275,21 @@ $(document).ready(function(){
     });
     autoAdjustColumns(listado_docs_seguimiento);
 
+     // DataTable HISTÓRICO LABORAL
+     var historico_laboral = $('#historico_laboral').DataTable({
+        "responsive": true,
+        "info": false,
+        "searching": false,
+        "ordering": false,
+        "scrollCollapse": true,
+        "scrollY": "30vh",
+        "paging": false,
+        "language":{
+            "emptyTable": "No se encontró información"
+        }
+    });
+    autoAdjustColumns(historico_laboral);
+
     // Validaciones de Cobertura y Tipo de Evento
     // 
     $("#tipo_evento").change(function(){
@@ -286,6 +301,10 @@ $(document).ready(function(){
             // $("#mostrar_ocultar_formularios").removeClass('d-none');
             $("#mostrar_ocultar_formularios").slideDown('slow');
             var parametro_origen_dto_atel = "origen_vali_1";
+        }
+        // Validacion N°1: Activo = Si y Tipo de Evento = Enfermedad
+        else if(activo == "Si" && tipo_evento_selecccionado == "Enfermedad"){
+            $("#mostrar_ocultar_formularios").slideDown('slow');
         }
 
 
