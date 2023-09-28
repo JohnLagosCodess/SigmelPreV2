@@ -25,6 +25,8 @@ return new class extends Migration
             $table->text('Clase_Final')->nullable();
             $table->enum('Dx_Principal', ['Si','No'])->nullable();
             $table->enum('MSD', ['Si','No', 'N/A'])->nullable();
+            $table->text('Tabla1999')->nullable();
+            $table->text('Titulo_tabla1999')->nullable();
             $table->text('Deficiencia')->nullable();
             $table->enum('Estado', ['Activo','Inactivo'])->default('Activo')->nullable();
             $table->text('Nombre_usuario');

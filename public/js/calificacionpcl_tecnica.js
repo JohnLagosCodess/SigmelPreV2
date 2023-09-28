@@ -1,5 +1,5 @@
-$(document).ready(function(){    
-    
+$(document).ready(function(){
+    //localStorage.clear();
     // Inicializacion del select2 de listados  Módulo Calificacion Tecnica PCL
     $(".origen_firme").select2({
         placeholder:"Seleccione una opción",
@@ -1031,7 +1031,7 @@ $(document).ready(function(){
             + Number(opt_total_tabla9)+ Number(opt_total_tabla10);
             if(!isNaN(opt_sumaTotal_20)){
                 //console.log(opt_sumaTotal_20);
-                $('#total_otras').val(redondear(opt_sumaTotal_20 ));
+                $('#total_otras').val(redondear(opt_sumaTotal_20));
             }
         }, 500);
     }
@@ -1711,6 +1711,7 @@ $(document).ready(function(){
                             $('#div_alerta_decreto').addClass('d-none');
                             $('.alerta_decreto').empty();
                             document.querySelector('#ActualizarDecreto').disabled=false;
+                            location.reload();
                         }, 3000);
                     }
     
@@ -2212,36 +2213,68 @@ $(document).ready(function(){
         })
     })    
 
+    
     /* Porcentaje PCl,  Rango PCL y Justificación de dependencia Concepto final del Dictamen Pericial  */
     $(document).ready(function() {
+
+        definirDecreto_deficiencia = $('#decreto_califi').val();
         total_deficiencia = $('#Total_Deficiencia50').val();
         total_rol_ocupacional12 = $('#total_tabla12').val();
         total_rol_ocupacional13 = $('#total_tabla13').val();
         total_rol_ocupacional14 = $('#total_tabla14').val();        
         total_rol_ocupacional = 0;
-        if($.trim(total_rol_ocupacional12) === "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){
-            total_rol_ocupacional = 0;
-        }else if($.trim(total_rol_ocupacional12) !== "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){
-            total_rol_ocupacional = Number(total_rol_ocupacional12);
-        }else if($.trim(total_rol_ocupacional12) === "" && $.trim(total_rol_ocupacional13) > 0 && $.trim(total_rol_ocupacional14) == 0){
-            total_rol_ocupacional = Number(total_rol_ocupacional13);
-        }else if($.trim(total_rol_ocupacional12) === "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) > 0){
-            total_rol_ocupacional = Number(total_rol_ocupacional14);
-        }
-        total_rol_laboral = $('#total_rol_areas').val();
-        if($.trim(total_deficiencia) == 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) === ""){
-            porcentajePcl = 0;
-        }else if($.trim(total_deficiencia) > 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) === ""){
-            porcentajePcl = Number(total_deficiencia);
-        }else if($.trim(total_deficiencia) == 0 && $.trim(total_rol_ocupacional) > 0 && $.trim(total_rol_laboral) === ""){
-            porcentajePcl = Number(total_rol_ocupacional);
-        }else if($.trim(total_deficiencia) == 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) > 0){
-            porcentajePcl = Number(total_rol_laboral);
-        }else if($.trim(total_deficiencia) > 0 && $.trim(total_rol_ocupacional) > "" && $.trim(total_rol_laboral) === ""){
-            porcentajePcl = Number(total_deficiencia) + Number(total_rol_ocupacional);  
-        }else if($.trim(total_deficiencia) > 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) > 0){
-            porcentajePcl = Number(total_deficiencia) + Number(total_rol_laboral);            
-        }        
+        dicapacidad_total = $('#total_discapacidades').val();
+        minusvalia_total = $('#total_minusvalia').val();
+
+        if (definirDecreto_deficiencia == 1) {
+            if($.trim(total_rol_ocupacional12) === "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){
+                total_rol_ocupacional = 0;
+            }else if($.trim(total_rol_ocupacional12) !== "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){
+                total_rol_ocupacional = Number(total_rol_ocupacional12);
+            }else if($.trim(total_rol_ocupacional12) === "" && $.trim(total_rol_ocupacional13) > 0 && $.trim(total_rol_ocupacional14) == 0){
+                total_rol_ocupacional = Number(total_rol_ocupacional13);
+            }else if($.trim(total_rol_ocupacional12) === "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) > 0){
+                total_rol_ocupacional = Number(total_rol_ocupacional14);
+            }
+            total_rol_laboral = $('#total_rol_areas').val();
+            if($.trim(total_deficiencia) == 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) === ""){
+                porcentajePcl = 0;
+            }else if($.trim(total_deficiencia) > 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) === ""){
+                porcentajePcl = Number(total_deficiencia);
+            }else if($.trim(total_deficiencia) == 0 && $.trim(total_rol_ocupacional) > 0 && $.trim(total_rol_laboral) === ""){
+                porcentajePcl = Number(total_rol_ocupacional);
+            }else if($.trim(total_deficiencia) == 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) > 0){
+                porcentajePcl = Number(total_rol_laboral);
+            }else if($.trim(total_deficiencia) > 0 && $.trim(total_rol_ocupacional) > 0 && $.trim(total_rol_laboral) === ""){
+                porcentajePcl = Number(total_deficiencia) + Number(total_rol_ocupacional);  
+            }else if($.trim(total_deficiencia) > 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) > 0){
+                porcentajePcl = Number(total_deficiencia) + Number(total_rol_laboral);            
+            }             
+        } else if(definirDecreto_deficiencia == 3) {
+            
+            if ($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) === "") {
+                porcentajePcl = 0;
+            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) === ""){
+                porcentajePcl = Number(total_deficiencia);
+            }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) === ""){
+                porcentajePcl = Number(dicapacidad_total);
+            }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) > 0){
+                porcentajePcl = Number(minusvalia_total);
+            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) === ""){
+                porcentajePcl = Number(total_deficiencia) + Number(dicapacidad_total);
+            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) > 0){
+                porcentajePcl = Number(total_deficiencia) + Number(minusvalia_total);
+            }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){
+                porcentajePcl = Number(dicapacidad_total) + Number(minusvalia_total);
+            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){
+                porcentajePcl = Number(total_deficiencia) + Number(dicapacidad_total) + Number(minusvalia_total);
+            }
+        }else if(definirDecreto_deficiencia == 2) {            
+            porcentajePcl = 0;            
+        }else{            
+            porcentajePcl = 0;            
+        }       
+
         $("#porcentaje_pcl").val(Math.round(porcentajePcl));
         if (porcentajePcl == 0) {
             $("#rango_pcl").val('PCL 0');
@@ -2298,6 +2331,8 @@ $(document).ready(function(){
             $('#btn_abrir_modal_auditivo').prop('disabled', true);
             $('#btn_abrir_modal_auditivo').css('cursor', 'not-allowed'); 
             $('#guardar_datos_deficiencia_alteraciones').prop('disabled', true);
+            $('#guardar_deficiencias_DecretoCero').prop('disabled', true);
+            $('#guardar_deficiencias_Decreto3').prop('disabled', true);
             $('#guardar_datos_cie10').prop('disabled', true);
             $('#guardar_datos_examenes').prop('disabled', true);           
             $('#ActualizarDecreto').prop('disabled', true);
@@ -2309,18 +2344,36 @@ $(document).ready(function(){
         }
 
         var textareaenfermedadactual = document.querySelector('#descripcion_enfermedad');
-        var enfermedadactual = textareaenfermedadactual.value; 
+        var enfermedadactual = textareaenfermedadactual.value;
+        
+        if(enfermedadactual == ""){
+            $('#ActualizarLaboralActivo').prop('disabled', true);
+            $('#GuardarLaboralActivo').prop('disabled', true);            
+            $('#btn_abrir_modal_agudeza').prop('disabled', true);
+            $('#btn_abrir_modal_agudeza').css('cursor', 'not-allowed');
+            $('#btn_abrir_modal_auditivo').prop('disabled', true);
+            $('#btn_abrir_modal_auditivo').css('cursor', 'not-allowed'); 
+            $('#guardar_datos_deficiencia_alteraciones').prop('disabled', true);
+            $('#guardar_deficiencias_DecretoCero').prop('disabled', true);
+            $('#guardar_datos_cie10').prop('disabled', true);
+            $('#guardar_datos_examenes').prop('disabled', true); 
+            $('#ActualizarRolOcupacional').prop('disabled', true);
+            $('#GuardarRolOcupacional').prop('disabled', true);            
+            $('#ActualizarLibros2_3').prop('disabled', true);  
+            $('#GuardarLibros2_3').prop('disabled', true);                        
+            $('#GuardrDictamenPericial').prop('disabled', true);  
+        }
         
         if(enfermedadactual !== "" && valorFecha !== ""){
-          $('#GuardrDictamenPericial').prop('disabled', true);
-          $('#origen_firme').prop('disabled', true);
-        $('#origen_cobertura').prop('disabled', true);
-        $('#decreto_califi').prop('disabled', true); 
-        }else if(enfermedadactual !== ""){
-            $('#GuardrDictamenPericial').prop('disabled', false);  
+            $('#GuardrDictamenPericial').prop('disabled', true);
             $('#origen_firme').prop('disabled', true);
             $('#origen_cobertura').prop('disabled', true);
-            $('#decreto_califi').prop('disabled', true);           
+            $('#decreto_califi').prop('disabled', true); 
+        }else if(enfermedadactual !== ""){
+            $('#origen_firme').prop('disabled', true);
+            $('#origen_cobertura').prop('disabled', true);
+            $('#decreto_califi').prop('disabled', true);
+            $('#GuardrDictamenPericial').prop('disabled', false);  
         }
 
         var valorOrigen = $('#origen_firme').val();
@@ -2705,12 +2758,9 @@ function funciones_elementos_fila_deficienciasDecretocero(num_decretoceroconse) 
             url:'/ListadoSelectoresDefiAlteraciones',
             data: datos_Nombre_tabla,
             success:function(data){
-                //console.log(data);
-                let claves = Object.keys(data);
-                //console.log(claves);
-                for (let i = 0; i < claves.length; i++) {
-                    $("#titulotabla_"+num_decretoceroconse).val(data[claves[i]]["Nombre_tabla"]);
-                }
+                //console.log(data);                
+                $("#titulotabla_"+num_decretoceroconse).empty();
+                $("#titulotabla_"+num_decretoceroconse).append(data[0]["Nombre_tabla"]);
             }
         });
     });
@@ -2720,44 +2770,136 @@ $(document).ready(function(){
     $("#guardar_deficiencias_DecretoCero").click(function(){       
             
         let token = $("input[name='_token']").val();
-        var guardar_datos = [];
-        var datos_finales_deficiciencias_decreto_cero = [];
-        var array_id_filas = [];
-        // RECORREMOS LOS TD DE LA TABLA PARA EXTRAER LOS DATOS E INSERTARLOS EN UN ARREGLO (LA INSERCIÓN LA HACE POR CADA FILA, POR ENDE, ES UN ARRAY MULTIDIMENSIONAL)
-        $('#listado_deficiencias_alteraciones_decretoCero tbody tr').each(function (index) {
-            array_id_filas.push($(this).attr('id'));
-            if ($(this).attr('id') !== "datos_deficiencias") {
-                $(this).children("td").each(function (index2) {
-                    var nombres_ids = $(this).find('*').attr("id");
-                    if (nombres_ids != undefined) {
-                        guardar_datos.push($('#'+nombres_ids).val());                        
+        var guardar_datos_alteraciones = [];
+        var datos_finales_deficiciencias_decreto_cero = [];      
+
+        $("#listado_deficiencias_alteraciones_decretoCero tbody tr").each(function (index){
+            $(this).children("td").each(function (index2) {
+
+                // extraemos todos los id
+                var nombres_ids_alteraciones = $(this).find('*').attr("id");
+
+                if (nombres_ids_alteraciones != undefined) {
+                    
+                    // Extraemos el id de la tabla
+                    if (nombres_ids_alteraciones.startsWith("lista_tabla_")) {
+                        var idtabla = $("#"+nombres_ids_alteraciones).val();
+                        // console.log(idtabla);
+                        guardar_datos_alteraciones.push(idtabla);
                     }
-                    if((index2+1) % 4 === 0){
-                        datos_finales_deficiciencias_decreto_cero.push(guardar_datos);
-                        guardar_datos = [];
-                    }
-                });
-            }
+
+                    // Analizamos si existe un select, input o text para extraer la información.
+                    if ($("#"+nombres_ids_alteraciones).val() == "") {
+                        var hay_select = '#'+nombres_ids_alteraciones+' select';
+                        var hay_input = '#'+nombres_ids_alteraciones+' input';
+                        if ($(hay_select).attr("id") != undefined) {
+                            var selector = $(hay_select).attr("id");
+                            var valor_select = $("#"+selector).val();
+                        }else if($(hay_input).attr("id") != undefined){
+                            var entrada_texto = $(hay_input).attr("id");
+                            var valor_input = $("#"+entrada_texto).val();
+                        }else{
+                            var valor_texto = $("#"+nombres_ids_alteraciones).text();
+                        }
+
+                        if (valor_select != undefined) {
+                            // console.log(valor_select);
+                            guardar_datos_alteraciones.push(valor_select);
+                        }
+                        if (valor_input != undefined && valor_input != "on") {
+                            // console.log(valor_input);
+                            guardar_datos_alteraciones.push(valor_input);
+                        }
+
+                        if (valor_texto) {
+                            // console.log(valor_texto);
+                            guardar_datos_alteraciones.push(valor_texto);
+                        }
+                      
+                    }               
+                    
+                }
+
+                if((index2+1) % 3 === 0){
+                    guardar_datos_alteraciones.splice(1,1);
+                    datos_finales_deficiciencias_decreto_cero.push(guardar_datos_alteraciones);
+                    //console.log(datos_finales_deficiciencias_decreto_cero);
+                    guardar_datos_alteraciones = [];
+                }
+            });
         });
         
         // ENVÍO POR AJAX LA INFORMACIÓN FINAL DE LA TABLA, JUNTO CON EL ID EVENTO, ID ASIGNACION, ID PROCESO
                   
-        var envio_datos_diagnosticos = {
+        var envio_datos_deficiencia_decretocero = {
             '_token': token,
             'datos_finales_deficiciencias_decreto_cero' : datos_finales_deficiciencias_decreto_cero,
             'Id_evento': $('#Id_Evento_decreto').val(),
             'Id_Asignacion': $('#Id_Asignacion_decreto').val(),
             'Id_proceso': $('#Id_Proceso_decreto').val(),                
-        };            
+        };  
+        
         $.ajax({
             type:'POST',
             url:'/guardarDeficieciasDecretosCero',
-            data: envio_datos_diagnosticos,
-            
+            data: envio_datos_deficiencia_decretocero,
+            success:function(response){
+                // console.log(response);
+                if (response.parametro == "inserto_informacion_deficiencias_decreto_cero") {
+                    $('#insercion_decreto_cero').removeClass('d-none');
+                    $('#insercion_decreto_cero').addClass('alert-success');
+                    $('#insercion_decreto_cero').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(() => {
+                        $('#insercion_decreto_cero').addClass('d-none');
+                        $('#insercion_decreto_cero').removeClass('alert-success');
+                        $('#insercion_decreto_cero').empty();
+                        location.reload();
+                    }, 3000);
+                }
+            }          
             
         });      
                
     });     
+});
+
+$(document).ready(function(){
+    $(document).on('click', "a[id^='btn_remover_deficiencias_decretocero_']", function(){
+
+        let token = $("input[name='_token']").val();
+        var datos_fila_quitar_deficiencia_cero = {
+            '_token': token,
+            'fila' : $(this).data("id_fila_quitar"),
+            'Id_evento': $('#Id_Evento_decreto').val()
+        };
+
+        //console.log(datos_fila_quitar_deficiencia_cero);
+        
+        $.ajax({
+            type:'POST',
+            url:'/eliminarDeficieciasDecretosCero',
+            data: datos_fila_quitar_deficiencia_cero,
+            success:function(response){
+                // console.log(response);
+                if (response.parametro == "fila_deficiencia_cero_eliminada") {
+                    $('#insercion_decreto_cero').empty();
+                    $('#insercion_decreto_cero').removeClass('d-none');
+                    $('#insercion_decreto_cero').addClass('alert-success');
+                    $('#insercion_decreto_cero').append('<strong>'+response.mensaje+'</strong>');
+                    
+                    setTimeout(() => {
+                        $('#insercion_decreto_cero').addClass('d-none');
+                        $('#insercion_decreto_cero').removeClass('alert-success');
+                        $('#insercion_decreto_cero').empty();
+                    }, 3000);
+                }
+                if (response.total_registros == 0) {
+                    $("#conteo_listado_deficiencia_alteraciones").val(response.total_registros);
+                }
+            }
+        });        
+
+    });
 });
 
 $(document).ready(function(){
@@ -2799,11 +2941,12 @@ $(document).ready(function(){
 });
 
 $(document).ready(function(){
-    $(document).on('click', "input[id^='dx_principal_auditiva']", function(){
+    $(document).on('click', "input[id^='dx_principal_deficiencia_auditiva_']", function(){
 
-        var checkboxDxPrincipal = document.getElementById('dx_principal_auditiva');        
+        var dataAuditiva = $(this).data("id_fila_dx_auditiva")
+        var checkboxDxPrincipal = document.getElementById('dx_principal_deficiencia_auditiva_'+dataAuditiva);        
         let token = $("input[name='_token']").val();
-        var dxPrincipal = $('#dx_principal_auditiva').val();
+        var dxPrincipal = $('#dx_principal_deficiencia_auditiva_'+dataAuditiva).val();
         var banderaDxPrincipal = $('#banderaDxPrincipal').val();
         if (checkboxDxPrincipal.checked) {
             //console.log(banderaDxPrincipal);
@@ -2870,11 +3013,12 @@ $(document).ready(function(){
 });
 
 $(document).ready(function(){
-    $(document).on('click', "input[id^='dx_principal_visual']", function(){
+    $(document).on('click', "input[id^='dx_principal_deficiencia_visual_']", function(){
 
-        var checkboxDxPrincipal = document.getElementById('dx_principal_visual');        
+        var dataVisual = $(this).data("id_fila_dx_visual")
+        var checkboxDxPrincipal = document.getElementById('dx_principal_deficiencia_visual_'+dataVisual);      
         let token = $("input[name='_token']").val();
-        var dx_principal_visual = $('#dx_principal_visual').val();
+        var dx_principal_visual = $('#dx_principal_deficiencia_visual_'+dataVisual).val();
         var banderaDxPrincipal_visual = $('#banderaDxPrincipal_visual').val();
         if (checkboxDxPrincipal.checked) {
             //console.log(banderaDxPrincipal_visual);
@@ -2891,7 +3035,15 @@ $(document).ready(function(){
                 success:function(response){
                     // console.log(response);
                     if (response.parametro == "fila_dxPrincipalagudeza_visual_agregado") {                                               
-                        setTimeout(() => {                            
+                        $('#dx_visual').empty();
+                        $('#dx_visual').removeClass('d-none');
+                        $('#dx_visual').addClass('alert-success');
+                        $('#dx_visual').append('<strong>'+response.mensaje+'</strong>');
+                        
+                        setTimeout(() => {
+                            $('#dx_visual').addClass('d-none');
+                            $('#dx_visual').removeClass('alert-success');
+                            $('#dx_visual').empty();
                             location.reload();
                         }, 3000);
                     }                
@@ -2913,7 +3065,15 @@ $(document).ready(function(){
                 success:function(response){
                     // console.log(response);
                     if (response.parametro == "fila_dxPrincipalagudeza_visual_agregado") {
-                        setTimeout(() => {                        
+                        $('#dx_visual').empty();
+                        $('#dx_visual').removeClass('d-none');
+                        $('#dx_visual').addClass('alert-success');
+                        $('#dx_visual').append('<strong>'+response.mensaje+'</strong>');
+                        
+                        setTimeout(() => {
+                            $('#dx_visual').addClass('d-none');
+                            $('#dx_visual').removeClass('alert-success');
+                            $('#dx_visual').empty();
                             location.reload();
                         }, 3000);
                     }                
@@ -2924,367 +3084,265 @@ $(document).ready(function(){
     });
 });
 
-$(document).ready(function() {    
-    var checkbox1 = $('#dx_principal_auditiva');
-    var checkbox2 = $('#dx_principal_visual');
-    var checkboxes = document.querySelectorAll("[id^='dx_principal_deficiencia_alteraciones_']");
-    //var checkboxes2 = document.querySelectorAll("[id^='checkbox_dx_principal_DefiAlteraciones_']"); 
-
-    // Verificar si el checkbox1 está marcado en el almacenamiento local   
+$(document).ready(function(){    
     setInterval(() => {
-        if (localStorage.getItem('checkbox1Checked') === 'true') {
-            localStorage.removeItem('checkboxDxPrincipal');
-            localStorage.removeItem('checkboxDxPrincipalNew');
-            checkbox1.prop('checked', true);
-            $("a[id^='btn_remover_examen_fila_agudeza']").css({
-                "cursor": "not-allowed",
-                "pointer-events": "none"
-            }).attr("disabled", true);          
-            checkbox2.attr('disabled', true);
-            function deshabilitarCheckboxes() {
-                for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].disabled = true;
-                }
-            }
-            
-            function checkboxCambiado() {
-                deshabilitarCheckboxes();        
-                //this.disabled = false;
-            }        
-            for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].addEventListener("change", checkboxCambiado());
-            }    
-            
-            function validarcheckboxNuevos() {
-                
-                var checkboxes2 = $('input[id^="checkbox_dx_principal_DefiAlteraciones_"]');
-                if (checkboxes2.length === 0) {
-                    //console.log("El NodeList está vacío");
-                } else {
-                    //console.log("El NodeList no está vacío");
-        
-                    checkboxes2.prop('disabled', true);
-        
-                    checkboxes2.on("change", function() {
-                        checkboxes2.prop('disabled', true);
-                    });
-                }
-            }
-    
-            validarcheckboxNuevos();    
-        }        
-    }, 500); 
-    
-    checkbox1.change(function() {
-        localStorage.setItem('checkbox1Checked', checkbox1.is(':checked'));
-        
-        if (checkbox1.is(':checked')) {
-            checkbox2.attr('disabled', true);
-            function deshabilitarCheckboxes() {
-                for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].disabled = true;
-                }
-            }
-            
-            function checkboxCambiado() {
-                deshabilitarCheckboxes();            
-                //this.disabled = false;
-            }
-            
-            for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].addEventListener("change", checkboxCambiado());
-            }
-            
-        } else {
-            checkbox2.attr('disabled', false);
-            function habilitarCheckboxes() {
-                for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].disabled = false;
-                }
-            }
-            
-            function checkboxCambiado() {
-                habilitarCheckboxes();            
-                //this.disabled = false;
-            }
-                        
-            for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].addEventListener("change", checkboxCambiado());
+       
+        var newid_checkbox_dx_principal_deficiencia = $("input[id^='checkbox_dx_principal_DefiAlteraciones_']").attr("id");
+        if ($("#" + newid_checkbox_dx_principal_deficiencia).is(':checked')) {
+            //console.log("Este checkbox " + newid_checkbox_dx_principal_deficiencia + " está chequeado"); 
+            $("input[id^='dx_principal_deficiencia_alteraciones_']").prop("disabled", true);
+            $("input[id^='dx_principal_deficiencia_auditiva_']").prop("disabled", true);
+            $("input[id^='dx_principal_deficiencia_visual_']").prop("disabled", true);
+        }else{
+            $("input[id^='dx_principal_deficiencia_alteraciones_']").prop("disabled", false);
+            $("input[id^='dx_principal_deficiencia_auditiva_']").prop("disabled", false);
+            $("input[id^='dx_principal_deficiencia_visual_']").prop("disabled", false);
+        }       
+        var checkboxes = $('[id^="dx_principal_deficiencia_alteraciones_"]');
+        checkboxes.each(function() {
+            var id_checkbox_dx_principal_deficiencia = $(this).attr('id');
+            if ($("#" + id_checkbox_dx_principal_deficiencia).is(':checked')) {
+                //console.log("Este checkbox " + id_checkbox_dx_principal_deficiencia + " está chequeado");                          
+                var numeroCheckboxSeleccionado = id_checkbox_dx_principal_deficiencia.split('_').pop();
+                var checkboxes = document.querySelectorAll('[id^="dx_principal_deficiencia_alteraciones"]');
+                checkboxes.forEach(function(checkbox) {
+                    var numeroCheckbox = checkbox.id.split('_').pop();
+                    if (numeroCheckbox !== numeroCheckboxSeleccionado) {
+                        checkbox.disabled = true;
+                    }
+                });          
+                $("input[id^='checkbox_dx_principal_DefiAlteraciones_']").prop("disabled", true);
+                $("input[id^='dx_principal_deficiencia_auditiva_']").prop("disabled", true);
+                $("input[id^='dx_principal_deficiencia_visual_']").prop("disabled", true);
             }            
-
-            localStorage.removeItem('checkbox1Checked');
-            localStorage.removeItem('checkbox2Checked');
-            localStorage.removeItem('checkboxDxPrincipal');
-            localStorage.removeItem('checkboxDxPrincipalNew');
+        });
+        
+        var id_checkbox_dx_principal_auditivo = $("input[id^='dx_principal_deficiencia_auditiva_']").attr("id");
+        if ($("#" + id_checkbox_dx_principal_auditivo).is(':checked')) {
+            //console.log("Este checkbox " + id_checkbox_dx_principal_auditivo + " está chequeado"); 
+            $("input[id^='checkbox_dx_principal_DefiAlteraciones_']").prop("disabled", true);
+            $("input[id^='dx_principal_deficiencia_alteraciones_']").prop("disabled", true);
+            $("input[id^='dx_principal_deficiencia_visual_']").prop("disabled", true);
         }
-    });   
-    
-    // Verificar si el checkbox2 está marcado en el almacenamiento local
-    setInterval(() => {
-        if (localStorage.getItem('checkbox2Checked') === 'true') {
-            localStorage.removeItem('checkboxDxPrincipal');
-            localStorage.removeItem('checkboxDxPrincipalNew');
-            checkbox2.prop('checked', true);
-            $("a[id^='btn_remover_fila_']").css({
-                "cursor": "not-allowed",
-                "pointer-events": "none"
-            }).attr("disabled", true); 
-            checkbox1.attr('disabled', true);
 
-            function deshabilitarCheckboxes() {
-                for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].disabled = true;
-                }
-            }
+        var id_checkbox_dx_principal_visual = $("input[id^='dx_principal_deficiencia_visual_']").attr("id");
+        if ($("#" + id_checkbox_dx_principal_visual).is(':checked')) {
+            //console.log("Este checkbox " + id_checkbox_dx_principal_visual + " está chequeado"); 
+            $("input[id^='checkbox_dx_principal_DefiAlteraciones_']").prop("disabled", true);
+            $("input[id^='dx_principal_deficiencia_alteraciones_']").prop("disabled", true);
+            $("input[id^='dx_principal_deficiencia_auditiva_']").prop("disabled", true);
+        }
+
+    }, 500);
+});
+
+$(document).ready(function(){
+    $("#guardar_deficiencias_Decreto3").click(function(){       
             
-            function checkboxCambiado() {
-                deshabilitarCheckboxes();        
-                //this.disabled = false;
-            }        
-            for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].addEventListener("change", checkboxCambiado());
-            }
-    
-            function validarcheckboxNuevos() {
+        let token = $("input[name='_token']").val();
+        var guardar_datos_alteraciones = [];
+        var datos_finales_deficiciencias_decreto_tres = [];      
+
+        $("#listado_deficiencias_decreto_tres tbody tr").each(function (index){
+            $(this).children("td").each(function (index2) {
+
+                // extraemos todos los id
+                var nombres_ids_alteraciones = $(this).find('*').attr("id");
+
+                if (nombres_ids_alteraciones != undefined) {
                     
-                var checkboxes2 = $('input[id^="checkbox_dx_principal_DefiAlteraciones_"]');
-                if (checkboxes2.length === 0) {
-                    //console.log("El NodeList está vacío");
-                } else {
-                    //console.log("El NodeList no está vacío");
-        
-                    checkboxes2.prop('disabled', true);
-        
-                    checkboxes2.on("change", function() {
-                        checkboxes2.prop('disabled', true);
-                    });
-                }
-            }
-    
-            validarcheckboxNuevos();
-        }        
-    }, 500);
-    
-    checkbox2.change(function() {
-        localStorage.setItem('checkbox2Checked', checkbox2.is(':checked'));
-        
-        if (checkbox2.is(':checked')) {
-            checkbox1.attr('disabled', true);
-            function deshabilitarCheckboxes() {
-                for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].disabled = true;
-                }
-            }
-            
-            function checkboxCambiado() {
-                deshabilitarCheckboxes();            
-                //this.disabled = false;
-            }
-            
-            for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].addEventListener("change", checkboxCambiado());
-            }
-        } else {
-            checkbox1.attr('disabled', false);
-            function habilitarCheckboxes() {
-                for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].disabled = false;
-                }
-            }
-            
-            function checkboxCambiado() {
-                habilitarCheckboxes();            
-                //this.disabled = false;
-            }
-                        
-            for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].addEventListener("change", checkboxCambiado());
-            }
-            localStorage.removeItem('checkbox1Checked');
-            localStorage.removeItem('checkbox2Checked');
-            localStorage.removeItem('checkboxDxPrincipal');
-            localStorage.removeItem('checkboxDxPrincipalNew');
-        }
-    });
+                    // Extraemos el id de la tabla
+                    if (nombres_ids_alteraciones.startsWith("tabladecreto3_")) {
+                        var idtabla = $("#"+nombres_ids_alteraciones).val();
+                        // console.log(idtabla);
+                        guardar_datos_alteraciones.push(idtabla);
+                    }
 
-    // Verificar si el checkboxes está marcado en el almacenamiento local  
-    function desavalidarCheckboxes(checkboxId) {
-        
-        var numeroCheckboxSeleccionado = checkboxId.split('_').pop();
-        var checkboxes = document.querySelectorAll('[id^="dx_principal_deficiencia_alteraciones"]');
-        checkboxes.forEach(function(checkbox) {
-            var numeroCheckbox = checkbox.id.split('_').pop();
-            if (numeroCheckbox !== numeroCheckboxSeleccionado) {
-            checkbox.disabled = true;
-            }
+                    // Analizamos si existe un select, input o text para extraer la información.
+                    if ($("#"+nombres_ids_alteraciones).val() == "") {
+                        var hay_select = '#'+nombres_ids_alteraciones+' select';
+                        var hay_input = '#'+nombres_ids_alteraciones+' input';
+                        if ($(hay_select).attr("id") != undefined) {
+                            var selector = $(hay_select).attr("id");
+                            var valor_select = $("#"+selector).val();
+                        }else if($(hay_input).attr("id") != undefined){
+                            var entrada_texto = $(hay_input).attr("id");
+                            var valor_input = $("#"+entrada_texto).val();
+                        }else{
+                            var valor_texto = $("#"+nombres_ids_alteraciones).text();
+                        }
+
+                        if (valor_select != undefined) {
+                            // console.log(valor_select);
+                            guardar_datos_alteraciones.push(valor_select);
+                        }
+                        if (valor_input != undefined && valor_input != "on") {
+                            // console.log(valor_input);
+                            guardar_datos_alteraciones.push(valor_input);
+                        }
+
+                        if (valor_texto) {
+                            // console.log(valor_texto);
+                            guardar_datos_alteraciones.push(valor_texto);
+                        }
+                      
+                    }   
+                    
+                    if (nombres_ids_alteraciones.startsWith("tablatitulodecreto3_")) {
+                        var idtabla = $("#"+nombres_ids_alteraciones).val();
+                        // console.log(idtabla);
+                        guardar_datos_alteraciones.push(idtabla);
+                    }
+
+                    // Analizamos si existe un select, input o text para extraer la información.
+                    if ($("#"+nombres_ids_alteraciones).val() == "") {
+                        var hay_select = '#'+nombres_ids_alteraciones+' select';
+                        var hay_input = '#'+nombres_ids_alteraciones+' input';
+                        if ($(hay_select).attr("id") != undefined) {
+                            var selector = $(hay_select).attr("id");
+                            var valor_select = $("#"+selector).val();
+                        }else if($(hay_input).attr("id") != undefined){
+                            var entrada_texto = $(hay_input).attr("id");
+                            var valor_input = $("#"+entrada_texto).val();
+                        }else{
+                            var valor_texto = $("#"+nombres_ids_alteraciones).text();
+                        }
+
+                        if (valor_select != undefined) {
+                            // console.log(valor_select);
+                            guardar_datos_alteraciones.push(valor_select);
+                        }
+                        if (valor_input != undefined && valor_input != "on") {
+                            // console.log(valor_input);
+                            guardar_datos_alteraciones.push(valor_input);
+                        }
+
+                        if (valor_texto) {
+                            // console.log(valor_texto);
+                            guardar_datos_alteraciones.push(valor_texto);
+                        }
+                      
+                    }
+
+                    if (nombres_ids_alteraciones.startsWith("deficienciadecreto3_")) {
+                        var idtabla = $("#"+nombres_ids_alteraciones).val();
+                        // console.log(idtabla);
+                        guardar_datos_alteraciones.push(idtabla);
+                    }
+
+                    // Analizamos si existe un select, input o text para extraer la información.
+                    if ($("#"+nombres_ids_alteraciones).val() == "") {
+                        var hay_select = '#'+nombres_ids_alteraciones+' select';
+                        var hay_input = '#'+nombres_ids_alteraciones+' input';
+                        if ($(hay_select).attr("id") != undefined) {
+                            var selector = $(hay_select).attr("id");
+                            var valor_select = $("#"+selector).val();
+                        }else if($(hay_input).attr("id") != undefined){
+                            var entrada_texto = $(hay_input).attr("id");
+                            var valor_input = $("#"+entrada_texto).val();
+                        }else{
+                            var valor_texto = $("#"+nombres_ids_alteraciones).text();
+                        }
+
+                        if (valor_select != undefined) {
+                            // console.log(valor_select);
+                            guardar_datos_alteraciones.push(valor_select);
+                        }
+                        if (valor_input != undefined && valor_input != "on") {
+                            // console.log(valor_input);
+                            guardar_datos_alteraciones.push(valor_input);
+                        }
+
+                        if (valor_texto) {
+                            // console.log(valor_texto);
+                            guardar_datos_alteraciones.push(valor_texto);
+                        }
+                      
+                    }
+                    
+                    
+                }
+
+                if((index2+1) % 3 === 0){
+                    //guardar_datos_alteraciones.splice(1,1);
+                    datos_finales_deficiciencias_decreto_tres.push(guardar_datos_alteraciones);
+                    console.log(datos_finales_deficiciencias_decreto_tres);
+                    guardar_datos_alteraciones = [];
+                }
+            });
         });
-
-        checkbox1.attr('disabled', true);
-        checkbox2.attr('disabled', true);
-    }     
-
-    function habivalidarCheckboxes(checkboxId) {
-        var numeroCheckboxSeleccionado = checkboxId.split('_').pop();
-    
-        var checkboxes = document.querySelectorAll('[id^="dx_principal_deficiencia_alteraciones"]');
-        checkboxes.forEach(function(checkbox) {
-            var numeroCheckbox = checkbox.id.split('_').pop();
-            if (numeroCheckbox !== numeroCheckboxSeleccionado) {
-            checkbox.disabled = false;
-            }
-        });
-
-        checkbox1.attr('disabled', false);
-        checkbox2.attr('disabled', false);
         
-        localStorage.removeItem('checkbox1Checked');
-        localStorage.removeItem('checkbox2Checked');
-        localStorage.removeItem('checkboxDxPrincipal');
-        localStorage.removeItem('checkboxDxPrincipalNew');
-
-    } 
-    //validarCheckboxes('dx_principal_deficiencia_alteraciones_');
-
-    $(document).on('click', "input[id^='dx_principal_deficiencia_alteraciones_']", function(){
-        var fila = $(this).data("id_fila_dx_principal");
-        localStorage.setItem("fila", fila);
-        localStorage.setItem('checkboxDxPrincipal', $(this).prop('checked'));
-        if ($(this).prop('checked')) {
-            desavalidarCheckboxes('dx_principal_deficiencia_alteraciones_'+fila);
-        }else{
-            habivalidarCheckboxes('dx_principal_deficiencia_alteraciones_'+fila);
-        }
-    });
-    setInterval(() => {
-        var filanew = localStorage.getItem("fila");
-        //var filasnews = localStorage.getItem("filas")
-        if (localStorage.getItem('checkboxDxPrincipal') === 'true') {
-            //localStorage.removeItem('checkboxDxPrincipal');
-            localStorage.removeItem('checkboxDxPrincipalNew');
-            localStorage.removeItem('filas');  
-            desavalidarCheckboxes('dx_principal_deficiencia_alteraciones_'+filanew);  
-            $('a[id^="btn_remover_deficiencia_alteraciones'+filanew+'"]').css({
-                "cursor": "not-allowed",
-                "pointer-events": "none"
-            }).attr("disabled", true); 
-                         
-            function validarcheckboxNuevos() {                    
-                var checkboxes2 = $('input[id^="checkbox_dx_principal_DefiAlteraciones_"]');
-                if (checkboxes2.length === 0) {
-                    //console.log("El NodeList está vacío");
-                } else {
-                    //console.log("El NodeList no está vacío");
+        // ENVÍO POR AJAX LA INFORMACIÓN FINAL DE LA TABLA, JUNTO CON EL ID EVENTO, ID ASIGNACION, ID PROCESO
+                  
+        var envio_datos_deficiencia_decretotres = {
+            '_token': token,
+            'datos_finales_deficiciencias_decreto_tres' : datos_finales_deficiciencias_decreto_tres,
+            'Id_evento': $('#Id_Evento_decreto').val(),
+            'Id_Asignacion': $('#Id_Asignacion_decreto').val(),
+            'Id_proceso': $('#Id_Proceso_decreto').val(),                
+        };  
         
-                    checkboxes2.prop('disabled', true);
-        
-                    checkboxes2.on("change", function() {
-                        checkboxes2.prop('disabled', true);
-                    });
+        $.ajax({
+            type:'POST',
+            url:'/guardarDeficieciasDecretosTres',
+            data: envio_datos_deficiencia_decretotres,
+            success:function(response){
+                // console.log(response);
+                if (response.parametro == "inserto_informacion_deficiencias_decreto_tres") {
+                    $('#insercion_decreto_3').removeClass('d-none');
+                    $('#insercion_decreto_3').addClass('alert-success');
+                    $('#insercion_decreto_3').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(() => {
+                        $('#insercion_decreto_3').addClass('d-none');
+                        $('#insercion_decreto_3').removeClass('alert-success');
+                        $('#insercion_decreto_3').empty();
+                        location.reload();
+                    }, 3000);
                 }
-            }    
-            validarcheckboxNuevos();
+            }          
             
-        }        
-    }, 500);
+        });      
+               
+    });     
+});
 
-    // Verificar si el checkboxes2 está marcado en el almacenamiento local  
-    function desavalidarCheckboxes2(checkbox2Id) {
+$(document).ready(function(){
+    $(document).on('click', "a[id^='btn_remover_deficiencias_decreto3_']", function(){
+
+        let token = $("input[name='_token']").val();
+        var datos_fila_quitar_deficiencia_cero = {
+            '_token': token,
+            'fila' : $(this).data("id_fila_quitar"),
+            'Id_evento': $('#Id_Evento_decreto').val()
+        };
+
+        //console.log(datos_fila_quitar_deficiencia_cero);
         
-        var numeroCheckbox2Seleccionado = checkbox2Id.split('_').pop();
-        var checkboxes2 = document.querySelectorAll('[id^="checkbox_dx_principal_DefiAlteraciones_"]');
-        checkboxes2.forEach(function(checkboxnew) {
-            var numeroCheckbox = checkboxnew.id.split('_').pop();
-            if (numeroCheckbox !== numeroCheckbox2Seleccionado) {
-                checkboxnew.disabled = true;
-            }
-        });       
-
-        checkbox1.attr('disabled', true);
-        checkbox2.attr('disabled', true);
-
-        $("[id^='dx_principal_deficiencia_alteraciones_']").prop('disabled', true);
-    }     
-
-    function habivalidarCheckboxes2(checkbox2Id) {
-        var numeroCheckbox2Seleccionado = checkbox2Id.split('_').pop();
-    
-        var checkboxes2 = document.querySelectorAll('[id^="checkbox_dx_principal_DefiAlteraciones_"]');
-        checkboxes2.forEach(function(checkboxnew) {
-            var numeroCheckbox = checkboxnew.id.split('_').pop();
-            if (numeroCheckbox !== numeroCheckbox2Seleccionado) {
-                checkboxnew.disabled = false;
-            }
-        });
-
-        checkbox1.attr('disabled', false);
-        checkbox2.attr('disabled', false);
-        $("[id^='dx_principal_deficiencia_alteraciones_']").prop('disabled', false);
-
-        localStorage.removeItem('checkbox1Checked');
-        localStorage.removeItem('checkbox2Checked');
-        localStorage.removeItem('checkboxDxPrincipalNew');
-        localStorage.removeItem('checkboxDxPrincipal');
-    } 
-
-    $(document).on('click', "input[id^='checkbox_dx_principal_DefiAlteraciones_']", function(){
-        var filas = $(this).data("id_fila_checkbox_dx_principal_defialteraciones");
-        localStorage.setItem("filas", filas);
-        localStorage.setItem('checkboxDxPrincipalNew', $(this).prop('checked'));
-        //localStorage.setItem('checkboxDxPrincipal', $(this).prop('checked'));
-        if ($(this).prop('checked')) {
-            desavalidarCheckboxes2('checkbox_dx_principal_DefiAlteraciones_'+filas);
-        }else{
-            habivalidarCheckboxes2('checkbox_dx_principal_DefiAlteraciones_'+filas);
-        }
-    });
-
-    var idCompleto = '';
-    function capturarIdCheckbox() {
-        $("[id^='dx_principal_deficiencia_alteraciones_']").each(function() {
-          if ($(this).is(':checked')) {
-            idCompleto = $(this).attr('id');
-            return false;
-          }
-        });    
-        return idCompleto;
-    }
-
-    setInterval(() => {
-        var filasnews = localStorage.getItem("filas")
-        if (localStorage.getItem('checkboxDxPrincipalNew') === 'true') {
-            desavalidarCheckboxes2('checkbox_dx_principal_DefiAlteraciones_'+filasnews);
-            capturarIdCheckbox();
-            var validacioncheck = $('#'+idCompleto);
-            if (validacioncheck.is(':checked') && validacioncheck.is(':disabled')) { 
-                validacioncheck.prop('disabled', false); 
-            }            
-            var matchResult = idCompleto.match(/\d+/);
-            if (matchResult && matchResult.length > 0) {
-                var newfilas = parseInt(matchResult[0]);
-                $('a[id^="btn_remover_deficiencia_alteraciones'+newfilas+'"]').css({
-                    "cursor": "not-allowed",
-                    "pointer-events": "none"
-                }).attr("disabled", true); 
-    
-            }
-            function validarcheckboxNuevos() {                    
-                var checkboxes2 = $('input[id^="checkbox_dx_principal_DefiAlteraciones_"]');
-                if (checkboxes2.length === 0) {
-                    //console.log("El NodeList está vacío");
-                } else {
-                    //console.log("El NodeList no está vacío");
-        
-                    checkboxes2.prop('disabled', true);
-        
-                    checkboxes2.on("change", function() {
-                        checkboxes2.prop('disabled', true);
-                    });
+        $.ajax({
+            type:'POST',
+            url:'/eliminarDeficieciasDecretosTres',
+            data: datos_fila_quitar_deficiencia_cero,
+            success:function(response){
+                // console.log(response);
+                if (response.parametro == "fila_deficiencia_tres_eliminada") {
+                    $('#insercion_decreto_3').empty();
+                    $('#insercion_decreto_3').removeClass('d-none');
+                    $('#insercion_decreto_3').addClass('alert-success');
+                    $('#insercion_decreto_3').append('<strong>'+response.mensaje+'</strong>');
+                    
+                    setTimeout(() => {
+                        $('#insercion_decreto_3').addClass('d-none');
+                        $('#insercion_decreto_3').removeClass('alert-success');
+                        $('#insercion_decreto_3').empty();
+                    }, 3000);
                 }
-            }    
-            validarcheckboxNuevos();    
-        }
-    }, 500);
+                if (response.total_registros == 0) {
+                    $("#conteo_listado_deficiencia_alteraciones").val(response.total_registros);
+                }
+            }
+        });        
 
+    });
 });
 
 $(document).ready(function(){

@@ -330,6 +330,7 @@
         @csrf
         <input hidden="hidden" type="text" name="Id_evento_calitec" id="Id_evento_calitec" value="{{$array_datos_calificacionOrigen[0]->ID_evento}}">
         <input hidden="hidden" type="text" name="Id_asignacion_calitec" id="Id_asignacion_calitec" value="{{$array_datos_calificacionOrigen[0]->Id_Asignacion}}">
+        <input hidden="hidden" type="text" name="Id_proceso_calitec" id="Id_proceso_calitec" value="{{$array_datos_calificacionOrigen[0]->Id_proceso}}">
         <button type="submit" id="botonFormulario2" style="display: none; !important"></button>
     </form>
 </div>

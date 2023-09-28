@@ -1175,7 +1175,7 @@ class CalificacionPCLController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
         ->select('sidae.Id_Deficiencia', 'sidae.ID_evento', 'sidae.Id_Asignacion', 'sidae.Id_proceso', 'sidae.Id_tabla',
         'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.CFM1', 'sidae.CFM2', 'sidae.FU', 'sidae.CAT', 'sidae.Clase_Final', 
-        'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
+        'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
         ->where([['sidae.ID_evento',$Id_evento_calitec],['sidae.Estado', '=', 'Activo']])->get();         
         
         $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
@@ -3383,10 +3383,145 @@ class CalificacionPCLController extends Controller
         }
         $time = time();
         $date = date("Y-m-d", $time);
-        $nombre_usuario = Auth::user()->name;
+        $nombre_usuario = Auth::user()->name;   
 
-        return 'Deficiencias decreto cer';
+        /* CAPTURA DE DATOS DE LA DEFICIENCIA */
+        $array_datos = $request->datos_finales_deficiciencias_decreto_cero;
+        //print_r($array_datos);
+
+        // Iteración para extraer los datos de la tabla y adicionar los datos de Id evento, Id asignacion y Id proceso
+        $array_datos_organizados = [];
+
+        foreach ($array_datos as $subarray_datos) {
+
+            array_unshift($subarray_datos, $request->Id_proceso);
+            array_unshift($subarray_datos, $request->Id_Asignacion);
+            array_unshift($subarray_datos, $request->Id_evento);
+
+            $subarray_datos[] = $nombre_usuario;
+            $subarray_datos[] = $date;
+
+            array_push($array_datos_organizados, $subarray_datos);
+        }
+
+        // Creación de array con los campos de la tabla: sigmel_informacion_deficiencias_alteraciones_eventos
         
+        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Id_tabla', 'Deficiencia', 'Nombre_usuario','F_registro'];
+        
+        // Combinación de los campos de la tabla con los datos
+        $array_datos_con_keys = [];
+        foreach ($array_datos_organizados as $subarray_datos_organizados) {
+            array_push($array_datos_con_keys, array_combine($array_keys_tabla, $subarray_datos_organizados));
+        }
+
+        // Inserción de la información
+        foreach ($array_datos_con_keys as $insertar) {
+            sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')->insert($insertar);
+        }
+
+        $mensajes = array(
+            "parametro" => 'inserto_informacion_deficiencias_decreto_cero',
+            "mensaje" => 'Deficiencia guardada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));    
 
     }
+
+    public function eliminarDeficieciasDecretoCero(Request $request){
+        $id_fila_deficiencia_cero = $request->fila;
+        $fila_actualizar = [
+            'Estado' => 'Inactivo'
+        ];
+
+        sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')->where('Id_Deficiencia', $id_fila_deficiencia_cero)
+        ->update($fila_actualizar);
+
+        $total_registros_deficiencias_cero = sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento', $request->Id_evento],['Estado', 'Activo']])->count();
+
+        $mensajes = array(
+            "parametro" => 'fila_deficiencia_cero_eliminada',
+            'total_registros' => $total_registros_deficiencias_cero,
+            "mensaje" => 'Deficiencia eliminada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+
+    }  
+
+    // Deficiencias Decreto Tres
+
+    public function guardarDeficieciasDecretoTres(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;   
+
+        /* CAPTURA DE DATOS DE LA DEFICIENCIA */
+        $array_datos = $request->datos_finales_deficiciencias_decreto_tres;
+        //print_r($array_datos);
+
+        // Iteración para extraer los datos de la tabla y adicionar los datos de Id evento, Id asignacion y Id proceso
+        $array_datos_organizados = [];
+
+        foreach ($array_datos as $subarray_datos) {
+
+            array_unshift($subarray_datos, $request->Id_proceso);
+            array_unshift($subarray_datos, $request->Id_Asignacion);
+            array_unshift($subarray_datos, $request->Id_evento);
+
+            $subarray_datos[] = $nombre_usuario;
+            $subarray_datos[] = $date;
+
+            array_push($array_datos_organizados, $subarray_datos);
+        }
+
+        // Creación de array con los campos de la tabla: sigmel_informacion_deficiencias_alteraciones_eventos
+        
+        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Tabla1999', 'Titulo_tabla1999', 'Deficiencia', 'Nombre_usuario','F_registro'];
+        
+        // Combinación de los campos de la tabla con los datos
+        $array_datos_con_keys = [];
+        foreach ($array_datos_organizados as $subarray_datos_organizados) {
+            array_push($array_datos_con_keys, array_combine($array_keys_tabla, $subarray_datos_organizados));
+        }
+
+        // Inserción de la información
+        foreach ($array_datos_con_keys as $insertar) {
+            sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')->insert($insertar);
+        }
+
+        $mensajes = array(
+            "parametro" => 'inserto_informacion_deficiencias_decreto_tres',
+            "mensaje" => 'Deficiencia guardada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));    
+
+    }
+
+    public function eliminarDeficieciasDecretoTres(Request $request){
+        $id_fila_deficiencia_cero = $request->fila;
+        $fila_actualizar = [
+            'Estado' => 'Inactivo'
+        ];
+
+        sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')->where('Id_Deficiencia', $id_fila_deficiencia_cero)
+        ->update($fila_actualizar);
+
+        $total_registros_deficiencias_tres = sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento', $request->Id_evento],['Estado', 'Activo']])->count();
+
+        $mensajes = array(
+            "parametro" => 'fila_deficiencia_tres_eliminada',
+            'total_registros' => $total_registros_deficiencias_tres,
+            "mensaje" => 'Deficiencia eliminada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+
+    }  
 }
