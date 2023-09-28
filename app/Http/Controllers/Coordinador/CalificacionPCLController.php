@@ -602,7 +602,9 @@ class CalificacionPCLController extends Controller
             $hitorialAgregarSeguimiento = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
             ->select('ID_evento','F_seguimiento','Causal_seguimiento','Descripcion_seguimiento','Nombre_usuario')
             ->where([
-                ['ID_evento', $newId_evento]
+                ['ID_evento', $newId_evento],
+                ['Estado','Activo'],
+                ['Id_proceso','2']
             ])
             ->get();
 
@@ -764,7 +766,8 @@ class CalificacionPCLController extends Controller
             
             $hitorialAgregarComunicado = cndatos_info_comunicado_eventos::on('sigmel_gestiones')
             ->where([
-                ['ID_evento', $newId_evento]
+                ['ID_evento', $newId_evento],
+                ['Id_proceso', '2']
             ])
             ->get();
             $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));

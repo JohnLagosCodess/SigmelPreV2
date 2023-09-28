@@ -435,6 +435,14 @@ Route::post('/captuarDestinatarioOrigen', [CalificacionOrigenController::class, 
 Route::post('/registrarComunicadoOrigen', [CalificacionOrigenController::class, 'guardarComunicadoOrigen']);
 // Acción: Capturar datos para el dataTable Comunicados Orogen
 Route::post('/historialComunicadoOrigen', [CalificacionOrigenController::class, 'historialComunicadosOrigen']);
+// Acción: Abrir modal para editar comunicado
+Route::post('/modalComunicadoOrigen', [CalificacionOrigenController::class, 'mostrarModalComunicadoOrigen'])->name('modalComunicadoOrigen');
+// Acción: Guardar Seguimientos Sugerido
+Route::post('/GuardarHistorialSeguiOrigen', [CalificacionOrigenController::class, 'GuardarHistorialSeguiOrigen']);
+// Acción: Actualizar comunicado
+Route::post('/actualizarComunicadoOrigen', [CalificacionOrigenController::class, 'actualizarComunicadoOrigen']);
+// Acción: Eliminar Fila (Cambiar a estado inactivo) Historial Seguimiento
+Route::post('/EliminarFilaHistoSeguimiento', [CalificacionOrigenController::class, 'EliminarFilaHistoSeguimiento'])->name('EliminarFilaHistoSeguimiento');
 // Acción: MOstrar vista Calificación Técnica PCL
 Route::get('/determinacionOrigenATEL', [DeterminacionOrigenATEL::class, 'mostrarVistaDtoATEL'])->name('determinacionOrigenATEL');
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */

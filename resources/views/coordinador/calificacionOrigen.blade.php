@@ -425,15 +425,15 @@
                                                 <tbody>
                                                     @if (!empty($listado_documentos_solicitados))
                                                         @foreach ($listado_documentos_solicitados as $prueba)
-                                                        <tr class="fila_visual_{{$prueba->Id_Documento_Solicitado}}" id="datos_visuales">
-                                                            <td>{{$prueba->F_solicitud_documento}}</td>
-                                                            <td>{{$prueba->Nombre_documento}}</td>
-                                                            <td>{{$prueba->Nombre_solicitante}}</td>
-                                                            <td>{{$prueba->F_recepcion_documento}}</td>
-                                                            <td>
-                                                                <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila_visual_{{$prueba->Id_Documento_Solicitado}}" data-id_fila_quitar="{{$prueba->Id_Documento_Solicitado}}" data-clase_fila="fila_visual_{{$prueba->Id_Documento_Solicitado}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
-                                                            </td>
-                                                        </tr>
+                                                            <tr class="fila_visual_{{$prueba->Id_Documento_Solicitado}}" id="datos_visuales">
+                                                                <td>{{$prueba->F_solicitud_documento}}</td>
+                                                                <td>{{$prueba->Nombre_documento}}</td>
+                                                                <td>{{$prueba->Nombre_solicitante}}</td>
+                                                                <td>{{$prueba->F_recepcion_documento}}</td>
+                                                                <td>
+                                                                    <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila_visual_{{$prueba->Id_Documento_Solicitado}}" data-id_fila_quitar="{{$prueba->Id_Documento_Solicitado}}" data-clase_fila="fila_visual_{{$prueba->Id_Documento_Solicitado}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
+                                                                </td>
+                                                            </tr>
                                                         @endforeach
                                                     @endif
                                                 </tbody>
@@ -473,6 +473,86 @@
                                     <tbody></tbody>
                                 </table>
                             </div>
+                        </div>
+                        <!-- Ver Historial de seguimientos -->
+                        <div class="card-header text-center">
+                            <h5>Historial de seguimientos</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de agregar una fila nueva es necesario
+                                            que diligencie en su totalidad los campos.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert d-none" id="resultado_insercion_seguimiento" role="alert">
+                            </div>
+                            <div class="table-responsive">
+                                <table id="listado_histori_seguimiento" class="table table-striped table-bordered" style="width: 100%">
+                                    <thead>
+                                        <tr class="bg-info">
+                                            <th>Causal de seguimiento</th>
+                                            <th>Fecha estipulada de seguimiento</th>
+                                            <th>Fecha seguimiento</th>
+                                            <th>Descripcion del seguimiento</th>
+                                            <th>Realizado Por</th>
+                                            <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_segui_fila"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (empty(($primer_seguimiento[0]->Causal_seguimiento)))
+                                            <tr id="primer_seguimiento">
+                                                <td><input type="text" id="primer_causal" name="primer_causal" value="Primer seguimiento" readonly></td>
+                                                <td><input type="date" id="f_estipulada1" name="f_estipulada1" disabled></td>
+                                                <td><input type="date" id="f_seguimiento1" name="f_seguimiento1" disabled></td>
+                                                <td><textarea id="descrip_seguimiento1" class="form-control" name="descrip_seguimiento1" cols="90" rows="2"></textarea></td>
+                                                <td><input type="text" class="form-control" name="realizado_por1" id="realizado_por1" value="" disabled></td>
+                                                <td></td>
+                                            </tr>
+                                        @endif
+                                        @if (empty(($segundo_seguimiento[0]->Causal_seguimiento)))
+                                            <tr id="segundo_seguimiento">
+                                                <td><input type="text" id="segundo_causal" name="segundo_causal" value="Segudo seguimiento" readonly></td>
+                                                <td><input type="date" id="f_estipulada2" name="f_estipulada2" disabled></td>
+                                                <td><input type="date" id="f_seguimiento2" name="f_seguimiento2"  disabled></td>
+                                                <td><textarea id="descrip_seguimiento2" class="form-control" name="descrip_seguimiento2" cols="90" rows="2"></textarea></td>
+                                                <td><input type="text" class="form-control" name="realizado_por2" id="realizado_por2" value="" disabled></td>
+                                                <td></td>
+                                            </tr>
+                                        @endif
+                                        @if (empty(($tercer_seguimiento[0]->Causal_seguimiento)))
+                                            <tr id="tercer_seguimiento">
+                                                <td><input type="text" id="tercer_causal" name="tercer_causal" value="Tercer seguimiento" readonly></td>
+                                                <td><input type="date" id="f_estipulada3" name="f_estipulada3" disabled></td>
+                                                <td><input type="date" id="f_seguimiento3" name="f_seguimiento3" disabled></td>
+                                                <td><textarea id="descrip_seguimiento3" class="form-control" name="descrip_seguimiento3" cols="90" rows="2"></textarea></td>
+                                                <td><input type="text" class="form-control" name="realizado_por3" id="realizado_por3" value="" disabled></td>
+                                                <td></td>
+                                            </tr>
+                                        @endif
+                                        @if (!empty($listado_seguimiento_solicitados))
+                                        @foreach ($listado_seguimiento_solicitados as $segui)
+                                            <tr class="fila_visual_segui_{{$segui->Id_Seguimiento}}" id="datos_visuales_segui">
+                                                <td>{{$segui->Causal_seguimiento}}</td>
+                                                <td>{{$segui->F_estipula_seguimiento}}</td>
+                                                <td>{{$segui->F_seguimiento}}</td>
+                                                <td>{{$segui->Descripcion_seguimiento}}</td>
+                                                <td>{{$segui->Nombre_usuario}}</td>
+                                                <td>
+                                                    <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila_visual_segui_{{$segui->Id_Seguimiento}}" data-id_fila_quitar_segui="{{$segui->Id_Seguimiento}}" data-clase_fila="fila_visual_segui_{{$segui->Id_Seguimiento}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                    </tbody>
+                                </table>
+                            </div><br>
+                            <x-adminlte-button class="mr-auto" id="guardar_datos_seguimiento" theme="info" label="Guardar"/>
+                            <br><br>
                         </div>
                     </div>
                 </div>
@@ -759,6 +839,284 @@
         </x-adminlte-modal>            
     </div>
 </div>
+{{-- Modal actualizar comunicado--}}
+<div class="row">
+    <div class="contenedor_sol_Generar_comunicado" style="float: left;">
+        <x-adminlte-modal id="modalcomunicados_" title="Generar comunicado" theme="info" icon="fas fa-file-pdf" size='xl' disable-animations>
+            <div class="row">
+                <div class="col-12">
+                    <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
+                    <div class="card-info" style="border: 1.5px solid black; border-radius: 2px;">
+                        <div class="card-header text-center">
+                            <h5>Generar comunicado</h5>
+                        </div>
+                        <form name="formu_comunicado" method="POST">
+                            @csrf
+                            <div class="card-body">                                
+                                <div class="row">  
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="cliente_comunicado_act">Cliente</label>
+                                            <input class="form-control" type="text" name="cliente_comunicado_act" id="cliente_comunicado_editar" disabled>
+                                            <input hidden="hidden" class="form-control" type="text" name="cliente_comunicado2_act" id="cliente_comunicado2_editar">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="nombre_afiliado_comunicado_act">Nombre del afiliado</label>
+                                            <input class="form-control" type="text" name="nombre_afiliado_comunicado_act" id="nombre_afiliado_comunicado_editar" disabled>
+                                            <input hidden="hidden" class="form-control" type="text" name="nombre_afiliado_comunicado2_act" id="nombre_afiliado_comunicado2_editar">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="tipo_documento_comunicado_act">Tipo de documento</label>
+                                            <input class="form-control" type="text" name="tipo_documento_comunicado_act" id="tipo_documento_comunicado_editar" disabled>
+                                            <input hidden="hidden" class="form-control" type="text" name="tipo_documento_comunicado2_act" id="tipo_documento_comunicado2_editar">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="identificacion_comunicado_act">N° de identificación</label>
+                                            <input class="form-control" type="text" name="identificacion_comunicado_act" id="identificacion_comunicado_editar" disabled>
+                                            <input hidden="hidden" class="form-control" type="text" name="identificacion_comunicado2_act" id="identificacion_comunicado2_editar">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="id_evento_comunicado_act">ID evento</label>
+                                            <input class="form-control" type="text" name="id_evento_comunicado_act" id="id_evento_comunicado_editar"  disabled>
+                                            <input hidden="hidden" class="form-control" type="text" name="id_evento_comunicado2_act" id="id_evento_comunicado2_editar">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de cambiar el destinatario
+                                    (Afiliado y Empresa) debe seleccionar nuevamente la Forma de envio y Revisó y en (Otro) todos.
+                                </div>                              
+                                <div class="row text-center">                                  
+                                    <label for="destinatario_principal_act" style="margin-left: 7px;">Destinatario Principal: <span style="color: red;">(*)</span></label>                                        
+                                    <div class="col-3">
+                                        <label for="afiliado_comunicado_act"><strong>Afiliado</strong></label>
+                                        <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="afiliado_comunicado_editar" value="Afiliado" style="margin-left: revert;" required>
+                                    </div>
+                                    <div class="col-3">
+                                        <label for="empresa_comunicado"><strong>Empresa</strong></label>
+                                        <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="empresa_comunicado_editar" value="Empresa" style="margin-left: revert;" required>
+                                    </div>
+                                    <div class="col-3">
+                                        <label for="Otro"><strong>Otro</strong></label>
+                                        <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="Otro_editar" value="Otro" style="margin-left: revert;" required>
+                                    </div>
+                                </div>                                                                                                                     
+                                <div class="row">                                        
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="nombre_destinatario_act"> Nombre destinatario <span style="color: red;">(*)</span></label>
+                                            <input class="form-control" type="text" name="nombre_destinatario_act" id="nombre_destinatario_editar" required>
+                                            <input hidden="hidden" class="form-control" type="text" name="nombre_destinatario_act2" id="nombre_destinatario_editar2" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="nic_cc_act">NIT / CC <span style="color: red;">(*)</span></label>
+                                            <input class="form-control" type="text" name="nic_cc_act" id="nic_cc_editar" required>
+                                            <input hidden="hidden" class="form-control" type="text" name="nic_cc_act2" id="nic_cc_editar2" required>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="direccion_destinatario_act">Dirección destinatario <span style="color: red;">(*)</span></label>
+                                            <input class="form-control" type="text" name="direccion_destinatario_act" id="direccion_destinatario_editar" required>
+                                            <input hidden="hidden" class="form-control" type="text" name="direccion_destinatario_act2" id="direccion_destinatario_editar2" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="telefono_destinatario_act">Telefono destinatario <span style="color: red;">(*)</span></label>
+                                            <input class="form-control" type="number" min="999999" max="9999999999" name="telefono_destinatario_act" id="telefono_destinatario_editar" required>
+                                            <input hidden="hidden" class="form-control" type="number" min="999999" max="9999999999" name="telefono_destinatario_act2" id="telefono_destinatario_editar2" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="email_destinatario_act">E-mail destinatario <span style="color: red;">(*)</span></label>
+                                            <input class="form-control" type="email" name="email_destinatario_act" id="email_destinatario_editar" required>
+                                            <input hidden="hidden" class="form-control" type="email" name="email_destinatario_act2" id="email_destinatario_editar2" required>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="departamento_destinatario_act">Departamento <span style="color: red;">(*)</span></label><br>
+                                            <select class="departamento_destinatario custom-select" name="departamento_destinatario_act" id="departamento_destinatario_editar" style="width: 100%;" required>                                                        
+                                            </select>
+                                            <input hidden="hidden" type="text" name="departamento_pdf" id="departamento_pdf">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="ciudad_destinatario_act">Ciudad <span style="color: red;">(*)</span></label><br>
+                                            <select class="ciudad_destinatario custom-select" name="ciudad_destinatario_act" id="ciudad_destinatario_editar" style="width: 100%;" required>
+                                            </select>
+                                            <input hidden="hidden" type="text" name="ciudad_pdf" id="ciudad_pdf">
+                                        </div>
+                                    </div>                                        
+                                    <div class="col-8">
+                                        <div class="form-group">
+                                            <label for="asunto_act">Asunto <span style="color: red;">(*)</span></label>
+                                            <input class="form-control" type="text" name="asunto_act" id="asunto_editar" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="cuerpo_comunicado_act">Cuerpo del comunicado <span style="color: red;">(*)</span></label>
+                                            <textarea class="form-control" name="cuerpo_comunicado_act" id="cuerpo_comunicado_editar" cols="30" rows="5" style="resize:none;" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2">
+                                        <div class="form-group">
+                                            <label for="anexos_act">Anexos</label>
+                                            <input class="form-control" type="number" name="anexos_act" id="anexos_editar">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="forma_envio_act">Forma de envío <span style="color: red;">(*)</span></label><br>
+                                            <select class="forma_envio_act custom-select" name="forma_envio_act" id="forma_envio_editar" style="width: 100%;" required>                                                    
+                                                <option value="">Seleccione una opción</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="elaboro_act">Elaboró</label>
+                                            <input class="form-control" type="text" name="elaboro_act" id="elaboro_editar" disabled>
+                                            <input hidden="hidden" class="form-control" type="text" name="elaboro2_act" id="elaboro2_editar">                                                
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="reviso_act">Revisó <span style="color: red;">(*)</span></label><br>
+                                            <select class="reviso custom-select" name="reviso_act" id="reviso_editar" style="width: 100%;" required>                                                    
+                                                <option value="">Seleccione una opción</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-1">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                <br>
+                                                <input class="custom-control-input" type="checkbox" id="firmarcomunicado_editar" name="firmarcomunicado_editar" value="firmar comunicado">
+                                                <label for="firmarcomunicado_editar" class="custom-control-label">Firmar</label>                 
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="agregar_copia">Agregar copia</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" type="checkbox" id="edit_copia_afiliado" name="edit_copia_afiliado" value="Afiliado">
+                                                    <label for="edit_copia_afiliado" class="custom-control-label">Afiliado</label>                 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" type="checkbox" id="edit_copia_empleador" name="edit_copia_empleador" value="Empleador">
+                                                    <label for="edit_copia_empleador" class="custom-control-label">Empleador</label>                 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" type="checkbox" id="edit_copia_eps" name="edit_copia_eps" value="EPS">
+                                                    <label for="edit_copia_eps" class="custom-control-label">EPS</label>                 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" type="checkbox" id="edit_copia_afp" name="edit_copia_afp" value="AFP">
+                                                    <label for="edit_copia_afp" class="custom-control-label">AFP</label>                 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" type="checkbox" id="edit_copia_arl" name="edit_copia_arl" value="ARL">
+                                                    <label for="edit_copia_arl" class="custom-control-label">ARL</label>                 
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="ciudad_comunicado_act">Ciudad <span style="color: red;">(*)</span></label>
+                                            <input class="form-control" type="text" name="ciudad_comunicado_act" id="ciudad_comunicado_editar" required>
+                                            <input hidden="hidden" type="text" class="form-control" name="Id_comunicado_act" id="Id_comunicado_act">
+                                            <input hidden="hidden" type="text" class="form-control" name="Id_evento_act" id="Id_evento_act">
+                                            <input hidden="hidden" type="text" class="form-control" name="Id_asignacion_act" id="Id_asignacion_act">
+                                            <input hidden="hidden" type="text" class="form-control" name="Id_procesos_act" id="Id_procesos_act">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="fecha_comunicado_act">Fecha</label>
+                                            <input class="form-control" type="date" name="fecha_comunicado_act" id="fecha_comunicado_editar" disabled>
+                                            <input hidden="hidden" class="form-control" type="date" name="fecha_comunicado2_act" id="fecha_comunicado2_editar">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="radicado_act">N° Radicado</label>
+                                            <input class="form-control" type="text" name="radicado_act" id="radicado_comunicado_editar" disabled>
+                                            <input hidden="hidden" class="form-control" type="text" name="radicado2_act" id="radicado2_comunicado_editar">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <input type="button" id="Editar_comunicados" class="btn btn-info" value="Actualizar">
+                                            <input type="submit" id="Pdf" class="btn btn-info" value="Pdf">                            
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="alerta_editar_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                                    </div>
+                                </div>
+                            </div>                                
+                        </form>                                                            
+                    </div>
+                </div>
+            </div>
+            <x-slot name="footerSlot">
+                <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
+            </x-slot>
+        </x-adminlte-modal>            
+    </div>
+</div>
 
 {{-- Modal cargue documentos --}}
 <?php $aperturaModal = 'Edicion'; ?>
@@ -820,6 +1178,55 @@
             
          });
     </script>
+    {{-- SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE HISTORIAL DE SEGUIMIENTOS --}}
+    <script type="text/javascript">
+        $(document).ready(function(){
+           var listado_histo_seguimiento = $('#listado_histori_seguimiento').DataTable({
+               "responsive": true,
+               "info": false,
+               "searching": false,
+               "ordering": false,
+               "scrollCollapse": true,
+               "scrollY": "30vh",
+               "paging": false,
+               "language":{
+                   "emptyTable": "No se encontró información"
+               }
+           });
+           autoAdjustColumns(listado_histo_seguimiento);
+           var contador2 = 0;
+           $('#btn_agregar_segui_fila').click(function(){
+               contador2 = contador2 + 1;
+               var nueva_fila2 = [
+                '<input type="text" class="form-control" id="otro_causal_fila_'+contador2+'" name="otro_causal">',
+                '<input type="date" class="form-control" id="fecha_estipula_fila_'+contador2+'" name="fecha_estipula" max="{{date("Y-m-d")}}"/>',
+                '<input type="date" class="form-control" id="fecha_seguimiento_fila_'+contador2+'" name="fecha_segui" value="<?php echo date("Y-m-d");?>" readonly/>',
+                '<textarea id="descrip_segui_fila_'+contador2+'" class="form-control" name="descrip_segui" cols="90" rows="4"></textarea>',
+                '<input type="text" class="form-control" id="otro_realizo_fila_'+contador2+'" name="otro_realizo" value="{{$nombre_usuario}}" readonly>',
+                '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_segui_fila" class="text-info" data-fila="fila_'+contador2+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
+                   'fila_'+contador2
+                ]; 
+               var agregar_fila2 = listado_histo_seguimiento.row.add(nueva_fila2).draw().node();
+              
+               $(agregar_fila2).addClass('fila_'+contador2);
+               $(agregar_fila2).attr("id", 'fila_'+contador2);
+
+               // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionOrigen.js)
+               //funciones_elementos_fila2(contador2);
+           });
+
+           $(document).on('click', '#btn_remover_segui_fila', function(){
+               var nombre_fila2 = $(this).data("fila");
+               listado_histo_seguimiento.row("."+nombre_fila2).remove().draw();
+           });
+
+           $(document).on('click', "a[id^='btn_remover_fila_visual_segui_']", function(){
+               var nombre_fila2 = $(this).data("clase_fila");
+               listado_histo_seguimiento.row("."+nombre_fila2).remove().draw();
+           });
+           
+        });
+   </script>
     <script>
         //funcion para habilitar el historial de acciones
         function historialDeAcciones() {

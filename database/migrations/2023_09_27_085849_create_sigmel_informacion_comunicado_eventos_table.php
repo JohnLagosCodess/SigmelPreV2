@@ -38,6 +38,7 @@ return new class extends Migration
             $table->string('Elaboro', 100);
             $table->integer('Reviso');
             $table->text('Agregar_copia')->nullable();
+            $table->string('Firmar_Comunicado', 20)->nullable();
             $table->string('Nombre_usuario', 100);
             $table->date('F_registro');
         });

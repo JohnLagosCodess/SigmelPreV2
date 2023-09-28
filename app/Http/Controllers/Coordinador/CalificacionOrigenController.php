@@ -16,6 +16,8 @@ use App\Models\sigmel_informacion_documentos_solicitados_eventos;
 use App\Models\sigmel_informacion_eventos;
 use App\Models\sigmel_informacion_comunicado_eventos;
 use App\Models\cndatos_info_comunicado_eventos;
+use App\Models\sigmel_informacion_seguimientos_eventos;
+
 
 
 
@@ -28,6 +30,7 @@ class CalificacionOrigenController extends Controller
             return redirect('/');
         }
         $user = Auth::user();
+        $nombre_usuario = Auth::user()->name;
         $time = time();
         $date = date("Y-m-d", $time);
         $newIdAsignacion=$request->newIdAsignacion;
@@ -146,8 +149,47 @@ class CalificacionOrigenController extends Controller
            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
            $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted;
        }
-        
-        return view('coordinador.calificacionOrigen', compact('user','array_datos_calificacionOrigen','arraylistado_documentos','arraycampa_documento_solicitado','SubModulo','Fnuevo','listado_documentos_solicitados','dato_validacion_no_aporta_docs','dato_ultimo_grupo_doc','dato_doc_sugeridos','dato_articulo_12','consecutivo'));
+       //Consulta Primer Seguimiento
+       $primer_seguimiento = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
+       ->select('*')
+       ->where([
+           ['Causal_seguimiento', '=', 'Primer seguimiento'],
+           ['Estado', '=', 'Activo'],
+           ['Id_proceso', '=', '1'],
+           ['ID_evento', '=', $newIdEvento]
+       ])
+       ->get();
+       //Consulta Segundo Seguimiento
+       $segundo_seguimiento = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
+       ->select('*')
+       ->where([
+           ['Causal_seguimiento', '=', 'Segudo seguimiento'],
+           ['Estado', '=', 'Activo'],
+           ['Id_proceso', '=', '1'],
+           ['ID_evento', '=', $newIdEvento]
+       ])
+       ->get();
+       //Consulta tercer Seguimiento
+       $tercer_seguimiento = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
+       ->select('*')
+       ->where([
+           ['Causal_seguimiento', '=', 'Tercer seguimiento'],
+           ['Estado', '=', 'Activo'],
+           ['Id_proceso', '=', '1'],
+           ['ID_evento', '=', $newIdEvento]
+       ])
+       ->get();
+       //Consulta Listado Historial de seguimientos
+       $listado_seguimiento_solicitados = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
+       ->select('*')
+       ->where([
+           ['ID_evento',$newIdEvento],
+           ['Estado','Activo'],
+           ['Id_proceso','1']
+        ])
+       ->get();
+
+        return view('coordinador.calificacionOrigen', compact('user','nombre_usuario','array_datos_calificacionOrigen','arraylistado_documentos','arraycampa_documento_solicitado','SubModulo','Fnuevo','listado_documentos_solicitados','dato_validacion_no_aporta_docs','dato_ultimo_grupo_doc','dato_doc_sugeridos','dato_articulo_12','consecutivo','primer_seguimiento','segundo_seguimiento','tercer_seguimiento','listado_seguimiento_solicitados'));
     }
 
     //Guardar informacion del modulo de Origen ATEL
@@ -641,17 +683,312 @@ class CalificacionOrigenController extends Controller
 
     public function historialComunicadosOrigen(Request $request){
 
-        $HistorialComunicadosPcl = $request->HistorialComunicadosPcl;
-
-        if ($HistorialComunicadosPcl == 'CargarComunicados') {
+        $HistorialComunicadosOrigen = $request->HistorialComunicadosOrigen;
+        $newId_evento = $request->newId_evento;
+        $newId_asignacion = $request->newId_asignacion;        
+        if ($HistorialComunicadosOrigen == 'CargarComunicados') {
             
             $hitorialAgregarComunicado = cndatos_info_comunicado_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento', $newId_evento],
+                ['Id_proceso', '1']
+            ])
             ->get();
-
             $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
             return response()->json(($arrayhitorialAgregarComunicado));
 
         }
         
     }
+    //Mostrar datos de comunicado edición
+    public function mostrarModalComunicadoOrigen(Request $request){
+
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;        
+        $destinatario_principal_comu = $request->destinatario_principal;
+        $id_evento = $request->id_evento;
+        $id_asignacion = $request->id_asignacion;
+        $id_proceso = $request->id_proceso;
+        $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+        ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+        ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
+        ->where([['sgt.Id_proceso_equipo', '=', $id_proceso]])->get();
+
+        return response()->json([
+            'destinatario_principal_comu' => $destinatario_principal_comu,
+            'array_datos_lider' => $array_datos_lider,
+        ]);
+        
+    }
+    //Actualizar Comunicado
+    public function actualizarComunicadoOrigen(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+        $Id_comunicado_editar = $request->Id_comunicado_editar;
+        $Id_evento_editar = $request->Id_evento_editar;
+        $Id_asignacion_editar = $request->Id_asignacion_editar;
+        $Id_procesos_editar = $request->Id_procesos_editar;
+        $radioafiliado_comunicado_editar = $request->radioafiliado_comunicado_editar;
+        $radioempresa_comunicado_editar = $request->radioempresa_comunicado_editar;
+        $radioOtro_editar = $request->radioOtro_editar;
+        $copiaComunicadoTotal = $request->agregar_copia_editar;
+        if (!empty($copiaComunicadoTotal)) {
+            $total_copia_comunicado = implode(", ", $copiaComunicadoTotal);                
+        }else{
+            $total_copia_comunicado = '';
+        }
+
+        if(!empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar) && empty($radioOtro_editar)){
+            $destinatario = 'Afiliado';
+        }elseif(empty($radioafiliado_comunicado_editar) && !empty($radioempresa_comunicado_editar) && empty($radioOtro_editar)){
+            $destinatario = 'Empresa';
+        }elseif(empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar) && !empty($radioOtro_editar)){
+            $destinatario = 'Otro';
+        }
+
+        $datos_info_actualizarComunicadoPcl=[
+
+            'ID_evento' => $Id_evento_editar,
+            'Id_Asignacion' => $Id_asignacion_editar,
+            'Id_proceso' => $Id_procesos_editar,
+            'Ciudad' => $request->ciudad_editar,
+            'F_comunicado' => $request->fecha_comunicado2_editar,
+            'N_radicado' => $request->radicado2_editar,
+            'Cliente' => $request->cliente_comunicado2_editar,
+            'Nombre_afiliado' => $request->nombre_afiliado_comunicado2_editar,
+            'T_documento' => $request->tipo_documento_comunicado2_editar,
+            'N_identificacion' => $request->identificacion_comunicado2_editar,
+            'Destinatario' => $destinatario,
+            'Nombre_destinatario' => $request->nombre_destinatario_editar,
+            'Nit_cc' => $request->nic_cc_editar,
+            'Direccion_destinatario' => $request->direccion_destinatario_editar,
+            'Telefono_destinatario' => $request->telefono_destinatario_editar,
+            'Email_destinatario' => $request->email_destinatario_editar,
+            'Id_departamento' => $request->departamento_destinatario_editar,
+            'Id_municipio' => $request->ciudad_destinatario_editar,
+            'Asunto' => $request->asunto_editar,
+            'Cuerpo_comunicado' => $request->cuerpo_comunicado_editar,
+            'Anexos' => $request->anexos_editar,
+            'Forma_envio' => $request->forma_envio_editar,
+            'Elaboro' => $request->elaboro2_editar,
+            'Reviso' => $request->reviso_editar,
+            'Agregar_copia' => $total_copia_comunicado,
+            'Firmar_Comunicado' => $request->firmarcomunicado,
+            'Nombre_usuario' => $nombre_usuario,
+            'F_registro' => $date,
+        ];
+
+        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado_editar)
+        ->update($datos_info_actualizarComunicadoPcl);
+
+        sleep(2);
+        $datos_info_historial_acciones = [
+            'ID_evento' => $Id_evento_editar,
+            'F_accion' => $date,
+            'Nombre_usuario' => $nombre_usuario,
+            'Accion_realizada' => "Se actualiza comunicado Origen ATEL.",
+            'Descripcion' => $request->asunto_editar,
+        ];
+
+        sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+        
+        $mensajes = array(
+            "parametro" => 'actualizar_comunicado',
+            "mensaje" => 'Comunicado actualizado satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+        
+    }
+    //Guardar Seguimientos Historial Origen
+    public function GuardarHistorialSeguiOrigen(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $date = date("Y-m-d");
+        $datetime = date("Y-m-d h:i:s");
+        $nombre_usuario = Auth::user()->name;
+        $parametro = $request->parametro;
+        $primer_causal = $request->primer_causal;
+        $descrip_seguimiento1 = $request->descrip_seguimiento1;
+        $segundo_causal = $request->segundo_causal;
+        $descrip_seguimiento2 = $request->descrip_seguimiento2;
+        $tercer_causal = $request->tercer_causal; 
+        $descrip_seguimiento3 = $request->descrip_seguimiento3;
+
+        //Valida el primer seguimiento
+        if($descrip_seguimiento1<>''){
+
+            $fecha_estipula_segui= date('Y-m-d', strtotime($date . ' +7 days'));
+            //Consulta si ya tiene registro de primer seguirmiento
+            $conteo_p1 = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
+            ->select('Causal_seguimiento as P1')
+            ->where([
+                ['Causal_seguimiento', '=', $primer_causal],
+                ['Estado', '=', 'Activo'],
+                ['Id_proceso', '=', '1'],
+                ['ID_evento', '=', $request->Id_evento]
+            ])
+            ->get();
+            //Si no tiene registro lo agrega
+            if(empty($conteo_p1[0]->P1)){
+                $datos_primer_segui = [
+                    'ID_Evento' => $request->Id_evento,
+                    'Id_Asignacion' => $request->Id_Asignacion,
+                    'Id_proceso' => $request->Id_proceso,
+                    'F_seguimiento' => $date,
+                    'F_estipula_seguimiento' => $fecha_estipula_segui,
+                    'Causal_seguimiento' => $primer_causal,
+                    'Descripcion_seguimiento' => $descrip_seguimiento1,
+                    'Nombre_usuario' => $nombre_usuario,
+                    'F_registro' => $date
+                    
+                ];
+                sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')->insert($datos_primer_segui);
+            }
+        }
+        //Valida el segundo seguimiento
+        if($descrip_seguimiento2<>''){
+
+            $fecha_estipula_segui2= date('Y-m-d', strtotime($date . ' +21 days'));
+            //Consulta si ya tiene registro de primer seguirmiento
+            $conteo_p2 = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
+            ->select('Causal_seguimiento as P2')
+            ->where([
+                ['Causal_seguimiento', '=', $segundo_causal],
+                ['Estado', '=', 'Activo'],
+                ['Id_proceso', '=', '1'],
+                ['ID_evento', '=', $request->Id_evento]
+            ])
+            ->get();
+            //Si no tiene registro lo agrega
+            if(empty($conteo_p2[0]->P2)){
+                $datos_segundo_segui = [
+                    'ID_Evento' => $request->Id_evento,
+                    'Id_Asignacion' => $request->Id_Asignacion,
+                    'Id_proceso' => $request->Id_proceso,
+                    'F_seguimiento' => $date,
+                    'F_estipula_seguimiento' => $fecha_estipula_segui2,
+                    'Causal_seguimiento' => $segundo_causal,
+                    'Descripcion_seguimiento' => $descrip_seguimiento2,
+                    'Nombre_usuario' => $nombre_usuario,
+                    'F_registro' => $date
+                    
+                ];
+                sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')->insert($datos_segundo_segui);
+            }
+        }
+        //Valida el tercer seguimiento
+        if($descrip_seguimiento3<>''){
+
+            $fecha_estipula_segui3= date('Y-m-d', strtotime($date . ' +27 days'));
+            //Consulta si ya tiene registro de primer seguirmiento
+            $conteo_p3 = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
+            ->select('Causal_seguimiento as P3')
+            ->where([
+                ['Causal_seguimiento', '=', $tercer_causal],
+                ['Estado', '=', 'Activo'],
+                ['Id_proceso', '=', '1'],
+                ['ID_evento', '=', $request->Id_evento]
+            ])
+            ->get();
+            //Si no tiene registro lo agrega
+            if(empty($conteo_p3[0]->P3)){
+                $datos_tercer_segui = [
+                    'ID_Evento' => $request->Id_evento,
+                    'Id_Asignacion' => $request->Id_Asignacion,
+                    'Id_proceso' => $request->Id_proceso,
+                    'F_seguimiento' => $date,
+                    'F_estipula_seguimiento' => $fecha_estipula_segui3,
+                    'Causal_seguimiento' => $tercer_causal,
+                    'Descripcion_seguimiento' => $descrip_seguimiento3,
+                    'Nombre_usuario' => $nombre_usuario,
+                    'F_registro' => $date
+                    
+                ];
+                sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')->insert($datos_tercer_segui);
+            }
+        }
+
+        // Si registra otros seguimientos
+        if (!empty($request->datos_finales_documentos_solicitados)) {
+
+            // Seteo del autoincrement para mantener el primary key siempre consecutivo.
+            $max_id = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
+            ->max('Id_Seguimiento');
+            if ($max_id <> "") {
+                DB::connection('sigmel_gestiones')
+                ->statement("ALTER TABLE sigmel_informacion_seguimientos_eventos AUTO_INCREMENT = ".($max_id));
+            }
+            
+           
+            // Captura del array de los datos de la tabla
+            $array_datos = $request->datos_finales_documentos_solicitados;
+            // Iteración para extraer los datos de la tabla y adicionar los datos de Id evento, Id asignacion y Id proceso
+            $array_datos_organizados = [];
+            foreach ($array_datos as $subarray_datos) {
+                
+                array_unshift($subarray_datos, $request->Id_proceso);
+                array_unshift($subarray_datos, $request->Id_Asignacion);
+                array_unshift($subarray_datos, $request->Id_evento);
+
+                $subarray_datos[] = $date;
+    
+                array_push($array_datos_organizados, $subarray_datos);
+            }
+    
+            // Creación de array con los campos de la tabla: sigmel_informacion_documentos_solicitados_eventos
+            $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso','Causal_seguimiento','F_estipula_seguimiento',
+            'F_seguimiento','Descripcion_seguimiento','Nombre_usuario','F_registro'];
+            // Combinación de los campos de la tabla con los datos
+            $array_datos_con_keys = [];
+            foreach ($array_datos_organizados as $subarray_datos_organizados) {
+                array_push($array_datos_con_keys, array_combine($array_keys_tabla, $subarray_datos_organizados));
+            }
+            // Inserción de la información
+            foreach ($array_datos_con_keys as $insertar) {
+                sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')->insert($insertar);
+            }
+        }
+       
+        $mensajes = array(
+            "parametro" => 'inserto_informacion',
+            "mensaje" => 'Información guardada satisfactoriamente.'
+        );
+        return json_decode(json_encode($mensajes, true)); 
+
+    }
+
+    // Eliminar fila de algun registro de la tabla de historial de seguimientos
+    public function EliminarFilaHistoSeguimiento(Request $request){
+
+        $id_fila = $request->fila;
+
+        $dato_actualizar = [
+            'Estado' => 'Inactivo'
+        ];
+
+        sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')->where('Id_seguimiento', $id_fila)
+        ->update($dato_actualizar);
+
+        $total_registros = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento', $request->Id_evento],['Estado', 'Activo']])->count();
+
+        $mensajes = array(
+            "parametro" => 'fila_eliminada',
+            'total_registros' => $total_registros,
+            "mensaje" => 'Información eliminada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+    }
+
 }
