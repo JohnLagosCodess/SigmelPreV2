@@ -482,7 +482,7 @@
                                             <div class="alert d-none" id="insercion_decreto_cero" role="alert">
                                             </div>
                                             <div class="table-responsive">
-                                                <table id="listado_deficiencias_alteraciones_decretoCero" class="table table-striped table-bordered" width="100%">
+                                                <table id="listado_deficiencias_decretoCero" class="table table-striped table-bordered" width="100%">
                                                     <thead>
                                                         <tr class="bg-info">
                                                             <th>Tabla</th>
@@ -552,7 +552,7 @@
                                     </div>
                                 </div>
                             </div>
-                        {{-- @elseif (!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 1)
+                        @elseif (!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 1)
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-12">
@@ -616,7 +616,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div> --}}
+                            </div>
                         @else
                             <div class="card-body">
                                 <div class="row">
@@ -725,10 +725,10 @@
                                                     <td>{{$agudeza_auditiva->Adicion_tinnitus}}</td>
                                                     <td>
                                                         @if ($agudeza_auditiva->Dx_Principal == 'Si') 
-                                                            <input class="scalesR" type="checkbox" name="dx_principal_auditiva" id="dx_principal_auditiva" checked>
+                                                            <input class="scalesR" type="checkbox" name="dx_principal_deficiencia_auditiva" id="dx_principal_deficiencia_auditiva_{{$agudeza_auditiva->Id_Agudeza_auditiva}}" data-id_fila_dx_auditiva="{{$agudeza_auditiva->Id_Agudeza_auditiva}}" checked>
                                                             <input hidden="hidden" type="text" name="banderaDxPrincipal" id="banderaDxPrincipal" value="NoDxPrincipal">
                                                         @else
-                                                            <input class="scalesR" type="checkbox" name="dx_principal_auditiva" id="dx_principal_auditiva">
+                                                            <input class="scalesR" type="checkbox" name="dx_principal_deficiencia_auditiva" id="dx_principal_deficiencia_auditiva_{{$agudeza_auditiva->Id_Agudeza_auditiva}}" data-id_fila_dx_auditiva="{{$agudeza_auditiva->Id_Agudeza_auditiva}}">
                                                             <input hidden="hidden" type="text" name="banderaDxPrincipal" id="banderaDxPrincipal" value="SiDxPrincipal">
                                                         @endif
                                                     </td>
@@ -759,6 +759,8 @@
                                 <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
                                     <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de eliminar una fila es necesario
                                     que NO este chequeado en DX Principal.
+                                </div>
+                                <div class="alert d-none" id="dx_visual" role="alert">
                                 </div>
                                 <div class="table-responsive" >
                                     <table id="listado_agudeza_visual" class="table table-striped table-bordered" width="100%">
@@ -796,10 +798,10 @@
                                                     <td>{{$info_agudeza->DSV}}</td>
                                                     <td>
                                                         @if ($info_agudeza->Dx_Principal == 'Si')
-                                                            <input class="scalesR" type="checkbox" name="dx_principal_visual" id="dx_principal_visual" checked>
+                                                            <input class="scalesR" type="checkbox" name="dx_principal_deficiencia_visual" id="dx_principal_deficiencia_visual_{{$info_agudeza->Id_agudeza}}" data-id_fila_dx_visual="{{$info_agudeza->Id_agudeza}}" checked>
                                                             <input hidden="hidden" type="text" name="banderaDxPrincipal_visual" id="banderaDxPrincipal_visual" value="NoDxPrincipal">
                                                         @else
-                                                            <input class="scalesR" type="checkbox" name="dx_principal_visual" id="dx_principal_visual">
+                                                            <input class="scalesR" type="checkbox" name="dx_principal_deficiencia_visual" id="dx_principal_deficiencia_visual_{{$info_agudeza->Id_agudeza}}" data-id_fila_dx_visual="{{$info_agudeza->Id_agudeza}}">
                                                             <input hidden="hidden" type="text" name="banderaDxPrincipal_visual" id="banderaDxPrincipal_visual" value="SiDxPrincipal">
                                                         @endif
                                                     </td>
@@ -6382,55 +6384,110 @@
         });
 
         //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DEFICIENCIAS ALTERACIONES DECRETO CERO 
-        $(".centrar").css('text-align', 'center');
-        var listado_deficiencias_alteraciones_decretoCero = $('#listado_deficiencias_alteraciones_decretoCero').DataTable({
-            "responsive": true,
-            "info": false,
-            "searching": false,
-            "ordering": false,
-            "scrollCollapse": true,
-            "scrollY": "30vh",
-            "paging": false,
-            "language":{
-                "emptyTable": "No se encontró información"
+        $(document).ready(function() {
+            $(".centrar").css('text-align', 'center');
+            if ($('#listado_deficiencias_decretoCero').length > 0) {
+                // Si existe, ejecutar el código
+                var listado_deficiencias_decretoCero = $('#listado_deficiencias_decretoCero').DataTable({
+                    "responsive": true,
+                    "info": false,
+                    "searching": false,
+                    "ordering": false,
+                    "scrollCollapse": true,
+                    "scrollY": "30vh",
+                    "paging": false,
+                    "language":{
+                        "emptyTable": "No se encontró información"
+                    }
+                }); 
+        
+                autoAdjustColumns(listado_deficiencias_decretoCero);
+                //listado_deficiencias_alteraciones_decretoCero.columns.adjust();
+                var contador_decretocero = 0;
+                $('#btn_agregar_deficiencia_decretoceroFila').click(function(){
+                    $('#guardar_deficiencias_DecretoCero').removeClass('d-none');
+        
+                    contador_decretocero = contador_decretocero + 1;
+                    var nueva_fila_decretoCero = [
+                        '<select id="lista_tabla_'+contador_decretocero+'" class="custom-select lista_tabla_'+contador_decretocero+'" name="lista_tabla"><option></option></select>',
+                        '<div id="titulotabla_'+contador_decretocero+'"></div>',       
+                        '<div id="deficienciaDecreto_'+contador_decretocero+'">0</div>',
+                        '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_deficienciaDecretoCero" class="text-info" data-fila="fila_'+contador_decretocero+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
+                        'fila_'+contador_decretocero
+                    ];
+        
+                    var agregar_deficiencia_decretoCero = listado_deficiencias_decretoCero.row.add(nueva_fila_decretoCero).draw().node();
+                    $(agregar_deficiencia_decretoCero).addClass('fila_'+contador_decretocero);
+                    $(agregar_deficiencia_decretoCero).attr("id", 'fila_'+contador_decretocero);
+        
+                    // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionpcl.js)
+                    funciones_elementos_fila_deficienciasDecretocero(contador_decretocero);
+                });
+                    
+                $(document).on('click', '#btn_remover_deficienciaDecretoCero', function(){
+                    var nombre_decretoCero = $(this).data("fila");
+                    listado_deficiencias_decretoCero.row("."+nombre_decretoCero).remove().draw();
+                });
+        
+                $(document).on('click', "a[id^='btn_remover_deficiencias_decretocero_']", function(){
+                    var nombre_decretoCero = $(this).data("clase_fila");
+                    listado_deficiencias_decretoCero.row("."+nombre_decretoCero).remove().draw();
+                });
             }
-        }); 
-
-        //autoAdjustColumns(listado_deficiencias_alteraciones_decretoCero);
-        listado_deficiencias_alteraciones_decretoCero.columns.adjust();
-
-
-        var contador_decretocero = 0;
-        $('#btn_agregar_deficiencia_decretoceroFila').click(function(){
-            $('#guardar_deficiencias_DecretoCero').removeClass('d-none');
-
-            contador_decretocero = contador_decretocero + 1;
-            var nueva_fila_decretoCero = [
-                '<select id="lista_tabla_'+contador_decretocero+'" class="custom-select lista_tabla_'+contador_decretocero+'" name="lista_tabla"><option></option></select>',
-                '<div id="titulotabla_'+contador_decretocero+'"></div>',       
-                '<div id="deficienciaDecreto_'+contador_decretocero+'">0</div>',
-                '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_deficienciaDecretoCero" class="text-info" data-fila="fila_'+contador_decretocero+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
-                'fila_'+contador_decretocero
-            ];
-
-            var agregar_deficiencia_decretoCero = listado_deficiencias_alteraciones_decretoCero.row.add(nueva_fila_decretoCero).draw().node();
-            $(agregar_deficiencia_decretoCero).addClass('fila_'+contador_decretocero);
-            $(agregar_deficiencia_decretoCero).attr("id", 'fila_'+contador_decretocero);
-
-            // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionpcl.js)
-            funciones_elementos_fila_deficienciasDecretocero(contador_decretocero);
-        });
-            
-        $(document).on('click', '#btn_remover_deficienciaDecretoCero', function(){
-            var nombre_decretoCero = $(this).data("fila");
-            listado_deficiencias_alteraciones_decretoCero.row("."+nombre_decretoCero).remove().draw();
-        });
-
-        $(document).on('click', "a[id^='btn_remover_deficiencias_decretocero_']", function(){
-            var nombre_decretoCero = $(this).data("clase_fila");
-            listado_deficiencias_alteraciones_decretoCero.row("."+nombre_decretoCero).remove().draw();
         });
         
+        //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DEFICIENCIAS ALTERACIONES DECRETO TRES
+        $(document).ready(function() {
+            $(".centrar").css('text-align', 'center');
+            if ($('#listado_deficiencias_decreto_tres').length > 0) {
+                // Si existe, ejecutar el código
+                var listado_deficiencias_decreto_tres = $('#listado_deficiencias_decreto_tres').DataTable({
+                    "responsive": true,
+                    "info": false,
+                    "searching": false,
+                    "ordering": false,
+                    "scrollCollapse": true,
+                    "scrollY": "30vh",
+                    "paging": false,
+                    "language":{
+                        "emptyTable": "No se encontró información"
+                    }
+                });
+                autoAdjustColumns(listado_deficiencias_decreto_tres);
+                //listado_deficiencias_decreto_tres.columns.adjust();  
+                var contador_decreto3 = 0;
+                $('#btn_agregar_deficiencia_decretotresfila').click(function(){
+                    $('#guardar_deficiencias_Decreto3').removeClass('d-none');
+        
+                    contador_decreto3 = contador_decreto3 + 1;
+                    var nueva_fila_decreto3 = [
+                        '<input type="text" class="form-control" name="tabladecreto3_" id="tabladecreto3_'+contador_decreto3+'">',
+                        '<input type="text" class="form-control"  name="tablatitulodecreto3_" id="tablatitulodecreto3_'+contador_decreto3+'">',
+                        '<input type="number" class="form-control"  name="deficienciadecreto3_" id="deficienciadecreto3_'+contador_decreto3+'">',
+                        '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_deficienciaDecreto3" class="text-info" data-fila="fila_'+contador_decreto3+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
+                        'fila_'+contador_decreto3
+                    ];
+        
+                    var agregar_deficiencia_decreto3 = listado_deficiencias_decreto_tres.row.add(nueva_fila_decreto3).draw().node();
+                    $(agregar_deficiencia_decreto3).addClass('fila_'+contador_decreto3);
+                    $(agregar_deficiencia_decreto3).attr("id", 'fila_'+contador_decreto3);
+        
+                });
+        
+               
+                $(document).on('click', '#btn_remover_deficienciaDecreto3', function(){
+                    var nombre_decreto3 = $(this).data("fila");
+                    listado_deficiencias_decreto_tres.row("."+nombre_decreto3).remove().draw();
+                });
+        
+                $(document).on('click', "a[id^='btn_remover_deficiencias_decreto3_']", function(){
+                    var nombre_decreto3 = $(this).data("clase_fila");
+                    listado_deficiencias_decreto_tres.row("."+nombre_decreto3).remove().draw();
+                });
+            }
+    
+        });
+
         //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE DEFICIENCIA POR FACTOR
         //Falta agregar función
 

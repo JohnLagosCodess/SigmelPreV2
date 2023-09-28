@@ -6,65 +6,69 @@ valor_CAT_seleccionado,
 fila_pertenece, id_tabla_pertenece, nombre_tabla_pertenece;
 $(document).ready(function(){
     $(".centrar").css('text-align', 'center');
-    /* GENERACIÓN DEL DATATABLE */
-    var tabla_alteraciones_sistemas = $('#listado_deficiencia_porfactor').DataTable({
-        "responsive": true,
-        "info": false,
-        "searching": false,
-        "ordering": false,
-        "scrollCollapse": true,
-        "scrollY": "30vh",
-        "paging": false,
-        "language":{
-            "emptyTable": "No se encontró información"
-        }
-    });
 
-    /* FUNCIÓN PARA AJUSTAR COLUMNAS */
-    //autoAdjustColumns(tabla_alteraciones_sistemas);
-    tabla_alteraciones_sistemas.columns.adjust();
-
-    /* REALIZAR LA INSERCIÓN DEL CONTENIDO EN LA FILA */
-    var contador_alteraciones = 0;
-    $("#btn_agregar_deficiencia_porfactor").click(function(){
-        
-        $('#guardar_datos_deficiencia_alteraciones').removeClass('d-none');
-        contador_alteraciones = contador_alteraciones + 1;
-        // 11
-        var nueva_fila_alteraciones = [
-          '<select id="listado_tablas_fila_alteraciones_'+contador_alteraciones+'" class="form-comtrol custom-select listado_tablas_fila_alteraciones_'+contador_alteraciones+'" name="ident_tabla"><option></option></select>',
-          '<div id="titulo_tabla_fila_alteraciones_'+contador_alteraciones+'"></div>',
-          '<div id="FP_fila_alteraciones_'+contador_alteraciones+'"></div>',
-          '<div id="CFM1_fila_alteraciones_'+contador_alteraciones+'"></div>',
-          '<div id="CFM2_fila_alteraciones_'+contador_alteraciones+'"></div>',
-          '<div id="FU_fila_alteraciones_'+contador_alteraciones+'"></div>',
-          '<div id="CAT_fila_alteraciones_'+contador_alteraciones+'"></div>',
-          '<div id="ClaseFinal_fila_alteraciones_'+contador_alteraciones+'"></div>',
-          '<input type="checkbox" id="checkbox_dx_principal_DefiAlteraciones_'+contador_alteraciones+'" class="checkbox_dx_principal_DefiAlteraciones_'+contador_alteraciones+'" data-id_fila_checkbox_dx_principal_DefiAlteraciones="'+contador_alteraciones+'" style="transform: scale(1.2);">',
-          '<div id="MSD_fila_alteraciones_'+contador_alteraciones+'"></div>',
-          '<div id="Deficiencia_fila_alteraciones_'+contador_alteraciones+'"></div>',
-          '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_quitar_fila_alteraciones" class="text-info" data-fila="fila_alteraciones_'+contador_alteraciones+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
-          'fila_alteraciones_'+contador_alteraciones
-        ];
-
-        var agregar_fila_alteraciones = tabla_alteraciones_sistemas.row.add(nueva_fila_alteraciones).draw().node();
-        $(agregar_fila_alteraciones).addClass('fila_alteraciones_'+contador_alteraciones);
-        $(agregar_fila_alteraciones).attr("id", 'fila_alteraciones_'+contador_alteraciones);
-
-
-        // Esta función realiza los controles de cada elemento por fila
-        funciones_elementos_fila_alteraciones(contador_alteraciones);
-    });
-
-    $(document).on('click', '#btn_quitar_fila_alteraciones', function(){
-        var nombre_fila_alteraciones = $(this).data("fila");
-        tabla_alteraciones_sistemas.row("."+nombre_fila_alteraciones).remove().draw();
-    });
-
-    $(document).on('click', "a[id^='btn_remover_deficiencia_alteraciones']", function(){
-        var nombre_fila_alteraciones = $(this).data("clase_fila");
-        tabla_alteraciones_sistemas.row("."+nombre_fila_alteraciones).remove().draw();
-    });
+    if ($('#listado_deficiencia_porfactor').length > 0) {
+        // Si existe, ejecutar el código
+        /* GENERACIÓN DEL DATATABLE */
+        var tabla_alteraciones_sistemas = $('#listado_deficiencia_porfactor').DataTable({
+            "responsive": true,
+            "info": false,
+            "searching": false,
+            "ordering": false,
+            "scrollCollapse": true,
+            "scrollY": "30vh",
+            "paging": false,
+            "language":{
+                "emptyTable": "No se encontró información"
+            }
+        });
+    
+        /* FUNCIÓN PARA AJUSTAR COLUMNAS */
+        autoAdjustColumns(tabla_alteraciones_sistemas);
+        //tabla_alteraciones_sistemas.columns.adjust();
+    
+        /* REALIZAR LA INSERCIÓN DEL CONTENIDO EN LA FILA */
+        var contador_alteraciones = 0;
+        $("#btn_agregar_deficiencia_porfactor").click(function(){
+            
+            $('#guardar_datos_deficiencia_alteraciones').removeClass('d-none');
+            contador_alteraciones = contador_alteraciones + 1;
+            // 11
+            var nueva_fila_alteraciones = [
+              '<select id="listado_tablas_fila_alteraciones_'+contador_alteraciones+'" class="form-comtrol custom-select listado_tablas_fila_alteraciones_'+contador_alteraciones+'" name="ident_tabla"><option></option></select>',
+              '<div id="titulo_tabla_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<div id="FP_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<div id="CFM1_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<div id="CFM2_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<div id="FU_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<div id="CAT_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<div id="ClaseFinal_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<input type="checkbox" id="checkbox_dx_principal_DefiAlteraciones_'+contador_alteraciones+'" class="checkbox_dx_principal_DefiAlteraciones_'+contador_alteraciones+'" data-id_fila_checkbox_dx_principal_DefiAlteraciones="'+contador_alteraciones+'" style="transform: scale(1.2);">',
+              '<div id="MSD_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<div id="Deficiencia_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_quitar_fila_alteraciones" class="text-info" data-fila="fila_alteraciones_'+contador_alteraciones+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
+              'fila_alteraciones_'+contador_alteraciones
+            ];
+    
+            var agregar_fila_alteraciones = tabla_alteraciones_sistemas.row.add(nueva_fila_alteraciones).draw().node();
+            $(agregar_fila_alteraciones).addClass('fila_alteraciones_'+contador_alteraciones);
+            $(agregar_fila_alteraciones).attr("id", 'fila_alteraciones_'+contador_alteraciones);
+    
+    
+            // Esta función realiza los controles de cada elemento por fila
+            funciones_elementos_fila_alteraciones(contador_alteraciones);
+        });
+    
+        $(document).on('click', '#btn_quitar_fila_alteraciones', function(){
+            var nombre_fila_alteraciones = $(this).data("fila");
+            tabla_alteraciones_sistemas.row("."+nombre_fila_alteraciones).remove().draw();
+        });
+    
+        $(document).on('click', "a[id^='btn_remover_deficiencia_alteraciones']", function(){
+            var nombre_fila_alteraciones = $(this).data("clase_fila");
+            tabla_alteraciones_sistemas.row("."+nombre_fila_alteraciones).remove().draw();
+        });
+    }
 
 });
 
