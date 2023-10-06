@@ -1,5 +1,7 @@
 $(document).ready(function(){
     //localStorage.clear();
+    localStorage.removeItem('filas');
+    localStorage.removeItem('checkboxDxPrincipalNew');
     // Inicializacion del select2 de listados  Módulo Calificacion Tecnica PCL
     $(".origen_firme").select2({
         placeholder:"Seleccione una opción",
@@ -3085,21 +3087,88 @@ $(document).ready(function(){
 
     });
 });
+// Dx Principal
+$(document).ready(function(){      
+    function desavalidarCheckboxes2(checkbox2Id) {
+        
+        var numeroCheckbox2Seleccionado = checkbox2Id.split('_').pop();
+        var checkboxes2 = document.querySelectorAll('[id^="checkbox_dx_principal_DefiAlteraciones_"]');
+        checkboxes2.forEach(function(checkboxnew) {
+            var numeroCheckbox = checkboxnew.id.split('_').pop();
+            if (numeroCheckbox !== numeroCheckbox2Seleccionado) {
+                checkboxnew.disabled = true;
+            }
+        });       
 
-$(document).ready(function(){    
-    setInterval(() => {
-       
-        var newid_checkbox_dx_principal_deficiencia = $("input[id^='checkbox_dx_principal_DefiAlteraciones_']").attr("id");
-        if ($("#" + newid_checkbox_dx_principal_deficiencia).is(':checked')) {
-            //console.log("Este checkbox " + newid_checkbox_dx_principal_deficiencia + " está chequeado"); 
-            $("input[id^='dx_principal_deficiencia_alteraciones_']").prop("disabled", true);
-            $("input[id^='dx_principal_deficiencia_auditiva_']").prop("disabled", true);
-            $("input[id^='dx_principal_deficiencia_visual_']").prop("disabled", true);
+        $("[id^='dx_principal_deficiencia_auditiva_']").prop('disabled', true);
+        $("[id^='dx_principal_deficiencia_visual_']").prop('disabled', true);
+        $("[id^='dx_principal_deficiencia_alteraciones_']").prop('disabled', true);
+    }     
+
+    function habivalidarCheckboxes2(checkbox2Id) {
+        var numeroCheckbox2Seleccionado = checkbox2Id.split('_').pop();
+    
+        var checkboxes2 = document.querySelectorAll('[id^="checkbox_dx_principal_DefiAlteraciones_"]');
+        checkboxes2.forEach(function(checkboxnew) {
+            var numeroCheckbox = checkboxnew.id.split('_').pop();
+            if (numeroCheckbox !== numeroCheckbox2Seleccionado) {
+                checkboxnew.disabled = false;
+            }
+        });
+        $("[id^='dx_principal_deficiencia_auditiva_']").prop('disabled', false);
+        $("[id^='dx_principal_deficiencia_visual_']").prop('disabled', false);       
+        $("[id^='dx_principal_deficiencia_alteraciones_']").prop('disabled', false);
+
+        localStorage.removeItem('filas');
+        localStorage.removeItem('checkboxDxPrincipalNew');
+
+        $('a[data-fila^="fila_alteraciones_"]').removeAttr('style');
+    } 
+
+    $(document).on('click', "input[id^='checkbox_dx_principal_DefiAlteraciones_']", function(){
+        var filas = $(this).data("id_fila_checkbox_dx_principal_defialteraciones");
+        localStorage.setItem("filas", filas);
+        localStorage.setItem('checkboxDxPrincipalNew', $(this).prop('checked'));
+        if ($(this).prop('checked')) {
+            desavalidarCheckboxes2('checkbox_dx_principal_DefiAlteraciones_'+filas);
         }else{
-            $("input[id^='dx_principal_deficiencia_alteraciones_']").prop("disabled", false);
-            $("input[id^='dx_principal_deficiencia_auditiva_']").prop("disabled", false);
-            $("input[id^='dx_principal_deficiencia_visual_']").prop("disabled", false);
-        }       
+            habivalidarCheckboxes2('checkbox_dx_principal_DefiAlteraciones_'+filas);
+        }
+    });
+   
+    var idCompleto = '';
+    function capturarIdCheckbox() {
+        $("[id^='checkbox_dx_principal_DefiAlteraciones_']").each(function() {
+          if ($(this).is(':checked')) {
+            idCompleto = $(this).attr('id');
+            return false;
+          }
+        });    
+        return idCompleto;
+        
+    }
+    setInterval(() => {
+        var filasnews = localStorage.getItem("filas")
+        if (localStorage.getItem('checkboxDxPrincipalNew') === 'true') {
+            desavalidarCheckboxes2('checkbox_dx_principal_DefiAlteraciones_'+filasnews);
+            capturarIdCheckbox();                     
+            var matchResult = idCompleto.match(/\d+/);            
+            if (matchResult && matchResult.length > 0) {
+                var newfilas = parseInt(matchResult[0]);  
+                console.log(newfilas);
+                if(newfilas > 0){
+                    $('a[data-fila="fila_alteraciones_'+newfilas+'"]').css({
+                        "cursor": "not-allowed",
+                        "pointer-events": "none"
+                    }).attr('disabled', true); 
+                }
+            }
+              
+        }
+    }, 500);
+    
+    setInterval(() => {
+             
         var checkboxes = $('[id^="dx_principal_deficiencia_alteraciones_"]');
         checkboxes.each(function() {
             var id_checkbox_dx_principal_deficiencia = $(this).attr('id');

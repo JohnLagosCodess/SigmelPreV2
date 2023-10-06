@@ -21,17 +21,18 @@
     </div>
     <div class="card-info" style="border: 1px solid black;">
         <div class="card-header text-center">
-            <h4>Origen ATEL - Evento: {{$array_datos_DTO_ATEL[0]->ID_evento}}</h4>
+            <h4>Origen ATEL - Evento: {{$array_datos_calificacion_origen[0]->ID_evento}}</h4>
             <h5 style="font-style: italic;">Determinación de Origen (DTO)</h5>
             <input type="hidden" id="para_ver_edicion_evento" value="{{ route('gestionInicialEdicion') }}">
-            <input type="hidden" name="Id_Evento_dto_atel" id="Id_Evento_dto_atel" value="{{$array_datos_DTO_ATEL[0]->ID_evento}}">
-            <input type="hidden" name="Id_Asignacion_dto_atel" id="Id_Asignacion_dto_atel" value="{{$array_datos_DTO_ATEL[0]->Id_Asignacion}}">
-            <input type="hidden" name="Id_Proceso_dto_atel" id="Id_Proceso_dto_atel" value="{{$array_datos_DTO_ATEL[0]->Id_proceso}}">
+            <input type="hidden" name="Id_Evento_dto_atel" id="Id_Evento_dto_atel" value="{{$array_datos_calificacion_origen[0]->ID_evento}}">
+            <input type="hidden" name="Id_Asignacion_dto_atel" id="Id_Asignacion_dto_atel" value="{{$array_datos_calificacion_origen[0]->Id_Asignacion}}">
+            <input type="hidden" name="Id_Proceso_dto_atel" id="Id_Proceso_dto_atel" value="{{$array_datos_calificacion_origen[0]->Id_proceso}}">
+            <input type="hidden" id="id_dto_atel" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Id_Dto_ATEL)){echo $datos_bd_DTO_ATEL[0]->Id_Dto_ATEL;}?>">
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-12">
-                    <form action="" method="POST" id="form_DTO_ATEL">
+        <form method="POST" id="form_DTO_ATEL">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
                         @csrf
                         <div class="card-info">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
@@ -44,15 +45,26 @@
                                             <label for="activo">Activo <span style="color:red;">(*)</span></label>
                                             <select class="custom-select es_activo" name="es_activo" id="es_activo" required>
                                                 <option value=""></option>
-                                                <option value="Si">Si</option>
-                                                <option value="No">No</option>
+                                                <?php if(!empty($datos_bd_DTO_ATEL[0]->Activo)):?>
+                                                    <?php if($datos_bd_DTO_ATEL[0]->Activo == "Si"):?>
+                                                        <option value="Si" selected>Si</option>
+                                                        <option value="No">No</option>
+                                                    <?php else:?>
+                                                        <option value="Si">Si</option>
+                                                        <option value="No" selected>No</option>
+                                                    <?php endif?>
+                                                <?php else:?>
+                                                    <option value="Si">Si</option>
+                                                    <option value="No">No</option>
+                                                <?php endif?>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="">Tipo de Evento <span style="color:red;">(*)</span></label>
-                                            <input type="hidden" id="nombre_evento_bd" value="{{$array_datos_DTO_ATEL[0]->Nombre_evento}}">
+                                            <input type="hidden" id="nombre_evento_guardado" value="{{$nombre_del_evento_guardado}}">
+                                            <input type="hidden" id="bd_tipo_evento" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Tipo_evento)){echo $datos_bd_DTO_ATEL[0]->Tipo_evento;}?>">
                                             <select class="custom-select tipo_evento" name="tipo_evento" id="tipo_evento" disabled required></select>
                                         </div>
                                     </div>
@@ -60,7 +72,6 @@
                             </div>
                         </div>
                         {{-- FORMULARIO ACCIDENTE, ENFERMEDAD, INCIDENTE, SIN COBERTURA --}}
-
                         <div id="mostrar_ocultar_formularios" class="d-none1">
                             {{-- Información del afiliado --}}
                             <div class="card-info">
@@ -72,13 +83,13 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="nombre_afiliado">Nombre de afiliado</label>
-                                                <input type="text" class="form-control" name="nombre_afiliado" id="nombre_afiliado" value="{{$array_datos_DTO_ATEL[0]->Nombre_afiliado}}" disabled>
+                                                <input type="text" class="form-control" name="nombre_afiliado" id="nombre_afiliado" value="{{$array_datos_calificacion_origen[0]->Nombre_afiliado}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="nro_identificacion">N° Identificación</label>
-                                                <input type="text" class="form-control" name="nro_identificacion" id="nro_identificacion" value="{{$array_datos_DTO_ATEL[0]->Nro_identificacion}}" disabled>
+                                                <input type="text" class="form-control" name="nro_identificacion" id="nro_identificacion" value="{{$array_datos_calificacion_origen[0]->Nro_identificacion}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -86,10 +97,8 @@
                                                 <label for="id_evento">ID evento</span></label>
                                                 <br>
                                                 {{-- DATOS PARA VER EDICIÓN DE EVENTO --}}
-                                                {{-- <input type="text" class="form-control" name="id_evento" id="id_evento" value="{{$array_datos_DTO_ATEL[0]->ID_evento}}" disabled> --}}
-                                                <input class="btn text-info" id="edit_evento_{{$array_datos_DTO_ATEL[0]->ID_evento}}" type="submit" style="font-weight: bold;" value="{{$array_datos_DTO_ATEL[0]->ID_evento}}">
-                                                <input type="hidden" name="badera_buscador_evento" id="badera_buscador_evento" value="desdebuscador">
-                                                <input type="hidden" name="newIdEvento" value="{{$array_datos_DTO_ATEL[0]->ID_evento}}">
+                                                <a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer; font-weight: bold;" class="btn text-info" type="button">{{$array_datos_calificacion_origen[0]->ID_evento}}</a>
+                                                
                                             </div>
                                         </div>
                                     </div>
@@ -112,7 +121,11 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="nro_dictamen">Dictamen N°</label>
-                                                <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" style="color: red;" value="{{$numero_consecutivo}}" disabled>   
+                                                @if (empty($datos_bd_DTO_ATEL[0]->Numero_dictamen))
+                                                    <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" value="{{$numero_consecutivo}}" disabled>   
+                                                @else
+                                                    <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" value="{{$datos_bd_DTO_ATEL[0]->Numero_dictamen}}" disabled>   
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -143,34 +156,34 @@
                             {{-- Información laboral --}}
                             <div class="card-info">
                                 <div class="card-header text-center" style="border: 1.5px solid black;">
-                                    <h5>Información laboral</h5>
+                                    <h5>Información Laboral</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="row text-center">
                                         <?php $radio = $array_datos_info_laboral[0]->Tipo_empleado; if($radio == "Empleado actual"):?>
                                             <div class="col-sm">
                                                 <div class="form-check custom-control custom-radio">
-                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_empleo" id="empleo_actual" value="Empleado actual" checked disabled>
-                                                <label class="form-check-label custom-control-label" for="empleo_actual"><strong>Empleo Actual</strong></label>
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_empleo" id="empleo_actual" value="Empleado actual" checked disabled>
+                                                    <label class="form-check-label custom-control-label" for="empleo_actual"><strong>Empleo Actual</strong></label>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-check custom-control custom-radio">
-                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_empleo" id="independiente" value="Independiente" disabled>
-                                                <label class="form-check-label custom-control-label" for="independiente"><strong>Independiente</strong></label>
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_empleo" id="independiente" value="Independiente" disabled>
+                                                    <label class="form-check-label custom-control-label" for="independiente"><strong>Independiente</strong></label>
                                                 </div>
                                             </div>
                                         <?php elseif ($radio == "Independiente"):?>
                                             <div class="col-sm">
                                                 <div class="form-check custom-control custom-radio">
-                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_empleo" id="empleo_actual" value="Empleado actual" disabled>
-                                                <label class="form-check-label custom-control-label" for="empleo_actual"><strong>Empleado Actual</strong></label>
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_empleo" id="empleo_actual" value="Empleado actual" disabled>
+                                                    <label class="form-check-label custom-control-label" for="empleo_actual"><strong>Empleado Actual</strong></label>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-check custom-control custom-radio">
-                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_empleo" id="independiente" value="Independiente" checked disabled>
-                                                <label class="form-check-label custom-control-label" for="independiente"><strong>Independiente</strong></label>
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_empleo" id="independiente" value="Independiente" checked disabled>
+                                                    <label class="form-check-label custom-control-label" for="independiente"><strong>Independiente</strong></label>
                                                 </div>
                                             </div>
                                         <?php endif?>
@@ -248,11 +261,11 @@
                                         </div>
                                     <?php endif?>
                                     {{-- HISTORICO LABORAL(PARA EL FORMULARIO DE ENFERMEDAD) --}}
-                                    <div class="row">
+                                    <div class="row" id="contenedor_historico_laboral">
                                         <div class="col-12">
                                             <div class="card-info">
                                                 <div class="card-header text-center" style="border: 1.5px solid black;">
-                                                    <h5>Histórico Laboral</h5>
+                                                    <h5>Historial Laboral</h5>
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="row">
@@ -302,31 +315,40 @@
                                     <h5>Información del Evento</h5>
                                 </div>
                                 <div class="card-body">
-                                    <div class="row">
+                                    <div class="row" id="contenedor_forms_acci_inci_sincober">
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="tipo_accidente">Tipo de accidente <span style="color:red;">(*)</span></label>
+                                                <input type="hidden" id="bd_tipo_accidente" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Tipo_accidente)){echo $datos_bd_DTO_ATEL[0]->Tipo_accidente;}?>">
                                                 <select class="custom-select tipo_accidente" name="tipo_accidente" id="tipo_accidente" required></select>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fecha_evento">Fecha del evento <span style="color:red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" required>
+                                                <input type="hidden" id="bd_fecha_evento" value="">
+                                                <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_evento)){echo $datos_bd_DTO_ATEL[0]->Fecha_evento;}?>" required>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="hora_evento">Hora del evento <span style="color:red;">(*)</span></label>
-                                                <input type="time" class="form-control" name="hora_evento" id="hora_evento" step="3600" min="00:00" max="23:59" pattern="[0-2][0-9]:[0-5][0-9]" required>
+                                                <input type="time" class="form-control" name="hora_evento" id="hora_evento" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Hora_evento)){echo $datos_bd_DTO_ATEL[0]->Hora_evento;}?>" required>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-4">
+                                        <div class="col-4" id="contenedor_grado_severidad">
                                             <div class="form-group">
                                                 <label for="grado_severidad">Grado de severidad <span style="color:red;">(*)</span></label>
+                                                <input type="hidden" id="bd_grado_severidad" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Grado_severidad)){echo $datos_bd_DTO_ATEL[0]->Grado_severidad;}?>">
                                                 <select class="custom-select grado_severidad" name="grado_severidad" id="grado_severidad" required></select>
+                                            </div>
+                                        </div>
+                                        <div class="col-4" id="contenedor_fecha_diagnos_enfermedad">
+                                            <div class="form-group">
+                                                <label for="fecha_enfermedad">Fecha Diagnostico de Enfermedad</label>
+                                                <input type="date" class="form-control" name="fecha_enfermedad" id="fecha_enfermedad" max="{{date("Y-m-d")}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_diagnostico_enfermedad)){echo $datos_bd_DTO_ATEL[0]->Fecha_diagnostico_enfermedad;}?>">
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -334,23 +356,33 @@
                                                 <label for="mortal">Mortal</label>
                                                 <select class="custom-select mortal" name="mortal" id="mortal">
                                                     <option value=""></option>
-                                                    <option value="Si">Si</option>
-                                                    <option value="No">No</option>
+                                                    <?php if(!empty($datos_bd_DTO_ATEL[0]->Mortal)):?>
+                                                        <?php if($datos_bd_DTO_ATEL[0]->Mortal == "Si"):?>
+                                                            <option value="Si" selected>Si</option>
+                                                            <option value="No">No</option>
+                                                        <?php else:?>
+                                                            <option value="Si">Si</option>
+                                                            <option value="No" selected>No</option>
+                                                        <?php endif?>
+                                                    <?php else:?>
+                                                        <option value="Si">Si</option>
+                                                        <option value="No">No</option>
+                                                    <?php endif?>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-4 d-none" id="mostrar_f_fallecimiento">
                                             <div class="form-group">
                                                 <label for="fecha_fallecimiento">Fecha de fallecimiento <span style="color:red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="fecha_fallecimiento" id="fecha_fallecimiento" max="{{date("Y-m-d")}}">
+                                                <input type="date" class="form-control" name="fecha_fallecimiento" id="fecha_fallecimiento" max="{{date("Y-m-d")}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento)){echo $datos_bd_DTO_ATEL[0]->Fecha_fallecimiento;}?>">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" id="contenedor_descrip_FURAT">
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="descripcion_FURAT" class="col-form-label">Descripción Formato Único de Reporte de presunto Accidente de Trabajo (FURAT) <span style="color:red;">(*)</span></label>
-                                                <textarea class="form-control descripcion_FURAT" name="descripcion_FURAT" id="descripcion_FURAT" rows="2" required></textarea>
+                                                <textarea class="form-control descripcion_FURAT" name="descripcion_FURAT" id="descripcion_FURAT" rows="2" required><?php if(!empty($datos_bd_DTO_ATEL[0]->Descripcion_FURAT)){echo $datos_bd_DTO_ATEL[0]->Descripcion_FURAT;}?></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -358,23 +390,47 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="factor_riesgo">Factor de riesgo</label>
+                                                <input type="hidden" id="bd_factor_riesgo" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Factor_riesgo)){echo $datos_bd_DTO_ATEL[0]->Factor_riesgo;}?>">
                                                 <select class="custom-select factor_riesgo" name="factor_riesgo" id="factor_riesgo"></select>
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-4" id="contenedor_tipo_lesion">
                                             <div class="form-group">
                                                 <label for="tipo_lesion">Tipo de lesión</label>
+                                                <input type="hidden" id="bd_tipo_lesion" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Tipo_lesion)){echo $datos_bd_DTO_ATEL[0]->Tipo_lesion;}?>">
                                                 <select class="custom-select tipo_lesion" name="tipo_lesion" id="tipo_lesion"></select>
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-4" id="contenedor_parte_afectada">
                                             <div class="form-group">
                                                 <label for="parte_cuerpo_afectada">Parte del cuerpo afectada</label>
+                                                <input type="hidden" id="bd_parte_cuerpo_afectada" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Parte_cuerpo_afectada)){echo $datos_bd_DTO_ATEL[0]->Parte_cuerpo_afectada;}?>">
                                                 <select class="custom-select parte_cuerpo_afectada" name="parte_cuerpo_afectada" id="parte_cuerpo_afectada"></select>
                                             </div>
                                         </div>
+
+                                        {{-- PARTE DEL FORMULARIO DE ENFERMEDAD --}}
+                                        <div class="col-4" id="contenedor_enfermedad_heredada">
+                                            <div class="form-group text-center mt-4">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" type="checkbox" id="enfermedad_heredada" name="enfermedad_heredada" value="Enfermedad Heredada"
+                                                        <?php if(!empty($datos_bd_DTO_ATEL[0]->Enfermedad_heredada)):?>
+                                                            <?php if($datos_bd_DTO_ATEL[0]->Enfermedad_heredada == "Si"):?>
+                                                                checked
+                                                            <?php endif?>
+                                                        <?php endif?>
+                                                    >
+                                                    <label for="enfermedad_heredada" class="custom-control-label">Enfermedad heredada</label>  
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4 d-none" id="contenedor_nombre_entidad_enfermedad_heredada">
+                                            <div class="form-group">
+                                                <label for="entidad_enfermedad">Nombre de la Entidad que hereda</label>
+                                                <input type="text" class="form-control entidad_enfermedad" name="entidad_enfermedad" id="entidad_enfermedad" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Nombre_entidad_hereda) && !empty($datos_bd_DTO_ATEL[0]->Enfermedad_heredada) && $datos_bd_DTO_ATEL[0]->Enfermedad_heredada == "Si"){echo $datos_bd_DTO_ATEL[0]->Nombre_entidad_hereda;}?>">
+                                            </div>
+                                        </div>
                                     </div>
-                                    
                                 </div>
                             </div>
     
@@ -388,7 +444,7 @@
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="justificacion_revision_origen" class="col-form-label">Justificación para revisión del Origen <span style="color:red;">(*)</span></label>
-                                                <textarea class="form-control justificacion_revision_origen" name="justificacion_revision_origen" id="justificacion_revision_origen" rows="2" required></textarea>
+                                                <textarea class="form-control justificacion_revision_origen" name="justificacion_revision_origen" id="justificacion_revision_origen" rows="2" required><?php if(!empty($datos_bd_DTO_ATEL[0]->Justificacion_revision_origen)){echo $datos_bd_DTO_ATEL[0]->Justificacion_revision_origen;}?></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -403,31 +459,138 @@
                                 <div class="card-body">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <h6 class="text-center"><b>Documentos tenidos en cuenta para la calificación</b></h6><h6>
-                                        </h6></div>
+                                            <h6 class="text-center"><b>Documentos tenidos en cuenta para la calificación</b></h6>
+                                        </div>
+                                        <?php if(!empty($datos_bd_DTO_ATEL[0]->Relacion_documentos)){$array_bd_documentos_relacion = explode(", ", $datos_bd_DTO_ATEL[0]->Relacion_documentos);}else{$array_bd_documentos_relacion= array();}?>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" id="contenedor_checkboxes_acci_inci_sincober">
                                         <div class="col-4 text-center">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input" type="checkbox" id="furat" name="furat" value="FURAT">
-                                                    <label for="furat" class="custom-control-label">Formato Único de Registro de Accidente de Trabajo (FURAT)</label>  
+                                                    <input class="custom-control-input" type="checkbox" id="furat_acci_inci_sincober" name="furat_acci_inci_sincober" value="FURAT"
+                                                        <?php if(in_array("FURAT", $array_bd_documentos_relacion)):?>
+                                                            checked
+                                                        <?php endif?>
+                                                    >
+                                                    <label for="furat_acci_inci_sincober" class="custom-control-label">Formato Único de Registro de Accidente de Trabajo (FURAT)</label>  
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input" type="checkbox" id="historia_clinica_completa" name="historia_clinica_completa" value="Historia clínica completa">
-                                                    <label for="historia_clinica_completa" class="custom-control-label">Historia clínica completa</label> 
+                                                    <input class="custom-control-input" type="checkbox" id="historia_clinica_acci_inci_sincober" name="historia_clinica_acci_inci_sincober" value="Historia clínica completa"
+                                                        <?php if(in_array("Historia clínica completa", $array_bd_documentos_relacion) && $datos_bd_DTO_ATEL[0]->Tipo_evento != 2):?>
+                                                            checked
+                                                        <?php endif?>
+                                                    >
+                                                    <label for="historia_clinica_acci_inci_sincober" class="custom-control-label">Historia clínica completa</label> 
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group row">
-                                                <label for="name" class="col-sm-2 col-form-label">Otros</label>
+                                                <label for="otros_acci_inci_sincober" class="col-sm-2 col-form-label">Otros</label>
                                                 <div class="col-sm-10">
-                                                    <input type="text" class="form-control otros" name="otros" id="otros">
+                                                    <input type="text" class="form-control otros_acci_inci_sincober" name="otros_acci_inci_sincober" id="otros_acci_inci_sincober" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Otros_relacion_documentos) && $datos_bd_DTO_ATEL[0]->Tipo_evento != 2){echo $datos_bd_DTO_ATEL[0]->Otros_relacion_documentos;}?>">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="contenedor_checkboxes_enfermedad">
+                                        <div class="row">
+                                            <div class="col-3 text-center">
+                                                <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="furel_enfermedad" name="furel_enfermedad" value="FUREL"
+                                                            <?php if(in_array("FUREL", $array_bd_documentos_relacion)):?>
+                                                                checked
+                                                            <?php endif?>
+                                                        >
+                                                        <label for="furel_enfermedad" class="custom-control-label">Reporte de Formato Único para la Radicación de Enfermedad Laboral (FUREL)</label>  
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-3 text-center">
+                                                <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="historia_clinica_enfermedad" name="historia_clinica_enfermedad" value="Historia clínica completa"
+                                                            <?php if(in_array("Historia clínica completa", $array_bd_documentos_relacion) && $datos_bd_DTO_ATEL[0]->Tipo_evento == 2):?>
+                                                                checked
+                                                            <?php endif?>
+                                                        >
+                                                        <label for="historia_clinica_enfermedad" class="custom-control-label">Historia clínica completa</label>  
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-3 text-center">
+                                                <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="apoyo_diag_interconsulta_enfermedad" name="apoyo_diag_interconsulta_enfermedad" value="Apoyos diagnosticos e Interconsultas"
+                                                            <?php if(in_array("Apoyos diagnosticos e Interconsultas", $array_bd_documentos_relacion)):?>
+                                                                checked
+                                                            <?php endif?>
+                                                        >
+                                                        <label for="apoyo_diag_interconsulta_enfermedad" class="custom-control-label">Apoyos diagnósticos e Interconsultas</label>  
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-3 text-center">
+                                                <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="analisis_puesto_trabajo_enfermedad" name="analisis_puesto_trabajo_enfermedad" value="Análisis de puesto de trabajo"
+                                                            <?php if(in_array("Análisis de puesto de trabajo", $array_bd_documentos_relacion)):?>
+                                                                checked
+                                                            <?php endif?>
+                                                        >
+                                                        <label for="analisis_puesto_trabajo_enfermedad" class="custom-control-label">Análisis de puesto de trabajo</label>  
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-3 text-center">
+                                                <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="examenes_pre_preocupacionales_enfermedad" name="examenes_pre_preocupacionales_enfermedad" value="Exámenes pre ocupacionales"
+                                                            <?php if(in_array("Exámenes pre ocupacionales", $array_bd_documentos_relacion)):?>
+                                                                checked
+                                                            <?php endif?>
+                                                        >
+                                                        <label for="examenes_pre_preocupacionales_enfermedad" class="custom-control-label">Exámenes pre ocupacionales</label>  
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-3 text-center">
+                                                <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="examenes_periodicos_preocupacionales_enfermedad" name="examenes_periodicos_preocupacionales_enfermedad" value="Exámenes periódicos ocupacionales"
+                                                            <?php if(in_array("Exámenes periódicos ocupacionales", $array_bd_documentos_relacion)):?>
+                                                                checked
+                                                            <?php endif?>
+                                                        >
+                                                        <label for="examenes_periodicos_preocupacionales_enfermedad" class="custom-control-label">Exámenes periódicos ocupacionales</label>  
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-3 text-center">
+                                                <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="examenes_post_ocupacionales_enfermedad" name="examenes_post_ocupacionales_enfermedad" value="Exámenes Post-ocupacionales"
+                                                            <?php if(in_array("Exámenes Post-ocupacionales", $array_bd_documentos_relacion)):?>
+                                                                checked
+                                                            <?php endif?>
+                                                        >
+                                                        <label for="examenes_post_ocupacionales_enfermedad" class="custom-control-label">Exámenes Post-ocupacionales</label>  
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-group row">
+                                                    <label for="otros_enfermedad" class="col-sm-2 col-form-label">Otros</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" class="form-control otros_enfermedad" name="otros_enfermedad" id="otros_enfermedad" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Otros_relacion_documentos) && $datos_bd_DTO_ATEL[0]->Tipo_evento == 2){echo $datos_bd_DTO_ATEL[0]->Otros_relacion_documentos;}?>">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -471,10 +634,10 @@
                                 </div>
                             </div>
     
-                            {{-- Exámanes e interconsultas --}}
+                            {{-- Exámenes e interconsultas --}}
                             <div class="card-info">
                                 <div class="card-header text-center" style="border: 1.5px solid black;">
-                                    <h5>Exámanes e interconsultas</h5>
+                                    <h5>Exámenes e interconsultas</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
@@ -483,6 +646,7 @@
                                                 <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de agregar una fila nueva es necesario
                                                 que diligencie en su totalidad los campos.
                                             </div>
+                                            <div class="alert d-none" id="resultado_insercion_examen" role="alert"></div>
                                             <div class="table-responsive">
                                                 <table id="listado_examenes_interconsultas" class="table table-striped table-bordered" width="100%">
                                                     <thead>
@@ -513,7 +677,7 @@
                             </div>
     
                             {{-- Diagnóstico motivo de calificación --}}
-                            <div class="card-info">
+                            <div class="card-info" id="contenedor_diag_moti_califi">
                                 <div class="card-header text-center" style="border: 1.5px solid black;">
                                     <h5>Diagnóstico motivo de calificación</h5>
                                 </div>
@@ -524,6 +688,7 @@
                                                 <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de agregar una fila nueva es necesario
                                                 que diligencie en su totalidad los campos.
                                             </div>
+                                            <div class="alert d-none" id="resultado_insercion_cie10" role="alert"></div>
                                             <div class="table-responsive">
                                                 <table id="listado_diagnostico_cie10" class="table table-striped table-bordered" width="100%">
                                                     <thead>
@@ -537,13 +702,21 @@
                                                             <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_cie10_fila"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
+                                                    <tbody id="so">
+                                                        @php
+                                                            $contador = 0;
+                                                        @endphp
                                                         @foreach ($array_datos_diagnostico_motcalifi as $diagnostico)
+                                                            @php $contador = $contador + 1; @endphp
                                                         <tr class="fila_diagnosticos_{{$diagnostico->Id_Diagnosticos_motcali}}" id="datos_diagnostico">
                                                             <td>{{$diagnostico->Codigo}}</td>
                                                             <td>{{$diagnostico->Nombre_CIE10}}</td>
-                                                            <td>{{$diagnostico->Nombre_parametro}}</td>
                                                             <td>{{$diagnostico->Deficiencia_motivo_califi_condiciones}}</td>
+                                                            <td>{{$diagnostico->Nombre_parametro_lateralidad}}</td>
+                                                            <td>{{$diagnostico->Nombre_parametro_origen}}</td>
+                                                            <td>
+                                                                <input type="checkbox" id="checkbox_dx_principal_visual_Cie10_{{$contador}}" class="checkbox_dx_principal_visual_Cie10_{{$contador}}" data-id_fila_checkbox_dx_principal_Cie10_visual_="{{$contador}}" <?php if($diagnostico->Principal == "Si"):?> checked <?php endif?> style="transform: scale(1.2) !important;">
+                                                            </td>
                                                             <td>
                                                                 <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_diagnosticos_moticalifi{{$diagnostico->Id_Diagnosticos_motcali}}" data-id_fila_quitar="{{$diagnostico->Id_Diagnosticos_motcali}}" data-clase_fila="fila_diagnosticos_{{$diagnostico->Id_Diagnosticos_motcali}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
                                                             </td>
@@ -567,7 +740,7 @@
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="sustentacion_califi_origen" class="col-form-label">Sustentación <span style="color:red;">(*)</span></label>
-                                                <textarea class="form-control sustentacion_califi_origen" name="sustentacion_califi_origen" id="sustentacion_califi_origen" rows="2" required></textarea>
+                                                <textarea class="form-control sustentacion_califi_origen" name="sustentacion_califi_origen" id="sustentacion_califi_origen" rows="2" required><?php if(!empty($datos_bd_DTO_ATEL[0]->Sustentacion)){echo $datos_bd_DTO_ATEL[0]->Sustentacion;}?></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -575,6 +748,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="origen_dto_atel">Origen <span style="color:red;">(*)</span></label>
+                                                <input type="hidden" id="bd_origen" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Origen)){echo $datos_bd_DTO_ATEL[0]->Origen;}?>">
                                                 <select class="custom-select origen_dto_atel" name="origen_dto_atel" id="origen_dto_atel" required></select>
                                             </div>
                                         </div>
@@ -582,20 +756,82 @@
                                 </div>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-        </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            @if (empty($datos_bd_DTO_ATEL[0]->ID_evento))
+                                <input type="submit" class="btn btn-info" id="GuardarDTOATEL" name="GuardarDTOATEL" value="Guardar">    
+                            @else
+                                <input type="submit" class="btn btn-info" id="EditarDTOATEL" name="EditarDTOATEL" value="Actualizar">    
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                <div class="row d-none" id="mostrar_mensaje_agrego_dto_atel">
+                    <div  class="col-12">
+                        <div class="form-group">
+                            <div class="mensaje_agrego_dto_atel alert alert-success" role="alert"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
+    {{-- Retornar al modulo de calificacionOrigen --}}
+    <form action="{{route('calificacionOrigen')}}" id="formularioEnvio" method="POST">            
+        @csrf
+       <input hidden="hidden" type="text" name="newIdEvento" id="newIdEvento" value="{{$array_datos_calificacion_origen[0]->ID_evento}}">
+       <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="{{$array_datos_calificacion_origen[0]->Id_Asignacion}}">
+       <input hidden="hidden" type="text" name="newIdproceso" id="newIdproceso" value="{{$array_datos_calificacion_origen[0]->Id_proceso}}">
+       <button type="submit" id="botonEnvioVista" style="display:none !important;"></button>
+   </form>
+
+   <form action="{{route('gestionInicialEdicion')}}" id="formularioLlevarEdicionEvento" method="POST">
+        @csrf
+        <input type="hidden" name="bandera_buscador_dto_atel" id="bandera_buscador_dto_atel" value="desdedtoatel">
+        <input hidden="hidden" type="text" name="newIdEvento" id="newIdEvento" value="{{$array_datos_calificacion_origen[0]->ID_evento}}">
+        <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="{{$array_datos_calificacion_origen[0]->Id_Asignacion}}">
+        <input hidden="hidden" type="text" name="newIdproceso" id="newIdproceso" value="{{$array_datos_calificacion_origen[0]->Id_proceso}}">
+    <button type="submit" id="botonVerEdicionEvento" style="display:none !important;"></button>
+   </form>
+
 @stop
 
 @section('js')
+
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>
     <script type="text/javascript">
+        document.getElementById('botonEnvioVista').addEventListener('click', function(event) {
+            event.preventDefault();
+            // Realizar las acciones que quieres al hacer clic en el botón
+            document.getElementById('formularioEnvio').submit();
+        });
+
+        document.getElementById('botonVerEdicionEvento').addEventListener('click', function(event) {
+            event.preventDefault();
+            // Realizar las acciones que quieres al hacer clic en el botón
+            document.getElementById('formularioLlevarEdicionEvento').submit();
+        });
+
         $(".centrar").css('text-align', 'center');
         $(document).on('mouseover',"input[id^='edit_evento_']", function(){
             let url_editar_evento = $('#para_ver_edicion_evento').val();
             $("form[id^='form_DTO_ATEL']").attr("action", url_editar_evento);    
+
+            $("#es_activo").removeAttr('required');
+            $("#tipo_evento").removeAttr('required');
+            $("#tipo_accidente").removeAttr('required');
+            $("#fecha_evento").removeAttr('required');
+            $("#hora_evento").removeAttr('required');
+            $("#grado_severidad").removeAttr('required');
+            $("#descripcion_FURAT").removeAttr('required');
+            $("#justificacion_revision_origen").removeAttr('required');
+            $("#sustentacion_califi_origen").removeAttr('required');
+            $("#origen_dto_atel").removeAttr('required');
         });
 
         // SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLE DE EXÁMENES E INTERCONSULTAS
@@ -661,6 +897,7 @@
         autoAdjustColumns(listado_diagnostico_cie10);
 
         var contador_cie10 = 0;
+        var array_ids_checkboxes = [];
         $('#btn_agregar_cie10_fila').click(function(){
             $('#guardar_datos_cie10').removeClass('d-none');
 
@@ -671,7 +908,7 @@
                 '<textarea id="descripcion_cie10_fila_'+contador_cie10+'" class="form-control" name="descripcion_cie10" cols="90" rows="4"></textarea>',
                 '<select id="lista_lateralidadCie10_fila_'+contador_cie10+'" class="custom-select lista_lateralidadCie10_fila_'+contador_cie10+'" name="lista_lateralidadCie10"><option></option></select>',
                 '<select id="lista_origenCie10_fila_'+contador_cie10+'" class="custom-select lista_origenCie10_fila_'+contador_cie10+'" name="lista_origenCie10"><option></option></select>',
-                '<input type="checkbox" id="checkbox_dx_principal_Cie10'+contador_cie10+'" class="checkbox_dx_principal_Cie10'+contador_cie10+'" data-id_fila_checkbox_dx_principal_Cie10="'+contador_cie10+'" style="transform: scale(1.2);">',
+                '<input type="checkbox" id="checkbox_dx_principal_Cie10_'+contador_cie10+'" class="checkbox_dx_principal_Cie10_'+contador_cie10+'" data-id_fila_checkbox_dx_principal_Cie10="'+contador_cie10+'" style="transform: scale(1.2);">',
                 '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_cie10_fila" class="text-info" data-fila="fila_'+contador_cie10+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
                 'fila_'+contador_cie10
             ];
@@ -682,12 +919,81 @@
 
             // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionpcl.js)
             funciones_elementos_fila_diagnosticos(contador_cie10);
+            
+            array_ids_checkboxes.push("checkbox_dx_principal_Cie10_"+contador_cie10);
+            
         });
             
         $(document).on('click', '#btn_remover_cie10_fila', function(){
             var nombre_cie10_fila = $(this).data("fila");
             listado_diagnostico_cie10.row("."+nombre_cie10_fila).remove().draw();
         });
+
+        $(document).on('click', "a[id^='btn_remover_diagnosticos_moticalifi']", function(){
+            var nombre_cie10_fila = $(this).data("clase_fila");
+            listado_diagnostico_cie10.row("."+nombre_cie10_fila).remove().draw();
+        });
+ 
+
+        setInterval(() => {
+            var checkboxes_visuales = $('[id^="checkbox_dx_principal_visual_Cie10_"]');
+            if($("input[id^='checkbox_dx_principal_visual_Cie10_']").is(":checked")){
+                
+                $.each(array_ids_checkboxes, function(index, valor) {
+                    $("#"+valor).prop("disabled", true);
+                });
+
+                checkboxes_visuales.each(function() {
+                    var id_check_visual = $(this).attr("id");
+                    if ($("#"+id_check_visual).is(":checked")) {
+                        $("input[id^='checkbox_dx_principal_visual_Cie10_']").not('#' + id_check_visual).prop('disabled', true);
+                    }
+                });
+            }else{
+                var confirmar;
+                $.each(array_ids_checkboxes, function(index, value) {
+                   if ($("#"+value).is(':checked')) {
+
+                    // $("input[id^='checkbox_dx_principal_visual_Cie10_']").prop("disabled", true);
+
+                    checkboxes_visuales.each(function() {
+                        var id_check_visual = $(this).attr("id");
+                        $("input[id^='checkbox_dx_principal_visual_Cie10_']").prop('disabled', true);
+                    });
+
+                    $.each(array_ids_checkboxes, function(index, value2) {
+                        if (value != value2) {
+                            $("#"+value2).prop("disabled", true);
+                        }
+                        confirmar = "Si";
+                    });
+
+                   }else{
+                    if (confirmar == undefined) {
+                        // $("input[id^='checkbox_dx_principal_visual_Cie10_']").prop("disabled", false);
+
+                        checkboxes_visuales.each(function() {
+                            var id_check_visual = $(this).attr("id");
+                            $("input[id^='checkbox_dx_principal_visual_Cie10_']").prop('disabled', false);
+                        });
+
+                        $.each(array_ids_checkboxes, function(index, value3) {
+                            $("#"+value3).prop("disabled", false);
+                        });
+                    }
+                   }
+                });
+
+                var checkboxes_visuales = $('[id^="checkbox_dx_principal_visual_Cie10_"]');
+                checkboxes_visuales.each(function() {
+                    var id_check_visual = $(this).attr("id");
+                    $("input[id^='checkbox_dx_principal_visual_Cie10_']").not('#' + id_check_visual).prop('disabled', false);
+                });
+            }
+        }, 500);
+
+
+
     </script>
     <script type="text/javascript" src="/js/dto_atel.js"></script>
    

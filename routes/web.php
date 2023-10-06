@@ -451,11 +451,17 @@ Route::post('/actualizarComunicadoOrigen', [CalificacionOrigenController::class,
 Route::post('/EliminarFilaHistoSeguimiento', [CalificacionOrigenController::class, 'EliminarFilaHistoSeguimiento'])->name('EliminarFilaHistoSeguimiento');
 // Acción: MOstrar vista Calificación Técnica PCL
 Route::get('/determinacionOrigenATEL', [DeterminacionOrigenATEL::class, 'mostrarVistaDtoATEL'])->name('determinacionOrigenATEL');
-// Acción: MOstrar vista Calificación Técnica PCL
+// Acción: Mostrar vista Determinación del Origen DTO ATEL
 Route::get('/determinacionOrigenATEL', [DeterminacionOrigenATEL::class, 'mostrarVistaDtoATEL'])->name('determinacionOrigenATEL');
 Route::post('/determinacionOrigenATEL', [DeterminacionOrigenATEL::class, 'mostrarVistaDtoATEL'])->name('determinacionOrigenATEL');
 // Accion: Selectores Submodulo DTO ATEL
 Route::post('/cargueListadoSelectoresDTOATEL', [DeterminacionOrigenATEL::class, 'cargueListadoSelectoresDTOATEL']);
+// Acción: Guardar información DTO ATEL
+Route::post('/GuardaroActualizarInfoDTOTAEL', [DeterminacionOrigenATEL::class, 'GuardaroActualizarInfoDTOTAEL']);
+// Acción: Eliminar registro de Examenes e interconsultar visualmente e inactiva en la DB
+Route::post('/eliminarExamenesInterconsultas', [DeterminacionOrigenATEL::class, 'eliminarExamenInterconsulta']);
+// Acción: Eliminar registros Diagnosticos motivo de calificacion visualmente e inactiva en la DB
+Route::post('/eliminarDiagnosticosMotivoCalificacion', [DeterminacionOrigenATEL::class, 'eliminarDiagnosticoMotivoCalificacion']);
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 
