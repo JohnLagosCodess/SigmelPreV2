@@ -61,7 +61,7 @@ $(document).ready(function(){
     };
     $.ajax({
         type:'POST',
-        url:'/ConsultaCampimetriaXFila',
+        url:'/ConsultaCampimetriaXFilaRe',
         data: bd_campimetria_ojo_izq,
         success:function(data) {
 
@@ -103,7 +103,7 @@ $(document).ready(function(){
     };
     $.ajax({
         type:'POST',
-        url:'/ConsultaCampimetriaXFila',
+        url:'/ConsultaCampimetriaXFilaRe',
         data: bd_campimetria_ojo_der,
         success:function(data) {
 
@@ -1170,7 +1170,7 @@ $(document).ready(function(){
         };
 
         $.ajax({
-            url: "/actualizarAgudezaVisual",
+            url: "/actualizarAgudezaVisualRe",
             type: "post",
             data: datos_actualizar_agudeza_visual,
             success:function(response){
@@ -1182,8 +1182,7 @@ $(document).ready(function(){
                         $("#resultado_insercion").addClass('d-none');
                         $("#resultado_insercion").removeClass('alert-success');
                         $("#resultado_insercion").empty();
-                        location.reload();
-                    }, 4000);
+                    }, 7000);
                 }
             }         
         });

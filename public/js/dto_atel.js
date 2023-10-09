@@ -121,6 +121,66 @@ $(document).ready(function(){
     }
 
     
+
+    // VERIFICACIÓN DEL DATO ACTIVO EN CASO DE QUE EXISTA INFORMACIÓN GUARDADA
+    var verificacion_activo = $("#es_activo").val();
+    
+    if (verificacion_activo != "") {
+        if (verificacion_activo == "Si") {
+            let datos_tipo_evento = {
+                '_token': token,
+                'parametro':"tipo_de_evento_si"
+            };
+            $.ajax({
+                type:'POST',
+                url:'/cargueListadoSelectoresDTOATEL',
+                data: datos_tipo_evento,
+                success:function(data){
+                    //console.log(data);
+                    $('#tipo_evento').prop('disabled', false);
+                    $('#tipo_evento').empty();
+                    $('#tipo_evento').append('<option value=""></option>');
+
+                    let listado_tipo_evento = Object.keys(data);
+                    for (let i = 0; i < listado_tipo_evento.length; i++) {
+                        // if (data[listado_tipo_evento[i]]['Nombre_evento'] == nombre_evento_bd) {                    
+                        if (data[listado_tipo_evento[i]]['Id_Evento'] == $("#bd_tipo_evento").val()) {                    
+                            $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'" selected>'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                        }else{
+                            $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'">'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                        }
+                    }
+                }
+            });
+        }else{
+            let datos_tipo_evento = {
+                '_token': token,
+                'parametro':"tipo_de_evento_no"
+            };
+            $.ajax({
+                type:'POST',
+                url:'/cargueListadoSelectoresDTOATEL',
+                data: datos_tipo_evento,
+                success:function(data){
+                    
+                    $('#tipo_evento').prop('disabled', false);
+                    $('#tipo_evento').empty();
+                    $('#tipo_evento').append('<option value=""></option>');
+
+                    let listado_tipo_evento = Object.keys(data);
+                    for (let i = 0; i < listado_tipo_evento.length; i++) {
+                        if (data[listado_tipo_evento[i]]['Id_Evento'] == $("#bd_tipo_evento").val()) {  
+                            $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'" selected>'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                        }else{
+                            $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'">'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    
     // validacion de si es activo o no para llenar el selector de tipo de evento
     $("#es_activo").change(function(){
         let opcion_seleccionada = $(this).val();

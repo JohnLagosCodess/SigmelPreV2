@@ -77,7 +77,7 @@
                             {{-- Información del afiliado --}}
                             <div class="card-info">
                                 <div class="card-header text-center" style="border: 1.5px solid black;">
-                                    <h5>Información del Afiliado</h5>
+                                    <h5>Información del afiliado</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
@@ -725,7 +725,7 @@
                             {{-- Exámenes e interconsultas --}}
                             <div class="card-info">
                                 <div class="card-header text-center" style="border: 1.5px solid black;">
-                                    <h5>Exámenes e Interconsultas</h5>
+                                    <h5>Exámenes e interconsultas</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
@@ -769,7 +769,7 @@
                             {{-- Diagnóstico motivo de calificación --}}
                             <div class="card-info" id="contenedor_diag_moti_califi">
                                 <div class="card-header text-center" style="border: 1.5px solid black;">
-                                    <h5>Diagnóstico Motivo de Calificación</h5>
+                                    <h5>Diagnóstico motivo de calificación</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">

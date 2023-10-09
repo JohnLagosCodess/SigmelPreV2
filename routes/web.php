@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Autenticacion\LoginController;
 use App\Http\Controllers\Autenticacion\LogoutController;
 use App\Http\Controllers\Coordinador\CalificacionPCLController;
+use App\Http\Controllers\Coordinador\RecalificacionPCLController;
 use App\Http\Controllers\Coordinador\CalificacionOrigenController;
+use App\Http\Controllers\Coordinador\CalificacionNotifiController;
 use App\Http\Controllers\Ingenieria\IngenieriaController;
 use App\Http\Controllers\ProbandoController;
 use App\Http\Controllers\RolesController;
@@ -15,7 +17,9 @@ use App\Http\Controllers\Coordinador\CoordinadorController;
 use App\Http\Controllers\Coordinador\SolicitudDocumentoSeguimientosPCLController;
 use App\Http\Controllers\Coordinador\PronunciamientoPCLController;
 use App\Http\Controllers\Coordinador\BandejaOrigenController;
+use App\Http\Controllers\Coordinador\BandejaNotifiController;
 use App\Http\Controllers\Coordinador\DeterminacionOrigenATEL;
+use App\Http\Controllers\Coordinador\PronunciamientoOrigenController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -370,6 +374,47 @@ Route::post('/eliminarDeficieciasDecretosCero', [CalificacionPCLController::clas
 Route::post('/guardarDeficieciasDecretosTres', [CalificacionPCLController::class, 'guardarDeficieciasDecretoTres']);
 // Acción: Elimincar deficiencias Decreto tres visualmente e inactiva en la DB
 Route::post('/eliminarDeficieciasDecretosTres', [CalificacionPCLController::class, 'eliminarDeficieciasDecretoTres']);
+
+// 02/10/2023
+// SUBMÓDULO RECALIFICACIÓN PCL
+// Acción: Mostrar vista Recalificación PCL
+Route::get('/recalificacionPCL',[RecalificacionPCLController::class, 'mostrarVistaRecalificacionPCL'])->name('recalificacionPCL');
+Route::post('/recalificacionPCL',[RecalificacionPCLController::class, 'mostrarVistaRecalificacionPCL'])->name('recalificacionPCL');
+// Acción: Llenado de selectores recalificacion y revision pension
+Route::post('/selectoresRecalificacionPCL', [RecalificacionPCLController::class, 'cargueListadoSelectoresRecalificacionPcl']);
+// Acción: Guardar Informacion Decreto, Dictamen, Relacion documentos, Fundamentos para la calificación de la perdida de capacidad laboral y ocupacional Recalificacion
+Route::post('/guardarDecretoDictamenRelacionDocFundaRe', [RecalificacionPCLController::class, 'guardarDecretoDicRelaDocFundRe']);
+// Acción: Guardar registros Examenes e interconsultas
+Route::post('/guardarExamenesInterconsultasRe', [RecalificacionPCLController::class, 'guardarExamenesInterconsultaRe']);
+// Acción: Eliminar registro de Examenes e interconsultar visualmente e inactiva en la DB
+Route::post('/eliminarExamenesInterconsultasRe', [RecalificacionPCLController::class, 'eliminarExamenInterconsultaRe']);
+// Acción: Guardar registros Diagnosticos motivo de calificación
+Route::post('/guardarDiagnosticosMotivoCalificacionRe', [RecalificacionPCLController::class, 'guardarDiagnosticoMotivoCalificacionRe']);
+// Acción: Eliminar registros Diagnosticos motivo de calificacion visualmente e inactiva en la DB
+Route::post('/eliminarDiagnosticosMotivoCalificacionRe', [RecalificacionPCLController::class, 'eliminarDiagnosticoMotivoCalificacionRe']);
+// Acción: Traer listado de selectores para el calculo de DEFICIENCIA POR ALTERACIONES DE LOS SISTEMAS GENERALES
+Route::post('/ListadoSelectoresDefiAlteracionesRe', [RecalificacionPCLController::class, 'ListadoSelectoresDefiAlteracionesRe']);
+// Acción: Consultar Deficiencia acorde al clase final y la tabla
+Route::post('/consultaValorDeficienciaRe', [RecalificacionPCLController::class, 'consultaValorDeficienciaRe']);
+// Acción: Guardar Datos Deficiencias por alteraciones
+Route::post('/GuardarDeficienciaAlteracionesRe',[RecalificacionPCLController::class, 'GuardarDeficienciaAlteracionesRe']);
+// Acción: Eliminar la Deficiencia alteraciones en la visualmente e inactiva en la DB
+Route::post('/eliminarDeficienciasAteracionesRe',[RecalificacionPCLController::class, 'eliminarDeficienciaAteracionesRe']);
+// Acción: Guardar Deficiencia Agudeza Auditiva
+Route::post('/guardarDeficienciaAgudezaAuditivaRe', [RecalificacionPCLController::class, 'guardarDeficienciasAgudezaAuditivasRe']);
+// Acción: Eliminar registros Agudeza Auditiva visualmente  e inactiva en la DB
+Route::post('/eliminarAgudezasAuditivasRe', [RecalificacionPCLController::class, 'eliminarAgudezaAuditivaRe']);
+// Acción: Consulta Campimetría por fila
+Route::post('/ConsultaCampimetriaXFilaRe', [RecalificacionPCLController::class, 'ConsultaCampimetriaXFilaRe']);
+// Acción: Guardar Información Agudeza Visual
+Route::post('/guardarAgudezaVisualRe', [RecalificacionPCLController::class, 'guardarAgudezaVisualRe']);
+// Acción: Traer información de Agudeza visual cuando se guarde la información
+Route::post('/infoAgudezaVisualRe', [RecalificacionPCLController::class, 'infoAgudezaVisualRe']);
+// Acción: Actualizar Información Agudeza Visual
+Route::post('/actualizarAgudezaVisualRe', [RecalificacionPCLController::class, 'actualizarAgudezaVisualRe']);
+// Acción: Borrar Información Agudeza Visual
+Route::post('/eliminarAgudezaVisualRe', [RecalificacionPCLController::class, 'eliminarAgudezaVisualRe']);
+
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);
 // Acción: Traer la información de los documentos acorde al id evento: Vista Buscador de Eventos (Modal Formulario Nuevo Servicio)
@@ -464,6 +509,35 @@ Route::post('/eliminarExamenesInterconsultasDTOATEL', [DeterminacionOrigenATEL::
 Route::post('/eliminarDiagnosticosMotivoCalificacionDTOATEL', [DeterminacionOrigenATEL::class, 'eliminarDiagnosticoMotivoCalificacion']);
 // Acción: Marcar o Desmarcar Dx Principal en Diagnósticos motivo calificación DTO ATEL
 Route::post('/actualizarDxPrincipalDTOATEL', [DeterminacionOrigenATEL::class, 'actualizarDxPrincipalDTOATEL']);
+// Acción: Guardar información DTO ATEL
+Route::post('/GuardaroActualizarInfoDTOTAEL', [DeterminacionOrigenATEL::class, 'GuardaroActualizarInfoDTOTAEL']);
+// Acción: Eliminar registro de Examenes e interconsultar visualmente e inactiva en la DB
+Route::post('/eliminarExamenesInterconsultasDTOATEL', [DeterminacionOrigenATEL::class, 'eliminarExamenInterconsulta']);
+// Acción: Eliminar registros Diagnosticos motivo de calificacion visualmente e inactiva en la DB
+Route::post('/eliminarDiagnosticosMotivoCalificacionDTOATEL', [DeterminacionOrigenATEL::class, 'eliminarDiagnosticoMotivoCalificacion']);
+// 02/10/2023
+// Vista: Módulo Pronunciamiento Origen
+Route::post('/calificacionOrigen/pronunciamientoOrigen', [PronunciamientoOrigenController::class, 'mostrarVistaPronunciamientoOrigen'])->name('pronunciamientoOrigen');
+Route::get('/calificacionOrigen/pronunciamientoOrigen', [PronunciamientoOrigenController::class, 'mostrarVistaPronunciamientoOrigen'])->name('pronunciamientoOrigen');
+// Accion: Selectores Módulo pronunciamiento Origen
+Route::post('/selectoresPronunciamientoOrigen', [PronunciamientoOrigenController::class, 'cargueListadoSelectoresPronunciamientoOrigen']);
+// Acción: Guardar Informacion Servicio Pronunciamiento Origen
+Route::post('/guardarInfoServiPronunciaOrigen', [PronunciamientoOrigenController::class, 'guardarInfoServiPronunciaOrigen']);
+//04/10/2023
+//Vista: Bandeja Noti Coordinador
+Route::get('/Sigmel/RolCoordinador/BandejaNotifi', [BandejaNotifiController::class, 'mostrarVistaBandejaNotifi'])->name('bandejaNotifi');
+// Accion: Selectores Bandeja Origen
+Route::post('/selectoresBandejaNotifi', [BandejaNotifiController::class, 'cargueListadoSelectoresBandejaNotifi']);
+// Accion: Capturar data sin filtros
+Route::post('/sinfiltrosBandejaNotifi', [BandejaNotifiController::class, 'sinFiltroBandejaNotifi']);
+// Accion: Capturar data según los filtros
+Route::post('/filtrosBandejaNotifi', [BandejaNotifiController::class, 'filtrosBandejaNotifi']);
+// Accion: Actualizar el profesional y redireccionar el servicio
+Route::post('/actualizarProfesionalServicioNotifi', [BandejaNotifiController::class, 'actualizarBandejaNotifi']);
+// 05/10/2023
+// Vista: Módulo Calificación Noti Coordinador
+Route::get('/calificacionNotifi', [CalificacionNotifiController::class, 'mostrarVistaCalificacionNotifi'])->name('calificacionNotifi');
+Route::post('/calificacionNotifi', [CalificacionNotifiController::class, 'mostrarVistaCalificacionNotifi'])->name('calificacionNotifi');
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 
