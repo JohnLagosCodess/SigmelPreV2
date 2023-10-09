@@ -328,8 +328,8 @@
         </form>
         <form action="{{route($SubModulo)}}" id="formulario2" method="POST">            
             @csrf
-            <input hidden="hidden" type="text" name="Id_evento_calitec" id="Id_evento_calitec" value="{{$array_datos_calificacionPcl[0]->ID_evento}}">
-            <input hidden="hidden" type="text" name="Id_asignacion_calitec" id="Id_asignacion_calitec" value="{{$array_datos_calificacionPcl[0]->Id_Asignacion}}">
+            <input hidden="hidden" type="text" name="Id_evento_pcl" id="Id_evento_pcl" value="{{$array_datos_calificacionPcl[0]->ID_evento}}">
+            <input hidden="hidden" type="text" name="Id_asignacion_pcl" id="Id_asignacion_pcl" value="{{$array_datos_calificacionPcl[0]->Id_Asignacion}}">
             <button type="submit" id="botonFormulario2" style="display: none; !important"></button>
         </form>
     </div>

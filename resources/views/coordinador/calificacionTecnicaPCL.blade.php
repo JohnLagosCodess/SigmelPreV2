@@ -816,6 +816,21 @@
                         <!-- Total Deficiencia (50%) -->
                         <div class="card-body text-center">
                             <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        @if(!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 3 && !empty($array_info_decreto_evento[0]->Suma_combinada))
+                                        <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert" style="text-align: initial;">
+                                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para guardar la Suma combinada y el Total Deficiencia (50%) se realiza al momento de guardar el <b>Concepto final del Dictamen Pericial</b>
+                                        </div>
+                                        @elseif(!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 3 && empty($array_info_decreto_evento[0]->Suma_combinada))
+                                            <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert" style="text-align: initial;">
+                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para guardar la Suma combinada y el Total Deficiencia (50%) se realiza al momento de guardar el <b>Concepto final del Dictamen Pericial</b>
+                                            </div>
+                                        @endif 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">                                
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="suma_combinada">Suma Combinada:</label>   

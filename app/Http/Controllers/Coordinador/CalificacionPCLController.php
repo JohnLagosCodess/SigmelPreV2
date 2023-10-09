@@ -1049,8 +1049,9 @@ class CalificacionPCLController extends Controller
             return redirect('/');
         }
         $user = Auth::user();
-        $Id_evento_calitec=$request->Id_evento_calitec;
-        $Id_asignacion_calitec = $request->Id_asignacion_calitec;
+
+        $Id_evento_calitec=$request->Id_evento_pcl;
+        $Id_asignacion_calitec = $request->Id_asignacion_pcl;
 
         $hay_agudeza_visual = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
         ->where('ID_evento', $Id_evento_calitec)->get();
@@ -1160,6 +1161,7 @@ class CalificacionPCLController extends Controller
         $array_datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
         ->where([
             ['ID_evento',$Id_evento_calitec],
+            ['Id_Asignacion',$Id_asignacion_calitec],
             ['Estado', 'Activo']
         ])
         ->get();
@@ -1169,25 +1171,27 @@ class CalificacionPCLController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
         ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
         'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones')
-        ->where([['side.ID_evento',$Id_evento_calitec],['side.Estado', '=', 'Activo']])->get(); 
+        ->where([['side.ID_evento',$Id_evento_calitec], ['side.Id_Asignacion',$Id_asignacion_calitec], ['side.Estado', '=', 'Activo']])->get(); 
         
         $array_datos_deficiencias_alteraciones =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
         ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
         ->select('sidae.Id_Deficiencia', 'sidae.ID_evento', 'sidae.Id_Asignacion', 'sidae.Id_proceso', 'sidae.Id_tabla',
         'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.CFM1', 'sidae.CFM2', 'sidae.FU', 'sidae.CAT', 'sidae.Clase_Final', 
         'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
-        ->where([['sidae.ID_evento',$Id_evento_calitec],['sidae.Estado', '=', 'Activo']])->get();         
+        ->where([['sidae.ID_evento',$Id_evento_calitec], ['sidae.Id_Asignacion',$Id_asignacion_calitec], ['sidae.Estado', '=', 'Activo']])->get();         
         
         $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
         ->where([
             ['ID_evento',$Id_evento_calitec],
+            ['Id_Asignacion',$Id_asignacion_calitec],
             ['Estado', 'Activo']
         ])
         ->get();
 
         $array_laboralmente_Activo = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
         ->where([
-            ['ID_evento',$Id_evento_calitec]
+            ['ID_evento',$Id_evento_calitec],
+            ['Id_Asignacion',$Id_asignacion_calitec],
         ])
         ->get();
 
@@ -1203,11 +1207,12 @@ class CalificacionPCLController extends Controller
         'siroe.Adaptativa_reconoce_funcion_espacios_casa', 'siroe.Adaptativa_imita_trazo_lapiz', 'siroe.Adaptativa_abre_puerta',
         'siroe.Total_criterios_desarrollo', 'siroe.Juego_estudio_clase', 'siroe.Total_rol_estudio_clase', 'siroe.Adultos_mayores',
         'siroe.Total_rol_adultos_ayores', 'siroe.Nombre_usuario', 'siroe.F_registro')
-        ->where([['siroe.ID_evento',$Id_evento_calitec]])->get();    
+        ->where([['siroe.ID_evento',$Id_evento_calitec], ['siroe.Id_Asignacion',$Id_asignacion_calitec]])->get();    
         
         $array_libros_2_3 = sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
         ->where([
-            ['ID_evento',$Id_evento_calitec]
+            ['ID_evento',$Id_evento_calitec],
+            ['Id_Asignacion',$Id_asignacion_calitec],
         ])
         ->get();
 
@@ -1920,7 +1925,8 @@ class CalificacionPCLController extends Controller
     public function eliminarExamenInterconsulta(Request $request){
         $id_fila_examen = $request->fila;
         $fila_actualizar = [
-            'Estado' => 'Inactivo'
+            'Estado' => 'Inactivo',
+            'Estado_Recalificacion' => 'Inactivo'
         ];
 
         sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')->where('Id_Examenes_interconsultas', $id_fila_examen)
@@ -2000,7 +2006,8 @@ class CalificacionPCLController extends Controller
     public function eliminarDiagnosticoMotivoCalificacion(Request $request){
         $id_fila_diagnostico = $request->fila;
         $fila_actualizar = [
-            'Estado' => 'Inactivo'
+            'Estado' => 'Inactivo',
+            'Estado_Recalificacion' => 'Inactivo'
         ];
 
         sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')->where('Id_Diagnosticos_motcali', $id_fila_diagnostico)
@@ -2072,7 +2079,8 @@ class CalificacionPCLController extends Controller
 
         $id_fila_agudeza_auditiva = $request->fila;
         $fila_actualizar = [
-            'Estado' => 'Inactivo'
+            'Estado' => 'Inactivo',
+            'Estado_Recalificacion' => 'Inactivo'
         ];
 
         sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')->where('Id_Agudeza_auditiva', $id_fila_agudeza_auditiva)
@@ -2544,7 +2552,8 @@ class CalificacionPCLController extends Controller
     public function eliminarDeficienciaAteraciones(Request $request){
         $id_fila_deficiencia_alteraciones = $request->fila;
         $fila_actualizar = [
-            'Estado' => 'Inactivo'
+            'Estado' => 'Inactivo',
+            'Estado_Recalificacion' => 'Inactivo'
         ];
 
         sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')->where('Id_Deficiencia', $id_fila_deficiencia_alteraciones)
@@ -2688,8 +2697,8 @@ class CalificacionPCLController extends Controller
         if ($request -> bandera_LaboralActivo_guardar_actualizar == 'Guardar') {
             $datos_laboralmenteActivo = [
                 'ID_evento' => $Id_Evento_decreto,
-                'Id_Asignacion' => $Id_Proceso_decreto,
-                'Id_proceso' => $Id_Asignacion_decreto,
+                'Id_Asignacion' => $Id_Asignacion_decreto,
+                'Id_proceso' => $Id_Proceso_decreto,                
                 'Restricciones_rol' => $restricion_rol,
                 'Autosuficiencia_economica' => $auto_suficiencia,
                 'Edad_cronologica_menor' => $edad_cronologica_menor,
@@ -2768,8 +2777,8 @@ class CalificacionPCLController extends Controller
 
             $datos_laboralmenteActivo = [
                 'ID_evento' => $Id_Evento_decreto,
-                'Id_Asignacion' => $Id_Proceso_decreto,
-                'Id_proceso' => $Id_Asignacion_decreto,
+                'Id_Asignacion' => $Id_Asignacion_decreto,
+                'Id_proceso' => $Id_Proceso_decreto,                
                 'Restricciones_rol' => $restricion_rol,
                 'Autosuficiencia_economica' => $auto_suficiencia,
                 'Edad_cronologica_menor' => $edad_cronologica_menor,
@@ -2899,8 +2908,8 @@ class CalificacionPCLController extends Controller
             
             $datos_rolOcupacional =[
                 'ID_evento' => $Id_EventoDecreto,
-                'Id_Asignacion' => $Id_ProcesoDecreto,
-                'Id_proceso' => $Id_Asignacion_Dcreto,
+                'Id_Asignacion' => $Id_Asignacion_Dcreto,
+                'Id_proceso' => $Id_ProcesoDecreto,                
                 'Poblacion_calificar' => $poblacion_califi,
                 'Motriz_postura_simetrica' => $mantiene_postura,
                 'Motriz_actividad_espontanea' => $actividad_espontanea,
@@ -2948,8 +2957,8 @@ class CalificacionPCLController extends Controller
 
             $datos_rolOcupacional =[
                 'ID_evento' => $Id_EventoDecreto,
-                'Id_Asignacion' => $Id_ProcesoDecreto,
-                'Id_proceso' => $Id_Asignacion_Dcreto,
+                'Id_Asignacion' => $Id_Asignacion_Dcreto,
+                'Id_proceso' => $Id_ProcesoDecreto,
                 'Poblacion_calificar' => $poblacion_califi,
                 'Motriz_postura_simetrica' => $mantiene_postura,
                 'Motriz_actividad_espontanea' => $actividad_espontanea,
@@ -3101,8 +3110,8 @@ class CalificacionPCLController extends Controller
         if($bandera_Libros2_3_guardar_actualizar == 'Guardar'){
             $datos_Libros2_3 =[
                 'ID_evento' => $Id_EventoDecreto,
-                'Id_Asignacion' => $Id_ProcesoDecreto,
-                'Id_proceso' => $Id_Asignacion_Dcreto,
+                'Id_Asignacion' => $Id_Asignacion_Dcreto,
+                'Id_proceso' => $Id_ProcesoDecreto,                
                 'Conducta10' => $conducta_10,
                 'Conducta11' => $conducta_11,
                 'Conducta12' => $conducta_12,
@@ -3204,8 +3213,8 @@ class CalificacionPCLController extends Controller
         }elseif($bandera_Libros2_3_guardar_actualizar == 'Actualizar'){
             $datos_Libros2_3 =[
                 'ID_evento' => $Id_EventoDecreto,
-                'Id_Asignacion' => $Id_ProcesoDecreto,
-                'Id_proceso' => $Id_Asignacion_Dcreto,
+                'Id_Asignacion' => $Id_Asignacion_Dcreto,
+                'Id_proceso' => $Id_ProcesoDecreto,                
                 'Conducta10' => $conducta_10,
                 'Conducta11' => $conducta_11,
                 'Conducta12' => $conducta_12,
@@ -3316,12 +3325,16 @@ class CalificacionPCLController extends Controller
         $time = time();
         $nombre_usuario = Auth::user()->name;
         $date = date("Y-m-d", $time);
+        $Decreto_pericial = $request->Decreto_pericial;
         $Id_EventoDecreto = $request->Id_EventoDecreto;
         $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
         $Id_Asignacion_Dcreto = $request->Id_Asignacion_Dcreto;
         $suma_combinada = $request->suma_combinada;
         $Total_Deficiencia50 = $request->Total_Deficiencia50;
-        $porcentaje_pcl = $request->porcentaje_pcl;        
+        $total_discapacidades = $request->total_discapacidades;
+        $total_minusvalia = $request->total_minusvalia;
+        $total_porcentajePcl = $Total_Deficiencia50 + $total_discapacidades + $total_minusvalia;
+        $porcentaje_pcl = $request->porcentaje_pcl;  
         $rango_pcl = $request->rango_pcl;        
         $tipo_evento = $request->tipo_evento;        
         $tipo_origen = $request->tipo_origen;  
@@ -3341,30 +3354,59 @@ class CalificacionPCLController extends Controller
         } else {
             $justi_dependencia = $justi_dependencia;
         }
-        $datos_dictamenPericial =[
-            'Suma_combinada' => $suma_combinada,
-            'Total_Deficiencia50' => $Total_Deficiencia50,
-            'Porcentaje_pcl' => $porcentaje_pcl,
-            'Rango_pcl' => $rango_pcl,
-            'Tipo_evento' => $tipo_evento,
-            'Origen' => $tipo_origen,
-            'F_evento' => $f_evento_pericial,
-            'F_estructuracion' => $f_estructura_pericial,
-            'Sustentacion_F_estructuracion' => $sustenta_fecha,
-            'Detalle_calificacion' => $detalle_califi,
-            'Enfermedad_catastrofica' => $enfermedad_catastrofica,
-            'Enfermedad_congenita' => $enfermedad_congenita,
-            'Tipo_enfermedad' => $tipo_enfermedad,
-            'Requiere_tercera_persona' => $requiere_persona,
-            'Requiere_tercera_persona_decisiones' => $requiere_decisiones_persona,
-            'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
-            'Justificacion_dependencia' => $justi_dependencia,
-            'Nombre_usuario' => $nombre_usuario,
-            'F_registro' => $date,
-        ];
+        if($Decreto_pericial == 3){
+            $datos_dictamenPericial =[
+                'Suma_combinada' => $suma_combinada,
+                'Total_Deficiencia50' => $Total_Deficiencia50,
+                'Porcentaje_pcl' => $total_porcentajePcl,
+                'Rango_pcl' => $rango_pcl,
+                'Tipo_evento' => $tipo_evento,
+                'Origen' => $tipo_origen,
+                'F_evento' => $f_evento_pericial,
+                'F_estructuracion' => $f_estructura_pericial,
+                'Sustentacion_F_estructuracion' => $sustenta_fecha,
+                'Detalle_calificacion' => $detalle_califi,
+                'Enfermedad_catastrofica' => $enfermedad_catastrofica,
+                'Enfermedad_congenita' => $enfermedad_congenita,
+                'Tipo_enfermedad' => $tipo_enfermedad,
+                'Requiere_tercera_persona' => $requiere_persona,
+                'Requiere_tercera_persona_decisiones' => $requiere_decisiones_persona,
+                'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
+                'Justificacion_dependencia' => $justi_dependencia,
+                'Estado_decreto' => 'Cerrado',
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];
+            sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
+            ->where('ID_evento', $Id_EventoDecreto)->update($datos_dictamenPericial); 
 
-        sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
-        ->where('ID_evento', $Id_EventoDecreto)->update($datos_dictamenPericial);   
+        }else{
+            $datos_dictamenPericial =[
+                'Suma_combinada' => $suma_combinada,
+                'Total_Deficiencia50' => $Total_Deficiencia50,
+                'Porcentaje_pcl' => $porcentaje_pcl,
+                'Rango_pcl' => $rango_pcl,
+                'Tipo_evento' => $tipo_evento,
+                'Origen' => $tipo_origen,
+                'F_evento' => $f_evento_pericial,
+                'F_estructuracion' => $f_estructura_pericial,
+                'Sustentacion_F_estructuracion' => $sustenta_fecha,
+                'Detalle_calificacion' => $detalle_califi,
+                'Enfermedad_catastrofica' => $enfermedad_catastrofica,
+                'Enfermedad_congenita' => $enfermedad_congenita,
+                'Tipo_enfermedad' => $tipo_enfermedad,
+                'Requiere_tercera_persona' => $requiere_persona,
+                'Requiere_tercera_persona_decisiones' => $requiere_decisiones_persona,
+                'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
+                'Justificacion_dependencia' => $justi_dependencia,
+                'Estado_decreto' => 'Cerrado',
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];
+    
+            sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
+            ->where('ID_evento', $Id_EventoDecreto)->update($datos_dictamenPericial);  
+        }
 
         $mensajes = array(
             "parametro" => 'insertar_dictamen_pericial',
@@ -3431,7 +3473,8 @@ class CalificacionPCLController extends Controller
     public function eliminarDeficieciasDecretoCero(Request $request){
         $id_fila_deficiencia_cero = $request->fila;
         $fila_actualizar = [
-            'Estado' => 'Inactivo'
+            'Estado' => 'Inactivo',
+            'Estado_Recalificacion' => 'Inactivo'
         ];
 
         sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')->where('Id_Deficiencia', $id_fila_deficiencia_cero)
@@ -3506,7 +3549,8 @@ class CalificacionPCLController extends Controller
     public function eliminarDeficieciasDecretoTres(Request $request){
         $id_fila_deficiencia_cero = $request->fila;
         $fila_actualizar = [
-            'Estado' => 'Inactivo'
+            'Estado' => 'Inactivo',
+            'Estado_Recalificacion' => 'Inactivo',
         ];
 
         sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')->where('Id_Deficiencia', $id_fila_deficiencia_cero)

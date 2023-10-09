@@ -880,7 +880,7 @@ $(document).ready(function(){
 
     $("[name='higiene_personal']").on("change", function(){
         opt_tabla9_higiene_personal = $(this).val();
-        $(this).val(opt_tabla9_cuidado_cuerpo);
+        $(this).val(opt_tabla9_higiene_personal);
         iniciarIntervaloTotaltabla9();
     });
 
@@ -1727,6 +1727,7 @@ $(document).ready(function(){
         var Id_EventoDecreto = $('#Id_Evento_decreto').val();
         var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
         var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
+        console.log(Id_Asignacion_Dcreto);
         var restricion_rol = $('input[name="restricion_rol"]:checked').val();
         var auto_suficiencia = $('input[name="auto_suficiencia"]:checked').val();
         if ($('input[type="radio"][id^="edad_cronologica_"]').is(":checked")) {                            
@@ -2220,7 +2221,7 @@ $(document).ready(function(){
     $(document).ready(function() {
 
         definirDecreto_deficiencia = $('#decreto_califi').val();
-        total_deficiencia = $('#Total_Deficiencia50').val();
+        total_deficiencia = $('#Total_Deficiencia50').val();          
         total_rol_ocupacional12 = $('#total_tabla12').val();
         total_rol_ocupacional13 = $('#total_tabla13').val();
         total_rol_ocupacional14 = $('#total_tabla14').val();        
@@ -2267,16 +2268,16 @@ $(document).ready(function(){
             }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) > 0){
                 porcentajePcl = Number(total_deficiencia) + Number(minusvalia_total);
             }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){
-                porcentajePcl = Number(dicapacidad_total) + Number(minusvalia_total);
-            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){
-                porcentajePcl = Number(total_deficiencia) + Number(dicapacidad_total) + Number(minusvalia_total);
+                porcentajePcl = Number(dicapacidad_total) + Number(minusvalia_total);                
+            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){                   
+                porcentajePcl = Number(total_deficiencia) + Number(dicapacidad_total) + Number(minusvalia_total);                
             }
         }else if(definirDecreto_deficiencia == 2) {            
             porcentajePcl = 0;            
         }else{            
             porcentajePcl = 0;            
         }       
-
+        console.log(porcentajePcl);
         $("#porcentaje_pcl").val(Math.round(porcentajePcl));
         if (porcentajePcl == 0) {
             $("#rango_pcl").val('PCL 0');
@@ -2330,6 +2331,7 @@ $(document).ready(function(){
             $('#GuardarLaboralActivo').prop('disabled', true);            
             $('#btn_abrir_modal_agudeza').prop('disabled', true);
             $('#btn_abrir_modal_agudeza').css('cursor', 'not-allowed');
+            $('#btn_guardar_agudeza').prop('disabled', true);            
             $('#btn_abrir_modal_auditivo').prop('disabled', true);
             $('#btn_abrir_modal_auditivo').css('cursor', 'not-allowed'); 
             $('#guardar_datos_deficiencia_alteraciones').prop('disabled', true);
@@ -2390,11 +2392,14 @@ $(document).ready(function(){
     
     $('#form_dictamen_pericial').submit(function (e){
         e.preventDefault();
+        var Decreto_pericial = $('#decreto_califi').val();
         var Id_EventoDecreto = $('#Id_Evento_decreto').val();
         var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
         var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
         var suma_combinada = $('#suma_combinada').val();
         var Total_Deficiencia50 = $('#Total_Deficiencia50').val();
+        var total_discapacidades = $('#total_discapacidades').val();
+        var total_minusvalia = $('#total_minusvalia').val();
         var porcentaje_pcl = $('#porcentaje_pcl').val();
         var rango_pcl = $('#rango_pcl').val();
         var tipo_evento = $('#tipo_evento').val();
@@ -2412,12 +2417,15 @@ $(document).ready(function(){
         var justi_dependencia = $('#justi_dependencia').val();   
         
         var datos_dictamenPericial={
-            '_token': token,
+            '_token': token,            
+            'Decreto_pericial':Decreto_pericial,
             'Id_EventoDecreto':Id_EventoDecreto,
             'Id_ProcesoDecreto':Id_ProcesoDecreto,
             'Id_Asignacion_Dcreto':Id_Asignacion_Dcreto,
             'suma_combinada':suma_combinada,
             'Total_Deficiencia50':Total_Deficiencia50,
+            'total_discapacidades':total_discapacidades,
+            'total_minusvalia':total_minusvalia,
             'porcentaje_pcl':porcentaje_pcl,
             'rango_pcl':rango_pcl,
             'tipo_evento':tipo_evento,
