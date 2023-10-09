@@ -211,6 +211,12 @@ $(document).ready(function () {
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito)); 
     });
 
+    // INPUT NOMBRE ENTIDAD HEREDADA (DTO ATEL)
+    $(document).on('keyup', "input[id^='entidad_enfermedad']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
+    });
+
     /* Función para colocar la primera letra en mayúscula de cada palabra que se escriba */
     function LetraMayusCadaPalabra(textoEscrito) {
         var palabras = textoEscrito.split(' ');

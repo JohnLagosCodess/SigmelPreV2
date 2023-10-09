@@ -9,13 +9,21 @@
 
 @section('content')
     <div class="row">
-        <div class="col-12">
+        <div class="col-2">
             <?php if (isset($_POST['badera_buscador_evento']) &&  $_POST['badera_buscador_evento'] == 'desdebuscador' ):?>
                 <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
-            <?php else: ?>
-
-                <a href="{{route("gestionInicialNuevo")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+            <?php elseif (isset($_POST['bandera_buscador_dto_atel']) &&  $_POST['bandera_buscador_dto_atel'] == 'desdedtoatel' ): ?>
+                <a onclick="document.getElementById('btn_regreso_dto_atel').click();"   class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <form action="{{route("determinacionOrigenATEL")}}" id="Regreso_DTO_ATEL" method="POST">            
+                    @csrf
+                    <input hidden="hidden" type="text" name="Id_evento_calitec" id="Id_evento_calitec" value="<?php echo $_POST['newIdEvento'];?>">
+                    <input hidden="hidden" type="text" name="Id_asignacion_calitec" id="Id_asignacion_calitec" value="<?php echo $_POST['newIdAsignacion'];?>">
+                    <input hidden="hidden" type="text" name="Id_proceso_calitec" id="Id_proceso_calitec" value="<?php echo $_POST['newIdproceso'];?>">
+                    <button type="submit" id="btn_regreso_dto_atel" style="display: none; !important"></button>
+                </form>
             <?php endif ?>
+        </div>
+        <div class="col-2" style="text-align: left !important;">
             <a href="javascript:void(0);" data-toggle="modal" data-target="#modalHistorialAcciones" class="btn btn-info" id="cargar_historial_acciones"><i class="fas fa-list"></i> Historial Acciones</a>
         </div>
     </div>
@@ -1023,6 +1031,13 @@
 @stop
 
 @section('js')
+    <script type="text/javascript">
+        document.getElementById('btn_regreso_dto_atel').addEventListener('click', function(event) {
+            event.preventDefault();
+            // Realizar las acciones que quieres al hacer clic en el botón
+            document.getElementById('Regreso_DTO_ATEL').submit();
+        });
+    </script>
     <script src="/js/selectores_gestion_edicion.js"></script>  
 
     <script type="text/javascript">

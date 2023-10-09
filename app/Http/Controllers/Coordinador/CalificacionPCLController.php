@@ -1211,13 +1211,13 @@ class CalificacionPCLController extends Controller
         ])
         ->get();
 
-        $array_datos_deficiencicas50 = DB::select('CALL psrbalthazaraudpcldef(?)', array($Id_evento_calitec));
-        $array_datos_deficiencicas50_1 = DB::select('CALL psrbalthazarvispcldef(?)', array($Id_evento_calitec));
-        $array_datos_deficiencicas50_2 = DB::select('CALL psrbalthazardefpcl(?)', array($Id_evento_calitec));
-        $array_datos_deficiencicas50_3 = DB::select('CALL psrbalthazaraudpcl(?)', array($Id_evento_calitec));
-        $array_datos_deficiencicas50_4 = DB::select('CALL psrbalthazarvispcl(?)', array($Id_evento_calitec));
-        $array_datos_deficiencicas50_5 = DB::select('CALL psrbalthazaraudvispcl(?)', array($Id_evento_calitec));
-        $array_datos_deficiencicas50_6 = DB::select('CALL psrbalthazarpcl(?)', array($Id_evento_calitec));
+        $array_datos_deficiencicas50 = DB::select('CALL psrbalthazaraudpcldef(?,?)', array($Id_evento_calitec,$Id_asignacion_calitec));
+        $array_datos_deficiencicas50_1 = DB::select('CALL psrbalthazarvispcldef(?,?)', array($Id_evento_calitec,$Id_asignacion_calitec));
+        $array_datos_deficiencicas50_2 = DB::select('CALL psrbalthazardefpcl(?,?)', array($Id_evento_calitec,$Id_asignacion_calitec));
+        $array_datos_deficiencicas50_3 = DB::select('CALL psrbalthazaraudpcl(?,?)', array($Id_evento_calitec,$Id_asignacion_calitec));
+        $array_datos_deficiencicas50_4 = DB::select('CALL psrbalthazarvispcl(?,?)', array($Id_evento_calitec,$Id_asignacion_calitec));
+        $array_datos_deficiencicas50_5 = DB::select('CALL psrbalthazaraudvispcl(?,?)', array($Id_evento_calitec,$Id_asignacion_calitec));
+        $array_datos_deficiencicas50_6 = DB::select('CALL psrbalthazarpcl(?,?)', array($Id_evento_calitec,$Id_asignacion_calitec));
 
         if(!empty($array_datos_deficiencicas50)  && empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
             $array_Deficiencias50 = $array_datos_deficiencicas50[0]->deficiencias;
