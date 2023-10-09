@@ -332,7 +332,7 @@ class RecalificacionPCLController extends Controller
         }
 
         $hay_agudeza_visualre = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento_re', $Id_evento_recali], ['Id_Asignacion_re', $Id_asignacion_recali], ['Estado', 'Activo']])->get(); 
+        ->where([['ID_evento_re', $Id_evento_recali], ['Id_Asignacion_re', $Id_asignacion_recali], ['Estado', '=', 'Activo']])->get(); 
         
         return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'validar_estado_decreto', 'datos_decreto', 'validar_evento_asignacion', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre'));
 
@@ -1220,7 +1220,7 @@ class RecalificacionPCLController extends Controller
         sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')->insert($request->info_formulario);
 
         // Extraemos el id insertado para almacenar los datos de la campimetria
-        $id_agudeza = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')->select('Id_agudeza')->latest('Id_agudeza')->first();
+        $id_agudeza = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')->select('Id_agudeza_re')->latest('Id_agudeza_re')->first();
 
         // Envío de la información de la campimetría para ojo izquierdo 
         $grilla_ojo_izq = $request->grilla_ojo_izq;
@@ -1330,12 +1330,12 @@ class RecalificacionPCLController extends Controller
         ])->update($datos_actualizar_agudeza_visual);
 
         /* Borrado de la información de la campimetría para ojo izquierdo  */
-        sigmel_info_campimetria_ojo_izqre_eventos::on('sigmel_gestiones')
-        ->where('Id_agudeza', $id_agudeza)->delete();
+        /* sigmel_info_campimetria_ojo_izqre_eventos::on('sigmel_gestiones')
+        ->where('Id_agudeza', $id_agudeza)->delete(); */
 
         /* Borrado de la información de la campimetría para ojo derecho */
-        sigmel_info_campimetria_ojo_derre_eventos::on('sigmel_gestiones')
-        ->where('Id_agudeza', $id_agudeza)->delete();
+        /* sigmel_info_campimetria_ojo_derre_eventos::on('sigmel_gestiones')
+        ->where('Id_agudeza', $id_agudeza)->delete(); */
 
         $mensajes = array(
             "parametro" => 'borro',

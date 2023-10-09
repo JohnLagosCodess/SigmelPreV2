@@ -1171,17 +1171,17 @@
         @include('coordinador.modalagudezaAuditivaRe')
     {{-- @else
         @include('coordinador.modalagudezaAuditivaEdicion'); --}}                 
-    @endif    
-    @if (count($hay_agudeza_visual) == 0)         
-        {{-- MODAL NUEVA DEFICIENCIA VISUAL --}}
-        @include('coordinador.campimetriaRePCL')
-    @elseif(count($hay_agudeza_visual) > 0)
+    @endif 
+    {{-- @if (count($hay_agudeza_visual) == 0)         
+        
+        @include('coordinador.campimetriaRePCL') --}}
+    @if(count($hay_agudeza_visual) > 0 && count($hay_agudeza_visualre) == 0)
         {{-- MODAL EDICIÓN DEFICIENCIA VISUAL --}}
         @include('coordinador.edicionCampimetriaRePCL')
-    @elseif(count($hay_agudeza_visualre) == 0)
+    @elseif(count($hay_agudeza_visualre) == 0 && count($hay_agudeza_visual) == 0)        
         {{-- MODAL EDICIÓN DEFICIENCIA VISUAL --}}
         @include('coordinador.campimetriaRePCL')
-    @elseif(count($hay_agudeza_visualre) > 0)
+    @elseif(count($hay_agudeza_visualre) > 0)        
         {{-- MODAL EDICIÓN DEFICIENCIA VISUAL --}}
         @include('coordinador.edicionCampimetriaRePCL')
     @endif
