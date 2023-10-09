@@ -325,10 +325,10 @@ class RecalificacionPCLController extends Controller
 
         if (count($validar_estado_decreto) > 0) {            
             $hay_agudeza_visual = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
-            ->where([['ID_evento_re', $Id_evento_recali], ['Id_Asignacion_re',$validar_estado_decreto[0]->Id_Asignacion_decreto], ['Estado', 'Activo']])->get(); 
+            ->where([['ID_evento_re', $Id_evento_recali], ['Id_Asignacion_re',$validar_estado_decreto[0]->Id_Asignacion_decreto], ['Estado', '=', 'Activo']])->get(); 
         } else {
-            $hay_agudeza_visual = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
-            ->where([['ID_evento_re', $Id_evento_recali], ['Estado', 'Activo']])->get();           
+            $hay_agudeza_visual = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento', $Id_evento_recali]])->get();           
         }
 
         $hay_agudeza_visualre = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')

@@ -19,7 +19,7 @@
                 <input type="text" id="dato_id_agudeza" value="{{$info_agudeza->Id_agudeza_re}}">
                 <input type="text" id="dato_agudeza_ojo_izq" value="{{$info_agudeza->Agudeza_Ojo_Izq_re}}">
                 <input type="text" id="dato_agudeza_ojo_der" value="{{$info_agudeza->Agudeza_Ojo_Der_re}}">
-                <input type="text" id="dato_ceguera_total" value="{{$info_agudeza->Ceguera_Total_re}}">                                
+                <input type="text" id="dato_ceguera_total" value="{{$info_agudeza->Ceguera_Total_re}}">
             @elseif (!empty($hay_agudeza_visualre[0]->Estado) && $hay_agudeza_visualre[0]->Estado == 'Activo')
                 <input type="text" id="ID_evento" name="ID_evento" value="{{$info_agudezare->ID_evento_re}}">
                 <input type="text" id="Id_Asignacion" name="Id_Asignacion" value="{{$info_agudezare->Id_Asignacion_re}}">
@@ -153,6 +153,7 @@
                                         <tbody>
                                             <tr class="text-center">
                                                 @if (!empty($hay_agudeza_visual[0]->Estado) && $hay_agudeza_visual[0]->Estado == 'Activo' && empty($hay_agudeza_visualre[0]->Estado))
+                                                    {{-- {{$hay_agudeza_visual[0]->Estado}} --}}
                                                     <td><input type="text" id="resultado_agudeza_ojo_izquierdo" name="resultado_agudeza_ojo_izquierdo" class="text-center" readonly value="{{$info_agudeza->Agudeza_Ojo_Izq_re}}"></td>
                                                     <td><input type="text" id="resultado_agudeza_ojo_derecho" name="resultado_agudeza_ojo_derecho" class="text-center" readonly value="{{$info_agudeza->Agudeza_Ojo_Der_re}}"></td>
                                                     <td><input type="text" id="resultado_agudeza_ambos_ojos" name="resultado_agudeza_ambos_ojos" class="text-center" readonly value="{{$info_agudeza->Agudeza_Ambos_Ojos_re}}"></td>
@@ -164,7 +165,7 @@
                                                     <td><input type="text" id="resultado_cvf" name="resultado_cvf" class="text-center" readonly value="{{$info_agudeza->CVF_re}}"></td>
                                                     <td><input type="text" id="resultado_dcv" name="resultado_dcv" class="text-center" readonly value="{{$info_agudeza->DCV_re}}"></td>
                                                     <td><input type="text" id="resultado_dsv" name="resultado_dsv" class="text-center" readonly value="{{$info_agudeza->DSV_re}}"></td>
-                                                    <td><input type="text" id="resultado_deficiencia" name="resultado_deficiencia" class="text-center" readonly value="{{$info_agudeza->Deficiencia_re}}"></td>                                                    
+                                                    <td><input type="text" id="resultado_deficiencia" name="resultado_deficiencia" class="text-center" readonly value="{{$info_agudeza->Deficiencia_re}}"></td>
                                                 @elseif(!empty($hay_agudeza_visualre[0]->Estado) && $hay_agudeza_visualre[0]->Estado == 'Activo')
                                                     <td><input type="text" id="resultado_agudeza_ojo_izquierdo" name="resultado_agudeza_ojo_izquierdo" class="text-center" readonly value="{{$info_agudezare->Agudeza_Ojo_Izq_re}}"></td>
                                                     <td><input type="text" id="resultado_agudeza_ojo_derecho" name="resultado_agudeza_ojo_derecho" class="text-center" readonly value="{{$info_agudezare->Agudeza_Ojo_Der_re}}"></td>
