@@ -141,13 +141,26 @@ $(document).ready(function(){
                     $('#tipo_evento').append('<option value=""></option>');
 
                     let listado_tipo_evento = Object.keys(data);
-                    for (let i = 0; i < listado_tipo_evento.length; i++) {
-                        // if (data[listado_tipo_evento[i]]['Nombre_evento'] == nombre_evento_bd) {                    
-                        if (data[listado_tipo_evento[i]]['Id_Evento'] == $("#bd_tipo_evento").val()) {      
-                            $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'" selected>'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                    for (let i = 0; i < listado_tipo_evento.length; i++) {             
+                        // if (data[listado_tipo_evento[i]]['Id_Evento'] == $("#bd_tipo_evento").val()) {      
+                        //     $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'" selected>'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                        // }else{
+                        //     $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'">'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                        // }
+                        if ($("#bd_tipo_evento").val() != "") {
+                            if (data[listado_tipo_evento[i]]['Id_Evento'] == $("#bd_tipo_evento").val()) {                    
+                                $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'" selected>'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                            }else{
+                                $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'">'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                            }
                         }else{
-                            $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'">'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
-                        }
+                            
+                            if (data[listado_tipo_evento[i]]['Nombre_evento'] == $("#nombre_evento_gestion_edicion").val()) {
+                                $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'" selected>'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                            }else{
+                                $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'">'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                            }
+                        }             
                     }
                 }
             });
@@ -168,11 +181,26 @@ $(document).ready(function(){
 
                     let listado_tipo_evento = Object.keys(data);
                     for (let i = 0; i < listado_tipo_evento.length; i++) {
-                        if (data[listado_tipo_evento[i]]['Id_Evento'] == $("#bd_tipo_evento").val()) {         
-                            $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'" selected>'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                        // if (data[listado_tipo_evento[i]]['Id_Evento'] == $("#bd_tipo_evento").val()) {         
+                        //     $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'" selected>'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                        // }else{
+                        //     $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'">'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                        // }
+
+                        if ($("#bd_tipo_evento").val() != "") {
+                            if (data[listado_tipo_evento[i]]['Id_Evento'] == $("#bd_tipo_evento").val()) {                    
+                                $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'" selected>'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                            }else{
+                                $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'">'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                            }
                         }else{
-                            $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'">'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
-                        }
+                            
+                            if (data[listado_tipo_evento[i]]['Nombre_evento'] == $("#nombre_evento_gestion_edicion").val()) {
+                                $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'" selected>'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                            }else{
+                                $('#tipo_evento').append('<option value="'+data[listado_tipo_evento[i]]['Id_Evento']+'">'+data[listado_tipo_evento[i]]['Nombre_evento']+'</option>');
+                            }
+                        }             
                     }
                 }
             });
@@ -414,6 +442,143 @@ $(document).ready(function(){
     });
     autoAdjustColumns(historico_laboral);
 
+    var intervalo = setInterval(() => {
+        var activo = $("#es_activo").val();
+        var verificacion_tipo_evento = $("#tipo_evento option:selected").text();
+
+        // Validacion N°1: Activo = Si y Tipo de Evento = Accidente
+        if (activo == "Si" && verificacion_tipo_evento == "Accidente") {
+            var parametro_origen_dto_atel = "origen_vali_1";
+            $("#mostrar_ocultar_formularios").slideUp('slow');
+            $("#mostrar_ocultar_formularios").slideDown('slow');
+
+            // Mostramos los contenedores del formulario accidente
+            $("#contenedor_forms_acci_inci_sincober").removeClass('d-none');
+            $("#contenedor_grado_severidad").removeClass('d-none');
+            $("#contenedor_descrip_FURAT").removeClass('d-none');
+            $("#contenedor_tipo_lesion").removeClass('d-none');
+            $("#contenedor_parte_afectada").removeClass('d-none');
+            $("#contenedor_checkboxes_acci_inci_sincober").removeClass('d-none');
+            
+            // Mostramos el contenedor del formulario de incidente
+            $("#contenedor_diag_moti_califi").removeClass('d-none');
+
+            // Les adicionamos el atributo required
+            $("#tipo_accidente").attr('required', true);
+            $("#fecha_evento").attr('required', true);
+            $("#hora_evento").attr('required', true);
+            $("#grado_severidad").attr('required', true);
+            $("#descripcion_FURAT").attr('required', true);
+            
+            // Ocultamos los contenedores del formulario enfermedad
+            $("#contenedor_historico_laboral").addClass('d-none');
+            $("#contenedor_fecha_diagnos_enfermedad").addClass('d-none');
+            $("#contenedor_enfermedad_heredada").addClass('d-none');
+            $("#contenedor_nombre_entidad_enfermedad_heredada").addClass('d-none');
+            $("#contenedor_checkboxes_enfermedad").addClass('d-none');
+            clearInterval(intervalo);
+        }
+        // Validacion N°2: Activo = Si y Tipo de Evento = Enfermedad
+        else if(activo == "Si" && verificacion_tipo_evento == "Enfermedad"){
+            var parametro_origen_dto_atel = "origen_vali_1";
+            $("#mostrar_ocultar_formularios").slideUp('slow');
+            $("#mostrar_ocultar_formularios").slideDown('slow');
+
+            // Mostramos los contenedores del formulario enfermedad
+            $("#contenedor_historico_laboral").removeClass('d-none');
+            $("#contenedor_fecha_diagnos_enfermedad").removeClass('d-none');
+            $("#contenedor_enfermedad_heredada").removeClass('d-none');
+            // $("#contenedor_nombre_entidad_enfermedad_heredada").removeClass('d-none');
+            $("#contenedor_checkboxes_enfermedad").removeClass('d-none');
+
+            // Mostramos el contenedor del formulario de incidente
+            $("#contenedor_diag_moti_califi").removeClass('d-none');
+
+            // Les quitamos el atributo required
+            $("#tipo_accidente").removeAttr('required');
+            $("#fecha_evento").removeAttr('required');
+            $("#hora_evento").removeAttr('required');
+            $("#grado_severidad").removeAttr('required');
+            $("#descripcion_FURAT").removeAttr('required');
+
+            // Ocultamos los contenedores del formulario accidente
+            $("#contenedor_forms_acci_inci_sincober").addClass('d-none');
+            $("#contenedor_grado_severidad").addClass('d-none');
+            $("#contenedor_descrip_FURAT").addClass('d-none');
+            $("#contenedor_tipo_lesion").addClass('d-none');
+            $("#contenedor_parte_afectada").addClass('d-none');
+            $("#contenedor_checkboxes_acci_inci_sincober").addClass('d-none');
+            clearInterval(intervalo);
+        }
+        // Validacion N°3: Activo = Si y Tipo de Evento = Incidente
+        else if(activo == "Si" && verificacion_tipo_evento == "Incidente"){
+            var parametro_origen_dto_atel = "origen_vali_2";
+            $("#mostrar_ocultar_formularios").slideUp('slow');
+            $("#mostrar_ocultar_formularios").slideDown('slow');
+
+            // Mostramos los contenedores del formulario accidente
+            $("#contenedor_forms_acci_inci_sincober").removeClass('d-none');
+            $("#contenedor_grado_severidad").removeClass('d-none');
+            $("#contenedor_descrip_FURAT").removeClass('d-none');
+            $("#contenedor_tipo_lesion").removeClass('d-none');
+            $("#contenedor_parte_afectada").removeClass('d-none');
+            $("#contenedor_checkboxes_acci_inci_sincober").removeClass('d-none');
+
+            // Ocultamos el contenedor del formulario de incidente
+            $("#contenedor_diag_moti_califi").addClass('d-none');
+
+            // Les adicionamos el atributo required
+            $("#tipo_accidente").attr('required', true);
+            $("#fecha_evento").attr('required', true);
+            $("#hora_evento").attr('required', true);
+            $("#grado_severidad").attr('required', true);
+            $("#descripcion_FURAT").attr('required', true);
+            
+            // Ocultamos los contenedores del formulario enfermedad
+            $("#contenedor_historico_laboral").addClass('d-none');
+            $("#contenedor_fecha_diagnos_enfermedad").addClass('d-none');
+            $("#contenedor_enfermedad_heredada").addClass('d-none');
+            $("#contenedor_nombre_entidad_enfermedad_heredada").addClass('d-none');
+            $("#contenedor_checkboxes_enfermedad").addClass('d-none');
+            clearInterval(intervalo);
+        }
+        // Validacion N°4: Activo = Si y Tipo de Evento = Sin Cobertura
+        else if(activo == "No" && verificacion_tipo_evento == "Sin Cobertura"){
+            var parametro_origen_dto_atel = "origen_vali_3";
+            $("#mostrar_ocultar_formularios").slideUp('slow');
+            $("#mostrar_ocultar_formularios").slideDown('slow');
+
+            // Mostramos los contenedores del formulario accidente
+            $("#contenedor_forms_acci_inci_sincober").removeClass('d-none');
+            $("#contenedor_grado_severidad").removeClass('d-none');
+            $("#contenedor_descrip_FURAT").removeClass('d-none');
+            $("#contenedor_tipo_lesion").removeClass('d-none');
+            $("#contenedor_parte_afectada").removeClass('d-none');
+            $("#contenedor_checkboxes_acci_inci_sincober").removeClass('d-none');
+
+            // Ocultamos el contenedor del formulario de incidente
+            $("#contenedor_diag_moti_califi").addClass('d-none');
+
+            // Les adicionamos el atributo required
+            $("#tipo_accidente").attr('required', true);
+            $("#fecha_evento").attr('required', true);
+            $("#hora_evento").attr('required', true);
+            $("#grado_severidad").attr('required', true);
+            $("#descripcion_FURAT").attr('required', true);
+            
+            // Ocultamos los contenedores del formulario enfermedad
+            $("#contenedor_historico_laboral").addClass('d-none');
+            $("#contenedor_fecha_diagnos_enfermedad").addClass('d-none');
+            $("#contenedor_enfermedad_heredada").addClass('d-none');
+            $("#contenedor_nombre_entidad_enfermedad_heredada").addClass('d-none');
+            $("#contenedor_checkboxes_enfermedad").addClass('d-none');
+            clearInterval(intervalo);
+        }
+
+        
+    }, 500);
+
+
     // VERIFICACION DEL DATO DE TIPO DE EVENTO EN CASO DE QUE YA EXISTA INFORMACIÓN GUARDADA
     var verificacion_tipo_evento = $("#nombre_evento_guardado").val();
    
@@ -515,7 +680,6 @@ $(document).ready(function(){
             $("#contenedor_checkboxes_enfermedad").addClass('d-none');
 
         }
-
         // Validacion N°4: Activo = Si y Tipo de Evento = Sin Cobertura
         else if(activo == "No" && verificacion_tipo_evento == "Sin Cobertura"){
             var parametro_origen_dto_atel = "origen_vali_3";
@@ -1048,7 +1212,7 @@ $(document).ready(function(){
         
         $.ajax({
             type:'POST',
-            url:'/eliminarExamenesInterconsultas',
+            url:'/eliminarExamenesInterconsultasDTOATEL',
             data: datos_fila_quitar_examen,
             success:function(response){
                 // console.log(response);
@@ -1072,7 +1236,7 @@ $(document).ready(function(){
 
     });
 
-    // Inactivar filas visuales cuando se eliminen de la pantalla para la tabla de Diagnosticos Motivo Calificacion
+    // Inactivar filas visuales cuando se eliminen de la pantalla para la tabla de Diagnósticos Motivo Calificacion
     $(document).on('click', "a[id^='btn_remover_diagnosticos_moticalifi']", function(){
         var id_evento = $("#Id_Evento_dto_atel").val();
         var id_asignacion = $('#Id_Asignacion_dto_atel').val();
@@ -1089,7 +1253,7 @@ $(document).ready(function(){
         
         $.ajax({
             type:'POST',
-            url:'/eliminarDiagnosticosMotivoCalificacion',
+            url:'eliminarDiagnosticosMotivoCalificacionDTOATEL',
             data: datos_fila_quitar_examen,
             success:function(response){
                 // console.log(response);
@@ -1113,104 +1277,58 @@ $(document).ready(function(){
 
     });
 
-    
+    // Quitar el Si como DX principal en la tabla Diagnósticos Motivo Calificación
+    $(document).on('click', "input[id^='checkbox_dx_principal_visual_Cie10_']", function(){
+        var fila = $(this).data("id_fila_checkbox_dx_principal_cie10_visual");
+        let token = $("input[name='_token']").val();
+
+        if ($("#checkbox_dx_principal_visual_Cie10_"+fila).is(":checked")) {
+            var informacion_actualizar = {
+                '_token': token,
+                'fila':fila,
+                'bandera': "Si",
+                'Id_evento': $('#Id_Evento_dto_atel').val(),
+                'Id_Asignacion': $('#Id_Asignacion_dto_atel').val(),
+                'Id_proceso': $('#Id_Proceso_dto_atel').val()
+            }
+        } else {
+            var informacion_actualizar = {
+                '_token': token,
+                'fila':fila,
+                'bandera': "No",
+                'Id_evento': $('#Id_Evento_dto_atel').val(),
+                'Id_Asignacion': $('#Id_Asignacion_dto_atel').val(),
+                'Id_proceso': $('#Id_Proceso_dto_atel').val()
+            }
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/actualizarDxPrincipalDTOATEL',
+            data: informacion_actualizar,
+            success:function(response){
+                if (response.parametro == "hecho") {
+                    $("#resultado_insercion_cie10").empty();
+                    $("#resultado_insercion_cie10").removeClass('d-none');
+                    $("#resultado_insercion_cie10").addClass('alert-success');
+                    $("#resultado_insercion_cie10").append('<strong>'+response.mensaje+'</strong>');
+
+                    setTimeout(() => {
+                        $("#resultado_insercion_cie10").addClass('d-none');
+                        $("#resultado_insercion_cie10").removeClass('alert-success');
+                        $("#resultado_insercion_cie10").empty();
+                    }, 3000);
+                }              
+            }
+        });
+
+
+
+    });
 
 });
 
-$(document).ready(function(){
-    // Validación para inactivar los checkbox dx principal cuando se marque alguno
-    setInterval(() => {
-        // $(document).on('click', "input[id^='checkbox_dx_principal_Cie10_']", function(){
-        //     var idsito = $(this).attr("id");
-        //     console.log(idsito);
-        //     if ($("input[id^='checkbox_dx_principal_Cie10_']").is(':checked') == true) {
-        //         var idsito = $("input[id^='checkbox_dx_principal_Cie10_']").attr("id");
-        //         $("input[id^='checkbox_dx_principal_Cie10_']").not("#"+idsito).prop("disabled", true);
-        //     }else{
-        //         $("input[id^='checkbox_dx_principal_Cie10_']").prop("disabled", false);
-        //     }
-        // })
-        
-        
-        // $(document).on('change', "input[id^='checkbox_dx_principal_Cie10_']", function(){
-        //     var checkboxId = $(this).attr('id');
-            
-        //     if ($("#"+checkboxId).is(':checked')) {
-        //         $("input[id^='checkbox_dx_principal_visual_Cie10_']").not('#' + checkboxId).prop('disabled', true);
-        //         $("input[id^='checkbox_dx_principal_Cie10_']").not('#' + checkboxId).prop('disabled', true);
-        //     }else{
-        //         $("input[id^='checkbox_dx_principal_visual_Cie10_']").not('#' + checkboxId).prop('disabled', false);
-        //         $("input[id^='checkbox_dx_principal_Cie10_']").not('#' + checkboxId).prop('disabled', false);
-        //     }
-        // });
 
-
-        // var newid_checkbox_dx_principal_deficiencia = $("input[id^='checkbox_dx_principal_Cie10_']").attr("id");
-        // if ($("#" + newid_checkbox_dx_principal_deficiencia).is(':checked')) {
-        //     //console.log("Este checkbox " + newid_checkbox_dx_principal_deficiencia + " está chequeado"); 
-        //     $("input[id^='checkbox_dx_principal_visual_Cie10_']").prop("disabled", true);
-        // }else{
-        //     $("input[id^='checkbox_dx_principal_visual_Cie10_']").prop("disabled", false);
-        // }       
-        // var checkboxes = $('[id^="checkbox_dx_principal_visual_Cie10_"]');
-        // checkboxes.each(function() {
-        //     var id_checkbox_dx_principal_deficiencia = $(this).attr('id');
-        //     if ($("#" + id_checkbox_dx_principal_deficiencia).is(':checked')) {
-        //         //console.log("Este checkbox " + id_checkbox_dx_principal_deficiencia + " está chequeado");                          
-        //         var numeroCheckboxSeleccionado = id_checkbox_dx_principal_deficiencia.split('_').pop();
-        //         var checkboxes = document.querySelectorAll('[id^="checkbox_dx_principal_visual_Cie10"]');
-        //         checkboxes.forEach(function(checkbox) {
-        //             var numeroCheckbox = checkbox.id.split('_').pop();
-        //             if (numeroCheckbox !== numeroCheckboxSeleccionado) {
-        //                 checkbox.disabled = true;
-        //             }
-        //         });          
-        //         $("input[id^='checkbox_dx_principal_Cie10_']").prop("disabled", true);
-        //     }            
-        // });
-
-
-        // $('#listado_diagnostico_cie10 tbody tr').each(function (index) {
-        //     // if ($(this).attr('id') !== "datos_diagnostico") {
-        //         $(this).children("td").each(function (index2) {
-        //             var nombres_ids = $(this).find('*').attr("id");
-        //             if (nombres_ids != undefined) {
-        //                 if ($('#'+nombres_ids).is(':checked')) {
-        //                     $("input[id^='checkbox_dx_principal_Cie10_']").not('#' + nombres_ids).prop('disabled', true);
-        //                 } else {
-        //                     $("input[id^='checkbox_dx_principal_Cie10_']").not('#' + nombres_ids).prop('disabled', false);
-        //                 }
-        //             }
-        //         });
-        //     // }
-        // });
-
-        // var checkboxes = $('[id^="checkbox_dx_principal_Cie10_"]');
-        // function iterarElementos() {
-        //     checkboxes.each(function(){
-        //         var id_checkbox = $(this).attr('id');
-                
-        //         if($("#"+id_checkbox).is(':checked')){
-        //             console.log("Este checkbox " + id_checkbox + " está chequeado");
-        //             $('input[id^="checkbox_dx_principal_Cie10_"]').each(function() {
-        //                 $("input[id^='checkbox_dx_principal_Cie10_']").not('#' + id_checkbox).prop('disabled', true);
-        //             });
-        //         }else{
-        //             $('input[id^="checkbox_dx_principal_Cie10_"]').each(function() {
-        //                 $("input[id^='checkbox_dx_principal_Cie10_']").not('#' + id_checkbox).prop('disabled', false);
-        //             });
-        //         }
-        //         // return false;
-        //     });
-        // }
-        
-        // iterarElementos();
-
-        
-
-        
-    }, 500);
-});
 
 
 

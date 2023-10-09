@@ -507,6 +507,14 @@ Route::post('/GuardaroActualizarInfoDTOTAEL', [DeterminacionOrigenATEL::class, '
 Route::post('/eliminarExamenesInterconsultasDTOATEL', [DeterminacionOrigenATEL::class, 'eliminarExamenInterconsulta']);
 // Acción: Eliminar registros Diagnosticos motivo de calificacion visualmente e inactiva en la DB
 Route::post('/eliminarDiagnosticosMotivoCalificacionDTOATEL', [DeterminacionOrigenATEL::class, 'eliminarDiagnosticoMotivoCalificacion']);
+// Acción: Marcar o Desmarcar Dx Principal en Diagnósticos motivo calificación DTO ATEL
+Route::post('/actualizarDxPrincipalDTOATEL', [DeterminacionOrigenATEL::class, 'actualizarDxPrincipalDTOATEL']);
+// Acción: Guardar información DTO ATEL
+Route::post('/GuardaroActualizarInfoDTOTAEL', [DeterminacionOrigenATEL::class, 'GuardaroActualizarInfoDTOTAEL']);
+// Acción: Eliminar registro de Examenes e interconsultar visualmente e inactiva en la DB
+Route::post('/eliminarExamenesInterconsultasDTOATEL', [DeterminacionOrigenATEL::class, 'eliminarExamenInterconsulta']);
+// Acción: Eliminar registros Diagnosticos motivo de calificacion visualmente e inactiva en la DB
+Route::post('/eliminarDiagnosticosMotivoCalificacionDTOATEL', [DeterminacionOrigenATEL::class, 'eliminarDiagnosticoMotivoCalificacion']);
 // 02/10/2023
 // Vista: Módulo Pronunciamiento Origen
 Route::post('/calificacionOrigen/pronunciamientoOrigen', [PronunciamientoOrigenController::class, 'mostrarVistaPronunciamientoOrigen'])->name('pronunciamientoOrigen');

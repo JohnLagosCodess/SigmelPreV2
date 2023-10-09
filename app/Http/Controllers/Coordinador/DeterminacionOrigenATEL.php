@@ -622,15 +622,76 @@ class DeterminacionOrigenATEL extends Controller
         ])
         ->update($fila_actualizar);
 
+        // Se cambio de Si a No ese Dx Principal
+        $fila_actualizar = [
+            'Principal' => 'No'
+        ];
+
+        sigmel_informacion_diagnosticos_eventos::on("sigmel_gestiones")
+        ->where([
+            ['Id_Diagnosticos_motcali', $id_fila_diagnostico],
+            ['ID_evento', $request->Id_evento],
+            ['Id_Asignacion', $request->Id_asignacion],
+            ['Id_proceso', $request->Id_proceso]
+        ])->update($fila_actualizar);
+
         $total_registros_diagnostico = sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
         ->where([['ID_evento', $request->Id_evento],['Estado', 'Activo']])->count();
 
         $mensajes = array(
             "parametro" => 'fila_diagnostico_eliminada',
             'total_registros' => $total_registros_diagnostico,
-            "mensaje" => 'Diagnóstico motivo de calificación eliminado satisfactoriamente.'
+            "mensaje" => 'Diagnóstico motivo de calificación y Dx Principal eliminados satisfactoriamente.'
         );
 
         return json_decode(json_encode($mensajes, true));
-    }   
+    }
+
+    public function actualizarDxPrincipalDTOATEL(Request $request){
+        $bandera = $request->bandera;
+        $Id_evento = $request->Id_evento;
+        $Id_Asignacion = $request->Id_Asignacion;
+        $Id_proceso = $request->Id_proceso;
+        $fila = $request->fila;
+
+        if ($bandera == "Si") {
+            $fila_actualizar = [
+                'Principal' => 'Si'
+            ];
+
+            sigmel_informacion_diagnosticos_eventos::on("sigmel_gestiones")
+            ->where([
+                ['Id_Diagnosticos_motcali', $fila],
+                ['ID_evento', $Id_evento],
+                ['Id_Asignacion', $Id_Asignacion],
+                ['Id_proceso', $Id_proceso],
+                ['Estado', 'Activo']
+            ])->update($fila_actualizar);
+
+            $mensaje = "Dx Principal agreagado satisfactoriamente.";
+
+        } else {
+            $fila_actualizar = [
+                'Principal' => 'No'
+            ];
+
+            sigmel_informacion_diagnosticos_eventos::on("sigmel_gestiones")
+            ->where([
+                ['Id_Diagnosticos_motcali', $fila],
+                ['ID_evento', $Id_evento],
+                ['Id_Asignacion', $Id_Asignacion],
+                ['Id_proceso', $Id_proceso],
+                ['Estado', 'Activo']
+            ])->update($fila_actualizar);
+
+            $mensaje = "Dx Principal eliminado satisfactoriamente.";
+        }
+
+        $mensajes = array(
+            "parametro" => 'hecho',
+            "mensaje" => $mensaje
+        );
+
+        return json_decode(json_encode($mensajes, true)); 
+    }
 }
