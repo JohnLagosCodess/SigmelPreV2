@@ -724,9 +724,9 @@
     
                             {{-- Exámenes e interconsultas --}}
                             <div class="card-info">
-                                <div class="card-header text-center" style="border: 1.5px solid black;">
+                                {{-- <div class="card-header text-center" style="border: 1.5px solid black;">
                                     <h5>Exámenes e interconsultas</h5>
-                                </div>
+                                </div> --}}
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-12">
@@ -739,9 +739,9 @@
                                                 <table id="listado_examenes_interconsultas" class="table table-striped table-bordered" width="100%">
                                                     <thead>
                                                         <tr class="bg-info">
-                                                            <th>Fecha exámen e interconsulta</th>
-                                                            <th>Nombre de exámen e interconsulta</th>
-                                                            <th>Descripción resultado</th>
+                                                            <th>Fecha del Documento</th>
+                                                            <th>Nombre del Documento</th>
+                                                            <th>Descripción del Documento</th>
                                                             <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_examen_fila"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                         </tr>
                                                     </thead>
