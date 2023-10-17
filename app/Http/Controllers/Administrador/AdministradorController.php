@@ -46,6 +46,7 @@ use App\Models\sigmel_informacion_laboral_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_historico_empresas_afiliados;
 use App\Models\sigmel_registro_documentos_eventos;
+use App\Models\sigmel_numero_orden_eventos;
 
 /* Llamado modelo para consultar historial de acciones */
 use App\Models\sigmel_historial_acciones_eventos;
@@ -1572,6 +1573,17 @@ class AdministradorController extends Controller
             // colacamos un tiempo de retardo pequeño para que alcance a insertar los datos
             sleep(2);
 
+            //Trae El numero de orden actual
+            $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
+            ->select('Numero_orden')
+            ->get();
+            //Validamos si un caso de Notificaciones
+            if($request->proceso=='4'){
+                $N_orden_evento=$n_orden[0]->Numero_orden;
+            }else{
+                $N_orden_evento='';
+            }
+
             /* RECOLECCIÓN INFORMACIÓN PARA LA TABLA: sigmel_informacion_asignacion_eventos */
             $datos_info_asignacion_evento =[
                 'ID_evento' => $request->id_evento,
@@ -1582,6 +1594,7 @@ class AdministradorController extends Controller
                 'F_alerta' => $request->fecha_alerta,
                 'Id_Estado_evento' => 1,
                 'F_radicacion' => $request->fecha_radicacion,
+                'N_de_orden' => $N_orden_evento,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date
             ];

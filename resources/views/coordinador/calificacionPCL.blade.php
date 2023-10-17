@@ -1081,6 +1081,7 @@
 
             //Elimina sessionStorage
             sessionStorage.removeItem("scrollToptecnica");
+            sessionStorage.removeItem("scrollTopPronuncia");
 
         });
     </script>

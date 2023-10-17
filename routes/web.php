@@ -20,6 +20,8 @@ use App\Http\Controllers\Coordinador\BandejaOrigenController;
 use App\Http\Controllers\Coordinador\BandejaNotifiController;
 use App\Http\Controllers\Coordinador\DeterminacionOrigenATEL;
 use App\Http\Controllers\Coordinador\PronunciamientoOrigenController;
+use App\Http\Controllers\Coordinador\BandejaJuntasController;
+use App\Http\Controllers\Coordinador\CalificacionJuntasController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -530,6 +532,25 @@ Route::post('/actualizarProfesionalServicioNotifi', [BandejaNotifiController::cl
 // Vista: Módulo Calificación Noti Coordinador
 Route::get('/calificacionNotifi', [CalificacionNotifiController::class, 'mostrarVistaCalificacionNotifi'])->name('calificacionNotifi');
 Route::post('/calificacionNotifi', [CalificacionNotifiController::class, 'mostrarVistaCalificacionNotifi'])->name('calificacionNotifi');
+// Accion: Insertar Califcación Notificacion
+Route::post('/registrarCalificacionNotifi', [CalificacionNotifiController::class, 'guardarCalificacionNotifi']);
+//13/10/2023
+//Vista: Bandeja Juntas Coordinador
+Route::get('/Sigmel/RolCoordinador/BandejaJuntas', [BandejaJuntasController::class, 'mostrarVistaBandejaJuntas'])->name('bandejaJuntas');
+// Accion: Selectores Bandeja Juntas
+Route::post('/selectoresBandejaJuntas', [BandejaJuntasController::class, 'cargueListadoSelectoresBandejaJuntas']);
+// Accion: Capturar data sin filtros
+Route::post('/sinfiltrosBandejaJuntas', [BandejaJuntasController::class, 'sinFiltroBandejaJuntas']);
+// Accion: Capturar data según los filtros
+Route::post('/filtrosBandejaJuntas', [BandejaJuntasController::class, 'filtrosBandejaJuntas']);
+// Accion: Actualizar el profesional y redireccionar el servicio
+Route::post('/actualizarProfesionalServicioJuntas', [BandejaJuntasController::class, 'actualizarBandejaJuntas']);
+//17/10/2023
+// Vista: Módulo Calificación Juntas Coordinador
+Route::get('/calificacionJuntas', [CalificacionJuntasController::class, 'mostrarVistaCalificacionJuntas'])->name('calificacionJuntas');
+Route::post('/calificacionJuntas', [CalificacionJuntasController::class, 'mostrarVistaCalificacionJuntas'])->name('calificacionJuntas');
+// Accion: Insertar Califcación Origen
+Route::post('/registrarCalificacionJuntas', [CalificacionJuntasController::class, 'guardarCalificacionJuntas']);
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 

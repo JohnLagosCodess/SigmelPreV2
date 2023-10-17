@@ -33,8 +33,8 @@ class PronunciamientoPCLController extends Controller
         }
         $user = Auth::user();
         $date=date("Y-m-d");
-        $Id_evento_calitec=$request->Id_evento_calitec;
-        $Id_asignacion_calitec = $request->Id_asignacion_calitec;
+        $Id_evento_calitec=$request->Id_evento_pcl;
+        $Id_asignacion_calitec = $request->Id_asignacion_pcl;
         $array_datos_pronunciamientoPcl = DB::select('CALL psrcalificacionpcl(?)', array($Id_asignacion_calitec));
         //Traer info informacion pronunciamiento
         $info_pronuncia= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_pronunciamiento_eventos as pr')

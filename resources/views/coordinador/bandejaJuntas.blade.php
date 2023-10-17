@@ -1,5 +1,5 @@
 @extends('adminlte::page')
-@section('title', 'Bandeja Notificaciones')
+@section('title', 'Bandeja Juntas')
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
@@ -9,12 +9,12 @@
 
 @stop
 @section('content')
-    <div class="card-info Notifibandeja" style="border: 1px solid black;">
+    <div class="card-info Juntasbandeja" style="border: 1px solid black;">
         <div class="card-header text-center">
-            <h4>Bandeja Notificaciones</h4>
-            <input type="hidden" id="action_modulo_calificacion_Notifi" value="{{ route('calificacionNotifi') }}">
+            <h4>Bandeja Juntas</h4>
+            <input type="hidden" id="action_modulo_calificacion_Juntas" value="{{ route('calificacionJuntas') }}">
         </div>
-        <form id="form_filtro_bandejaNotifi" method="POST">
+        <form id="form_filtro_bandejaJuntas" method="POST">
             @csrf
             <div class="card-body">                
                 <div class="row">
@@ -46,7 +46,7 @@
                                 <div class="text-center" id="mostrar-barra"  style="display:none;">                                
                                     <button class="btn btn-info" type="button" disabled>
                                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                        Filtrando Bandeja Notificaciones...
+                                        Filtrando Bandeja Juntas...
                                     </button>
                                 </div>
                             </div>
@@ -64,21 +64,21 @@
                     </div>                                      
                 </div>
             </div>
+
             &nbsp; <label for="nro_registros2" class="col-form-label d-none" id="num_registros2">Se encontraron <span></span> 0 registros</label>
         </form> 
-        <!-- Bandeja Notificaciones-->
-        <form id="form_proser_bandejaNotifi" method="POST">
+        <!-- Bandeja Juntas-->
+        <form id="form_proser_bandejaJuntas" method="POST">
             @csrf
-            <div class="row contenedor_casos_notifi">
+            <div class="row contenedor_casos_juntas">
                 <div class="col-12">                                           
                     &nbsp; <label for="nro_registros" class="col-form-label" id="num_registroslabel">Se encontraron <span id="num_registros"></span> registros</label>
-                    <br>&nbsp;<label for="nro_orden" class="col-form-label" id="num_ordenlabel">N° de orden: {{$n_orden[0]->Numero_orden}}</label>
                     <div class="card-body" id="contenedorTable">
                         <div class="table table-responsive">
-                            <table id="Bandeja_Notifi" class="table table-striped table-bordered" style="width:100%">
+                            <table id="Bandeja_Juntas" class="table table-striped table-bordered" style="width:100%">
                                 <thead>
                                     <tr class="bg-info">
-                                        <th class="detallenotifi">Detalle  </th>
+                                        <th class="detallejuntas">Detalle  </th>
                                         <th>Cliente</th>
                                         <th>Nombre de afiliado</th>
                                         <th>N° identificación</th>
@@ -99,16 +99,23 @@
                                         <th>Asignado por</th>
                                         <th>Fecha alerta</th>
                                         <th>Estado alerta</th>
-                                        <th>Fecha de asignación para notificación</th>
-                                        <th>N° de orden</th>
-                                        <th>N° Radicado</th>
-                                        <th>Asunto</th>
-                                        <th>Fecha de envio</th>
-                                        <th>Estado general de la Notificacion</th>
-                                        <th>Fecha acción</th>
+                                        <th>Enfermedad heredada</th>
+                                        <th>Parte que controvierte primera calificación</th>
+                                        <th>Tipo de controversia primera calificación</th>
+                                        <th>Término de controversia ante primera calificación</th>
+                                        <th>Junta Regional de Calificación de Invalidez (JRCI)</th>
+                                        <th>N° Dictamen (JRCI)</th>
+                                        <th>Fecha de Radicado entrada Dictamen (JRCI)</th>
+                                        <th>Fecha de asignación para pronunciamiento de Juntas</th>
+                                        <th>N° Acta Ejecutoria emitida por JRCI</th>
+                                        <th>N° radicado de recurso ante JRCI</th>
+                                        <th>Término de controversia propia ante JRCI</th>
+                                        <th>Parte que presenta controversia ante JRCI</th>
+                                        <th>Tipo de controversia presentada por otra parte ante JRCI</th>
+                                        <th>Fecha acción</th> 
                                     </tr>
                                 </thead>
-                                <tbody id="body_listado_casos_notifi">                                
+                                <tbody id="body_listado_casos_juntas">                                
                                 </tbody>
                             </table>
                         </div>
@@ -159,7 +166,7 @@
     <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.templates.min.js"></script>
 
-    <script src="/js/bandeja_notifi.js"></script>
+    <script src="/js/bandeja_juntas.js"></script>
     
     <script>
         function ocultarBotonFiltrar(){
