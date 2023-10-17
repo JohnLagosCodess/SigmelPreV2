@@ -6,6 +6,7 @@ use App\Http\Controllers\Administrador\BuscarEventoController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Autenticacion\LoginController;
 use App\Http\Controllers\Autenticacion\LogoutController;
+use App\Http\Controllers\Coordinador\AdicionDxDTO;
 use App\Http\Controllers\Coordinador\CalificacionPCLController;
 use App\Http\Controllers\Coordinador\RecalificacionPCLController;
 use App\Http\Controllers\Coordinador\CalificacionOrigenController;
@@ -494,8 +495,6 @@ Route::post('/GuardarHistorialSeguiOrigen', [CalificacionOrigenController::class
 Route::post('/actualizarComunicadoOrigen', [CalificacionOrigenController::class, 'actualizarComunicadoOrigen']);
 // Acción: Eliminar Fila (Cambiar a estado inactivo) Historial Seguimiento
 Route::post('/EliminarFilaHistoSeguimiento', [CalificacionOrigenController::class, 'EliminarFilaHistoSeguimiento'])->name('EliminarFilaHistoSeguimiento');
-// Acción: MOstrar vista Calificación Técnica PCL
-Route::get('/determinacionOrigenATEL', [DeterminacionOrigenATEL::class, 'mostrarVistaDtoATEL'])->name('determinacionOrigenATEL');
 // Acción: Mostrar vista Determinación del Origen DTO ATEL
 Route::get('/determinacionOrigenATEL', [DeterminacionOrigenATEL::class, 'mostrarVistaDtoATEL'])->name('determinacionOrigenATEL');
 Route::post('/determinacionOrigenATEL', [DeterminacionOrigenATEL::class, 'mostrarVistaDtoATEL'])->name('determinacionOrigenATEL');
@@ -538,6 +537,14 @@ Route::post('/actualizarProfesionalServicioNotifi', [BandejaNotifiController::cl
 // Vista: Módulo Calificación Noti Coordinador
 Route::get('/calificacionNotifi', [CalificacionNotifiController::class, 'mostrarVistaCalificacionNotifi'])->name('calificacionNotifi');
 Route::post('/calificacionNotifi', [CalificacionNotifiController::class, 'mostrarVistaCalificacionNotifi'])->name('calificacionNotifi');
+
+// Acción: Mostrar vista ADICIÓN DX DTO
+Route::get('/adicionDxDtoOrigen', [AdicionDxDTO::class, 'mostrarVistaAdicionDxDTO'])->name('adicionDxDtoOrigen');
+Route::post('/adicionDxDtoOrigen', [AdicionDxDTO::class, 'mostrarVistaAdicionDxDTO'])->name('adicionDxDtoOrigen');
+// Accion: Selectores Submodulo Adición DX DTO
+Route::post('/cargueListadoSelectoresAdicionDx', [AdicionDxDTO::class, 'cargueListadoSelectoresAdicionDx']);
+// Acción: Insertar o Editar Adicion DX
+Route::post('/GuardaroActualizarInfoAdicionDX', [AdicionDxDTO::class, 'GuardaroActualizarInfoAdicionDX']);
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 

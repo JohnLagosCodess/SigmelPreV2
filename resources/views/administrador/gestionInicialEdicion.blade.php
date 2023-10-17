@@ -21,6 +21,15 @@
                     <input hidden="hidden" type="text" name="Id_proceso_calitec" id="Id_proceso_calitec" value="<?php echo $_POST['newIdproceso'];?>">
                     <button type="submit" id="btn_regreso_dto_atel" style="display: none; !important"></button>
                 </form>
+            <?php elseif (isset($_POST['bandera_buscador_adicion_dx']) &&  $_POST['bandera_buscador_adicion_dx'] == 'desdeadiciondx' ): ?>
+                <a onclick="document.getElementById('btn_regreso_adicion_dx').click();"   class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <form action="{{route("adicionDxDtoOrigen")}}" id="Regreso_Adicion_Dx" method="POST">            
+                    @csrf
+                    <input hidden="hidden" type="text" name="Id_evento_calitec" id="Id_evento_calitec" value="<?php echo $_POST['newIdEvento'];?>">
+                    <input hidden="hidden" type="text" name="Id_asignacion_calitec" id="Id_asignacion_calitec" value="<?php echo $_POST['newIdAsignacion'];?>">
+                    <input hidden="hidden" type="text" name="Id_proceso_calitec" id="Id_proceso_calitec" value="<?php echo $_POST['newIdproceso'];?>">
+                    <button type="submit" id="btn_regreso_adicion_dx" style="display: none; !important"></button>
+                </form>
             <?php endif ?>
         </div>
         <div class="col-2" style="text-align: left !important;">
@@ -1036,6 +1045,12 @@
             event.preventDefault();
             // Realizar las acciones que quieres al hacer clic en el botón
             document.getElementById('Regreso_DTO_ATEL').submit();
+        });
+
+        document.getElementById('btn_regreso_adicion_dx').addEventListener('click', function(event) {
+            event.preventDefault();
+            // Realizar las acciones que quieres al hacer clic en el botón
+            document.getElementById('Regreso_Adicion_Dx').submit();
         });
     </script>
     <script src="/js/selectores_gestion_edicion.js"></script>  
