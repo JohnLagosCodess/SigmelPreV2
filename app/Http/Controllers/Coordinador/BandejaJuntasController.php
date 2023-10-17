@@ -7,82 +7,78 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
-
+//llamado de modelos para formulario BandejaOrigen y captura de data
 use App\Models\sigmel_lista_procesos_servicios;
 use App\Models\cndatos_bandeja_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
-use App\Models\sigmel_numero_orden_eventos;
 
-class BandejaNotifiController extends Controller
+class BandejaJuntasController extends Controller
 {
-    // Bandeja Notifiacion Coordinador
-    public function mostrarVistaBandejaNotifi(){
+    // Bandeja Origen Coordinador
+    public function mostrarVistaBandejaJuntas(){
         if(!Auth::check()){
             return redirect('/');
         }
-        $user = Auth::user();    
-        // consulta numero de orden
-        $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
-        ->select('Numero_orden')
-        ->get();
-        return view('coordinador.bandejaNotifi', compact('user','n_orden'));
+        $user = Auth::user();        
+
+        return view('coordinador.bandejaJuntas', compact('user'));
     }
-    //Selectores Bandeja Notifi
-    public function cargueListadoSelectoresBandejaNotifi(Request $request){
+
+     //Selectores Bandeja Juntas
+     public function cargueListadoSelectoresBandejaJuntas(Request $request){
         $parametro = $request->parametro;
         
-        if ($parametro == 'lista_profesional_notifi') {
+        if ($parametro == 'lista_profesional_juntas') {
             
-            $listado_profesional_notifi = DB::table('users')->select('id', 'name')
+            $listado_profesional_juntas = DB::table('users')->select('id', 'name')
             ->where('estado', 'Activo')
-            ->whereRaw("FIND_IN_SET(4, id_procesos_usuario) > 0")->get();
+            ->whereRaw("FIND_IN_SET(3, id_procesos_usuario) > 0")->get();
 
-            $info_listado_profesional_Notifi = json_decode(json_encode($listado_profesional_notifi, true));
-            return response()->json($info_listado_profesional_Notifi);
+            $info_listado_profesional_Juntas = json_decode(json_encode($listado_profesional_juntas, true));
+            return response()->json($info_listado_profesional_Juntas);
         }
 
-        //Listado servicio proceso Notifi
-        if($parametro == 'lista_servicios_notifi'){
-            $listado_servicio_Notifi = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+        //Listado servicio proceso Origen
+        if($parametro == 'lista_servicios_juntas'){
+            $listado_servicio_Juntas = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
             ->select('Id_Servicio', 'Nombre_servicio')
             ->where([
-                ['Nombre_proceso', '=', 'Notificaciones'],
+                ['Nombre_proceso', '=', 'Juntas'],
                 ['Estado', '=', 'activo']
             ])
             ->get();
 
-            $info_listado_servicio_Notifi = json_decode(json_encode($listado_servicio_Notifi, true));
-            return response()->json($info_listado_servicio_Notifi);
+            $info_listado_servicio_Juntas = json_decode(json_encode($listado_servicio_Juntas, true));
+            return response()->json($info_listado_servicio_Juntas);
         }
     }
 
-    public function sinFiltroBandejaNotifi(Request $request){
+    public function sinFiltroBandejaJuntas(Request $request){
 
-        $BandejaNotifiTotal = $request->BandejaNotifiTotal;        
+        $BandejaJuntasTotal = $request->BandejaJuntasTotal;        
 
-        if($BandejaNotifiTotal == 'CargaBandejaNotifi'){
+        if($BandejaJuntasTotal == 'CargaBandejaJuntas'){
 
-            $bandejaNotifisin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
+            $bandejaJuntassin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
             ->where([
-                ['Nombre_proceso_actual', '=', 'Notificaciones']
+                ['Nombre_proceso_actual', '=', 'Juntas']
             ])
             ->whereNull('Nombre_proceso_anterior');
 
-            $bandejaNotifi = cndatos_bandeja_eventos::on('sigmel_gestiones')
+            $bandejaJuntas = cndatos_bandeja_eventos::on('sigmel_gestiones')
             ->where([
-                ['Nombre_proceso_actual', '=', 'Notificaciones'],
-                ['Id_proceso_anterior', '<>', 4]
+                ['Nombre_proceso_actual', '=', 'Juntas'],
+                ['Id_proceso_anterior', '<>', 3]
             ])
-            ->union($bandejaNotifisin_Pro_ant)
+            ->union($bandejaJuntassin_Pro_ant)
             ->get();
 
-            $arraybandejaNotifi = json_decode(json_encode($bandejaNotifi, true));
-            return response()->json($arraybandejaNotifi);
+            $arraybandejaJuntas = json_decode(json_encode($bandejaJuntas, true));
+            return response()->json($arraybandejaJuntas);
 
         }
     }
-
-    public function filtrosBandejaNotifi(Request $request){
+    public function filtrosBandejaJuntas(Request $request){
         
         $consultar_f_desde = $request->consultar_f_desde;
         $consultar_f_hasta = $request->consultar_f_hasta;
@@ -91,27 +87,27 @@ class BandejaNotifiController extends Controller
         switch (true) {
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and !empty($consultar_g_dias)):
 
-                    $bandejaNotifisin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    $bandejaJuntassin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
-                        ['Nombre_proceso_actual', '=', 'Notificaciones'],
+                        ['Nombre_proceso_actual', '=', 'Juntas'],
                         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
                     ])
                     ->whereNull('Nombre_proceso_anterior')
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
                     
-                    $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
-                            ['Nombre_proceso_actual', '=', 'Notificaciones'],
-                            ['Id_proceso_anterior', '<>', 4],
+                            ['Nombre_proceso_actual', '=', 'Juntas'],
+                            ['Id_proceso_anterior', '<>', 3],
                             ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
                         ])            
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
-                    ->union($bandejaNotifisin_Pro_ant)
+                    ->union($bandejaJuntassin_Pro_ant)
                     ->get();
             
-                    $arraybandejaNotifiFiltros = json_decode(json_encode($bandejaNotifiFiltros, true));
-                    if (count($arraybandejaNotifiFiltros)>0) {
-                        return response()->json($arraybandejaNotifiFiltros);                        
+                    $arraybandejaJuntasFiltros = json_decode(json_encode($bandejaJuntasFiltros, true));
+                    if (count($arraybandejaJuntasFiltros)>0) {
+                        return response()->json($arraybandejaJuntasFiltros);                        
                     }else{
                         $mensajes = array(
                             "parametro" => 'sin_datos',
@@ -123,25 +119,25 @@ class BandejaNotifiController extends Controller
             break;
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and empty($consultar_g_dias)):
                     
-                    $bandejaNotifisin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    $bandejaJuntassin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
-                        ['Nombre_proceso_actual', '=', 'Notificaciones']
+                        ['Nombre_proceso_actual', '=', 'Juntas']
                     ])
                     ->whereNull('Nombre_proceso_anterior')
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
 
-                    $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
-                            ['Nombre_proceso_actual', '=', 'Notificaciones'],
-                            ['Id_proceso_anterior', '<>', 4],
+                            ['Nombre_proceso_actual', '=', 'Juntas'],
+                            ['Id_proceso_anterior', '<>', 3],
                         ])            
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
-                    ->union($bandejaNotifisin_Pro_ant)
+                    ->union($bandejaJuntassin_Pro_ant)
                     ->get();                    
 
-                    $arraybandejaNotifiFiltros = json_decode(json_encode($bandejaNotifiFiltros, true));
-                    if (count($arraybandejaNotifiFiltros)>0) {
-                        return response()->json($arraybandejaNotifiFiltros);
+                    $arraybandejaJuntasFiltros = json_decode(json_encode($bandejaJuntasFiltros, true));
+                    if (count($arraybandejaJuntasFiltros)>0) {
+                        return response()->json($arraybandejaJuntasFiltros);
                     }else{
                         $mensajes = array(
                             "parametro" => 'sin_datos',
@@ -153,25 +149,25 @@ class BandejaNotifiController extends Controller
             break;
             case (empty($consultar_f_desde) and empty($consultar_f_hasta) and !empty($consultar_g_dias)):
                     
-                    $bandejaNotifisin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    $bandejaJuntassin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
-                        ['Nombre_proceso_actual', '=', 'Notificaciones'],
+                        ['Nombre_proceso_actual', '=', 'Juntas'],
                         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
                     ])
                     ->whereNull('Nombre_proceso_anterior');
                     
-                    $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
-                            ['Nombre_proceso_actual', '=', 'Notificaciones'],
-                            ['Id_proceso_anterior', '<>', 4],
+                            ['Nombre_proceso_actual', '=', 'Juntas'],
+                            ['Id_proceso_anterior', '<>', 3],
                             ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
                         ])            
-                    ->union($bandejaNotifisin_Pro_ant)
+                    ->union($bandejaJuntassin_Pro_ant)
                     ->get();
                 
-                    $arraybandejaNotifiFiltros = json_decode(json_encode($bandejaNotifiFiltros, true));
-                    if (count($arraybandejaNotifiFiltros)>0) {
-                        return response()->json($arraybandejaNotifiFiltros);
+                    $arraybandejaJuntasFiltros = json_decode(json_encode($bandejaJuntasFiltros, true));
+                    if (count($arraybandejaJuntasFiltros)>0) {
+                        return response()->json($arraybandejaJuntasFiltros);
                     }else{
                         $mensajes = array(
                             "parametro" => 'sin_datos',
@@ -219,14 +215,14 @@ class BandejaNotifiController extends Controller
     
         
     }
-    public function actualizarBandejaNotifi(Request $request){
+    public function actualizarBandejaJuntas(Request $request){
 
         if(!Auth::check()){
             return redirect('/');
         }
         $usuario = Auth::user()->name;        
         //print_r($request->json);
-        $IdEventoBandejaNotifi = $request->array;
+        $IdEventoBandejaJuntas = $request->array;
         $Id_profesional = $request->json['profesional'];
         $Id_Servicio_redireccionar = $request->json['redireccionar'];
 
@@ -237,46 +233,46 @@ class BandejaNotifiController extends Controller
             $nombre = json_decode(json_encode($profesional));
             $nombre_profesional= $nombre[0]->name; 
 
-            $actualizar_bandejaNotifi = [
+            $actualizar_bandejaJuntas = [
                 'Nombre_usuario' => $usuario,
                 'Id_profesional' => $Id_profesional,
                 'Nombre_profesional' => $nombre_profesional,
                 'Id_servicio' => $Id_Servicio_redireccionar
             ];       
 
-            $actualizar_bandejaNotifi_Profesional = [
+            $actualizar_bandejaJuntas_Profesional = [
                 'Nombre_usuario' => $usuario,
                 'Id_profesional' => $Id_profesional,
                 'Nombre_profesional' => $nombre_profesional
             ]; 
         }else{
-            $actualizar_bandejaNotifi_Servicio = [
+            $actualizar_bandejaJuntas_Servicio = [
                 'Nombre_usuario' => $usuario,
                 'Id_servicio' => $Id_Servicio_redireccionar
             ]; 
         }
         
         switch (true) {
-            case (!empty($IdEventoBandejaNotifi) and !empty($Id_profesional) and !empty($Id_Servicio_redireccionar)):
+            case (!empty($IdEventoBandejaJuntas) and !empty($Id_profesional) and !empty($Id_Servicio_redireccionar)):
         
-                    sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->whereIn('Id_Asignacion', $IdEventoBandejaNotifi)
-                    ->update($actualizar_bandejaNotifi);
+                    sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->whereIn('Id_Asignacion', $IdEventoBandejaJuntas)
+                    ->update($actualizar_bandejaJuntas);
             
                     $mensajes = array(
-                        "parametro" => 'actualizado_B_Notifi',
+                        "parametro" => 'actualizado_B_Juntas',
                         "mensaje" => 'Se realizó la actualizacion satisfactoriamente'
                     );
             
                     return json_decode(json_encode($mensajes, true));
                 
             break;
-            case (!empty($IdEventoBandejaNotifi) and empty($Id_profesional) and !empty($Id_Servicio_redireccionar)):
+            case (!empty($IdEventoBandejaJuntas) and empty($Id_profesional) and !empty($Id_Servicio_redireccionar)):
 
-                    sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->whereIn('Id_Asignacion', $IdEventoBandejaNotifi)
-                    ->update($actualizar_bandejaNotifi_Servicio);
+                    sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->whereIn('Id_Asignacion', $IdEventoBandejaJuntas)
+                    ->update($actualizar_bandejaJuntas_Servicio);
 
                     $mensajes = array(
-                        "parametro" => 'actualizado_B_Notifi',
+                        "parametro" => 'actualizado_B_Juntas',
                         "mensaje" => 'Se realizó la actualizacion satisfactoriamente'
                     );
 
@@ -284,13 +280,13 @@ class BandejaNotifiController extends Controller
 
             break;
             
-            case (!empty($IdEventoBandejaNotifi) and !empty($Id_profesional) and empty($Id_Servicio_redireccionar)):
+            case (!empty($IdEventoBandejaJuntas) and !empty($Id_profesional) and empty($Id_Servicio_redireccionar)):
 
-                    sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->whereIn('Id_Asignacion', $IdEventoBandejaNotifi)
-                    ->update($actualizar_bandejaNotifi_Profesional);
+                    sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->whereIn('Id_Asignacion', $IdEventoBandejaJuntas)
+                    ->update($actualizar_bandejaJuntas_Profesional);
 
                     $mensajes = array(
-                        "parametro" => 'actualizado_B_Notifi',
+                        "parametro" => 'actualizado_B_Juntas',
                         "mensaje" => 'Se realizó la actualizacion satisfactoriamente'
                     );
 
@@ -298,9 +294,9 @@ class BandejaNotifiController extends Controller
 
             break;
 
-            case (!empty($IdEventoBandejaNotifi) and empty($Id_profesional) and empty($Id_Servicio_redireccionar)):
+            case (!empty($IdEventoBandejaJuntas) and empty($Id_profesional) and empty($Id_Servicio_redireccionar)):
                     $mensajes = array(
-                        "parametro" => 'NOactualizado_B_Notifi',
+                        "parametro" => 'NOactualizado_B_Juntas',
                         "mensaje" => 'Debe seleccionar el Profesional o Redireccionar a, para Actualizar'
                     );
 

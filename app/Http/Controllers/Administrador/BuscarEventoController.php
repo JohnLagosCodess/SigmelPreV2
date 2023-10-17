@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\cndatos_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
+use App\Models\sigmel_numero_orden_eventos;
+
 
 class BuscarEventoController extends Controller
 {
@@ -143,7 +145,16 @@ class BuscarEventoController extends Controller
             $id_profesional = null;
             $nombre_profesional = null;
         }
-
+        //Trae El numero de orden actual
+        $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
+        ->select('Numero_orden')
+        ->get();
+        //Validamos si un caso de Notificaciones
+        if($request->id_proceso_actual=='4'){
+            $N_orden_evento=$n_orden[0]->Numero_orden;
+        }else{
+            $N_orden_evento='';
+        }
         // Recopilación de datos para insertar el nuevo servicio
         $datos_nuevo_servicio = [
             'ID_evento' => $request->id_evento,
@@ -157,6 +168,7 @@ class BuscarEventoController extends Controller
             'Id_Estado_evento' => 1,
             'F_accion' => $request->nueva_fecha_accion,
             'F_radicacion' => $request->nueva_fecha_radicacion,
+            'N_de_orden' => $N_orden_evento,
             'Id_profesional' => $id_profesional,
             'Nombre_profesional' => $nombre_profesional,
             'Nombre_usuario' => $nombre_usuario,
@@ -204,6 +216,17 @@ class BuscarEventoController extends Controller
             $nombre_profesional = null;
         }
 
+        //Trae El numero de orden actual
+        $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
+        ->select('Numero_orden')
+        ->get();
+        //Validamos si un caso de Notificaciones
+        if($request->selector_nuevo_proceso=='4'){
+            $N_orden_evento=$n_orden[0]->Numero_orden;
+        }else{
+            $N_orden_evento='';
+        }
+
         $datos_nuevo_proceso = [
             'ID_evento' => $request->id_evento,
             'Id_proceso' => $request->selector_nuevo_proceso,
@@ -216,6 +239,7 @@ class BuscarEventoController extends Controller
             'Id_Estado_evento' => 1,
             'F_accion' => $request->nueva_fecha_accion_nuevo_proceso,
             'F_radicacion' => $request->fecha_radicacion_nuevo_proceso,
+            'N_de_orden' => $N_orden_evento,
             'Id_profesional' => $id_profesional,
             'Nombre_profesional' => $nombre_profesional,
             'Nombre_usuario' => $nombre_usuario,

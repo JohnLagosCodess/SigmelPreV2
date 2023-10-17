@@ -2,18 +2,18 @@ $(document).ready(function(){
 
     // Obtener sessionStorage del navegador
     //var posicionActual = $(window).scrollTop(); // Guarda cuando recarga la pagina
-    var posicionMemoria = sessionStorage.getItem("scrollTop"); // Guarda session scrollTop
+    var posicionMemoria = sessionStorage.getItem("scrollTopPronuncia"); // Guarda session scrollTop
 
     if (posicionMemoria != null) {
         $(window).scrollTop(posicionMemoria);
-        sessionStorage.removeItem("scrollTop");
+        sessionStorage.removeItem("scrollTopPronuncia");
         //console.log("Se ha restaurado la posición guardada en memoria");
     } else {
         //console.log("No se ha encontrado una posición guardada en memoria");
     }
     //guardar la posición de desplazamiento actual en la memoria
     $(window).on("beforeunload", function() {
-        sessionStorage.setItem("scrollTop", $(window).scrollTop());
+        sessionStorage.setItem("scrollTopPronuncia", $(window).scrollTop());
     });
 
     // Inicializacion del select2 de listados  Módulo pronunciamiento PCL
