@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Administrador\AdministradorController;
 use App\Http\Controllers\Administrador\EntidadesController;
+use App\Http\Controllers\Administrador\AccionesController;
 use App\Http\Controllers\Administrador\BuscarEventoController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Autenticacion\LoginController;
@@ -566,6 +567,26 @@ Route::post('/adicionDxDtoOrigen', [AdicionDxDTO::class, 'mostrarVistaAdicionDxD
 Route::post('/cargueListadoSelectoresAdicionDx', [AdicionDxDTO::class, 'cargueListadoSelectoresAdicionDx']);
 // Acción: Insertar o Editar Adicion DX
 Route::post('/GuardaroActualizarInfoAdicionDX', [AdicionDxDTO::class, 'GuardaroActualizarInfoAdicionDX']);
+
+// 17/10/2023 - CRUD ACCIONES
+// Vista: Formulario para crear una nueva acción
+Route::get('/Sigmel/NuevaAccion', [AccionesController::class, 'mostrarVistaNuevaAccion'])->name('crearNuevaAccion');
+// Accion: Selectores Módulo Acciones
+Route::post('/selectoresAcciones', [AccionesController::class, 'cargueListadoSelectoresAcciones']);
+// Acción: Crear una nueva acción
+// Route::post('/Sigmel/CrearNuevaAccion', [AccionesController::class, 'CrearNuevaAccion'])->name('CrearNuevaAccion');
+Route::post('/CrearNuevaAccion', [AccionesController::class, 'CrearNuevaAccion']);
+// Vista: Formulario para listar una acción
+Route::get('/Sigmel/ListarAcciones', [AccionesController::class, 'mostrarVistaListarAcciones'])->name('listarAcciones');
+// Acción:Traer datos de la acción a editar
+Route::post('/Sigmel/InformacionAccionEditar', [AccionesController::class, 'InformacionAccionEditar'])->name('InformacionAccionEditar');
+// Acción: Actualización de la información de la Acción
+Route::post('/ActualizarAccion', [AccionesController::class, 'ActualizarAccion'])->name('ActualizarAccion');
+
+// Vista: Formulario para editar una acción
+// Route::get('/Sigmel/EditarAccion', [AccionesController::class, 'mostrarVistaListarAccion'])->name('listarAcciones');
+
+
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 

@@ -230,6 +230,18 @@ $(document).ready(function () {
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
     });
 
+    // TEXTAREA FORMULARIO NUEVA ACCION
+    $(document).on('keyup', "textarea[id^='descrip_accion']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    // INPUT O TEXT AREA DE FORMULARIO NUEVA ACCION
+    $("#accion").keyup(function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
     /* Función para colocar la primera letra en mayúscula de cada palabra que se escriba */
     function LetraMayusCadaPalabra(textoEscrito) {
         var palabras = textoEscrito.split(' ');
