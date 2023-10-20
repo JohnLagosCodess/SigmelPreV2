@@ -69,6 +69,48 @@
     scale: 1.2;
 }
 
+.scalesRecali{
+    scale: 2;
+}
+
+.custom-checkboxtipo {
+    display: inline-block;
+    width: 20px;
+    height: 20px;    
+    cursor: not-allowed;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.custom-checkboxtipo:checked {
+    background-color: #007BFF;
+    border-color: #007BFF;
+    scale: 1.2;
+}
+
+.custom-checkboxtipo-label {
+    user-select: none;
+}
+
+.custom-checkboxtipore {
+    display: inline-block;
+    width: 20px;
+    height: 20px;    
+    cursor: not-allowed;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.custom-checkboxtipore:checked {
+    background-color: #007BFF;
+    border-color: #007BFF;
+    scale: 1.2;
+}
+
+.custom-checkboxtipore-label {
+    user-select: none;
+}
+
 .select2-selection__choice{
     background: transparent !important;
     color: black !important;

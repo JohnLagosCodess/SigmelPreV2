@@ -1336,7 +1336,7 @@ $(document).ready(function(){
             Number($("[id='conducta_16']").val()) + Number($("[id='conducta_17']").val()) + Number($("[id='conducta_18']").val()) +
             Number($("[id='conducta_19']").val());          
             if(!isNaN(opt_total_conducta)){
-                $('#total_conducta').val(redondear(opt_total_conducta));
+                $('#total_conducta').val(redondear(opt_total_conducta));                
             }
         }, 500);        
     } 
@@ -1358,7 +1358,7 @@ $(document).ready(function(){
 
     // Realiza suma de comunicacion
     function iniciarIntervaloTotalcomunicacion() {
-        clearInterval(intervalo);
+        //clearInterval(intervalo);
         intervalo = setInterval(() => {
             opt_total_comunicacion = Number($("[id='comunicacion_20']").val()) + Number($("[id='comunicacion_21']").val()) + Number($("[id='comunicacion_22']").val()) +
             Number($("[id='comunicacion_23']").val()) + Number($("[id='comunicacion_24']").val()) + Number($("[id='comunicacion_25']").val()) +
@@ -1387,7 +1387,7 @@ $(document).ready(function(){
 
     // Realiza suma de cuidado_personal
     function iniciarIntervaloTotalcuidado_personal() {
-        clearInterval(intervalo);
+        //clearInterval(intervalo);
         intervalo = setInterval(() => {
             opt_total_cuidado_personal = Number($("[id='cuidado_personal_30']").val()) + Number($("[id='cuidado_personal_31']").val()) + Number($("[id='cuidado_personal_32']").val()) +
             Number($("[id='cuidado_personal_33']").val()) + Number($("[id='cuidado_personal_34']").val()) + Number($("[id='cuidado_personal_35']").val()) +
@@ -1416,7 +1416,7 @@ $(document).ready(function(){
  
      // Realiza suma de lomocion
      function iniciarIntervaloTotallomocion() {
-         clearInterval(intervalo);
+         //clearInterval(intervalo);
          intervalo = setInterval(() => {
             opt_total_lomocion = Number($("[id='lomocion_40']").val()) + Number($("[id='lomocion_41']").val()) + Number($("[id='lomocion_42']").val()) +
             Number($("[id='lomocion_43']").val()) + Number($("[id='lomocion_44']").val()) + Number($("[id='lomocion_45']").val()) +
@@ -1444,7 +1444,7 @@ $(document).ready(function(){
  
      // Realiza suma de disposicion
      function iniciarIntervaloTotaldisposicion() {
-         clearInterval(intervalo);
+         //clearInterval(intervalo);
          intervalo = setInterval(() => {
             opt_total_disposicion = Number($("[id='disposicion_50']").val()) + Number($("[id='disposicion_51']").val()) + Number($("[id='disposicion_52']").val()) +
             Number($("[id='disposicion_53']").val()) + Number($("[id='disposicion_54']").val()) + Number($("[id='disposicion_55']").val()) +
@@ -1472,7 +1472,7 @@ $(document).ready(function(){
   
       // Realiza suma de destreza
       function iniciarIntervaloTotaldestreza() {
-          clearInterval(intervalo);
+          //clearInterval(intervalo);
           intervalo = setInterval(() => {
             opt_total_destreza = Number($("[id='destreza_60']").val()) + Number($("[id='destreza_61']").val()) + Number($("[id='destreza_62']").val()) +
             Number($("[id='destreza_63']").val()) + Number($("[id='destreza_64']").val()) + Number($("[id='destreza_65']").val()) +
@@ -1501,7 +1501,7 @@ $(document).ready(function(){
 
     // Realiza suma de situacion
     function iniciarIntervaloTotalsituacion() {
-        clearInterval(intervalo);
+        //clearInterval(intervalo);
         intervalo = setInterval(() => {
             opt_total_situacion = Number($("[id='situacion_70']").val()) + Number($("[id='situacion_71']").val()) + Number($("[id='situacion_72']").val()) +
             Number($("[id='situacion_73']").val()) + Number($("[id='situacion_74']").val()) + Number($("[id='situacion_75']").val()) +
@@ -1587,13 +1587,13 @@ $(document).ready(function(){
         }, 500);
     }
 
-    $(document).ready(function() {
+    /* $(document).ready(function() {
         $('[id^="activarminusvalia_"]').each(function() {
             $(this).hover(function() {
                 iniciarIntervaloMinusvalia();
             });
         });
-    });
+    }); */
 
 
     $('#form_CaliTecDecreto').submit(function (e){
@@ -2277,7 +2277,7 @@ $(document).ready(function(){
         }else{            
             porcentajePcl = 0;            
         }       
-        console.log(porcentajePcl);
+        //console.log(porcentajePcl);
         $("#porcentaje_pcl").val(Math.round(porcentajePcl));
         if (porcentajePcl == 0) {
             $("#rango_pcl").val('PCL 0');
@@ -2838,7 +2838,7 @@ $(document).ready(function(){
                 }
             });
         });
-        console.log(datos_finales_deficiciencias_decreto_cero);        
+        //console.log(datos_finales_deficiciencias_decreto_cero);        
         // ENVÍO POR AJAX LA INFORMACIÓN FINAL DE LA TABLA, JUNTO CON EL ID EVENTO, ID ASIGNACION, ID PROCESO
                   
         var envio_datos_deficiencia_decretocero = {
@@ -3163,7 +3163,7 @@ $(document).ready(function(){
             var matchResult = idCompleto.match(/\d+/);            
             if (matchResult && matchResult.length > 0) {
                 var newfilas = parseInt(matchResult[0]);  
-                console.log(newfilas);
+                //console.log(newfilas);
                 if(newfilas > 0){
                     $('a[data-fila="fila_alteraciones_'+newfilas+'"]').css({
                         "cursor": "not-allowed",

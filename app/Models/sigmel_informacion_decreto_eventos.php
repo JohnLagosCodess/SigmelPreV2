@@ -22,6 +22,8 @@ class sigmel_informacion_decreto_eventos extends Model
     'Cobertura',
     'Decreto_calificacion',
     'Numero_dictamen',
+    'PCL_anterior',
+    'Descripcion_nueva_calificacion',
     'Relacion_documentos',
     'Otros_relacion_doc',
     'Descripcion_enfermedad_actual',
@@ -42,6 +44,7 @@ class sigmel_informacion_decreto_eventos extends Model
     'Requiere_tercera_persona_decisiones',
     'Requiere_dispositivo_apoyo',
     'Justificacion_dependencia',
+    'Estado_decreto',
     'Nombre_usuario',
     'F_registro',
     ];

@@ -102,6 +102,8 @@ return new class extends Migration
             $table->string('Edad_cronologica_menor', 4)->nullable();
             $table->string('Edad_cronologica_adulto', 4)->nullable();
             $table->string('Total_minusvalia', 4)->nullable();
+            $table->enum('Estado',['Activo', 'Inactivo'])->default('Activo')->nullable();
+            $table->enum('Estado_Recalificacion',['Activo', 'Inactivo'])->default('Activo')->nullable(); 
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

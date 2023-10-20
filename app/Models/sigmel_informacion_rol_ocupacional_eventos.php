@@ -48,6 +48,8 @@ class sigmel_informacion_rol_ocupacional_eventos extends Model
         'Total_rol_estudio_clase',
         'Adultos_mayores',
         'Total_rol_adultos_ayores',
+        'Estado',
+        'Estado_Recalificacion',
         'Nombre_usuario',
         'F_registro',
     ];

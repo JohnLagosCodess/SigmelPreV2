@@ -5107,9 +5107,9 @@ $(document).ready(function(){
                         location.reload();
                     }, 3000);
                 }
-                if (response.total_registros == 0) {
+                /* if (response.total_registros == 0) {
                     $("#conteo_listado_deficiencia_alteraciones").val(response.total_registros);
-                }
+                } */
             }
         });        
 
@@ -5132,7 +5132,7 @@ $(document).ready(function(){
             };       
             $.ajax({
                 type:'POST',
-                url:'/actualizarDxPrincipalDeficienciaAlteraciones',
+                url:'/actualizarDxPrincipalDeficienciaAlteracionesRe',
                 data: datos_actualizar_dxPrincial_deficiencias_alteraciones,
                 success:function(response){
                     // console.log(response);
@@ -5163,7 +5163,7 @@ $(document).ready(function(){
             
             $.ajax({
                 type:'POST',
-                url:'/actualizarDxPrincipalDeficienciaAlteraciones',
+                url:'/actualizarDxPrincipalDeficienciaAlteracionesRe',
                 data: datos_actualizar_dxPrincial_deficiencias_alteraciones,
                 success:function(response){
                     // console.log(response);

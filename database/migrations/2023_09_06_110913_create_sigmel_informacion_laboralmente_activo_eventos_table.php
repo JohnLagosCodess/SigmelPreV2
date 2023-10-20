@@ -77,7 +77,9 @@ return new class extends Migration
             $table->float('Domestica_animales')->nullable();
             $table->float('Domestica_total')->nullable();
             $table->float('Total_otras_areas')->nullable();
-            $table->float('Total_laboral_otras_areas')->nullable();                     
+            $table->float('Total_laboral_otras_areas')->nullable(); 
+            $table->enum('Estado',['Activo', 'Inactivo'])->default('Activo')->nullable();
+            $table->enum('Estado_Recalificacion',['Activo', 'Inactivo'])->default('Activo')->nullable();                  
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

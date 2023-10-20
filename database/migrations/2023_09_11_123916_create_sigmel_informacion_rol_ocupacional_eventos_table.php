@@ -47,6 +47,8 @@ return new class extends Migration
             $table->float('Total_rol_estudio_clase')->nullable();
             $table->string('Adultos_mayores', 4)->nullable();
             $table->float('Total_rol_adultos_ayores')->nullable();
+            $table->enum('Estado',['Activo', 'Inactivo'])->default('Activo')->nullable();
+            $table->enum('Estado_Recalificacion',['Activo', 'Inactivo'])->default('Activo')->nullable(); 
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

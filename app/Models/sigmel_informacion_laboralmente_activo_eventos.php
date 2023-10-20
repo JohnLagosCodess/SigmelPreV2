@@ -79,6 +79,8 @@ class sigmel_informacion_laboralmente_activo_eventos extends Model
         'Domestica_total',
         'Total_otras_areas',
         'Total_laboral_otras_areas',
+        'Estado',
+        'Estado_Recalificacion',
         'Nombre_usuario',
         'F_registro',
     ];

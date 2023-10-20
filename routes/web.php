@@ -383,6 +383,8 @@ Route::post('/recalificacionPCL',[RecalificacionPCLController::class, 'mostrarVi
 // Acción: Llenado de selectores recalificacion y revision pension
 Route::post('/selectoresRecalificacionPCL', [RecalificacionPCLController::class, 'cargueListadoSelectoresRecalificacionPcl']);
 // Acción: Guardar Informacion Decreto, Dictamen, Relacion documentos, Fundamentos para la calificación de la perdida de capacidad laboral y ocupacional Recalificacion
+Route::get('/guardarDecretoDictamenRelacionDocFundaRe', [RecalificacionPCLController::class, 'guardarDecretoDicRelaDocFundRe']);
+// Acción: Guardar Informacion Decreto, Dictamen, Relacion documentos, Fundamentos para la calificación de la perdida de capacidad laboral y ocupacional Recalificacion
 Route::post('/guardarDecretoDictamenRelacionDocFundaRe', [RecalificacionPCLController::class, 'guardarDecretoDicRelaDocFundRe']);
 // Acción: Guardar registros Examenes e interconsultas
 Route::post('/guardarExamenesInterconsultasRe', [RecalificacionPCLController::class, 'guardarExamenesInterconsultaRe']);
@@ -400,10 +402,14 @@ Route::post('/consultaValorDeficienciaRe', [RecalificacionPCLController::class, 
 Route::post('/GuardarDeficienciaAlteracionesRe',[RecalificacionPCLController::class, 'GuardarDeficienciaAlteracionesRe']);
 // Acción: Eliminar la Deficiencia alteraciones en la visualmente e inactiva en la DB
 Route::post('/eliminarDeficienciasAteracionesRe',[RecalificacionPCLController::class, 'eliminarDeficienciaAteracionesRe']);
+// Acción: Actualizar Dx Principal Deficiencias Alteraciones
+Route::post('/actualizarDxPrincipalDeficienciaAlteracionesRe', [RecalificacionPCLController::class, 'actualizarDxPrincipalDeficienciasAlteracionesRe']);
 // Acción: Guardar Deficiencia Agudeza Auditiva
 Route::post('/guardarDeficienciaAgudezaAuditivaRe', [RecalificacionPCLController::class, 'guardarDeficienciasAgudezaAuditivasRe']);
 // Acción: Eliminar registros Agudeza Auditiva visualmente  e inactiva en la DB
 Route::post('/eliminarAgudezasAuditivasRe', [RecalificacionPCLController::class, 'eliminarAgudezaAuditivaRe']);
+// Acción: Actualizar Dx Principal de Agudeza Auditiva
+Route::post('/actualizarDxPrincipalAgudezaAuditivaRe', [RecalificacionPCLController::class, 'actualizarDxPrincipalAgudezaAuditivaRe']);
 // Acción: Consulta Campimetría por fila
 Route::post('/ConsultaCampimetriaXFilaRe', [RecalificacionPCLController::class, 'ConsultaCampimetriaXFilaRe']);
 // Acción: Guardar Información Agudeza Visual
@@ -414,6 +420,22 @@ Route::post('/infoAgudezaVisualRe', [RecalificacionPCLController::class, 'infoAg
 Route::post('/actualizarAgudezaVisualRe', [RecalificacionPCLController::class, 'actualizarAgudezaVisualRe']);
 // Acción: Borrar Información Agudeza Visual
 Route::post('/eliminarAgudezaVisualRe', [RecalificacionPCLController::class, 'eliminarAgudezaVisualRe']);
+// Acción: Actualizar DX Principal agudeza Visual
+Route::post('/actualizarDxPrincipalAgudezasVisualRe', [RecalificacionPCLController::class, 'actualizarDxPrincipalAgudezaVisualRe']);
+// Acción: Guardar y Actualizar Título II Valoración del Rol Laboral laboralmente Activo
+Route::post('/guardarLaboralmenteActivosRe', [RecalificacionPCLController::class, 'guardarLaboralmenteActivoRe']); 
+// Acción: Guardar y Actualizar Título II Valoración del Rol Ocupacional
+Route::post('/guardarRolOcupacionalesRe', [RecalificacionPCLController::class, 'guardarRolOcupacionalRe']);
+// Acción: Guardar y Actualizar Libro II Calificación de las discapacidades (20%) y Libro III Calificación de minusvalías (30%)
+Route::post('/guardarLibros2_3Re', [RecalificacionPCLController::class, 'guardarLibro2_3Re']);
+// Acción: Guardar deficiencias Decreto Cero
+Route::post('/guardarDeficieciasDecretosCeroRe', [RecalificacionPCLController::class, 'guardarDeficieciasDecretoCeroRe']);
+// Acción: Eliminar deficiencias Decrecto creo visualmente e inactiva en la DB
+Route::post('/eliminarDeficieciasDecretosCeroRe', [RecalificacionPCLController::class, 'eliminarDeficieciasDecretoCeroRe']);
+// Acción: Guardar deficiencias Decreto tres
+Route::post('/guardarDeficieciasDecretosTresRe', [RecalificacionPCLController::class, 'guardarDeficieciasDecretoTresRe']);
+// Acción: Elimincar deficiencias Decreto tres visualmente e inactiva en la DB
+Route::post('/eliminarDeficieciasDecretosTresRe', [RecalificacionPCLController::class, 'eliminarDeficieciasDecretoTresRe']);
 
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);

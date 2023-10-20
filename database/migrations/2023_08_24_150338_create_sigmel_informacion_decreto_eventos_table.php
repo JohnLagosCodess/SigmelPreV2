@@ -20,6 +20,8 @@ return new class extends Migration
             $table->integer('Cobertura');
             $table->integer('Decreto_calificacion');
             $table->string('Numero_dictamen',7);
+            $table->text('PCL_anterior')->nullable();
+            $table->text('Descripcion_nueva_calificacion')->nullable();
             $table->text('Relacion_documentos')->nullable();
             $table->text('Otros_relacion_doc')->nullable();
             $table->text('Descripcion_enfermedad_actual');
@@ -40,6 +42,7 @@ return new class extends Migration
             $table->text('Requiere_tercera_persona_decisiones')->nullable();
             $table->text('Requiere_dispositivo_apoyo')->nullable();
             $table->text('Justificacion_dependencia');
+            $table->text('Estado_decreto')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

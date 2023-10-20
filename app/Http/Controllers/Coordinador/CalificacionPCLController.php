@@ -1192,6 +1192,7 @@ class CalificacionPCLController extends Controller
         ->where([
             ['ID_evento',$Id_evento_calitec],
             ['Id_Asignacion',$Id_asignacion_calitec],
+            ['Estado', 'Activo']
         ])
         ->get();
 
@@ -1207,22 +1208,26 @@ class CalificacionPCLController extends Controller
         'siroe.Adaptativa_reconoce_funcion_espacios_casa', 'siroe.Adaptativa_imita_trazo_lapiz', 'siroe.Adaptativa_abre_puerta',
         'siroe.Total_criterios_desarrollo', 'siroe.Juego_estudio_clase', 'siroe.Total_rol_estudio_clase', 'siroe.Adultos_mayores',
         'siroe.Total_rol_adultos_ayores', 'siroe.Nombre_usuario', 'siroe.F_registro')
-        ->where([['siroe.ID_evento',$Id_evento_calitec], ['siroe.Id_Asignacion',$Id_asignacion_calitec]])->get();    
+        ->where([['siroe.ID_evento',$Id_evento_calitec], ['siroe.Id_Asignacion',$Id_asignacion_calitec], ['siroe.Estado', 'Activo']])->get();    
         
         $array_libros_2_3 = sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
         ->where([
             ['ID_evento',$Id_evento_calitec],
             ['Id_Asignacion',$Id_asignacion_calitec],
+            ['Estado', 'Activo']
         ])
         ->get();
 
-        $array_datos_deficiencicas50 = DB::select('CALL psrbalthazaraudpcldef(?,?)', array($Id_evento_calitec,$Id_asignacion_calitec));
-        $array_datos_deficiencicas50_1 = DB::select('CALL psrbalthazarvispcldef(?,?)', array($Id_evento_calitec,$Id_asignacion_calitec));
-        $array_datos_deficiencicas50_2 = DB::select('CALL psrbalthazardefpcl(?,?)', array($Id_evento_calitec,$Id_asignacion_calitec));
-        $array_datos_deficiencicas50_3 = DB::select('CALL psrbalthazaraudpcl(?,?)', array($Id_evento_calitec,$Id_asignacion_calitec));
-        $array_datos_deficiencicas50_4 = DB::select('CALL psrbalthazarvispcl(?,?)', array($Id_evento_calitec,$Id_asignacion_calitec));
-        $array_datos_deficiencicas50_5 = DB::select('CALL psrbalthazaraudvispcl(?,?)', array($Id_evento_calitec,$Id_asignacion_calitec));
-        $array_datos_deficiencicas50_6 = DB::select('CALL psrbalthazarpcl(?,?)', array($Id_evento_calitec,$Id_asignacion_calitec));
+        if(count($array_datos_calificacionPclTecnica) > 0){
+            $Id_servicio_balt = $array_datos_calificacionPclTecnica[0]->Id_Servicio;
+        }                
+        $array_datos_deficiencicas50 = DB::select('CALL psrbalthazaraudpcldef(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        $array_datos_deficiencicas50_1 = DB::select('CALL psrbalthazarvispcldef(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        $array_datos_deficiencicas50_2 = DB::select('CALL psrbalthazardefpcl(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        $array_datos_deficiencicas50_3 = DB::select('CALL psrbalthazaraudpcl(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        $array_datos_deficiencicas50_4 = DB::select('CALL psrbalthazarvispcl(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        $array_datos_deficiencicas50_5 = DB::select('CALL psrbalthazaraudvispcl(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        $array_datos_deficiencicas50_6 = DB::select('CALL psrbalthazarpcl(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
 
         if(!empty($array_datos_deficiencicas50)  && empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
             $array_Deficiencias50 = $array_datos_deficiencicas50[0]->deficiencias;
@@ -1504,7 +1509,7 @@ class CalificacionPCLController extends Controller
         'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
         'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
         'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia')
-        ->where([['side.ID_evento',$Id_evento_calitec]])->get();        
+        ->where([['side.ID_evento',$Id_evento_calitec], ['side.Id_Asignacion',$Id_asignacion_calitec]])->get();        
 
         return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo','array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_dictamen_pericial'));
     }
@@ -2846,7 +2851,7 @@ class CalificacionPCLController extends Controller
             ]; 
 
             sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
-            ->where('ID_evento', $Id_Evento_decreto)->update($datos_laboralmenteActivo);
+            ->where([['ID_evento', $Id_Evento_decreto], ['Id_Asginacion',$Id_Asignacion_decreto]])->update($datos_laboralmenteActivo);
             sleep(2);
 
             $mensajes = array(
@@ -3378,7 +3383,7 @@ class CalificacionPCLController extends Controller
                 'F_registro' => $date,
             ];
             sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
-            ->where('ID_evento', $Id_EventoDecreto)->update($datos_dictamenPericial); 
+            ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial); 
 
         }else{
             $datos_dictamenPericial =[
@@ -3405,7 +3410,7 @@ class CalificacionPCLController extends Controller
             ];
     
             sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
-            ->where('ID_evento', $Id_EventoDecreto)->update($datos_dictamenPericial);  
+            ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial);  
         }
 
         $mensajes = array(

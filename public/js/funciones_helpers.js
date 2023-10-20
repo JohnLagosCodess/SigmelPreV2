@@ -187,6 +187,14 @@ $(document).ready(function () {
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
     });
 
+    // Text  y inputs areas vista Recalificacion tecnica
+
+    $(document).on('keyup', "textarea[id^='descripcion_nueva_calificacion']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
+    });
+
+
     // TEXTAREA DESCRIPCIÓN FURAT (DTO ATEL)
     $(document).on('keyup', "textarea[id^='descripcion_FURAT']", function(){
         var textoEscrito = $(this).val();

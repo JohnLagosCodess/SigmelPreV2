@@ -102,6 +102,8 @@ class sigmel_informacion_libro2_libro3_eventos extends Model
         'Autosuficiencia',
         'Edad_cronologica',
         'Total_minusvalia',
+        'Estado',
+        'Estado_Recalificacion',
         'Nombre_usuario',
         'F_registro',
     ];
