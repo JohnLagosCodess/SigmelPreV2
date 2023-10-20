@@ -10,11 +10,9 @@ use App\Models\sigmel_informacion_accion_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_historial_acciones_eventos;
 
-
-
-class CalificacionNotifiController extends Controller
+class CalificacionJuntasController extends Controller
 {
-    public function mostrarVistaCalificacionNotifi(Request $request){
+    public function mostrarVistaCalificacionJuntas(Request $request){
         if(!Auth::check()){
             return redirect('/');
         }
@@ -24,15 +22,17 @@ class CalificacionNotifiController extends Controller
         $date = date("Y-m-d", $time);
         $newIdAsignacion=$request->newIdAsignacion;
         $newIdEvento = $request->newIdEvento;
-        $array_datos_calificacionNoti = DB::select('CALL psrcalificacionNoti(?)', array($newIdAsignacion));
-        //Trae Documetos Generales del evento
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento));
 
-        return view('coordinador.calificacionNotificaciones', compact('user','array_datos_calificacionNoti','arraylistado_documentos'));
+        $array_datos_calificacionJuntas = DB::select('CALL psrcalificacionJuntas(?)', array($newIdAsignacion));
+         //Trae Documetos Generales del evento
+         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento));
+        
 
+        return view('coordinador.calificacionJuntas', compact('user','array_datos_calificacionJuntas','arraylistado_documentos'));
     }
-    //Guardar informacion del modulo de Notificaciones
-    public function guardarCalificacionNotifi(Request $request){
+
+    //Guardar informacion del modulo de Juntas
+    public function guardarCalificacionJuntas(Request $request){
         if (!Auth::check()) {
             return redirect('/');
         }
@@ -49,7 +49,7 @@ class CalificacionNotifiController extends Controller
                
             // insercion de datos a la tabla de sigmel_informacion_accion_eventos
     
-            $datos_info_registrarCalifcacionNotificaciones= [
+            $datos_info_registrarCalifcacionJuntas= [
                 'ID_evento' => $request->newId_evento,
                 'Id_Asignacion' => $request->newId_asignacion,
                 'Id_proceso' => $request->Id_proceso,
@@ -70,7 +70,7 @@ class CalificacionNotifiController extends Controller
                 'F_registro' => $date,
             ];
     
-            sigmel_informacion_accion_eventos::on('sigmel_gestiones')->insert($datos_info_registrarCalifcacionNotificaciones);
+            sigmel_informacion_accion_eventos::on('sigmel_gestiones')->insert($datos_info_registrarCalifcacionJuntas);
 
             sleep(2);
 
@@ -83,14 +83,14 @@ class CalificacionNotifiController extends Controller
                 'ID_evento' => $newIdEvento,
                 'F_accion' => $date,
                 'Nombre_usuario' => $nombre_usuario,
-                'Accion_realizada' => "Guardado Modulo Calificacion Notificaciones.",
+                'Accion_realizada' => "Guardado Modulo Calificacion Juntas.",
                 'Descripcion' => $request->descripcion_accion,
             ];
 
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
             sleep(2);
             $mensajes = array(
-                "parametro" => 'agregarCalificacionNotifi',
+                "parametro" => 'agregarCalificacionJuntas',
                 "parametro_1" => 'guardo',
                 "mensaje_1" => 'Registro agregado satisfactoriamente.'
             );
@@ -101,7 +101,7 @@ class CalificacionNotifiController extends Controller
             
             // actualizacion de datos a la tabla de sigmel_informacion_accion_eventos
 
-            $datos_info_registrarCalifcacionNotificaciones= [
+            $datos_info_registrarCalifcacionJuntas= [
                 'ID_evento' => $request->newId_evento,
                 'Id_Asignacion' => $request->newId_asignacion,
                 'Id_proceso' => $request->Id_proceso,
@@ -123,7 +123,7 @@ class CalificacionNotifiController extends Controller
             ];
 
             sigmel_informacion_accion_eventos::on('sigmel_gestiones')
-            ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_registrarCalifcacionNotificaciones);
+            ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_registrarCalifcacionJuntas);
             sleep(2);
             sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_actualizarAsignacionEvento);
@@ -134,14 +134,14 @@ class CalificacionNotifiController extends Controller
                 'ID_evento' => $newIdEvento,
                 'F_accion' => $date,
                 'Nombre_usuario' => $nombre_usuario,
-                'Accion_realizada' => "Actualizado Modulo Notificaciones.",
+                'Accion_realizada' => "Actualizado Modulo Juntas.",
                 'Descripcion' => $request->descripcion_accion,
             ];
 
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
             sleep(2);
             $mensajes = array(
-                "parametro" => 'agregarCalificacionNotifi',
+                "parametro" => 'agregarCalificacionJuntas',
                 "mensaje" => 'Registro actualizado satisfactoriamente.'
             );
     

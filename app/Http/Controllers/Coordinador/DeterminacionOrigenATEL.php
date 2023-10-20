@@ -285,7 +285,7 @@ class DeterminacionOrigenATEL extends Controller
             ->select('Id_Cie_diagnostico', 'CIE10')
             ->where([
                 ['Estado', '=', 'activo']
-            ])->limit('10')
+            ])
             ->get();
 
             $info_listado_cie_diagnostico = json_decode(json_encode($listado_cie_diagnostico, true));

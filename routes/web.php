@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\Administrador\AdministradorController;
 use App\Http\Controllers\Administrador\EntidadesController;
+use App\Http\Controllers\Administrador\AccionesController;
 use App\Http\Controllers\Administrador\BuscarEventoController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Autenticacion\LoginController;
 use App\Http\Controllers\Autenticacion\LogoutController;
+use App\Http\Controllers\Coordinador\AdicionDxDTO;
 use App\Http\Controllers\Coordinador\CalificacionPCLController;
 use App\Http\Controllers\Coordinador\RecalificacionPCLController;
 use App\Http\Controllers\Coordinador\CalificacionOrigenController;
@@ -20,6 +22,8 @@ use App\Http\Controllers\Coordinador\BandejaOrigenController;
 use App\Http\Controllers\Coordinador\BandejaNotifiController;
 use App\Http\Controllers\Coordinador\DeterminacionOrigenATEL;
 use App\Http\Controllers\Coordinador\PronunciamientoOrigenController;
+use App\Http\Controllers\Coordinador\BandejaJuntasController;
+use App\Http\Controllers\Coordinador\CalificacionJuntasController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -516,8 +520,6 @@ Route::post('/GuardarHistorialSeguiOrigen', [CalificacionOrigenController::class
 Route::post('/actualizarComunicadoOrigen', [CalificacionOrigenController::class, 'actualizarComunicadoOrigen']);
 // Acción: Eliminar Fila (Cambiar a estado inactivo) Historial Seguimiento
 Route::post('/EliminarFilaHistoSeguimiento', [CalificacionOrigenController::class, 'EliminarFilaHistoSeguimiento'])->name('EliminarFilaHistoSeguimiento');
-// Acción: MOstrar vista Calificación Técnica PCL
-Route::get('/determinacionOrigenATEL', [DeterminacionOrigenATEL::class, 'mostrarVistaDtoATEL'])->name('determinacionOrigenATEL');
 // Acción: Mostrar vista Determinación del Origen DTO ATEL
 Route::get('/determinacionOrigenATEL', [DeterminacionOrigenATEL::class, 'mostrarVistaDtoATEL'])->name('determinacionOrigenATEL');
 Route::post('/determinacionOrigenATEL', [DeterminacionOrigenATEL::class, 'mostrarVistaDtoATEL'])->name('determinacionOrigenATEL');
@@ -560,6 +562,53 @@ Route::post('/actualizarProfesionalServicioNotifi', [BandejaNotifiController::cl
 // Vista: Módulo Calificación Noti Coordinador
 Route::get('/calificacionNotifi', [CalificacionNotifiController::class, 'mostrarVistaCalificacionNotifi'])->name('calificacionNotifi');
 Route::post('/calificacionNotifi', [CalificacionNotifiController::class, 'mostrarVistaCalificacionNotifi'])->name('calificacionNotifi');
+// Accion: Insertar Califcación Notificacion
+Route::post('/registrarCalificacionNotifi', [CalificacionNotifiController::class, 'guardarCalificacionNotifi']);
+//13/10/2023
+//Vista: Bandeja Juntas Coordinador
+Route::get('/Sigmel/RolCoordinador/BandejaJuntas', [BandejaJuntasController::class, 'mostrarVistaBandejaJuntas'])->name('bandejaJuntas');
+// Accion: Selectores Bandeja Juntas
+Route::post('/selectoresBandejaJuntas', [BandejaJuntasController::class, 'cargueListadoSelectoresBandejaJuntas']);
+// Accion: Capturar data sin filtros
+Route::post('/sinfiltrosBandejaJuntas', [BandejaJuntasController::class, 'sinFiltroBandejaJuntas']);
+// Accion: Capturar data según los filtros
+Route::post('/filtrosBandejaJuntas', [BandejaJuntasController::class, 'filtrosBandejaJuntas']);
+// Accion: Actualizar el profesional y redireccionar el servicio
+Route::post('/actualizarProfesionalServicioJuntas', [BandejaJuntasController::class, 'actualizarBandejaJuntas']);
+//17/10/2023
+// Vista: Módulo Calificación Juntas Coordinador
+Route::get('/calificacionJuntas', [CalificacionJuntasController::class, 'mostrarVistaCalificacionJuntas'])->name('calificacionJuntas');
+Route::post('/calificacionJuntas', [CalificacionJuntasController::class, 'mostrarVistaCalificacionJuntas'])->name('calificacionJuntas');
+// Accion: Insertar Califcación Origen
+Route::post('/registrarCalificacionJuntas', [CalificacionJuntasController::class, 'guardarCalificacionJuntas']);
+
+// Acción: Mostrar vista ADICIÓN DX DTO
+Route::get('/adicionDxDtoOrigen', [AdicionDxDTO::class, 'mostrarVistaAdicionDxDTO'])->name('adicionDxDtoOrigen');
+Route::post('/adicionDxDtoOrigen', [AdicionDxDTO::class, 'mostrarVistaAdicionDxDTO'])->name('adicionDxDtoOrigen');
+// Accion: Selectores Submodulo Adición DX DTO
+Route::post('/cargueListadoSelectoresAdicionDx', [AdicionDxDTO::class, 'cargueListadoSelectoresAdicionDx']);
+// Acción: Insertar o Editar Adicion DX
+Route::post('/GuardaroActualizarInfoAdicionDX', [AdicionDxDTO::class, 'GuardaroActualizarInfoAdicionDX']);
+
+// 17/10/2023 - CRUD ACCIONES
+// Vista: Formulario para crear una nueva acción
+Route::get('/Sigmel/NuevaAccion', [AccionesController::class, 'mostrarVistaNuevaAccion'])->name('crearNuevaAccion');
+// Accion: Selectores Módulo Acciones
+Route::post('/selectoresAcciones', [AccionesController::class, 'cargueListadoSelectoresAcciones']);
+// Acción: Crear una nueva acción
+// Route::post('/Sigmel/CrearNuevaAccion', [AccionesController::class, 'CrearNuevaAccion'])->name('CrearNuevaAccion');
+Route::post('/CrearNuevaAccion', [AccionesController::class, 'CrearNuevaAccion']);
+// Vista: Formulario para listar una acción
+Route::get('/Sigmel/ListarAcciones', [AccionesController::class, 'mostrarVistaListarAcciones'])->name('listarAcciones');
+// Acción:Traer datos de la acción a editar
+Route::post('/Sigmel/InformacionAccionEditar', [AccionesController::class, 'InformacionAccionEditar'])->name('InformacionAccionEditar');
+// Acción: Actualización de la información de la Acción
+Route::post('/ActualizarAccion', [AccionesController::class, 'ActualizarAccion'])->name('ActualizarAccion');
+
+// Vista: Formulario para editar una acción
+// Route::get('/Sigmel/EditarAccion', [AccionesController::class, 'mostrarVistaListarAccion'])->name('listarAcciones');
+
+
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 

@@ -21,8 +21,12 @@ class sigmel_informacion_diagnosticos_eventos extends Model
         'CIE10',
         'Nombre_CIE10',
         'Origen_CIE10',
+        'Lateralidad_CIE10',
         'Deficiencia_motivo_califi_condiciones',
+        'Principal',
+        'F_adicion_CIE10',
         'Estado',
+        'Estado_Recalificacion',
         'Nombre_usuario',
         'F_registro',
     ];

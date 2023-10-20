@@ -328,7 +328,6 @@ $(document).ready(function(){
     }
 
     // Validadion checkbox Enfermedad heredada
-    
     $("#enfermedad_heredada").click(function(){
         if ($(this).is(":checked")) {
             $("#contenedor_nombre_entidad_enfermedad_heredada").removeClass('d-none');
@@ -476,6 +475,30 @@ $(document).ready(function(){
             $("#contenedor_enfermedad_heredada").addClass('d-none');
             $("#contenedor_nombre_entidad_enfermedad_heredada").addClass('d-none');
             $("#contenedor_checkboxes_enfermedad").addClass('d-none');
+
+            // llenado de datos del selector origen acorde a las validaciones
+            let datos_selector_origen_val_1 = {
+                '_token': token,
+                'parametro': parametro_origen_dto_atel
+            };
+            $.ajax({
+                type:'POST',
+                url:'/cargueListadoSelectoresDTOATEL',
+                data: datos_selector_origen_val_1,
+                success:function(data){
+                    //console.log(data);
+                    $('#origen_dto_atel').empty();
+                    $('#origen_dto_atel').append('<option value=""></option>');
+                    let listado_origen_dto_atel = Object.keys(data);
+                    for (let i = 0; i < listado_origen_dto_atel.length; i++) {
+                        if (data[listado_origen_dto_atel[i]]['Id_Parametro'] == $("#bd_origen").val()) {
+                            $('#origen_dto_atel').append('<option value="'+data[listado_origen_dto_atel[i]]['Id_Parametro']+'" selected>'+data[listado_origen_dto_atel[i]]['Nombre_parametro']+'</option>');
+                        } else {
+                            $('#origen_dto_atel').append('<option value="'+data[listado_origen_dto_atel[i]]['Id_Parametro']+'">'+data[listado_origen_dto_atel[i]]['Nombre_parametro']+'</option>');
+                        }
+                    }
+                }
+            });
             clearInterval(intervalo);
         }
         // Validacion N°2: Activo = Si y Tipo de Evento = Enfermedad
@@ -508,6 +531,30 @@ $(document).ready(function(){
             $("#contenedor_tipo_lesion").addClass('d-none');
             $("#contenedor_parte_afectada").addClass('d-none');
             $("#contenedor_checkboxes_acci_inci_sincober").addClass('d-none');
+
+            // llenado de datos del selector origen acorde a las validaciones
+            let datos_selector_origen_val_1 = {
+                '_token': token,
+                'parametro': parametro_origen_dto_atel
+            };
+            $.ajax({
+                type:'POST',
+                url:'/cargueListadoSelectoresDTOATEL',
+                data: datos_selector_origen_val_1,
+                success:function(data){
+                    //console.log(data);
+                    $('#origen_dto_atel').empty();
+                    $('#origen_dto_atel').append('<option value=""></option>');
+                    let listado_origen_dto_atel = Object.keys(data);
+                    for (let i = 0; i < listado_origen_dto_atel.length; i++) {
+                        if (data[listado_origen_dto_atel[i]]['Id_Parametro'] == $("#bd_origen").val()) {
+                            $('#origen_dto_atel').append('<option value="'+data[listado_origen_dto_atel[i]]['Id_Parametro']+'" selected>'+data[listado_origen_dto_atel[i]]['Nombre_parametro']+'</option>');
+                        } else {
+                            $('#origen_dto_atel').append('<option value="'+data[listado_origen_dto_atel[i]]['Id_Parametro']+'">'+data[listado_origen_dto_atel[i]]['Nombre_parametro']+'</option>');
+                        }
+                    }
+                }
+            });
             clearInterval(intervalo);
         }
         // Validacion N°3: Activo = Si y Tipo de Evento = Incidente
@@ -540,6 +587,30 @@ $(document).ready(function(){
             $("#contenedor_enfermedad_heredada").addClass('d-none');
             $("#contenedor_nombre_entidad_enfermedad_heredada").addClass('d-none');
             $("#contenedor_checkboxes_enfermedad").addClass('d-none');
+
+            // llenado de datos del selector origen acorde a las validaciones
+            let datos_selector_origen_val_1 = {
+                '_token': token,
+                'parametro': parametro_origen_dto_atel
+            };
+            $.ajax({
+                type:'POST',
+                url:'/cargueListadoSelectoresDTOATEL',
+                data: datos_selector_origen_val_1,
+                success:function(data){
+                    //console.log(data);
+                    $('#origen_dto_atel').empty();
+                    $('#origen_dto_atel').append('<option value=""></option>');
+                    let listado_origen_dto_atel = Object.keys(data);
+                    for (let i = 0; i < listado_origen_dto_atel.length; i++) {
+                        if (data[listado_origen_dto_atel[i]]['Id_Parametro'] == $("#bd_origen").val()) {
+                            $('#origen_dto_atel').append('<option value="'+data[listado_origen_dto_atel[i]]['Id_Parametro']+'" selected>'+data[listado_origen_dto_atel[i]]['Nombre_parametro']+'</option>');
+                        } else {
+                            $('#origen_dto_atel').append('<option value="'+data[listado_origen_dto_atel[i]]['Id_Parametro']+'">'+data[listado_origen_dto_atel[i]]['Nombre_parametro']+'</option>');
+                        }
+                    }
+                }
+            });
             clearInterval(intervalo);
         }
         // Validacion N°4: Activo = Si y Tipo de Evento = Sin Cobertura
@@ -572,8 +643,34 @@ $(document).ready(function(){
             $("#contenedor_enfermedad_heredada").addClass('d-none');
             $("#contenedor_nombre_entidad_enfermedad_heredada").addClass('d-none');
             $("#contenedor_checkboxes_enfermedad").addClass('d-none');
+
+            // llenado de datos del selector origen acorde a las validaciones
+            let datos_selector_origen_val_1 = {
+                '_token': token,
+                'parametro': parametro_origen_dto_atel
+            };
+            $.ajax({
+                type:'POST',
+                url:'/cargueListadoSelectoresDTOATEL',
+                data: datos_selector_origen_val_1,
+                success:function(data){
+                    //console.log(data);
+                    $('#origen_dto_atel').empty();
+                    $('#origen_dto_atel').append('<option value=""></option>');
+                    let listado_origen_dto_atel = Object.keys(data);
+                    for (let i = 0; i < listado_origen_dto_atel.length; i++) {
+                        if (data[listado_origen_dto_atel[i]]['Id_Parametro'] == $("#bd_origen").val()) {
+                            $('#origen_dto_atel').append('<option value="'+data[listado_origen_dto_atel[i]]['Id_Parametro']+'" selected>'+data[listado_origen_dto_atel[i]]['Nombre_parametro']+'</option>');
+                        } else {
+                            $('#origen_dto_atel').append('<option value="'+data[listado_origen_dto_atel[i]]['Id_Parametro']+'">'+data[listado_origen_dto_atel[i]]['Nombre_parametro']+'</option>');
+                        }
+                    }
+                }
+            });
             clearInterval(intervalo);
         }
+
+        
 
         
     }, 500);

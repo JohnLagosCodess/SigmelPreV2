@@ -22,7 +22,9 @@ return new class extends Migration
             $table->text('Lateralidad_CIE10')->nullable();
             $table->text('Deficiencia_motivo_califi_condiciones')->nullable();
             $table->enum('Principal', ['Si','No'])->nullable();
+            $table->date('F_adicion_CIE10')->nullable();
             $table->enum('Estado', ['Activo','Inactivo'])->default('Activo')->nullable();
+            $table->enum('Estado_Recalificacion', ['Activo','Inactivo'])->default('Activo')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });
