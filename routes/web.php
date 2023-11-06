@@ -194,12 +194,7 @@ Route::post('/listadoUsuariosAsignacion', [AdministradorController::class, 'list
 Route::post('/Sigmel/RolAdministrador/GuardarEdicionEquipoTrabajo', [AdministradorController::class, 'editar_equipo_trabajo'])->name('GuardarEdicionEquipoTrabajo');
 
 // 04/05/2023
-// Vista: Formulario para registrar Cliente
-Route::get('/Sigmel/RolAdministrador/RegistroCliente', [AdministradorController::class, 'mostrarVistaCrearCliente'])->name('registrarCliente');
-// Acción: Registrar el cliente
-Route::post('/Sigmel/RolAdministrador/CrearCliente', [AdministradorController::class, 'guardar_cliente'])->name('CrearCliente');
-// Acción: Actualizar información del cliente.
-Route::post('/Sigmel/RolAdministrador/ActualizarCliente', [AdministradorController::class, 'actualizar_cliente'])->name('ActualizarCliente');
+
 // Vista: Bandeja de gestión Inicial
 Route::get('/Sigmel/RolAdministrador/BandejaGestionInicial', [AdministradorController::class, 'mostrarVistaBandejaGestionInicial'])->name('bandejaGestionInicial');
 // Vista: Cargue de Bases
@@ -513,8 +508,8 @@ Route::post('/eliminarDiagnosticosMotivoCalificacionDTOATEL', [DeterminacionOrig
 Route::post('/actualizarDxPrincipalDTOATEL', [DeterminacionOrigenATEL::class, 'actualizarDxPrincipalDTOATEL']);
 // Acción: Guardar información DTO ATEL
 Route::post('/GuardaroActualizarInfoDTOTAEL', [DeterminacionOrigenATEL::class, 'GuardaroActualizarInfoDTOTAEL']);
-// Acción: Eliminar registro de Examenes e interconsultar visualmente e inactiva en la DB
-Route::post('/eliminarExamenesInterconsultasDTOATEL', [DeterminacionOrigenATEL::class, 'eliminarExamenInterconsulta']);
+// // Acción: Eliminar registro de Examenes e interconsultar visualmente e inactiva en la DB
+// Route::post('/eliminarExamenesInterconsultasDTOATEL', [DeterminacionOrigenATEL::class, 'eliminarExamenInterconsulta']);
 // Acción: Eliminar registros Diagnosticos motivo de calificacion visualmente e inactiva en la DB
 Route::post('/eliminarDiagnosticosMotivoCalificacionDTOATEL', [DeterminacionOrigenATEL::class, 'eliminarDiagnosticoMotivoCalificacion']);
 // 02/10/2023
@@ -574,17 +569,38 @@ Route::get('/Sigmel/NuevaAccion', [AccionesController::class, 'mostrarVistaNueva
 // Accion: Selectores Módulo Acciones
 Route::post('/selectoresAcciones', [AccionesController::class, 'cargueListadoSelectoresAcciones']);
 // Acción: Crear una nueva acción
-// Route::post('/Sigmel/CrearNuevaAccion', [AccionesController::class, 'CrearNuevaAccion'])->name('CrearNuevaAccion');
 Route::post('/CrearNuevaAccion', [AccionesController::class, 'CrearNuevaAccion']);
-// Vista: Formulario para listar una acción
+// Vista: Formulario para listar acciones
 Route::get('/Sigmel/ListarAcciones', [AccionesController::class, 'mostrarVistaListarAcciones'])->name('listarAcciones');
 // Acción:Traer datos de la acción a editar
 Route::post('/Sigmel/InformacionAccionEditar', [AccionesController::class, 'InformacionAccionEditar'])->name('InformacionAccionEditar');
 // Acción: Actualización de la información de la Acción
 Route::post('/ActualizarAccion', [AccionesController::class, 'ActualizarAccion'])->name('ActualizarAccion');
 
-// Vista: Formulario para editar una acción
-// Route::get('/Sigmel/EditarAccion', [AccionesController::class, 'mostrarVistaListarAccion'])->name('listarAcciones');
+// Vista: Formulario para registrar Cliente
+Route::get('/Sigmel/RolAdministrador/RegistroCliente', [AdministradorController::class, 'mostrarVistaCrearCliente'])->name('registrarCliente');
+// Acción: Registrar el cliente
+Route::post('/CrearCliente', [AdministradorController::class, 'guardar_cliente']);
+// Vista: Traer lista de clientes
+Route::get  ('/Sigmel/RolAdministrador/ListarClientes', [AdministradorController::class, 'mostrarVistaListarClientes'])->name('listarClientes');
+// Acción: Traer información del cliente
+Route::post('/Sigmel/InformacionClienteEditar', [AdministradorController::class, 'InformacionClienteEditar'])->name('InformacionClienteEditar');
+// Acción: Eliminar fila dinámica en tabla de sucursales modal edicion cliente
+Route::post('/eliminarSucursalCliente', [AdministradorController::class, 'eliminarSucursalCliente']);
+// Acción: Eliminar fila dinámica en tabla de ans modal edicion cliente
+Route::post('/eliminarAnsCliente', [AdministradorController::class, 'eliminarAnsCliente']);
+// Acción: Actualizar información del cliente.
+Route::post('/ActualizarCliente', [AdministradorController::class, 'actualizar_cliente']);
+
+// Acción: Eliminar fila dinámica en tabla de firmas cliente modal edicion cliente
+Route::post('/eliminarFirmaCliente', [AdministradorController::class, 'eliminarFirmaCliente']);
+// Acción: Eliminar fila dinámica en tabla de firmas proveedor modal edicion cliente
+Route::post('/eliminarFirmaProveedor', [AdministradorController::class, 'eliminarFirmaProveedor']);
+// Guardar o Actualizar Firma Cliente
+Route::post('/GuardarActualizarFirmasCliente', [AdministradorController::class, 'GuardarActualizarFirmasCliente']);
+// Guardar o Actualizar Firma Proveedor
+Route::post('/GuardarActualizarFirmasProveedor', [AdministradorController::class, 'GuardarActualizarFirmasProveedor']);
+
 
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */

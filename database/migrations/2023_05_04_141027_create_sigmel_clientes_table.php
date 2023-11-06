@@ -12,15 +12,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_clientes', function (Blueprint $table) {
-            $table->increments('id');
-            $table->text('nombre_cliente');
-            $table->string('nit', 100);
-            $table->text('razon_social');
-            $table->text('representante_legal');
-            $table->string('telefono_contacto', 12);
-            $table->string('correo_contacto', 50);
-            $table->enum('estado', ['activo', 'inactivo'])->default('activo');
-            $table->text('observacion')->nullable();
+            $table->increments('Id_cliente');
+            $table->integer('Tipo_cliente');
+            $table->text('Nombre_cliente');
+            $table->string('Nit', 100);
+            $table->text('Telefono_principal');
+            $table->text('Otros_telefonos')->nullable();
+            $table->text('Email_principal');
+            $table->text('Otros_emails')->nullable();
+            $table->text('Linea_atencion_principal');
+            $table->text('Otras_lineas_atencion')->nullable();
+            $table->text('Direccion');
+            $table->integer('Id_Departamento');
+            $table->integer('Id_Ciudad');
+            $table->enum('Estado', ['Activo', 'Inactivo'])->default('Activo');
+            $table->text('Codigo_cliente');
+            $table->text('Logo_cliente')->nullable();
+            $table->text('Nombre_usuario');
+            $table->date('F_registro');
             $table->timestamps();
         });
     }

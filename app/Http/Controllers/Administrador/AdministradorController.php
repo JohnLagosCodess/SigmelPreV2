@@ -9,13 +9,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CargarDocRequest;
 use Illuminate\Support\Facades\Validator;
+
 // use Illuminate\Validation\Rules\File;
 
 use Illuminate\Support\Facades\File;
 
 use App\Models\sigmel_grupos_trabajos;
 use App\Models\sigmel_usuarios_grupos_trabajos;
-use App\Models\sigmel_clientes;
+
 use App\Models\sigmel_auditorias_gr_trabajos;
 use App\Models\sigmel_auditorias_creacion_clientes;
 
@@ -48,11 +49,20 @@ use App\Models\sigmel_historico_empresas_afiliados;
 use App\Models\sigmel_registro_documentos_eventos;
 use App\Models\sigmel_numero_orden_eventos;
 
+
 /* Llamado modelo para consultar historial de acciones */
 use App\Models\sigmel_historial_acciones_eventos;
 use App\Models\psrvistadocumentos;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Rels;
 use stdClass;
+
+/* Llamado de modelos para la gestión de un cliente*/
+use App\Models\sigmel_clientes;
+use App\Models\sigmel_informacion_sucursales_clientes;
+use App\Models\sigmel_informacion_servicios_contratados;
+use App\Models\sigmel_informacion_ans_clientes;
+use App\Models\sigmel_informacion_firmas_clientes;
+use App\Models\sigmel_informacion_firmas_proveedores;
 
 class AdministradorController extends Controller
 {
@@ -374,12 +384,12 @@ class AdministradorController extends Controller
 
         $user = Auth::user();
 
-        $info_registro_cliente = sigmel_clientes::on('sigmel_gestiones')
-        ->select('id', 'nombre_cliente', 'nit', 'razon_social', 'representante_legal', 
-        'telefono_contacto', 'correo_contacto', 
-        'estado', 'observacion', 'created_at', 'updated_at')->get();
+        // $info_registro_cliente = sigmel_clientes::on('sigmel_gestiones')
+        // ->select('id', 'nombre_cliente', 'nit', 'razon_social', 'representante_legal', 
+        // 'telefono_contacto', 'correo_contacto', 
+        // 'estado', 'observacion', 'created_at', 'updated_at')->get();
 
-        return view('administrador.registrarCliente', compact('user', 'info_registro_cliente'));
+        return view('administrador.registrarCliente', compact('user'));
     }
 
     public function guardar_cliente(Request $request){
@@ -389,42 +399,902 @@ class AdministradorController extends Controller
         
         $time = time();
         $date = date("Y-m-d h:i:s", $time);
+        $date_con_hora = date("Y-m-d h:i:s", $time);
+        $nombre_usuario = Auth::user()->name;
 
-        if ($request->observacion_cliente <> '') {
-            $observacion = $request->observacion_cliente;
+        if (empty($request->Nombre_cliente)) {
+            $mensaje_mostrar = "No puede crear el cliente.";
+            $mensajes = array(
+                "parametro" => 'no_agrego_cliente',
+                "mensaje" => $mensaje_mostrar
+            );
+
         } else {
-            $observacion = null;
+
+            /* PASO N° 1: REGISTRAR LA INFORMACIÓN DEL CLIENTE EN LA TABLA sigmel_clientes */
+
+            // Evaluamos si selecciona la opción OTRO/¿Cuál? del selector de tipo de cliente
+            if ($request->Tipo_cliente == 4) {
+                
+                $datos_otro_tipo_cliente = [
+                    'Nombre_tipo_cliente' => $request->Otro_tipo_cliente,
+                    'Estado' => 'activo',
+                    'F_registro' => $date
+                ];
+                sigmel_lista_tipo_clientes::on('sigmel_gestiones')->insert($datos_otro_tipo_cliente);
+                $array_tipo_cliente = sigmel_lista_tipo_clientes::on('sigmel_gestiones')->select('Id_TipoCliente')->latest('Id_TipoCliente')->first();
+                $tipo_cliente = $array_tipo_cliente['Id_TipoCliente'];
+            } else {
+                $tipo_cliente = $request->Tipo_cliente;
+            }
+
+            $nuevo_cliente = array(
+                'Tipo_cliente' => $tipo_cliente,
+                'Nombre_cliente' => $request->Nombre_cliente,
+                'Nit' => $request->Nit,
+                'Telefono_principal' => $request-> Telefono_principal,
+                'Otros_telefonos' => $request->Otros_telefonos,
+                'Email_principal' => $request->Email_principal,
+                'Otros_emails' => $request->Otros_emails,
+                'Linea_atencion_principal' => $request->Linea_atencion_principal,
+                'Otras_lineas_atencion' => $request->Otras_lineas_atencion,
+                'Direccion' => $request->Direccion,
+                'Id_Departamento' => $request->Id_Departamento,
+                'Id_Ciudad' => $request->Id_Ciudad,
+                'Estado' => $request->Estado,
+                'Codigo_cliente' => $request->Codigo_cliente,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $request->Fecha_creacion,
+                'created_at' => $date_con_hora,
+            );
+
+            sigmel_clientes::on('sigmel_gestiones')->insert($nuevo_cliente);
+
+            sleep(2);
+            
+            /* PASO N° 2: EXTRAEMOS EL ID DEL CLIENTE DE LA INSERCIÓN ANTERIOR */
+            $array_id_cliente = sigmel_clientes::on('sigmel_gestiones')->select('Id_cliente')->latest('Id_cliente')->first();
+            $id_cliente = $array_id_cliente['Id_cliente'];
+
+            if (!empty($id_cliente)) {
+
+                /* PASO N° 3: INSERTAR LOS DATOS DE LAS SUCURSALES EN LA TABLA sigmel_informacion_sucursales_clientes */
+                if(!empty($request->Sucursales)){
+                    if(count($request->Sucursales) > 0){
+                        $array_sucursales = $request->Sucursales;
+
+                        // Iteración para extraer los datos de la tabla y adicionar el id cliente, fecha registro y quien lo hizo
+                        $array_datos_organizados_sucursales = [];
+
+                        foreach ($array_sucursales as $subarray_datos) {
+                            array_unshift($subarray_datos, $id_cliente);
+        
+                            $subarray_datos[] = $nombre_usuario;
+                            $subarray_datos[] = $date;
+        
+                            array_push($array_datos_organizados_sucursales, $subarray_datos);
+                        };
+                        
+                        // Creación de array con los campos de la tabla: sigmel_informacion_servicios_contratados
+                        $array_tabla_sucursales = ['Id_cliente', 'Nombre', 'Gerente', 'Telefono_principal', 'Otros_telefonos',
+                        'Email_principal', 'Otros_emails', 'Linea_atencion_principal', 'Otras_lineas_atencion',
+                        'Direccion', 'Id_Departamento', 'Id_Ciudad', 'Nombre_usuario', 'F_registro'];
+
+                        // Combinación de los campos de la tabla con los datos
+                        $array_datos_con_keys_sucursales = [];
+                        foreach ($array_datos_organizados_sucursales as $subarray_datos_organizados_sucursales) {
+                            array_push($array_datos_con_keys_sucursales, array_combine($array_tabla_sucursales, $subarray_datos_organizados_sucursales));
+                        };
+
+                        // Inserción de la información
+                        foreach ($array_datos_con_keys_sucursales as $insertar_sucursales) {
+                            sigmel_informacion_sucursales_clientes::on('sigmel_gestiones')->insert($insertar_sucursales);
+                        }
+
+                    }
+                };
+                sleep(2);
+                
+                /* PASO N° 4: INSERTAR LOS DATOS DE LOS SERVICIOS CONTRATADOS EN LA TABLA sigmel_informacion_servicios_contratados */
+                if (!empty($request->Servicios_contratados)) {
+                    if(count($request->Servicios_contratados) > 0){
+                        $array_servicios_contratados = $request->Servicios_contratados;
+        
+                        // Iteración para extraer los datos de la tabla y adicionar el id cliente, fecha registro y quien lo hizo
+                        $array_datos_organizados_servicios_contratados = [];
+        
+                        foreach ($array_servicios_contratados as $subarray_datos) {
+                            array_unshift($subarray_datos, $id_cliente);
+        
+                            $subarray_datos[] = $nombre_usuario;
+                            $subarray_datos[] = $date;
+        
+                            array_push($array_datos_organizados_servicios_contratados, $subarray_datos);
+                        };
+        
+                        // Creación de array con los campos de la tabla: sigmel_informacion_servicios_contratados
+                        $array_tabla_servicios_contratados = ['Id_cliente','Id_proceso','Id_servicio',
+                        'Valor_tarifa_servicio','Nro_consecutivo_dictamen_servicio','Nombre_usuario',
+                        'F_registro'];
+        
+                        // Combinación de los campos de la tabla con los datos
+                        $array_datos_con_keys_servicios_contratados = [];
+                        foreach ($array_datos_organizados_servicios_contratados as $subarray_datos_organizados_servicios_contratados) {
+                            array_push($array_datos_con_keys_servicios_contratados, array_combine($array_tabla_servicios_contratados, $subarray_datos_organizados_servicios_contratados));
+                        };
+        
+                        // Inserción de la información
+                        foreach ($array_datos_con_keys_servicios_contratados as $insertar_servicios_contratados) {
+                            sigmel_informacion_servicios_contratados::on('sigmel_gestiones')->insert($insertar_servicios_contratados);
+                        };
+                    }
+                };
+                
+                sleep(2);
+                /* PASO N° 5: INSERTAR LOS DATOS DE LOS ANS EN LA TABLA sigmel_informacion_ans_clientes */
+                if(!empty($request->ANS)){
+                    if(count($request->ANS) > 0){
+                        $array_ans = $request->ANS;
+
+                        // Iteración para extraer los datos de la tabla y adicionar el id cliente, fecha registro y quien lo hizo
+                        $array_datos_organizados_ans = [];
+
+                        foreach ($array_ans as $subarray_datos) {
+                            array_unshift($subarray_datos, $id_cliente);
+        
+                            $subarray_datos[] = $nombre_usuario;
+                            $subarray_datos[] = $date;
+        
+                            array_push($array_datos_organizados_ans, $subarray_datos);
+                        };
+                        
+                        // Creación de array con los campos de la tabla: sigmel_informacion_servicios_contratados
+                        $array_tabla_ans = ['Id_cliente', 'Nombre', 'Descripcion', 'Valor', 'Unidad', 'Nombre_usuario', 'F_registro'];
+
+                        // Combinación de los campos de la tabla con los datos
+                        $array_datos_con_keys_ans = [];
+                        foreach ($array_datos_organizados_ans as $subarray_datos_organizados_ans) {
+                            array_push($array_datos_con_keys_ans, array_combine($array_tabla_ans, $subarray_datos_organizados_ans));
+                        };
+
+                        // Inserción de la información
+                        foreach ($array_datos_con_keys_ans as $insertar_ans) {
+                            sigmel_informacion_ans_clientes::on('sigmel_gestiones')->insert($insertar_ans);
+                        }
+
+                    }
+                };
+
+                /* PASO N°6: INSERCIÓN DEL LOGO EN CARPETA Y ACTUALIZACIÓN DEL DATO EN LA TABLA sigmel_clientes */
+                sleep(1);
+                if (!empty($request->Logo)) {
+                    $imagenBase64 = $request->Logo;
+                    $imagen_decodificada = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $imagenBase64));
+                    $nombre_logo = 'logo_cliente_'.$id_cliente.'.'. $request->Extension_logo;
+                    $ruta = $id_cliente.'/'.$nombre_logo;
+                    Storage::disk('public')->put($ruta, $imagen_decodificada);
+    
+                    // Insertamos el nombre del logo del cliente en la tabla sigmel_clientes.
+                    $datos_nombre_logo = [
+                        'Logo_cliente' => $nombre_logo
+                    ];
+            
+                    sigmel_clientes::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_cliente', $id_cliente],
+                    ])
+                    ->update($datos_nombre_logo);
+
+                    // generar permisos a la carpeta del logo del cliente.
+                    $path = public_path('logos_clientes/'.$id_cliente);
+                    $mode = 777;
+                    chmod($path, octdec($mode));
+                }
+                sleep(1);
+
+                /* PASO N°7: INSERCIÓN DEL CONTENIDO DE LA FIRMA EN LA TABLA sigmel_informacion_firmas_clientes
+                E INSERCIÓN DE LAS IMAGENES EN LA CARPETA DEL CLIENTE CORRESPONDIENTE */
+                if(!empty($request->Firmas)){
+                    if(count($request->Firmas) > 0){
+        
+                        $array_urls_imagenes = $request->Urls;
+                        $array_extensiones_imagenes = $request->Extensiones_firmas;
+          
+                        
+                        $array_url_logos_firma_cliente = array();
+                        if(!empty($array_urls_imagenes) && !empty($array_extensiones_imagenes)){
+                            for ($i=0; $i < count($array_urls_imagenes); $i++) { 
+                                $conteo = time();
+                                $imagenBase64 = $array_urls_imagenes[$i];
+                                $imagen_decodificada = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $imagenBase64));
+                                $nombre_logo = 'logo_firma_cliente_'.$conteo.'.'. $array_extensiones_imagenes[$i];
+                                $ruta = $id_cliente.'/'.$nombre_logo;
+                                Storage::disk('publicfirmasclientes')->put($ruta, $imagen_decodificada);
+        
+                                // generar permisos a la carpeta del logo del cliente.
+                                $path = public_path('firmas_clientes/'.$id_cliente);
+                                $mode = 777;
+                                chmod($path, octdec($mode));
+        
+                                if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on'){
+                                    $solicitud = "https://";
+                                } else {
+                                    $solicitud = "http://";
+                                }
+        
+                                $url_logo_firma_cliente = "{$solicitud}{$_SERVER['HTTP_HOST']}/firmas_clientes/{$id_cliente}/{$nombre_logo}";
+                                array_push($array_url_logos_firma_cliente, $url_logo_firma_cliente);
+                            }
+                        }
+        
+        
+                        $array_firmas_cliente = $request->Firmas;
+        
+                        // Iteración para extraer los datos de la tabla y adicionar el id cliente, fecha registro y quien lo hizo
+                        $array_datos_organizados_firmas_cliente = [];
+                        foreach ($array_firmas_cliente as $subarray_datos) {
+                            array_unshift($subarray_datos, $id_cliente);
+        
+                            $subarray_datos[] = $nombre_usuario;
+                            $subarray_datos[] = $date;
+        
+                            array_push($array_datos_organizados_firmas_cliente, $subarray_datos);
+                        };
+        
+        
+                        if(count($array_url_logos_firma_cliente) > 0){
+                            $string_urls = implode(", ", $array_url_logos_firma_cliente);
+        
+                            for ($a=0; $a < count($array_datos_organizados_firmas_cliente); $a++) { 
+                                $array_datos_organizados_firmas_cliente[$a][] = $string_urls;
+                            }
+                            // Creación de array con los campos de la tabla: sigmel_informacion_firmas_cliente
+                            $array_tabla_firmas_cliente = ['Id_cliente', 'Nombre_firmante', 'Cargo_firmante', 'Firma', 'Nombre_usuario', 'F_registro', 'Url'];
+            
+                            // Combinación de los campos de la tabla con los datos
+                            $array_datos_con_keys_firmas_cliente = [];
+                            foreach ($array_datos_organizados_firmas_cliente as $subarray_datos_organizados_firmas_cliente) {
+                                array_push($array_datos_con_keys_firmas_cliente, array_combine($array_tabla_firmas_cliente, $subarray_datos_organizados_firmas_cliente));
+                            };
+        
+                        }else{
+                            // Creación de array con los campos de la tabla: sigmel_informacion_firmas_cliente
+                            $array_tabla_firmas_cliente = ['Id_cliente', 'Nombre_firmante', 'Cargo_firmante', 'Firma', 'Nombre_usuario', 'F_registro'];
+        
+                            // Combinación de los campos de la tabla con los datos
+                            $array_datos_con_keys_firmas_cliente = [];
+                            foreach ($array_datos_organizados_firmas_cliente as $subarray_datos_organizados_firmas_cliente) {
+                                array_push($array_datos_con_keys_firmas_cliente, array_combine($array_tabla_firmas_cliente, $subarray_datos_organizados_firmas_cliente));
+                            };
+                        }
+                        
+        
+                        // Inserción de la información
+                        foreach ($array_datos_con_keys_firmas_cliente as $insertar_firmas_cliente) {
+                            sigmel_informacion_firmas_clientes::on('sigmel_gestiones')->insert($insertar_firmas_cliente);
+                        }
+                    }
+                };
+
+                /* PASO N°8: INSERCIÓN DEL CONTENIDO DE LA FIRMA EN LA TABLA sigmel_informacion_firmas_proveedores
+                E INSERCIÓN DE LAS IMAGENES EN LA CARPETA DEL CLIENTE CORRESPONDIENTE */
+                if(!empty($request->Firmas_proveedor)){
+                    if(count($request->Firmas_proveedor) > 0){
+        
+                        $array_urls_imagenes_proveedor = $request->Urls_proveedor;
+                        $array_extensiones_imagenes_proveedor = $request->Extensiones_firmas_proveedor;
+          
+                        
+                        $array_url_logos_firma_proveedor = array();
+                        if(!empty($array_urls_imagenes_proveedor) && !empty($array_extensiones_imagenes_proveedor)){
+                            for ($i=0; $i < count($array_urls_imagenes_proveedor); $i++) { 
+                                $conteo = time();
+                                $imagenBase64 = $array_urls_imagenes_proveedor[$i];
+                                $imagen_decodificada = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $imagenBase64));
+                                $nombre_logo = 'logo_firma_proveedor_'.$conteo.'.'. $array_extensiones_imagenes_proveedor[$i];
+                                $ruta = $id_cliente.'/'.$nombre_logo;
+                                Storage::disk('publicfirmasproveedores')->put($ruta, $imagen_decodificada);
+        
+                                // generar permisos a la carpeta del logo del cliente.
+                                $path = public_path('firmas_proveedores/'.$id_cliente);
+                                $mode = 777;
+                                chmod($path, octdec($mode));
+        
+                                if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on'){
+                                    $solicitud = "https://";
+                                } else {
+                                    $solicitud = "http://";
+                                }
+        
+                                $url_logo_firma_proveedor = "{$solicitud}{$_SERVER['HTTP_HOST']}/firmas_proveedores/{$id_cliente}/{$nombre_logo}";
+                                array_push($array_url_logos_firma_proveedor, $url_logo_firma_proveedor);
+                            }
+                        }
+        
+        
+                        $array_firmas_proveedor = $request->Firmas_proveedor;
+        
+                        // Iteración para extraer los datos de la tabla y adicionar el id cliente, fecha registro y quien lo hizo
+                        $array_datos_organizados_firmas_proveedor = [];
+                        foreach ($array_firmas_proveedor as $subarray_datos) {
+                            array_unshift($subarray_datos, $id_cliente);
+        
+                            $subarray_datos[] = $nombre_usuario;
+                            $subarray_datos[] = $date;
+        
+                            array_push($array_datos_organizados_firmas_proveedor, $subarray_datos);
+                        };
+        
+        
+                        if(count($array_url_logos_firma_proveedor) > 0){
+                            $string_urls = implode(", ", $array_url_logos_firma_proveedor);
+        
+                            for ($a=0; $a < count($array_datos_organizados_firmas_proveedor); $a++) { 
+                                $array_datos_organizados_firmas_proveedor[$a][] = $string_urls;
+                            }
+                            // Creación de array con los campos de la tabla: sigmel_informacion_firmas_proveedores
+                            $array_tabla_firmas_proveedor = ['Id_cliente', 'Nombre_firmante', 'Cargo_firmante', 'Firma', 'Nombre_usuario', 'F_registro', 'Url'];
+            
+                            // Combinación de los campos de la tabla con los datos
+                            $array_datos_con_keys_firmas_proveedor = [];
+                            foreach ($array_datos_organizados_firmas_proveedor as $subarray_datos_organizados_firmas_proveedor) {
+                                array_push($array_datos_con_keys_firmas_proveedor, array_combine($array_tabla_firmas_proveedor, $subarray_datos_organizados_firmas_proveedor));
+                            };
+        
+                        }else{
+                            // Creación de array con los campos de la tabla: sigmel_informacion_firmas_proveedores
+                            $array_tabla_firmas_proveedor = ['Id_cliente', 'Nombre_firmante', 'Cargo_firmante', 'Firma', 'Nombre_usuario', 'F_registro'];
+        
+                            // Combinación de los campos de la tabla con los datos
+                            $array_datos_con_keys_firmas_proveedor = [];
+                            foreach ($array_datos_organizados_firmas_proveedor as $subarray_datos_organizados_firmas_proveedor) {
+                                array_push($array_datos_con_keys_firmas_proveedor, array_combine($array_tabla_firmas_proveedor, $subarray_datos_organizados_firmas_proveedor));
+                            };
+                        }
+                        
+        
+                        // Inserción de la información
+                        foreach ($array_datos_con_keys_firmas_proveedor as $insertar_firmas_proveedor) {
+                            sigmel_informacion_firmas_proveedores::on('sigmel_gestiones')->insert($insertar_firmas_proveedor);
+                        }
+                    }
+                };
+            }
+
+            $mensaje_mostrar = "Información de cliente guardada satisfactoriamente";
+    
+            $mensajes = array(
+                "parametro" => 'agrego_cliente',
+                "mensaje" => $mensaje_mostrar
+            ); 
+    
+            return json_decode(json_encode($mensajes, true));
+        }
+    }
+
+    public function GuardarActualizarFirmasCliente(Request $request){
+        $time = time();
+        $date = date("Y-m-d", $time);
+
+        $nombre_usuario = Auth::user()->name;
+        $id_cliente = $request->Id_cliente;
+
+        // echo $request->Id_firma_editar;
+      
+        if(!empty($request->Firmas)){
+            if(count($request->Firmas) > 0){
+
+                $array_urls_imagenes = $request->Urls;
+                $array_extensiones_imagenes = $request->Extensiones_firmas;
+                $array_url_logos_firma_cliente = array();
+
+                if(!empty($array_urls_imagenes) && !empty($array_extensiones_imagenes)){
+                    for ($i=0; $i < count($array_urls_imagenes); $i++) { 
+                        // $conteo = $i + 1;
+                        $conteo = time();
+                        $imagenBase64 = $array_urls_imagenes[$i];
+
+                        if (preg_match('/^data/', $imagenBase64)) {
+                            $imagen_decodificada = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $imagenBase64));
+                            $nombre_logo = 'logo_firma_cliente_'.$conteo.'.'. $array_extensiones_imagenes[$i];
+                            $ruta = $id_cliente.'/'.$nombre_logo;
+                            Storage::disk('publicfirmasclientes')->put($ruta, $imagen_decodificada);
+    
+                            // generar permisos a la carpeta del logo del cliente.
+                            $path = public_path('firmas_clientes/'.$id_cliente);
+                            $mode = 777;
+                            chmod($path, octdec($mode));
+    
+                            if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on'){
+                                $solicitud = "https://";
+                            } else {
+                                $solicitud = "http://";
+                            }
+    
+                            $url_logo_firma_cliente = "{$solicitud}{$_SERVER['HTTP_HOST']}/firmas_clientes/{$id_cliente}/{$nombre_logo}";
+                            array_push($array_url_logos_firma_cliente, $url_logo_firma_cliente);
+                        }
+
+                    }
+                }
+
+
+                $array_firmas_cliente = $request->Firmas;
+
+                // Iteración para extraer los datos de la tabla y adicionar el id cliente, fecha registro y quien lo hizo
+                $array_datos_organizados_firmas_cliente = [];
+                foreach ($array_firmas_cliente as $subarray_datos) {
+                    array_unshift($subarray_datos, $id_cliente);
+
+                    $subarray_datos[] = $nombre_usuario;
+                    $subarray_datos[] = $date;
+
+                    array_push($array_datos_organizados_firmas_cliente, $subarray_datos);
+                };
+
+
+                if(count($array_url_logos_firma_cliente) > 0){
+                    $string_urls = implode(", ", $array_url_logos_firma_cliente);
+
+                    for ($a=0; $a < count($array_datos_organizados_firmas_cliente); $a++) { 
+                        $array_datos_organizados_firmas_cliente[$a][] = $string_urls;
+                    }
+                    // Creación de array con los campos de la tabla
+                    $array_tabla_firmas_cliente = ['Id_cliente', 'Nombre_firmante', 'Cargo_firmante', 'Firma', 'Nombre_usuario', 'F_registro', 'Url'];
+
+                    // Combinación de los campos de la tabla con los datos
+                    $array_datos_con_keys_firmas_cliente = [];
+                    foreach ($array_datos_organizados_firmas_cliente as $subarray_datos_organizados_firmas_cliente) {
+                        array_push($array_datos_con_keys_firmas_cliente, array_combine($array_tabla_firmas_cliente, $subarray_datos_organizados_firmas_cliente));
+                    };
+
+                }else{
+                    // Creación de array con los campos de la tabla
+                    $array_tabla_firmas_cliente = ['Id_cliente', 'Nombre_firmante', 'Cargo_firmante', 'Firma', 'Nombre_usuario', 'F_registro'];
+
+                    // Combinación de los campos de la tabla con los datos
+                    $array_datos_con_keys_firmas_cliente = [];
+                    foreach ($array_datos_organizados_firmas_cliente as $subarray_datos_organizados_firmas_cliente) {
+                        array_push($array_datos_con_keys_firmas_cliente, array_combine($array_tabla_firmas_cliente, $subarray_datos_organizados_firmas_cliente));
+                    };
+                }
+                
+
+                // Inserción de la información
+                if($request->Id_firma_editar != ''){
+                    foreach ($array_datos_con_keys_firmas_cliente as $insertar_firmas_cliente) {
+                        sigmel_informacion_firmas_clientes::on('sigmel_gestiones')
+                        ->where([
+                            ['Id_firma', $request->Id_firma_editar],
+                            ['Id_cliente', $id_cliente]
+                        ])
+                        ->update($insertar_firmas_cliente);
+                    }
+                    $mensaje = "Firma actualizada correctamente.";
+                }else{
+                    foreach ($array_datos_con_keys_firmas_cliente as $insertar_firmas_cliente) {
+                        sigmel_informacion_firmas_clientes::on('sigmel_gestiones')
+                        ->insert($insertar_firmas_cliente);
+                    }
+                    $mensaje = "Firma guardada correctamente.";
+                }
+
+                $mensajes = array(
+                    "parametro" => 'gestion_firma',
+                    "mensaje" => $mensaje
+                );
+
+                return json_decode(json_encode($mensajes, true));
+            }
+        };
+
+       
+    }
+
+    public function GuardarActualizarFirmasProveedor(Request $request){
+        $time = time();
+        $date = date("Y-m-d", $time);
+
+        $nombre_usuario = Auth::user()->name;
+        $id_cliente = $request->Id_cliente;
+        
+        if(!empty($request->Firmas_proveedor)){
+            if(count($request->Firmas_proveedor) > 0){
+        
+                $array_urls_imagenes_proveedor = $request->Urls_proveedor;
+                $array_extensiones_imagenes_proveedor = $request->Extensiones_firmas_proveedor;
+        
+                
+                $array_url_logos_firma_proveedor = array();
+                if(!empty($array_urls_imagenes_proveedor) && !empty($array_extensiones_imagenes_proveedor)){
+                    for ($i=0; $i < count($array_urls_imagenes_proveedor); $i++) { 
+                        $conteo = time();
+                        $imagenBase64 = $array_urls_imagenes_proveedor[$i];
+
+                        if (preg_match('/^data/', $imagenBase64)) {
+                            $imagen_decodificada = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $imagenBase64));
+                            $nombre_logo = 'logo_firma_proveedor_'.$conteo.'.'. $array_extensiones_imagenes_proveedor[$i];
+                            $ruta = $id_cliente.'/'.$nombre_logo;
+                            Storage::disk('publicfirmasproveedores')->put($ruta, $imagen_decodificada);
+            
+                            // generar permisos a la carpeta del logo del cliente.
+                            $path = public_path('firmas_proveedores/'.$id_cliente);
+                            $mode = 777;
+                            chmod($path, octdec($mode));
+            
+                            if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on'){
+                                $solicitud = "https://";
+                            } else {
+                                $solicitud = "http://";
+                            }
+            
+                            $url_logo_firma_proveedor = "{$solicitud}{$_SERVER['HTTP_HOST']}/firmas_proveedores/{$id_cliente}/{$nombre_logo}";
+                            array_push($array_url_logos_firma_proveedor, $url_logo_firma_proveedor);
+                        }
+                    }
+                }
+        
+        
+                $array_firmas_proveedor = $request->Firmas_proveedor;
+        
+                // Iteración para extraer los datos de la tabla y adicionar el id cliente, fecha registro y quien lo hizo
+                $array_datos_organizados_firmas_proveedor = [];
+                foreach ($array_firmas_proveedor as $subarray_datos) {
+                    array_unshift($subarray_datos, $id_cliente);
+        
+                    $subarray_datos[] = $nombre_usuario;
+                    $subarray_datos[] = $date;
+        
+                    array_push($array_datos_organizados_firmas_proveedor, $subarray_datos);
+                };
+        
+        
+                if(count($array_url_logos_firma_proveedor) > 0){
+                    $string_urls = implode(", ", $array_url_logos_firma_proveedor);
+        
+                    for ($a=0; $a < count($array_datos_organizados_firmas_proveedor); $a++) { 
+                        $array_datos_organizados_firmas_proveedor[$a][] = $string_urls;
+                    }
+                    // Creación de array con los campos de la tabla: sigmel_informacion_firmas_proveedores
+                    $array_tabla_firmas_proveedor = ['Id_cliente', 'Nombre_firmante', 'Cargo_firmante', 'Firma', 'Nombre_usuario', 'F_registro', 'Url'];
+        
+                    // Combinación de los campos de la tabla con los datos
+                    $array_datos_con_keys_firmas_proveedor = [];
+                    foreach ($array_datos_organizados_firmas_proveedor as $subarray_datos_organizados_firmas_proveedor) {
+                        array_push($array_datos_con_keys_firmas_proveedor, array_combine($array_tabla_firmas_proveedor, $subarray_datos_organizados_firmas_proveedor));
+                    };
+        
+                }else{
+                    // Creación de array con los campos de la tabla: sigmel_informacion_firmas_proveedores
+                    $array_tabla_firmas_proveedor = ['Id_cliente', 'Nombre_firmante', 'Cargo_firmante', 'Firma', 'Nombre_usuario', 'F_registro'];
+        
+                    // Combinación de los campos de la tabla con los datos
+                    $array_datos_con_keys_firmas_proveedor = [];
+                    foreach ($array_datos_organizados_firmas_proveedor as $subarray_datos_organizados_firmas_proveedor) {
+                        array_push($array_datos_con_keys_firmas_proveedor, array_combine($array_tabla_firmas_proveedor, $subarray_datos_organizados_firmas_proveedor));
+                    };
+                }
+        
+                // Inserción de la información
+                if($request->Id_firma_editar != ''){
+                    foreach ($array_datos_con_keys_firmas_proveedor as $insertar_firmas_proveedor) {
+                        sigmel_informacion_firmas_proveedores::on('sigmel_gestiones')
+                        ->where([
+                            ['Id_firma', $request->Id_firma_editar],
+                            ['Id_cliente', $id_cliente]
+                        ])
+                        ->update($insertar_firmas_proveedor);
+                    }
+                    $mensaje = "Firma actualizada correctamente.";
+                }else{
+                    // Inserción de la información
+                    foreach ($array_datos_con_keys_firmas_proveedor as $insertar_firmas_proveedor) {
+                        sigmel_informacion_firmas_proveedores::on('sigmel_gestiones')->insert($insertar_firmas_proveedor);
+                    }
+                    $mensaje = "Firma guardada correctamente.";
+                }
+        
+                $mensajes = array(
+                    "parametro" => 'gestion_firma',
+                    "mensaje" => $mensaje
+                );
+        
+                return json_decode(json_encode($mensajes, true));
+        
+            }
+        };
+    }
+
+    public function mostrarVistaListarClientes(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
         }
 
-        $crear_unico_cliente = [
-            'nombre_cliente' => $request->nombre_cliente,
-            'nit' => $request->nit_cliente,
-            'razon_social' => $request->razon_social_cliente,
-            'representante_legal' => $request->representante_legal_cliente,
-            'telefono_contacto' => $request->telefono_contacto_cliente,
-            'correo_contacto' => $request->correo_contacto_cliente,
-            'estado' => $request->estado_cliente,
-            'observacion' => $observacion,
-            'created_at' => $date
-        ];
+        $user = Auth::user();
 
-        sigmel_clientes::on('sigmel_gestiones')->insert($crear_unico_cliente);
+        // TRAEMOS LA INFORMACIÓN DE TODOS LOS CLIENTES
+        $array_datos_clientes = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_clientes as sc')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_clientes as sltc', 'sc.Tipo_cliente', '=', 'sltc.Id_TipoCliente')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sc.Id_Departamento', '=', 'sldm1.Id_departamento') 
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sc.Id_Ciudad', '=', 'sldm2.Id_municipios') 
+        // ->leftJoin('sigmel_gestiones.sigmel_informacion_sucursales_clientes as sisc', 'sc.Id_cliente', '=', 'sisc.Id_cliente') 
+        ->select(
+            'sc.Id_cliente',
+            'sc.Tipo_cliente',
+            'sltc.Nombre_tipo_cliente',
+            'sc.Nombre_cliente',
+            'sc.Nit',
+            DB::raw("CONCAT_WS(', ', sc.Telefono_principal, sc.Otros_telefonos) as Telefonos"),
+            DB::raw("CONCAT_WS(', ', sc.Email_principal, sc.Otros_emails) as Emails"),
+            DB::raw("CONCAT_WS(', ', sc.Linea_atencion_principal, sc.Otras_lineas_atencion) as Lineas_atencion"),
+            'sc.Direccion',
+            'sc.Id_Departamento',
+            'sldm1.Nombre_departamento',
+            'sc.Id_Ciudad',
+            'sldm2.Nombre_municipio',
+            // DB::raw("GROUP_CONCAT(sisc.Nombre ORDER BY sisc.Nombre ASC SEPARATOR', ') as Sucursales"),
+            DB::raw('(SELECT GROUP_CONCAT(Nombre SEPARATOR ", ") FROM sigmel_gestiones.sigmel_informacion_sucursales_clientes where FIND_IN_SET(Id_cliente, sc.Id_cliente) and Estado = "Activo") as Sucursales'),
+            'sc.Estado',
+            'sc.Codigo_cliente',
+            'sc.F_registro',
+            'sc.created_at',
+            'sc.updated_at'
+        )->groupBy('sc.Id_cliente')->get();
 
-        /* REGISTRO ACTIVIDAD PARA AUDITORIA */
-        $accion_realizada = "Registro de cliente: {$request->nombre_cliente}";
-        $registro_actividad = [
-            'id_usuario_sesion' => Auth::id(),
-            'nombre_usuario_sesion' => Auth::user()->name,
-            'email_usuario_sesion' => Auth::user()->email,
-            'acccion_realizada' => $accion_realizada,
-            'fecha_registro_accion' => $date
-        ];
+
+        $conteo_activos_inactivos = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_clientes')
+        ->select(DB::raw("COUNT(IF(Estado = 'Activo', 1, NULL)) AS 'Activos'"), DB::raw("COUNT(IF(Estado = 'Inactivo', 1, NULL)) AS 'Inactivos'"))
+        ->get();
+
+        return view('administrador.listarClientes', compact('user', 'array_datos_clientes', 'conteo_activos_inactivos'));
+    }
+
+    public function InformacionClienteEditar(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $parametro = $request->parametro;
+
+        if ($parametro == "info_basica") {
+            $datos_info_basica_cliente = sigmel_clientes::on('sigmel_gestiones')->where('Id_cliente', $request->id_cliente_editar)->get();
+            $informacion_basica_cliente = json_decode(json_encode($datos_info_basica_cliente), true);
+            return response()->json($informacion_basica_cliente);
+        }
+
         
-        sigmel_auditorias_creacion_clientes::on('sigmel_auditorias')->insert($registro_actividad);
+        if ($parametro == "listado_sucursales_cliente") {
+            // TRAEMOS LA INFORMACIÓN DE TODOS LOS CLIENTES
+            $array_sucursales_cliente = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_sucursales_clientes as sisc')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sisc.Id_Departamento', '=', 'sldm1.Id_departamento') 
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sisc.Id_Ciudad', '=', 'sldm2.Id_municipios') 
+            ->select(
+                'sisc.Id_sucursal',
+                'sisc.Id_cliente',
+                'sisc.Nombre',
+                'sisc.Gerente',
+                'sisc.Telefono_principal',
+                'sisc.Otros_telefonos',
+                'sisc.Email_principal',
+                'sisc.Otros_emails',
+                'sisc.Linea_atencion_principal',
+                'sisc.Otras_lineas_atencion',
+                'sisc.Direccion',
+                'sisc.Id_Departamento',
+                'sldm1.Nombre_departamento',
+                'sisc.Id_Ciudad',
+                'sldm2.Nombre_municipio',
+                DB::raw("CONCAT('<div class=\"centrar\"><a href=\"javascript:void(0);\" id=\"btn_remover_fila_sucursal_', sisc.Id_sucursal, '\" data-id_fila_quitar=\"', sisc.Id_sucursal, '\" data-clase_fila=\"fila_sucursal_', sisc.Id_sucursal, '\" class=\"text-info\"><i class=\"fas fa-minus-circle\" style=\"font-size:24px;\"></i></a></div>') as string_html")
+            )->where([
+                ['sisc.Id_cliente', '=', $request->id_cliente_editar],
+                ['sisc.Estado', '=', 'Activo']
+            ])->groupBy('sisc.Id_sucursal')->get();
 
-        $msg= "Cliente registrado correctamente.";
-        return redirect()->route('registrarCliente')->with('cliente_creado', $msg);
+            $informacion_sucursales_cliente = json_decode(json_encode($array_sucursales_cliente), true);
+            return response()->json($informacion_sucursales_cliente);
+        }
 
+        if($parametro == "servicios_contratados_cliente"){
+            $array_servicios_contratados_cliente = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+            ->select('Id_servicio', 'Valor_tarifa_servicio', 'Nro_consecutivo_dictamen_servicio')
+            ->where('Id_cliente', $request->id_cliente_editar)->get();
+
+            $informacion_servicios_contratados_cliente = json_decode(json_encode($array_servicios_contratados_cliente), true);
+            return response()->json($informacion_servicios_contratados_cliente);
+        }
+
+        if ($parametro == "listado_ans_cliente") {
+            $array_ans_cliente = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_ans_clientes as siac')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'siac.Unidad', '=', 'slp.Id_Parametro') 
+            ->select(
+                'siac.Id_ans',
+                'siac.Id_cliente',
+                'siac.Nombre',
+                'siac.Descripcion',
+                'siac.Valor',
+                'siac.Unidad',
+                'slp.Nombre_parametro as Nombre_unidad',
+                DB::raw("CONCAT('<div class=\"centrar\"><a href=\"javascript:void(0);\" id=\"btn_remover_fila_ans_', siac.Id_ans, '\" data-id_fila_quitar=\"', siac.Id_ans, '\" data-clase_fila=\"fila_ans_', siac.Id_ans, '\" class=\"text-info\"><i class=\"fas fa-minus-circle\" style=\"font-size:24px;\"></i></a></div>') as string_html")
+            )->where([
+                ['siac.Id_cliente', '=', $request->id_cliente_editar],
+                ['siac.Estado', '=', 'Activo']
+            ])->groupBy('siac.Id_ans')->get();
+
+            $informacion_ans_cliente = json_decode(json_encode($array_ans_cliente), true);
+            return response()->json($informacion_ans_cliente);
+        }
+
+        if($parametro == "firmas_cliente"){
+            $array_firmas_cliente = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_firmas_clientes as sifc')
+            ->select(
+                'sifc.Id_firma',
+                'sifc.Nombre_firmante',
+	            'sifc.Cargo_firmante',
+	            'sifc.Firma',
+	            'sifc.Url',
+                DB::raw("CONCAT('<div class=\"centrar\"><a title=\"Editar Firma\" href=\"javascript:void(0);\" id=\"btn_editar_firma_cliente_', sifc.Id_firma, '\" data-id_fila_editar=\"', sifc.Id_firma, '\" class=\"text-info\"><i class=\"fa fa-sm fa-pen\" style=\"font-size:20px;\"></i></a> <a href=\"javascript:void(0);\" id=\"btn_remover_fila_firma_cliente_', sifc.Id_firma, '\" data-id_fila_quitar=\"', sifc.Id_firma, '\" data-clase_fila=\"fila_firma_cliente_', sifc.Id_firma, '\" class=\"text-info\"><i class=\"fas fa-minus-circle\" style=\"font-size:24px;\"></i></a></div>') as string_html")
+            )
+            ->where([
+                ['sifc.Id_cliente', '=', $request->id_cliente_editar],
+                ['sifc.Estado', '=', 'Activo'],
+            ])
+            ->get();
+
+            $informacion_firmas_cliente = json_decode(json_encode($array_firmas_cliente), true);
+            return response()->json($informacion_firmas_cliente);
+        }
+
+        if($parametro == "traer_firma_editar_cliente"){
+            $array_editar_firma_cliente = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_firmas_clientes as sifc')
+            ->select(
+                'sifc.Id_firma',
+                'sifc.Id_cliente',
+                'sifc.Nombre_firmante',
+	            'sifc.Cargo_firmante',
+	            'sifc.Firma',
+	            'sifc.Url',
+            )
+            ->where([
+                ['sifc.Id_cliente', '=', $request->id_cliente_editar],
+                ['sifc.Id_firma', '=', $request->fila_editar],
+                ['sifc.Estado', '=', 'Activo'],
+            ])
+            ->get();
+
+            $informacion_edicion_firma_cliente = json_decode(json_encode($array_editar_firma_cliente), true);
+            return response()->json($informacion_edicion_firma_cliente);
+        }
+
+        if($parametro == "firmas_proveedor"){
+            $array_firmas_proveedor = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_firmas_proveedores as sifp')
+            ->select(
+                'sifp.Id_firma',
+                'sifp.Nombre_firmante',
+	            'sifp.Cargo_firmante',
+	            'sifp.Firma',
+	            'sifp.Url',
+                DB::raw("CONCAT('<div class=\"centrar\"><a title=\"Editar Firma\" href=\"javascript:void(0);\" id=\"btn_editar_firma_proveedor_', sifp.Id_firma, '\" data-id_fila_editar=\"', sifp.Id_firma, '\" class=\"text-info\"><i class=\"fa fa-sm fa-pen\" style=\"font-size:20px;\"></i></a> <a href=\"javascript:void(0);\" id=\"btn_remover_fila_firma_proveedor_', sifp.Id_firma, '\" data-id_fila_quitar=\"', sifp.Id_firma, '\" data-clase_fila=\"fila_firma_proveedor_', sifp.Id_firma, '\" class=\"text-info\"><i class=\"fas fa-minus-circle\" style=\"font-size:24px;\"></i></a></div>') as string_html")
+            )
+            ->where([
+                ['sifp.Id_cliente', '=', $request->id_cliente_editar],
+                ['sifp.Estado', '=', 'Activo'],
+            ])
+            ->get();
+
+            $informacion_firmas_proveedor = json_decode(json_encode($array_firmas_proveedor), true);
+            return response()->json($informacion_firmas_proveedor);
+        }
+
+        if($parametro == "traer_firma_editar_proveedor"){
+            $array_editar_firma_proveedor = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_firmas_proveedores as sifp')
+            ->select(
+                'sifp.Id_firma',
+                'sifp.Id_cliente',
+                'sifp.Nombre_firmante',
+	            'sifp.Cargo_firmante',
+	            'sifp.Firma',
+	            'sifp.Url',
+            )
+            ->where([
+                ['sifp.Id_cliente', '=', $request->id_cliente_editar],
+                ['sifp.Id_firma', '=', $request->fila_editar],
+                ['sifp.Estado', '=', 'Activo'],
+            ])
+            ->get();
+
+            $informacion_edicion_firma_proveedor = json_decode(json_encode($array_editar_firma_proveedor), true);
+            return response()->json($informacion_edicion_firma_proveedor);
+        }
+
+    }
+
+    public function eliminarSucursalCliente(Request $request){
+        $id_fila_sucursal = $request->fila;
+        $id_cliente = $request->id_cliente;
+        $fila_actualizar = [
+            'Estado' => 'Inactivo'
+        ];
+
+        sigmel_informacion_sucursales_clientes::on('sigmel_gestiones')
+        ->where([
+            ['Id_sucursal', $id_fila_sucursal],
+            ['Id_cliente', $id_cliente],
+        ])
+        ->update($fila_actualizar);
+
+        $mensajes = array(
+            "parametro" => 'fila_sucursal_eliminada',
+            "mensaje" => 'Sucursal eliminada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+    }
+
+    public function eliminarFirmaCliente(Request $request){
+        $id_fila_firma = $request->fila;
+        $id_cliente = $request->id_cliente;
+        $fila_actualizar = [
+            'Estado' => 'Inactivo'
+        ];
+
+        sigmel_informacion_firmas_clientes::on('sigmel_gestiones')
+        ->where([
+            ['Id_firma', $id_fila_firma],
+            ['Id_cliente', $id_cliente],
+        ])
+        ->update($fila_actualizar);
+
+        $mensajes = array(
+            "parametro" => 'firma_eliminada',
+            "mensaje" => 'Firma eliminada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+    }
+
+    public function eliminarFirmaProveedor(Request $request){
+        $id_fila_firma = $request->fila;
+        $id_cliente = $request->id_cliente;
+        $fila_actualizar = [
+            'Estado' => 'Inactivo'
+        ];
+
+        sigmel_informacion_firmas_proveedores::on('sigmel_gestiones')
+        ->where([
+            ['Id_firma', $id_fila_firma],
+            ['Id_cliente', $id_cliente],
+        ])
+        ->update($fila_actualizar);
+
+        $mensajes = array(
+            "parametro" => 'firma_eliminada',
+            "mensaje" => 'Firma eliminada satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+    }
+
+    public function eliminarAnsCliente(Request $request){
+
+        $id_fila_ans = $request->fila;
+        $id_cliente = $request->id_cliente;
+        $fila_actualizar = [
+            'Estado' => 'Inactivo'
+        ];
+
+        sigmel_informacion_ans_clientes::on('sigmel_gestiones')
+        ->where([
+            ['Id_ans', $id_fila_ans],
+            ['Id_cliente', $id_cliente],
+        ])
+        ->update($fila_actualizar);
+
+        $mensajes = array(
+            "parametro" => 'fila_ans_eliminada',
+            "mensaje" => 'ANS eliminado satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
     }
 
     public function actualizar_cliente(Request $request){
@@ -435,45 +1305,204 @@ class AdministradorController extends Controller
         
         $time = time();
         $date = date("Y-m-d h:i:s", $time);
+        $date_con_hora = date("Y-m-d h:i:s", $time);
+        $nombre_usuario = Auth::user()->name;
+        $id_cliente_actualizar = $request->Id_cliente;
 
-        if ($request->observacion_cliente <> '') {
-            $observacion = $request->observacion_cliente;
-        } else {
-            $observacion = null;
+        if (empty($request->Nombre_cliente)) {
+            $mensaje_mostrar = "No puede actualizar el cliente.";
+            $mensajes = array(
+                "parametro" => 'no_actualizo_cliente',
+                "mensaje" => $mensaje_mostrar
+            );
+        }else{
+            /* PASO N° 1: ACTUALIZAR LA INFORMACIÓN DEL CLIENTE EN LA TABLA sigmel_clientes */
+            if ($request->Tipo_cliente == 4) {
+            
+                $datos_otro_tipo_cliente = [
+                    'Nombre_tipo_cliente' => $request->Otro_tipo_cliente,
+                    'Estado' => 'activo',
+                    'F_registro' => $date
+                ];
+                sigmel_lista_tipo_clientes::on('sigmel_gestiones')->insert($datos_otro_tipo_cliente);
+                $array_tipo_cliente = sigmel_lista_tipo_clientes::on('sigmel_gestiones')->select('Id_TipoCliente')->latest('Id_TipoCliente')->first();
+                $tipo_cliente = $array_tipo_cliente['Id_TipoCliente'];
+            } else {
+                $tipo_cliente = $request->Tipo_cliente;
+            }
+
+            // Actualización del logo del cliente
+            if ($request->Extension_logo != '') {
+                if($request->Extension_logo == "jpg" || $request->Extension_logo == "png"){
+                    $imagenBase64 = $request->Logo;
+                    $imagen_decodificada = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $imagenBase64));
+                    $nombre_logo = 'logo_cliente_'.$id_cliente_actualizar.'.'. $request->Extension_logo;
+                    $ruta = $id_cliente_actualizar.'/'.$nombre_logo;
+                    Storage::disk('public')->put($ruta, $imagen_decodificada);
+
+                    sleep(1);
+
+                    // generar permisos a la carpeta del logo del cliente.
+                    $path = public_path('logos_clientes/'.$id_cliente_actualizar);
+                    $mode = 777;
+                    chmod($path, octdec($mode));
+                }
+            }else{
+                $nombre_logo = $request->Nombre_logo_bd;
+            }
+            $actualizar_cliente = array(
+                'Tipo_cliente' => $tipo_cliente,
+                'Nombre_cliente' => $request->Nombre_cliente,
+                'Nit' => $request->Nit,
+                'Telefono_principal' => $request-> Telefono_principal,
+                'Otros_telefonos' => $request->Otros_telefonos,
+                'Email_principal' => $request->Email_principal,
+                'Otros_emails' => $request->Otros_emails,
+                'Linea_atencion_principal' => $request->Linea_atencion_principal,
+                'Otras_lineas_atencion' => $request->Otras_lineas_atencion,
+                'Direccion' => $request->Direccion,
+                'Id_Departamento' => $request->Id_Departamento,
+                'Id_Ciudad' => $request->Id_Ciudad,
+                'Estado' => $request->Estado,
+                'Codigo_cliente' => $request->Codigo_cliente,
+                'Logo_cliente' => $nombre_logo,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $request->Fecha_creacion,
+                'updated_at' => $date_con_hora,
+            );
+
+            sigmel_clientes::on('sigmel_gestiones')
+            ->where('Id_cliente', $id_cliente_actualizar)->update($actualizar_cliente);
+
+            sleep(2);
+
+            /* PASO N° 2: INSERTAR LOS DATOS DE LAS SUCURSALES EN LA TABLA sigmel_informacion_sucursales_clientes */
+            if(!empty($request->Sucursales)){
+                if(count($request->Sucursales) > 0){
+                    $array_sucursales = $request->Sucursales;
+
+                    // Iteración para extraer los datos de la tabla y adicionar el id cliente, fecha registro y quien lo hizo
+                    $array_datos_organizados_sucursales = [];
+
+                    foreach ($array_sucursales as $subarray_datos) {
+                        array_unshift($subarray_datos, $id_cliente_actualizar);
+    
+                        $subarray_datos[] = $nombre_usuario;
+                        $subarray_datos[] = $date;
+    
+                        array_push($array_datos_organizados_sucursales, $subarray_datos);
+                    };
+                    
+                    // Creación de array con los campos de la tabla: sigmel_informacion_servicios_contratados
+                    $array_tabla_sucursales = ['Id_cliente', 'Nombre', 'Gerente', 'Telefono_principal', 'Otros_telefonos',
+                    'Email_principal', 'Otros_emails', 'Linea_atencion_principal', 'Otras_lineas_atencion',
+                    'Direccion', 'Id_Departamento', 'Id_Ciudad', 'Nombre_usuario', 'F_registro'];
+
+                    // Combinación de los campos de la tabla con los datos
+                    $array_datos_con_keys_sucursales = [];
+                    foreach ($array_datos_organizados_sucursales as $subarray_datos_organizados_sucursales) {
+                        array_push($array_datos_con_keys_sucursales, array_combine($array_tabla_sucursales, $subarray_datos_organizados_sucursales));
+                    };
+
+                    // Inserción de la información
+                    foreach ($array_datos_con_keys_sucursales as $insertar_sucursales) {
+                        sigmel_informacion_sucursales_clientes::on('sigmel_gestiones')->insert($insertar_sucursales);
+                    }
+                }
+            };
+            
+            sleep(2);
+
+            /* PASO N°3 BORRAR LA INFORMACIÓN DE LOS SERVICIOS CONTRATADOS Y VOLVERLOS A INSERTAR
+            ESTO DEBIDO A QUE PUEDEN HABER MÁS O MENOS SERVICIOS */
+
+            sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+            ->where('Id_cliente', $id_cliente_actualizar)
+            ->delete();
+
+            if (!empty($request->Servicios_contratados)) {
+                if(count($request->Servicios_contratados) > 0){
+                    $array_servicios_contratados = $request->Servicios_contratados;
+    
+                    // Iteración para extraer los datos de la tabla y adicionar el id cliente, fecha registro y quien lo hizo
+                    $array_datos_organizados_servicios_contratados = [];
+    
+                    foreach ($array_servicios_contratados as $subarray_datos) {
+                        array_unshift($subarray_datos, $id_cliente_actualizar);
+    
+                        $subarray_datos[] = $nombre_usuario;
+                        $subarray_datos[] = $date;
+    
+                        array_push($array_datos_organizados_servicios_contratados, $subarray_datos);
+                    };
+    
+                    // Creación de array con los campos de la tabla: sigmel_informacion_servicios_contratados
+                    $array_tabla_servicios_contratados = ['Id_cliente','Id_proceso','Id_servicio',
+                    'Valor_tarifa_servicio','Nro_consecutivo_dictamen_servicio','Nombre_usuario',
+                    'F_registro'];
+    
+                    // Combinación de los campos de la tabla con los datos
+                    $array_datos_con_keys_servicios_contratados = [];
+                    foreach ($array_datos_organizados_servicios_contratados as $subarray_datos_organizados_servicios_contratados) {
+                        array_push($array_datos_con_keys_servicios_contratados, array_combine($array_tabla_servicios_contratados, $subarray_datos_organizados_servicios_contratados));
+                    };
+    
+                    // Inserción de la información
+                    foreach ($array_datos_con_keys_servicios_contratados as $insertar_servicios_contratados) {
+                        sigmel_informacion_servicios_contratados::on('sigmel_gestiones')->insert($insertar_servicios_contratados);
+                    };
+                }
+            };
+            
+            sleep(2);
+
+            /* PASO N° 4: INSERTAR LOS DATOS DE LOS ANS EN LA TABLA sigmel_informacion_ans_clientes */
+            if(!empty($request->ANS)){
+                if(count($request->ANS) > 0){
+                    $array_ans = $request->ANS;
+
+                    // Iteración para extraer los datos de la tabla y adicionar el id cliente, fecha registro y quien lo hizo
+                    $array_datos_organizados_ans = [];
+
+                    foreach ($array_ans as $subarray_datos) {
+                        array_unshift($subarray_datos, $id_cliente_actualizar);
+    
+                        $subarray_datos[] = $nombre_usuario;
+                        $subarray_datos[] = $date;
+    
+                        array_push($array_datos_organizados_ans, $subarray_datos);
+                    };
+                    
+                    // Creación de array con los campos de la tabla: sigmel_informacion_servicios_contratados
+                    $array_tabla_ans = ['Id_cliente', 'Nombre', 'Descripcion', 'Valor', 'Unidad', 'Nombre_usuario', 'F_registro'];
+
+                    // Combinación de los campos de la tabla con los datos
+                    $array_datos_con_keys_ans = [];
+                    foreach ($array_datos_organizados_ans as $subarray_datos_organizados_ans) {
+                        array_push($array_datos_con_keys_ans, array_combine($array_tabla_ans, $subarray_datos_organizados_ans));
+                    };
+
+                    // Inserción de la información
+                    foreach ($array_datos_con_keys_ans as $insertar_ans) {
+                        sigmel_informacion_ans_clientes::on('sigmel_gestiones')->insert($insertar_ans);
+                    }
+
+                }
+            };
+            // sleep(1);
+
+            
         }
 
-        $crear_unico_cliente = [
-            'nombre_cliente' => $request->nombre_cliente,
-            'nit' => $request->nit_cliente,
-            'razon_social' => $request->razon_social_cliente,
-            'representante_legal' => $request->representante_legal_cliente,
-            'telefono_contacto' => $request->telefono_contacto_cliente,
-            'correo_contacto' => $request->correo_contacto_cliente,
-            'estado' => $request->estado_cliente,
-            'observacion' => $observacion,
-            'updated_at' => $date
-        ];
+        $mensaje_mostrar = "Información de cliente actualizada satisfactoriamente";
 
+        $mensajes = array(
+            "parametro" => 'actualizo_cliente',
+            "mensaje" => $mensaje_mostrar
+        ); 
 
-        
-        sigmel_clientes::on('sigmel_gestiones')
-        ->where('id', $request->id_cliente)
-        ->update($crear_unico_cliente);
+        return json_decode(json_encode($mensajes, true));
 
-        /* REGISTRO ACTIVIDAD PARA AUDITORIA */
-        $accion_realizada = "Actualización de información del cliente: {$request->nombre_cliente}";
-        $registro_actividad = [
-            'id_usuario_sesion' => Auth::id(),
-            'nombre_usuario_sesion' => Auth::user()->name,
-            'email_usuario_sesion' => Auth::user()->email,
-            'acccion_realizada' => $accion_realizada,
-            'fecha_registro_accion' => $date
-        ];
-        
-        sigmel_auditorias_creacion_clientes::on('sigmel_auditorias')->insert($registro_actividad);
-        
-        $msg= "Información de cliente actualizada correctamente.";
-        return redirect()->route('registrarCliente')->with('cliente_creado', $msg);
     }
 
     /* VISTA FRONTEND BANDEJA GESTIÓN INICIAL */
@@ -1135,6 +2164,45 @@ class AdministradorController extends Controller
             return response()->json(($info_listado_procesos_edicion_equipo));
         }
 
+        /* LISTADO TIPOS DEPARTAMENTO PAR CREAR UN CLIENTE */
+        if($parametro == 'lista_departamentos_cliente'){
+            $listado_departamento_cliente = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
+                ->select('Id_departamento', 'Nombre_departamento')
+                ->where('Estado', 'activo')
+                ->groupBy('Id_departamento','Nombre_departamento')
+                ->get();
+
+            $info_listado_departamento_cliente = json_decode(json_encode($listado_departamento_cliente, true));
+            return response()->json(($info_listado_departamento_cliente));
+        }
+
+        /* LISTA CIUDADES PARA CREAR UN CLIENTE */
+        if($parametro == "lista_municipios_cliente"){
+            $listado_municipios_cliente = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
+                ->select('Id_municipios', 'Nombre_municipio')
+                ->where([
+                    ['Id_departamento', '=', $request->id_departamento_cliente],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
+
+            $info_lista_municpios_cliente = json_decode(json_encode($listado_municipios_cliente, true));
+            return response()->json($info_lista_municpios_cliente);
+        }
+
+        /* LISTA UNIDADES ANS PARA TABLA ANS */
+        if($parametro == "lista_unidades_ans"){
+            $listado_unidades_ans = sigmel_lista_parametros::on('sigmel_gestiones')
+                ->select('Id_Parametro', 'Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Unidad ANS'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
+
+            $info_lista_unidades_ans = json_decode(json_encode($listado_unidades_ans, true));
+            return response()->json($info_lista_unidades_ans);
+        }
 
     }
     
@@ -1146,6 +2214,7 @@ class AdministradorController extends Controller
 
         $time = time();
         $date = date("Y-m-d", $time);
+        $date_con_hora = date("Y-m-d h:i:s", $time);
         $nombre_usuario = Auth::user()->name;
 
         $array_evento = sigmel_informacion_eventos::on('sigmel_gestiones')->select('ID_evento')->where('ID_evento', '=', $request->id_evento)->first();
@@ -2489,7 +3558,7 @@ class AdministradorController extends Controller
     }
 
     public function consultaHistoricoEmpresas(Request $request){
-        $array_datos_laboral_tabla = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_historico_empresas_afiliados as shea')
+        $array_datos_clientes = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_historico_empresas_afiliados as shea')
         ->leftJoin('sigmel_gestiones.sigmel_lista_arls as slarl', 'slarl.Id_Arl', '=', 'shea.Id_arl')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'shea.Id_departamento') 
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sldm1.Id_municipios', '=', 'shea.Id_municipio') 
@@ -2537,7 +3606,7 @@ class AdministradorController extends Controller
         ->distinct()
         ->get();
 
-        return response()->json($array_datos_laboral_tabla);
+        return response()->json($array_datos_clientes);
     }
 
     public function cargaListadoDocumentosInicialNuevo(Request $request){

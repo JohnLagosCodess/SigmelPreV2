@@ -242,6 +242,42 @@ $(document).ready(function () {
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
     });
 
+    /* TODO LO RELACIONADO A CREAR CLIENTE */
+    $("#otro_tipo_cliente").keyup(function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $("#nombre_cliente").keyup(function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "input[id^='nombre_sucursal_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "input[id^='nombre_gerente_sucursal_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "input[id^='nombre_ans_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "textarea[id^='descripcion_ans_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "input[id^='valor_ans_']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
     /* Función para colocar la primera letra en mayúscula de cada palabra que se escriba */
     function LetraMayusCadaPalabra(textoEscrito) {
         var palabras = textoEscrito.split(' ');
@@ -295,6 +331,21 @@ $(document).ready(function () {
     $(document).on("input", '[id^="suma_combinada"]', function() {
         var inputId = this.id;
         Maximo2Decimales(inputId);
+    });
+
+    /* Input que permita registrar en formato contabilidad */
+    $(".soloContabilidad").on({
+        "focus": function(event) {
+            $(event.target).select();
+        },
+        "input": function(event) {
+            let value = event.target.value;
+            value = value.replace(/\D/g, ""); // Remove non-digit characters
+            value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"); // Add comma for thousands separators
+            value = value.replace(/(\d)(\.(\d{2}))$/, "$1$2"); // Add period for decimal places
+            value = "$" + value; // Add "$" at the beginning
+            event.target.value = value;
+        }
     });
 
     $(document).on("input", '[id^="Total_Deficiencia50"]', function() {
