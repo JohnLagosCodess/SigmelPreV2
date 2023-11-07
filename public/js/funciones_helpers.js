@@ -242,7 +242,7 @@ $(document).ready(function () {
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
     });
 
-    /* TODO LO RELACIONADO A CREAR CLIENTE */
+    /* TODO LO RELACIONADO A CLIENTES (CREACIÓN Y EDICIÓN) */
     $("#otro_tipo_cliente").keyup(function(){
         var textoEscrito = $(this).val();
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
@@ -259,6 +259,26 @@ $(document).ready(function () {
     });
 
     $(document).on('keyup', "input[id^='nombre_gerente_sucursal_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $("#nombre_del_firmante_cliente").keyup(function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $("#cargo_del_firmante_cliente").keyup(function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $("#nombre_del_firmante_proveedor").keyup(function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+    
+    $("#cargo_del_firmante_proveedor").keyup(function(){
         var textoEscrito = $(this).val();
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
     });
