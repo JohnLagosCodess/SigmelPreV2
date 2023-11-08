@@ -1140,6 +1140,7 @@ $(document).ready(function(){
 
     // Mostrar el formulario de firmas para insertar más firmas de cliente
     $("#btn_abrir_form_firma_cliente").click(function(){
+        $('#Id_firma_cliente_cliente').val('');
         $("#agregar_firma_cliente").removeClass('d-none');
         $("#nombre_del_firmante_cliente").prop("required", true);
         $("#cargo_del_firmante_cliente").prop("required", true);
@@ -1346,6 +1347,7 @@ $(document).ready(function(){
 
     // Mostrar el formulario de firmas para insertar más firmas de proveedor
     $("#btn_abrir_form_firma_proveedor").click(function(){
+        $('#Id_firma_cliente_proveedor').val('');
         $("#agregar_firma_proveedor").removeClass('d-none');
         $("#nombre_del_firmante_proveedor").prop("required", true);
         $("#cargo_del_firmante_proveedor").prop("required", true);
