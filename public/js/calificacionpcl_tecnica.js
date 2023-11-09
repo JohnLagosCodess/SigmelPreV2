@@ -2252,8 +2252,63 @@ $(document).ready(function(){
                 porcentajePcl = Number(total_deficiencia) + Number(total_rol_ocupacional);  
             }else if($.trim(total_deficiencia) > 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) > 0){
                 porcentajePcl = Number(total_deficiencia) + Number(total_rol_laboral);            
-            }             
+            }      
+            //console.log(porcentajePcl);
+            $("#porcentaje_pcl").val(Math.round(porcentajePcl));
+            if (porcentajePcl == 0) {
+                $("#rango_pcl").val('PCL 0');
+            }else if (porcentajePcl < 5) {
+                $("#rango_pcl").val('Menor al 5%');
+            }else if(porcentajePcl >= 5 && porcentajePcl <= 14.99){
+                $("#rango_pcl").val('Entre 5 y 14,99%');            
+            }else if(porcentajePcl >= 15 && porcentajePcl <= 29.99){
+                $("#rango_pcl").val('Entre 15 y 29,99%');            
+            }else if(porcentajePcl >= 30 && porcentajePcl <= 49.99){
+                $("#rango_pcl").val('Entre 30,01 y 49,99%');            
+            }else if(porcentajePcl > 50){
+                $("#rango_pcl").val('Mayor a 50%');            
+            }       
         } else if(definirDecreto_deficiencia == 3) {
+
+            var total_deficiencia1999 = $('#Total_Deficiencia50');
+            
+            $('#Total_Deficiencia50').focus(function() {
+                $("#Total_Deficiencia50").on("input", function() {
+                    total_deficiencia1999 = $(this).val();
+                    if ($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) === "") {
+                        porcentajePcl = 0;
+                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) === ""){
+                        porcentajePcl = Number(total_deficiencia1999);
+                    }else if($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) === ""){
+                        porcentajePcl = Number(dicapacidad_total);
+                    }else if($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) > 0){
+                        porcentajePcl = Number(minusvalia_total);
+                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) === ""){
+                        porcentajePcl = Number(total_deficiencia1999) + Number(dicapacidad_total);
+                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) > 0){
+                        porcentajePcl = Number(total_deficiencia1999) + Number(minusvalia_total);
+                    }else if($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){
+                        porcentajePcl = Number(dicapacidad_total) + Number(minusvalia_total);
+                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){                            
+                        porcentajePcl = Number(total_deficiencia1999) + Number(dicapacidad_total) + Number(minusvalia_total);                            
+                    }                   
+                    
+                    $("#porcentaje_pcl").val(Math.round(porcentajePcl));
+                    if (porcentajePcl == 0) {
+                        $("#rango_pcl").val('PCL 0');
+                    }else if (porcentajePcl < 5) {
+                        $("#rango_pcl").val('Menor al 5%');
+                    }else if(porcentajePcl >= 5 && porcentajePcl <= 14.99){
+                        $("#rango_pcl").val('Entre 5 y 14,99%');            
+                    }else if(porcentajePcl >= 15 && porcentajePcl <= 29.99){
+                        $("#rango_pcl").val('Entre 15 y 29,99%');            
+                    }else if(porcentajePcl >= 30 && porcentajePcl <= 49.99){
+                        $("#rango_pcl").val('Entre 30,01 y 49,99%');            
+                    }else if(porcentajePcl > 50){
+                        $("#rango_pcl").val('Mayor a 50%');            
+                    }
+                });
+            }); 
             
             if ($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) === "") {
                 porcentajePcl = 0;
@@ -2272,26 +2327,59 @@ $(document).ready(function(){
             }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){                   
                 porcentajePcl = Number(total_deficiencia) + Number(dicapacidad_total) + Number(minusvalia_total);                
             }
+
+            //console.log(porcentajePcl);
+            $("#porcentaje_pcl").val(Math.round(porcentajePcl));
+            if (porcentajePcl == 0) {
+                $("#rango_pcl").val('PCL 0');
+            }else if (porcentajePcl < 5) {
+                $("#rango_pcl").val('Menor al 5%');
+            }else if(porcentajePcl >= 5 && porcentajePcl <= 14.99){
+                $("#rango_pcl").val('Entre 5 y 14,99%');            
+            }else if(porcentajePcl >= 15 && porcentajePcl <= 29.99){
+                $("#rango_pcl").val('Entre 15 y 29,99%');            
+            }else if(porcentajePcl >= 30 && porcentajePcl <= 49.99){
+                $("#rango_pcl").val('Entre 30,01 y 49,99%');            
+            }else if(porcentajePcl > 50){
+                $("#rango_pcl").val('Mayor a 50%');            
+            }
+
         }else if(definirDecreto_deficiencia == 2) {            
-            porcentajePcl = 0;            
+            porcentajePcl = 0;   
+            //console.log(porcentajePcl);
+            $("#porcentaje_pcl").val(Math.round(porcentajePcl));
+            if (porcentajePcl == 0) {
+                $("#rango_pcl").val('PCL 0');
+            }else if (porcentajePcl < 5) {
+                $("#rango_pcl").val('Menor al 5%');
+            }else if(porcentajePcl >= 5 && porcentajePcl <= 14.99){
+                $("#rango_pcl").val('Entre 5 y 14,99%');            
+            }else if(porcentajePcl >= 15 && porcentajePcl <= 29.99){
+                $("#rango_pcl").val('Entre 15 y 29,99%');            
+            }else if(porcentajePcl >= 30 && porcentajePcl <= 49.99){
+                $("#rango_pcl").val('Entre 30,01 y 49,99%');            
+            }else if(porcentajePcl > 50){
+                $("#rango_pcl").val('Mayor a 50%');            
+            }        
         }else{            
-            porcentajePcl = 0;            
+            porcentajePcl = 0;      
+            //console.log(porcentajePcl);
+            $("#porcentaje_pcl").val(Math.round(porcentajePcl));
+            if (porcentajePcl == 0) {
+                $("#rango_pcl").val('PCL 0');
+            }else if (porcentajePcl < 5) {
+                $("#rango_pcl").val('Menor al 5%');
+            }else if(porcentajePcl >= 5 && porcentajePcl <= 14.99){
+                $("#rango_pcl").val('Entre 5 y 14,99%');            
+            }else if(porcentajePcl >= 15 && porcentajePcl <= 29.99){
+                $("#rango_pcl").val('Entre 15 y 29,99%');            
+            }else if(porcentajePcl >= 30 && porcentajePcl <= 49.99){
+                $("#rango_pcl").val('Entre 30,01 y 49,99%');            
+            }else if(porcentajePcl > 50){
+                $("#rango_pcl").val('Mayor a 50%');            
+            }      
         }       
-        //console.log(porcentajePcl);
-        $("#porcentaje_pcl").val(Math.round(porcentajePcl));
-        if (porcentajePcl == 0) {
-            $("#rango_pcl").val('PCL 0');
-        }else if (porcentajePcl < 5) {
-            $("#rango_pcl").val('Menor al 5%');
-        }else if(porcentajePcl >= 5 && porcentajePcl <= 14.99){
-            $("#rango_pcl").val('Entre 5 y 14,99%');            
-        }else if(porcentajePcl >= 15 && porcentajePcl <= 29.99){
-            $("#rango_pcl").val('Entre 15 y 29,99%');            
-        }else if(porcentajePcl >= 30 && porcentajePcl <= 49.99){
-            $("#rango_pcl").val('Entre 30,01 y 49,99%');            
-        }else if(porcentajePcl > 50){
-            $("#rango_pcl").val('Mayor a 50%');            
-        }
+        
 
         var tercerapersona = $("#requiere_persona");
         var tomadecisiones = $("#requiere_decisiones_persona");
@@ -2327,6 +2415,7 @@ $(document).ready(function(){
             $('#GuardarRolOcupacional').prop('disabled', false);            
             $('#ActualizarLibros2_3').prop('disabled', false); 
         }else if(valorFecha !== ""){
+            //botones
             $('#ActualizarLaboralActivo').prop('disabled', true);
             $('#GuardarLaboralActivo').prop('disabled', true);            
             $('#btn_abrir_modal_agudeza').prop('disabled', true);
@@ -2344,7 +2433,36 @@ $(document).ready(function(){
             $('#GuardarRolOcupacional').prop('disabled', true);            
             $('#ActualizarLibros2_3').prop('disabled', true);  
             $('#GuardarLibros2_3').prop('disabled', true);                        
-            $('#GuardrDictamenPericial').prop('disabled', true);                        
+            $('#GuardrDictamenPericial').prop('disabled', true);  
+            //etiquetas a o botones de eliminar filas
+            $("a[id^='btn_remover_examen_fila_examenes_']").css({
+                cursor: "not-allowed",
+                "pointer-events": "none"
+            });
+            $("a[id^='btn_remover_diagnosticos_moticalifi']").css({
+                cursor: "not-allowed",
+                "pointer-events": "none"
+            });
+            $("a[id^='btn_remover_deficiencia_alteraciones']").css({
+                cursor: "not-allowed",
+                "pointer-events": "none"
+            });
+            $("a[id^='btn_remover_deficiencias_decretocero_']").css({
+                cursor: "not-allowed",
+                "pointer-events": "none"
+            });            
+            $("a[id^='btn_remover_deficiencias_decreto3_']").css({
+                cursor: "not-allowed",
+                "pointer-events": "none"
+            }); 
+            $("a[id^='btn_remover_examen_fila_agudeza']").css({
+                cursor: "not-allowed",
+                "pointer-events": "none"
+            });
+            $("a[id^='btn_remover_fila_']").css({
+                cursor: "not-allowed",
+                "pointer-events": "none"
+            });                       
         }
 
         var textareaenfermedadactual = document.querySelector('#descripcion_enfermedad');
@@ -2391,7 +2509,27 @@ $(document).ready(function(){
     });   
     
     $('#form_dictamen_pericial').submit(function (e){
-        e.preventDefault();
+        e.preventDefault();              
+        
+        // Abrir modal para mostrar alerta y retornar al input
+        var validarsuma_combinada = $('#suma_combinada').val();
+        var validarTotal_Deficiencia50 = $('#Total_Deficiencia50').val();
+        function displayModal() {
+            $('#AlertaScTd').modal('show');
+            
+            $('#AlertaScTd').on('hidden.bs.modal', function () {
+                
+                $('#suma_combinada').focus();
+            });
+        }       
+
+        if ((validarsuma_combinada.trim() === "" && validarTotal_Deficiencia50.trim() === "") 
+        || (validarsuma_combinada.trim() === "" && validarTotal_Deficiencia50.trim() !== "") 
+        || (validarsuma_combinada.trim() !== "" && validarTotal_Deficiencia50.trim() === "")) {
+        displayModal();
+        return;
+        }
+
         var Decreto_pericial = $('#decreto_califi').val();
         var Id_EventoDecreto = $('#Id_Evento_decreto').val();
         var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
@@ -2495,7 +2633,8 @@ $(document).ready(function(){
             'datos_finales_examenes_interconsultas' : datos_finales_examenes_interconsultas,
             'Id_evento': $('#Id_Evento_decreto').val(),
             'Id_Asignacion': $('#Id_Asignacion_decreto').val(),
-            'Id_proceso': $('#Id_Proceso_decreto').val(),                
+            'Id_proceso': $('#Id_Proceso_decreto').val(),
+            'Estado_Recalificacion': 'Inactivo',
         };            
         $.ajax({
             type:'POST',
@@ -2664,7 +2803,8 @@ $(document).ready(function(){
             'datos_finales_diagnosticos_moticalifi' : datos_finales_diagnosticos_moticalifi,
             'Id_evento': $('#Id_Evento_decreto').val(),
             'Id_Asignacion': $('#Id_Asignacion_decreto').val(),
-            'Id_proceso': $('#Id_Proceso_decreto').val(),                
+            'Id_proceso': $('#Id_Proceso_decreto').val(), 
+            'Estado_Recalificacion': 'Inactivo',
         };            
         $.ajax({
             type:'POST',
@@ -2846,7 +2986,8 @@ $(document).ready(function(){
             'datos_finales_deficiciencias_decreto_cero' : datos_finales_deficiciencias_decreto_cero,
             'Id_evento': $('#Id_Evento_decreto').val(),
             'Id_Asignacion': $('#Id_Asignacion_decreto').val(),
-            'Id_proceso': $('#Id_Proceso_decreto').val(),                
+            'Id_proceso': $('#Id_Proceso_decreto').val(),  
+            'Estado_Recalificacion': 'Inactivo',
         };  
 
         //console.log(envio_datos_deficiencia_decretocero);
@@ -3358,7 +3499,8 @@ $(document).ready(function(){
             'datos_finales_deficiciencias_decreto_tres' : datos_finales_deficiciencias_decreto_tres,
             'Id_evento': $('#Id_Evento_decreto').val(),
             'Id_Asignacion': $('#Id_Asignacion_decreto').val(),
-            'Id_proceso': $('#Id_Proceso_decreto').val(),                
+            'Id_proceso': $('#Id_Proceso_decreto').val(),
+            'Estado_Recalificacion': 'Inactivo',
         };  
         
         $.ajax({

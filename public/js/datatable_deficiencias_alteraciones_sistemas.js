@@ -5052,6 +5052,7 @@ $(document).ready(function(){
             'Id_evento': $('#Id_Evento_decreto').val(),
             'Id_Asignacion': $('#Id_Asignacion_decreto').val(),
             'Id_proceso': $('#Id_Proceso_decreto').val(),
+            'Estado_Recalificacion': 'Inactivo',
         };
 
         $.ajax({

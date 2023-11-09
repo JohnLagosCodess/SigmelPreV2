@@ -196,6 +196,7 @@ $(document).ready(function() {
                 'oido_izquierdo': oido_izquierdo,
                 'oido_derecho': oido_derecho,
                 'Agudeza_Auditivas': Agudeza_Auditivas,
+                'Estado_Recalificacion': 'Inactivo',
             };
 
             $.ajax({

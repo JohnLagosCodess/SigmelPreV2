@@ -43,8 +43,92 @@ class RecalificacionPCLController extends Controller
 
         $Id_evento_recali=$request->Id_evento_pcl;
         $Id_asignacion_recali = $request->Id_asignacion_pcl;
-        $Id_servicio = 6;
-        $array_datos_RecalificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($Id_asignacion_recali));
+        $Id_proceso_recali = 2;
+        $Id_servicioCalifi= 6;
+        $Id_servicioRecalifi = 7;
+
+        // validar id evento de la calificacion tecnica
+        $validar_evento_CalifiTecnica = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        ->select('ID_Evento','Id_Asignacion', 'Id_proceso', 'Id_servicio')
+        ->where([['ID_Evento',$Id_evento_recali],['Id_servicio',$Id_servicioCalifi], ['Id_proceso',$Id_proceso_recali]])->get();
+
+        // validar id evento y asignacion de la recalificacion para saber si hay id de asignacion menores que no se han recalificado
+        $validar_evento_Recali = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        ->select('ID_Evento','Id_Asignacion', 'Id_proceso', 'Id_servicio')
+        ->where([
+            ['ID_Evento',$Id_evento_recali],['Id_servicio',$Id_servicioRecalifi], 
+            ['Id_proceso',$Id_proceso_recali], ['Id_Asignacion', '<', $Id_asignacion_recali]
+        ])->get();
+
+        if(!empty($validar_evento_Recali[0]->Id_Asignacion)){
+            $resultadosIdAsignacion = [];
+            foreach ($validar_evento_Recali as $registro) {
+                $resultadosIdAsignacion[] = [                
+                    'Id_Asignacion' => $registro->Id_Asignacion,                
+                ];
+            }        
+            $array_datos_idasignacion_decretos = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
+            ->select('Id_Asignacion', 'Estado_decreto')->whereIn('Id_Asignacion', $resultadosIdAsignacion)
+            ->orderBy('Id_Asignacion', 'desc')
+            //->limit(1)
+            ->get();
+        }
+
+
+        // $evento_AsignacionMin = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        // ->select('ID_Evento','Id_Asignacion', 'Id_proceso', 'Id_servicio')
+        // ->where([['ID_Evento',$Id_evento_recali],['Id_servicio',$Id_servicioRecalifi], ['Id_proceso',$Id_proceso_recali]])
+        // //->get();
+        // ->min('Id_Asignacion');
+
+        // Obtener el minimo y el maximo id de asignacion y estado del decreto
+
+        $eventoAsigancionMin_Recalifi = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_asignacion_eventos as siae', 'siae.Id_Asignacion', '=', 'side.Id_Asignacion')
+        ->select('side.ID_Evento', 'side.Id_Asignacion as Id_Asignacion_decreto', 'siae.Id_Asignacion as Id_Asignacion_asig',
+        'siae.Id_proceso' , 'siae.Id_servicio', 'side.Porcentaje_pcl', 'side.Estado_decreto')
+        ->where([['side.ID_Evento',$Id_evento_recali], ['siae.Id_servicio', $Id_servicioRecalifi], ['siae.Id_proceso', $Id_proceso_recali]])
+        ->groupBy('side.ID_Evento', 'side.Id_Asignacion', 'siae.Id_Asignacion', 'siae.Id_proceso', 'siae.Id_servicio', 
+        'side.Porcentaje_pcl', 'side.Estado_decreto')
+        ->orderBy('side.Id_Asignacion', 'asc')
+        ->limit(1)
+        //->get();
+        ->min('siae.Id_Asignacion');
+
+        $eventoAsigancion_Recalifi = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_asignacion_eventos as siae', 'siae.Id_Asignacion', '=', 'side.Id_Asignacion')
+        ->select('side.ID_Evento', 'side.Id_Asignacion as Id_Asignacion_decreto', 'siae.Id_Asignacion as Id_Asignacion_asig',
+        'siae.Id_proceso' , 'siae.Id_servicio', 'side.Porcentaje_pcl', 'side.Estado_decreto')
+        ->where([
+            ['side.ID_Evento',$Id_evento_recali],
+            ['siae.Id_servicio', $Id_servicioRecalifi], 
+            ['siae.Id_proceso', $Id_proceso_recali],
+            ['side.Estado_decreto', 'Cerrado']
+        ])
+        ->groupBy('side.ID_Evento', 'side.Id_Asignacion', 'siae.Id_Asignacion', 'siae.Id_proceso', 'siae.Id_servicio', 
+        'side.Porcentaje_pcl', 'side.Estado_decreto')
+        ->orderBy('side.Id_Asignacion', 'desc')
+        ->limit(1)
+        //->get();
+        ->max('siae.Id_Asignacion');
+
+        $eventoAsigancion_Recalifi_estadoDecreto = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_asignacion_eventos as siae', 'siae.Id_Asignacion', '=', 'side.Id_Asignacion')
+        ->select('side.ID_Evento', 'side.Id_Asignacion as Id_Asignacion_decreto', 'siae.Id_Asignacion as Id_Asignacion_asig',
+        'siae.Id_proceso' , 'siae.Id_servicio', 'side.Porcentaje_pcl', 'side.Estado_decreto')
+        ->where([
+            ['side.ID_Evento',$Id_evento_recali],
+            ['siae.Id_servicio', $Id_servicioRecalifi], 
+            ['siae.Id_proceso', $Id_proceso_recali]
+        ])
+        ->groupBy('side.ID_Evento', 'side.Id_Asignacion', 'siae.Id_Asignacion', 'siae.Id_proceso', 'siae.Id_servicio', 
+        'side.Porcentaje_pcl', 'side.Estado_decreto')
+        ->orderBy('side.Id_Asignacion', 'desc')
+        ->limit(1)
+        ->get();
+        //->max('siae.Id_Asignacion');        
+
+        // Obtener el motivo solicitud para la primera recalificacion
 
         $array_datos_motivo_solicitud = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_pericial_eventos as sipe')
         ->leftJoin('sigmel_gestiones.sigmel_lista_motivo_solicitudes as slms', 'slms.Id_Solicitud', '=', 'sipe.Id_motivo_solicitud')
@@ -52,702 +136,1515 @@ class RecalificacionPCLController extends Controller
         'sipe.Regimen_salud', 'sipe.Id_solicitante', 'sipe.Id_nombre_solicitante', 'sipe.Fuente_informacion', 'sipe.Nombre_usuario', 
         'sipe.F_registro')
         ->where([['sipe.ID_evento',$Id_evento_recali]])->get(); 
+        
+        // Validar estado del decreto
 
         $validar_estado_decreto = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_asignacion_eventos as siae', 'siae.Id_Asignacion', '=', 'side.Id_Asignacion')
         ->select('side.ID_Evento', 'side.Id_Asignacion as Id_Asignacion_decreto', 'siae.Id_Asignacion as Id_Asignacion_asig', 'siae.Id_servicio',
-        'side.Porcentaje_pcl', 'side.Estado_decreto')->where([['side.ID_Evento',$Id_evento_recali], ['siae.Id_servicio', $Id_servicio]])->get();  
+        'side.Porcentaje_pcl', 'side.Estado_decreto')
+        ->where([['side.ID_Evento',$Id_evento_recali], ['siae.Id_servicio', $Id_servicioCalifi]])->get(); 
         
-        if (!empty($validar_estado_decreto[0]->ID_Evento)) {
-            $datos_decreto =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_firme')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Cobertura')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as slcd', 'slcd.Id_Decreto', '=', 'side.Decreto_calificacion')        
-            ->select('side.ID_Evento', 'side.Id_proceso', 'side.Id_Asignacion', 'side.Origen_firme', 'slp.Nombre_parametro as Origen', 
-            'side.Cobertura', 'slps.Nombre_parametro as Coberturas', 'side.Decreto_calificacion', 'slcd.Nombre_decreto')
-            ->where([['side.ID_Evento',$Id_evento_recali], ['side.Id_Asignacion',$validar_estado_decreto[0]->Id_Asignacion_decreto]])->get(); 
-            
-            $array_info_decreto_evento = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')        
-            ->where([
-                ['ID_Evento', $Id_evento_recali],['Id_Asignacion', $validar_estado_decreto[0]->Id_Asignacion_decreto]
-            ])
-            ->get();
-            
-            $array_datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
-            ->where([
-                ['ID_evento',$Id_evento_recali],
-                ['Id_Asignacion', $validar_estado_decreto[0]->Id_Asignacion_decreto],
-                ['Estado_Recalificacion', 'Activo']
-            ])
-            ->get();
-
-            $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
-            ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
-            'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones')
-            ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion', $validar_estado_decreto[0]->Id_Asignacion_decreto], ['side.Estado_Recalificacion', '=', 'Activo']])->get();
-
-            $array_datos_deficiencias_alteraciones =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
-            ->select('sidae.Id_Deficiencia', 'sidae.ID_evento', 'sidae.Id_Asignacion', 'sidae.Id_proceso', 'sidae.Id_tabla',
-            'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.CFM1', 'sidae.CFM2', 'sidae.FU', 'sidae.CAT', 'sidae.Clase_Final', 
-            'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
-            ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Id_Asignacion', $validar_estado_decreto[0]->Id_Asignacion_decreto], ['sidae.Estado_Recalificacion', '=', 'Activo']])->get();
-
-            $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
-            ->where([
-                ['ID_evento',$Id_evento_recali],
-                ['Id_Asignacion',$validar_estado_decreto[0]->Id_Asignacion_decreto],
-                ['Estado_Recalificacion', 'Activo']
-            ])
-            ->get();
-
-            $hay_agudeza_visual = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
-            ->where([['ID_evento_re', $Id_evento_recali], ['Id_Asignacion_re',$validar_estado_decreto[0]->Id_Asignacion_decreto], ['Estado', '=', 'Activo']])->get();
-
-            $array_laboralmente_Activo = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
-            ->where([
-                ['ID_evento',$Id_evento_recali],
-                ['Id_Asignacion',$validar_estado_decreto[0]->Id_Asignacion_decreto],
-                ['Estado_Recalificacion', 'Activo']
-            ])
-            ->get();
-
-            $array_rol_ocupacional =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_rol_ocupacional_eventos as siroe')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siroe.Poblacion_calificar')
-            ->select('siroe.Id_Rol_ocupacional', 'siroe.ID_evento', 'siroe.Id_Asignacion', 'siroe.Id_proceso', 'siroe.Poblacion_calificar', 
-            'slp.Nombre_parametro', 'siroe.Motriz_postura_simetrica', 'siroe.Motriz_actividad_espontanea', 'siroe.Motriz_sujeta_cabeza',
-            'siroe.Motriz_sentarse_apoyo', 'siroe.Motriz_gira_sobre_mismo', 'siroe.Motriz_sentanser_sin_apoyo', 'siroe.Motriz_pasa_tumbado_sentado',
-            'siroe.Motriz_pararse_apoyo', 'siroe.Motriz_pasos_apoyo', 'siroe.Motriz_pararse_sin_apoyo', 'siroe.Motriz_anda_solo', 'siroe.Motriz_empujar_pelota_pies',
-            'siroe.Motriz_andar_obstaculos', 'siroe.Adaptativa_succiona', 'siroe.Adaptativa_fija_mirada', 'siroe.Adaptativa_sigue_trayectoria_objeto',
-            'siroe.Adaptativa_sostiene_sonajero', 'siroe.Adaptativa_tiende_mano_hacia_objeto', 'siroe.Adaptativa_sostiene_objeto_manos',
-            'siroe.Adaptativa_abre_cajones', 'siroe.Adaptativa_bebe_solo', 'siroe.Adaptativa_quitar_prenda_vestir', 
-            'siroe.Adaptativa_reconoce_funcion_espacios_casa', 'siroe.Adaptativa_imita_trazo_lapiz', 'siroe.Adaptativa_abre_puerta',
-            'siroe.Total_criterios_desarrollo', 'siroe.Juego_estudio_clase', 'siroe.Total_rol_estudio_clase', 'siroe.Adultos_mayores',
-            'siroe.Total_rol_adultos_ayores', 'siroe.Nombre_usuario', 'siroe.F_registro')
-            ->where([['siroe.ID_evento',$Id_evento_recali], ['siroe.Id_Asignacion',$validar_estado_decreto[0]->Id_Asignacion_decreto], ['Estado_Recalificacion', 'Activo']])->get();
-
-            $array_libros_2_3 = sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
-            ->where([
-                ['ID_evento',$Id_evento_recali],
-                ['Id_Asignacion',$validar_estado_decreto[0]->Id_Asignacion_decreto],
-                ['Estado_Recalificacion', 'Activo']
-            ])
-            ->get();
-
-            $array_dictamen_pericial =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'side.Tipo_evento')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
-            ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
-            'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
-            'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
-            'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia')
-            ->where([['side.ID_evento',$Id_evento_recali]], ['side.Id_Asignacion',$Id_asignacion_recali])->get();  
-
-        } else {
-            $datos_decreto =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_firme')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Cobertura')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as slcd', 'slcd.Id_Decreto', '=', 'side.Decreto_calificacion')        
-            ->select('side.ID_Evento', 'side.Id_proceso', 'side.Id_Asignacion', 'side.Origen_firme', 'slp.Nombre_parametro as Origen', 
-            'side.Cobertura', 'slps.Nombre_parametro as Coberturas', 'side.Decreto_calificacion', 'slcd.Nombre_decreto')
-            ->where([['side.ID_Evento',$Id_evento_recali]])->get(); 
-            
-            $array_info_decreto_evento = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')        
-            ->where([
-                ['ID_Evento', $Id_evento_recali]
-            ])
-            ->get();   
-                                  
-            $array_datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
-            ->where([
-                ['ID_evento',$Id_evento_recali],
-                ['Estado_Recalificacion', 'Activo']
-            ])
-            ->get();
-
-            $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
-            ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
-            'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones')
-            ->where([['side.ID_evento',$Id_evento_recali], ['side.Estado_Recalificacion', '=', 'Activo']])->get();
-
-            $array_datos_deficiencias_alteraciones =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
-            ->select('sidae.Id_Deficiencia', 'sidae.ID_evento', 'sidae.Id_Asignacion', 'sidae.Id_proceso', 'sidae.Id_tabla',
-            'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.CFM1', 'sidae.CFM2', 'sidae.FU', 'sidae.CAT', 'sidae.Clase_Final', 
-            'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
-            ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Estado_Recalificacion', '=', 'Activo']])->get();
-
-            $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
-            ->where([
-                ['ID_evento',$Id_evento_recali],
-                ['Estado_Recalificacion', 'Activo']
-            ])
-            ->get();
-
-            $hay_agudeza_visual = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
-            ->where([['ID_evento', $Id_evento_recali]])->get();
-
-            $array_laboralmente_Activo = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
-            ->where([
-                ['ID_evento',$Id_evento_recali],
-                ['Estado_Recalificacion', 'Activo']
-            ])
-            ->get();
-            
-            $array_rol_ocupacional =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_rol_ocupacional_eventos as siroe')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siroe.Poblacion_calificar')
-            ->select('siroe.Id_Rol_ocupacional', 'siroe.ID_evento', 'siroe.Id_Asignacion', 'siroe.Id_proceso', 'siroe.Poblacion_calificar', 
-            'slp.Nombre_parametro', 'siroe.Motriz_postura_simetrica', 'siroe.Motriz_actividad_espontanea', 'siroe.Motriz_sujeta_cabeza',
-            'siroe.Motriz_sentarse_apoyo', 'siroe.Motriz_gira_sobre_mismo', 'siroe.Motriz_sentanser_sin_apoyo', 'siroe.Motriz_pasa_tumbado_sentado',
-            'siroe.Motriz_pararse_apoyo', 'siroe.Motriz_pasos_apoyo', 'siroe.Motriz_pararse_sin_apoyo', 'siroe.Motriz_anda_solo', 'siroe.Motriz_empujar_pelota_pies',
-            'siroe.Motriz_andar_obstaculos', 'siroe.Adaptativa_succiona', 'siroe.Adaptativa_fija_mirada', 'siroe.Adaptativa_sigue_trayectoria_objeto',
-            'siroe.Adaptativa_sostiene_sonajero', 'siroe.Adaptativa_tiende_mano_hacia_objeto', 'siroe.Adaptativa_sostiene_objeto_manos',
-            'siroe.Adaptativa_abre_cajones', 'siroe.Adaptativa_bebe_solo', 'siroe.Adaptativa_quitar_prenda_vestir', 
-            'siroe.Adaptativa_reconoce_funcion_espacios_casa', 'siroe.Adaptativa_imita_trazo_lapiz', 'siroe.Adaptativa_abre_puerta',
-            'siroe.Total_criterios_desarrollo', 'siroe.Juego_estudio_clase', 'siroe.Total_rol_estudio_clase', 'siroe.Adultos_mayores',
-            'siroe.Total_rol_adultos_ayores', 'siroe.Nombre_usuario', 'siroe.F_registro')
-            ->where([['siroe.ID_evento',$Id_evento_recali], ['Estado_Recalificacion', 'Activo']])->get();
-
-            $array_libros_2_3 = sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
-            ->where([
-                ['ID_evento',$Id_evento_recali],
-                ['Estado_Recalificacion', 'Activo']
-            ])
-            ->get();
-
-            $array_dictamen_pericial =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'side.Tipo_evento')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
-            ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
-            'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
-            'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
-            'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia')
-            ->where([['side.ID_evento',$Id_evento_recali]])->get();
+        // Validar PCl anterior de la Recalficacion
+        $eventoAsigancionMax_RecaRecali = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_asignacion_eventos as siae', 'siae.ID_evento', '=', 'side.ID_evento')
+        ->select('side.Id_Asignacion')
+        ->where([['side.Id_Asignacion', '<', DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos  as siae')->select('siae.Id_Asignacion')->max('siae.Id_Asignacion')], 
+                ['side.ID_Evento', $Id_evento_recali], 
+                ['side.Id_proceso', $Id_proceso_recali], 
+                ['siae.Id_servicio', $Id_servicioRecalifi]
+        ])        
+        ->max('side.Id_Asignacion');
         
-        }        
-        
-        $validar_evento_asignacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-        ->select('ID_Evento','Id_Asignacion', 'Id_servicio')->where([['ID_Evento',$Id_evento_recali],['Id_servicio',$Id_servicio]])->get();        
+        if(!empty($eventoAsigancionMax_RecaRecali) && $eventoAsigancionMax_RecaRecali < $Id_asignacion_recali){            
+            // echo 'if';       
+            // echo '<hr>';
+            // echo $eventoAsigancionMax_RecaRecali;
+            $eventoAsigancion_RecalifiPCL = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_asignacion_eventos as siae', 'siae.Id_Asignacion', '=', 'side.Id_Asignacion')
+            ->select('side.ID_Evento', 'side.Id_Asignacion as Id_Asignacion_decreto', 'siae.Id_Asignacion as Id_Asignacion_asig', 'siae.Id_servicio',
+            'side.Porcentaje_pcl', 'side.Estado_decreto')
+            ->where([['side.ID_Evento',$Id_evento_recali], ['siae.Id_servicio', $Id_servicioRecalifi], 
+            ['side.Id_Asignacion', $eventoAsigancionMax_RecaRecali]])->get();  
+        }elseif(!empty($eventoAsigancionMax_RecaRecali) && $eventoAsigancionMax_RecaRecali > $Id_asignacion_recali){            
+            // echo 'elseif';       
+            // echo '<hr>';
+            // echo $eventoAsigancionMax_RecaRecali;
+            $eventoAsigancion_RecalifiPCL = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_asignacion_eventos as siae', 'siae.Id_Asignacion', '=', 'side.Id_Asignacion')
+            ->select('side.ID_Evento', 'side.Id_Asignacion as Id_Asignacion_decreto', 'siae.Id_Asignacion as Id_Asignacion_asig', 'siae.Id_servicio',
+            'side.PCL_anterior', 'side.Estado_decreto')
+            ->where([['side.ID_Evento',$Id_evento_recali], ['siae.Id_servicio', $Id_servicioRecalifi], 
+            ['side.Id_Asignacion', $Id_asignacion_recali]])->get();         
+        }elseif($eventoAsigancionMax_RecaRecali == $Id_asignacion_recali){      
+            // echo 'esta aqui else';
+            // echo '<hr>';
+            // echo $eventoAsigancionMax_RecaRecali;
+            $eventoAsigancion_RecalifiPCL = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_asignacion_eventos as siae', 'siae.Id_Asignacion', '=', 'side.Id_Asignacion')
+            ->select('side.ID_Evento', 'side.Id_Asignacion as Id_Asignacion_decreto', 'siae.Id_Asignacion as Id_Asignacion_asig',
+            'siae.Id_proceso' , 'siae.Id_servicio', 'side.PCL_anterior', 'side.Estado_decreto')
+            ->where([
+                ['side.ID_Evento',$Id_evento_recali],
+                ['siae.Id_servicio', $Id_servicioRecalifi], 
+                ['siae.Id_proceso', $Id_proceso_recali],
+                ['side.Id_Asignacion', $Id_asignacion_recali]
+            ])
+            ->groupBy('side.ID_Evento', 'side.Id_Asignacion', 'siae.Id_Asignacion', 'siae.Id_proceso', 'siae.Id_servicio', 
+            'side.PCL_anterior', 'side.Estado_decreto')
+            ->orderBy('side.Id_Asignacion', 'desc')
+            ->limit(1)
+            ->get();
+        }    
+         
+        // echo '<pre>';
+        //     echo print_r($eventoAsigancion_RecalifiPCL);
+        //     echo '<hr>';
+        // echo '</pre>';
 
-        // Obtener el último consecutivo de la base de datos
-        $consecutivoDictamen = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
-        ->max('Numero_dictamen');
+        // traer todos los datos del evento segun el id de asignacion
+        $array_datos_RecalificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($Id_asignacion_recali));
 
-        if ($consecutivoDictamen > 0) {
-            $numero_consecutivo = $consecutivoDictamen + 1;
-        }else{
-            $numero_consecutivo = 0000000 + 1;
-        }
-        // Formatear el número consecutivo a 7 dígitos
-        $numero_consecutivo = str_pad($numero_consecutivo, 7, "0", STR_PAD_LEFT); 
-           
-        $array_info_decreto_evento_re = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')        
-        ->where([
-            ['ID_Evento', $Id_evento_recali],['Id_Asignacion', $Id_asignacion_recali]
-        ])
-        ->get();
+        // Condicional IF para Recalificacion sobre Recalificacion y Else para Recalifacion sobre Calificacion tecnica
 
-        if (!empty($array_info_decreto_evento_re[0]->Id_Asignacion)) {
-
-            $Historiaclínicacompleta  = "Historia clínica completa";
-            $Exámenespreocupacionales = "Exámenes preocupacionales";
-            $Epicrisis = "Epicrisis";
-            $Exámenesperiódicosocupacionales  = "Exámenes periódicos ocupacionales";
-            $Exámenesparaclinicos  = "Exámenes paraclinicos";
-            $ExámenesPostocupacionales  = "Exámenes Post-ocupacionales";
-            $Conceptosdesaludocupacional   = "Conceptos de salud ocupacional";
-
-            $arraytotalRealcionDocumentos = [
-                'Historia clínica completa',
-                'Exámenes preocupacionales',
-                'Epicrisis',
-                'Exámenes periódicos ocupacionales',
-                'Exámenes paraclinicos',
-                'Exámenes Post-ocupacionales',
-                'Conceptos de salud ocupacional',
-            ];
-
-            foreach ($arraytotalRealcionDocumentos as &$valor) {    
-                $valor = trim($valor);
-                $valor = str_replace("-", "", $valor);  
-                //$valor = strtr($valor, 'áéíóúÁÉÍÓÚ', 'aeiouAEIOU'); 
-                $valor = preg_replace("/\s+/", "", $valor); 
-            }
-            $relacionDocuementos = $array_info_decreto_evento_re[0]->Relacion_documentos;
-            $separaRelacionDocumentos = explode(", ",$relacionDocuementos);  
-            
-            foreach ($separaRelacionDocumentos as &$valor) {    
-                $valor = trim($valor);
-                $valor = str_replace("-", "", $valor);  
-                //$valor = strtr($valor, 'áéíóúÁÉÍÓÚ', 'aeiouAEIOU'); 
-                $valor = preg_replace("/\s+/", "", $valor);     
-            }
-            foreach ($arraytotalRealcionDocumentos as $index => $value) {
-                if (!in_array($value, $separaRelacionDocumentos)) {
-                    ${$value} = "vacio";
-                }
-            }                       
-        }elseif(!empty($array_info_decreto_evento[0]->Id_Asignacion)){
-            $Historiaclínicacompleta  = "Historia clínica completa";
-            $Exámenespreocupacionales = "Exámenes preocupacionales";
-            $Epicrisis = "Epicrisis";
-            $Exámenesperiódicosocupacionales  = "Exámenes periódicos ocupacionales";
-            $Exámenesparaclinicos  = "Exámenes paraclinicos";
-            $ExámenesPostocupacionales  = "Exámenes Post-ocupacionales";
-            $Conceptosdesaludocupacional   = "Conceptos de salud ocupacional";
-
-            $arraytotalRealcionDocumentos = [
-                'Historia clínica completa',
-                'Exámenes preocupacionales',
-                'Epicrisis',
-                'Exámenes periódicos ocupacionales',
-                'Exámenes paraclinicos',
-                'Exámenes Post-ocupacionales',
-                'Conceptos de salud ocupacional',
-            ];
-
-            foreach ($arraytotalRealcionDocumentos as &$valor) {    
-                $valor = trim($valor);
-                $valor = str_replace("-", "", $valor);  
-                //$valor = strtr($valor, 'áéíóúÁÉÍÓÚ', 'aeiouAEIOU'); 
-                $valor = preg_replace("/\s+/", "", $valor); 
-            }
-            $relacionDocuementos = $array_info_decreto_evento[0]->Relacion_documentos;
-            $separaRelacionDocumentos = explode(", ",$relacionDocuementos);  
-            
-            foreach ($separaRelacionDocumentos as &$valor) {    
-                $valor = trim($valor);
-                $valor = str_replace("-", "", $valor);  
-                //$valor = strtr($valor, 'áéíóúÁÉÍÓÚ', 'aeiouAEIOU'); 
-                $valor = preg_replace("/\s+/", "", $valor);     
-            }
-            foreach ($arraytotalRealcionDocumentos as $index => $value) {
-                if (!in_array($value, $separaRelacionDocumentos)) {
-                    ${$value} = "vacio";
-                }
-            }
-        }else{
-            list(
-                $Historiaclínicacompleta, 
-                $Exámenespreocupacionales, 
-                $Epicrisis, 
-                $Exámenesperiódicosocupacionales, 
-                $Exámenesparaclinicos, 
-                $ExámenesPostocupacionales, 
-                $Conceptosdesaludocupacional
-            ) = array_fill(0, 7, 'vacio');
-        }
-        $array_datos_relacion_documentos = [
-            'Historiaclinicacompleta' => $Historiaclínicacompleta, 
-            'Examenespreocupacionales' => $Exámenespreocupacionales, 
-            'Epicrisis' => $Epicrisis, 
-            'Examenesperiodicosocupacionales' => $Exámenesperiódicosocupacionales, 
-            'Examenesparaclinicos' => $Exámenesparaclinicos, 
-            'ExamenesPostocupacionales' => $ExámenesPostocupacionales, 
-            'Conceptosdesaludocupacion' => $Conceptosdesaludocupacional,
-        ];
-               
-        //Traer Motivo de solicitud,Dominancia actual
-        $motivo_solicitud_actual = cndatos_eventos::on('sigmel_gestiones')
-        ->select('Id_motivo_solicitud','Nombre_solicitud','Id_dominancia','Nombre_dominancia')
-        ->where([
-            ['ID_evento', '=', $Id_evento_recali]
-        ])
-        ->get();
-        
-        $datos_apoderado_actual = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-        ->select('Nombre_apoderado','Nro_identificacion_apoderado')
-        ->where([
-            ['ID_evento', '=', $Id_evento_recali]
-        ])
-        ->get(); 
-        
-        $array_datos_examenes_interconsultasre = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
-        ->where([
-            ['ID_evento',$Id_evento_recali],
-            ['Id_Asignacion',$Id_asignacion_recali],
-            ['Estado_Recalificacion', 'Activo']
-        ])
-        ->get();
-
-        $array_datos_diagnostico_motcalifire =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
-        ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
-        'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones')
-        ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion',$Id_asignacion_recali], ['side.Estado_Recalificacion', '=', 'Activo']])->get(); 
-
-        $array_datos_deficiencias_alteracionesre =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
-        ->select('sidae.Id_Deficiencia', 'sidae.ID_evento', 'sidae.Id_Asignacion', 'sidae.Id_proceso', 'sidae.Id_tabla',
-        'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.CFM1', 'sidae.CFM2', 'sidae.FU', 'sidae.CAT', 'sidae.Clase_Final', 
-        'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
-        ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Id_Asignacion',$Id_asignacion_recali], ['sidae.Estado_Recalificacion', '=', 'Activo']])->get(); 
-  
-        $array_agudeza_Auditivare = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
-        ->where([
-            ['ID_evento',$Id_evento_recali],
-            ['Id_Asignacion',$Id_asignacion_recali],
-            ['Estado_Recalificacion', 'Activo']
-        ])
-        ->get();
-
-        $hay_agudeza_visualre = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento_re', $Id_evento_recali], ['Id_Asignacion_re', $Id_asignacion_recali], ['Estado_Recalificacion', '=', 'Activo']])->get();
-                        
-        $array_laboralmente_Activore = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
-        ->where([
-            ['ID_evento',$Id_evento_recali],
-            ['Id_Asignacion',$Id_asignacion_recali],
-            ['Estado_Recalificacion', 'Activo']
-        ])
-        ->get();
-
-        $array_rol_ocupacionalre =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_rol_ocupacional_eventos as siroe')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siroe.Poblacion_calificar')
-        ->select('siroe.Id_Rol_ocupacional', 'siroe.ID_evento', 'siroe.Id_Asignacion', 'siroe.Id_proceso', 'siroe.Poblacion_calificar', 
-        'slp.Nombre_parametro', 'siroe.Motriz_postura_simetrica', 'siroe.Motriz_actividad_espontanea', 'siroe.Motriz_sujeta_cabeza',
-        'siroe.Motriz_sentarse_apoyo', 'siroe.Motriz_gira_sobre_mismo', 'siroe.Motriz_sentanser_sin_apoyo', 'siroe.Motriz_pasa_tumbado_sentado',
-        'siroe.Motriz_pararse_apoyo', 'siroe.Motriz_pasos_apoyo', 'siroe.Motriz_pararse_sin_apoyo', 'siroe.Motriz_anda_solo', 'siroe.Motriz_empujar_pelota_pies',
-        'siroe.Motriz_andar_obstaculos', 'siroe.Adaptativa_succiona', 'siroe.Adaptativa_fija_mirada', 'siroe.Adaptativa_sigue_trayectoria_objeto',
-        'siroe.Adaptativa_sostiene_sonajero', 'siroe.Adaptativa_tiende_mano_hacia_objeto', 'siroe.Adaptativa_sostiene_objeto_manos',
-        'siroe.Adaptativa_abre_cajones', 'siroe.Adaptativa_bebe_solo', 'siroe.Adaptativa_quitar_prenda_vestir', 
-        'siroe.Adaptativa_reconoce_funcion_espacios_casa', 'siroe.Adaptativa_imita_trazo_lapiz', 'siroe.Adaptativa_abre_puerta',
-        'siroe.Total_criterios_desarrollo', 'siroe.Juego_estudio_clase', 'siroe.Total_rol_estudio_clase', 'siroe.Adultos_mayores',
-        'siroe.Total_rol_adultos_ayores', 'siroe.Nombre_usuario', 'siroe.F_registro')
-        ->where([['siroe.ID_evento',$Id_evento_recali], ['siroe.Id_Asignacion',$Id_asignacion_recali], ['Estado_Recalificacion', 'Activo']])->get();  
-
-        $array_libros_2_3re = sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
-        ->where([
-            ['ID_evento',$Id_evento_recali],
-            ['Id_Asignacion',$Id_asignacion_recali],
-            ['Estado_Recalificacion', 'Activo']
-        ])
-        ->get();
-
-        /* if($validar_estado_decreto[0]->Id_Asignacion_decreto == $Id_asignacion_recali){
-        }
-        elseif (count($validar_estado_decreto) > 0) {
-
-            if(count($array_datos_RecalificacionPcl) > 0){
-                $Id_servicio_balt = 6;
-            }
-    
-            $array_datos_deficiencicas50 = DB::select('CALL psrbalthazaraudpcldef(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
-            $array_datos_deficiencicas50_1 = DB::select('CALL psrbalthazarvispcldef(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
-            $array_datos_deficiencicas50_2 = DB::select('CALL psrbalthazardefpcl(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
-            $array_datos_deficiencicas50_3 = DB::select('CALL psrbalthazaraudpcl(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
-            $array_datos_deficiencicas50_4 = DB::select('CALL psrbalthazarvispcl(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
-            $array_datos_deficiencicas50_5 = DB::select('CALL psrbalthazaraudvispcl(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
-            $array_datos_deficiencicas50_6 = DB::select('CALL psrbalthazarpcl(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
-            
-        }  */      
-        
-        if(!empty($array_datos_RecalificacionPcl[0]->Id_Asignacion)){
-            $Id_servicio_balt = $array_datos_RecalificacionPcl[0]->Id_Servicio;
-        }
-
-        $array_datos_deficiencicas50 = DB::select('CALL psrbalthazaraudpcldef(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
-        $array_datos_deficiencicas50_1 = DB::select('CALL psrbalthazarvispcldef(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
-        $array_datos_deficiencicas50_2 = DB::select('CALL psrbalthazardefpcl(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
-        $array_datos_deficiencicas50_3 = DB::select('CALL psrbalthazaraudpcl(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
-        $array_datos_deficiencicas50_4 = DB::select('CALL psrbalthazarvispcl(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
-        $array_datos_deficiencicas50_5 = DB::select('CALL psrbalthazaraudvispcl(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
-        $array_datos_deficiencicas50_6 = DB::select('CALL psrbalthazarpcl(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));    
-        
-        
-        if(!empty($array_datos_deficiencicas50)  && empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
-            
-            $array_Deficiencias50 = $array_datos_deficiencicas50[0]->deficiencias;
-            $deficiencias = explode(",", $array_Deficiencias50);
-            //print_r($deficiencias);                        
-
-            $ultimos_valores = array_slice($deficiencias, -1);
-            list($agudezaAudtivaDef) = $ultimos_valores;
-            
-            foreach ($deficiencias as $index => $value) {
-                if ($value == $agudezaAudtivaDef) {
-                    $deficiencias[$index] = $agudezaAudtivaDef * 2;
-                }
-            }            
-            //print_r($deficiencias);
-                                  
-            //print_r($deficiencias);
-            while(!empty($deficiencias) && count($deficiencias) > 1) {
-                $a = $deficiencias[0];
-                $b = $deficiencias[1];
-                $resultado = $a + (100 - $a) * $b / 100;
-                array_shift($deficiencias);
-                array_shift($deficiencias);
-                array_unshift($deficiencias, $resultado);
-            }
-            //print_r($deficiencias);
-            foreach ($deficiencias as &$value) {
-                $value = round($value, 2); 
-                               
-                $TotalDeficiencia50 = $value * 50 / 100;
-            }
-            
-        }elseif(empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
-            $array_Deficiencias50 = $array_datos_deficiencicas50_1[0]->deficiencias;
-            $deficiencias = explode(",", $array_Deficiencias50);
-            //print_r($deficiencias);            
-                       
-            while(!empty($deficiencias) && count($deficiencias) > 1) {
-                $a = $deficiencias[0];
-                $b = $deficiencias[1];
-                $resultado = $a + (100 - $a) * $b / 100;
-                array_shift($deficiencias);
-                array_shift($deficiencias);
-                array_unshift($deficiencias, $resultado);
-            }
-            //print_r($deficiencias);
-            foreach ($deficiencias as &$value) {
-                $value = round($value, 2); 
-                               
-                $TotalDeficiencia50 = $value * 50 / 100;
-            }
-            
-        }elseif(empty($array_datos_deficiencicas50)  && empty($array_datos_deficiencicas50_1) && !empty($array_datos_deficiencicas50_2)){
-            $array_Deficiencias50 = $array_datos_deficiencicas50_2[0]->deficiencias;
-            $deficiencias = explode(",", $array_Deficiencias50);
-            //print_r($deficiencias);    
-            usort($deficiencias, function($a, $b) {
-                $numA = preg_replace('/[^0-9.]+/', '', $a);
-                $numB = preg_replace('/[^0-9.]+/', '', $b);
-            
-                if ($numA > $numB) {
-                    return -1;
-                } else if ($numA < $numB) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            });            
-            //print_r($deficiencias);
-            foreach ($deficiencias as $key => $value) {
-                if (strpos($value, "(si)") !== false) {
-                    $deficiencias[$key] = 23.20;
-                }
-            }
-            //print_r($deficiencias);            
-            while(!empty($deficiencias) && count($deficiencias) > 1) {
-                $a = $deficiencias[0];
-                $b = $deficiencias[1];
-                $resultado = $a + (100 - $a) * $b / 100;
-                array_shift($deficiencias);
-                array_shift($deficiencias);
-                array_unshift($deficiencias, $resultado);
-            }
-            //print_r($deficiencias);
-            foreach ($deficiencias as &$value) {
-                $value = round($value, 2); 
-                               
-                $TotalDeficiencia50 = $value * 50 / 100;
-            }
-            
-        }elseif(!empty($array_datos_deficiencicas50_3) && empty($array_datos_deficiencicas50_1)) {
-            $array_Deficiencias50 = $array_datos_deficiencicas50_3[0]->deficiencias;
-            $deficiencias = explode(",", $array_Deficiencias50);
-            //print_r($deficiencias);            
-            $ultimos_valores = array_slice($deficiencias, -1);
-            list($agudezaAudtivaDef) = $ultimos_valores;
-            
-            //print_r($deficiencias);
-            usort($deficiencias, function($a, $b) {
-                $numA = preg_replace('/[^0-9.]+/', '', $a);
-                $numB = preg_replace('/[^0-9.]+/', '', $b);
-            
-                if ($numA > $numB) {
-                    return -1;
-                } else if ($numA < $numB) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            });            
-            //print_r($deficiencias);
-            foreach ($deficiencias as $key => $value) {
-                if (strpos($value, "(si)") !== false) {
-                    $deficiencias[$key] = 23.20;
-                }
-            }
-            //print_r($deficiencias);
-            $indexDoble = null;            
-            foreach ($deficiencias as $index => $value) {
-                if ($value == $agudezaAudtivaDef) {
-                    $indexDoble = $index;
-                    break;
-                }
-            }            
-            if ($indexDoble !== null) {
-                $deficiencias[$indexDoble] *= 2;
-            }            
-            //print_r($deficiencias);
-            while(!empty($deficiencias) && count($deficiencias) > 1) {
-                $a = $deficiencias[0];
-                $b = $deficiencias[1];
-                $resultado = $a + (100 - $a) * $b / 100;
-                array_shift($deficiencias);
-                array_shift($deficiencias);
-                array_unshift($deficiencias, $resultado);
-            }
-            //print_r($deficiencias);
-            foreach ($deficiencias as &$value) {
-                $value = round($value, 2); 
-                               
-                $TotalDeficiencia50 = $value * 50 / 100;
-            }
-            
-        }elseif(!empty($array_datos_deficiencicas50_4) && empty($array_datos_deficiencicas50)){
-            $array_Deficiencias50 = $array_datos_deficiencicas50_4[0]->deficiencias;
-            $deficiencias = explode(",", $array_Deficiencias50);
-            //print_r($deficiencias);  
-            usort($deficiencias, function($a, $b) {
-                $numA = preg_replace('/[^0-9.]+/', '', $a);
-                $numB = preg_replace('/[^0-9.]+/', '', $b);
-            
-                if ($numA > $numB) {
-                    return -1;
-                } else if ($numA < $numB) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            });            
-            //print_r($deficiencias);
-            foreach ($deficiencias as $key => $value) {
-                if (strpos($value, "(si)") !== false) {
-                    $deficiencias[$key] = 23.20;
-                }
-            }                       
-            //print_r($deficiencias);
-            while(!empty($deficiencias) && count($deficiencias) > 1) {
-                $a = $deficiencias[0];
-                $b = $deficiencias[1];
-                $resultado = $a + (100 - $a) * $b / 100;
-                array_shift($deficiencias);
-                array_shift($deficiencias);
-                array_unshift($deficiencias, $resultado);
-            }
-            //print_r($deficiencias);
-            foreach ($deficiencias as &$value) {
-                $value = round($value, 2); 
-                               
-                $TotalDeficiencia50 = $value * 50 / 100;
-            }
-            
-            
-        }elseif(!empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
-            $array_Deficiencias50 = $array_datos_deficiencicas50_5[0]->deficiencias;
-            $deficiencias = explode(",", $array_Deficiencias50);
-            //print_r($deficiencias);            
-            $ultimos_valores = array_slice($deficiencias, -2);
-            list($agudezaAudtivaDef, $agudezaVisualDef) = $ultimos_valores;
+        if ($eventoAsigancionMin_Recalifi != $Id_asignacion_recali && !empty($eventoAsigancionMin_Recalifi)) { 
+            if (count($validar_evento_Recali) != count($array_datos_idasignacion_decretos)) {
+                return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'validar_estado_decreto', 'validar_evento_CalifiTecnica', 'array_datos_idasignacion_decretos', 'validar_evento_Recali'));                   
+            }else {
+                if(empty($eventoAsigancion_Recalifi)){
+                    return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'eventoAsigancion_Recalifi', 'eventoAsigancion_Recalifi_estadoDecreto', 'validar_estado_decreto', 'eventoAsigancion_RecalifiPCL', 'validar_evento_CalifiTecnica'));
+                } 
+                elseif(!empty($eventoAsigancion_Recalifi)){
+                    if ($eventoAsigancion_Recalifi >= 1) {                                    
+                        // $array_datos_motivo_solicitud = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_pericial_eventos as sipe')
+                        // ->leftJoin('sigmel_gestiones.sigmel_lista_motivo_solicitudes as slms', 'slms.Id_Solicitud', '=', 'sipe.Id_motivo_solicitud')
+                        // ->select('sipe.Id_Pericial', 'sipe.ID_evento', 'sipe.Id_motivo_solicitud', 'slms.Nombre_solicitud', 'sipe.Tipo_vinculacion', 
+                        // 'sipe.Regimen_salud', 'sipe.Id_solicitante', 'sipe.Id_nombre_solicitante', 'sipe.Fuente_informacion', 'sipe.Nombre_usuario', 
+                        // 'sipe.F_registro')
+                        // ->where([['sipe.ID_evento',$Id_evento_recali]])->get(); 
                 
-            $indexDoble = null;            
-            foreach ($deficiencias as $index => $value) {
-                if ($value == $agudezaAudtivaDef) {
-                    $indexDoble = $index;
-                    break;
-                }
-            }            
-            if ($indexDoble !== null) {
-                $deficiencias[$indexDoble] *= 2;
-            }            
-            //print_r($deficiencias);
-            while(!empty($deficiencias) && count($deficiencias) > 1) {
-                $a = $deficiencias[0];
-                $b = $deficiencias[1];
-                $resultado = $a + (100 - $a) * $b / 100;
-                array_shift($deficiencias);
-                array_shift($deficiencias);
-                array_unshift($deficiencias, $resultado);
-            }
-            //print_r($deficiencias);
-            foreach ($deficiencias as &$value) {
-                $value = round($value, 2); 
-                               
-                $TotalDeficiencia50 = $value * 50 / 100;
-            }
+                        // $validar_estado_decreto = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                        // ->leftJoin('sigmel_gestiones.sigmel_informacion_asignacion_eventos as siae', 'siae.Id_Asignacion', '=', 'side.Id_Asignacion')
+                        // ->select('side.ID_Evento', 'side.Id_Asignacion as Id_Asignacion_decreto', 'siae.Id_Asignacion as Id_Asignacion_asig', 'siae.Id_servicio',
+                        // 'side.Porcentaje_pcl', 'side.Estado_decreto')
+                        // ->where([['side.ID_Evento',$Id_evento_recali], ['siae.Id_servicio', $Id_servicioRecalifi]])->get();
+                        
+                        $datos_decreto =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_firme')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Cobertura')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as slcd', 'slcd.Id_Decreto', '=', 'side.Decreto_calificacion')        
+                        ->select('side.ID_Evento', 'side.Id_proceso', 'side.Id_Asignacion', 'side.Origen_firme', 'slp.Nombre_parametro as Origen', 
+                        'side.Cobertura', 'slps.Nombre_parametro as Coberturas', 'side.Decreto_calificacion', 'slcd.Nombre_decreto')
+                        ->where([['side.ID_Evento',$Id_evento_recali], ['side.Id_Asignacion',$eventoAsigancion_Recalifi]])->get(); 
+                        
+                        $array_info_decreto_evento = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')        
+                        ->where([
+                            ['ID_Evento', $Id_evento_recali],['Id_Asignacion', $eventoAsigancion_Recalifi]
+                        ])
+                        ->get();
+                        
+                        $array_datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento',$Id_evento_recali],
+                            ['Id_Asignacion', $eventoAsigancion_Recalifi],
+                            ['Estado_Recalificacion', 'Activo']
+                        ])
+                        ->get();
+                
+                        $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+                        ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
+                        'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones')
+                        ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion', $eventoAsigancion_Recalifi], ['side.Estado_Recalificacion', '=', 'Activo']])->get();
             
-        }elseif(!empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && !empty($array_datos_deficiencicas50_2)) {
+                        $array_datos_deficiencias_alteraciones =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
+                        ->select('sidae.Id_Deficiencia', 'sidae.ID_evento', 'sidae.Id_Asignacion', 'sidae.Id_proceso', 'sidae.Id_tabla',
+                        'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.CFM1', 'sidae.CFM2', 'sidae.FU', 'sidae.CAT', 'sidae.Clase_Final', 
+                        'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
+                        ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Id_Asignacion', $eventoAsigancion_Recalifi], ['sidae.Estado_Recalificacion', '=', 'Activo']])->get();
             
-            $array_Deficiencias50 = $array_datos_deficiencicas50_6[0]->deficiencias;
-            $deficiencias = explode(",", $array_Deficiencias50);
-            //print_r($deficiencias);            
-            $ultimos_valores = array_slice($deficiencias, -2);
-            list($agudezaAudtivaDef, $agudezaVisualDef) = $ultimos_valores;
+                        $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento',$Id_evento_recali],
+                            ['Id_Asignacion',$eventoAsigancion_Recalifi],
+                            ['Estado_Recalificacion', 'Activo']
+                        ])
+                        ->get();
+                
+                        $hay_agudeza_visual = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
+                        ->where([['ID_evento_re', $Id_evento_recali], ['Id_Asignacion_re',$eventoAsigancion_Recalifi], ['Estado_Recalificacion', '=', 'Activo']])->get();
+                            
+                        $array_laboralmente_Activo = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento',$Id_evento_recali],
+                            ['Id_Asignacion',$eventoAsigancion_Recalifi],
+                            ['Estado_Recalificacion', 'Activo']
+                        ])
+                        ->get();
+            
+                        $array_rol_ocupacional =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_rol_ocupacional_eventos as siroe')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siroe.Poblacion_calificar')
+                        ->select('siroe.Id_Rol_ocupacional', 'siroe.ID_evento', 'siroe.Id_Asignacion', 'siroe.Id_proceso', 'siroe.Poblacion_calificar', 
+                        'slp.Nombre_parametro', 'siroe.Motriz_postura_simetrica', 'siroe.Motriz_actividad_espontanea', 'siroe.Motriz_sujeta_cabeza',
+                        'siroe.Motriz_sentarse_apoyo', 'siroe.Motriz_gira_sobre_mismo', 'siroe.Motriz_sentanser_sin_apoyo', 'siroe.Motriz_pasa_tumbado_sentado',
+                        'siroe.Motriz_pararse_apoyo', 'siroe.Motriz_pasos_apoyo', 'siroe.Motriz_pararse_sin_apoyo', 'siroe.Motriz_anda_solo', 'siroe.Motriz_empujar_pelota_pies',
+                        'siroe.Motriz_andar_obstaculos', 'siroe.Adaptativa_succiona', 'siroe.Adaptativa_fija_mirada', 'siroe.Adaptativa_sigue_trayectoria_objeto',
+                        'siroe.Adaptativa_sostiene_sonajero', 'siroe.Adaptativa_tiende_mano_hacia_objeto', 'siroe.Adaptativa_sostiene_objeto_manos',
+                        'siroe.Adaptativa_abre_cajones', 'siroe.Adaptativa_bebe_solo', 'siroe.Adaptativa_quitar_prenda_vestir', 
+                        'siroe.Adaptativa_reconoce_funcion_espacios_casa', 'siroe.Adaptativa_imita_trazo_lapiz', 'siroe.Adaptativa_abre_puerta',
+                        'siroe.Total_criterios_desarrollo', 'siroe.Juego_estudio_clase', 'siroe.Total_rol_estudio_clase', 'siroe.Adultos_mayores',
+                        'siroe.Total_rol_adultos_ayores', 'siroe.Nombre_usuario', 'siroe.F_registro')
+                        ->where([['siroe.ID_evento',$Id_evento_recali], ['siroe.Id_Asignacion',$eventoAsigancion_Recalifi], ['Estado_Recalificacion', 'Activo']])->get();
+            
+                        $array_libros_2_3 = sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento',$Id_evento_recali],
+                            ['Id_Asignacion',$eventoAsigancion_Recalifi],
+                            ['Estado_Recalificacion', 'Activo']
+                        ])
+                        ->get();
+                
+                        $array_dictamen_pericial =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'side.Tipo_evento')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
+                        ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
+                        'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+                        'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
+                        'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia')
+                        ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion', $eventoAsigancion_Recalifi]])->get();
+                        
+                    } 
+                    /* else {
+                        $datos_decreto =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_firme')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Cobertura')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as slcd', 'slcd.Id_Decreto', '=', 'side.Decreto_calificacion')        
+                        ->select('side.ID_Evento', 'side.Id_proceso', 'side.Id_Asignacion', 'side.Origen_firme', 'slp.Nombre_parametro as Origen', 
+                        'side.Cobertura', 'slps.Nombre_parametro as Coberturas', 'side.Decreto_calificacion', 'slcd.Nombre_decreto')
+                        ->where([['side.ID_Evento',$Id_evento_recali]])->get(); 
+                        
+                        $array_info_decreto_evento = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')        
+                        ->where([
+                            ['ID_Evento', $Id_evento_recali]
+                        ])
+                        ->get();   
+                                                
+                        $array_datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento',$Id_evento_recali],
+                            ['Estado', 'Activo']
+                        ])
+                        ->get();
+            
+                        $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+                        ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
+                        'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones')
+                        ->where([['side.ID_evento',$Id_evento_recali], ['side.Estado', '=', 'Activo']])->get();
+            
+                        $array_datos_deficiencias_alteraciones =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
+                        ->select('sidae.Id_Deficiencia', 'sidae.ID_evento', 'sidae.Id_Asignacion', 'sidae.Id_proceso', 'sidae.Id_tabla',
+                        'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.CFM1', 'sidae.CFM2', 'sidae.FU', 'sidae.CAT', 'sidae.Clase_Final', 
+                        'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
+                        ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Estado', '=', 'Activo']])->get();
+            
+                        $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento',$Id_evento_recali],
+                            ['Estado', 'Activo']
+                        ])
+                        ->get();
+            
+                        $hay_agudeza_visual = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
+                        ->where([['ID_evento', $Id_evento_recali]])->get();
+            
+                        $array_laboralmente_Activo = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento',$Id_evento_recali],
+                            ['Estado_Recalificacion', 'Activo']
+                        ])
+                        ->get();
+                        
+                        $array_rol_ocupacional =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_rol_ocupacional_eventos as siroe')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siroe.Poblacion_calificar')
+                        ->select('siroe.Id_Rol_ocupacional', 'siroe.ID_evento', 'siroe.Id_Asignacion', 'siroe.Id_proceso', 'siroe.Poblacion_calificar', 
+                        'slp.Nombre_parametro', 'siroe.Motriz_postura_simetrica', 'siroe.Motriz_actividad_espontanea', 'siroe.Motriz_sujeta_cabeza',
+                        'siroe.Motriz_sentarse_apoyo', 'siroe.Motriz_gira_sobre_mismo', 'siroe.Motriz_sentanser_sin_apoyo', 'siroe.Motriz_pasa_tumbado_sentado',
+                        'siroe.Motriz_pararse_apoyo', 'siroe.Motriz_pasos_apoyo', 'siroe.Motriz_pararse_sin_apoyo', 'siroe.Motriz_anda_solo', 'siroe.Motriz_empujar_pelota_pies',
+                        'siroe.Motriz_andar_obstaculos', 'siroe.Adaptativa_succiona', 'siroe.Adaptativa_fija_mirada', 'siroe.Adaptativa_sigue_trayectoria_objeto',
+                        'siroe.Adaptativa_sostiene_sonajero', 'siroe.Adaptativa_tiende_mano_hacia_objeto', 'siroe.Adaptativa_sostiene_objeto_manos',
+                        'siroe.Adaptativa_abre_cajones', 'siroe.Adaptativa_bebe_solo', 'siroe.Adaptativa_quitar_prenda_vestir', 
+                        'siroe.Adaptativa_reconoce_funcion_espacios_casa', 'siroe.Adaptativa_imita_trazo_lapiz', 'siroe.Adaptativa_abre_puerta',
+                        'siroe.Total_criterios_desarrollo', 'siroe.Juego_estudio_clase', 'siroe.Total_rol_estudio_clase', 'siroe.Adultos_mayores',
+                        'siroe.Total_rol_adultos_ayores', 'siroe.Nombre_usuario', 'siroe.F_registro')
+                        ->where([['siroe.ID_evento',$Id_evento_recali], ['Estado_Recalificacion', 'Activo']])->get();
+            
+                        $array_libros_2_3 = sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento',$Id_evento_recali],
+                            ['Estado_Recalificacion', 'Activo']
+                        ])
+                        ->get();
+            
+                        $array_dictamen_pericial =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'side.Tipo_evento')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
+                        ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
+                        'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+                        'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
+                        'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia')
+                        ->where([['side.ID_evento',$Id_evento_recali]])->get();
+                    
+                    } */
+    
+                    $datos_decretore =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_firme')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Cobertura')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as slcd', 'slcd.Id_Decreto', '=', 'side.Decreto_calificacion')        
+                    ->select('side.ID_Evento', 'side.Id_proceso', 'side.Id_Asignacion', 'side.Origen_firme', 'slp.Nombre_parametro as Origen', 
+                    'side.Cobertura', 'slps.Nombre_parametro as Coberturas', 'side.Decreto_calificacion', 'slcd.Nombre_decreto')
+                    ->where([['side.ID_Evento',$Id_evento_recali], ['side.Id_Asignacion', $Id_asignacion_recali]])->get();
+                    
+                    // Obtener el último consecutivo de la base de datos
+                    $consecutivoDictamen = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
+                    ->max('Numero_dictamen');
+            
+                    if ($consecutivoDictamen > 0) {
+                        $numero_consecutivo = $consecutivoDictamen + 1;
+                    }else{
+                        $numero_consecutivo = 0000000 + 1;
+                    }
+                    // Formatear el número consecutivo a 7 dígitos
+                    $numero_consecutivo = str_pad($numero_consecutivo, 7, "0", STR_PAD_LEFT); 
                        
-            //print_r($deficiencias);
-            usort($deficiencias, function($a, $b) {
-                $numA = preg_replace('/[^0-9.]+/', '', $a);
-                $numB = preg_replace('/[^0-9.]+/', '', $b);
+                    $array_info_decreto_evento_re = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')        
+                    ->where([
+                        ['ID_Evento', $Id_evento_recali],['Id_Asignacion', $Id_asignacion_recali]
+                    ])
+                    ->get();
             
-                if ($numA > $numB) {
-                    return -1;
-                } else if ($numA < $numB) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            });            
-            //print_r($deficiencias);
-            foreach ($deficiencias as $key => $value) {
-                if (strpos($value, "(si)") !== false) {
-                    $deficiencias[$key] = 23.20;
-                }
-            }
-            //print_r($deficiencias);
-            $indexDoble = null;            
-            foreach ($deficiencias as $index => $value) {
-                if ($value == $agudezaAudtivaDef) {
-                    $indexDoble = $index;
-                    break;
-                }
-            }            
-            if ($indexDoble !== null) {
-                $deficiencias[$indexDoble] *= 2;
-            }        
-            //print_r($deficiencias);
-            while(!empty($deficiencias) && count($deficiencias) > 1) {
-                $a = $deficiencias[0];
-                $b = $deficiencias[1];
-                $resultado = $a + (100 - $a) * $b / 100;
-                array_shift($deficiencias);
-                array_shift($deficiencias);
-                array_unshift($deficiencias, $resultado);
-            }
-            //print_r($deficiencias);
-            foreach ($deficiencias as &$value) {
-                $value = round($value, 2); 
-                               
-                $TotalDeficiencia50 = $value * 50 / 100;
-            }
+                    if (!empty($array_info_decreto_evento_re[0]->Id_Asignacion)) {
             
-        }else{            
-            $deficiencias = 0;
-            $TotalDeficiencia50 =0;
-        }
-
-        $array_dictamen_pericialre =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'side.Tipo_evento')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
-        ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
-        'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
-        'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
-        'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia')
-        ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion',$Id_asignacion_recali]])->get();        
+                        $Historiaclínicacompleta  = "Historia clínica completa";
+                        $Exámenespreocupacionales = "Exámenes preocupacionales";
+                        $Epicrisis = "Epicrisis";
+                        $Exámenesperiódicosocupacionales  = "Exámenes periódicos ocupacionales";
+                        $Exámenesparaclinicos  = "Exámenes paraclinicos";
+                        $ExámenesPostocupacionales  = "Exámenes Post-ocupacionales";
+                        $Conceptosdesaludocupacional   = "Conceptos de salud ocupacional";
+            
+                        $arraytotalRealcionDocumentos = [
+                            'Historia clínica completa',
+                            'Exámenes preocupacionales',
+                            'Epicrisis',
+                            'Exámenes periódicos ocupacionales',
+                            'Exámenes paraclinicos',
+                            'Exámenes Post-ocupacionales',
+                            'Conceptos de salud ocupacional',
+                        ];
+            
+                        foreach ($arraytotalRealcionDocumentos as &$valor) {    
+                            $valor = trim($valor);
+                            $valor = str_replace("-", "", $valor);  
+                            //$valor = strtr($valor, 'áéíóúÁÉÍÓÚ', 'aeiouAEIOU'); 
+                            $valor = preg_replace("/\s+/", "", $valor); 
+                        }
+                        $relacionDocuementos = $array_info_decreto_evento_re[0]->Relacion_documentos;
+                        $separaRelacionDocumentos = explode(", ",$relacionDocuementos);  
+                        
+                        foreach ($separaRelacionDocumentos as &$valor) {    
+                            $valor = trim($valor);
+                            $valor = str_replace("-", "", $valor);  
+                            //$valor = strtr($valor, 'áéíóúÁÉÍÓÚ', 'aeiouAEIOU'); 
+                            $valor = preg_replace("/\s+/", "", $valor);     
+                        }
+                        foreach ($arraytotalRealcionDocumentos as $index => $value) {
+                            if (!in_array($value, $separaRelacionDocumentos)) {
+                                ${$value} = "vacio";
+                            }
+                        }                       
+                    }elseif(!empty($array_info_decreto_evento[0]->Id_Asignacion)){
+                        $Historiaclínicacompleta  = "Historia clínica completa";
+                        $Exámenespreocupacionales = "Exámenes preocupacionales";
+                        $Epicrisis = "Epicrisis";
+                        $Exámenesperiódicosocupacionales  = "Exámenes periódicos ocupacionales";
+                        $Exámenesparaclinicos  = "Exámenes paraclinicos";
+                        $ExámenesPostocupacionales  = "Exámenes Post-ocupacionales";
+                        $Conceptosdesaludocupacional   = "Conceptos de salud ocupacional";
+            
+                        $arraytotalRealcionDocumentos = [
+                            'Historia clínica completa',
+                            'Exámenes preocupacionales',
+                            'Epicrisis',
+                            'Exámenes periódicos ocupacionales',
+                            'Exámenes paraclinicos',
+                            'Exámenes Post-ocupacionales',
+                            'Conceptos de salud ocupacional',
+                        ];
+            
+                        foreach ($arraytotalRealcionDocumentos as &$valor) {    
+                            $valor = trim($valor);
+                            $valor = str_replace("-", "", $valor);  
+                            //$valor = strtr($valor, 'áéíóúÁÉÍÓÚ', 'aeiouAEIOU'); 
+                            $valor = preg_replace("/\s+/", "", $valor); 
+                        }
+                        $relacionDocuementos = $array_info_decreto_evento[0]->Relacion_documentos;
+                        $separaRelacionDocumentos = explode(", ",$relacionDocuementos);  
+                        
+                        foreach ($separaRelacionDocumentos as &$valor) {    
+                            $valor = trim($valor);
+                            $valor = str_replace("-", "", $valor);  
+                            //$valor = strtr($valor, 'áéíóúÁÉÍÓÚ', 'aeiouAEIOU'); 
+                            $valor = preg_replace("/\s+/", "", $valor);     
+                        }
+                        foreach ($arraytotalRealcionDocumentos as $index => $value) {
+                            if (!in_array($value, $separaRelacionDocumentos)) {
+                                ${$value} = "vacio";
+                            }
+                        }
+                    }else{
+                        list(
+                            $Historiaclínicacompleta, 
+                            $Exámenespreocupacionales, 
+                            $Epicrisis, 
+                            $Exámenesperiódicosocupacionales, 
+                            $Exámenesparaclinicos, 
+                            $ExámenesPostocupacionales, 
+                            $Conceptosdesaludocupacional
+                        ) = array_fill(0, 7, 'vacio');
+                    }
+                    $array_datos_relacion_documentos = [
+                        'Historiaclinicacompleta' => $Historiaclínicacompleta, 
+                        'Examenespreocupacionales' => $Exámenespreocupacionales, 
+                        'Epicrisis' => $Epicrisis, 
+                        'Examenesperiodicosocupacionales' => $Exámenesperiódicosocupacionales, 
+                        'Examenesparaclinicos' => $Exámenesparaclinicos, 
+                        'ExamenesPostocupacionales' => $ExámenesPostocupacionales, 
+                        'Conceptosdesaludocupacion' => $Conceptosdesaludocupacional,
+                    ];
+                           
+                    //Traer Motivo de solicitud,Dominancia actual
+                    $motivo_solicitud_actual = cndatos_eventos::on('sigmel_gestiones')
+                    ->select('Id_motivo_solicitud','Nombre_solicitud','Id_dominancia','Nombre_dominancia')
+                    ->where([
+                        ['ID_evento', '=', $Id_evento_recali]
+                    ])
+                    ->get();
+                    
+                    $datos_apoderado_actual = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+                    ->select('Nombre_apoderado','Nro_identificacion_apoderado')
+                    ->where([
+                        ['ID_evento', '=', $Id_evento_recali]
+                    ])
+                    ->get(); 
+                    
+                    $array_datos_examenes_interconsultasre = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+                    ->where([
+                        ['ID_evento',$Id_evento_recali],
+                        ['Id_Asignacion',$Id_asignacion_recali],
+                        ['Estado_Recalificacion', 'Activo']
+                    ])
+                    ->get();
+            
+                    $array_datos_diagnostico_motcalifire =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+                    ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
+                    'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones')
+                    ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion',$Id_asignacion_recali], ['side.Estado_Recalificacion', '=', 'Activo']])->get(); 
+            
+                    $array_datos_deficiencias_alteracionesre =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
+                    ->select('sidae.Id_Deficiencia', 'sidae.ID_evento', 'sidae.Id_Asignacion', 'sidae.Id_proceso', 'sidae.Id_tabla',
+                    'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.CFM1', 'sidae.CFM2', 'sidae.FU', 'sidae.CAT', 'sidae.Clase_Final', 
+                    'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
+                    ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Id_Asignacion',$Id_asignacion_recali], ['sidae.Estado_Recalificacion', '=', 'Activo']])->get(); 
+              
+                    $array_agudeza_Auditivare = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
+                    ->where([
+                        ['ID_evento',$Id_evento_recali],
+                        ['Id_Asignacion',$Id_asignacion_recali],
+                        ['Estado_Recalificacion', 'Activo']
+                    ])
+                    ->get();
         
-        return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'validar_estado_decreto', 'datos_decreto', 'validar_evento_asignacion', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_dictamen_pericial', 'array_dictamen_pericialre'));
-
+                    $hay_agudeza_visualre = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
+                    ->where([['ID_evento_re', $Id_evento_recali], ['Id_Asignacion_re', $Id_asignacion_recali], ['Estado_Recalificacion', '=', 'Activo']])->get();
+    
+                    $array_laboralmente_Activore = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
+                    ->where([
+                        ['ID_evento',$Id_evento_recali],
+                        ['Id_Asignacion',$Id_asignacion_recali],
+                        ['Estado_Recalificacion', 'Activo']
+                    ])
+                    ->get();
+            
+                    $array_rol_ocupacionalre =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_rol_ocupacional_eventos as siroe')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siroe.Poblacion_calificar')
+                    ->select('siroe.Id_Rol_ocupacional', 'siroe.ID_evento', 'siroe.Id_Asignacion', 'siroe.Id_proceso', 'siroe.Poblacion_calificar', 
+                    'slp.Nombre_parametro', 'siroe.Motriz_postura_simetrica', 'siroe.Motriz_actividad_espontanea', 'siroe.Motriz_sujeta_cabeza',
+                    'siroe.Motriz_sentarse_apoyo', 'siroe.Motriz_gira_sobre_mismo', 'siroe.Motriz_sentanser_sin_apoyo', 'siroe.Motriz_pasa_tumbado_sentado',
+                    'siroe.Motriz_pararse_apoyo', 'siroe.Motriz_pasos_apoyo', 'siroe.Motriz_pararse_sin_apoyo', 'siroe.Motriz_anda_solo', 'siroe.Motriz_empujar_pelota_pies',
+                    'siroe.Motriz_andar_obstaculos', 'siroe.Adaptativa_succiona', 'siroe.Adaptativa_fija_mirada', 'siroe.Adaptativa_sigue_trayectoria_objeto',
+                    'siroe.Adaptativa_sostiene_sonajero', 'siroe.Adaptativa_tiende_mano_hacia_objeto', 'siroe.Adaptativa_sostiene_objeto_manos',
+                    'siroe.Adaptativa_abre_cajones', 'siroe.Adaptativa_bebe_solo', 'siroe.Adaptativa_quitar_prenda_vestir', 
+                    'siroe.Adaptativa_reconoce_funcion_espacios_casa', 'siroe.Adaptativa_imita_trazo_lapiz', 'siroe.Adaptativa_abre_puerta',
+                    'siroe.Total_criterios_desarrollo', 'siroe.Juego_estudio_clase', 'siroe.Total_rol_estudio_clase', 'siroe.Adultos_mayores',
+                    'siroe.Total_rol_adultos_ayores', 'siroe.Nombre_usuario', 'siroe.F_registro')
+                    ->where([['siroe.ID_evento',$Id_evento_recali], ['siroe.Id_Asignacion',$Id_asignacion_recali], ['Estado_Recalificacion', 'Activo']])->get();  
+                                         
+                    $array_libros_2_3re = sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
+                    ->where([
+                        ['ID_evento',$Id_evento_recali],
+                        ['Id_Asignacion',$Id_asignacion_recali],
+                        ['Estado_Recalificacion', 'Activo']
+                    ])
+                    ->get();
+            
+                    // if($validar_estado_decreto[0]->Id_Asignacion_decreto == $Id_asignacion_recali){
+                    // }
+                    // elseif (count($validar_estado_decreto) > 0) {
+            
+                    //     if(count($array_datos_RecalificacionPcl) > 0){
+                    //         $Id_servicio_balt = 6;
+                    //     }
+                
+                    //     $array_datos_deficiencicas50 = DB::select('CALL psrbalthazaraudpcldef(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
+                    //     $array_datos_deficiencicas50_1 = DB::select('CALL psrbalthazarvispcldef(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
+                    //     $array_datos_deficiencicas50_2 = DB::select('CALL psrbalthazardefpcl(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
+                    //     $array_datos_deficiencicas50_3 = DB::select('CALL psrbalthazaraudpcl(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
+                    //     $array_datos_deficiencicas50_4 = DB::select('CALL psrbalthazarvispcl(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
+                    //     $array_datos_deficiencicas50_5 = DB::select('CALL psrbalthazaraudvispcl(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
+                    //     $array_datos_deficiencicas50_6 = DB::select('CALL psrbalthazarpcl(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
+                        
+                    // }       
+                    
+                    if(!empty($array_datos_RecalificacionPcl[0]->Id_Asignacion)){
+                        $Id_servicio_balt = $array_datos_RecalificacionPcl[0]->Id_Servicio;
+                    }
+            
+                    $array_datos_deficiencicas50 = DB::select('CALL psrbalthazaraudpcldef(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
+                    $array_datos_deficiencicas50_1 = DB::select('CALL psrbalthazarvispcldef(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
+                    $array_datos_deficiencicas50_2 = DB::select('CALL psrbalthazardefpcl(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
+                    $array_datos_deficiencicas50_3 = DB::select('CALL psrbalthazaraudpcl(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
+                    $array_datos_deficiencicas50_4 = DB::select('CALL psrbalthazarvispcl(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
+                    $array_datos_deficiencicas50_5 = DB::select('CALL psrbalthazaraudvispcl(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
+                    $array_datos_deficiencicas50_6 = DB::select('CALL psrbalthazarpcl(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));    
+                    
+                    
+                    if(!empty($array_datos_deficiencicas50)  && empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
+                        
+                        $array_Deficiencias50 = $array_datos_deficiencicas50[0]->deficiencias;
+                        $deficiencias = explode(",", $array_Deficiencias50);
+                        //print_r($deficiencias);                        
+            
+                        $ultimos_valores = array_slice($deficiencias, -1);
+                        list($agudezaAudtivaDef) = $ultimos_valores;
+                        
+                        foreach ($deficiencias as $index => $value) {
+                            if ($value == $agudezaAudtivaDef) {
+                                $deficiencias[$index] = $agudezaAudtivaDef * 2;
+                            }
+                        }            
+                        //print_r($deficiencias);
+                                              
+                        //print_r($deficiencias);
+                        while(!empty($deficiencias) && count($deficiencias) > 1) {
+                            $a = $deficiencias[0];
+                            $b = $deficiencias[1];
+                            $resultado = $a + (100 - $a) * $b / 100;
+                            array_shift($deficiencias);
+                            array_shift($deficiencias);
+                            array_unshift($deficiencias, $resultado);
+                        }
+                        //print_r($deficiencias);
+                        foreach ($deficiencias as &$value) {
+                            $value = round($value, 2); 
+                                           
+                            $TotalDeficiencia50 = $value * 50 / 100;
+                        }
+                        
+                    }elseif(empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
+                        $array_Deficiencias50 = $array_datos_deficiencicas50_1[0]->deficiencias;
+                        $deficiencias = explode(",", $array_Deficiencias50);
+                        //print_r($deficiencias);            
+                                   
+                        while(!empty($deficiencias) && count($deficiencias) > 1) {
+                            $a = $deficiencias[0];
+                            $b = $deficiencias[1];
+                            $resultado = $a + (100 - $a) * $b / 100;
+                            array_shift($deficiencias);
+                            array_shift($deficiencias);
+                            array_unshift($deficiencias, $resultado);
+                        }
+                        //print_r($deficiencias);
+                        foreach ($deficiencias as &$value) {
+                            $value = round($value, 2); 
+                                           
+                            $TotalDeficiencia50 = $value * 50 / 100;
+                        }
+                        
+                    }elseif(empty($array_datos_deficiencicas50)  && empty($array_datos_deficiencicas50_1) && !empty($array_datos_deficiencicas50_2)){
+                        $array_Deficiencias50 = $array_datos_deficiencicas50_2[0]->deficiencias;
+                        $deficiencias = explode(",", $array_Deficiencias50);
+                        //print_r($deficiencias);    
+                        usort($deficiencias, function($a, $b) {
+                            $numA = preg_replace('/[^0-9.]+/', '', $a);
+                            $numB = preg_replace('/[^0-9.]+/', '', $b);
+                        
+                            if ($numA > $numB) {
+                                return -1;
+                            } else if ($numA < $numB) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        });            
+                        //print_r($deficiencias);
+                        foreach ($deficiencias as $key => $value) {
+                            if (strpos($value, "(si)") !== false) {
+                                $deficiencias[$key] = 23.20;
+                            }
+                        }
+                        //print_r($deficiencias);            
+                        while(!empty($deficiencias) && count($deficiencias) > 1) {
+                            $a = $deficiencias[0];
+                            $b = $deficiencias[1];
+                            $resultado = $a + (100 - $a) * $b / 100;
+                            array_shift($deficiencias);
+                            array_shift($deficiencias);
+                            array_unshift($deficiencias, $resultado);
+                        }
+                        //print_r($deficiencias);
+                        foreach ($deficiencias as &$value) {
+                            $value = round($value, 2); 
+                                           
+                            $TotalDeficiencia50 = $value * 50 / 100;
+                        }
+                        
+                    }elseif(!empty($array_datos_deficiencicas50_3) && empty($array_datos_deficiencicas50_1)) {
+                        $array_Deficiencias50 = $array_datos_deficiencicas50_3[0]->deficiencias;
+                        $deficiencias = explode(",", $array_Deficiencias50);
+                        //print_r($deficiencias);            
+                        $ultimos_valores = array_slice($deficiencias, -1);
+                        list($agudezaAudtivaDef) = $ultimos_valores;
+                        
+                        //print_r($deficiencias);
+                        usort($deficiencias, function($a, $b) {
+                            $numA = preg_replace('/[^0-9.]+/', '', $a);
+                            $numB = preg_replace('/[^0-9.]+/', '', $b);
+                        
+                            if ($numA > $numB) {
+                                return -1;
+                            } else if ($numA < $numB) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        });            
+                        //print_r($deficiencias);
+                        foreach ($deficiencias as $key => $value) {
+                            if (strpos($value, "(si)") !== false) {
+                                $deficiencias[$key] = 23.20;
+                            }
+                        }
+                        //print_r($deficiencias);
+                        $indexDoble = null;            
+                        foreach ($deficiencias as $index => $value) {
+                            if ($value == $agudezaAudtivaDef) {
+                                $indexDoble = $index;
+                                break;
+                            }
+                        }            
+                        if ($indexDoble !== null) {
+                            $deficiencias[$indexDoble] *= 2;
+                        }            
+                        //print_r($deficiencias);
+                        while(!empty($deficiencias) && count($deficiencias) > 1) {
+                            $a = $deficiencias[0];
+                            $b = $deficiencias[1];
+                            $resultado = $a + (100 - $a) * $b / 100;
+                            array_shift($deficiencias);
+                            array_shift($deficiencias);
+                            array_unshift($deficiencias, $resultado);
+                        }
+                        //print_r($deficiencias);
+                        foreach ($deficiencias as &$value) {
+                            $value = round($value, 2); 
+                                           
+                            $TotalDeficiencia50 = $value * 50 / 100;
+                        }
+                        
+                    }elseif(!empty($array_datos_deficiencicas50_4) && empty($array_datos_deficiencicas50)){
+                        $array_Deficiencias50 = $array_datos_deficiencicas50_4[0]->deficiencias;
+                        $deficiencias = explode(",", $array_Deficiencias50);
+                        //print_r($deficiencias);  
+                        usort($deficiencias, function($a, $b) {
+                            $numA = preg_replace('/[^0-9.]+/', '', $a);
+                            $numB = preg_replace('/[^0-9.]+/', '', $b);
+                        
+                            if ($numA > $numB) {
+                                return -1;
+                            } else if ($numA < $numB) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        });            
+                        //print_r($deficiencias);
+                        foreach ($deficiencias as $key => $value) {
+                            if (strpos($value, "(si)") !== false) {
+                                $deficiencias[$key] = 23.20;
+                            }
+                        }                       
+                        //print_r($deficiencias);
+                        while(!empty($deficiencias) && count($deficiencias) > 1) {
+                            $a = $deficiencias[0];
+                            $b = $deficiencias[1];
+                            $resultado = $a + (100 - $a) * $b / 100;
+                            array_shift($deficiencias);
+                            array_shift($deficiencias);
+                            array_unshift($deficiencias, $resultado);
+                        }
+                        //print_r($deficiencias);
+                        foreach ($deficiencias as &$value) {
+                            $value = round($value, 2); 
+                                           
+                            $TotalDeficiencia50 = $value * 50 / 100;
+                        }
+                        
+                        
+                    }elseif(!empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
+                        $array_Deficiencias50 = $array_datos_deficiencicas50_5[0]->deficiencias;
+                        $deficiencias = explode(",", $array_Deficiencias50);
+                        //print_r($deficiencias);            
+                        $ultimos_valores = array_slice($deficiencias, -2);
+                        list($agudezaAudtivaDef, $agudezaVisualDef) = $ultimos_valores;
+                            
+                        $indexDoble = null;            
+                        foreach ($deficiencias as $index => $value) {
+                            if ($value == $agudezaAudtivaDef) {
+                                $indexDoble = $index;
+                                break;
+                            }
+                        }            
+                        if ($indexDoble !== null) {
+                            $deficiencias[$indexDoble] *= 2;
+                        }            
+                        //print_r($deficiencias);
+                        while(!empty($deficiencias) && count($deficiencias) > 1) {
+                            $a = $deficiencias[0];
+                            $b = $deficiencias[1];
+                            $resultado = $a + (100 - $a) * $b / 100;
+                            array_shift($deficiencias);
+                            array_shift($deficiencias);
+                            array_unshift($deficiencias, $resultado);
+                        }
+                        //print_r($deficiencias);
+                        foreach ($deficiencias as &$value) {
+                            $value = round($value, 2); 
+                                           
+                            $TotalDeficiencia50 = $value * 50 / 100;
+                        }
+                        
+                    }elseif(!empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && !empty($array_datos_deficiencicas50_2)) {
+                        
+                        $array_Deficiencias50 = $array_datos_deficiencicas50_6[0]->deficiencias;
+                        $deficiencias = explode(",", $array_Deficiencias50);
+                        //print_r($deficiencias);            
+                        $ultimos_valores = array_slice($deficiencias, -2);
+                        list($agudezaAudtivaDef, $agudezaVisualDef) = $ultimos_valores;
+                                   
+                        //print_r($deficiencias);
+                        usort($deficiencias, function($a, $b) {
+                            $numA = preg_replace('/[^0-9.]+/', '', $a);
+                            $numB = preg_replace('/[^0-9.]+/', '', $b);
+                        
+                            if ($numA > $numB) {
+                                return -1;
+                            } else if ($numA < $numB) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        });            
+                        //print_r($deficiencias);
+                        foreach ($deficiencias as $key => $value) {
+                            if (strpos($value, "(si)") !== false) {
+                                $deficiencias[$key] = 23.20;
+                            }
+                        }
+                        //print_r($deficiencias);
+                        $indexDoble = null;            
+                        foreach ($deficiencias as $index => $value) {
+                            if ($value == $agudezaAudtivaDef) {
+                                $indexDoble = $index;
+                                break;
+                            }
+                        }            
+                        if ($indexDoble !== null) {
+                            $deficiencias[$indexDoble] *= 2;
+                        }        
+                        //print_r($deficiencias);
+                        while(!empty($deficiencias) && count($deficiencias) > 1) {
+                            $a = $deficiencias[0];
+                            $b = $deficiencias[1];
+                            $resultado = $a + (100 - $a) * $b / 100;
+                            array_shift($deficiencias);
+                            array_shift($deficiencias);
+                            array_unshift($deficiencias, $resultado);
+                        }
+                        //print_r($deficiencias);
+                        foreach ($deficiencias as &$value) {
+                            $value = round($value, 2); 
+                                           
+                            $TotalDeficiencia50 = $value * 50 / 100;
+                        }
+                        
+                    }else{            
+                        $deficiencias = 0;
+                        $TotalDeficiencia50 =0;
+                    }
+            
+                    $array_dictamen_pericialre =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'side.Tipo_evento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
+                    ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
+                    'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+                    'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
+                    'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.Estado_decreto')
+                    ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion',$Id_asignacion_recali]])->get();        
+                    
+                    return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'eventoAsigancion_Recalifi', 'eventoAsigancion_Recalifi_estadoDecreto', 'validar_estado_decreto', 'eventoAsigancion_RecalifiPCL', 'datos_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_dictamen_pericial', 'array_dictamen_pericialre'));
+                    
+                }
+            }
+        } elseif($eventoAsigancionMin_Recalifi == $Id_asignacion_recali || empty($eventoAsigancionMin_Recalifi)) {   
+            
+            if (!empty($validar_evento_Recali[0]->Id_Asignacion)) {
+                return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'validar_estado_decreto', 'validar_evento_CalifiTecnica', 'array_datos_idasignacion_decretos', 'validar_evento_Recali'));                
+            } else {
+                if (!empty($validar_evento_CalifiTecnica[0]->Id_servicio)) {
+                    if (count($validar_evento_CalifiTecnica) == 1) {                
+                        // $array_datos_motivo_solicitud = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_pericial_eventos as sipe')
+                        // ->leftJoin('sigmel_gestiones.sigmel_lista_motivo_solicitudes as slms', 'slms.Id_Solicitud', '=', 'sipe.Id_motivo_solicitud')
+                        // ->select('sipe.Id_Pericial', 'sipe.ID_evento', 'sipe.Id_motivo_solicitud', 'slms.Nombre_solicitud', 'sipe.Tipo_vinculacion', 
+                        // 'sipe.Regimen_salud', 'sipe.Id_solicitante', 'sipe.Id_nombre_solicitante', 'sipe.Fuente_informacion', 'sipe.Nombre_usuario', 
+                        // 'sipe.F_registro')
+                        // ->where([['sipe.ID_evento',$Id_evento_recali]])->get(); 
+                
+                        // $validar_estado_decreto = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                        // ->leftJoin('sigmel_gestiones.sigmel_informacion_asignacion_eventos as siae', 'siae.Id_Asignacion', '=', 'side.Id_Asignacion')
+                        // ->select('side.ID_Evento', 'side.Id_Asignacion as Id_Asignacion_decreto', 'siae.Id_Asignacion as Id_Asignacion_asig', 'siae.Id_servicio',
+                        // 'side.Porcentaje_pcl', 'side.Estado_decreto')
+                        // ->where([['side.ID_Evento',$Id_evento_recali], ['siae.Id_servicio', $Id_servicioCalifi]])->get();  
+                        
+                        if (!empty($validar_estado_decreto[0]->ID_Evento)) {
+                            $datos_decreto =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_firme')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Cobertura')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as slcd', 'slcd.Id_Decreto', '=', 'side.Decreto_calificacion')        
+                            ->select('side.ID_Evento', 'side.Id_proceso', 'side.Id_Asignacion', 'side.Origen_firme', 'slp.Nombre_parametro as Origen', 
+                            'side.Cobertura', 'slps.Nombre_parametro as Coberturas', 'side.Decreto_calificacion', 'slcd.Nombre_decreto')
+                            ->where([['side.ID_Evento',$Id_evento_recali], ['side.Id_Asignacion',$validar_estado_decreto[0]->Id_Asignacion_decreto]])->get(); 
+                            
+                            $array_info_decreto_evento = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')        
+                            ->where([
+                                ['ID_Evento', $Id_evento_recali],['Id_Asignacion', $validar_estado_decreto[0]->Id_Asignacion_decreto]
+                            ])
+                            ->get();
+                            
+                            $array_datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+                            ->where([
+                                ['ID_evento',$Id_evento_recali],
+                                ['Id_Asignacion', $validar_estado_decreto[0]->Id_Asignacion_decreto],
+                                ['Estado', 'Activo']
+                            ])
+                            ->get();
+                
+                            $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+                            ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
+                            'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones')
+                            ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion', $validar_estado_decreto[0]->Id_Asignacion_decreto], ['side.Estado', '=', 'Activo']])->get();
+                
+                            $array_datos_deficiencias_alteraciones =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
+                            ->select('sidae.Id_Deficiencia', 'sidae.ID_evento', 'sidae.Id_Asignacion', 'sidae.Id_proceso', 'sidae.Id_tabla',
+                            'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.CFM1', 'sidae.CFM2', 'sidae.FU', 'sidae.CAT', 'sidae.Clase_Final', 
+                            'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
+                            ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Id_Asignacion', $validar_estado_decreto[0]->Id_Asignacion_decreto], ['sidae.Estado', '=', 'Activo']])->get();
+                
+                            $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
+                            ->where([
+                                ['ID_evento',$Id_evento_recali],
+                                ['Id_Asignacion',$validar_estado_decreto[0]->Id_Asignacion_decreto],
+                                ['Estado', 'Activo']
+                            ])
+                            ->get();
+                
+                            $hay_agudeza_visual = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
+                            ->where([['ID_evento_re', $Id_evento_recali], ['Id_Asignacion_re',$validar_estado_decreto[0]->Id_Asignacion_decreto], ['Estado_Recalificacion', '=', 'Activo']])->get();
+                
+                            $array_laboralmente_Activo = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
+                            ->where([
+                                ['ID_evento',$Id_evento_recali],
+                                ['Id_Asignacion',$validar_estado_decreto[0]->Id_Asignacion_decreto],
+                                ['Estado_Recalificacion', 'Activo']
+                            ])
+                            ->get();
+                
+                            $array_rol_ocupacional =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_rol_ocupacional_eventos as siroe')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siroe.Poblacion_calificar')
+                            ->select('siroe.Id_Rol_ocupacional', 'siroe.ID_evento', 'siroe.Id_Asignacion', 'siroe.Id_proceso', 'siroe.Poblacion_calificar', 
+                            'slp.Nombre_parametro', 'siroe.Motriz_postura_simetrica', 'siroe.Motriz_actividad_espontanea', 'siroe.Motriz_sujeta_cabeza',
+                            'siroe.Motriz_sentarse_apoyo', 'siroe.Motriz_gira_sobre_mismo', 'siroe.Motriz_sentanser_sin_apoyo', 'siroe.Motriz_pasa_tumbado_sentado',
+                            'siroe.Motriz_pararse_apoyo', 'siroe.Motriz_pasos_apoyo', 'siroe.Motriz_pararse_sin_apoyo', 'siroe.Motriz_anda_solo', 'siroe.Motriz_empujar_pelota_pies',
+                            'siroe.Motriz_andar_obstaculos', 'siroe.Adaptativa_succiona', 'siroe.Adaptativa_fija_mirada', 'siroe.Adaptativa_sigue_trayectoria_objeto',
+                            'siroe.Adaptativa_sostiene_sonajero', 'siroe.Adaptativa_tiende_mano_hacia_objeto', 'siroe.Adaptativa_sostiene_objeto_manos',
+                            'siroe.Adaptativa_abre_cajones', 'siroe.Adaptativa_bebe_solo', 'siroe.Adaptativa_quitar_prenda_vestir', 
+                            'siroe.Adaptativa_reconoce_funcion_espacios_casa', 'siroe.Adaptativa_imita_trazo_lapiz', 'siroe.Adaptativa_abre_puerta',
+                            'siroe.Total_criterios_desarrollo', 'siroe.Juego_estudio_clase', 'siroe.Total_rol_estudio_clase', 'siroe.Adultos_mayores',
+                            'siroe.Total_rol_adultos_ayores', 'siroe.Nombre_usuario', 'siroe.F_registro')
+                            ->where([['siroe.ID_evento',$Id_evento_recali], ['siroe.Id_Asignacion',$validar_estado_decreto[0]->Id_Asignacion_decreto], ['Estado_Recalificacion', 'Activo']])->get();
+                
+                            $array_libros_2_3 = sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
+                            ->where([
+                                ['ID_evento',$Id_evento_recali],
+                                ['Id_Asignacion',$validar_estado_decreto[0]->Id_Asignacion_decreto],
+                                ['Estado_Recalificacion', 'Activo']
+                            ])
+                            ->get();
+                
+                            $array_dictamen_pericial =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'side.Tipo_evento')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
+                            ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
+                            'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+                            'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
+                            'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia')
+                            ->where([['side.ID_evento',$Id_evento_recali]], ['side.Id_Asignacion',$validar_estado_decreto[0]->Id_Asignacion_decreto])->get();  
+                
+                        } else {
+                            $datos_decreto =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_firme')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Cobertura')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as slcd', 'slcd.Id_Decreto', '=', 'side.Decreto_calificacion')        
+                            ->select('side.ID_Evento', 'side.Id_proceso', 'side.Id_Asignacion', 'side.Origen_firme', 'slp.Nombre_parametro as Origen', 
+                            'side.Cobertura', 'slps.Nombre_parametro as Coberturas', 'side.Decreto_calificacion', 'slcd.Nombre_decreto')
+                            ->where([['side.ID_Evento',$Id_evento_recali]])->get(); 
+                            
+                            $array_info_decreto_evento = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')        
+                            ->where([
+                                ['ID_Evento', $Id_evento_recali]
+                            ])
+                            ->get();   
+                                                  
+                            $array_datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+                            ->where([
+                                ['ID_evento',$Id_evento_recali],
+                                ['Estado', 'Activo']
+                            ])
+                            ->get();
+                
+                            $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+                            ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
+                            'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones')
+                            ->where([['side.ID_evento',$Id_evento_recali], ['side.Estado', '=', 'Activo']])->get();
+                
+                            $array_datos_deficiencias_alteraciones =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
+                            ->select('sidae.Id_Deficiencia', 'sidae.ID_evento', 'sidae.Id_Asignacion', 'sidae.Id_proceso', 'sidae.Id_tabla',
+                            'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.CFM1', 'sidae.CFM2', 'sidae.FU', 'sidae.CAT', 'sidae.Clase_Final', 
+                            'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
+                            ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Estado', '=', 'Activo']])->get();
+                
+                            $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
+                            ->where([
+                                ['ID_evento',$Id_evento_recali],
+                                ['Estado', 'Activo']
+                            ])
+                            ->get();
+                
+                            $hay_agudeza_visual = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
+                            ->where([['ID_evento', $Id_evento_recali]])->get();
+                
+                            $array_laboralmente_Activo = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
+                            ->where([
+                                ['ID_evento',$Id_evento_recali],
+                                ['Estado_Recalificacion', 'Activo']
+                            ])
+                            ->get();
+                            
+                            $array_rol_ocupacional =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_rol_ocupacional_eventos as siroe')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siroe.Poblacion_calificar')
+                            ->select('siroe.Id_Rol_ocupacional', 'siroe.ID_evento', 'siroe.Id_Asignacion', 'siroe.Id_proceso', 'siroe.Poblacion_calificar', 
+                            'slp.Nombre_parametro', 'siroe.Motriz_postura_simetrica', 'siroe.Motriz_actividad_espontanea', 'siroe.Motriz_sujeta_cabeza',
+                            'siroe.Motriz_sentarse_apoyo', 'siroe.Motriz_gira_sobre_mismo', 'siroe.Motriz_sentanser_sin_apoyo', 'siroe.Motriz_pasa_tumbado_sentado',
+                            'siroe.Motriz_pararse_apoyo', 'siroe.Motriz_pasos_apoyo', 'siroe.Motriz_pararse_sin_apoyo', 'siroe.Motriz_anda_solo', 'siroe.Motriz_empujar_pelota_pies',
+                            'siroe.Motriz_andar_obstaculos', 'siroe.Adaptativa_succiona', 'siroe.Adaptativa_fija_mirada', 'siroe.Adaptativa_sigue_trayectoria_objeto',
+                            'siroe.Adaptativa_sostiene_sonajero', 'siroe.Adaptativa_tiende_mano_hacia_objeto', 'siroe.Adaptativa_sostiene_objeto_manos',
+                            'siroe.Adaptativa_abre_cajones', 'siroe.Adaptativa_bebe_solo', 'siroe.Adaptativa_quitar_prenda_vestir', 
+                            'siroe.Adaptativa_reconoce_funcion_espacios_casa', 'siroe.Adaptativa_imita_trazo_lapiz', 'siroe.Adaptativa_abre_puerta',
+                            'siroe.Total_criterios_desarrollo', 'siroe.Juego_estudio_clase', 'siroe.Total_rol_estudio_clase', 'siroe.Adultos_mayores',
+                            'siroe.Total_rol_adultos_ayores', 'siroe.Nombre_usuario', 'siroe.F_registro')
+                            ->where([['siroe.ID_evento',$Id_evento_recali], ['Estado_Recalificacion', 'Activo']])->get();
+                
+                            $array_libros_2_3 = sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
+                            ->where([
+                                ['ID_evento',$Id_evento_recali],
+                                ['Estado_Recalificacion', 'Activo']
+                            ])
+                            ->get();
+                
+                            $array_dictamen_pericial =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'side.Tipo_evento')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
+                            ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
+                            'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+                            'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
+                            'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia')
+                            ->where([['side.ID_evento',$Id_evento_recali]])->get();
+                        
+                        }
+                        
+                        $datos_decretore =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_firme')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Cobertura')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as slcd', 'slcd.Id_Decreto', '=', 'side.Decreto_calificacion')        
+                            ->select('side.ID_Evento', 'side.Id_proceso', 'side.Id_Asignacion', 'side.Origen_firme', 'slp.Nombre_parametro as Origen', 
+                            'side.Cobertura', 'slps.Nombre_parametro as Coberturas', 'side.Decreto_calificacion', 'slcd.Nombre_decreto')
+                            ->where([['side.ID_Evento',$Id_evento_recali], ['side.Id_Asignacion', $Id_asignacion_recali]])->get();
+                
+                        // Obtener el último consecutivo de la base de datos
+                        $consecutivoDictamen = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
+                        ->max('Numero_dictamen');
+                
+                        if ($consecutivoDictamen > 0) {
+                            $numero_consecutivo = $consecutivoDictamen + 1;
+                        }else{
+                            $numero_consecutivo = 0000000 + 1;
+                        }
+                        // Formatear el número consecutivo a 7 dígitos
+                        $numero_consecutivo = str_pad($numero_consecutivo, 7, "0", STR_PAD_LEFT); 
+                           
+                        $array_info_decreto_evento_re = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')        
+                        ->where([
+                            ['ID_Evento', $Id_evento_recali],['Id_Asignacion', $Id_asignacion_recali]
+                        ])
+                        ->get();
+                
+                        if (!empty($array_info_decreto_evento_re[0]->Id_Asignacion)) {
+                
+                            $Historiaclínicacompleta  = "Historia clínica completa";
+                            $Exámenespreocupacionales = "Exámenes preocupacionales";
+                            $Epicrisis = "Epicrisis";
+                            $Exámenesperiódicosocupacionales  = "Exámenes periódicos ocupacionales";
+                            $Exámenesparaclinicos  = "Exámenes paraclinicos";
+                            $ExámenesPostocupacionales  = "Exámenes Post-ocupacionales";
+                            $Conceptosdesaludocupacional   = "Conceptos de salud ocupacional";
+                
+                            $arraytotalRealcionDocumentos = [
+                                'Historia clínica completa',
+                                'Exámenes preocupacionales',
+                                'Epicrisis',
+                                'Exámenes periódicos ocupacionales',
+                                'Exámenes paraclinicos',
+                                'Exámenes Post-ocupacionales',
+                                'Conceptos de salud ocupacional',
+                            ];
+                
+                            foreach ($arraytotalRealcionDocumentos as &$valor) {    
+                                $valor = trim($valor);
+                                $valor = str_replace("-", "", $valor);  
+                                //$valor = strtr($valor, 'áéíóúÁÉÍÓÚ', 'aeiouAEIOU'); 
+                                $valor = preg_replace("/\s+/", "", $valor); 
+                            }
+                            $relacionDocuementos = $array_info_decreto_evento_re[0]->Relacion_documentos;
+                            $separaRelacionDocumentos = explode(", ",$relacionDocuementos);  
+                            
+                            foreach ($separaRelacionDocumentos as &$valor) {    
+                                $valor = trim($valor);
+                                $valor = str_replace("-", "", $valor);  
+                                //$valor = strtr($valor, 'áéíóúÁÉÍÓÚ', 'aeiouAEIOU'); 
+                                $valor = preg_replace("/\s+/", "", $valor);     
+                            }
+                            foreach ($arraytotalRealcionDocumentos as $index => $value) {
+                                if (!in_array($value, $separaRelacionDocumentos)) {
+                                    ${$value} = "vacio";
+                                }
+                            }                       
+                        }elseif(!empty($array_info_decreto_evento[0]->Id_Asignacion)){
+                            $Historiaclínicacompleta  = "Historia clínica completa";
+                            $Exámenespreocupacionales = "Exámenes preocupacionales";
+                            $Epicrisis = "Epicrisis";
+                            $Exámenesperiódicosocupacionales  = "Exámenes periódicos ocupacionales";
+                            $Exámenesparaclinicos  = "Exámenes paraclinicos";
+                            $ExámenesPostocupacionales  = "Exámenes Post-ocupacionales";
+                            $Conceptosdesaludocupacional   = "Conceptos de salud ocupacional";
+                
+                            $arraytotalRealcionDocumentos = [
+                                'Historia clínica completa',
+                                'Exámenes preocupacionales',
+                                'Epicrisis',
+                                'Exámenes periódicos ocupacionales',
+                                'Exámenes paraclinicos',
+                                'Exámenes Post-ocupacionales',
+                                'Conceptos de salud ocupacional',
+                            ];
+                
+                            foreach ($arraytotalRealcionDocumentos as &$valor) {    
+                                $valor = trim($valor);
+                                $valor = str_replace("-", "", $valor);  
+                                //$valor = strtr($valor, 'áéíóúÁÉÍÓÚ', 'aeiouAEIOU'); 
+                                $valor = preg_replace("/\s+/", "", $valor); 
+                            }
+                            $relacionDocuementos = $array_info_decreto_evento[0]->Relacion_documentos;
+                            $separaRelacionDocumentos = explode(", ",$relacionDocuementos);  
+                            
+                            foreach ($separaRelacionDocumentos as &$valor) {    
+                                $valor = trim($valor);
+                                $valor = str_replace("-", "", $valor);  
+                                //$valor = strtr($valor, 'áéíóúÁÉÍÓÚ', 'aeiouAEIOU'); 
+                                $valor = preg_replace("/\s+/", "", $valor);     
+                            }
+                            foreach ($arraytotalRealcionDocumentos as $index => $value) {
+                                if (!in_array($value, $separaRelacionDocumentos)) {
+                                    ${$value} = "vacio";
+                                }
+                            }
+                        }else{
+                            list(
+                                $Historiaclínicacompleta, 
+                                $Exámenespreocupacionales, 
+                                $Epicrisis, 
+                                $Exámenesperiódicosocupacionales, 
+                                $Exámenesparaclinicos, 
+                                $ExámenesPostocupacionales, 
+                                $Conceptosdesaludocupacional
+                            ) = array_fill(0, 7, 'vacio');
+                        }
+                        $array_datos_relacion_documentos = [
+                            'Historiaclinicacompleta' => $Historiaclínicacompleta, 
+                            'Examenespreocupacionales' => $Exámenespreocupacionales, 
+                            'Epicrisis' => $Epicrisis, 
+                            'Examenesperiodicosocupacionales' => $Exámenesperiódicosocupacionales, 
+                            'Examenesparaclinicos' => $Exámenesparaclinicos, 
+                            'ExamenesPostocupacionales' => $ExámenesPostocupacionales, 
+                            'Conceptosdesaludocupacion' => $Conceptosdesaludocupacional,
+                        ];
+                               
+                        //Traer Motivo de solicitud,Dominancia actual
+                        $motivo_solicitud_actual = cndatos_eventos::on('sigmel_gestiones')
+                        ->select('Id_motivo_solicitud','Nombre_solicitud','Id_dominancia','Nombre_dominancia')
+                        ->where([
+                            ['ID_evento', '=', $Id_evento_recali]
+                        ])
+                        ->get();
+                        
+                        $datos_apoderado_actual = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+                        ->select('Nombre_apoderado','Nro_identificacion_apoderado')
+                        ->where([
+                            ['ID_evento', '=', $Id_evento_recali]
+                        ])
+                        ->get(); 
+                        
+                        $array_datos_examenes_interconsultasre = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento',$Id_evento_recali],
+                            ['Id_Asignacion',$Id_asignacion_recali],
+                            ['Estado_Recalificacion', 'Activo']
+                        ])
+                        ->get();
+                
+                        $array_datos_diagnostico_motcalifire =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+                        ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
+                        'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones')
+                        ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion',$Id_asignacion_recali], ['side.Estado_Recalificacion', '=', 'Activo']])->get(); 
+                
+                        $array_datos_deficiencias_alteracionesre =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
+                        ->select('sidae.Id_Deficiencia', 'sidae.ID_evento', 'sidae.Id_Asignacion', 'sidae.Id_proceso', 'sidae.Id_tabla',
+                        'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.CFM1', 'sidae.CFM2', 'sidae.FU', 'sidae.CAT', 'sidae.Clase_Final', 
+                        'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
+                        ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Id_Asignacion',$Id_asignacion_recali], ['sidae.Estado_Recalificacion', '=', 'Activo']])->get(); 
+                  
+                        $array_agudeza_Auditivare = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento',$Id_evento_recali],
+                            ['Id_Asignacion',$Id_asignacion_recali],
+                            ['Estado_Recalificacion', 'Activo']
+                        ])
+                        ->get();
+                       
+                        $hay_agudeza_visualre = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
+                        ->where([['ID_evento_re', $Id_evento_recali], ['Id_Asignacion_re', $Id_asignacion_recali], ['Estado_Recalificacion', '=', 'Activo']])->get();
+                                        
+                        $array_laboralmente_Activore = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento',$Id_evento_recali],
+                            ['Id_Asignacion',$Id_asignacion_recali],
+                            ['Estado_Recalificacion', 'Activo']
+                        ])
+                        ->get();
+                
+                        $array_rol_ocupacionalre =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_rol_ocupacional_eventos as siroe')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siroe.Poblacion_calificar')
+                        ->select('siroe.Id_Rol_ocupacional', 'siroe.ID_evento', 'siroe.Id_Asignacion', 'siroe.Id_proceso', 'siroe.Poblacion_calificar', 
+                        'slp.Nombre_parametro', 'siroe.Motriz_postura_simetrica', 'siroe.Motriz_actividad_espontanea', 'siroe.Motriz_sujeta_cabeza',
+                        'siroe.Motriz_sentarse_apoyo', 'siroe.Motriz_gira_sobre_mismo', 'siroe.Motriz_sentanser_sin_apoyo', 'siroe.Motriz_pasa_tumbado_sentado',
+                        'siroe.Motriz_pararse_apoyo', 'siroe.Motriz_pasos_apoyo', 'siroe.Motriz_pararse_sin_apoyo', 'siroe.Motriz_anda_solo', 'siroe.Motriz_empujar_pelota_pies',
+                        'siroe.Motriz_andar_obstaculos', 'siroe.Adaptativa_succiona', 'siroe.Adaptativa_fija_mirada', 'siroe.Adaptativa_sigue_trayectoria_objeto',
+                        'siroe.Adaptativa_sostiene_sonajero', 'siroe.Adaptativa_tiende_mano_hacia_objeto', 'siroe.Adaptativa_sostiene_objeto_manos',
+                        'siroe.Adaptativa_abre_cajones', 'siroe.Adaptativa_bebe_solo', 'siroe.Adaptativa_quitar_prenda_vestir', 
+                        'siroe.Adaptativa_reconoce_funcion_espacios_casa', 'siroe.Adaptativa_imita_trazo_lapiz', 'siroe.Adaptativa_abre_puerta',
+                        'siroe.Total_criterios_desarrollo', 'siroe.Juego_estudio_clase', 'siroe.Total_rol_estudio_clase', 'siroe.Adultos_mayores',
+                        'siroe.Total_rol_adultos_ayores', 'siroe.Nombre_usuario', 'siroe.F_registro')
+                        ->where([['siroe.ID_evento',$Id_evento_recali], ['siroe.Id_Asignacion',$Id_asignacion_recali], ['Estado_Recalificacion', 'Activo']])->get();  
+                
+                        $array_libros_2_3re = sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento',$Id_evento_recali],
+                            ['Id_Asignacion',$Id_asignacion_recali],
+                            ['Estado_Recalificacion', 'Activo']
+                        ])
+                        ->get();
+                
+                        // if($validar_estado_decreto[0]->Id_Asignacion_decreto == $Id_asignacion_recali){
+                        // }
+                        // elseif (count($validar_estado_decreto) > 0) {
+                
+                        //     if(count($array_datos_RecalificacionPcl) > 0){
+                        //         $Id_servicio_balt = 6;
+                        //     }
+                    
+                        //     $array_datos_deficiencicas50 = DB::select('CALL psrbalthazaraudpcldef(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
+                        //     $array_datos_deficiencicas50_1 = DB::select('CALL psrbalthazarvispcldef(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
+                        //     $array_datos_deficiencicas50_2 = DB::select('CALL psrbalthazardefpcl(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
+                        //     $array_datos_deficiencicas50_3 = DB::select('CALL psrbalthazaraudpcl(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
+                        //     $array_datos_deficiencicas50_4 = DB::select('CALL psrbalthazarvispcl(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
+                        //     $array_datos_deficiencicas50_5 = DB::select('CALL psrbalthazaraudvispcl(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
+                        //     $array_datos_deficiencicas50_6 = DB::select('CALL psrbalthazarpcl(?,?,?)', array($Id_evento_recali,$validar_estado_decreto[0]->Id_Asignacion_decreto,$Id_servicio_balt));
+                            
+                        // }       
+                        
+                        if(!empty($array_datos_RecalificacionPcl[0]->Id_Asignacion)){
+                            $Id_servicio_balt = $array_datos_RecalificacionPcl[0]->Id_Servicio;
+                        }                    
+    
+                        $array_datos_deficiencicas50 = DB::select('CALL psrbalthazaraudpcldef(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
+                        $array_datos_deficiencicas50_1 = DB::select('CALL psrbalthazarvispcldef(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
+                        $array_datos_deficiencicas50_2 = DB::select('CALL psrbalthazardefpcl(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
+                        $array_datos_deficiencicas50_3 = DB::select('CALL psrbalthazaraudpcl(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
+                        $array_datos_deficiencicas50_4 = DB::select('CALL psrbalthazarvispcl(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
+                        $array_datos_deficiencicas50_5 = DB::select('CALL psrbalthazaraudvispcl(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));
+                        $array_datos_deficiencicas50_6 = DB::select('CALL psrbalthazarpcl(?,?,?)', array($Id_evento_recali,$Id_asignacion_recali,$Id_servicio_balt));    
+                        
+                        
+                        if(!empty($array_datos_deficiencicas50)  && empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
+                            
+                            $array_Deficiencias50 = $array_datos_deficiencicas50[0]->deficiencias;
+                            $deficiencias = explode(",", $array_Deficiencias50);
+                            //print_r($deficiencias);                        
+                
+                            $ultimos_valores = array_slice($deficiencias, -1);
+                            list($agudezaAudtivaDef) = $ultimos_valores;
+                            
+                            foreach ($deficiencias as $index => $value) {
+                                if ($value == $agudezaAudtivaDef) {
+                                    $deficiencias[$index] = $agudezaAudtivaDef * 2;
+                                }
+                            }            
+                            //print_r($deficiencias);
+                                                  
+                            //print_r($deficiencias);
+                            while(!empty($deficiencias) && count($deficiencias) > 1) {
+                                $a = $deficiencias[0];
+                                $b = $deficiencias[1];
+                                $resultado = $a + (100 - $a) * $b / 100;
+                                array_shift($deficiencias);
+                                array_shift($deficiencias);
+                                array_unshift($deficiencias, $resultado);
+                            }
+                            //print_r($deficiencias);
+                            foreach ($deficiencias as &$value) {
+                                $value = round($value, 2); 
+                                               
+                                $TotalDeficiencia50 = $value * 50 / 100;
+                            }
+                            
+                        }elseif(empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
+                            $array_Deficiencias50 = $array_datos_deficiencicas50_1[0]->deficiencias;
+                            $deficiencias = explode(",", $array_Deficiencias50);
+                            //print_r($deficiencias);            
+                                       
+                            while(!empty($deficiencias) && count($deficiencias) > 1) {
+                                $a = $deficiencias[0];
+                                $b = $deficiencias[1];
+                                $resultado = $a + (100 - $a) * $b / 100;
+                                array_shift($deficiencias);
+                                array_shift($deficiencias);
+                                array_unshift($deficiencias, $resultado);
+                            }
+                            //print_r($deficiencias);
+                            foreach ($deficiencias as &$value) {
+                                $value = round($value, 2); 
+                                               
+                                $TotalDeficiencia50 = $value * 50 / 100;
+                            }
+                            
+                        }elseif(empty($array_datos_deficiencicas50)  && empty($array_datos_deficiencicas50_1) && !empty($array_datos_deficiencicas50_2)){
+                            $array_Deficiencias50 = $array_datos_deficiencicas50_2[0]->deficiencias;
+                            $deficiencias = explode(",", $array_Deficiencias50);
+                            //print_r($deficiencias);    
+                            usort($deficiencias, function($a, $b) {
+                                $numA = preg_replace('/[^0-9.]+/', '', $a);
+                                $numB = preg_replace('/[^0-9.]+/', '', $b);
+                            
+                                if ($numA > $numB) {
+                                    return -1;
+                                } else if ($numA < $numB) {
+                                    return 1;
+                                } else {
+                                    return 0;
+                                }
+                            });            
+                            //print_r($deficiencias);
+                            foreach ($deficiencias as $key => $value) {
+                                if (strpos($value, "(si)") !== false) {
+                                    $deficiencias[$key] = 23.20;
+                                }
+                            }
+                            //print_r($deficiencias);            
+                            while(!empty($deficiencias) && count($deficiencias) > 1) {
+                                $a = $deficiencias[0];
+                                $b = $deficiencias[1];
+                                $resultado = $a + (100 - $a) * $b / 100;
+                                array_shift($deficiencias);
+                                array_shift($deficiencias);
+                                array_unshift($deficiencias, $resultado);
+                            }
+                            //print_r($deficiencias);
+                            foreach ($deficiencias as &$value) {
+                                $value = round($value, 2); 
+                                               
+                                $TotalDeficiencia50 = $value * 50 / 100;
+                            }
+                            
+                        }elseif(!empty($array_datos_deficiencicas50_3) && empty($array_datos_deficiencicas50_1)) {
+                            $array_Deficiencias50 = $array_datos_deficiencicas50_3[0]->deficiencias;
+                            $deficiencias = explode(",", $array_Deficiencias50);
+                            //print_r($deficiencias);            
+                            $ultimos_valores = array_slice($deficiencias, -1);
+                            list($agudezaAudtivaDef) = $ultimos_valores;
+                            
+                            //print_r($deficiencias);
+                            usort($deficiencias, function($a, $b) {
+                                $numA = preg_replace('/[^0-9.]+/', '', $a);
+                                $numB = preg_replace('/[^0-9.]+/', '', $b);
+                            
+                                if ($numA > $numB) {
+                                    return -1;
+                                } else if ($numA < $numB) {
+                                    return 1;
+                                } else {
+                                    return 0;
+                                }
+                            });            
+                            //print_r($deficiencias);
+                            foreach ($deficiencias as $key => $value) {
+                                if (strpos($value, "(si)") !== false) {
+                                    $deficiencias[$key] = 23.20;
+                                }
+                            }
+                            //print_r($deficiencias);
+                            $indexDoble = null;            
+                            foreach ($deficiencias as $index => $value) {
+                                if ($value == $agudezaAudtivaDef) {
+                                    $indexDoble = $index;
+                                    break;
+                                }
+                            }            
+                            if ($indexDoble !== null) {
+                                $deficiencias[$indexDoble] *= 2;
+                            }            
+                            //print_r($deficiencias);
+                            while(!empty($deficiencias) && count($deficiencias) > 1) {
+                                $a = $deficiencias[0];
+                                $b = $deficiencias[1];
+                                $resultado = $a + (100 - $a) * $b / 100;
+                                array_shift($deficiencias);
+                                array_shift($deficiencias);
+                                array_unshift($deficiencias, $resultado);
+                            }
+                            //print_r($deficiencias);
+                            foreach ($deficiencias as &$value) {
+                                $value = round($value, 2); 
+                                               
+                                $TotalDeficiencia50 = $value * 50 / 100;
+                            }
+                            
+                        }elseif(!empty($array_datos_deficiencicas50_4) && empty($array_datos_deficiencicas50)){
+                            $array_Deficiencias50 = $array_datos_deficiencicas50_4[0]->deficiencias;
+                            $deficiencias = explode(",", $array_Deficiencias50);
+                            //print_r($deficiencias);  
+                            usort($deficiencias, function($a, $b) {
+                                $numA = preg_replace('/[^0-9.]+/', '', $a);
+                                $numB = preg_replace('/[^0-9.]+/', '', $b);
+                            
+                                if ($numA > $numB) {
+                                    return -1;
+                                } else if ($numA < $numB) {
+                                    return 1;
+                                } else {
+                                    return 0;
+                                }
+                            });            
+                            //print_r($deficiencias);
+                            foreach ($deficiencias as $key => $value) {
+                                if (strpos($value, "(si)") !== false) {
+                                    $deficiencias[$key] = 23.20;
+                                }
+                            }                       
+                            //print_r($deficiencias);
+                            while(!empty($deficiencias) && count($deficiencias) > 1) {
+                                $a = $deficiencias[0];
+                                $b = $deficiencias[1];
+                                $resultado = $a + (100 - $a) * $b / 100;
+                                array_shift($deficiencias);
+                                array_shift($deficiencias);
+                                array_unshift($deficiencias, $resultado);
+                            }
+                            //print_r($deficiencias);
+                            foreach ($deficiencias as &$value) {
+                                $value = round($value, 2); 
+                                               
+                                $TotalDeficiencia50 = $value * 50 / 100;
+                            }
+                            
+                            
+                        }elseif(!empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
+                            $array_Deficiencias50 = $array_datos_deficiencicas50_5[0]->deficiencias;
+                            $deficiencias = explode(",", $array_Deficiencias50);
+                            //print_r($deficiencias);            
+                            $ultimos_valores = array_slice($deficiencias, -2);
+                            list($agudezaAudtivaDef, $agudezaVisualDef) = $ultimos_valores;
+                                
+                            $indexDoble = null;            
+                            foreach ($deficiencias as $index => $value) {
+                                if ($value == $agudezaAudtivaDef) {
+                                    $indexDoble = $index;
+                                    break;
+                                }
+                            }            
+                            if ($indexDoble !== null) {
+                                $deficiencias[$indexDoble] *= 2;
+                            }            
+                            //print_r($deficiencias);
+                            while(!empty($deficiencias) && count($deficiencias) > 1) {
+                                $a = $deficiencias[0];
+                                $b = $deficiencias[1];
+                                $resultado = $a + (100 - $a) * $b / 100;
+                                array_shift($deficiencias);
+                                array_shift($deficiencias);
+                                array_unshift($deficiencias, $resultado);
+                            }
+                            //print_r($deficiencias);
+                            foreach ($deficiencias as &$value) {
+                                $value = round($value, 2); 
+                                               
+                                $TotalDeficiencia50 = $value * 50 / 100;
+                            }
+                            
+                        }elseif(!empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && !empty($array_datos_deficiencicas50_2)) {
+                            
+                            $array_Deficiencias50 = $array_datos_deficiencicas50_6[0]->deficiencias;
+                            $deficiencias = explode(",", $array_Deficiencias50);
+                            //print_r($deficiencias);            
+                            $ultimos_valores = array_slice($deficiencias, -2);
+                            list($agudezaAudtivaDef, $agudezaVisualDef) = $ultimos_valores;
+                                       
+                            //print_r($deficiencias);
+                            usort($deficiencias, function($a, $b) {
+                                $numA = preg_replace('/[^0-9.]+/', '', $a);
+                                $numB = preg_replace('/[^0-9.]+/', '', $b);
+                            
+                                if ($numA > $numB) {
+                                    return -1;
+                                } else if ($numA < $numB) {
+                                    return 1;
+                                } else {
+                                    return 0;
+                                }
+                            });            
+                            //print_r($deficiencias);
+                            foreach ($deficiencias as $key => $value) {
+                                if (strpos($value, "(si)") !== false) {
+                                    $deficiencias[$key] = 23.20;
+                                }
+                            }
+                            //print_r($deficiencias);
+                            $indexDoble = null;            
+                            foreach ($deficiencias as $index => $value) {
+                                if ($value == $agudezaAudtivaDef) {
+                                    $indexDoble = $index;
+                                    break;
+                                }
+                            }            
+                            if ($indexDoble !== null) {
+                                $deficiencias[$indexDoble] *= 2;
+                            }        
+                            //print_r($deficiencias);
+                            while(!empty($deficiencias) && count($deficiencias) > 1) {
+                                $a = $deficiencias[0];
+                                $b = $deficiencias[1];
+                                $resultado = $a + (100 - $a) * $b / 100;
+                                array_shift($deficiencias);
+                                array_shift($deficiencias);
+                                array_unshift($deficiencias, $resultado);
+                            }
+                            //print_r($deficiencias);
+                            foreach ($deficiencias as &$value) {
+                                $value = round($value, 2); 
+                                               
+                                $TotalDeficiencia50 = $value * 50 / 100;
+                            }
+                            
+                        }else{            
+                            $deficiencias = 0;
+                            $TotalDeficiencia50 =0;
+                        }
+                
+                        $array_dictamen_pericialre =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'side.Tipo_evento')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
+                        ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
+                        'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+                        'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
+                        'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.Estado_decreto')
+                        ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion',$Id_asignacion_recali]])->get();        
+                        
+                        return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'validar_estado_decreto', 'datos_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_dictamen_pericial', 'array_dictamen_pericialre'));
+    
+                    }
+                }                
+            }
+        }
     }
 
     public function cargueListadoSelectoresRecalificacionPcl(Request $request){
@@ -954,6 +1851,10 @@ class RecalificacionPCLController extends Controller
         $valorDataAuditivo = $request->valorDataAuditivo;
         $valorDataVisual = $request->valorDataVisual;
         $DataDeficiencias= $request->ValorDataDeficiencias;
+        $ValorDataExamenesInterconsultas = $request->ValorDataExamenesInterconsultas;
+        $ValorDataDiagnosticos = $request->ValorDataDiagnosticos;
+        $ValorDataDeficienciasDecretoCero = $request->ValorDataDeficienciasDecretoCero;
+        $ValorDataDeficienciasDecretotres = $request->ValorDataDeficienciasDecretotres;
         
         if ($origen_firme == 49 && $origen_cobertura == 51 || $origen_firme == 48 && $origen_cobertura == 51 || $origen_firme == 49 && $origen_cobertura == 50) {
             $banderaGuardarNoDecreto = $request->banderaGuardarNoDecreto;
@@ -966,7 +1867,8 @@ class RecalificacionPCLController extends Controller
                         'Id_Asignacion' => $id_Asignacion_decreto,
                         'Origen_firme' => $origen_firme,
                         'Cobertura' => $origen_cobertura,
-                        'Decreto_calificacion' => $decreto_califi,                    
+                        'Decreto_calificacion' => $decreto_califi, 
+                        'Estado_decreto' => 'Abierto',
                         'Nombre_usuario' => $usuario,
                         'F_registro' => $date,
                 ];
@@ -1037,6 +1939,7 @@ class RecalificacionPCLController extends Controller
                     'Relacion_documentos' => $total_relacion_documentos,
                     'Otros_relacion_doc' => $descripcion_otros,
                     'Descripcion_enfermedad_actual' => $descripcion_enfermedad,
+                    'Estado_decreto' => 'Abierto',
                     'Nombre_usuario' => $usuario,
                     'F_registro' => $date,
                 ];
@@ -1051,8 +1954,62 @@ class RecalificacionPCLController extends Controller
                 ->where([
                     ['ID_evento', $id_Evento_decreto]
                 ])->update($dato_info_pericial_eventos); 
-                // Deficiencias del sistema
 
+                // Examenes Interconsultas
+                if(!empty($ValorDataExamenesInterconsultas)){
+                    $registrosDataExamenesInteconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+                    ->select('ID_evento', 'Id_Asignacion', 'Id_proceso', 'F_examen_interconsulta', 'Nombre_examen_interconsulta', 'Descripcion_resultado', 
+                    'Estado', 'Estado_Recalificacion')
+                    ->whereIn('Id_Examenes_interconsultas', $ValorDataExamenesInterconsultas)->get();             
+                    if (!empty($registrosDataExamenesInteconsultas[0]->ID_evento)) {
+                        
+                        // sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+                        // ->whereIn('Id_Examenes_interconsultas', $ValorDataExamenesInterconsultas)
+                        // ->update(['Estado_Recalificacion' => 'Inactivo']);                
+                        
+                        sleep(3);
+                        
+                        foreach ($registrosDataExamenesInteconsultas as $registro) { 
+                            $registro->Id_Asignacion = $id_Asignacion_decreto;
+                            $registro->Estado = 'Inactivo';
+                            $registro->Estado_Recalificacion = 'Activo';
+                            $registro->Nombre_usuario = $usuario;
+                            $registro->F_registro = $date;
+                            sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+                            ->insert($registro->toArray());
+                        }
+                    } 
+                }
+
+                // Diagnosticos CIE10
+
+                if(!empty($ValorDataDiagnosticos)){
+                    $registrosDataDiagnosticos = sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
+                    ->select('ID_evento', 'Id_Asignacion', 'Id_proceso', 'CIE10', 'Nombre_CIE10', 'Origen_CIE10', 'Deficiencia_motivo_califi_condiciones',
+                    'Estado', 'Estado_Recalificacion')
+                    ->whereIn('Id_Diagnosticos_motcali', $ValorDataDiagnosticos)->get();             
+                    if (!empty($registrosDataDiagnosticos[0]->ID_evento)) {
+                        
+                        // sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
+                        // ->whereIn('Id_Diagnosticos_motcali', $ValorDataDiagnosticos)
+                        // ->update(['Estado_Recalificacion' => 'Inactivo']);                
+                        
+                        sleep(3);
+                        
+                        foreach ($registrosDataDiagnosticos as $registro) { 
+                            $registro->Id_Asignacion = $id_Asignacion_decreto;
+                            $registro->Estado = 'Inactivo';
+                            $registro->Estado_Recalificacion = 'Activo';
+                            $registro->Nombre_usuario = $usuario;
+                            $registro->F_registro = $date;
+                            sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
+                            ->insert($registro->toArray());
+                        }
+                    } 
+                }
+
+                // Deficiencias del sistema
+                //print_r($DataDeficiencias);
                 if (!empty($DataDeficiencias)) {
                     $registrosDataDeficiencias = sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
                     ->select('ID_evento', 'Id_Asignacion', 'Id_proceso', 'Id_tabla', 'FP', 'CFM1', 'CFM2', 'FU', 'CAT', 
@@ -1060,10 +2017,12 @@ class RecalificacionPCLController extends Controller
                     ->whereIn('Id_Deficiencia', $DataDeficiencias)->get();             
                     if (!empty($registrosDataDeficiencias[0]->ID_evento)) {
                         
-                        sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
-                        ->whereIn('Id_Deficiencia', $DataDeficiencias)
-                        ->update(['Estado_Recalificacion' => 'Inactivo']);                
-        
+                        // sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
+                        // ->whereIn('Id_Deficiencia', $DataDeficiencias)
+                        // ->update(['Estado_Recalificacion' => 'Inactivo']);                
+                        
+                        sleep(3);
+                        
                         foreach ($registrosDataDeficiencias as $registro) { 
                             $registro->Id_Asignacion = $id_Asignacion_decreto;
                             $registro->Estado = 'Inactivo';
@@ -1076,15 +2035,67 @@ class RecalificacionPCLController extends Controller
                     } 
                 } 
 
+                // Deficiencias Decreto Cero
+                if (!empty($ValorDataDeficienciasDecretoCero)) {
+                    $registrosDataDeficienciasDecretoCero = sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
+                    ->select('ID_evento', 'Id_Asignacion', 'Id_proceso', 'Id_tabla', 'FP', 'CFM1', 'CFM2', 'FU', 'CAT', 
+                    'Clase_Final', 'Dx_Principal', 'MSD', 'Tabla1999', 'Titulo_tabla1999', 'Deficiencia', 'Estado', 'Estado_Recalificacion')
+                    ->whereIn('Id_Deficiencia', $ValorDataDeficienciasDecretoCero)->get();             
+                    if (!empty($registrosDataDeficienciasDecretoCero[0]->ID_evento)) {
+                        
+                        // sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
+                        // ->whereIn('Id_Deficiencia', $ValorDataDeficienciasDecretoCero)
+                        // ->update(['Estado_Recalificacion' => 'Inactivo']);                
+                        
+                        sleep(3);
+                        
+                        foreach ($registrosDataDeficienciasDecretoCero as $registro) { 
+                            $registro->Id_Asignacion = $id_Asignacion_decreto;
+                            $registro->Estado = 'Inactivo';
+                            $registro->Estado_Recalificacion = 'Activo';
+                            $registro->Nombre_usuario = $usuario;
+                            $registro->F_registro = $date;
+                            sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
+                            ->insert($registro->toArray());
+                        }
+                    } 
+                }
+
+                // Deficiencias Decreto 1999
+                if(!empty($ValorDataDeficienciasDecretotres)){
+                    $registrosDataDeficienciasDecretotres = sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
+                    ->select('ID_evento', 'Id_Asignacion', 'Id_proceso', 'Id_tabla', 'FP', 'CFM1', 'CFM2', 'FU', 'CAT', 
+                    'Clase_Final', 'Dx_Principal', 'MSD', 'Tabla1999', 'Titulo_tabla1999', 'Deficiencia', 'Estado', 'Estado_Recalificacion')
+                    ->whereIn('Id_Deficiencia', $ValorDataDeficienciasDecretotres)->get();             
+                    if (!empty($registrosDataDeficienciasDecretotres[0]->ID_evento)) {
+                        
+                        // sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
+                        // ->whereIn('Id_Deficiencia', $ValorDataDeficienciasDecretotres)
+                        // ->update(['Estado_Recalificacion' => 'Inactivo']);                
+                        
+                        sleep(3);
+                        
+                        foreach ($registrosDataDeficienciasDecretotres as $registro) { 
+                            $registro->Id_Asignacion = $id_Asignacion_decreto;
+                            $registro->Estado = 'Inactivo';
+                            $registro->Estado_Recalificacion = 'Activo';
+                            $registro->Nombre_usuario = $usuario;
+                            $registro->F_registro = $date;
+                            sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
+                            ->insert($registro->toArray());
+                        }
+                    }
+                }
+
                 //Agudeza Auditiva Recalificacion
                 sleep(3);
                 if (!empty($valorDataAuditivo)) {
-                    $array_datos_EstadoReca_auditivo = [
-                        'Estado_Recalificacion' => 'Inactivo', 
-                    ];
-                    sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
-                    ->where([['ID_evento',$id_Evento_decreto ], ['Id_Agudeza_auditiva',$valorDataAuditivo]])
-                    ->update($array_datos_EstadoReca_auditivo);
+                    // $array_datos_EstadoReca_auditivo = [
+                    //     'Estado_Recalificacion' => 'Inactivo', 
+                    // ];
+                    // sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
+                    // ->where([['ID_evento',$id_Evento_decreto ], ['Id_Agudeza_auditiva',$valorDataAuditivo]])
+                    // ->update($array_datos_EstadoReca_auditivo);
     
                     $array_datos_agudeza_auditiva_calif = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
                     ->where([['ID_evento',$id_Evento_decreto ], ['Id_Agudeza_auditiva', $valorDataAuditivo]])->get();
@@ -1131,193 +2142,267 @@ class RecalificacionPCLController extends Controller
                         
                     }
                 }
-
                 
                 //Agudeza Visual Recalificacion
-                if (!empty($valorDataVisual)) {
-                    sleep(3);
-                    $array_datos_agudeza_visual_calif = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
-                    ->where([['ID_evento',$id_Evento_decreto ]])->get();
-    
-                    $array_datos_agudeza_visualre_calif = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
-                    ->where([['ID_evento_re',$id_Evento_decreto ], ['Id_agudeza_re',$valorDataVisual]])->get();
-    
-                    if(!empty($array_datos_agudeza_visual_calif[0]->ID_evento) && empty($array_datos_agudeza_visualre_calif[0]->ID_evento_re)){
-    
-                        
-                        $Id_agudeza_vis = $array_datos_agudeza_visual_calif[0]->Id_agudeza;
-                        $ID_evento_re = $array_datos_agudeza_visual_calif[0]->ID_evento;
-                        $Id_Asignacion_re = $array_datos_agudeza_visual_calif[0]->Id_Asignacion;
-                        $Id_proceso_re = $array_datos_agudeza_visual_calif[0]->Id_proceso;
-                        $Ceguera_Total_re = $array_datos_agudeza_visual_calif[0]->Ceguera_Total;
-                        $Agudeza_Ojo_Izq_re = $array_datos_agudeza_visual_calif[0]->Agudeza_Ojo_Izq;
-                        $Agudeza_Ojo_Der_re = $array_datos_agudeza_visual_calif[0]->Agudeza_Ojo_Der;
-                        $Agudeza_Ambos_Ojos_re = $array_datos_agudeza_visual_calif[0]->Agudeza_Ambos_Ojos;
-                        $PAVF_re = $array_datos_agudeza_visual_calif[0]->PAVF;
-                        $DAV_re = $array_datos_agudeza_visual_calif[0]->DAV;
-                        $Campo_Visual_Ojo_Izq_re = $array_datos_agudeza_visual_calif[0]->Campo_Visual_Ojo_Izq;
-                        $Campo_Visual_Ojo_Der_re = $array_datos_agudeza_visual_calif[0]->Campo_Visual_Ojo_Der;
-                        $Campo_Visual_Ambos_Ojos_re = $array_datos_agudeza_visual_calif[0]->Campo_Visual_Ambos_Ojos;
-                        $CVF_re = $array_datos_agudeza_visual_calif[0]->CVF;
-                        $DCV_re = $array_datos_agudeza_visual_calif[0]->DCV;
-                        $DSV_re = $array_datos_agudeza_visual_calif[0]->DSV;
-                        $Dx_Principal_re = $array_datos_agudeza_visual_calif[0]->Dx_Principal;
-                        $Deficiencia_re = $array_datos_agudeza_visual_calif[0]->Deficiencia;
-                        $Nombre_usuario = $array_datos_agudeza_visual_calif[0]->Nombre_usuario;
-                        $F_registro = $array_datos_agudeza_visual_calif[0]->F_registro;
-    
-                        $array_datos_agudeza_visual_Reca = [
-                            'ID_evento_re' => $ID_evento_re,
-                            'Id_Asignacion_re' => $id_Asignacion_decreto,
-                            'Id_proceso_re' => $Id_proceso_re,
-                            'Ceguera_Total_re' => $Ceguera_Total_re,
-                            'Agudeza_Ojo_Izq_re' => $Agudeza_Ojo_Izq_re,
-                            'Agudeza_Ojo_Der_re' => $Agudeza_Ojo_Der_re,
-                            'Agudeza_Ambos_Ojos_re' => $Agudeza_Ambos_Ojos_re,
-                            'PAVF_re' => $PAVF_re,
-                            'DAV_re' => $DAV_re,
-                            'Campo_Visual_Ojo_Izq_re' => $Campo_Visual_Ojo_Izq_re,
-                            'Campo_Visual_Ojo_Der_re' => $Campo_Visual_Ojo_Der_re,
-                            'Campo_Visual_Ambos_Ojos_re' => $Campo_Visual_Ambos_Ojos_re,
-                            'CVF_re' => $CVF_re,
-                            'DCV_re' => $DCV_re,
-                            'DSV_re' => $DSV_re,
-                            'Dx_Principal_re' => $Dx_Principal_re,
-                            'Deficiencia_re' => $Deficiencia_re,
-                            'Nombre_usuario' => $Nombre_usuario,
-                            'F_registro' => $F_registro,
-                        ];
-    
-                        sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')->insert($array_datos_agudeza_visual_Reca);
+
+                if (!empty($decreto_califi) && $decreto_califi == 1) {
+
+                    if (!empty($valorDataVisual)) {
                         sleep(3);
-    
-                        $array_datos_ojo_derecho = sigmel_info_campimetria_ojo_der_eventos::on('sigmel_gestiones')
-                        ->select('Id_agudeza', 'InfoFila1', 'InfoFila2', 'InfoFila3', 'InfoFila4', 'InfoFila5',
-                        'InfoFila6', 'InfoFila7', 'InfoFila8', 'InfoFila9', 'InfoFila10', 'Nombre_usuario',
-                        'F_registro')->where([['Id_agudeza',$Id_agudeza_vis]])->get();
-    
-                        foreach ($array_datos_ojo_derecho as $registro) {                            
+                        $array_datos_agudeza_visual_calif = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
+                        ->where([['ID_evento',$id_Evento_decreto ], ['Id_agudeza',$valorDataVisual]])->get();
+        
+                        $array_datos_agudeza_visualre_calif = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
+                        ->where([['ID_evento_re',$id_Evento_decreto ], ['Id_agudeza_re',$valorDataVisual]])->get();
+
+                        /* echo $valorDataVisual;
+                        echo '<hr>';
+                        echo '<pre>';
+                            print_r($array_datos_agudeza_visualre_calif);
+                        echo '</pre>'; */
+                        
+                        if(!empty($array_datos_agudeza_visualre_calif[0]->Id_agudeza_re)){
+            
+                            sleep(3);
+                            /* $array_datos_EstadoReca_visual = [
+                                'Estado_Recalificacion' => 'Inactivo', 
+                            ];
+        
+                            sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
+                            ->where([['ID_evento_re',$id_Evento_decreto ], ['Id_agudeza_re',$valorDataVisual]])
+                            ->update($array_datos_EstadoReca_visual); */
+        
+                            $Id_agudeza_visre = $array_datos_agudeza_visualre_calif[0]->Id_agudeza_re;
+                            $ID_evento_re = $array_datos_agudeza_visualre_calif[0]->ID_evento_re;
+                            $Id_Asignacion_re = $array_datos_agudeza_visualre_calif[0]->Id_Asignacion_re;
+                            $Id_proceso_re = $array_datos_agudeza_visualre_calif[0]->Id_proceso_re;
+                            $Ceguera_Total_re = $array_datos_agudeza_visualre_calif[0]->Ceguera_Total_re;
+                            $Agudeza_Ojo_Izq_re = $array_datos_agudeza_visualre_calif[0]->Agudeza_Ojo_Izq_re;
+                            $Agudeza_Ojo_Der_re = $array_datos_agudeza_visualre_calif[0]->Agudeza_Ojo_Der_re;
+                            $Agudeza_Ambos_Ojos_re = $array_datos_agudeza_visualre_calif[0]->Agudeza_Ambos_Ojos_re;
+                            $PAVF_re = $array_datos_agudeza_visualre_calif[0]->PAVF_re;
+                            $DAV_re = $array_datos_agudeza_visualre_calif[0]->DAV_re;
+                            $Campo_Visual_Ojo_Izq_re = $array_datos_agudeza_visualre_calif[0]->Campo_Visual_Ojo_Izq_re;
+                            $Campo_Visual_Ojo_Der_re = $array_datos_agudeza_visualre_calif[0]->Campo_Visual_Ojo_Der_re;
+                            $Campo_Visual_Ambos_Ojos_re = $array_datos_agudeza_visualre_calif[0]->Campo_Visual_Ambos_Ojos_re;
+                            $CVF_re = $array_datos_agudeza_visualre_calif[0]->CVF_re;
+                            $DCV_re = $array_datos_agudeza_visualre_calif[0]->DCV_re;
+                            $DSV_re = $array_datos_agudeza_visualre_calif[0]->DSV_re;
+                            $Dx_Principal_re = $array_datos_agudeza_visualre_calif[0]->Dx_Principal_re;
+                            $Deficiencia_re = $array_datos_agudeza_visualre_calif[0]->Deficiencia_re;
+                            $Nombre_usuario = $array_datos_agudeza_visualre_calif[0]->Nombre_usuario;
+                            $F_registro = $array_datos_agudeza_visualre_calif[0]->F_registro;
+        
+                            $array_datos_agudeza_visual_Reca = [
+                                'ID_evento_re' => $ID_evento_re,
+                                'Id_Asignacion_re' => $id_Asignacion_decreto,
+                                'Id_proceso_re' => $Id_proceso_re,
+                                'Ceguera_Total_re' => $Ceguera_Total_re,
+                                'Agudeza_Ojo_Izq_re' => $Agudeza_Ojo_Izq_re,
+                                'Agudeza_Ojo_Der_re' => $Agudeza_Ojo_Der_re,
+                                'Agudeza_Ambos_Ojos_re' => $Agudeza_Ambos_Ojos_re,
+                                'PAVF_re' => $PAVF_re,
+                                'DAV_re' => $DAV_re,
+                                'Campo_Visual_Ojo_Izq_re' => $Campo_Visual_Ojo_Izq_re,
+                                'Campo_Visual_Ojo_Der_re' => $Campo_Visual_Ojo_Der_re,
+                                'Campo_Visual_Ambos_Ojos_re' => $Campo_Visual_Ambos_Ojos_re,
+                                'CVF_re' => $CVF_re,
+                                'DCV_re' => $DCV_re,
+                                'DSV_re' => $DSV_re,
+                                'Dx_Principal_re' => $Dx_Principal_re,
+                                'Deficiencia_re' => $Deficiencia_re,
+                                'Estado' => 'Inactivo',
+                                'Nombre_usuario' => $Nombre_usuario,
+                                'F_registro' => $F_registro,
+                            ];
+
+                            
+                            sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')->insert($array_datos_agudeza_visual_Reca);
+                            
+                            sleep(3);                            
+        
+                            $array_datos_agudeza_visualre_calif = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
+                            ->select('Id_agudeza_re')->where([['ID_evento_re',$id_Evento_decreto ], ['Id_Asignacion_re',$id_Asignacion_decreto]])
+                            ->get();
+        
+                            if(!empty($array_datos_agudeza_visualre_calif[0]->Id_agudeza_re)){                        
+                                $newId_AgudezaRe = $array_datos_agudeza_visualre_calif[0]->Id_agudeza_re;
+                            }
+                            sleep(3);
+                                    
+                            $array_datos_ojo_derecho = sigmel_info_campimetria_ojo_derre_eventos::on('sigmel_gestiones')
+                            ->select('Id_agudeza', 'InfoFila1', 'InfoFila2', 'InfoFila3', 'InfoFila4', 'InfoFila5',
+                            'InfoFila6', 'InfoFila7', 'InfoFila8', 'InfoFila9', 'InfoFila10', 'Nombre_usuario',
+                            'F_registro')->where([['Id_agudeza',$Id_agudeza_visre]])->get();
+                            
+                            foreach ($array_datos_ojo_derecho as $registro) {  
+                                $registro->Id_agudeza = $newId_AgudezaRe;
                                 sigmel_info_campimetria_ojo_derre_eventos::on('sigmel_gestiones')
                                 ->insert($registro->toArray());
-                        }
-    
-                        $array_datos_ojo_izquierdo = sigmel_info_campimetria_ojo_izq_eventos::on('sigmel_gestiones')
-                        ->select('Id_agudeza', 'InfoFila1', 'InfoFila2', 'InfoFila3', 'InfoFila4', 'InfoFila5',
-                        'InfoFila6', 'InfoFila7', 'InfoFila8', 'InfoFila9', 'InfoFila10', 'Nombre_usuario',
-                        'F_registro')->where([['Id_agudeza',$Id_agudeza_vis]])->get();
-    
-                        foreach ($array_datos_ojo_izquierdo as $registro) {                            
-                            sigmel_info_campimetria_ojo_izqre_eventos::on('sigmel_gestiones')
-                            ->insert($registro->toArray());
-                        }
-                        sleep(3);
-                        $mensajes = array(
-                            "parametro" => 'agregar_decreto_parte',
-                            "parametro2" => 'guardo',
-                            "mensaje" => 'Guardado satisfactoriamente.'
-                        );        
-                
-                        return json_decode(json_encode($mensajes, true));
+                            }
+                            sleep(3);                              
         
-                        
-                    }elseif(!empty($array_datos_agudeza_visualre_calif[0]->Id_agudeza_re)){
+                            $array_datos_ojo_izquierdo = sigmel_info_campimetria_ojo_izqre_eventos::on('sigmel_gestiones')
+                            ->select('Id_agudeza', 'InfoFila1', 'InfoFila2', 'InfoFila3', 'InfoFila4', 'InfoFila5',
+                            'InfoFila6', 'InfoFila7', 'InfoFila8', 'InfoFila9', 'InfoFila10', 'Nombre_usuario',
+                            'F_registro')->where([['Id_agudeza',$Id_agudeza_visre]])->get();
         
+                            foreach ($array_datos_ojo_izquierdo as $registro) {                            
+                                $registro->Id_agudeza = $newId_AgudezaRe;
+                                sigmel_info_campimetria_ojo_izqre_eventos::on('sigmel_gestiones')
+                                ->insert($registro->toArray());
+                            }
+                            $mensajes = array(
+                                "parametro" => 'agregar_decreto_parte',
+                                "parametro2" => 'guardo',
+                                "mensaje" => 'Guardado satisfactoriamente.'
+                            );        
+                    
+                            return json_decode(json_encode($mensajes, true));
+                                
+                        }                        
+                    }elseif(empty($valorDataVisual)){
                         sleep(3);
-                        $array_datos_EstadoReca_visual = [
-                            'Estado_Recalificacion' => 'Inactivo', 
-                        ];
-    
-                        sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
-                        ->where([['ID_evento_re',$id_Evento_decreto ], ['Id_agudeza_re',$valorDataVisual]])
-                        ->update($array_datos_EstadoReca_visual);
-    
-                        $Id_agudeza_visre = $array_datos_agudeza_visualre_calif[0]->Id_agudeza;
-                        $ID_evento_re = $array_datos_agudeza_visualre_calif[0]->ID_evento;
-                        $Id_Asignacion_re = $array_datos_agudeza_visualre_calif[0]->Id_Asignacion;
-                        $Id_proceso_re = $array_datos_agudeza_visualre_calif[0]->Id_proceso;
-                        $Ceguera_Total_re = $array_datos_agudeza_visualre_calif[0]->Ceguera_Total;
-                        $Agudeza_Ojo_Izq_re = $array_datos_agudeza_visualre_calif[0]->Agudeza_Ojo_Izq;
-                        $Agudeza_Ojo_Der_re = $array_datos_agudeza_visualre_calif[0]->Agudeza_Ojo_Der;
-                        $Agudeza_Ambos_Ojos_re = $array_datos_agudeza_visualre_calif[0]->Agudeza_Ambos_Ojos;
-                        $PAVF_re = $array_datos_agudeza_visualre_calif[0]->PAVF;
-                        $DAV_re = $array_datos_agudeza_visualre_calif[0]->DAV;
-                        $Campo_Visual_Ojo_Izq_re = $array_datos_agudeza_visualre_calif[0]->Campo_Visual_Ojo_Izq;
-                        $Campo_Visual_Ojo_Der_re = $array_datos_agudeza_visualre_calif[0]->Campo_Visual_Ojo_Der;
-                        $Campo_Visual_Ambos_Ojos_re = $array_datos_agudeza_visualre_calif[0]->Campo_Visual_Ambos_Ojos;
-                        $CVF_re = $array_datos_agudeza_visualre_calif[0]->CVF;
-                        $DCV_re = $array_datos_agudeza_visualre_calif[0]->DCV;
-                        $DSV_re = $array_datos_agudeza_visualre_calif[0]->DSV;
-                        $Dx_Principal_re = $array_datos_agudeza_visualre_calif[0]->Dx_Principal;
-                        $Deficiencia_re = $array_datos_agudeza_visualre_calif[0]->Deficiencia;
-                        $Nombre_usuario = $array_datos_agudeza_visualre_calif[0]->Nombre_usuario;
-                        $F_registro = $array_datos_agudeza_visualre_calif[0]->F_registro;
-    
-                        $array_datos_agudeza_visual_Reca = [
-                            'ID_evento_re' => $ID_evento_re,
-                            'Id_Asignacion_re' => $id_Asignacion_decreto,
-                            'Id_proceso_re' => $Id_proceso_re,
-                            'Ceguera_Total_re' => $Ceguera_Total_re,
-                            'Agudeza_Ojo_Izq_re' => $Agudeza_Ojo_Izq_re,
-                            'Agudeza_Ojo_Der_re' => $Agudeza_Ojo_Der_re,
-                            'Agudeza_Ambos_Ojos_re' => $Agudeza_Ambos_Ojos_re,
-                            'PAVF_re' => $PAVF_re,
-                            'DAV_re' => $DAV_re,
-                            'Campo_Visual_Ojo_Izq_re' => $Campo_Visual_Ojo_Izq_re,
-                            'Campo_Visual_Ojo_Der_re' => $Campo_Visual_Ojo_Der_re,
-                            'Campo_Visual_Ambos_Ojos_re' => $Campo_Visual_Ambos_Ojos_re,
-                            'CVF_re' => $CVF_re,
-                            'DCV_re' => $DCV_re,
-                            'DSV_re' => $DSV_re,
-                            'Dx_Principal_re' => $Dx_Principal_re,
-                            'Deficiencia_re' => $Deficiencia_re,
-                            'Nombre_usuario' => $Nombre_usuario,
-                            'F_registro' => $F_registro,
-                        ];
-    
-                        sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')->insert($array_datos_agudeza_visual_Reca);
-    
-                        sleep(3);
-    
-                        $array_datos_agudeza_visualre_calif = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
-                        ->select('Id_agudeza_re')->where([['ID_evento_re',$id_Evento_decreto ], ['Id_Asignacion_re',$id_Asignacion_decreto]])
+
+                        $array_datos_maxid_visualInactivo = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
+                        ->select('Id_agudeza_re')
+                        ->where([['ID_evento_re',$id_Evento_decreto ]])
+                        ->max('Id_agudeza_re');
+
+                        $array_datos_maxid_visualestado = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
+                        ->select('Estado_Recalificacion')
+                        ->where([['Id_agudeza_re',$array_datos_maxid_visualInactivo ]])
                         ->get();
-    
-                        if(!empty($array_datos_agudeza_visualre_calif[0]->Id_agudeza_re)){                        
-                            $newId_AgudezaRe = $array_datos_agudeza_visualre_calif[0]->Id_agudeza_re;
+
+                        $valida_Evento_enOtrosDecretos = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
+                        ->select('ID_Evento', 'Id_proceso', 'Id_Asignacion', 'Decreto_calificacion')
+                        ->where([['ID_Evento',$id_Evento_decreto], ['Id_proceso', $id_Proceso_decreto]])
+                        ->where(function ($query) {
+                            $query->where('Decreto_calificacion', 2)
+                                ->orWhere('Decreto_calificacion', 3);
+                        })
+                        ->get();
+
+                        if (!empty($array_datos_maxid_visualestado[0]->Estado_Recalificacion) && $array_datos_maxid_visualestado[0]->Estado_Recalificacion == 'Inactivo') {
+                            $mensajes = array(
+                                "parametro" => 'agregar_decreto_parte',
+                                "parametro2" => 'guardo',
+                                "mensaje" => 'Guardado satisfactoriamente.'
+                            );        
+                    
+                            return json_decode(json_encode($mensajes, true));   
+
+                        }elseif (!empty($valida_Evento_enOtrosDecretos[0]->Decreto_calificacion) && $valida_Evento_enOtrosDecretos[0]->Decreto_calificacion <> 1) {
+                            $mensajes = array(
+                                "parametro" => 'agregar_decreto_parte',
+                                "parametro2" => 'guardo',
+                                "mensaje" => 'Guardado satisfactoriamente.'
+                            );        
+                    
+                            return json_decode(json_encode($mensajes, true));                                                       
+                        
+                        } else {
+                            
+                            $array_datos_agudeza_visual_calif = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
+                            ->where([['ID_evento',$id_Evento_decreto]])->get();
+            
+                            $array_datos_agudeza_visualre_calif = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
+                            ->where([['ID_evento_re',$id_Evento_decreto ], ['Id_agudeza_re',$valorDataVisual]])->get();
+                            
+                            if(!empty($array_datos_agudeza_visual_calif[0]->ID_evento) && empty($array_datos_agudeza_visualre_calif[0]->Id_agudeza_re)){
+            
+                                
+                                $Id_agudeza_vis = $array_datos_agudeza_visual_calif[0]->Id_agudeza;
+                                $ID_evento_re = $array_datos_agudeza_visual_calif[0]->ID_evento;
+                                $Id_Asignacion_re = $array_datos_agudeza_visual_calif[0]->Id_Asignacion;
+                                $Id_proceso_re = $array_datos_agudeza_visual_calif[0]->Id_proceso;
+                                $Ceguera_Total_re = $array_datos_agudeza_visual_calif[0]->Ceguera_Total;
+                                $Agudeza_Ojo_Izq_re = $array_datos_agudeza_visual_calif[0]->Agudeza_Ojo_Izq;
+                                $Agudeza_Ojo_Der_re = $array_datos_agudeza_visual_calif[0]->Agudeza_Ojo_Der;
+                                $Agudeza_Ambos_Ojos_re = $array_datos_agudeza_visual_calif[0]->Agudeza_Ambos_Ojos;
+                                $PAVF_re = $array_datos_agudeza_visual_calif[0]->PAVF;
+                                $DAV_re = $array_datos_agudeza_visual_calif[0]->DAV;
+                                $Campo_Visual_Ojo_Izq_re = $array_datos_agudeza_visual_calif[0]->Campo_Visual_Ojo_Izq;
+                                $Campo_Visual_Ojo_Der_re = $array_datos_agudeza_visual_calif[0]->Campo_Visual_Ojo_Der;
+                                $Campo_Visual_Ambos_Ojos_re = $array_datos_agudeza_visual_calif[0]->Campo_Visual_Ambos_Ojos;
+                                $CVF_re = $array_datos_agudeza_visual_calif[0]->CVF;
+                                $DCV_re = $array_datos_agudeza_visual_calif[0]->DCV;
+                                $DSV_re = $array_datos_agudeza_visual_calif[0]->DSV;
+                                $Dx_Principal_re = $array_datos_agudeza_visual_calif[0]->Dx_Principal;
+                                $Deficiencia_re = $array_datos_agudeza_visual_calif[0]->Deficiencia;
+                                $Nombre_usuario = $array_datos_agudeza_visual_calif[0]->Nombre_usuario;
+                                $F_registro = $array_datos_agudeza_visual_calif[0]->F_registro;
+            
+                                $array_datos_agudeza_visual_Reca = [
+                                    'ID_evento_re' => $ID_evento_re,
+                                    'Id_Asignacion_re' => $id_Asignacion_decreto,
+                                    'Id_proceso_re' => $Id_proceso_re,
+                                    'Ceguera_Total_re' => $Ceguera_Total_re,
+                                    'Agudeza_Ojo_Izq_re' => $Agudeza_Ojo_Izq_re,
+                                    'Agudeza_Ojo_Der_re' => $Agudeza_Ojo_Der_re,
+                                    'Agudeza_Ambos_Ojos_re' => $Agudeza_Ambos_Ojos_re,
+                                    'PAVF_re' => $PAVF_re,
+                                    'DAV_re' => $DAV_re,
+                                    'Campo_Visual_Ojo_Izq_re' => $Campo_Visual_Ojo_Izq_re,
+                                    'Campo_Visual_Ojo_Der_re' => $Campo_Visual_Ojo_Der_re,
+                                    'Campo_Visual_Ambos_Ojos_re' => $Campo_Visual_Ambos_Ojos_re,
+                                    'CVF_re' => $CVF_re,
+                                    'DCV_re' => $DCV_re,
+                                    'DSV_re' => $DSV_re,
+                                    'Dx_Principal_re' => $Dx_Principal_re,
+                                    'Deficiencia_re' => $Deficiencia_re,
+                                    'Estado' => 'Inactivo',
+                                    'Nombre_usuario' => $Nombre_usuario,
+                                    'F_registro' => $F_registro,
+                                ];
+            
+                                sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')->insert($array_datos_agudeza_visual_Reca);
+                                
+                                sleep(3);                            
+        
+                                $array_datos_agudeza_visualre_calif = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
+                                ->select('Id_agudeza_re')->where([['ID_evento_re',$id_Evento_decreto ], ['Id_Asignacion_re',$id_Asignacion_decreto]])
+                                ->get();
+            
+                                if(!empty($array_datos_agudeza_visualre_calif[0]->Id_agudeza_re)){                        
+                                    $newId_AgudezaRe = $array_datos_agudeza_visualre_calif[0]->Id_agudeza_re;
+                                }
+                                sleep(3);
+            
+                                $array_datos_ojo_derecho = sigmel_info_campimetria_ojo_der_eventos::on('sigmel_gestiones')
+                                ->select('Id_agudeza', 'InfoFila1', 'InfoFila2', 'InfoFila3', 'InfoFila4', 'InfoFila5',
+                                'InfoFila6', 'InfoFila7', 'InfoFila8', 'InfoFila9', 'InfoFila10', 'Nombre_usuario',
+                                'F_registro')->where([['Id_agudeza',$Id_agudeza_vis]])->get();
+            
+                                foreach ($array_datos_ojo_derecho as $registro) {   
+                                    $registro->Id_agudeza = $newId_AgudezaRe;                         
+                                    sigmel_info_campimetria_ojo_derre_eventos::on('sigmel_gestiones')
+                                    ->insert($registro->toArray());
+                                }
+            
+                                $array_datos_ojo_izquierdo = sigmel_info_campimetria_ojo_izq_eventos::on('sigmel_gestiones')
+                                ->select('Id_agudeza', 'InfoFila1', 'InfoFila2', 'InfoFila3', 'InfoFila4', 'InfoFila5',
+                                'InfoFila6', 'InfoFila7', 'InfoFila8', 'InfoFila9', 'InfoFila10', 'Nombre_usuario',
+                                'F_registro')->where([['Id_agudeza',$Id_agudeza_vis]])->get();
+            
+                                foreach ($array_datos_ojo_izquierdo as $registro) {  
+                                    $registro->Id_agudeza = $newId_AgudezaRe;                          
+                                    sigmel_info_campimetria_ojo_izqre_eventos::on('sigmel_gestiones')
+                                    ->insert($registro->toArray());
+                                }
+                                sleep(3);
+                                $mensajes = array(
+                                    "parametro" => 'agregar_decreto_parte',
+                                    "parametro2" => 'guardo',
+                                    "mensaje" => 'Guardado satisfactoriamente.'
+                                );        
+                        
+                                return json_decode(json_encode($mensajes, true));
                         }
-                        sleep(3);
-    
-                        $array_datos_ojo_derecho = sigmel_info_campimetria_ojo_derre_eventos::on('sigmel_gestiones')
-                        ->select('Id_agudeza', 'InfoFila1', 'InfoFila2', 'InfoFila3', 'InfoFila4', 'InfoFila5',
-                        'InfoFila6', 'InfoFila7', 'InfoFila8', 'InfoFila9', 'InfoFila10', 'Nombre_usuario',
-                        'F_registro')->where([['Id_agudeza',$Id_agudeza_visre]])->get();
-    
-                        foreach ($array_datos_ojo_derecho as $registro) {  
-                            $registro->Id_agudeza = $newId_AgudezaRe;
-                            sigmel_info_campimetria_ojo_derre_eventos::on('sigmel_gestiones')
-                            ->insert($registro->toArray());
+                        
+
                         }
-                        sleep(3);
-    
-                        $array_datos_ojo_izquierdo = sigmel_info_campimetria_ojo_izqre_eventos::on('sigmel_gestiones')
-                        ->select('Id_agudeza', 'InfoFila1', 'InfoFila2', 'InfoFila3', 'InfoFila4', 'InfoFila5',
-                        'InfoFila6', 'InfoFila7', 'InfoFila8', 'InfoFila9', 'InfoFila10', 'Nombre_usuario',
-                        'F_registro')->where([['Id_agudeza',$Id_agudeza_visre]])->get();
-    
-                        foreach ($array_datos_ojo_izquierdo as $registro) {                            
-                            $registro->Id_agudeza = $newId_AgudezaRe;
-                            sigmel_info_campimetria_ojo_izqre_eventos::on('sigmel_gestiones')
-                            ->insert($registro->toArray());
-                        }
-                        $mensajes = array(
-                            "parametro" => 'agregar_decreto_parte',
-                            "parametro2" => 'guardo',
-                            "mensaje" => 'Guardado satisfactoriamente.'
-                        );        
-                
-                        return json_decode(json_encode($mensajes, true));
-                           
-                    } 
+                    }
                 }
                 
                 sleep(3);
@@ -1327,7 +2412,7 @@ class RecalificacionPCLController extends Controller
                     "mensaje" => 'Guardado satisfactoriamente.'
                 );        
         
-                return json_decode(json_encode($mensajes, true));  
+               return json_decode(json_encode($mensajes, true));  
     
             }elseif($request->bandera_decreto_guardar_actualizar == 'Actualizar'){
     
@@ -2170,13 +3255,12 @@ class RecalificacionPCLController extends Controller
         $cuidado_animales = $request -> cuidado_animales;
         $resultado_tabla10 = $request -> resultado_tabla10;
         $total_otras = $request -> total_otras;
-        $total_rol_areas = $request -> total_rol_areas;
-        
+        $total_rol_areas = $request -> total_rol_areas;       
         
         
         if ($request -> bandera_LaboralActivo_guardar_actualizar == 'Guardar') {
             
-            $Ultimo_Id_Asignacion = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
+            /* $Ultimo_Id_Asignacion = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
             ->where([['ID_evento', $Id_Evento_decreto]])
             ->max('Id_Asignacion');
     
@@ -2186,7 +3270,7 @@ class RecalificacionPCLController extends Controller
             
             sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
             ->where([['ID_evento', $Id_Evento_decreto], ['Id_Asignacion', $Ultimo_Id_Asignacion]])
-            ->update($Estado_Recalificacion_laboral);
+            ->update($Estado_Recalificacion_laboral); */
 
             $datos_laboralmenteActivo = [
                 'ID_evento' => $Id_Evento_decreto,
@@ -2400,7 +3484,7 @@ class RecalificacionPCLController extends Controller
 
         if ($bandera_RolOcupacional_guardar_actualizar == 'Guardar') {
 
-            $Ultimo_Id_Asignacion = sigmel_informacion_rol_ocupacional_eventos::on('sigmel_gestiones')
+            /* $Ultimo_Id_Asignacion = sigmel_informacion_rol_ocupacional_eventos::on('sigmel_gestiones')
             ->where([['ID_evento', $Id_EventoDecreto]])
             ->max('Id_Asignacion');
     
@@ -2410,7 +3494,7 @@ class RecalificacionPCLController extends Controller
             
             sigmel_informacion_rol_ocupacional_eventos::on('sigmel_gestiones')
             ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Ultimo_Id_Asignacion]])
-            ->update($Estado_Recalificacion_ocupacional);
+            ->update($Estado_Recalificacion_ocupacional); */
 
             $datos_rolOcupacional =[
                 'ID_evento' => $Id_EventoDecreto,
@@ -2616,7 +3700,7 @@ class RecalificacionPCLController extends Controller
 
         if($bandera_Libros2_3_guardar_actualizar == 'Guardar'){
 
-            $Ultimo_Id_Asignacion = sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
+            /* $Ultimo_Id_Asignacion = sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
             ->where([['ID_evento', $Id_EventoDecreto]])
             ->max('Id_Asignacion');
     
@@ -2626,7 +3710,7 @@ class RecalificacionPCLController extends Controller
             
             sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
             ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Ultimo_Id_Asignacion]])
-            ->update($Estado_Recalificacion_libros);
+            ->update($Estado_Recalificacion_libros); */
 
             $datos_Libros2_3 =[
                 'ID_evento' => $Id_EventoDecreto,
@@ -2837,106 +3921,7 @@ class RecalificacionPCLController extends Controller
         }
 
     }
-
-    public function guardardictamenPericial(Request $request){
-
-        if (!Auth::check()) {
-            return redirect('/');
-        }
-        $time = time();
-        $nombre_usuario = Auth::user()->name;
-        $date = date("Y-m-d", $time);
-        $Decreto_pericial = $request->Decreto_pericial;
-        $Id_EventoDecreto = $request->Id_EventoDecreto;
-        $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
-        $Id_Asignacion_Dcreto = $request->Id_Asignacion_Dcreto;
-        $suma_combinada = $request->suma_combinada;
-        $Total_Deficiencia50 = $request->Total_Deficiencia50;
-        $total_discapacidades = $request->total_discapacidades;
-        $total_minusvalia = $request->total_minusvalia;
-        $total_porcentajePcl = $Total_Deficiencia50 + $total_discapacidades + $total_minusvalia;
-        $porcentaje_pcl = $request->porcentaje_pcl;  
-        $rango_pcl = $request->rango_pcl;        
-        $tipo_evento = $request->tipo_evento;        
-        $tipo_origen = $request->tipo_origen;  
-        $f_evento_pericial = $request->f_evento_pericial;
-        $f_estructura_pericial = $request->f_estructura_pericial;      
-        $sustenta_fecha = $request->sustenta_fecha;        
-        $detalle_califi = $request->detalle_califi;        
-        $enfermedad_catastrofica = $request->enfermedad_catastrofica;        
-        $enfermedad_congenita = $request->enfermedad_congenita;        
-        $tipo_enfermedad = $request->tipo_enfermedad;        
-        $requiere_persona = $request->requiere_persona;        
-        $requiere_decisiones_persona = $request->requiere_decisiones_persona;        
-        $requiere_dispositivo_apoyo = $request->requiere_dispositivo_apoyo;        
-        $justi_dependencia = $request->justi_dependencia; 
-        if (empty($requiere_persona) && empty($requiere_decisiones_persona) && empty($requiere_dispositivo_apoyo)) {
-            $justi_dependencia = '';
-        } else {
-            $justi_dependencia = $justi_dependencia;
-        }
-        if($Decreto_pericial == 3){
-            $datos_dictamenPericial =[
-                'Suma_combinada' => $suma_combinada,
-                'Total_Deficiencia50' => $Total_Deficiencia50,
-                'Porcentaje_pcl' => $total_porcentajePcl,
-                'Rango_pcl' => $rango_pcl,
-                'Tipo_evento' => $tipo_evento,
-                'Origen' => $tipo_origen,
-                'F_evento' => $f_evento_pericial,
-                'F_estructuracion' => $f_estructura_pericial,
-                'Sustentacion_F_estructuracion' => $sustenta_fecha,
-                'Detalle_calificacion' => $detalle_califi,
-                'Enfermedad_catastrofica' => $enfermedad_catastrofica,
-                'Enfermedad_congenita' => $enfermedad_congenita,
-                'Tipo_enfermedad' => $tipo_enfermedad,
-                'Requiere_tercera_persona' => $requiere_persona,
-                'Requiere_tercera_persona_decisiones' => $requiere_decisiones_persona,
-                'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
-                'Justificacion_dependencia' => $justi_dependencia,
-                'Estado_decreto' => 'Cerrado',
-                'Nombre_usuario' => $nombre_usuario,
-                'F_registro' => $date,
-            ];
-            sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
-            ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial); 
-
-        }else{
-            $datos_dictamenPericial =[
-                'Suma_combinada' => $suma_combinada,
-                'Total_Deficiencia50' => $Total_Deficiencia50,
-                'Porcentaje_pcl' => $porcentaje_pcl,
-                'Rango_pcl' => $rango_pcl,
-                'Tipo_evento' => $tipo_evento,
-                'Origen' => $tipo_origen,
-                'F_evento' => $f_evento_pericial,
-                'F_estructuracion' => $f_estructura_pericial,
-                'Sustentacion_F_estructuracion' => $sustenta_fecha,
-                'Detalle_calificacion' => $detalle_califi,
-                'Enfermedad_catastrofica' => $enfermedad_catastrofica,
-                'Enfermedad_congenita' => $enfermedad_congenita,
-                'Tipo_enfermedad' => $tipo_enfermedad,
-                'Requiere_tercera_persona' => $requiere_persona,
-                'Requiere_tercera_persona_decisiones' => $requiere_decisiones_persona,
-                'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
-                'Justificacion_dependencia' => $justi_dependencia,
-                'Estado_decreto' => 'Cerrado',
-                'Nombre_usuario' => $nombre_usuario,
-                'F_registro' => $date,
-            ];
     
-            sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
-            ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial);  
-        }
-
-        $mensajes = array(
-            "parametro" => 'insertar_dictamen_pericial',
-            "mensaje" => 'Concepto final del dictamen pericial guardado satisfactoriamente.'
-        );
-
-        return json_decode(json_encode($mensajes, true));
-
-    }
 
     // Deficiencias Decreto Cero
 
@@ -3089,5 +4074,107 @@ class RecalificacionPCLController extends Controller
         return json_decode(json_encode($mensajes, true));
 
     } 
+
+    //Guardar dictamen pericial
+
+    public function guardardictamenPericialRe(Request $request){
+
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $nombre_usuario = Auth::user()->name;
+        $date = date("Y-m-d", $time);
+        $Decreto_pericial = $request->Decreto_pericial;
+        $Id_EventoDecreto = $request->Id_EventoDecreto;
+        $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
+        $Id_Asignacion_Dcreto = $request->Id_Asignacion_Dcreto;
+        $suma_combinada = $request->suma_combinada;
+        $Total_Deficiencia50 = $request->Total_Deficiencia50;
+        $total_discapacidades = $request->total_discapacidades;
+        $total_minusvalia = $request->total_minusvalia;
+        $total_porcentajePcl = $Total_Deficiencia50 + $total_discapacidades + $total_minusvalia;
+        $porcentaje_pcl = $request->porcentaje_pcl;  
+        $rango_pcl = $request->rango_pcl;        
+        $tipo_evento = $request->tipo_evento;        
+        $tipo_origen = $request->tipo_origen;  
+        $f_evento_pericial = $request->f_evento_pericial;
+        $f_estructura_pericial = $request->f_estructura_pericial;      
+        $sustenta_fecha = $request->sustenta_fecha;        
+        $detalle_califi = $request->detalle_califi;        
+        $enfermedad_catastrofica = $request->enfermedad_catastrofica;        
+        $enfermedad_congenita = $request->enfermedad_congenita;        
+        $tipo_enfermedad = $request->tipo_enfermedad;        
+        $requiere_persona = $request->requiere_persona;        
+        $requiere_decisiones_persona = $request->requiere_decisiones_persona;        
+        $requiere_dispositivo_apoyo = $request->requiere_dispositivo_apoyo;        
+        $justi_dependencia = $request->justi_dependencia; 
+        if (empty($requiere_persona) && empty($requiere_decisiones_persona) && empty($requiere_dispositivo_apoyo)) {
+            $justi_dependencia = '';
+        } else {
+            $justi_dependencia = $justi_dependencia;
+        }
+        if($Decreto_pericial == 3){
+            $datos_dictamenPericial =[
+                'Suma_combinada' => $suma_combinada,
+                'Total_Deficiencia50' => $Total_Deficiencia50,
+                'Porcentaje_pcl' => $total_porcentajePcl,
+                'Rango_pcl' => $rango_pcl,
+                'Tipo_evento' => $tipo_evento,
+                'Origen' => $tipo_origen,
+                'F_evento' => $f_evento_pericial,
+                'F_estructuracion' => $f_estructura_pericial,
+                'Sustentacion_F_estructuracion' => $sustenta_fecha,
+                'Detalle_calificacion' => $detalle_califi,
+                'Enfermedad_catastrofica' => $enfermedad_catastrofica,
+                'Enfermedad_congenita' => $enfermedad_congenita,
+                'Tipo_enfermedad' => $tipo_enfermedad,
+                'Requiere_tercera_persona' => $requiere_persona,
+                'Requiere_tercera_persona_decisiones' => $requiere_decisiones_persona,
+                'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
+                'Justificacion_dependencia' => $justi_dependencia,
+                'Estado_decreto' => 'Cerrado',
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];
+            sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial); 
+
+        }else{
+            $datos_dictamenPericial =[
+                'Suma_combinada' => $suma_combinada,
+                'Total_Deficiencia50' => $Total_Deficiencia50,
+                'Porcentaje_pcl' => $porcentaje_pcl,
+                'Rango_pcl' => $rango_pcl,
+                'Tipo_evento' => $tipo_evento,
+                'Origen' => $tipo_origen,
+                'F_evento' => $f_evento_pericial,
+                'F_estructuracion' => $f_estructura_pericial,
+                'Sustentacion_F_estructuracion' => $sustenta_fecha,
+                'Detalle_calificacion' => $detalle_califi,
+                'Enfermedad_catastrofica' => $enfermedad_catastrofica,
+                'Enfermedad_congenita' => $enfermedad_congenita,
+                'Tipo_enfermedad' => $tipo_enfermedad,
+                'Requiere_tercera_persona' => $requiere_persona,
+                'Requiere_tercera_persona_decisiones' => $requiere_decisiones_persona,
+                'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
+                'Justificacion_dependencia' => $justi_dependencia,
+                'Estado_decreto' => 'Cerrado',
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];
+    
+            sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial);  
+        }
+
+        $mensajes = array(
+            "parametro" => 'insertar_dictamen_pericial',
+            "mensaje" => 'Concepto final del dictamen pericial guardado satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
+
+    }
 
 }

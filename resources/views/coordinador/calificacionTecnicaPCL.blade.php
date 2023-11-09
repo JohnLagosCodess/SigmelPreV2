@@ -6255,6 +6255,24 @@
     {{-- @else
         @include('coordinador.modalagudezaAuditivaEdicion'); --}}                 
     @endif
+
+    <!-- Modal Alerta Suma Combinada y total deficiencia para el decreto 1999-->    
+    <x-adminlte-modal id="AlertaScTd" class="modalscroll" title="Suma Combinada y Total Deficiencia" theme="info" icon="fas fa-info-circle" size='md' disable-animations>
+        <div class="row">
+            <div class="col-12">        
+                <div class="card-body">
+                    La Suma Combinada y Total Deficiencia  los campos son requeridos. Por favor, llenarlos antes de guardar.
+                </div>                                   
+            </div>
+        </div>  
+        <div class="row">
+            <div class="col-12">
+                <button type="button" id="btn_cerrar_modal_agudeza" class="btn btn-danger" style="float:right !important;" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div> 
+        <x-slot name="footerSlot">
+        </x-slot>     
+    </x-adminlte-modal>
  @stop
  
 

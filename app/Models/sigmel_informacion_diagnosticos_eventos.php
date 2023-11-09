@@ -27,6 +27,7 @@ class sigmel_informacion_diagnosticos_eventos extends Model
         'F_adicion_CIE10',
         'Estado',
         'Estado_Recalificacion',
+        'Item_servicio',
         'Nombre_usuario',
         'F_registro',
     ];

@@ -885,6 +885,7 @@ $(document).ready(function() {
             "DCV_re": $("#resultado_dcv").val(),
             "DSV_re": $("#resultado_dsv").val(),
             "Deficiencia_re": $("#resultado_deficiencia").val(),
+            "Estado": 'Inactivo',
             "Nombre_usuario": $("#nombre_usuario").val(),
             "F_registro": $("#dia_actual").val()
         };

@@ -387,7 +387,7 @@ Route::post('/recalificacionPCL',[RecalificacionPCLController::class, 'mostrarVi
 // Acción: Llenado de selectores recalificacion y revision pension
 Route::post('/selectoresRecalificacionPCL', [RecalificacionPCLController::class, 'cargueListadoSelectoresRecalificacionPcl']);
 // Acción: Guardar Informacion Decreto, Dictamen, Relacion documentos, Fundamentos para la calificación de la perdida de capacidad laboral y ocupacional Recalificacion
-Route::get('/guardarDecretoDictamenRelacionDocFundaRe', [RecalificacionPCLController::class, 'guardarDecretoDicRelaDocFundRe']);
+//Route::get('/guardarDecretoDictamenRelacionDocFundaRe', [RecalificacionPCLController::class, 'guardarDecretoDicRelaDocFundRe']);
 // Acción: Guardar Informacion Decreto, Dictamen, Relacion documentos, Fundamentos para la calificación de la perdida de capacidad laboral y ocupacional Recalificacion
 Route::post('/guardarDecretoDictamenRelacionDocFundaRe', [RecalificacionPCLController::class, 'guardarDecretoDicRelaDocFundRe']);
 // Acción: Guardar registros Examenes e interconsultas
@@ -440,6 +440,11 @@ Route::post('/eliminarDeficieciasDecretosCeroRe', [RecalificacionPCLController::
 Route::post('/guardarDeficieciasDecretosTresRe', [RecalificacionPCLController::class, 'guardarDeficieciasDecretoTresRe']);
 // Acción: Elimincar deficiencias Decreto tres visualmente e inactiva en la DB
 Route::post('/eliminarDeficieciasDecretosTresRe', [RecalificacionPCLController::class, 'eliminarDeficieciasDecretoTresRe']);
+// Acción: Guardar Dictamen Pericial
+Route::post('/guardardictamenesPericialRe', [RecalificacionPCLController::class, 'guardardictamenPericialRe']); 
+
+
+Route::get  ('/Sigmel/RolAdministrador/ListarClientes', [AdministradorController::class, 'mostrarVistaListarClientes'])->name('listarClientes');
 
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);

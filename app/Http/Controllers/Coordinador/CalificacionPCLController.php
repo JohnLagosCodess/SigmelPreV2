@@ -1727,7 +1727,8 @@ class CalificacionPCLController extends Controller
                         'Id_Asignacion' => $id_Asignacion_decreto,
                         'Origen_firme' => $origen_firme,
                         'Cobertura' => $origen_cobertura,
-                        'Decreto_calificacion' => $decreto_califi,                    
+                        'Decreto_calificacion' => $decreto_califi,   
+                        'Estado_decreto' =>  'Abierto',
                         'Nombre_usuario' => $usuario,
                         'F_registro' => $date,
                 ];
@@ -1794,6 +1795,7 @@ class CalificacionPCLController extends Controller
                     'Relacion_documentos' => $total_relacion_documentos,
                     'Otros_relacion_doc' => $descripcion_otros,
                     'Descripcion_enfermedad_actual' => $descripcion_enfermedad,
+                    'Estado_decreto' =>  'Abierto',
                     'Nombre_usuario' => $usuario,
                     'F_registro' => $date,
                 ];
@@ -1878,7 +1880,7 @@ class CalificacionPCLController extends Controller
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
-
+        $Estado_Recalificacion = $request->Estado_Recalificacion;
         // Seteo del autoincrement para mantener el primary key siempre consecutivo.
         $max_id = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
         ->max('Id_Examenes_interconsultas');
@@ -1897,6 +1899,7 @@ class CalificacionPCLController extends Controller
             array_unshift($subarray_datos, $request->Id_Asignacion);
             array_unshift($subarray_datos, $request->Id_evento);
 
+            $subarray_datos[] = $Estado_Recalificacion;
             $subarray_datos[] = $nombre_usuario;
             $subarray_datos[] = $date;
 
@@ -1905,7 +1908,7 @@ class CalificacionPCLController extends Controller
 
         // Creación de array con los campos de la tabla: sigmel_informacion_examenes_interconsultas_eventos
         $array_tabla_examen_interconsulta = ['ID_evento','Id_Asignacion','Id_proceso',
-        'F_examen_interconsulta','Nombre_examen_interconsulta','Descripcion_resultado',
+        'F_examen_interconsulta','Nombre_examen_interconsulta','Descripcion_resultado', 'Estado_Recalificacion',
         'Nombre_usuario','F_registro'];
 
         // Combinación de los campos de la tabla con los datos
@@ -1957,7 +1960,7 @@ class CalificacionPCLController extends Controller
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
-
+        $Estado_Recalificacion = $request->Estado_Recalificacion;
         // Seteo del autoincrement para mantener el primary key siempre consecutivo.
         $max_id = sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
         ->max('Id_Diagnosticos_motcali');
@@ -1977,6 +1980,7 @@ class CalificacionPCLController extends Controller
             array_unshift($subarray_datos, $request->Id_Asignacion);
             array_unshift($subarray_datos, $request->Id_evento);
 
+            $subarray_datos[] = $Estado_Recalificacion;
             $subarray_datos[] = $nombre_usuario;
             $subarray_datos[] = $date;
 
@@ -1985,7 +1989,7 @@ class CalificacionPCLController extends Controller
 
         // Creación de array con los campos de la tabla: sigmel_informacion_diagnosticos_eventos
         $array_tabla_diagnosticos_motivo_calificacion = ['ID_evento','Id_Asignacion','Id_proceso',
-        'CIE10','Nombre_CIE10','Origen_CIE10','Deficiencia_motivo_califi_condiciones',
+        'CIE10','Nombre_CIE10','Origen_CIE10','Deficiencia_motivo_califi_condiciones', 'Estado_Recalificacion',
         'Nombre_usuario','F_registro'];
 
         // Combinación de los campos de la tabla con los datos
@@ -2047,6 +2051,7 @@ class CalificacionPCLController extends Controller
         $oido_izquierdo = $request->oido_izquierdo;
         $oido_derecho = $request->oido_derecho;
         $Agudeza_Auditivas = $request->Agudeza_Auditivas;
+        $Estado_Recalificacion = $request->Estado_Recalificacion;
         
         foreach ($Agudeza_Auditivas as $auditiva) {
             $auditiva;            
@@ -2066,6 +2071,7 @@ class CalificacionPCLController extends Controller
             'Deficiencia_binaural' => $columna2,
             'Adicion_tinnitus' => $columna3,
             'Deficiencia' => $columna4,
+            'Estado_Recalificacion' => $Estado_Recalificacion,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
         ];
@@ -2511,7 +2517,7 @@ class CalificacionPCLController extends Controller
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
-    
+        $Estado_Recalificacion = $request->Estado_Recalificacion;
         /* CAPTURA DE DATOS DE LA DEFICIENCIA */
         $array_datos = $request->datos_finales_deficiencias_alteraciones;
 
@@ -2524,6 +2530,7 @@ class CalificacionPCLController extends Controller
             array_unshift($subarray_datos, $request->Id_Asignacion);
             array_unshift($subarray_datos, $request->Id_evento);
 
+            $subarray_datos[] = $Estado_Recalificacion;
             $subarray_datos[] = $nombre_usuario;
             $subarray_datos[] = $date;
 
@@ -2533,7 +2540,7 @@ class CalificacionPCLController extends Controller
         // Creación de array con los campos de la tabla: sigmel_informacion_deficiencias_alteraciones_eventos
         
         $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Id_tabla', 'FP', 'CFM1', 'CFM2', 'FU',	'CAT', 'Clase_Final', 
-        'Dx_Principal', 'MSD', 'Deficiencia', 'Nombre_usuario','F_registro'];
+        'Dx_Principal', 'MSD', 'Deficiencia', 'Estado_Recalificacion', 'Nombre_usuario','F_registro'];
         
         // Combinación de los campos de la tabla con los datos
         $array_datos_con_keys = [];
@@ -2851,7 +2858,7 @@ class CalificacionPCLController extends Controller
             ]; 
 
             sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
-            ->where([['ID_evento', $Id_Evento_decreto], ['Id_Asginacion',$Id_Asignacion_decreto]])->update($datos_laboralmenteActivo);
+            ->where([['ID_evento', $Id_Evento_decreto], ['Id_Asignacion', $Id_Asignacion_decreto]])->update($datos_laboralmenteActivo);
             sleep(2);
 
             $mensajes = array(
@@ -3431,7 +3438,7 @@ class CalificacionPCLController extends Controller
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;   
-
+        $Estado_Recalificacion = $request->Estado_Recalificacion;
         /* CAPTURA DE DATOS DE LA DEFICIENCIA */
         $array_datos = $request->datos_finales_deficiciencias_decreto_cero;
         //print_r($array_datos);
@@ -3445,6 +3452,7 @@ class CalificacionPCLController extends Controller
             array_unshift($subarray_datos, $request->Id_Asignacion);
             array_unshift($subarray_datos, $request->Id_evento);
 
+            $subarray_datos[] = $Estado_Recalificacion;
             $subarray_datos[] = $nombre_usuario;
             $subarray_datos[] = $date;
 
@@ -3453,7 +3461,8 @@ class CalificacionPCLController extends Controller
 
         // Creación de array con los campos de la tabla: sigmel_informacion_deficiencias_alteraciones_eventos
         
-        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Id_tabla', 'Deficiencia', 'Nombre_usuario','F_registro'];
+        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Id_tabla', 'Deficiencia', 
+        'Estado_Recalificacion', 'Nombre_usuario','F_registro'];
         
         // Combinación de los campos de la tabla con los datos
         $array_datos_con_keys = [];
@@ -3507,7 +3516,7 @@ class CalificacionPCLController extends Controller
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;   
-
+        $Estado_Recalificacion = $request->Estado_Recalificacion;
         /* CAPTURA DE DATOS DE LA DEFICIENCIA */
         $array_datos = $request->datos_finales_deficiciencias_decreto_tres;
         //print_r($array_datos);
@@ -3521,6 +3530,7 @@ class CalificacionPCLController extends Controller
             array_unshift($subarray_datos, $request->Id_Asignacion);
             array_unshift($subarray_datos, $request->Id_evento);
 
+            $subarray_datos[] = $Estado_Recalificacion;
             $subarray_datos[] = $nombre_usuario;
             $subarray_datos[] = $date;
 
@@ -3529,7 +3539,8 @@ class CalificacionPCLController extends Controller
 
         // Creación de array con los campos de la tabla: sigmel_informacion_deficiencias_alteraciones_eventos
         
-        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Tabla1999', 'Titulo_tabla1999', 'Deficiencia', 'Nombre_usuario','F_registro'];
+        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Tabla1999', 'Titulo_tabla1999', 'Deficiencia', 
+        'Estado_Recalificacion', 'Nombre_usuario','F_registro'];
         
         // Combinación de los campos de la tabla con los datos
         $array_datos_con_keys = [];
