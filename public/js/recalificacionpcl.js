@@ -611,6 +611,8 @@ $(document).ready(function(){
     var opt_tabla6_tareas_simples = $("[id^='tareas_simples_']").is(":checked") ? $("[id^='tareas_simples_']:checked").val() : 0;
     var opt_total_tabla6 = $("[id='resultado_tabla6']").val() || 0;
 
+    //console.log(opt_total_tabla6);
+
     $("[name='mirar']").on("change", function(){        
         opt_tabla6_mirar = $(this).val();
         $(this).val(opt_tabla6_mirar);        
@@ -1031,8 +1033,8 @@ $(document).ready(function(){
         intervalo = setInterval(() => {                        
             opt_sumaTotal_20 = Number(opt_total_tabla6) + Number(opt_total_tabla7)+ Number(opt_total_tabla8)
             + Number(opt_total_tabla9)+ Number(opt_total_tabla10);
+            //console.log(opt_sumaTotal_20);
             if(!isNaN(opt_sumaTotal_20)){
-                //console.log(opt_sumaTotal_20);
                 $('#total_otras').val(redondearRecali(opt_sumaTotal_20));
             }
         }, 500);
@@ -1074,8 +1076,8 @@ $(document).ready(function(){
     var opt_tabla12_succiona = $("[id^='succiona']").is(":checked") ? $("[id^='succiona']:checked").val() : 0;
     var opt_tabla12_fija_mirada = $("[id^='fija_mirada']").is(":checked") ? $("[id^='fija_mirada']:checked").val() : 0;
     var opt_tabla12_trayectoria_objeto = $("[id^='trayectoria_objeto']").is(":checked") ? $("[id^='trayectoria_objeto']:checked").val() : 0;
-    var opt_tabla12_sostiene_sonajero = $("[id^='trayectoria_objeto']").is(":checked") ? $("[id^='trayectoria_objeto']:checked").val() : 0;
-    var opt_tabla12_hacia_objeto = $("[id^='sostiene_sonajero']").is(":checked") ? $("[id^='sostiene_sonajero']:checked").val() : 0;
+    var opt_tabla12_sostiene_sonajero = $("[id^='sostiene_sonajero']").is(":checked") ? $("[id^='sostiene_sonajero']:checked").val() : 0;
+    var opt_tabla12_hacia_objeto = $("[id^='hacia_objeto']").is(":checked") ? $("[id^='hacia_objeto']:checked").val() : 0;
     var opt_tabla12_sostiene_objeto = $("[id^='sostiene_objeto']").is(":checked") ? $("[id^='sostiene_objeto']:checked").val() : 0;
     var opt_tabla12_abre_cajones = $("[id^='abre_cajones']").is(":checked") ? $("[id^='abre_cajones']:checked").val() : 0;
     var opt_tabla12_bebe_solo = $("[id^='bebe_solo']").is(":checked") ? $("[id^='bebe_solo']:checked").val() : 0;
@@ -1326,12 +1328,11 @@ $(document).ready(function(){
             iniciarIntervaloDiscapacida();
         });
     } 
-
+    var conducta_15 = $('#conducta_15').val();
     // Realiza suma de conducta
     function iniciarIntervaloTotalConducta() {
         //clearInterval(intervalo);   
         intervalo = setInterval(() => {
-            //console.log(opt_total_conducta);
             opt_total_conducta = Number($("[id='conducta_10']").val()) + Number($("[id='conducta_11']").val()) + Number($("[id='conducta_12']").val()) +
             Number($("[id='conducta_13']").val()) + Number($("[id='conducta_14']").val()) + Number($("[id='conducta_15']").val()) +
             Number($("[id='conducta_16']").val()) + Number($("[id='conducta_17']").val()) + Number($("[id='conducta_18']").val()) +
@@ -1341,7 +1342,7 @@ $(document).ready(function(){
             }
         }, 500);         
     } 
-
+    
     //Suma de valores Comunicación
     var opt_comunicacion = [];
     var opt_total_comunicacion = $("[id='total_comunicacion']").val() || 0; 
@@ -2264,7 +2265,6 @@ $(document).ready(function(){
             }
         })
     })    
-
     
     /* Porcentaje PCl,  Rango PCL y Justificación de dependencia Concepto final del Dictamen Pericial  */
     $(document).ready(function() {
@@ -2337,7 +2337,105 @@ $(document).ready(function(){
             listado_laboralmente_activo_p14.empty();
             total_tabla14rolocu.val("");
         }
-       
+
+        // Asignar valor de 0 por defecto al total de las tablas del 6 a la 10
+
+        /* //tabla 6
+        var mirar_00 = $("#mirar_00");
+        var escuchar_00 = $("#escuchar_00");
+        var aprender_00 = $("#aprender_00");
+        var calcular_00 = $("#calcular_00");
+        var pensar_00 = $("#pensar_00");
+        var leer_00 = $("#leer_00");
+        var escribir_00 = $("#escribir_00");
+        var matematicos_00 = $("#matematicos_00");
+        var decisiones_00 = $("#decisiones_00");
+        var tareas_simples_00 = $("#tareas_simples_00");
+        if(mirar_00.is(":checked") && escuchar_00.is(":checked") && aprender_00.is(":checked") && calcular_00.is(":checked") &&
+            pensar_00.is(":checked") && leer_00.is(":checked") && escribir_00.is(":checked") && matematicos_00.is(":checked") &&
+            decisiones_00.is(":checked") && tareas_simples_00.is(":checked")){            
+            $("#resultado_tabla6").val(0);
+        }
+
+        // tabla 7
+        var comunicarse_mensaje_00 = $("#comunicarse_mensaje_00");
+        var no_comunicarse_mensaje_00 = $("#no_comunicarse_mensaje_00");
+        var comunicarse_signos_00 = $("#comunicarse_signos_00");
+        var comunicarse_escrito_00 = $("#comunicarse_escrito_00");
+        var habla_00 = $("#habla_00");
+        var no_verbales_00 = $("#no_verbales_00");
+        var mensajes_escritos_00 = $("#mensajes_escritos_00");
+        var sostener_conversa_00 = $("#sostener_conversa_00");
+        var iniciar_discusiones_00 = $("#iniciar_discusiones_00");
+        var utiliza_dispositivos_00 = $("#utiliza_dispositivos_00");
+        if(comunicarse_mensaje_00.is(":checked") && no_comunicarse_mensaje_00.is(":checked") && comunicarse_signos_00.is(":checked") && comunicarse_escrito_00.is(":checked") &&
+            habla_00.is(":checked") && no_verbales_00.is(":checked") && mensajes_escritos_00.is(":checked") && sostener_conversa_00.is(":checked") &&
+            iniciar_discusiones_00.is(":checked") && utiliza_dispositivos_00.is(":checked")){            
+            $("#resultado_tabla7").val(0);
+        }
+
+        // tabla 8
+        var cambiar_posturas_00 = $("#cambiar_posturas_00");
+        var posicion_cuerpo_00 = $("#posicion_cuerpo_00");
+        var llevar_objetos_00 = $("#llevar_objetos_00");
+        var uso_fino_mano_00 = $("#uso_fino_mano_00");
+        var uso_mano_brazo_00 = $("#uso_mano_brazo_00");
+        var desplazarse_entorno_00 = $("#desplazarse_entorno_00");
+        var distintos_lugares_00 = $("#distintos_lugares_00");
+        var desplazarse_con_equipo_00 = $("#desplazarse_con_equipo_00");
+        var transporte_pasajero_00 = $("#transporte_pasajero_00");
+        var conduccion_00 = $("#conduccion_00");
+        if(cambiar_posturas_00.is(":checked") && posicion_cuerpo_00.is(":checked") && llevar_objetos_00.is(":checked") && uso_fino_mano_00.is(":checked") &&
+            uso_mano_brazo_00.is(":checked") && desplazarse_entorno_00.is(":checked") && distintos_lugares_00.is(":checked") && desplazarse_con_equipo_00.is(":checked") &&
+            transporte_pasajero_00.is(":checked") && conduccion_00.is(":checked")){            
+            $("#resultado_tabla8").val(0);
+        }
+
+        // tabla 9
+        var lavarse_00 = $("#lavarse_00");
+        var cuidado_cuerpo_00 = $("#cuidado_cuerpo_00");
+        var higiene_personal_00 = $("#higiene_personal_00");
+        var vestirse_00 = $("#vestirse_00");
+        var quitarse_ropa_00 = $("#quitarse_ropa_00");
+        var ponerse_calzado_00 = $("#ponerse_calzado_00");
+        var comer_00 = $("#comer_00");
+        var beber_00 = $("#beber_00");
+        var cuidado_salud_00 = $("#cuidado_salud_00");
+        var control_dieta_00 = $("#control_dieta_00");
+        if(lavarse_00.is(":checked") && cuidado_cuerpo_00.is(":checked") && higiene_personal_00.is(":checked") && vestirse_00.is(":checked") &&
+            quitarse_ropa_00.is(":checked") && ponerse_calzado_00.is(":checked") && comer_00.is(":checked") && beber_00.is(":checked") &&
+            cuidado_salud_00.is(":checked") && control_dieta_00.is(":checked")){            
+            $("#resultado_tabla9").val(0);
+        }
+
+        // tabla 10
+        var adquisicion_para_vivir_00 = $("#adquisicion_para_vivir_00");
+        var bienes_servicios_00 = $("#bienes_servicios_00");
+        var comprar_00 = $("#comprar_00");
+        var preparar_comida_00 = $("#preparar_comida_00");
+        var quehaceres_casa_00 = $("#quehaceres_casa_00");
+        var limpieza_vivienda_00 = $("#limpieza_vivienda_00");
+        var objetos_hogar_00 = $("#objetos_hogar_00");
+        var ayudar_los_demas_00 = $("#ayudar_los_demas_00");
+        var mantenimiento_dispositivos_00 = $("#mantenimiento_dispositivos_00");
+        var cuidado_animales_00 = $("#cuidado_animales_00");
+        if(adquisicion_para_vivir_00.is(":checked") && bienes_servicios_00.is(":checked") && comprar_00.is(":checked") && preparar_comida_00.is(":checked") &&
+            quehaceres_casa_00.is(":checked") && limpieza_vivienda_00.is(":checked") && objetos_hogar_00.is(":checked") && ayudar_los_demas_00.is(":checked") &&
+            mantenimiento_dispositivos_00.is(":checked") && cuidado_animales_00.is(":checked")){            
+            $("#resultado_tabla10").val(0);
+        } */
+
+
+        // Asignar valor de 0 por defecto al total de la tabla 13 y 14
+        /* var claseA_dificulta_01 = $("#claseA_dificulta_01");
+        if (claseA_dificulta_01.is(":checked")) {
+            $("#total_tabla13").val('0');            
+        }  
+
+        var claseA_dificultaAdulto_01 = $("#claseA_dificultaAdulto_01");
+        if (claseA_dificultaAdulto_01.is(":checked")) {
+            $("#total_tabla14").val('0');            
+        }   */  
 
         var definirDecreto_deficiencia = $('#decreto_califi').val();
         var total_deficiencia = $('#Total_Deficiencia50').val();
@@ -2349,13 +2447,13 @@ $(document).ready(function(){
         var minusvalia_total = $('#total_minusvalia').val();
 
         if (definirDecreto_deficiencia == 1) {
-            if($.trim(total_rol_ocupacional12) === "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){
+            if($.trim(total_rol_ocupacional12) == 0 && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){
                 total_rol_ocupacional = 0;
-            }else if($.trim(total_rol_ocupacional12) !== "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){
+            }else if($.trim(total_rol_ocupacional12) == 0 && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){                
                 total_rol_ocupacional = Number(total_rol_ocupacional12);
-            }else if($.trim(total_rol_ocupacional12) === "" && $.trim(total_rol_ocupacional13) > 0 && $.trim(total_rol_ocupacional14) == 0){
+            }else if($.trim(total_rol_ocupacional12) == 0 && $.trim(total_rol_ocupacional13) > 0 && $.trim(total_rol_ocupacional14) == 0){                
                 total_rol_ocupacional = Number(total_rol_ocupacional13);
-            }else if($.trim(total_rol_ocupacional12) === "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) > 0){
+            }else if($.trim(total_rol_ocupacional12) == 0 && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) > 0){               
                 total_rol_ocupacional = Number(total_rol_ocupacional14);
             }
             total_rol_laboral = $('#total_rol_areas').val();
@@ -2595,6 +2693,7 @@ $(document).ready(function(){
             $('#GuardarLibros2_3').prop('disabled', false);
             $('#GuardrDictamenPericial').prop('disabled', false);
         }else if($('#GuardarDecreto').length){
+            //botones
             $('#origen_firme').prop('disabled', false);
             $('#origen_cobertura').prop('disabled', false);
             $('#decreto_califi').prop('disabled', false);
@@ -2609,6 +2708,39 @@ $(document).ready(function(){
             $('#GuardarRolOcupacional').prop('disabled', true);
             $('#GuardarLibros2_3').prop('disabled', true);
             $('#GuardrDictamenPericial').prop('disabled', true);
+            //etiquetas a o botones de eliminar filas
+            $("a[id^='btn_remover_examen_fila_examenes_']").css({
+                cursor: "not-allowed",
+                "pointer-events": "none"
+            });
+            $("a[id^='btn_remover_diagnosticos_moticalifi']").css({
+                cursor: "not-allowed",
+                "pointer-events": "none"
+            });
+            $("a[id^='btn_remover_deficiencia_alteraciones']").css({
+                cursor: "not-allowed",
+                "pointer-events": "none"
+            });
+            $("a[id^='btn_remover_deficiencias_decretocero_']").css({
+                cursor: "not-allowed",
+                "pointer-events": "none"
+            });            
+            $("a[id^='btn_remover_deficiencias_decreto3_']").css({
+                cursor: "not-allowed",
+                "pointer-events": "none"
+            });            
+            $("a[id^='btn_remover_examen_fila_agudeza']").css({
+                cursor: "not-allowed",
+                "pointer-events": "none"
+            });
+            $("a[id^='btn_remover_fila_']").css({
+                cursor: "not-allowed",
+                "pointer-events": "none"
+            });
+            // checkboxes
+            $("input[id^='dx_principal_deficiencia_alteraciones_']").prop('disabled', true);            
+            $("input[id^='dx_principal_deficiencia_auditiva_']").prop('disabled', true);                        
+            $("input[id^='dx_principal_deficiencia_visual_']").prop('disabled', true);
         }
         
         /* if(enfermedadactual !== "" && valorFecha !== ""){
@@ -2642,7 +2774,7 @@ $(document).ready(function(){
             $('#poblacion_califi').prop("disabled", true);
         }
 
-        // Desahabilitar todos los botones del formulario
+        // Desahabilitar todos los botones del formulario despues de Guardar el Decreto
         var $bandera_estado_decreto = $("#bandera_estado_decreto").val();
 
         if($bandera_estado_decreto == 'Cerrado'){
@@ -2694,7 +2826,12 @@ $(document).ready(function(){
             $("a[id^='btn_remover_fila_']").css({
                 cursor: "not-allowed",
                 "pointer-events": "none"
-            });         
+            });      
+            
+            // checkboxes
+            $("input[id^='dx_principal_deficiencia_alteraciones_']").prop('disabled', true);            
+            $("input[id^='dx_principal_deficiencia_auditiva_']").prop('disabled', true);                        
+            $("input[id^='dx_principal_deficiencia_visual_']").prop('disabled', true);
         }
 
         var selectorDecreto = $('#decreto_califi');
@@ -2983,7 +3120,8 @@ $(document).ready(function(){
 function funciones_elementos_fila_diagnosticos(num_consecutivo) {
     // Inicializacion de select 2
     $("#lista_Cie10_fila_"+num_consecutivo).select2({
-        width: '100%',
+        //width: '100%',
+        width: '340px',
         placeholder: "Seleccione",
         allowClear: false
     });
@@ -3009,7 +3147,7 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
             // $("select[id^='lista_Cie10_fila_']").empty();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $("#lista_Cie10_fila_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Cie_diagnostico"]+'">'+data[claves[i]]["CIE10"]+'</option>');
+                $("#lista_Cie10_fila_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Cie_diagnostico"]+'">'+data[claves[i]]["CIE10"]+' - '+data[claves[i]]["Descripcion_diagnostico"]+'</option>');
             }
         }
     });

@@ -1074,8 +1074,8 @@ $(document).ready(function(){
     var opt_tabla12_succiona = $("[id^='succiona']").is(":checked") ? $("[id^='succiona']:checked").val() : 0;
     var opt_tabla12_fija_mirada = $("[id^='fija_mirada']").is(":checked") ? $("[id^='fija_mirada']:checked").val() : 0;
     var opt_tabla12_trayectoria_objeto = $("[id^='trayectoria_objeto']").is(":checked") ? $("[id^='trayectoria_objeto']:checked").val() : 0;
-    var opt_tabla12_sostiene_sonajero = $("[id^='trayectoria_objeto']").is(":checked") ? $("[id^='trayectoria_objeto']:checked").val() : 0;
-    var opt_tabla12_hacia_objeto = $("[id^='sostiene_sonajero']").is(":checked") ? $("[id^='sostiene_sonajero']:checked").val() : 0;
+    var opt_tabla12_sostiene_sonajero = $("[id^='sostiene_sonajero']").is(":checked") ? $("[id^='sostiene_sonajero']:checked").val() : 0;
+    var opt_tabla12_hacia_objeto = $("[id^='hacia_objeto']").is(":checked") ? $("[id^='hacia_objeto']:checked").val() : 0;
     var opt_tabla12_sostiene_objeto = $("[id^='sostiene_objeto']").is(":checked") ? $("[id^='sostiene_objeto']:checked").val() : 0;
     var opt_tabla12_abre_cajones = $("[id^='abre_cajones']").is(":checked") ? $("[id^='abre_cajones']:checked").val() : 0;
     var opt_tabla12_bebe_solo = $("[id^='bebe_solo']").is(":checked") ? $("[id^='bebe_solo']:checked").val() : 0;
@@ -2224,19 +2224,19 @@ $(document).ready(function(){
         total_deficiencia = $('#Total_Deficiencia50').val();          
         total_rol_ocupacional12 = $('#total_tabla12').val();
         total_rol_ocupacional13 = $('#total_tabla13').val();
-        total_rol_ocupacional14 = $('#total_tabla14').val();        
+        total_rol_ocupacional14 = $('#total_tabla14').val();  
         total_rol_ocupacional = 0;
         dicapacidad_total = $('#total_discapacidades').val();
         minusvalia_total = $('#total_minusvalia').val();
 
         if (definirDecreto_deficiencia == 1) {
-            if($.trim(total_rol_ocupacional12) === "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){
+            if($.trim(total_rol_ocupacional12) == 0 && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){
                 total_rol_ocupacional = 0;
-            }else if($.trim(total_rol_ocupacional12) !== "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){
+            }else if($.trim(total_rol_ocupacional12) == 0 && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){                
                 total_rol_ocupacional = Number(total_rol_ocupacional12);
-            }else if($.trim(total_rol_ocupacional12) === "" && $.trim(total_rol_ocupacional13) > 0 && $.trim(total_rol_ocupacional14) == 0){
+            }else if($.trim(total_rol_ocupacional12) == 0 && $.trim(total_rol_ocupacional13) > 0 && $.trim(total_rol_ocupacional14) == 0){                
                 total_rol_ocupacional = Number(total_rol_ocupacional13);
-            }else if($.trim(total_rol_ocupacional12) === "" && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) > 0){
+            }else if($.trim(total_rol_ocupacional12) == 0 && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) > 0){               
                 total_rol_ocupacional = Number(total_rol_ocupacional14);
             }
             total_rol_laboral = $('#total_rol_areas').val();
@@ -2275,23 +2275,23 @@ $(document).ready(function(){
             $('#Total_Deficiencia50').focus(function() {
                 $("#Total_Deficiencia50").on("input", function() {
                     total_deficiencia1999 = $(this).val();
-                    if ($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) === "") {
+                    if ($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) == 0) {
                         porcentajePcl = 0;
-                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) === ""){
+                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) == 0){
                         porcentajePcl = Number(total_deficiencia1999);
-                    }else if($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) === ""){
+                    }else if($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) == 0){
                         porcentajePcl = Number(dicapacidad_total);
-                    }else if($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) > 0){
+                    }else if($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) > 0){
                         porcentajePcl = Number(minusvalia_total);
-                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) === ""){
+                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) == 0){
                         porcentajePcl = Number(total_deficiencia1999) + Number(dicapacidad_total);
-                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) > 0){
+                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) > 0){
                         porcentajePcl = Number(total_deficiencia1999) + Number(minusvalia_total);
                     }else if($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){
-                        porcentajePcl = Number(dicapacidad_total) + Number(minusvalia_total);
-                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){                            
-                        porcentajePcl = Number(total_deficiencia1999) + Number(dicapacidad_total) + Number(minusvalia_total);                            
-                    }                   
+                        porcentajePcl = Number(dicapacidad_total) + Number(minusvalia_total);                
+                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){                   
+                        porcentajePcl = Number(total_deficiencia1999) + Number(dicapacidad_total) + Number(minusvalia_total);                
+                    }                  
                     
                     $("#porcentaje_pcl").val(Math.round(porcentajePcl));
                     if (porcentajePcl == 0) {
@@ -2310,17 +2310,17 @@ $(document).ready(function(){
                 });
             }); 
             
-            if ($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) === "") {
+            if ($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) == 0) {
                 porcentajePcl = 0;
-            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) === ""){
+            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) == 0){
                 porcentajePcl = Number(total_deficiencia);
-            }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) === ""){
+            }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) == 0){
                 porcentajePcl = Number(dicapacidad_total);
-            }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) > 0){
+            }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) > 0){
                 porcentajePcl = Number(minusvalia_total);
-            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) === ""){
+            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) == 0){
                 porcentajePcl = Number(total_deficiencia) + Number(dicapacidad_total);
-            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) > 0){
+            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) > 0){
                 porcentajePcl = Number(total_deficiencia) + Number(minusvalia_total);
             }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){
                 porcentajePcl = Number(dicapacidad_total) + Number(minusvalia_total);                
@@ -2462,7 +2462,12 @@ $(document).ready(function(){
             $("a[id^='btn_remover_fila_']").css({
                 cursor: "not-allowed",
                 "pointer-events": "none"
-            });                       
+            });    
+            
+            // checkboxes
+            $("input[id^='dx_principal_deficiencia_alteraciones_']").prop('disabled', true);            
+            $("input[id^='dx_principal_deficiencia_auditiva_']").prop('disabled', true);                        
+            $("input[id^='dx_principal_deficiencia_visual_']").prop('disabled', true);
         }
 
         var textareaenfermedadactual = document.querySelector('#descripcion_enfermedad');
@@ -2497,6 +2502,79 @@ $(document).ready(function(){
             $('#decreto_califi').prop('disabled', true);
             $('#GuardrDictamenPericial').prop('disabled', false);  
         }
+
+        // Desmarcar radio buttons tablas de rol ocupacional al momento de ingresar una nueva insercion
+        var selectortablasrolocupacional = $('#poblacion_califi');        
+        var total_tabla12rolocu = $('#total_tabla12');
+        var total_tabla13rolocu = $('#total_tabla13');
+        var total_tabla14rolocu = $('#total_tabla14');        
+        selectortablasrolocupacional.on('change', function() {
+            var valordelselect = selectortablasrolocupacional.val();
+            if (valordelselect == 75) {
+                $("input[type='radio'][name='roles_ocupacionales_juego']").prop("checked", false);                
+                total_tabla13rolocu.val("");
+                $("input[type='radio'][name='roles_ocupacionales_adultos']").prop("checked", false);                
+                total_tabla14rolocu.val("");
+            }else if(valordelselect == 76){
+                $("input[type='radio'][name='mantiene_postura']").prop("checked", false);                                
+                $("input[type='radio'][name='actividad_espontanea']").prop("checked", false);                                
+                $("input[type='radio'][name='sujeta_cabeza']").prop("checked", false);                                
+                $("input[type='radio'][name='sienta_apoyo']").prop("checked", false);                                
+                $("input[type='radio'][name='sobre_mismo']").prop("checked", false);                                
+                $("input[type='radio'][name='sentado_sin_apoyo']").prop("checked", false);                                
+                $("input[type='radio'][name='tumbado_sentado']").prop("checked", false);                                
+                $("input[type='radio'][name='pie_apoyo']").prop("checked", false);                                
+                $("input[type='radio'][name='pasos_apoyo']").prop("checked", false);                                
+                $("input[type='radio'][name='mantiene_sin_apoyo']").prop("checked", false);                                
+                $("input[type='radio'][name='anda_solo']").prop("checked", false);                                
+                $("input[type='radio'][name='empuja_pelota']").prop("checked", false);                                
+                $("input[type='radio'][name='sorteando_obstaculos']").prop("checked", false);                                
+                $("input[type='radio'][name='succiona']").prop("checked", false);                                
+                $("input[type='radio'][name='fija_mirada']").prop("checked", false);                                
+                $("input[type='radio'][name='trayectoria_objeto']").prop("checked", false);                                
+                $("input[type='radio'][name='sostiene_sonajero']").prop("checked", false);                                
+                $("input[type='radio'][name='hacia_objeto']").prop("checked", false);                                
+                $("input[type='radio'][name='sostiene_objeto']").prop("checked", false);                                
+                $("input[type='radio'][name='abre_cajones']").prop("checked", false);                                
+                $("input[type='radio'][name='bebe_solo']").prop("checked", false);                                
+                $("input[type='radio'][name='quita_prenda']").prop("checked", false);                                
+                $("input[type='radio'][name='espacios_casa']").prop("checked", false);                                
+                $("input[type='radio'][name='imita_trazaso']").prop("checked", false);                                
+                $("input[type='radio'][name='abre_puerta']").prop("checked", false);
+                total_tabla12rolocu.val("");
+                $("input[type='radio'][name='roles_ocupacionales_adultos']").prop("checked", false);                
+                total_tabla14rolocu.val("");
+            }else if(valordelselect == 77){
+                $("input[type='radio'][name='mantiene_postura']").prop("checked", false);                                
+                $("input[type='radio'][name='actividad_espontanea']").prop("checked", false);                                
+                $("input[type='radio'][name='sujeta_cabeza']").prop("checked", false);                                
+                $("input[type='radio'][name='sienta_apoyo']").prop("checked", false);                                
+                $("input[type='radio'][name='sobre_mismo']").prop("checked", false);                                
+                $("input[type='radio'][name='sentado_sin_apoyo']").prop("checked", false);                                
+                $("input[type='radio'][name='tumbado_sentado']").prop("checked", false);                                
+                $("input[type='radio'][name='pie_apoyo']").prop("checked", false);                                
+                $("input[type='radio'][name='pasos_apoyo']").prop("checked", false);                                
+                $("input[type='radio'][name='mantiene_sin_apoyo']").prop("checked", false);                                
+                $("input[type='radio'][name='anda_solo']").prop("checked", false);                                
+                $("input[type='radio'][name='empuja_pelota']").prop("checked", false);                                
+                $("input[type='radio'][name='sorteando_obstaculos']").prop("checked", false);                                
+                $("input[type='radio'][name='succiona']").prop("checked", false);                                
+                $("input[type='radio'][name='fija_mirada']").prop("checked", false);                                
+                $("input[type='radio'][name='trayectoria_objeto']").prop("checked", false);                                
+                $("input[type='radio'][name='sostiene_sonajero']").prop("checked", false);                                
+                $("input[type='radio'][name='hacia_objeto']").prop("checked", false);                                
+                $("input[type='radio'][name='sostiene_objeto']").prop("checked", false);                                
+                $("input[type='radio'][name='abre_cajones']").prop("checked", false);                                
+                $("input[type='radio'][name='bebe_solo']").prop("checked", false);                                
+                $("input[type='radio'][name='quita_prenda']").prop("checked", false);                                
+                $("input[type='radio'][name='espacios_casa']").prop("checked", false);                                
+                $("input[type='radio'][name='imita_trazaso']").prop("checked", false);                                
+                $("input[type='radio'][name='abre_puerta']").prop("checked", false);
+                total_tabla12rolocu.val("");
+                $("input[type='radio'][name='roles_ocupacionales_juego']").prop("checked", false);                
+                total_tabla13rolocu.val("");
+            }            
+        });  
 
         var valorOrigen = $('#origen_firme').val();
         var valorCobertura = $('#origen_cobertura').val();
@@ -2701,7 +2779,8 @@ $(document).ready(function(){
 function funciones_elementos_fila_diagnosticos(num_consecutivo) {
     // Inicializacion de select 2
     $("#lista_Cie10_fila_"+num_consecutivo).select2({
-        width: '100%',
+        //width: '100%',
+        width: '340px',
         placeholder: "Seleccione",
         allowClear: false
     });
@@ -2727,7 +2806,7 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
             // $("select[id^='lista_Cie10_fila_']").empty();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $("#lista_Cie10_fila_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Cie_diagnostico"]+'">'+data[claves[i]]["CIE10"]+'</option>');
+                $("#lista_Cie10_fila_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Cie_diagnostico"]+'">'+data[claves[i]]["CIE10"]+' - '+data[claves[i]]["Descripcion_diagnostico"]+'</option>');
             }
         }
     });

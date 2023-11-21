@@ -613,11 +613,18 @@ $(document).ready(function(){
             valor_pavf = (valor_mayor_agudeza*3 + agudeza_izq_seleccionada + agudeza_der_seleccionada)/5;
             
             if (!isNaN(valor_pavf)) {
-                $("#resultado_pavf").val(parseFloat(redondear(valor_pavf)));
+                if (valor_pavf > 100) {
+                    valor_pavf = 100;
+                    $("#resultado_pavf").val(parseFloat(redondear(valor_pavf)));                    
+                } else {
+                    $("#resultado_pavf").val(parseFloat(redondear(valor_pavf)));                    
+                }
             }
 
             // Deficiencia por Agudeza Visual (DAV)
             if ($("#resultado_agudeza_ojo_izquierdo").val() == "" && $("#resultado_agudeza_ojo_derecho").val() == "") {
+                $("#resultado_dav").val(0);
+            }else if(valor_pavf > 100){
                 $("#resultado_dav").val(0);
             }else{
                 valor_dav = 100 - $("#resultado_pavf").val();

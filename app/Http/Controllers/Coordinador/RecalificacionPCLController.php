@@ -709,7 +709,13 @@ class RecalificacionPCLController extends Controller
                         //print_r($deficiencias);
                         foreach ($deficiencias as $key => $value) {
                             if (strpos($value, "(si)") !== false) {
-                                $deficiencias[$key] = 23.20;
+                                //$deficiencias[$key] = 23.20;
+                                $numerodeficiencia = (float) preg_replace('/[^\d.]/', '', $value);
+                                $nuevoValor = $numerodeficiencia * 0.2;
+                                $a = $numerodeficiencia;
+                                $b = $nuevoValor;
+                                $resultadoMSD = $a + (100 - $a) * $b / 100;
+                                $deficiencias[$key] = $resultadoMSD;
                             }
                         }
                         //print_r($deficiencias);            
@@ -751,7 +757,13 @@ class RecalificacionPCLController extends Controller
                         //print_r($deficiencias);
                         foreach ($deficiencias as $key => $value) {
                             if (strpos($value, "(si)") !== false) {
-                                $deficiencias[$key] = 23.20;
+                                //$deficiencias[$key] = 23.20;
+                                $numerodeficiencia = (float) preg_replace('/[^\d.]/', '', $value);
+                                $nuevoValor = $numerodeficiencia * 0.2;
+                                $a = $numerodeficiencia;
+                                $b = $nuevoValor;
+                                $resultadoMSD = $a + (100 - $a) * $b / 100;
+                                $deficiencias[$key] = $resultadoMSD;
                             }
                         }
                         //print_r($deficiencias);
@@ -800,7 +812,13 @@ class RecalificacionPCLController extends Controller
                         //print_r($deficiencias);
                         foreach ($deficiencias as $key => $value) {
                             if (strpos($value, "(si)") !== false) {
-                                $deficiencias[$key] = 23.20;
+                                //$deficiencias[$key] = 23.20;
+                                $numerodeficiencia = (float) preg_replace('/[^\d.]/', '', $value);
+                                $nuevoValor = $numerodeficiencia * 0.2;
+                                $a = $numerodeficiencia;
+                                $b = $nuevoValor;
+                                $resultadoMSD = $a + (100 - $a) * $b / 100;
+                                $deficiencias[$key] = $resultadoMSD;
                             }
                         }                       
                         //print_r($deficiencias);
@@ -877,7 +895,13 @@ class RecalificacionPCLController extends Controller
                         //print_r($deficiencias);
                         foreach ($deficiencias as $key => $value) {
                             if (strpos($value, "(si)") !== false) {
-                                $deficiencias[$key] = 23.20;
+                                //$deficiencias[$key] = 23.20;
+                                $numerodeficiencia = (float) preg_replace('/[^\d.]/', '', $value);
+                                $nuevoValor = $numerodeficiencia * 0.2;
+                                $a = $numerodeficiencia;
+                                $b = $nuevoValor;
+                                $resultadoMSD = $a + (100 - $a) * $b / 100;
+                                $deficiencias[$key] = $resultadoMSD;
                             }
                         }
                         //print_r($deficiencias);
@@ -1426,7 +1450,13 @@ class RecalificacionPCLController extends Controller
                             //print_r($deficiencias);
                             foreach ($deficiencias as $key => $value) {
                                 if (strpos($value, "(si)") !== false) {
-                                    $deficiencias[$key] = 23.20;
+                                    //$deficiencias[$key] = 23.20;
+                                    $numerodeficiencia = (float) preg_replace('/[^\d.]/', '', $value);
+                                    $nuevoValor = $numerodeficiencia * 0.2;
+                                    $a = $numerodeficiencia;
+                                    $b = $nuevoValor;
+                                    $resultadoMSD = $a + (100 - $a) * $b / 100;
+                                    $deficiencias[$key] = $resultadoMSD;
                                 }
                             }
                             //print_r($deficiencias);            
@@ -1468,7 +1498,13 @@ class RecalificacionPCLController extends Controller
                             //print_r($deficiencias);
                             foreach ($deficiencias as $key => $value) {
                                 if (strpos($value, "(si)") !== false) {
-                                    $deficiencias[$key] = 23.20;
+                                    //$deficiencias[$key] = 23.20;
+                                    $numerodeficiencia = (float) preg_replace('/[^\d.]/', '', $value);
+                                    $nuevoValor = $numerodeficiencia * 0.2;
+                                    $a = $numerodeficiencia;
+                                    $b = $nuevoValor;
+                                    $resultadoMSD = $a + (100 - $a) * $b / 100;
+                                    $deficiencias[$key] = $resultadoMSD;
                                 }
                             }
                             //print_r($deficiencias);
@@ -1517,7 +1553,13 @@ class RecalificacionPCLController extends Controller
                             //print_r($deficiencias);
                             foreach ($deficiencias as $key => $value) {
                                 if (strpos($value, "(si)") !== false) {
-                                    $deficiencias[$key] = 23.20;
+                                    //$deficiencias[$key] = 23.20;
+                                    $numerodeficiencia = (float) preg_replace('/[^\d.]/', '', $value);
+                                    $nuevoValor = $numerodeficiencia * 0.2;
+                                    $a = $numerodeficiencia;
+                                    $b = $nuevoValor;
+                                    $resultadoMSD = $a + (100 - $a) * $b / 100;
+                                    $deficiencias[$key] = $resultadoMSD;
                                 }
                             }                       
                             //print_r($deficiencias);
@@ -1594,7 +1636,13 @@ class RecalificacionPCLController extends Controller
                             //print_r($deficiencias);
                             foreach ($deficiencias as $key => $value) {
                                 if (strpos($value, "(si)") !== false) {
-                                    $deficiencias[$key] = 23.20;
+                                    //$deficiencias[$key] = 23.20;
+                                    $numerodeficiencia = (float) preg_replace('/[^\d.]/', '', $value);
+                                    $nuevoValor = $numerodeficiencia * 0.2;
+                                    $a = $numerodeficiencia;
+                                    $b = $nuevoValor;
+                                    $resultadoMSD = $a + (100 - $a) * $b / 100;
+                                    $deficiencias[$key] = $resultadoMSD;
                                 }
                             }
                             //print_r($deficiencias);
@@ -1731,7 +1779,7 @@ class RecalificacionPCLController extends Controller
         // Listado cie diagnosticos motivo calificacion (Calificacion Tecnica)
         if ($parametro == 'listado_CIE10') {
             $listado_cie_diagnostico = sigmel_lista_cie_diagnosticos::on('sigmel_gestiones')
-            ->select('Id_Cie_diagnostico', 'CIE10')
+            ->select('Id_Cie_diagnostico', 'CIE10', 'Descripcion_diagnostico')
             ->where([
                 ['Estado', '=', 'activo']
             ])

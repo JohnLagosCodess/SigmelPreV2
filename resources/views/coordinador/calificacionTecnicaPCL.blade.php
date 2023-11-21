@@ -432,9 +432,9 @@
                                             <table id="listado_diagnostico_cie10" class="table table-striped table-bordered" width="100%">
                                                 <thead>
                                                     <tr class="bg-info">
-                                                        <th>CIE10</th>
-                                                        <th>Nombre CIE10</th>
-                                                        <th>Origen CIE10</th>
+                                                        <th style="width: 340px !important;">CIE10</th>
+                                                        <th style="width: 340px !important;">Nombre CIE10</th>
+                                                        <th style="width: 140px !important;">Origen CIE10</th>
                                                         <th>Deficiencia(s) motivo de la calificación/<br>Condiciones de salud</th>
                                                         <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_cie10_fila"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                     </tr>
@@ -1175,12 +1175,13 @@
                                         <!--Tabla 6  - Aprendizaje y aplicación del conocimiento-->
                                         <div class="col-6">
                                             <div class="form-group" id="activarintervalos4">
-                                                <label for="tabla6">Tabla 6  - Aprendizaje y aplicación del conocimiento</label>
+                                                <label for="tabla6">Tabla 6 - Aprendizaje y aplicación del conocimiento</label>
                                                 <div class="table-responsive">
                                                     <table id="listado_laboralmente_activo_p6" class="table table-striped table-bordered"  width="100%">
                                                         <thead>
                                                             <tr class="bg-info">
                                                                 <th>Área ocupacional</th>
+                                                                <th>0.0</th>
                                                                 <th>0.1</th>
                                                                 <th>0.2</th>
                                                                 <th>0.3</th>
@@ -1190,6 +1191,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Mirar<br><br></strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Aprendizaje_mirar) && $array_laboralmente_Activo[0]->Aprendizaje_mirar == 0.0)                                                                       
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mirar" id="mirar_00" value="0.0" checked>
+                                                                    @else                                                                                                                                            
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mirar" id="mirar_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="mirar_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -1238,6 +1249,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Aprendizaje_escuchar) && $array_laboralmente_Activo[0]->Aprendizaje_escuchar == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="escuchar" id="escuchar_00" value="0.0" checked>                                                                                                                                                                                                                            
+                                                                    @else                                                                                                                                            
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="escuchar" id="escuchar_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="escuchar_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Aprendizaje_escuchar) && $array_laboralmente_Activo[0]->Aprendizaje_escuchar == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="escuchar" id="escuchar_01" value="0.1" checked>                                                                                                                                                                                                                            
                                                                     @else                                                                                                                                            
@@ -1280,6 +1301,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Aprender a leer, escribir y calcular<br><br></strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Aprendizaje_aprender) && $array_laboralmente_Activo[0]->Aprendizaje_aprender == 0.0)                                                                            
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="aprender" id="aprender_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="aprender" id="aprender_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="aprender_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -1328,6 +1359,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Aprendizaje_calcular) && $array_laboralmente_Activo[0]->Aprendizaje_calcular == 0.0)                                                                                                                                                    
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="calcular" id="calcular_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="calcular" id="calcular_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="calcular_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Aprendizaje_calcular) && $array_laboralmente_Activo[0]->Aprendizaje_calcular == 0.1)                                                                                                                                                    
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="calcular" id="calcular_01" value="0.1" checked>                                                                                                                                                
                                                                     @else
@@ -1370,6 +1411,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Pensar</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Aprendizaje_pensar) && $array_laboralmente_Activo[0]->Aprendizaje_pensar == 0.0)                                                                                                                                                    
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="pensar" id="pensar_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="pensar" id="pensar_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="pensar_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -1418,6 +1469,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Aprendizaje_leer) && $array_laboralmente_Activo[0]->Aprendizaje_leer == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="leer" id="leer_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="leer" id="leer_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="leer_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Aprendizaje_leer) && $array_laboralmente_Activo[0]->Aprendizaje_leer == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="leer" id="leer_01" value="0.1" checked>                                                                                                                                                
                                                                     @else
@@ -1460,6 +1521,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Escribir</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Aprendizaje_escribir) && $array_laboralmente_Activo[0]->Aprendizaje_escribir == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="escribir" id="escribir_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="escribir" id="escribir_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="escribir_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -1508,6 +1579,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Aprendizaje_matematicos) && $array_laboralmente_Activo[0]->Aprendizaje_matematicos == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="matematicos" id="matematicos_00" value="0.0" checked>                                                                                                                                                                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="matematicos" id="matematicos_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="matematicos_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Aprendizaje_matematicos) && $array_laboralmente_Activo[0]->Aprendizaje_matematicos == 0.1)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="matematicos" id="matematicos_01" value="0.1" checked>                                                                                                                                                                                                                        
                                                                     @else
@@ -1550,6 +1631,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Resolver problemas y tomar decisiones</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Aprendizaje_resolver) && $array_laboralmente_Activo[0]->Aprendizaje_resolver == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="decisiones" id="decisiones_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="decisiones" id="decisiones_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="decisiones_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -1598,6 +1689,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Aprendizaje_tareas) && $array_laboralmente_Activo[0]->Aprendizaje_tareas == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tareas_simples" id="tareas_simples_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tareas_simples" id="tareas_simples_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="tareas_simples_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Aprendizaje_tareas) && $array_laboralmente_Activo[0]->Aprendizaje_tareas == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tareas_simples" id="tareas_simples_01" value="0.1" checked>                                                                                                                                                
                                                                     @else
@@ -1643,7 +1744,7 @@
                                                 @if (!empty($array_laboralmente_Activo[0]->Aprendizaje_total))
                                                     <input type="text" id="resultado_tabla6" name="resultado_tabla6" value="{{$array_laboralmente_Activo[0]->Aprendizaje_total}}"  readonly="">
                                                 @else
-                                                    <input type="text" id="resultado_tabla6" name="resultado_tabla6" readonly="">                                                    
+                                                    <input type="text" id="resultado_tabla6" name="resultado_tabla6" value="0" readonly="">                                                    
                                                 @endif
                                             </div>
                                         </div>
@@ -1656,6 +1757,7 @@
                                                         <thead>
                                                             <tr class="bg-info">
                                                                 <th>Área ocupacional</th>
+                                                                <th>0.0</th>
                                                                 <th>0.1</th>
                                                                 <th>0.2</th>
                                                                 <th>0.3</th>
@@ -1665,6 +1767,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Comunicarse con recepción de mensajes verbales</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_verbales) && $array_laboralmente_Activo[0]->Comunicacion_verbales == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="comunicarse_mensaje" id="comunicarse_mensaje_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="comunicarse_mensaje" id="comunicarse_mensaje_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="comunicarse_mensaje_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -1713,6 +1825,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_noverbales) && $array_laboralmente_Activo[0]->Comunicacion_noverbales == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="no_comunicarse_mensaje" id="no_comunicarse_mensaje_00" value="0.0" checked>                                                                                                                                                                                                                            
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="no_comunicarse_mensaje" id="no_comunicarse_mensaje_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="no_comunicarse_mensaje_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Comunicacion_noverbales) && $array_laboralmente_Activo[0]->Comunicacion_noverbales == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="no_comunicarse_mensaje" id="no_comunicarse_mensaje_01" value="0.1" checked>                                                                                                                                                                                                                            
                                                                     @else
@@ -1755,6 +1877,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Comunicarse, recepción en lenguaje signos formal</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_formal) && $array_laboralmente_Activo[0]->Comunicacion_formal == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="comunicarse_signos" id="comunicarse_signos_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="comunicarse_signos" id="comunicarse_signos_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="comunicarse_signos_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -1803,6 +1935,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_escritos) && $array_laboralmente_Activo[0]->Comunicacion_escritos == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="comunicarse_escrito" id="comunicarse_escrito_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="comunicarse_escrito" id="comunicarse_escrito_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="comunicarse_escrito_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Comunicacion_escritos) && $array_laboralmente_Activo[0]->Comunicacion_escritos == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="comunicarse_escrito" id="comunicarse_escrito_01" value="0.1" checked>                                                                        
                                                                     @else
@@ -1845,6 +1987,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Habla palabras, frases y párrafos</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_habla) && $array_laboralmente_Activo[0]->Comunicacion_habla == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="habla" id="habla_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="habla" id="habla_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="habla_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -1893,6 +2045,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_produccion) && $array_laboralmente_Activo[0]->Comunicacion_produccion == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="no_verbales" id="no_verbales_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="no_verbales" id="no_verbales_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="no_verbales_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Comunicacion_produccion) && $array_laboralmente_Activo[0]->Comunicacion_produccion == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="no_verbales" id="no_verbales_01" value="0.1" checked>                                                                                                                                                
                                                                     @else
@@ -1938,7 +2100,17 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
-                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_mensajes))
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_mensajes) && $array_laboralmente_Activo[0]->Comunicacion_mensajes == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mensajes_escritos" id="mensajes_escritos_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mensajes_escritos" id="mensajes_escritos_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="mensajes_escritos_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_mensajes) && $array_laboralmente_Activo[0]->Comunicacion_mensajes == 0.1)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mensajes_escritos" id="mensajes_escritos_01" value="0.1" checked>                                                                                                                                                
                                                                     @else
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mensajes_escritos" id="mensajes_escritos_01" value="0.1">
@@ -1948,7 +2120,7 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
-                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_mensajes))
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_mensajes) && $array_laboralmente_Activo[0]->Comunicacion_mensajes == 0.2)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mensajes_escritos" id="mensajes_escritos_02" value="0.2" checked>                                                                                                                                                
                                                                     @else
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mensajes_escritos" id="mensajes_escritos_02" value="0.2">
@@ -1958,7 +2130,7 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
-                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_mensajes))
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_mensajes) && $array_laboralmente_Activo[0]->Comunicacion_mensajes == 0.3)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mensajes_escritos" id="mensajes_escritos_03" value="0.3" checked>                                                                                                                                                
                                                                     @else
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mensajes_escritos" id="mensajes_escritos_03" value="0.3">
@@ -1968,7 +2140,7 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
-                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_mensajes))
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_mensajes) && $array_laboralmente_Activo[0]->Comunicacion_mensajes == 0.4)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mensajes_escritos" id="mensajes_escritos_04" value="0.4" checked>                                                                                                                                                
                                                                     @else
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mensajes_escritos" id="mensajes_escritos_04" value="0.4">
@@ -1980,6 +2152,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Iniciar y sostener conversación</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_conversacion) && $array_laboralmente_Activo[0]->Comunicacion_conversacion == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sostener_conversa" id="sostener_conversa_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sostener_conversa" id="sostener_conversa_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="sostener_conversa_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -2028,6 +2210,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_discusiones) && $array_laboralmente_Activo[0]->Comunicacion_discusiones == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="iniciar_discusiones" id="iniciar_discusiones_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="iniciar_discusiones" id="iniciar_discusiones_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="iniciar_discusiones_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Comunicacion_discusiones) && $array_laboralmente_Activo[0]->Comunicacion_discusiones == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="iniciar_discusiones" id="iniciar_discusiones_01" value="0.1" checked>                                                                                                                                                
                                                                     @else
@@ -2070,6 +2262,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Utilización dispositivos y técnicas de comunicación</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Comunicacion_dispositivos) && $array_laboralmente_Activo[0]->Comunicacion_dispositivos == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="utiliza_dispositivos" id="utiliza_dispositivos_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="utiliza_dispositivos" id="utiliza_dispositivos_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="utiliza_dispositivos_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -2118,7 +2320,7 @@
                                                 @if (!empty($array_laboralmente_Activo[0]->Comunicacion_total))
                                                     <input type="text" id="resultado_tabla7" name="resultado_tabla7" value="{{$array_laboralmente_Activo[0]->Comunicacion_total}}" readonly="">                                                    
                                                 @else
-                                                    <input type="text" id="resultado_tabla7" name="resultado_tabla7" readonly="">
+                                                    <input type="text" id="resultado_tabla7" name="resultado_tabla7" value="0" readonly="">
                                                 @endif
                                             </div>
                                         </div>
@@ -2131,6 +2333,7 @@
                                                         <thead>
                                                             <tr class="bg-info">
                                                                 <th>Área ocupacional</th>
+                                                                <th>0.0</th>
                                                                 <th>0.1</th>
                                                                 <th>0.2</th>
                                                                 <th>0.3</th>
@@ -2140,6 +2343,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Cambiar posturas corporales básicas y de lugar</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Movilidad_cambiar_posturas) && $array_laboralmente_Activo[0]->Movilidad_cambiar_posturas == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="cambiar_posturas" id="cambiar_posturas_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="cambiar_posturas" id="cambiar_posturas_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="cambiar_posturas_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -2188,6 +2401,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Movilidad_mantener_posicion) && $array_laboralmente_Activo[0]->Movilidad_mantener_posicion == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="posicion_cuerpo" id="posicion_cuerpo_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="posicion_cuerpo" id="posicion_cuerpo_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="posicion_cuerpo_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Movilidad_mantener_posicion) && $array_laboralmente_Activo[0]->Movilidad_mantener_posicion == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="posicion_cuerpo" id="posicion_cuerpo_01" value="0.1" checked>                                                                                                                                                
                                                                     @else
@@ -2230,6 +2453,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Levantar y llevar objetos</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Movilidad_objetos) && $array_laboralmente_Activo[0]->Movilidad_objetos == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="llevar_objetos" id="llevar_objetos_00" value="0.0" checked>                                                                                                                                                                                                                    
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="llevar_objetos" id="llevar_objetos_00" value="0.0"> 
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="llevar_objetos_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -2278,6 +2511,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Movilidad_uso_mano) && $array_laboralmente_Activo[0]->Movilidad_uso_mano == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="uso_fino_mano" id="uso_fino_mano_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="uso_fino_mano" id="uso_fino_mano_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="uso_fino_mano_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Movilidad_uso_mano) && $array_laboralmente_Activo[0]->Movilidad_uso_mano == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="uso_fino_mano" id="uso_fino_mano_01" value="0.1" checked>                                                                                                                                                
                                                                     @else
@@ -2320,6 +2563,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Uso de la mano y el brazo</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Movilidad_mano_brazo) && $array_laboralmente_Activo[0]->Movilidad_mano_brazo == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="uso_mano_brazo" id="uso_mano_brazo_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="uso_mano_brazo" id="uso_mano_brazo_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="uso_mano_brazo_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -2368,6 +2621,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Movilidad_Andar) && $array_laboralmente_Activo[0]->Movilidad_Andar == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="desplazarse_entorno" id="desplazarse_entorno_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="desplazarse_entorno" id="desplazarse_entorno_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="desplazarse_entorno_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Movilidad_Andar) && $array_laboralmente_Activo[0]->Movilidad_Andar == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="desplazarse_entorno" id="desplazarse_entorno_01" value="0.1" checked>                                                                                                                                                
                                                                     @else
@@ -2410,6 +2673,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Desplazarse por distintos lugares</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Movilidad_desplazarse) && $array_laboralmente_Activo[0]->Movilidad_desplazarse == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="distintos_lugares" id="distintos_lugares_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="distintos_lugares" id="distintos_lugares_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="distintos_lugares_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -2458,6 +2731,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Movilidad_equipo) && $array_laboralmente_Activo[0]->Movilidad_equipo == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="desplazarse_con_equipo" id="desplazarse_con_equipo_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="desplazarse_con_equipo" id="desplazarse_con_equipo_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="desplazarse_con_equipo_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Movilidad_equipo) && $array_laboralmente_Activo[0]->Movilidad_equipo == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="desplazarse_con_equipo" id="desplazarse_con_equipo_01" value="0.1" checked>                                                                        
                                                                     @else
@@ -2500,6 +2783,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Utilización de transporte como pasajero</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Movilidad_transporte) && $array_laboralmente_Activo[0]->Movilidad_transporte == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="transporte_pasajero" id="transporte_pasajero_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="transporte_pasajero" id="transporte_pasajero_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="transporte_pasajero_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -2548,6 +2841,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Movilidad_conduccion) && $array_laboralmente_Activo[0]->Movilidad_conduccion == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="conduccion" id="conduccion_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="conduccion" id="conduccion_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="conduccion_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Movilidad_conduccion) && $array_laboralmente_Activo[0]->Movilidad_conduccion == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="conduccion" id="conduccion_01" value="0.1" checked>                                                                        
                                                                     @else
@@ -2593,7 +2896,7 @@
                                                 @if (!empty($array_laboralmente_Activo[0]->Movilidad_total))
                                                     <input type="text" id="resultado_tabla8" name="resultado_tabla8" value="{{$array_laboralmente_Activo[0]->Movilidad_total}}" readonly="">                                                    
                                                 @else
-                                                    <input type="text" id="resultado_tabla8" name="resultado_tabla8" readonly="">                                                    
+                                                    <input type="text" id="resultado_tabla8" name="resultado_tabla8" value="0" readonly="">                                                    
                                                 @endif
                                             </div>
                                         </div>
@@ -2606,6 +2909,7 @@
                                                         <thead>
                                                             <tr class="bg-info">
                                                                 <th>Área ocupacional</th>
+                                                                <th>0.0</th>
                                                                 <th>0.1</th>
                                                                 <th>0.2</th>
                                                                 <th>0.3</th>
@@ -2615,6 +2919,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Lavarse<br><br></strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Cuidado_lavarse) && $array_laboralmente_Activo[0]->Cuidado_lavarse == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="lavarse" id="lavarse_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="lavarse" id="lavarse_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="lavarse_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -2663,6 +2977,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Cuidado_partes_cuerpo) && $array_laboralmente_Activo[0]->Cuidado_partes_cuerpo == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="cuidado_cuerpo" id="cuidado_cuerpo_00" value="0.0" checked>                                                                                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="cuidado_cuerpo" id="cuidado_cuerpo_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="cuidado_cuerpo_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Cuidado_partes_cuerpo) && $array_laboralmente_Activo[0]->Cuidado_partes_cuerpo == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="cuidado_cuerpo" id="cuidado_cuerpo_01" value="0.1" checked>                                                                                                                                                                                                                
                                                                     @else
@@ -2705,6 +3029,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Higiene personal relacionada con procesos excreción</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Cuidado_higiene) && $array_laboralmente_Activo[0]->Cuidado_higiene == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="higiene_personal" id="higiene_personal_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="higiene_personal" id="higiene_personal_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="higiene_personal_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -2753,6 +3087,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Cuidado_vestirse) && $array_laboralmente_Activo[0]->Cuidado_vestirse == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="vestirse" id="vestirse_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="vestirse" id="vestirse_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="vestirse_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Cuidado_vestirse) && $array_laboralmente_Activo[0]->Cuidado_vestirse == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="vestirse" id="vestirse_01" value="0.1" checked>                                                                                                                                                
                                                                     @else
@@ -2795,6 +3139,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Quitarse la ropa</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Cuidado_quitarse) && $array_laboralmente_Activo[0]->Cuidado_quitarse == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="quitarse_ropa" id="quitarse_ropa_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="quitarse_ropa" id="quitarse_ropa_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="quitarse_ropa_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -2843,6 +3197,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Cuidado_ponerse_calzado) && $array_laboralmente_Activo[0]->Cuidado_ponerse_calzado == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="ponerse_calzado" id="ponerse_calzado_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="ponerse_calzado" id="ponerse_calzado_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="ponerse_calzado_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Cuidado_ponerse_calzado) && $array_laboralmente_Activo[0]->Cuidado_ponerse_calzado == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="ponerse_calzado" id="ponerse_calzado_01" value="0.1" checked>                                                                                                                                                
                                                                     @else
@@ -2885,6 +3249,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Comer</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Cuidado_comer) && $array_laboralmente_Activo[0]->Cuidado_comer == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="comer" id="comer_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="comer" id="comer_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="comer_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -2933,6 +3307,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Cuidado_beber) && $array_laboralmente_Activo[0]->Cuidado_beber == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="beber" id="beber_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="beber" id="beber_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="beber_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Cuidado_beber) && $array_laboralmente_Activo[0]->Cuidado_beber == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="beber" id="beber_01" value="0.1" checked>                                                                                                                                                
                                                                     @else
@@ -2975,6 +3359,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Cuidado de la propia salud</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Cuidado_salud) && $array_laboralmente_Activo[0]->Cuidado_salud == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="cuidado_salud" id="cuidado_salud_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="cuidado_salud" id="cuidado_salud_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="cuidado_salud_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -3023,6 +3417,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Cuidado_dieta) && $array_laboralmente_Activo[0]->Cuidado_dieta == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="control_dieta" id="control_dieta_00" value="0.0" checked>
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="control_dieta" id="control_dieta_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="control_dieta_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Cuidado_dieta) && $array_laboralmente_Activo[0]->Cuidado_dieta == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="control_dieta" id="control_dieta_01" value="0.1" checked>
                                                                     @else
@@ -3068,7 +3472,7 @@
                                                 @if (!empty($array_laboralmente_Activo[0]->Cuidado_total))
                                                     <input type="text" id="resultado_tabla9" name="resultado_tabla9" value="{{$array_laboralmente_Activo[0]->Cuidado_total}}"  readonly="">                                                    
                                                 @else                                                    
-                                                    <input type="text" id="resultado_tabla9" name="resultado_tabla9"  readonly="">
+                                                    <input type="text" id="resultado_tabla9" name="resultado_tabla9" value="0"  readonly="">
                                                 @endif
                                             </div>
                                         </div>
@@ -3081,6 +3485,7 @@
                                                         <thead>
                                                             <tr class="bg-info">
                                                                 <th>Área ocupacional</th>
+                                                                <th>0.0</th>
                                                                 <th>0.1</th>
                                                                 <th>0.2</th>
                                                                 <th>0.3</th>
@@ -3090,6 +3495,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Adquisición de lugar para vivir</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Domestica_vivir) && $array_laboralmente_Activo[0]->Domestica_vivir == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="adquisicion_para_vivir" id="adquisicion_para_vivir_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="adquisicion_para_vivir" id="adquisicion_para_vivir_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="adquisicion_para_vivir_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -3138,6 +3553,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Domestica_bienes) && $array_laboralmente_Activo[0]->Domestica_bienes == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="bienes_servicios" id="bienes_servicios_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="bienes_servicios" id="bienes_servicios_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="bienes_servicios_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Domestica_bienes) && $array_laboralmente_Activo[0]->Domestica_bienes == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="bienes_servicios" id="bienes_servicios_01" value="0.1" checked>                                                                                                                                                
                                                                     @else
@@ -3180,6 +3605,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Comprar</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Domestica_comprar) && $array_laboralmente_Activo[0]->Domestica_comprar == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="comprar" id="comprar_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="comprar" id="comprar_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="comprar_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -3228,6 +3663,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Domestica_comidas) && $array_laboralmente_Activo[0]->Domestica_comidas == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="preparar_comida" id="preparar_comida_00" value="0.0" checked>                                                                                                                                               
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="preparar_comida" id="preparar_comida_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="preparar_comida_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Domestica_comidas) && $array_laboralmente_Activo[0]->Domestica_comidas == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="preparar_comida" id="preparar_comida_01" value="0.1" checked>                                                                                                                                               
                                                                     @else
@@ -3270,6 +3715,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Realizar los quehaceres de la casa</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Domestica_quehaceres) && $array_laboralmente_Activo[0]->Domestica_quehaceres == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="quehaceres_casa" id="quehaceres_casa_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="quehaceres_casa" id="quehaceres_casa_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="quehaceres_casa_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -3318,6 +3773,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Domestica_limpieza) && $array_laboralmente_Activo[0]->Domestica_limpieza == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="limpieza_vivienda" id="limpieza_vivienda_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="limpieza_vivienda" id="limpieza_vivienda_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="limpieza_vivienda_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Domestica_limpieza) && $array_laboralmente_Activo[0]->Domestica_limpieza == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="limpieza_vivienda" id="limpieza_vivienda_01" value="0.1" checked>                                                                                                                                                
                                                                     @else
@@ -3360,6 +3825,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Cuidado de los objetos del hogar</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Domestica_objetos) && $array_laboralmente_Activo[0]->Domestica_objetos == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="objetos_hogar" id="objetos_hogar_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="objetos_hogar" id="objetos_hogar_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="objetos_hogar_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -3408,6 +3883,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Domestica_ayudar) && $array_laboralmente_Activo[0]->Domestica_ayudar == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="ayudar_los_demas" id="ayudar_los_demas_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="ayudar_los_demas" id="ayudar_los_demas_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="ayudar_los_demas_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Domestica_ayudar) && $array_laboralmente_Activo[0]->Domestica_ayudar == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="ayudar_los_demas" id="ayudar_los_demas_01" value="0.1" checked>                                                                                                                                                
                                                                     @else
@@ -3450,6 +3935,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Mantenimiento de los dispositivos de ayuda</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Domestica_mantenimiento) && $array_laboralmente_Activo[0]->Domestica_mantenimiento == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mantenimiento_dispositivos" id="mantenimiento_dispositivos_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mantenimiento_dispositivos" id="mantenimiento_dispositivos_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="mantenimiento_dispositivos_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -3498,6 +3993,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_laboralmente_Activo[0]->Domestica_animales) && $array_laboralmente_Activo[0]->Domestica_animales == 0.0)                                                                        
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="cuidado_animales" id="cuidado_animales_00" value="0.0" checked>                                                                                                                                                
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="cuidado_animales" id="cuidado_animales_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="cuidado_animales_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_laboralmente_Activo[0]->Domestica_animales) && $array_laboralmente_Activo[0]->Domestica_animales == 0.1)                                                                        
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="cuidado_animales" id="cuidado_animales_01" value="0.1" checked>                                                                                                                                                
                                                                     @else
@@ -3543,7 +4048,7 @@
                                                 @if (!empty($array_laboralmente_Activo[0]->Domestica_total))
                                                     <input type="text" id="resultado_tabla10" name="resultado_tabla10" value="{{$array_laboralmente_Activo[0]->Domestica_total}}"  readonly="">                                                    
                                                 @else
-                                                    <input type="text" id="resultado_tabla10" name="resultado_tabla10"  readonly="">                                                    
+                                                    <input type="text" id="resultado_tabla10" name="resultado_tabla10" value="0"  readonly="">                                                    
                                                 @endif
                                             </div>
                                         </div>
@@ -3556,7 +4061,7 @@
                                                 @if (!empty($array_laboralmente_Activo[0]->Total_otras_areas))
                                                     <input type="text" id="total_otras" name="total_otras" value="{{$array_laboralmente_Activo[0]->Total_otras_areas}}"  readonly="">                                                    
                                                 @else
-                                                    <input type="text" id="total_otras" name="total_otras"  readonly="">                                                                                                        
+                                                    <input type="text" id="total_otras" name="total_otras" value="0"  readonly="">                                                                                                        
                                                 @endif
                                                 <br>
                                                 <label for="total_rol_areas">Total rol laboral y otras areas(50%):</label>
@@ -3625,6 +4130,7 @@
                                                         <thead>
                                                             <tr class="bg-info">
                                                                 <th>Área ocupacional</th>
+                                                                <th>0.0</th>
                                                                 <th>1.0</th>
                                                                 <th>2.0</th>
                                                             </tr>
@@ -3632,6 +4138,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Mantiene una postura simétrica o alineada</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Motriz_postura_simetrica) && $array_rol_ocupacional[0]->Motriz_postura_simetrica == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mantiene_postura" id="mantiene_postura_00" value="0.0" checked>
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mantiene_postura" id="mantiene_postura_00" value="0.0">                                                                        
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="mantiene_postura_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -3660,6 +4176,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Motriz_actividad_espontanea) && $array_rol_ocupacional[0]->Motriz_actividad_espontanea == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="actividad_espontanea" id="actividad_espontanea_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="actividad_espontanea" id="actividad_espontanea_00" value="0.0">                                                                        
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="actividad_espontanea_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_rol_ocupacional[0]->Motriz_actividad_espontanea) && $array_rol_ocupacional[0]->Motriz_actividad_espontanea == 1.0)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="actividad_espontanea" id="actividad_espontanea_01" value="1.0" checked>                                                                        
                                                                     @else
@@ -3682,6 +4208,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Sujeta la cabeza</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Motriz_sujeta_cabeza) && $array_rol_ocupacional[0]->Motriz_sujeta_cabeza == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sujeta_cabeza" id="sujeta_cabeza_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sujeta_cabeza" id="sujeta_cabeza_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="sujeta_cabeza_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -3710,6 +4246,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Motriz_sentarse_apoyo) && $array_rol_ocupacional[0]->Motriz_sentarse_apoyo == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sienta_apoyo" id="sienta_apoyo_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sienta_apoyo" id="sienta_apoyo_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="sienta_apoyo_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_rol_ocupacional[0]->Motriz_sentarse_apoyo) && $array_rol_ocupacional[0]->Motriz_sentarse_apoyo == 1.0)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sienta_apoyo" id="sienta_apoyo_01" value="1.0" checked>                                                                        
                                                                     @else
@@ -3732,6 +4278,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Gira sobre sí mismo</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Motriz_gira_sobre_mismo) && $array_rol_ocupacional[0]->Motriz_gira_sobre_mismo == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sobre_mismo" id="sobre_mismo_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sobre_mismo" id="sobre_mismo_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="sobre_mismo_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -3760,6 +4316,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Motriz_sentanser_sin_apoyo) && $array_rol_ocupacional[0]->Motriz_sentanser_sin_apoyo == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sentado_sin_apoyo" id="sentado_sin_apoyo_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sentado_sin_apoyo" id="sentado_sin_apoyo_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="sentado_sin_apoyo_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_rol_ocupacional[0]->Motriz_sentanser_sin_apoyo) && $array_rol_ocupacional[0]->Motriz_sentanser_sin_apoyo == 1.0)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sentado_sin_apoyo" id="sentado_sin_apoyo_01" value="1.0" checked>                                                                        
                                                                     @else
@@ -3782,6 +4348,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Pasa de tumbado a sentado</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Motriz_pasa_tumbado_sentado) && $array_rol_ocupacional[0]->Motriz_pasa_tumbado_sentado == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tumbado_sentado" id="tumbado_sentado_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tumbado_sentado" id="tumbado_sentado_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="tumbado_sentado_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -3810,6 +4386,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Motriz_pararse_apoyo) && $array_rol_ocupacional[0]->Motriz_pararse_apoyo == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="pie_apoyo" id="pie_apoyo_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="pie_apoyo" id="pie_apoyo_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="pie_apoyo_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_rol_ocupacional[0]->Motriz_pararse_apoyo) && $array_rol_ocupacional[0]->Motriz_pararse_apoyo == 1.0)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="pie_apoyo" id="pie_apoyo_01" value="1.0" checked>                                                                        
                                                                     @else
@@ -3832,6 +4418,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Da pasos con apoyo</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Motriz_pasos_apoyo) && $array_rol_ocupacional[0]->Motriz_pasos_apoyo == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="pasos_apoyo" id="pasos_apoyo_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="pasos_apoyo" id="pasos_apoyo_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="pasos_apoyo_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -3860,6 +4456,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Motriz_pararse_sin_apoyo) && $array_rol_ocupacional[0]->Motriz_pararse_sin_apoyo == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mantiene_sin_apoyo" id="mantiene_sin_apoyo_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mantiene_sin_apoyo" id="mantiene_sin_apoyo_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="mantiene_sin_apoyo_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_rol_ocupacional[0]->Motriz_pararse_sin_apoyo) && $array_rol_ocupacional[0]->Motriz_pararse_sin_apoyo == 1.0)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="mantiene_sin_apoyo" id="mantiene_sin_apoyo_01" value="1.0" checked>                                                                        
                                                                     @else
@@ -3882,6 +4488,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Anda solo</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Motriz_anda_solo) && $array_rol_ocupacional[0]->Motriz_anda_solo == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="anda_solo" id="anda_solo_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="anda_solo" id="anda_solo_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="anda_solo_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -3910,6 +4526,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Motriz_empujar_pelota_pies) && $array_rol_ocupacional[0]->Motriz_empujar_pelota_pies == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="empuja_pelota" id="empuja_pelota_00" value="0.0" checked>
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="empuja_pelota" id="empuja_pelota_00" value="0.0">                                                                        
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="empuja_pelota_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_rol_ocupacional[0]->Motriz_empujar_pelota_pies) && $array_rol_ocupacional[0]->Motriz_empujar_pelota_pies == 1.0)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="empuja_pelota" id="empuja_pelota_01" value="1.0" checked>
                                                                     @else
@@ -3932,6 +4558,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Anda sorteando obstáculos</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Motriz_andar_obstaculos) && $array_rol_ocupacional[0]->Motriz_andar_obstaculos == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sorteando_obstaculos" id="sorteando_obstaculos_00" value="0.0" checked>
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sorteando_obstaculos" id="sorteando_obstaculos_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="sorteando_obstaculos_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -3966,6 +4602,7 @@
                                                         <thead>
                                                             <tr class="bg-info">
                                                                 <th>Área ocupacional</th>
+                                                                <th>0.0</th>
                                                                 <th>1.0</th>
                                                                 <th>2.0</th>
                                                             </tr>
@@ -3973,6 +4610,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Succiona</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Adaptativa_succiona) && $array_rol_ocupacional[0]->Adaptativa_succiona == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="succiona" id="succiona_00" value="0.0" checked>
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="succiona" id="succiona_00" value="0.0">                                                                        
+                                                                    @endif 
+                                                                    <label class="form-check-label custom-control-label" for="succiona_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -4001,6 +4648,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Adaptativa_fija_mirada) && $array_rol_ocupacional[0]->Adaptativa_fija_mirada == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="fija_mirada" id="fija_mirada_00" value="0.0" checked>
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="fija_mirada" id="fija_mirada_00" value="0.0">                                                                        
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="fija_mirada_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_rol_ocupacional[0]->Adaptativa_fija_mirada) && $array_rol_ocupacional[0]->Adaptativa_fija_mirada == 1.0)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="fija_mirada" id="fija_mirada_01" value="1.0" checked>
                                                                     @else
@@ -4023,6 +4680,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Sigue la trayectoria de un objeto</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Adaptativa_sigue_trayectoria_objeto) && $array_rol_ocupacional[0]->Adaptativa_sigue_trayectoria_objeto == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="trayectoria_objeto" id="trayectoria_objeto_00" value="0.0" checked>                                                                        
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="trayectoria_objeto" id="trayectoria_objeto_00" value="0.0">
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="trayectoria_objeto_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -4051,6 +4718,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Adaptativa_sostiene_sonajero) && $array_rol_ocupacional[0]->Adaptativa_sostiene_sonajero == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sostiene_sonajero" id="sostiene_sonajero_00" value="0.0" checked>
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sostiene_sonajero" id="sostiene_sonajero_00" value="0.0">                                                                        
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="sostiene_sonajero_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_rol_ocupacional[0]->Adaptativa_sostiene_sonajero) && $array_rol_ocupacional[0]->Adaptativa_sostiene_sonajero == 1.0)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sostiene_sonajero" id="sostiene_sonajero_01" value="1.0" checked>
                                                                     @else
@@ -4073,6 +4750,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Tiende la mano hacia un objeto</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Adaptativa_tiende_mano_hacia_objeto) && $array_rol_ocupacional[0]->Adaptativa_tiende_mano_hacia_objeto == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="hacia_objeto" id="hacia_objeto_00" value="0.0" checked>
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="hacia_objeto" id="hacia_objeto_00" value="0.0">                                                                        
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="hacia_objeto_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -4101,6 +4788,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Adaptativa_sostiene_objeto_manos) && $array_rol_ocupacional[0]->Adaptativa_sostiene_objeto_manos == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sostiene_objeto" id="sostiene_objeto_00" value="0.0" checked>
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sostiene_objeto" id="sostiene_objeto_00" value="0.0">                                                                        
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="sostiene_objeto_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_rol_ocupacional[0]->Adaptativa_sostiene_objeto_manos) && $array_rol_ocupacional[0]->Adaptativa_sostiene_objeto_manos == 1.0)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="sostiene_objeto" id="sostiene_objeto_01" value="1.0" checked>
                                                                     @else
@@ -4123,6 +4820,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Abre cajones</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Adaptativa_abre_cajones) && $array_rol_ocupacional[0]->Adaptativa_abre_cajones == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="abre_cajones" id="abre_cajones_00" value="0.0" checked>
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="abre_cajones" id="abre_cajones_00" value="0.0">                                                                    
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="abre_cajones_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -4151,6 +4858,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Adaptativa_bebe_solo) && $array_rol_ocupacional[0]->Adaptativa_bebe_solo == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="bebe_solo" id="bebe_solo_00" value="0.0" checked>
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="bebe_solo" id="bebe_solo_00" value="0.0">                                                                        
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="bebe_solo_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_rol_ocupacional[0]->Adaptativa_bebe_solo) && $array_rol_ocupacional[0]->Adaptativa_bebe_solo == 1.0)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="bebe_solo" id="bebe_solo_01" value="1.0" checked>
                                                                     @else
@@ -4173,6 +4890,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Se quita una prenda de vestir</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Adaptativa_quitar_prenda_vestir) && $array_rol_ocupacional[0]->Adaptativa_quitar_prenda_vestir == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="quita_prenda" id="quita_prenda_00" value="0.0" checked>
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="quita_prenda" id="quita_prenda_00" value="0.0">                                                                        
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="quita_prenda_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -4201,6 +4928,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Adaptativa_reconoce_funcion_espacios_casa) && $array_rol_ocupacional[0]->Adaptativa_reconoce_funcion_espacios_casa == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="espacios_casa" id="espacios_casa_00" value="0.0" checked>
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="espacios_casa" id="espacios_casa_00" value="0.0">                                                                        
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="espacios_casa_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_rol_ocupacional[0]->Adaptativa_reconoce_funcion_espacios_casa) && $array_rol_ocupacional[0]->Adaptativa_reconoce_funcion_espacios_casa == 1.0)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="espacios_casa" id="espacios_casa_01" value="1.0" checked>
                                                                     @else
@@ -4223,6 +4960,16 @@
                                                         <tbody>
                                                             <td>
                                                                 <label><strong>Imita trazos con el lápiz</strong></label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Adaptativa_imita_trazo_lapiz) &&  $array_rol_ocupacional[0]->Adaptativa_imita_trazo_lapiz == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="imita_trazaso" id="imita_trazaso_00" value="0.0" checked>
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="imita_trazaso" id="imita_trazaso_00" value="0.0">                                                                        
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="imita_trazaso_00"></label>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
@@ -4251,6 +4998,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-check custom-control custom-radio">
+                                                                    @if (!empty($array_rol_ocupacional[0]->Adaptativa_abre_puerta) && $array_rol_ocupacional[0]->Adaptativa_abre_puerta == 0.0)
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="abre_puerta" id="abre_puerta_00" value="0.0" checked>
+                                                                    @else
+                                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="abre_puerta" id="abre_puerta_00" value="0.0">                                                                        
+                                                                    @endif
+                                                                    <label class="form-check-label custom-control-label" for="abre_puerta_00"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check custom-control custom-radio">
                                                                     @if (!empty($array_rol_ocupacional[0]->Adaptativa_abre_puerta) && $array_rol_ocupacional[0]->Adaptativa_abre_puerta == 1.0)
                                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="abre_puerta" id="abre_puerta_01" value="1.0" checked>
                                                                     @else
@@ -4276,7 +5033,7 @@
                                                 @if (!empty($array_rol_ocupacional[0]->Total_criterios_desarrollo))
                                                     <input type="text" id="total_tabla12" name="total_tabla12"  value="{{$array_rol_ocupacional[0]->Total_criterios_desarrollo}}" readonly="">                                                    
                                                 @else
-                                                    <input type="text" id="total_tabla12" name="total_tabla12"  readonly="">                                                    
+                                                    <input type="text" id="total_tabla12" name="total_tabla12" value="0" readonly="">                                                    
                                                 @endif
                                             </div>
                                         </div>
@@ -4362,7 +5119,7 @@
                                                 @if (!empty($array_rol_ocupacional[0]->Total_rol_estudio_clase))
                                                     <input type="text" id="total_tabla13" name="total_tabla13" value="{{$array_rol_ocupacional[0]->Total_rol_estudio_clase}}" readonly="">
                                                 @else
-                                                    <input type="text" id="total_tabla13" name="total_tabla13"  readonly="">                                                                                                        
+                                                    <input type="text" id="total_tabla13" name="total_tabla13" value="0"  readonly="">                                                                                                        
                                                 @endif
                                             </div>
                                         </div>
@@ -4448,7 +5205,7 @@
                                                 @if (!empty($array_rol_ocupacional[0]->Total_rol_adultos_ayores))
                                                     <input type="text" id="total_tabla14" name="total_tabla14" value="{{$array_rol_ocupacional[0]->Total_rol_adultos_ayores}}" readonly="">
                                                 @else
-                                                    <input type="text" id="total_tabla14" name="total_tabla14"  readonly="">                                                                                                        
+                                                    <input type="text" id="total_tabla14" name="total_tabla14" value="0"  readonly="">                                                                                                        
                                                 @endif
                                             </div>
                                         </div>
@@ -4633,7 +5390,7 @@
                                                                 @if (!empty($array_libros_2_3[0]->Total_conducta))
                                                                     <input type="text" class="form-control" name="total_conducta" id="total_conducta" value="{{$array_libros_2_3[0]->Total_conducta}}" readonly>                                                                    
                                                                 @else
-                                                                    <input type="text" class="form-control" name="total_conducta" id="total_conducta" readonly>                                                                    
+                                                                    <input type="text" class="form-control" name="total_conducta" id="total_conducta" value="0" readonly>                                                                    
                                                                 @endif
                                                             </th>
                                                         </tr>
@@ -4773,7 +5530,7 @@
                                                                 @if (!empty($array_libros_2_3[0]->Total_comunicacion))
                                                                     <input type="text" class="form-control" name="total_comunicacion" id="total_comunicacion" value="{{$array_libros_2_3[0]->Total_comunicacion}}" readonly>                                                                    
                                                                 @else
-                                                                    <input type="text" class="form-control" name="total_comunicacion" id="total_comunicacion" readonly>                                                                    
+                                                                    <input type="text" class="form-control" name="total_comunicacion" id="total_comunicacion" value="0" readonly>                                                                    
                                                                 @endif
                                                             </th>
                                                         </tr>
@@ -4913,7 +5670,7 @@
                                                                 @if (!empty($array_libros_2_3[0]->Total_personal))
                                                                     <input type="text" class="form-control" name="total_cuidado_personal" id="total_cuidado_personal" value="{{$array_libros_2_3[0]->Total_personal}}" readonly>
                                                                 @else
-                                                                    <input type="text" class="form-control" name="total_cuidado_personal" id="total_cuidado_personal" readonly>                                                                    
+                                                                    <input type="text" class="form-control" name="total_cuidado_personal" id="total_cuidado_personal" value="0" readonly>                                                                    
                                                                 @endif
                                                             </th>
                                                         </tr>
@@ -5053,7 +5810,7 @@
                                                                 @if (!empty($array_libros_2_3[0]->Total_locomocion))
                                                                     <input type="text" class="form-control" name="total_lomocion" id="total_lomocion" value="{{$array_libros_2_3[0]->Total_locomocion}}" readonly>                                                                                                                                        
                                                                 @else
-                                                                    <input type="text" class="form-control" name="total_lomocion" id="total_lomocion" readonly>                                                                    
+                                                                    <input type="text" class="form-control" name="total_lomocion" id="total_lomocion" value="0" readonly>                                                                    
                                                                 @endif
                                                             </th>
                                                         </tr>
@@ -5193,7 +5950,7 @@
                                                                 @if (!empty($array_libros_2_3[0]->Total_disposicion))
                                                                     <input type="text" class="form-control" name="total_disposicion" id="total_disposicion" value="{{$array_libros_2_3[0]->Total_disposicion}}" readonly>
                                                                 @else
-                                                                    <input type="text" class="form-control" name="total_disposicion" id="total_disposicion" readonly>                                                                    
+                                                                    <input type="text" class="form-control" name="total_disposicion" id="total_disposicion" value="0" readonly>                                                                    
                                                                 @endif
                                                             </th>
                                                         </tr>
@@ -5333,7 +6090,7 @@
                                                                 @if (!empty($array_libros_2_3[0]->Total_destreza))
                                                                     <input type="text" class="form-control" name="total_destreza" id="total_destreza" value="{{$array_libros_2_3[0]->Total_destreza}}" readonly>                                                                                                                                        
                                                                 @else
-                                                                    <input type="text" class="form-control" name="total_destreza" id="total_destreza" readonly>                                                                    
+                                                                    <input type="text" class="form-control" name="total_destreza" id="total_destreza" value="0" readonly>                                                                    
                                                                 @endif
                                                             </th>
                                                         </tr>
@@ -5461,7 +6218,7 @@
                                                                 @if (!empty($array_libros_2_3[0]->Total_situacion))
                                                                     <input type="text" class="form-control" name="total_situacion" id="total_situacion" value="{{$array_libros_2_3[0]->Total_situacion}}" readonly>
                                                                 @else
-                                                                    <input type="text" class="form-control" name="total_situacion" id="total_situacion" readonly>                                                                    
+                                                                    <input type="text" class="form-control" name="total_situacion" id="total_situacion" value="0" readonly>                                                                    
                                                                 @endif
                                                             </th>
                                                         </tr>
@@ -5473,7 +6230,7 @@
                                         @if (!empty($array_libros_2_3[0]->Total_discapacidad))
                                             <input type="text" name="total_discapacidades" id="total_discapacidades" value="{{$array_libros_2_3[0]->Total_discapacidad}}" readonly>
                                         @else
-                                            <input type="text" name="total_discapacidades" id="total_discapacidades" readonly>                                            
+                                            <input type="text" name="total_discapacidades" id="total_discapacidades" value="0" readonly>                                            
                                         @endif
                                     </div>
                                 </div>                             
@@ -5992,7 +6749,7 @@
                                         @if (!empty($array_libros_2_3[0]->Total_minusvalia))
                                             <input type="text" name="total_minusvalia" id="total_minusvalia" value="{{$array_libros_2_3[0]->Total_minusvalia}}" readonly>                                            
                                         @else
-                                            <input type="text" name="total_minusvalia" id="total_minusvalia" readonly>                                            
+                                            <input type="text" name="total_minusvalia" id="total_minusvalia" value="0" readonly>                                            
                                         @endif
                                     </div>
                                 </div><br>
@@ -6355,7 +7112,7 @@
 
             contador_cie10 = contador_cie10 + 1;
             var nueva_fila_cie10 = [
-                '<select id="lista_Cie10_fila_'+contador_cie10+'" class="custom-select lista_Cie10_fila_'+contador_cie10+'" name="lista_Cie10"><option></option></select>',
+                '<select id="lista_Cie10_fila_'+contador_cie10+'" class="form-comtrol custom-select lista_Cie10_fila_'+contador_cie10+'" name="lista_Cie10"><option></option></select>',
                 '<input type="text" class="form-control" id="nombre_cie10_fila_'+contador_cie10+'" name="nombre_cie10"/>',
                 '<select id="lista_origenCie10_fila_'+contador_cie10+'" class="custom-select lista_origenCie10_fila_'+contador_cie10+'" name="lista_origenCie10"><option></option></select>',
                 '<textarea id="descripcion_cie10_fila_'+contador_cie10+'" class="form-control" name="descripcion_cie10" cols="90" rows="4"></textarea>',
