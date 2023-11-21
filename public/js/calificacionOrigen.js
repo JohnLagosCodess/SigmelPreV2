@@ -795,15 +795,15 @@ $(document).ready(function(){
         var copiaComunicadoTotal = [];
 
         $('input[type="checkbox"]').each(function() {
-        var copiaComunicado = $(this).attr('id');            
-        if (copiaComunicado === 'copia_afiliado' || copiaComunicado === 'copia_empleador' || 
-            copiaComunicado === 'copia_eps' || copiaComunicado === 'copia_afp' || 
-            copiaComunicado === 'copia_arl') {                
-            if ($(this).is(':checked')) {                
-            var relacionCopiaValor = $(this).val();
-            copiaComunicadoTotal.push(relacionCopiaValor);
+            var copiaComunicado = $(this).attr('id');            
+            if (copiaComunicado === 'copia_afiliado' || copiaComunicado === 'copia_empleador' || 
+                copiaComunicado === 'copia_eps' || copiaComunicado === 'copia_afp' || 
+                copiaComunicado === 'copia_arl') {                
+                if ($(this).is(':checked')) {                
+                var relacionCopiaValor = $(this).val();
+                copiaComunicadoTotal.push(relacionCopiaValor);
+                }
             }
-        }
         });
 
         //console.log(copiaComunicadoTotal);

@@ -38,7 +38,23 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
+            'root' => public_path('logos_clientes'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
+        'publicfirmasclientes' => [
+            'driver' => 'local',
+            'root' => public_path('firmas_clientes'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
+        'publicfirmasproveedores' => [
+            'driver' => 'local',
+            'root' => public_path('firmas_proveedores'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
             'throw' => false,

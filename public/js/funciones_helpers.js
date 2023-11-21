@@ -102,6 +102,12 @@ $(document).ready(function () {
         var textoEscrito = $(this).val();
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
     });
+	
+	$(document).on('keyup', "textarea[id^='documento_soli_fila_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+	
     $(document).on('keyup', "textarea[id^='descripcion_fila_']", function(){
         var textoEscrito = $(this).val();
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
@@ -237,6 +243,17 @@ $(document).ready(function () {
         var textoEscrito = $(this).val();
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
     });
+	
+	// Clase para poner  la primera letra en mayuscula
+    $('.CadaLetraMayus').keypress(function(event) {
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));   
+    });
+    // Clase para poner solo la primera letra en mayuscula
+    $('.soloPrimeraLetraMayus').keypress(function(event) {
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));   
+    });
 
     // TEXTAREA FORMULARIO NUEVA ACCION
     $(document).on('keyup', "textarea[id^='descrip_accion']", function(){
@@ -249,6 +266,125 @@ $(document).ready(function () {
         var textoEscrito = $(this).val();
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
     });
+
+    /* TODO LO RELACIONADO A CLIENTES (CREACIÓN Y EDICIÓN) */
+    $("#otro_tipo_cliente").keyup(function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $("#nombre_cliente").keyup(function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "input[id^='nombre_sucursal_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "input[id^='nombre_gerente_sucursal_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $("#nombre_del_firmante_cliente").keyup(function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $("#cargo_del_firmante_cliente").keyup(function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $("#nombre_del_firmante_proveedor").keyup(function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+    
+    $("#cargo_del_firmante_proveedor").keyup(function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "input[id^='nombre_ans_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "textarea[id^='descripcion_ans_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "input[id^='valor_ans_']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
+    /* TODO LO CORRESPONDIENTE A LA PARAMETRIZACION */
+    $(document).on('keyup', "input[id^='tiempo_alerta_origen_atel_']", function(){
+        var inputId = this.id;
+        Maximo1Decimal(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='bd_tiempo_alerta_origen_atel_']", function(){
+        var inputId = this.id;
+        Maximo1Decimal(inputId);
+    });
+
+    $(document).on('keyup', "textarea[id^='motivo_movimiento_origen_atel_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "textarea[id^='bd_motivo_movimiento_origen_atel_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "input[id^='tiempo_alerta_calificacion_pcl_']", function(){
+        var inputId = this.id;
+        Maximo1Decimal(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='bd_tiempo_alerta_calificacion_pcl_']", function(){
+        var inputId = this.id;
+        Maximo1Decimal(inputId);
+    });
+
+    $(document).on('keyup', "textarea[id^='motivo_movimiento_calificacion_pcl_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "textarea[id^='bd_motivo_movimiento_calificacion_pcl_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+
+    $(document).on('keyup', "input[id^='tiempo_alerta_juntas_']", function(){
+        var inputId = this.id;
+        Maximo1Decimal(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='bd_tiempo_alerta_juntas_']", function(){
+        var inputId = this.id;
+        Maximo1Decimal(inputId);
+    });
+
+    $(document).on('keyup', "textarea[id^='motivo_movimiento_juntas_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "textarea[id^='bd_motivo_movimiento_juntas_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
 
     /* Función para colocar la primera letra en mayúscula de cada palabra que se escriba */
     function LetraMayusCadaPalabra(textoEscrito) {
@@ -284,7 +420,9 @@ $(document).ready(function () {
         if (!Number.isInteger(Number(value))) {
           $(input).val("");
         }
-      }
+    }
+
+    
     
     $(document).on("input", '[id^="deficienciadecreto3_"]', function() {
         NumerosEnteros(this);
@@ -298,11 +436,38 @@ $(document).ready(function () {
               $(this).val(parseFloat(inputValue).toFixed(2));
             }
         });
+    };
+
+    function Maximo1Decimal(idinput){
+        $('#'+idinput).on('input', function(){
+            var inputValue = $(this).val();
+            var decimalCount = (inputValue.split('.')[1] || []).length;        
+            if (decimalCount > 1) {
+              $(this).val(parseFloat(inputValue).toFixed(1));
+            }
+        });
     }
+
+    
 
     $(document).on("input", '[id^="suma_combinada"]', function() {
         var inputId = this.id;
         Maximo2Decimales(inputId);
+    });
+
+    /* Input que permita registrar en formato contabilidad */
+    $(".soloContabilidad").on({
+        "focus": function(event) {
+            $(event.target).select();
+        },
+        "input": function(event) {
+            let value = event.target.value;
+            value = value.replace(/\D/g, ""); // Remove non-digit characters
+            value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"); // Add comma for thousands separators
+            value = value.replace(/(\d)(\.(\d{2}))$/, "$1$2"); // Add period for decimal places
+            value = "$" + value; // Add "$" at the beginning
+            event.target.value = value;
+        }
     });
 
     $(document).on("input", '[id^="Total_Deficiencia50"]', function() {
@@ -339,6 +504,12 @@ $(document).ready(function () {
         if (keycode < 48 || keycode > 57) {
         event.preventDefault();
         }
+    });
+	
+	 /* SOLO PERMITTE DOS DECIMALES */
+    $('.soloDosDecimales').keypress(function(event) {
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
     });
     
 });

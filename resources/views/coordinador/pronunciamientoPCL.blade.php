@@ -212,7 +212,7 @@
                                         <div class="form-group">
                                             <label for="dictamen_calificador">N° dictamen primer calificador<span style="color: red;">(*)</span></label>
                                             @if (!empty($info_pronuncia[0]->Dictamen_calificador))
-                                                <input type="number" class="form-control" id="dictamen_calificador" name="dictamen_calificador"  value="{{$info_pronuncia[0]->Dictamen_calificador}}" required>
+                                                <input type="number" class="form-control soloNumeros" id="dictamen_calificador" name="dictamen_calificador"  value="{{$info_pronuncia[0]->Dictamen_calificador}}" required>
                                             @else
                                                 <input type="number" class="form-control soloNumeros" id="dictamen_calificador" name="dictamen_calificador" required />
                                             @endif

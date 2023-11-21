@@ -4,6 +4,7 @@ use App\Http\Controllers\Administrador\AdministradorController;
 use App\Http\Controllers\Administrador\EntidadesController;
 use App\Http\Controllers\Administrador\AccionesController;
 use App\Http\Controllers\Administrador\BuscarEventoController;
+use App\Http\Controllers\Administrador\ParametrizacionController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Autenticacion\LoginController;
 use App\Http\Controllers\Autenticacion\LogoutController;
@@ -24,7 +25,9 @@ use App\Http\Controllers\Coordinador\DeterminacionOrigenATEL;
 use App\Http\Controllers\Coordinador\PronunciamientoOrigenController;
 use App\Http\Controllers\Coordinador\BandejaJuntasController;
 use App\Http\Controllers\Coordinador\CalificacionJuntasController;
+use App\Http\Controllers\Coordinador\ControversiaJuntasController;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -194,12 +197,7 @@ Route::post('/listadoUsuariosAsignacion', [AdministradorController::class, 'list
 Route::post('/Sigmel/RolAdministrador/GuardarEdicionEquipoTrabajo', [AdministradorController::class, 'editar_equipo_trabajo'])->name('GuardarEdicionEquipoTrabajo');
 
 // 04/05/2023
-// Vista: Formulario para registrar Cliente
-Route::get('/Sigmel/RolAdministrador/RegistroCliente', [AdministradorController::class, 'mostrarVistaCrearCliente'])->name('registrarCliente');
-// Acción: Registrar el cliente
-Route::post('/Sigmel/RolAdministrador/CrearCliente', [AdministradorController::class, 'guardar_cliente'])->name('CrearCliente');
-// Acción: Actualizar información del cliente.
-Route::post('/Sigmel/RolAdministrador/ActualizarCliente', [AdministradorController::class, 'actualizar_cliente'])->name('ActualizarCliente');
+
 // Vista: Bandeja de gestión Inicial
 Route::get('/Sigmel/RolAdministrador/BandejaGestionInicial', [AdministradorController::class, 'mostrarVistaBandejaGestionInicial'])->name('bandejaGestionInicial');
 // Vista: Cargue de Bases
@@ -540,8 +538,8 @@ Route::post('/eliminarDiagnosticosMotivoCalificacionDTOATEL', [DeterminacionOrig
 Route::post('/actualizarDxPrincipalDTOATEL', [DeterminacionOrigenATEL::class, 'actualizarDxPrincipalDTOATEL']);
 // Acción: Guardar información DTO ATEL
 Route::post('/GuardaroActualizarInfoDTOTAEL', [DeterminacionOrigenATEL::class, 'GuardaroActualizarInfoDTOTAEL']);
-// Acción: Eliminar registro de Examenes e interconsultar visualmente e inactiva en la DB
-Route::post('/eliminarExamenesInterconsultasDTOATEL', [DeterminacionOrigenATEL::class, 'eliminarExamenInterconsulta']);
+// // Acción: Eliminar registro de Examenes e interconsultar visualmente e inactiva en la DB
+// Route::post('/eliminarExamenesInterconsultasDTOATEL', [DeterminacionOrigenATEL::class, 'eliminarExamenInterconsulta']);
 // Acción: Eliminar registros Diagnosticos motivo de calificacion visualmente e inactiva en la DB
 Route::post('/eliminarDiagnosticosMotivoCalificacionDTOATEL', [DeterminacionOrigenATEL::class, 'eliminarDiagnosticoMotivoCalificacion']);
 // 02/10/2023
@@ -584,8 +582,40 @@ Route::post('/actualizarProfesionalServicioJuntas', [BandejaJuntasController::cl
 // Vista: Módulo Calificación Juntas Coordinador
 Route::get('/calificacionJuntas', [CalificacionJuntasController::class, 'mostrarVistaCalificacionJuntas'])->name('calificacionJuntas');
 Route::post('/calificacionJuntas', [CalificacionJuntasController::class, 'mostrarVistaCalificacionJuntas'])->name('calificacionJuntas');
-// Accion: Insertar Califcación Origen
+// Accion: Insertar Califcación Juntas
 Route::post('/registrarCalificacionJuntas', [CalificacionJuntasController::class, 'guardarCalificacionJuntas']);
+// Accion: Selectores Módulo Juntas
+Route::post('/selectoresJuntas', [CalificacionJuntasController::class, 'cargueListadoSelectoresJuntas']);
+// Accion: Registrar Datos de controvertido
+Route::post('/registrarControvertido', [CalificacionJuntasController::class, 'guardarControvertidoJuntas']);
+// Accion: Registrar Datos de controversia
+Route::post('/registrarControversia', [CalificacionJuntasController::class, 'guardarControversiaJuntas']);
+// Accion: Registrar Datos pagos honorarios
+Route::post('/registrarPagoJuntas', [CalificacionJuntasController::class, 'guardarPagosJuntas']);
+// Acción: Guardar Datos Listado de documentos solicitados
+Route::post('/GuardarDocumentosSolicitadosJuntas',[CalificacionJuntasController::class, 'GuardarDocumentosSolicitadosJuntas']);
+// Acción: Capturar de datos para el formulario generar comunicado destinatario final en Juntas
+Route::post('/captuarDestinatarioJuntas', [CalificacionJuntasController::class, 'captuarDestinatariosPrincipalJuntas']);
+// Acción Insertar comunicado
+Route::post('/registrarComunicadoJuntas', [CalificacionJuntasController::class, 'guardarComunicadoJuntas']);
+// Acción: Capturar datos para el dataTable Comunicados Orogen
+Route::post('/historialComunicadoJuntas', [CalificacionJuntasController::class, 'historialComunicadosJuntas']);
+// Acción: Abrir modal para editar comunicado
+Route::post('/modalComunicadoJuntas', [CalificacionJuntasController::class, 'mostrarModalComunicadoJuntas'])->name('modalComunicadoJuntas');
+// Acción: Actualizar comunicado
+Route::post('/actualizarComunicadoJuntas', [CalificacionJuntasController::class, 'actualizarComunicadoJuntas']);
+// Acción: Insertar Agregar Seguimiento
+Route::post('/registrarCausalSeguimientoJuntas', [CalificacionJuntasController::class, 'guardarAgregarSeguimientoJuntas']);
+//18/11/2023
+// Vista: Módulo Controversia Juntas
+Route::post('/calificacionJuntas/controversiaJuntas', [ControversiaJuntasController::class, 'mostrarVistaPronunciamientoJuntas'])->name('controversiaJuntas');
+Route::get('/calificacionJuntas/controversiaJuntas', [ControversiaJuntasController::class, 'mostrarVistaPronunciamientoJuntas'])->name('controversiaJuntas');
+// Accion: Selectores Módulo Controversia Juntas
+Route::post('/selectoresJuntasControversia', [ControversiaJuntasController::class, 'cargueListadoSelectoresJuntasControversia']);
+// Acción: Guardar Informacion Servicio Controversia Juntas
+Route::post('/guardarInfoServiPronunciaJuntas', [ControversiaJuntasController::class, 'guardarInfoServiPronunciaJuntas']);
+// Accion: Registrar Datos de controvertido Modulo Juntas
+Route::post('/registrarControvertidoJuntas', [ControversiaJuntasController::class, 'guardarControvertidoMoJuntas']);
 
 // Acción: Mostrar vista ADICIÓN DX DTO
 Route::get('/adicionDxDtoOrigen', [AdicionDxDTO::class, 'mostrarVistaAdicionDxDTO'])->name('adicionDxDtoOrigen');
@@ -601,17 +631,55 @@ Route::get('/Sigmel/NuevaAccion', [AccionesController::class, 'mostrarVistaNueva
 // Accion: Selectores Módulo Acciones
 Route::post('/selectoresAcciones', [AccionesController::class, 'cargueListadoSelectoresAcciones']);
 // Acción: Crear una nueva acción
-// Route::post('/Sigmel/CrearNuevaAccion', [AccionesController::class, 'CrearNuevaAccion'])->name('CrearNuevaAccion');
 Route::post('/CrearNuevaAccion', [AccionesController::class, 'CrearNuevaAccion']);
-// Vista: Formulario para listar una acción
+// Vista: Formulario para listar acciones
 Route::get('/Sigmel/ListarAcciones', [AccionesController::class, 'mostrarVistaListarAcciones'])->name('listarAcciones');
 // Acción:Traer datos de la acción a editar
 Route::post('/Sigmel/InformacionAccionEditar', [AccionesController::class, 'InformacionAccionEditar'])->name('InformacionAccionEditar');
 // Acción: Actualización de la información de la Acción
 Route::post('/ActualizarAccion', [AccionesController::class, 'ActualizarAccion'])->name('ActualizarAccion');
 
-// Vista: Formulario para editar una acción
-// Route::get('/Sigmel/EditarAccion', [AccionesController::class, 'mostrarVistaListarAccion'])->name('listarAcciones');
+// Vista: Formulario para registrar Cliente
+Route::get('/Sigmel/RolAdministrador/RegistroCliente', [AdministradorController::class, 'mostrarVistaCrearCliente'])->name('registrarCliente');
+// Acción: Registrar el cliente
+Route::post('/CrearCliente', [AdministradorController::class, 'guardar_cliente']);
+// Vista: Traer lista de clientes
+Route::get  ('/Sigmel/RolAdministrador/ListarClientes', [AdministradorController::class, 'mostrarVistaListarClientes'])->name('listarClientes');
+// Acción: Traer información del cliente
+Route::post('/Sigmel/InformacionClienteEditar', [AdministradorController::class, 'InformacionClienteEditar'])->name('InformacionClienteEditar');
+// Acción: Eliminar fila dinámica en tabla de sucursales modal edicion cliente
+Route::post('/eliminarSucursalCliente', [AdministradorController::class, 'eliminarSucursalCliente']);
+// Acción: Eliminar fila dinámica en tabla de ans modal edicion cliente
+Route::post('/eliminarAnsCliente', [AdministradorController::class, 'eliminarAnsCliente']);
+// Acción: Actualizar información del cliente.
+Route::post('/ActualizarCliente', [AdministradorController::class, 'actualizar_cliente']);
+
+// Acción: Eliminar fila dinámica en tabla de firmas cliente modal edicion cliente
+Route::post('/eliminarFirmaCliente', [AdministradorController::class, 'eliminarFirmaCliente']);
+// Acción: Eliminar fila dinámica en tabla de firmas proveedor modal edicion cliente
+Route::post('/eliminarFirmaProveedor', [AdministradorController::class, 'eliminarFirmaProveedor']);
+// Guardar o Actualizar Firma Cliente
+Route::post('/GuardarActualizarFirmasCliente', [AdministradorController::class, 'GuardarActualizarFirmasCliente']);
+// Guardar o Actualizar Firma Proveedor
+Route::post('/GuardarActualizarFirmasProveedor', [AdministradorController::class, 'GuardarActualizarFirmasProveedor']);
+
+// 08/11/2023: Parametrización
+Route::post('/Sigmel/RolAdministrador/mostrarVistaParametrizacion', [ParametrizacionController::class, 'mostrarVistaParametrizacion'])->name('mostrarVistaParametrizacion');
+// Acción: Traer datos para la vista de parametrización
+Route::post('/CargueSelectoresParametrizar', [ParametrizacionController::class, 'CargueSelectoresParametrizar']);
+
+// Acción: Envío de parametrizaciones del proceso origen atel
+Route::post('/EnvioParametrizacionOrigenAtel', [ParametrizacionController::class, 'EnvioParametrizacionOrigenAtel']);
+// Acción: Actualizar la parametrización del proceso Origen Atel
+Route::post('/ActualizarParametrizacionOrigenAtel', [ParametrizacionController::class, 'ActualizarParametrizacionOrigenAtel']);
+// Acción: Envío de parametrizaciones del proceso calificación pcl
+Route::post('/EnvioParametrizacionCalificacionPcl', [ParametrizacionController::class, 'EnvioParametrizacionCalificacionPcl']);
+// Acción: Actualizar la parametrización del proceso calificación pcl
+Route::post('/ActualizarParametrizacionCalificacionPcl', [ParametrizacionController::class, 'ActualizarParametrizacionCalificacionPcl']);
+// Acción: Envío de parametrizaciones del proceso juntas
+Route::post('/EnvioParametrizacionJuntas', [ParametrizacionController::class, 'EnvioParametrizacionJuntas']);
+// Acción: Actualizar la parametrización del proceso juntas
+Route::post('/ActualizarParametrizacionJuntas', [ParametrizacionController::class, 'ActualizarParametrizacionJuntas']);
 
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
