@@ -3,7 +3,7 @@
         <div class="col-12">
             <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
                 <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Tenga en cuenta que hacer clic en la opción
-                <strong>Ceguera Toal</strong> el sistema seteará el formulario.
+                <strong>Ceguera Total</strong> el sistema seteará el formulario.
             </div>
         </div>
     </div>
@@ -173,7 +173,7 @@
                                                 <th>Campo Visual Ojo Izquierdo</th>
                                                 <th>Campo Visual Ojo Derecho</th>
                                                 <th>Campo Visual Ambos Ojos</th>
-                                                <th>Puntaje Campo Visual Funcional (CVF)</th>
+                                                <th>Puntaje Campo Visual Funcional (PCVF)</th>
                                                 <th>Deficiencia por Campo Visual (DCV)</th>
                                                 <th>Deficiencia Global del Sistema Visual (DSV)</th>
                                                 <th>Deficiencia</th>

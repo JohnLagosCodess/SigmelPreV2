@@ -3,7 +3,7 @@
         <div class="col-12">
             <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
                 <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Tenga en cuenta que hacer clic en la opción
-                <strong>Ceguera Toal</strong> el sistema seteará el formulario.
+                <strong>Ceguera Total</strong> el sistema seteará el formulario.
             </div>
         </div>
     </div>
@@ -132,7 +132,7 @@
                                                 <th>Campo Visual Ojo Izquierdo</th>
                                                 <th>Campo Visual Ojo Derecho</th>
                                                 <th>Campo Visual Ambos Ojos</th>
-                                                <th>Puntaje Campo Visual Funcional (CVF)</th>
+                                                <th>Puntaje Campo Visual Funcional (PCVF)</th>
                                                 <th>Deficiencia por Campo Visual (DCV)</th>
                                                 <th>Deficiencia Global del Sistema Visual (DSV)</th>
                                                 <th>Deficiencia</th>
@@ -167,8 +167,10 @@
             <div class="col-12">
                 <div class="alert d-none" id="resultado_insercion" role="alert"></div>
             </div>
-            <div>
+            <div class="col-6">
                 <input type="submit" id="btn_guardar_agudeza" class="mr-auto btn btn-info" value="Guardar">
+            </div>
+            <div class="col-6">
                 <button type="button" id="btn_cerrar_modal_agudeza" class="btn btn-danger" style="float:right !important;" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
