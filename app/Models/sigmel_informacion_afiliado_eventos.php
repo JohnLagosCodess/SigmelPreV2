@@ -41,5 +41,6 @@ class sigmel_informacion_afiliado_eventos extends Model
     'Activo',
     'Nombre_usuario',
     'F_registro',
+    'F_actualizacion'
     ];
 }

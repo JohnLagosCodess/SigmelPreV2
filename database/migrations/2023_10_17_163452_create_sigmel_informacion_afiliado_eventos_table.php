@@ -40,6 +40,7 @@ return new class extends Migration
             $table->enum('Activo', ['Si', 'No']);
             $table->text('Nombre_usuario');
             $table->date('F_registro');
+            $table->date('F_actualizacion')->nullable();
         });
     }
 

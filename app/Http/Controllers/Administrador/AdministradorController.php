@@ -3199,7 +3199,8 @@ class AdministradorController extends Controller
             'Id_arl' => $id_arl,
             'Activo' => $request->activo,
             'Nombre_usuario' => $nombre_usuario,
-            'F_registro' => $date
+            'F_registro' => $date,
+            'F_actualizacion' => $date
         ];        
 
         $afiliadoActualizar = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')

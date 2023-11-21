@@ -25,7 +25,9 @@ use App\Http\Controllers\Coordinador\DeterminacionOrigenATEL;
 use App\Http\Controllers\Coordinador\PronunciamientoOrigenController;
 use App\Http\Controllers\Coordinador\BandejaJuntasController;
 use App\Http\Controllers\Coordinador\CalificacionJuntasController;
+use App\Http\Controllers\Coordinador\ControversiaJuntasController;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -553,8 +555,40 @@ Route::post('/actualizarProfesionalServicioJuntas', [BandejaJuntasController::cl
 // Vista: Módulo Calificación Juntas Coordinador
 Route::get('/calificacionJuntas', [CalificacionJuntasController::class, 'mostrarVistaCalificacionJuntas'])->name('calificacionJuntas');
 Route::post('/calificacionJuntas', [CalificacionJuntasController::class, 'mostrarVistaCalificacionJuntas'])->name('calificacionJuntas');
-// Accion: Insertar Califcación Origen
+// Accion: Insertar Califcación Juntas
 Route::post('/registrarCalificacionJuntas', [CalificacionJuntasController::class, 'guardarCalificacionJuntas']);
+// Accion: Selectores Módulo Juntas
+Route::post('/selectoresJuntas', [CalificacionJuntasController::class, 'cargueListadoSelectoresJuntas']);
+// Accion: Registrar Datos de controvertido
+Route::post('/registrarControvertido', [CalificacionJuntasController::class, 'guardarControvertidoJuntas']);
+// Accion: Registrar Datos de controversia
+Route::post('/registrarControversia', [CalificacionJuntasController::class, 'guardarControversiaJuntas']);
+// Accion: Registrar Datos pagos honorarios
+Route::post('/registrarPagoJuntas', [CalificacionJuntasController::class, 'guardarPagosJuntas']);
+// Acción: Guardar Datos Listado de documentos solicitados
+Route::post('/GuardarDocumentosSolicitadosJuntas',[CalificacionJuntasController::class, 'GuardarDocumentosSolicitadosJuntas']);
+// Acción: Capturar de datos para el formulario generar comunicado destinatario final en Juntas
+Route::post('/captuarDestinatarioJuntas', [CalificacionJuntasController::class, 'captuarDestinatariosPrincipalJuntas']);
+// Acción Insertar comunicado
+Route::post('/registrarComunicadoJuntas', [CalificacionJuntasController::class, 'guardarComunicadoJuntas']);
+// Acción: Capturar datos para el dataTable Comunicados Orogen
+Route::post('/historialComunicadoJuntas', [CalificacionJuntasController::class, 'historialComunicadosJuntas']);
+// Acción: Abrir modal para editar comunicado
+Route::post('/modalComunicadoJuntas', [CalificacionJuntasController::class, 'mostrarModalComunicadoJuntas'])->name('modalComunicadoJuntas');
+// Acción: Actualizar comunicado
+Route::post('/actualizarComunicadoJuntas', [CalificacionJuntasController::class, 'actualizarComunicadoJuntas']);
+// Acción: Insertar Agregar Seguimiento
+Route::post('/registrarCausalSeguimientoJuntas', [CalificacionJuntasController::class, 'guardarAgregarSeguimientoJuntas']);
+//18/11/2023
+// Vista: Módulo Controversia Juntas
+Route::post('/calificacionJuntas/controversiaJuntas', [ControversiaJuntasController::class, 'mostrarVistaPronunciamientoJuntas'])->name('controversiaJuntas');
+Route::get('/calificacionJuntas/controversiaJuntas', [ControversiaJuntasController::class, 'mostrarVistaPronunciamientoJuntas'])->name('controversiaJuntas');
+// Accion: Selectores Módulo Controversia Juntas
+Route::post('/selectoresJuntasControversia', [ControversiaJuntasController::class, 'cargueListadoSelectoresJuntasControversia']);
+// Acción: Guardar Informacion Servicio Controversia Juntas
+Route::post('/guardarInfoServiPronunciaJuntas', [ControversiaJuntasController::class, 'guardarInfoServiPronunciaJuntas']);
+// Accion: Registrar Datos de controvertido Modulo Juntas
+Route::post('/registrarControvertidoJuntas', [ControversiaJuntasController::class, 'guardarControvertidoMoJuntas']);
 
 // Acción: Mostrar vista ADICIÓN DX DTO
 Route::get('/adicionDxDtoOrigen', [AdicionDxDTO::class, 'mostrarVistaAdicionDxDTO'])->name('adicionDxDtoOrigen');

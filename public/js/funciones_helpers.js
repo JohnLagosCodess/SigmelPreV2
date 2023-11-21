@@ -102,6 +102,12 @@ $(document).ready(function () {
         var textoEscrito = $(this).val();
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
     });
+	
+	$(document).on('keyup', "textarea[id^='documento_soli_fila_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+	
     $(document).on('keyup', "textarea[id^='descripcion_fila_']", function(){
         var textoEscrito = $(this).val();
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
@@ -228,6 +234,17 @@ $(document).ready(function () {
     $(document).on('keyup', "input[id^='otros_docs']", function(){
         var textoEscrito = $(this).val();
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
+    });
+	
+	// Clase para poner  la primera letra en mayuscula
+    $('.CadaLetraMayus').keypress(function(event) {
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));   
+    });
+    // Clase para poner solo la primera letra en mayuscula
+    $('.soloPrimeraLetraMayus').keypress(function(event) {
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));   
     });
 
     // TEXTAREA FORMULARIO NUEVA ACCION
@@ -479,6 +496,12 @@ $(document).ready(function () {
         if (keycode < 48 || keycode > 57) {
         event.preventDefault();
         }
+    });
+	
+	 /* SOLO PERMITTE DOS DECIMALES */
+    $('.soloDosDecimales').keypress(function(event) {
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
     });
     
 });
