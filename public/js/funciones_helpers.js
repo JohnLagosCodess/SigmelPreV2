@@ -298,6 +298,69 @@ $(document).ready(function () {
         Maximo2Decimales(inputId);
     });
 
+    /* TODO LO CORRESPONDIENTE A LA PARAMETRIZACION */
+    $(document).on('keyup', "input[id^='tiempo_alerta_origen_atel_']", function(){
+        var inputId = this.id;
+        Maximo1Decimal(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='bd_tiempo_alerta_origen_atel_']", function(){
+        var inputId = this.id;
+        Maximo1Decimal(inputId);
+    });
+
+    $(document).on('keyup', "textarea[id^='motivo_movimiento_origen_atel_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "textarea[id^='bd_motivo_movimiento_origen_atel_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "input[id^='tiempo_alerta_calificacion_pcl_']", function(){
+        var inputId = this.id;
+        Maximo1Decimal(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='bd_tiempo_alerta_calificacion_pcl_']", function(){
+        var inputId = this.id;
+        Maximo1Decimal(inputId);
+    });
+
+    $(document).on('keyup', "textarea[id^='motivo_movimiento_calificacion_pcl_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "textarea[id^='bd_motivo_movimiento_calificacion_pcl_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+
+    $(document).on('keyup', "input[id^='tiempo_alerta_juntas_']", function(){
+        var inputId = this.id;
+        Maximo1Decimal(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='bd_tiempo_alerta_juntas_']", function(){
+        var inputId = this.id;
+        Maximo1Decimal(inputId);
+    });
+
+    $(document).on('keyup', "textarea[id^='motivo_movimiento_juntas_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "textarea[id^='bd_motivo_movimiento_juntas_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+
     /* Función para colocar la primera letra en mayúscula de cada palabra que se escriba */
     function LetraMayusCadaPalabra(textoEscrito) {
         var palabras = textoEscrito.split(' ');
@@ -332,7 +395,9 @@ $(document).ready(function () {
         if (!Number.isInteger(Number(value))) {
           $(input).val("");
         }
-      }
+    }
+
+    
     
     $(document).on("input", '[id^="deficienciadecreto3_"]', function() {
         NumerosEnteros(this);
@@ -346,7 +411,19 @@ $(document).ready(function () {
               $(this).val(parseFloat(inputValue).toFixed(2));
             }
         });
+    };
+
+    function Maximo1Decimal(idinput){
+        $('#'+idinput).on('input', function(){
+            var inputValue = $(this).val();
+            var decimalCount = (inputValue.split('.')[1] || []).length;        
+            if (decimalCount > 1) {
+              $(this).val(parseFloat(inputValue).toFixed(1));
+            }
+        });
     }
+
+    
 
     $(document).on("input", '[id^="suma_combinada"]', function() {
         var inputId = this.id;

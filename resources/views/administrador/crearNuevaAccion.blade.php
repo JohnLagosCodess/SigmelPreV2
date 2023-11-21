@@ -1,5 +1,5 @@
 @extends('adminlte::page')
-@section('title', 'COLOCAR AQUÍ EL TÍTULO')
+@section('title', 'Nueva Acción')
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>

@@ -1578,9 +1578,11 @@ class AdministradorController extends Controller
 
         /* TRAER LISTADO DE CLIENTES */
         if($parametro == 'lista_clientes'){
-            $listado_clientes = sigmel_lista_clientes::on('sigmel_gestiones')
+            // $listado_clientes = sigmel_lista_clientes::on('sigmel_gestiones')
+            $listado_clientes = sigmel_clientes::on('sigmel_gestiones')
                 ->select('Id_Cliente', 'Nombre_cliente')
-                ->where('Estado', 'activo')
+                ->where('Estado', 'Activo')
+                // ->where('Estado', 'activo')
                 ->get();
             
             $info_lista_clientes = json_decode(json_encode($listado_clientes, true));
@@ -2012,13 +2014,31 @@ class AdministradorController extends Controller
 
         /* LISTADO ACCION */
         if($parametro == 'listado_accion'){
-            $listado_accion = sigmel_lista_acciones_procesos_servicios::on('sigmel_gestiones')
-                ->select('Id_Accion', 'Nombre_accion')
-                ->where('Estado', 'activo')
-                ->get();
 
-            $info_listado_accion= json_decode(json_encode($listado_accion, true));
-            return response()->json(($info_listado_accion));
+            /* Iniciamos trayendo las acciones a ejecutar configuradas en la tabla de parametrizaciones
+            dependiendo del id del cliente, id del proceso y el id del servicio y el estado activo */
+            $acciones_a_ejecutar = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Accion_ejecutar')
+            ->where([
+                ['sipc.Id_cliente', '=', $request->Id_cliente],
+                ['sipc.Id_proceso', '=', $request->Id_proceso],
+                ['sipc.Servicio_asociado', '=', $request->Id_servicio],
+                ['sipc.Status_parametrico', '=', 'Activo']
+            ])->get();
+
+            $info_acciones_a_ejecutar = json_decode(json_encode($acciones_a_ejecutar, true));
+            echo "<pre>";
+                print_r($info_acciones_a_ejecutar);
+            echo "</pre>";
+
+            
+            // $listado_accion = sigmel_lista_acciones_procesos_servicios::on('sigmel_gestiones')
+            //     ->select('Id_Accion', 'Nombre_accion')
+            //     ->where('Estado', 'activo')
+            //     ->get();
+
+            // $info_listado_accion= json_decode(json_encode($listado_accion, true));
+            // return response()->json(($info_listado_accion));
         }
 
         /* LISTADO DE SERVICIOS DEPENDIENDO DEL PROCESO PARA LA VISTA DE BUSCADOR DE EVENTOS (MODAL NUEVO SERVICIO) 

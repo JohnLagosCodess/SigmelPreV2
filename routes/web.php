@@ -4,6 +4,7 @@ use App\Http\Controllers\Administrador\AdministradorController;
 use App\Http\Controllers\Administrador\EntidadesController;
 use App\Http\Controllers\Administrador\AccionesController;
 use App\Http\Controllers\Administrador\BuscarEventoController;
+use App\Http\Controllers\Administrador\ParametrizacionController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Autenticacion\LoginController;
 use App\Http\Controllers\Autenticacion\LogoutController;
@@ -601,6 +602,23 @@ Route::post('/GuardarActualizarFirmasCliente', [AdministradorController::class, 
 // Guardar o Actualizar Firma Proveedor
 Route::post('/GuardarActualizarFirmasProveedor', [AdministradorController::class, 'GuardarActualizarFirmasProveedor']);
 
+// 08/11/2023: Parametrización
+Route::post('/Sigmel/RolAdministrador/mostrarVistaParametrizacion', [ParametrizacionController::class, 'mostrarVistaParametrizacion'])->name('mostrarVistaParametrizacion');
+// Acción: Traer datos para la vista de parametrización
+Route::post('/CargueSelectoresParametrizar', [ParametrizacionController::class, 'CargueSelectoresParametrizar']);
+
+// Acción: Envío de parametrizaciones del proceso origen atel
+Route::post('/EnvioParametrizacionOrigenAtel', [ParametrizacionController::class, 'EnvioParametrizacionOrigenAtel']);
+// Acción: Actualizar la parametrización del proceso Origen Atel
+Route::post('/ActualizarParametrizacionOrigenAtel', [ParametrizacionController::class, 'ActualizarParametrizacionOrigenAtel']);
+// Acción: Envío de parametrizaciones del proceso calificación pcl
+Route::post('/EnvioParametrizacionCalificacionPcl', [ParametrizacionController::class, 'EnvioParametrizacionCalificacionPcl']);
+// Acción: Actualizar la parametrización del proceso calificación pcl
+Route::post('/ActualizarParametrizacionCalificacionPcl', [ParametrizacionController::class, 'ActualizarParametrizacionCalificacionPcl']);
+// Acción: Envío de parametrizaciones del proceso juntas
+Route::post('/EnvioParametrizacionJuntas', [ParametrizacionController::class, 'EnvioParametrizacionJuntas']);
+// Acción: Actualizar la parametrización del proceso juntas
+Route::post('/ActualizarParametrizacionJuntas', [ParametrizacionController::class, 'ActualizarParametrizacionJuntas']);
 
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */

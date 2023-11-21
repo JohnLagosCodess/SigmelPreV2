@@ -16,7 +16,7 @@
         <div class="col-12">
             <div>
                 <h4>Convenciones:</h4>
-                <p><i class="fa fa-sm fa-pen text-primary"></i> Editar Cliente &nbsp;</p>
+                <p><i class="fa fa-sm fa-pen text-primary"></i> Editar Cliente &nbsp; <i class="fas fa-draw-polygon text-primary"></i> Configurar Parametrización &nbsp;</p>
             </div>
             <div class="card-info">
                 <div class="card-header">
@@ -51,7 +51,17 @@
                                 <?php if(!empty($array_datos_clientes)):?>
                                     @foreach ($array_datos_clientes as $cliente_editar)
                                         <tr>
-                                            <td><a href="javascript:void(0);" id="btn_modal_edicion_cliente_{{$cliente_editar->Id_cliente}}" data-toggle="modal" data-target="#modalEdicionCliente_{{$cliente_editar->Id_cliente}}" data-id_editar_cliente="{{$cliente_editar->Id_cliente}}" data-nombre_editar_cliente="{{$cliente_editar->Nombre_cliente}}"><i class="fa fa-pen text-primary"></i></a></td>
+                                            <td>
+                                                <form action="{{route('mostrarVistaParametrizacion')}}" id="FormVistaParametrizacion_{{$cliente_editar->Id_cliente}}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="Id_cliente" id="Id_cliente" value="<?php echo $cliente_editar->Id_cliente; ?>">
+                                                    <input type="hidden" name="Nombre_tipo_cliente" value="<?php echo $cliente_editar->Nombre_tipo_cliente; ?>">
+                                                    <input type="hidden" name="Nombre_cliente" value="<?php echo $cliente_editar->Nombre_cliente; ?>">
+                                                    <input type="submit" id="enviar_form_parametrizacion_{{$cliente_editar->Id_cliente}}" class="d-none">
+                                                    <a href="javascript:void(0);" type="submit" id="btn_parametrizacion_{{$cliente_editar->Id_cliente}}" data-id_cliente_parametrizar="{{$cliente_editar->Id_cliente}}"><i class="fas fa-draw-polygon text-primary"></i></a>
+                                                </form>
+                                                <a href="javascript:void(0);" id="btn_modal_edicion_cliente_{{$cliente_editar->Id_cliente}}" data-toggle="modal" data-target="#modalEdicionCliente_{{$cliente_editar->Id_cliente}}" data-id_editar_cliente="{{$cliente_editar->Id_cliente}}" data-nombre_editar_cliente="{{$cliente_editar->Nombre_cliente}}"><i class="fa fa-pen text-primary"></i></a>
+                                            </td>
                                             <td>{{$cliente_editar->Id_cliente}}</td>
                                             <td>{{$cliente_editar->Nombre_tipo_cliente}}</td>
                                             <td>{{$cliente_editar->Nombre_cliente}}</td>
@@ -85,4 +95,5 @@
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>
     <script src="/js/editar_clientes.js"></script>
+    <script src="/js/parametrizacion.js"></script>
 @stop

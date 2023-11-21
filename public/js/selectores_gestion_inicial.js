@@ -817,23 +817,28 @@ $(document).ready(function(){
     });
 
     //LISTADO ACCION
-    let datos_listado_accion = {
-        '_token': token,
-        'parametro' : "listado_accion"
-    };
-    $.ajax({
-        type:'POST',
-        url:'/cargarselectores',
-        data: datos_listado_accion,
-        success:function(data) {
-            //console.log(data);
-            $('#accion').empty();
-            $('#accion').append('<option value="" selected>Seleccione</option>');
-            let claves = Object.keys(data);
-            for (let i = 0; i < claves.length; i++) {
-                $('#accion').append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Nombre_accion"]+'</option>');
+    $("#servicio").change(function(){
+        let datos_listado_accion = {
+            '_token': token,
+            'Id_cliente': $("#cliente").val(),
+            'Id_proceso': $("#proceso").val(),
+            'Id_servicio': $(this).val(),
+            'parametro' : "listado_accion"
+        };
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_listado_accion,
+            success:function(data) {
+                // //console.log(data);
+                // $('#accion').empty();
+                // $('#accion').append('<option value="" selected>Seleccione</option>');
+                // let claves = Object.keys(data);
+                // for (let i = 0; i < claves.length; i++) {
+                //     $('#accion').append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Nombre_accion"]+'</option>');
+                // }
             }
-        }
+        });
     });
 
     /* VALIDACIÓN OPCIONES OTRO */

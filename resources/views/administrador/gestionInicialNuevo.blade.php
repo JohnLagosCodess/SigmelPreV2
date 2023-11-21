@@ -647,7 +647,7 @@
                 </div>
             </div>
             <div class="card-footer">
-                <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                <div class="alert alert-info mensaje_confirmacion_cargar_evento" role="alert">
                     <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Debe cargar los documentos obligatorios para crear el evento.
                 </div>
                 <div class="grupo_botones" style="float: left;">
