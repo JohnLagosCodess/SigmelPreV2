@@ -153,7 +153,7 @@ $(document).ready(function(){
         }
     });
 
-    /* Validación opción OTRO/¿Cuál? del selector Tipo de Cliente FALTA */
+    /* Validación opción OTRO/¿Cuál? del selector Tipo de Cliente */
     $('.columna_otro_tipo_cliente').css('display','none');
     $('#tipo_cliente').change(function(){
         let opt_otro_cual_tipo_cliente = $("#tipo_cliente option:selected").text();
@@ -309,14 +309,14 @@ $(document).ready(function(){
                 // listado de tipos de clientes
                 let datos_lista_tipo_clientes = {
                     '_token': token,
-                    'parametro' : "lista_tipo_clientes"
+                    'parametro' : "lista_tipo_clientes",
+                    'parametro1': "nuevo_cliente"
                 };
                 $.ajax({
                     type:'POST',
                     url:'/cargarselectores',
                     data: datos_lista_tipo_clientes,
                     success:function(data) {
-                        // console.log(data);
                         $('#tipo_cliente').empty();
                         $('#tipo_cliente').append('<option value="" selected>Seleccione</option>');
                         let claves = Object.keys(data);

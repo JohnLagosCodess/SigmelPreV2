@@ -30,6 +30,26 @@
                     <input hidden="hidden" type="text" name="Id_proceso_calitec" id="Id_proceso_calitec" value="<?php echo $_POST['newIdproceso'];?>">
                     <button type="submit" id="btn_regreso_adicion_dx" style="display: none; !important"></button>
                 </form>
+            <?php elseif (isset($_POST['bandera_buscador_clt']) &&  $_POST['bandera_buscador_clt'] == 'desdeclt' ): ?>
+                <a onclick="document.getElementById('btn_regreso_clt').click();"   class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <form action="{{route("CalficacionTecnicaPCL")}}" id="Regreso_Clt" method="POST">            
+                    @csrf
+                    <input hidden="hidden" type="text" name="Id_evento_calitec" id="Id_evento_calitec" value="<?php echo $_POST['newIdEvento'];?>">
+                    <input hidden="hidden" type="text" name="Id_asignacion_calitec" id="Id_asignacion_calitec" value="<?php echo $_POST['newIdAsignacion'];?>">
+                    <input hidden="hidden" type="text" name="Id_proceso_calitec" id="Id_proceso_calitec" value="<?php echo $_POST['newIdproceso'];?>">
+                    <input hidden="hidden" type="text" name="Id_servicio_calitec" id="Id_servicio_calitec" value="<?php echo $_POST['newIdservicio'];?>">
+                    <button type="submit" id="btn_regreso_clt" style="display: none; !important"></button>
+                </form>
+            <?php elseif (isset($_POST['bandera_buscador_clpcl']) &&  $_POST['bandera_buscador_clpcl'] == 'desdeclpcl' ): ?>
+                <a onclick="document.getElementById('btn_regreso_clpcl').click();"   class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <form action="{{route("calificacionPCL")}}" id="Regreso_ClPcl" method="POST">            
+                    @csrf
+                    <input hidden="hidden" type="text" name="Id_evento_pcl" id="Id_evento_pcl" value="<?php echo $_POST['newIdEvento'];?>">
+                    <input hidden="hidden" type="text" name="Id_asignacion_pcl" id="Id_asignacion_pcl" value="<?php echo $_POST['newIdAsignacion'];?>">
+                    <input hidden="hidden" type="text" name="Id_proceso_pcl" id="Id_proceso_pcl" value="<?php echo $_POST['newIdproceso'];?>">
+                    <input hidden="hidden" type="text" name="Id_servicio_pcl" id="Id_servicio_pcl" value="<?php echo $_POST['newIdservicio'];?>">
+                    <button type="submit" id="btn_regreso_clpcl" style="display: none; !important"></button>
+                </form>
             <?php endif ?>
         </div>
         <div class="col-2" style="text-align: left !important;">
@@ -86,17 +106,21 @@
                             <div class="col-sm">
                                 <div class="form-group">
                                     <label for="cliente" class="col-form-label">Cliente <span style="color:red;">(*)</span></label>
-                                    <select class="cliente custom-select" name="cliente" id="cliente" required="true">
+                                    <input type="hidden" name="cliente" id="cliente" value="{{$array_datos_info_evento[0]->Cliente}}">
+                                    <input type="text" class="form-control" id="mostrar_nombre_cliente" value="{{$array_datos_info_evento[0]->Nombre_cliente}}" readonly required>
+                                    {{-- <select class="cliente custom-select" name="cliente" id="cliente" required="true">
                                         <option value="{{$array_datos_info_evento[0]->Cliente}}" selected>{{$array_datos_info_evento[0]->Nombre_cliente}}</option>
-                                    </select>
+                                    </select> --}}
                                 </div>
                             </div>
                             <div class="col-sm">
                                 <div class="form-group">
                                     <label for="tipo_cliente" class="col-form-label">Tipo de Cliente <span style="color:red;">(*)</span></label>
-                                    <select class="tipo_cliente custom-select" name="tipo_cliente" id="tipo_cliente" required>
+                                    <input type="hidden" name="tipo_cliente" id="tipo_cliente" value="{{$array_datos_info_evento[0]->Tipo_cliente}}" required>
+                                    <input type="text" class="form-control" id="mostrar_nombre_tipo_cliente" value="{{$array_datos_info_evento[0]->Nombre_tipo_cliente}}" readonly>
+                                    {{-- <select class="tipo_cliente custom-select" name="tipo_cliente" id="tipo_cliente" required>
                                         <option value="{{$array_datos_info_evento[0]->Tipo_cliente}}" selected>{{$array_datos_info_evento[0]->Nombre_tipo_cliente}}</option>
-                                    </select>
+                                    </select> --}}
                                 </div>
                             </div>
                             <div class="col-sm columna_otro_tipo_cliente">
@@ -333,7 +357,7 @@
                                                     <div class="form-group">
                                                         <label for="afp" class="col-form label">AFP</label>
                                                         <select class="afp custom-select" name="afp" id="afp">
-                                                            <option value="{{$array_datos_info_afiliados[0]->Id_Afp}}">{{$array_datos_info_afiliados[0]->Nombre_afp}}</option>
+                                                            <option value="{{$array_datos_info_afiliados[0]->Id_afp}}">{{$array_datos_info_afiliados[0]->Nombre_afp}}</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -347,7 +371,7 @@
                                                     <div class="form-group">
                                                         <label for="arl_info_afiliado" class="col-form label">ARL</label>
                                                         <select class="arl_info_afiliado custom-select" name="arl_info_afiliado" id="arl_info_afiliado">
-                                                            <option value="{{$array_datos_info_afiliados[0]->Id_Arl}}">{{$array_datos_info_afiliados[0]->Nombre_arl}}</option>
+                                                            <option value="{{$array_datos_info_afiliados[0]->Id_arl}}">{{$array_datos_info_afiliados[0]->Nombre_arl}}</option>
                                                         </select>
                                                     </div>
                                                 </div>

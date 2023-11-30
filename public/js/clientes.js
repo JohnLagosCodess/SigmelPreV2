@@ -30,7 +30,8 @@ $(document).ready(function(){
     // listado de tipos de clientes
     let datos_lista_tipo_clientes = {
         '_token': token,
-        'parametro' : "lista_tipo_clientes"
+        'parametro' : "lista_tipo_clientes",
+        'parametro1': "nuevo_cliente"
     };
     $.ajax({
         type:'POST',

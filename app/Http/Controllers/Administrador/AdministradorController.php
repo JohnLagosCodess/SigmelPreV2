@@ -64,6 +64,9 @@ use App\Models\sigmel_informacion_ans_clientes;
 use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_firmas_proveedores;
 
+/* Parametrizaciones */
+use App\Models\sigmel_informacion_parametrizaciones_clientes;
+use App\Models\sigmel_informacion_acciones;
 class AdministradorController extends Controller
 {
     
@@ -212,7 +215,7 @@ class AdministradorController extends Controller
         $informacion_usuario = json_decode(json_encode($datos), true);
         return response()->json($informacion_usuario);
     }
-    // MAURO
+
     public function listadoUsuariosAsignacion (Request $request){
         // Si el usuario no ha iniciado, no podrá ingresar al sistema
         if(!Auth::check()){
@@ -1591,14 +1594,38 @@ class AdministradorController extends Controller
 
         /* TRAER LISTADO DE TIPOS DE CLIENTE */
         if ($parametro == "lista_tipo_clientes") {
-            
-            $listado_tipo_clientes = sigmel_lista_tipo_clientes::on('sigmel_gestiones')
+            if ($request->parametro1 == "nuevo_cliente") {
+                $listado_tipo_clientes = sigmel_lista_tipo_clientes::on('sigmel_gestiones')
                 ->select('Id_TipoCliente', 'Nombre_tipo_cliente')
-                ->where('Estado', 'activo')
+                ->where([
+                    ['Estado', '=', 'activo']
+                ])
                 ->get();
-            
-            $info_lista_tipo_clientes = json_decode(json_encode($listado_tipo_clientes, true));
-            return response()->json($info_lista_tipo_clientes);
+                
+                $info_lista_tipo_clientes = json_decode(json_encode($listado_tipo_clientes, true));
+                return response()->json($info_lista_tipo_clientes);
+
+            }else{
+                $array_id_tipo_cliente = sigmel_clientes::on('sigmel_gestiones')
+                ->select('Tipo_cliente')
+                ->where('Id_cliente', $request->Id_cliente)
+                ->get();
+    
+                if (count($array_id_tipo_cliente) > 0) {
+                    $id_tipo_cliente = $array_id_tipo_cliente[0]->Tipo_cliente;
+                    
+                    $listado_tipo_clientes = sigmel_lista_tipo_clientes::on('sigmel_gestiones')
+                        ->select('Id_TipoCliente', 'Nombre_tipo_cliente')
+                        ->where([
+                            ['Id_TipoCliente', $id_tipo_cliente],
+                            ['Estado', '=', 'activo']
+                        ])
+                        ->get();
+                    
+                    $info_lista_tipo_clientes = json_decode(json_encode($listado_tipo_clientes, true));
+                    return response()->json($info_lista_tipo_clientes);
+                }
+            }
         }
 
         /* TRAER LISTADO DE TIPOS DE EVENTO */
@@ -1730,11 +1757,19 @@ class AdministradorController extends Controller
         /* TRAER LISTADO DE EPS */
         if ($parametro == "lista_eps") {
             
-            $listado_eps = sigmel_lista_eps::on('sigmel_gestiones')
-                ->select('Id_Eps', 'Nombre_eps')
-                ->where('Estado', 'activo')
-                // ->orderBy('Nombre_eps', 'asc')
-                ->get();
+            // $listado_eps = sigmel_lista_eps::on('sigmel_gestiones')
+            //     ->select('Id_Eps', 'Nombre_eps')
+            //     ->where('Estado', 'activo')
+            //     // ->orderBy('Nombre_eps', 'asc')
+            //     ->get();
+
+            $listado_eps = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as enti')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_entidades as sle', 'enti.IdTipo_entidad', '=', 'sle.Id_Entidad')
+            ->select('enti.Id_Entidad as Id_Eps', 'enti.Nombre_entidad as Nombre_eps')
+            ->where([
+                ['enti.IdTipo_entidad', '=', '3'],
+                ['enti.Estado_entidad', '=', 'activo']
+            ])->get();
             
             $info_lista_eps = json_decode(json_encode($listado_eps, true));
             return response()->json($info_lista_eps);
@@ -1743,11 +1778,19 @@ class AdministradorController extends Controller
         /* TRAER LISTADO DE AFP */
         if ($parametro == "lista_afp") {
             
-            $listado_afp = sigmel_lista_afps::on('sigmel_gestiones')
+           /*  $listado_afp = sigmel_lista_afps::on('sigmel_gestiones')
                 ->select('Id_Afp', 'Nombre_afp')
                 ->where('Estado', 'activo')
                 // ->orderBy('Nombre_afp', 'asc')
-                ->get();
+                ->get(); */
+            
+            $listado_afp = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as enti')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_entidades as sle', 'enti.IdTipo_entidad', '=', 'sle.Id_Entidad')
+            ->select('enti.Id_Entidad as Id_Afp', 'enti.Nombre_entidad as Nombre_afp')
+            ->where([
+                ['enti.IdTipo_entidad', '=', '2'],
+                ['enti.Estado_entidad', '=', 'activo']
+            ])->get();
             
             $info_lista_afp = json_decode(json_encode($listado_afp, true));
             return response()->json($info_lista_afp);
@@ -1756,11 +1799,19 @@ class AdministradorController extends Controller
         /* TRAER LISTADO DE ARL (Información Afiliado) */
         if ($parametro == "lista_arl_info_afiliado") {
             
-            $listado_arl_info_afiliado = sigmel_lista_arls::on('sigmel_gestiones')
+            /* $listado_arl_info_afiliado = sigmel_lista_arls::on('sigmel_gestiones')
                 ->select('Id_Arl', 'Nombre_arl')
                 ->where('Estado', 'activo')
                 // ->orderBy('Nombre_arl', 'asc')
-                ->get();
+                ->get(); */
+            
+            $listado_arl_info_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as enti')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_entidades as sle', 'enti.IdTipo_entidad', '=', 'sle.Id_Entidad')
+            ->select('enti.Id_Entidad as Id_Arl', 'enti.Nombre_entidad as Nombre_arl')
+            ->where([
+                ['enti.IdTipo_entidad', '=', '1'],
+                ['enti.Estado_entidad', '=', 'activo']
+            ])->get();
             
             $info_lista_arl_info_afiliado = json_decode(json_encode($listado_arl_info_afiliado, true));
             return response()->json($info_lista_arl_info_afiliado);
@@ -1796,12 +1847,20 @@ class AdministradorController extends Controller
             return response()->json($info_lista_activo);
         }
 
-        /* LISTADO ARL */
+        /* LISTADO ARL (INFORMACIÓN LABORAL)*/
         if($parametro == 'listado_arl_info_laboral'){
-            $listado_arls = sigmel_lista_arls::on('sigmel_gestiones')
+            /* $listado_arls = sigmel_lista_arls::on('sigmel_gestiones')
                 ->select('Id_Arl', 'Nombre_arl')
                 ->where('Estado', 'activo')
-                ->get();
+                ->get(); */
+
+            $listado_arls = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as enti')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_entidades as sle', 'enti.IdTipo_entidad', '=', 'sle.Id_Entidad')
+            ->select('enti.Id_Entidad as Id_Arl', 'enti.Nombre_entidad as Nombre_arl')
+            ->where([
+                ['enti.IdTipo_entidad', '=', '1'],
+                ['enti.Estado_entidad', '=', 'activo']
+            ])->get();
             
             $info_listado_arls = json_decode(json_encode($listado_arls, true));
             return response()->json(($info_listado_arls));
@@ -2016,7 +2075,7 @@ class AdministradorController extends Controller
         if($parametro == 'listado_accion'){
 
             /* Iniciamos trayendo las acciones a ejecutar configuradas en la tabla de parametrizaciones
-            dependiendo del id del cliente, id del proceso y el id del servicio y el estado activo */
+            dependiendo del id del cliente, id del proceso, id del servicio, estado activo */
             $acciones_a_ejecutar = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
             ->select('sipc.Accion_ejecutar')
             ->where([
@@ -2027,18 +2086,62 @@ class AdministradorController extends Controller
             ])->get();
 
             $info_acciones_a_ejecutar = json_decode(json_encode($acciones_a_ejecutar, true));
-            echo "<pre>";
-                print_r($info_acciones_a_ejecutar);
-            echo "</pre>";
+            // Con las acciones a ejecutar, analizamos si tienen alguna acción antecesora asociada
+            if (count($info_acciones_a_ejecutar) > 0) {
 
+                // Extraemos las acciones antecesoras a partir de las acciones a ejecutar
+                $array_acciones_ejecutar = [];
+                for ($i=0; $i < count($info_acciones_a_ejecutar); $i++) { 
+                    array_push($array_acciones_ejecutar, $info_acciones_a_ejecutar[$i]->Accion_ejecutar);
+                };
+
+                $extraccion_acciones_antecesoras = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+                ->select('Accion_ejecutar','Accion_antecesora')
+                ->where([
+                    ['Id_cliente', '=', $request->Id_cliente],
+                    ['Id_proceso', '=', $request->Id_proceso],
+                    ['Servicio_asociado', '=', $request->Id_servicio],
+                ])
+                ->whereIn('Accion_ejecutar', $array_acciones_ejecutar)
+                ->get();
+                
+                $info_extraccion_acciones_antecesoras = json_decode(json_encode($extraccion_acciones_antecesoras, true));
+                
+                // Quitamos todas las acciones a ejecutar que tengan una acción antecesora
+                if (count($info_extraccion_acciones_antecesoras) > 0) {
+                    
+                    foreach ($info_extraccion_acciones_antecesoras as $key => $value) {
+                        if ($info_extraccion_acciones_antecesoras[$key]->Accion_antecesora !== null) {
+                            unset($info_extraccion_acciones_antecesoras[$key]);
+                        }
+                    }
+                    
+                    $info_extraccion_acciones_antecesoras = array_values($info_extraccion_acciones_antecesoras);
+
+                    // Extraemos los id de las acciones a ejecutar para buscarlas en la tabla sigmel_informacion_acciones;
+                    $array_listado_acciones = [];
+                    for ($a=0; $a < count($info_extraccion_acciones_antecesoras); $a++) { 
+                        array_push($array_listado_acciones, $info_extraccion_acciones_antecesoras[$a]->Accion_ejecutar);
+                    }
+
+                    // print_r($array_listado_acciones);
+                    $listado_acciones = sigmel_informacion_acciones::on('sigmel_gestiones')
+                    ->select('Id_Accion', 'Accion')
+                    ->where([
+                        ['Status_accion', '=', 'Activo']
+                    ])
+                    ->whereIn('Id_Accion', $array_listado_acciones)
+                    ->get();
+        
+                    $info_listado_acciones_nuevo_evento = json_decode(json_encode($listado_acciones, true));
+                    // print_r($info_listado_acciones_nuevo_evento);
+                    return response()->json(($info_listado_acciones_nuevo_evento));
+
+                    // MAURO
+
+                }
+            }
             
-            // $listado_accion = sigmel_lista_acciones_procesos_servicios::on('sigmel_gestiones')
-            //     ->select('Id_Accion', 'Nombre_accion')
-            //     ->where('Estado', 'activo')
-            //     ->get();
-
-            // $info_listado_accion= json_decode(json_encode($listado_accion, true));
-            // return response()->json(($info_listado_accion));
         }
 
         /* LISTADO DE SERVICIOS DEPENDIENDO DEL PROCESO PARA LA VISTA DE BUSCADOR DE EVENTOS (MODAL NUEVO SERVICIO) 
@@ -2086,16 +2189,108 @@ class AdministradorController extends Controller
 
         /* LISTADO DE ACCIONES PARA LA VISTA DE BUSCADOR DE EVENTOS (MODAL NUEVO SERVICIO) */
         if ($parametro == 'listado_accion_nuevo_servicio') {
-            $listado_accion = sigmel_lista_acciones_procesos_servicios::on('sigmel_gestiones')
-                ->select('Id_Accion', 'Nombre_accion')
-                ->where([
-                    ['Id_Accion', '=', 1],
-                    ['Estado', 'activo']
-                    ])
-                ->get();
 
-            $info_listado_accion= json_decode(json_encode($listado_accion, true));
-            return response()->json(($info_listado_accion));
+            /* Iniciamos trayendo las acciones a ejecutar configuradas en la tabla de parametrizaciones
+            dependiendo del id del cliente, id del proceso, id del servicio, estado activo */
+            
+            $array_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->select('Cliente')->where('ID_evento', $request->nro_evento)->first();
+
+            $id_cliente = $array_id_cliente["Cliente"];
+
+            $acciones_a_ejecutar = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Accion_ejecutar')
+            ->where([
+                ['sipc.Id_cliente', '=', $id_cliente],
+                ['sipc.Id_proceso', '=', $request->Id_proceso],
+                ['sipc.Servicio_asociado', '=', $request->Id_servicio],
+                ['sipc.Status_parametrico', '=', 'Activo']
+            ])->get();
+
+            $info_acciones_a_ejecutar = json_decode(json_encode($acciones_a_ejecutar, true));
+
+            if (count($info_acciones_a_ejecutar) > 0) {
+                // Extraemos las acciones antecesoras a partir de las acciones a ejecutar
+                $array_acciones_ejecutar = [];
+                for ($i=0; $i < count($info_acciones_a_ejecutar); $i++) { 
+                    array_push($array_acciones_ejecutar, $info_acciones_a_ejecutar[$i]->Accion_ejecutar);
+                };
+
+                $extraccion_acciones_antecesoras = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+                ->select('Accion_ejecutar','Accion_antecesora')
+                ->where([
+                    ['Id_cliente', '=', $id_cliente],
+                    ['Id_proceso', '=', $request->Id_proceso],
+                    ['Servicio_asociado', '=', $request->Id_servicio],
+                ])
+                ->whereIn('Accion_ejecutar', $array_acciones_ejecutar)
+                ->get();
+                
+                $info_extraccion_acciones_antecesoras = json_decode(json_encode($extraccion_acciones_antecesoras, true));
+
+                // En caso de que almenos exista una acción antecesora, se debe analizar si esta acción 
+                // (que depende de una acción ejecutar) está en la tabla de auditorias de asignacion de eventos dependiendo
+                // del id del proceso y el id del servicio. El id de la accion a ejecutar estaría dentro de las opciones a mostrar solo si se encuentra el id
+                // de la accion antecesora en dicha tabla
+                if (count($info_extraccion_acciones_antecesoras) > 0) {
+                    
+                    foreach ($info_extraccion_acciones_antecesoras as $key => $value) {
+                        if ($info_extraccion_acciones_antecesoras[$key]->Accion_antecesora !== null) {
+                            $busqueda_accion_antecesora = DB::table(getDatabaseName('sigmel_auditorias') .'sigmel_auditorias_informacion_asignacion_eventos as saiae')
+                            ->select('saiae.Aud_Id_accion')
+                            ->where([
+                                ['saiae.Aud_Id_Asignacion', '=', $request->Id_asignacion],
+                                ['saiae.Aud_ID_evento', '=', $request->nro_evento],
+                                ['saiae.Aud_Id_proceso', '=', $request->Id_proceso],
+                                ['saiae.Aud_Id_servicio', '=', $request->Id_servicio],
+                                ['saiae.Aud_Id_accion', $info_extraccion_acciones_antecesoras[$key]->Accion_antecesora]
+                            ])
+                            ->get();
+
+                            // Si no existe en la tabla debe eliminar la información de la acción a ejecutar ya que esta no se debe mostrar.
+                            if (count($busqueda_accion_antecesora) == 0) {
+                                unset($info_extraccion_acciones_antecesoras[$key]);
+                            }
+                        }
+                    }
+                    
+                    $info_extraccion_acciones_antecesoras = array_values($info_extraccion_acciones_antecesoras);
+                    
+                    /* echo "<pre>";
+                    print_r($info_extraccion_acciones_antecesoras);
+                    echo "</pre>"; */
+
+                    // Extraemos los id de las acciones a ejecutar para buscarlas en la tabla sigmel_informacion_acciones;
+                    $array_listado_acciones = [];
+                    for ($a=0; $a < count($info_extraccion_acciones_antecesoras); $a++) { 
+                        array_push($array_listado_acciones, $info_extraccion_acciones_antecesoras[$a]->Accion_ejecutar);
+                    }
+
+                    // print_r($array_listado_acciones);
+                    $listado_acciones = sigmel_informacion_acciones::on('sigmel_gestiones')
+                    ->select('Id_Accion', 'Accion as Nombre_accion')
+                    ->where([
+                        ['Status_accion', '=', 'Activo']
+                    ])
+                    ->whereIn('Id_Accion', $array_listado_acciones)
+                    ->get();
+
+                    $info_listado_acciones_nuevo_servicio = json_decode(json_encode($listado_acciones, true));
+                    return response()->json(($info_listado_acciones_nuevo_servicio));
+                }
+            }
+
+
+            // $listado_accion = sigmel_lista_acciones_procesos_servicios::on('sigmel_gestiones')
+            //     ->select('Id_Accion', 'Nombre_accion')
+            //     ->where([
+            //         ['Id_Accion', '=', 1],
+            //         ['Estado', 'activo']
+            //         ])
+            //     ->get();
+
+            // $info_listado_accion= json_decode(json_encode($listado_accion, true));
+            // return response()->json(($info_listado_accion));
         }
 
         /* LISTADO DE PROCESOS DEPENDIENDO DEL PROCESO ACTUAL (TRAE LOS QUE SEAN DIFERENTES AL ID ENVIADO) PARA LA VISTA BUSCADOR DE EVENTOS (MODAL NUEVO PROCESO) */
@@ -2134,7 +2329,7 @@ class AdministradorController extends Controller
             $listado_id_servicios_evento = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
                 ->select('Id_servicio')
                 ->where([
-                    ['ID_evento', '=', $request->nro_evento_nuevo_proceso],
+                    ['ID_evento', '=', $request->nro_evento],
                     ['Id_proceso', '=',  $request->id_proceso_escogido]
                 ])->get();
 
@@ -2159,7 +2354,98 @@ class AdministradorController extends Controller
 
         /* LISTADO DE ACCIONES PARA LA VISTA DE BUSCADOR DE EVENTOS (MODAL NUEVO PROCESO) */
         if ($parametro == 'listado_accion_nuevo_proceso') {
-            $listado_accion = sigmel_lista_acciones_procesos_servicios::on('sigmel_gestiones')
+
+            /* Iniciamos trayendo las acciones a ejecutar configuradas en la tabla de parametrizaciones
+            dependiendo del id del cliente, id del proceso, id del servicio, estado activo */
+            
+            $array_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->select('Cliente')->where('ID_evento', $request->nro_evento)->first();
+
+            $id_cliente = $array_id_cliente["Cliente"];
+
+            $acciones_a_ejecutar = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Accion_ejecutar')
+            ->where([
+                ['sipc.Id_cliente', '=', $id_cliente],
+                ['sipc.Id_proceso', '=', $request->Id_proceso],
+                ['sipc.Servicio_asociado', '=', $request->Id_servicio],
+                ['sipc.Status_parametrico', '=', 'Activo']
+            ])->get();
+
+            $info_acciones_a_ejecutar = json_decode(json_encode($acciones_a_ejecutar, true));
+
+            if (count($info_acciones_a_ejecutar) > 0) {
+                // Extraemos las acciones antecesoras a partir de las acciones a ejecutar
+                $array_acciones_ejecutar = [];
+                for ($i=0; $i < count($info_acciones_a_ejecutar); $i++) { 
+                    array_push($array_acciones_ejecutar, $info_acciones_a_ejecutar[$i]->Accion_ejecutar);
+                };
+
+                $extraccion_acciones_antecesoras = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+                ->select('Accion_ejecutar','Accion_antecesora')
+                ->where([
+                    ['Id_cliente', '=', $id_cliente],
+                    ['Id_proceso', '=', $request->Id_proceso],
+                    ['Servicio_asociado', '=', $request->Id_servicio],
+                ])
+                ->whereIn('Accion_ejecutar', $array_acciones_ejecutar)
+                ->get();
+                
+                $info_extraccion_acciones_antecesoras = json_decode(json_encode($extraccion_acciones_antecesoras, true));
+
+                // En caso de que almenos exista una acción antecesora, se debe analizar si esta acción 
+                // (que depende de una acción ejecutar) está en la tabla de auditorias de asignacion de eventos dependiendo
+                // del id del proceso y el id del servicio. El id de la accion a ejecutar estaría dentro de las opciones a mostrar solo si se encuentra el id
+                // de la accion antecesora en dicha tabla
+                if (count($info_extraccion_acciones_antecesoras) > 0) {
+                    
+                    foreach ($info_extraccion_acciones_antecesoras as $key => $value) {
+                        if ($info_extraccion_acciones_antecesoras[$key]->Accion_antecesora !== null) {
+                            $busqueda_accion_antecesora = DB::table(getDatabaseName('sigmel_auditorias') .'sigmel_auditorias_informacion_asignacion_eventos as saiae')
+                            ->select('saiae.Aud_Id_accion')
+                            ->where([
+                                ['saiae.Aud_Id_Asignacion', '=', $request->Id_asignacion],
+                                ['saiae.Aud_ID_evento', '=', $request->nro_evento],
+                                ['saiae.Aud_Id_proceso', '=', $request->Id_proceso],
+                                ['saiae.Aud_Id_servicio', '=', $request->Id_servicio],
+                                ['saiae.Aud_Id_accion', $info_extraccion_acciones_antecesoras[$key]->Accion_antecesora]
+                            ])
+                            ->get();
+
+                            // Si no existe en la tabla debe eliminar la información de la acción a ejecutar ya que esta no se debe mostrar.
+                            if (count($busqueda_accion_antecesora) == 0) {
+                                unset($info_extraccion_acciones_antecesoras[$key]);
+                            }
+                        }
+                    }
+                    
+                    $info_extraccion_acciones_antecesoras = array_values($info_extraccion_acciones_antecesoras);
+                    
+                    /* echo "<pre>";
+                    print_r($info_extraccion_acciones_antecesoras);
+                    echo "</pre>"; */
+
+                    // Extraemos los id de las acciones a ejecutar para buscarlas en la tabla sigmel_informacion_acciones;
+                    $array_listado_acciones = [];
+                    for ($a=0; $a < count($info_extraccion_acciones_antecesoras); $a++) { 
+                        array_push($array_listado_acciones, $info_extraccion_acciones_antecesoras[$a]->Accion_ejecutar);
+                    }
+
+                    // print_r($array_listado_acciones);
+                    $listado_acciones = sigmel_informacion_acciones::on('sigmel_gestiones')
+                    ->select('Id_Accion', 'Accion as Nombre_accion')
+                    ->where([
+                        ['Status_accion', '=', 'Activo']
+                    ])
+                    ->whereIn('Id_Accion', $array_listado_acciones)
+                    ->get();
+
+                    $info_listado_acciones_nuevo_proceso = json_decode(json_encode($listado_acciones, true));
+                    return response()->json(($info_listado_acciones_nuevo_proceso));
+                }
+            }
+
+            /* $listado_accion = sigmel_lista_acciones_procesos_servicios::on('sigmel_gestiones')
                 ->select('Id_Accion', 'Nombre_accion')
                 ->where([
                     ['Id_Accion', '=', 1],
@@ -2168,7 +2454,7 @@ class AdministradorController extends Controller
                 ->get();
 
             $info_listado_accion= json_decode(json_encode($listado_accion, true));
-            return response()->json(($info_listado_accion));
+            return response()->json(($info_listado_accion)); */
         }
 
         /* LISTADO DE PROCESOS PARA EL FORMULARIO DE EDICIÓN DE EQUIPO DE TRABAJO (MODAL EDICIÓN EQUIPO DE TRABAJO) */
@@ -2226,6 +2512,43 @@ class AdministradorController extends Controller
 
     }
     
+    public function validacionParametricaEnSi(Request $request){
+        $parametro = $request->parametro;
+
+        if ($parametro == "validarSiModNuevo") {
+            $casilla_mod_nuevo = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Modulo_nuevo')
+            ->where([
+                ['sipc.Id_cliente', '=', $request->Id_cliente],
+                ['sipc.Id_proceso', '=', $request->Id_proceso],
+                ['sipc.Servicio_asociado', '=', $request->Id_servicio],
+                ['sipc.Accion_ejecutar', '=', $request->Id_accion]
+            ])->get();
+    
+            $info_casilla_mod_nuevo = json_decode(json_encode($casilla_mod_nuevo, true));
+            return response()->json($info_casilla_mod_nuevo);
+        };
+
+        if ($parametro == "validarSiModConsultar") {
+            $array_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->select('Cliente')->where('ID_evento', $request->nro_evento)->first();
+
+            $id_cliente = $array_id_cliente["Cliente"];
+
+            $casilla_mod_consultar = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Modulo_consultar')
+            ->where([
+                ['sipc.Id_cliente', '=', $id_cliente],
+                ['sipc.Id_proceso', '=', $request->Id_proceso],
+                ['sipc.Servicio_asociado', '=', $request->Id_servicio],
+                ['sipc.Accion_ejecutar', '=', $request->Id_accion]
+            ])->get();
+    
+            $info_casilla_mod_consultar = json_decode(json_encode($casilla_mod_consultar, true));
+            return response()->json($info_casilla_mod_consultar);
+        }
+    }
+
     public function creacionEvento(Request $request){
     
         if(!Auth::check()){
@@ -2670,10 +2993,30 @@ class AdministradorController extends Controller
             if($request->proceso=='4'){
                 $N_orden_evento=$n_orden[0]->Numero_orden;
             }else{
-                $N_orden_evento='';
+                $N_orden_evento=null;
             }
 
+            // Extraemos el id estado de la tabla de parametrizaciones dependiendo del
+            // id del cliente, id proceso, id servicio, id accion. Este id irá como estado inicial
+            // en la creación de un evento
+            // MAURO PARAMETRICA
+            $estado_acorde_a_parametrica = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Estado')
+            ->where([
+                ['sipc.Id_cliente', '=', $request->cliente],
+                ['sipc.Id_proceso', '=', $request->proceso],
+                ['sipc.Servicio_asociado', '=', $request->servicio],
+                ['sipc.Accion_ejecutar','=', $request->accion]
+            ])->get();
+
+            if(count($estado_acorde_a_parametrica)>0){
+                $Id_Estado_evento = $estado_acorde_a_parametrica[0]->Estado;
+            }else{
+                $Id_Estado_evento = 223;
+            }
+            
             /* RECOLECCIÓN INFORMACIÓN PARA LA TABLA: sigmel_informacion_asignacion_eventos */
+
             $datos_info_asignacion_evento =[
                 'ID_evento' => $request->id_evento,
                 'Id_proceso' => $request->proceso,
@@ -2681,9 +3024,11 @@ class AdministradorController extends Controller
                 'Id_accion' => $request->accion,
                 'Descripcion' => $request->descripcion_asignacion,
                 'F_alerta' => $request->fecha_alerta,
-                'Id_Estado_evento' => 1,
+                'Id_Estado_evento' => $Id_Estado_evento,
                 'F_radicacion' => $request->fecha_radicacion,
                 'N_de_orden' => $N_orden_evento,
+                'Id_proceso_anterior' => $request->proceso,
+                'Id_servicio_anterior' => $request->servicio,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date
             ];
@@ -2883,7 +3228,7 @@ class AdministradorController extends Controller
         $parametro = $request->parametro;
 
         $array_datos_info_evento =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_eventos as sie')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_clientes as slc', 'sie.Cliente', '=', 'slc.Id_Cliente')
+        ->leftJoin('sigmel_gestiones.sigmel_clientes as slc', 'sie.Cliente', '=', 'slc.Id_Cliente')
         ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_clientes as sltc', 'sie.Tipo_cliente', '=', 'sltc.Id_TipoCliente')
         ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'sie.Tipo_evento', '=', 'slte.Id_Evento')
         ->select('sie.Cliente', 'slc.Nombre_cliente', 'sie.Tipo_cliente', 'sltc.Nombre_tipo_cliente', 'sie.Tipo_evento',
@@ -2899,16 +3244,16 @@ class AdministradorController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'siae.Id_departamento')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sldm1.Id_municipios', '=', 'siae.Id_municipio')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_tipo_afiliado', 'siae.Tipo_afiliado', '=', 'slp_tipo_afiliado.Id_Parametro')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_eps as sle', 'sle.Id_Eps', '=', 'siae.Id_eps')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_afps as slafp', 'slafp.Id_Afp', '=', 'siae.Id_afp')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_arls as slarl', 'slarl.Id_Arl', '=', 'siae.Id_arl')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sle', 'sle.Id_Entidad', '=', 'siae.Id_eps')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sle1', 'sle1.Id_Entidad', '=', 'siae.Id_afp')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sle2', 'sle2.Id_Entidad', '=', 'siae.Id_arl')
         ->select('siae.Id_Afiliado', 'siae.ID_evento', 'siae.F_registro', 'siae.Nombre_afiliado', 'siae.Direccion', 'siae.Tipo_documento',
         'slp_tipo_doc.Nombre_parametro as Nombre_documento', 'siae.Nro_identificacion', 'siae.F_nacimiento', 'siae.Edad', 'siae.Genero',
         'slp_tipo_genero.Nombre_parametro as Nombre_genero', 'siae.Email', 'siae.Telefono_contacto', 'siae.Estado_civil',
         'slp_estado_civil.Nombre_parametro as Nombre_estado_civil', 'siae.Nivel_escolar', 'slp_nivel_escolar.Nombre_parametro as Nombre_nivel_escolar',
         'sld.Id_dominancia', 'sld.Nombre_dominancia as Dominancia', 'siae.Id_departamento', 'sldm.Nombre_departamento',
         'siae.Id_municipio', 'sldm1.Nombre_municipio', 'siae.Ocupacion', 'siae.Tipo_afiliado', 'slp_tipo_afiliado.Nombre_parametro as Nombre_tipo_afiliado',
-        'siae.Ibc', 'siae.Id_eps', 'sle.Nombre_eps', 'slafp.Id_Afp', 'slafp.Nombre_afp', 'slarl.Id_Arl', 'slarl.Nombre_arl',
+        'siae.Ibc', 'siae.Id_eps', 'sle.Nombre_entidad as Nombre_eps', 'siae.Id_afp', 'sle1.Nombre_entidad as Nombre_afp', 'siae.Id_arl', 'sle2.Nombre_entidad as Nombre_arl',
         'siae.Apoderado', 'siae.Nombre_apoderado', 'siae.Nro_identificacion_apoderado', 'siae.Activo')
         ->where([['siae.ID_evento','=',$newIdEvento]])
         ->orderBy('siae.F_registro', 'desc')
@@ -2916,13 +3261,13 @@ class AdministradorController extends Controller
         ->get();
 
         $array_datos_info_laboral=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_arls as sla', 'sla.Id_arl', '=', 'sile.Id_arl')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sla', 'sla.Id_entidad', '=', 'sile.Id_arl')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'sile.Id_departamento')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldms', 'sldms.Id_municipios', '=', 'sile.Id_municipio')
         ->leftJoin('sigmel_gestiones.sigmel_lista_actividad_economicas as slae', 'slae.Id_ActEco', '=', 'sile.Id_actividad_economica')
         ->leftJoin('sigmel_gestiones.sigmel_lista_clase_riesgos as slcr', 'slcr.Id_Riesgo', '=', 'sile.Id_clase_riesgo')
         ->leftJoin('sigmel_gestiones.sigmel_lista_ciuo_codigos as slcc', 'slcc.Id_Codigo', '=', 'sile.Id_codigo_ciuo')
-        ->select('sile.ID_evento', 'sile.Tipo_empleado','sile.Id_arl', 'sla.Nombre_arl', 'sile.Empresa', 'sile.Nit_o_cc', 'sile.Telefono_empresa',
+        ->select('sile.ID_evento', 'sile.Tipo_empleado','sile.Id_arl', 'sla.Nombre_entidad as Nombre_arl', 'sile.Empresa', 'sile.Nit_o_cc', 'sile.Telefono_empresa',
         'sile.Email', 'sile.Direccion', 'sile.Id_departamento', 'sldm.Nombre_departamento', 'sile.Id_municipio', 
         'sldms.Nombre_municipio', 'sile.Id_actividad_economica', 'slae.Nombre_actividad', 'sile.Id_clase_riesgo', 
         'slcr.Nombre_riesgo', 'sile.Persona_contacto', 'sile.Telefono_persona_contacto', 'sile.Id_codigo_ciuo', 'slcc.Nombre_ciuo', 

@@ -2,6 +2,7 @@ $(document).ready(function(){
 
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE CLIENTES */
     $(".cliente").select2({
+        width: '100%',
         placeholder: "Seleccione una opción",
         allowClear: false
     });
@@ -224,24 +225,33 @@ $(document).ready(function(){
             }
         }
     });
+
     // listado de tipos de clientes
-    let datos_lista_tipo_clientes = {
-        '_token': token,
-        'parametro' : "lista_tipo_clientes"
-    };
-    $.ajax({
-        type:'POST',
-        url:'/cargarselectores',
-        data: datos_lista_tipo_clientes,
-        success:function(data) {
-            // console.log(data);
-            $('#tipo_cliente').empty();
-            $('#tipo_cliente').append('<option value="" selected>Seleccione</option>');
-            let claves = Object.keys(data);
-            for (let i = 0; i < claves.length; i++) {
-                $('#tipo_cliente').append('<option value="'+data[claves[i]]["Id_TipoCliente"]+'">'+data[claves[i]]["Nombre_tipo_cliente"]+'</option>');
+    $('#cliente').change(function(){
+        let datos_lista_tipo_clientes = {
+            '_token': token,
+            'parametro' : "lista_tipo_clientes",
+            'Id_cliente': $(this).val()
+        };
+        
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_lista_tipo_clientes,
+            success:function(data) {
+                $('#tipo_cliente').empty();
+                $('#nombre_tipo_cliente').empty();
+
+                $('#tipo_cliente').val(data[0]["Id_TipoCliente"]);
+                $('#nombre_tipo_cliente').val(data[0]["Nombre_tipo_cliente"]);
+
+                // $('#tipo_cliente').append('<option value="" selected>Seleccione</option>');
+                // let claves = Object.keys(data);
+                // for (let i = 0; i < claves.length; i++) {
+                //     $('#tipo_cliente').append('<option value="'+data[claves[i]]["Id_TipoCliente"]+'">'+data[claves[i]]["Nombre_tipo_cliente"]+'</option>');
+                // }
             }
-        }
+        });
     });
     // listado tipo de evento
     let datos_lista_tipo_evento = {
@@ -479,14 +489,14 @@ $(document).ready(function(){
         }
     });
     // lista apoderado
-    let datos_lista_arl_apoderado = {
+    let datos_apoderado = {
         '_token': token,
         'parametro' : "apoderado"
     };
     $.ajax({
         type:'POST',
         url:'/cargarselectores',
-        data: datos_lista_arl_apoderado,
+        data: datos_apoderado,
         success:function(data) {
             // console.log(data);
             $('#apoderado').empty();
@@ -823,20 +833,21 @@ $(document).ready(function(){
             'Id_cliente': $("#cliente").val(),
             'Id_proceso': $("#proceso").val(),
             'Id_servicio': $(this).val(),
+            'Id_evento': $("#id_evento").val(),
             'parametro' : "listado_accion"
         };
+        
         $.ajax({
             type:'POST',
             url:'/cargarselectores',
             data: datos_listado_accion,
             success:function(data) {
-                // //console.log(data);
-                // $('#accion').empty();
-                // $('#accion').append('<option value="" selected>Seleccione</option>');
-                // let claves = Object.keys(data);
-                // for (let i = 0; i < claves.length; i++) {
-                //     $('#accion').append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Nombre_accion"]+'</option>');
-                // }
+                $('#accion').empty();
+                $('#accion').append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $('#accion').append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                }
             }
         });
     });
@@ -1379,6 +1390,41 @@ $(document).ready(function(){
             }         
         });
     });
+
+    /* VALIDACIÓN PARA DETERMINAR QUE LA PARAMÉTRICA QUE SE CONFIGURE PARA EL MÓDULO NUEVO ESTE EN UN VALOR DE SI EN LA TABLA sigmel_informacion_parametrizaciones_clientes */
+    var validar_mod_nuevo = setInterval(() => {
+        if($("#cliente").val() != '' && $("#proceso").val() != '' && $("#servicio").val() != '' && $("#accion").val() != ''){
+            let datos_ejecutar_parametrica_mod_nuevo= {
+                '_token': token,
+                'parametro': "validarSiModNuevo",
+                'Id_cliente': $("#cliente").val(),
+                'Id_proceso': $("#proceso").val(),
+                'Id_servicio': $("#servicio").val(),
+                'Id_accion': $("#accion").val(),
+            };
+
+            $.ajax({
+                type:'POST',
+                url:'/validacionParametricaEnSi',
+                data: datos_ejecutar_parametrica_mod_nuevo,
+                success:function(data) {
+                    if(data.length > 0){
+                        if (data[0]["Modulo_nuevo"] !== "Si") {
+                            $(".no_ejecutar_parametrica_mod_nuevo").removeClass('d-none');
+                            $('#btn_guardar_evento').addClass('d-none');
+                        } else {
+                            $(".no_ejecutar_parametrica_mod_nuevo").addClass('d-none');
+                            clearInterval(validar_mod_nuevo);
+                            // $('#btn_guardar_evento').removeClass('d-none');
+                        }
+                    }
+                
+                }
+            });
+
+        }
+        
+    }, 500);
 
     /* CALCULAR EDAD ACORDE A LA FECHA DE NACIMIENTO */
     $('#fecha_nacimiento').change(function(){
