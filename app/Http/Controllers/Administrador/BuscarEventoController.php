@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\cndatos_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_numero_orden_eventos;
-
+use App\Models\sigmel_informacion_eventos;
 
 class BuscarEventoController extends Controller
 {
@@ -127,6 +127,7 @@ class BuscarEventoController extends Controller
 
         $time = time();
         $date = date("Y-m-d", $time);
+        $date_con_hora = date("Y-m-d h:i:s", $time);
         $nombre_usuario = Auth::user()->name;
         
         // Actualizamos a No el servicio escogido (tupla) para deshabilitar la opcion
@@ -141,10 +142,14 @@ class BuscarEventoController extends Controller
         if ($request->nuevo_profesional <> "") {
             $id_profesional = $request->nuevo_profesional;
             $nombre_profesional = $request->nombre_profesional;
+            $F_asignacion_calificacion = $date_con_hora;
         }else{
             $id_profesional = null;
             $nombre_profesional = null;
+            $F_asignacion_calificacion = null;
+
         }
+
         //Trae El numero de orden actual
         $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
         ->select('Numero_orden')
@@ -155,6 +160,31 @@ class BuscarEventoController extends Controller
         }else{
             $N_orden_evento='';
         }
+
+        // Extraemos el id estado de la tabla de parametrizaciones dependiendo del
+        // id del cliente, id proceso, id servicio, id accion. Este id irá como estado inicial
+        // en la creación de un evento
+        // MAURO PARAMETRICA
+        $array_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->select('Cliente')->where('ID_evento', $request->id_evento)->first();
+
+        $id_cliente = $array_id_cliente["Cliente"];
+
+        $estado_acorde_a_parametrica = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+        ->select('sipc.Estado')
+        ->where([
+            ['sipc.Id_cliente', '=', $id_cliente],
+            ['sipc.Id_proceso', '=', $request->id_proceso_actual],
+            ['sipc.Servicio_asociado', '=', $request->nuevo_servicio],
+            ['sipc.Accion_ejecutar','=', $request->nueva_accion]
+        ])->get();
+
+        if(count($estado_acorde_a_parametrica)>0){
+            $Id_Estado_evento = $estado_acorde_a_parametrica[0]->Estado;
+        }else{
+            $Id_Estado_evento = 223;
+        }
+
         // Recopilación de datos para insertar el nuevo servicio
         $datos_nuevo_servicio = [
             'ID_evento' => $request->id_evento,
@@ -165,10 +195,13 @@ class BuscarEventoController extends Controller
             'Id_accion' => $request->nueva_accion,
             'Descripcion' => $request->nueva_descripcion,
             'F_alerta' => $request->nueva_fecha_alerta,
-            'Id_Estado_evento' => 1,
+            'Id_Estado_evento' => $Id_Estado_evento,
             'F_accion' => $request->nueva_fecha_accion,
             'F_radicacion' => $request->nueva_fecha_radicacion,
             'N_de_orden' => $N_orden_evento,
+            'Id_proceso_anterior' => $request->id_proceso_actual,
+            'Id_servicio_anterior' => $request->id_servicio_actual,
+            'F_asignacion_calificacion' => $F_asignacion_calificacion,
             'Id_profesional' => $id_profesional,
             'Nombre_profesional' => $nombre_profesional,
             'Nombre_usuario' => $nombre_usuario,
@@ -196,6 +229,7 @@ class BuscarEventoController extends Controller
         
         $time = time();
         $date = date("Y-m-d", $time);
+        $date_con_hora = date("Y-m-d h:i:s", $time);
         $nombre_usuario = Auth::user()->name;
 
         // Actualizamos a No el proceso escogido (tupla) para deshabilitar la opcion
@@ -211,9 +245,12 @@ class BuscarEventoController extends Controller
         if ($request->nuevo_profesional_nuevo_proceso <> "") {
             $id_profesional = $request->nuevo_profesional_nuevo_proceso;
             $nombre_profesional = $request->nombre_profesional_nuevo_proceso;
+            $F_asignacion_calificacion = $date_con_hora;
         }else{
             $id_profesional = null;
             $nombre_profesional = null;
+            $F_asignacion_calificacion = null;
+
         }
 
         //Trae El numero de orden actual
@@ -227,6 +264,31 @@ class BuscarEventoController extends Controller
             $N_orden_evento='';
         }
 
+
+        // Extraemos el id estado de la tabla de parametrizaciones dependiendo del
+        // id del cliente, id proceso, id servicio, id accion. Este id irá como estado inicial
+        // en la creación de un evento
+        // MAURO PARAMETRICA
+        $array_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->select('Cliente')->where('ID_evento', $request->id_evento)->first();
+
+        $id_cliente = $array_id_cliente["Cliente"];
+
+        $estado_acorde_a_parametrica = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+        ->select('sipc.Estado')
+        ->where([
+            ['sipc.Id_cliente', '=', $id_cliente],
+            ['sipc.Id_proceso', '=', $request->selector_nuevo_proceso],
+            ['sipc.Servicio_asociado', '=', $request->selector_nuevo_servicio],
+            ['sipc.Accion_ejecutar','=', $request->nueva_accion_nuevo_proceso]
+        ])->get();
+
+        if(count($estado_acorde_a_parametrica)>0){
+            $Id_Estado_evento = $estado_acorde_a_parametrica[0]->Estado;
+        }else{
+            $Id_Estado_evento = 223;
+        }
+
         $datos_nuevo_proceso = [
             'ID_evento' => $request->id_evento,
             'Id_proceso' => $request->selector_nuevo_proceso,
@@ -236,9 +298,12 @@ class BuscarEventoController extends Controller
             'Id_accion' => $request->nueva_accion_nuevo_proceso,
             'Descripcion' => $request->nueva_descripcion_nuevo_proceso,
             'F_alerta' => $request->nueva_fecha_alerta_nuevo_proceso,
-            'Id_Estado_evento' => 1,
+            'Id_Estado_evento' => $Id_Estado_evento,
             'F_accion' => $request->nueva_fecha_accion_nuevo_proceso,
             'F_radicacion' => $request->fecha_radicacion_nuevo_proceso,
+            'Id_proceso_anterior' => $request->id_proceso_actual_nuevo_proceso,
+            'Id_servicio_anterior' => $request->id_servicio_actual_nuevo_proceso,
+            'F_asignacion_calificacion' => $F_asignacion_calificacion,
             'N_de_orden' => $N_orden_evento,
             'Id_profesional' => $id_profesional,
             'Nombre_profesional' => $nombre_profesional,
@@ -256,7 +321,6 @@ class BuscarEventoController extends Controller
         );
 
         return json_decode(json_encode($mensajes, true));
-
 
     }
 

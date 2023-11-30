@@ -619,9 +619,10 @@ $(document).ready(function(){
         success:function(data) {
             // console.log(data);
             let arl_info_laboralEdicion = $('select[name=arl_info_laboral]').val();
+            
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                if (data[claves[i]]["Id_Arl"] != arl_info_laboralEdicion) {                    
+                if (data[claves[i]]["Id_Arl"] != arl_info_laboralEdicion) {        
                     $('#arl_info_laboral').append('<option value="'+data[claves[i]]["Id_Arl"]+'">'+data[claves[i]]["Nombre_arl"]+'</option>');
                 }
             }

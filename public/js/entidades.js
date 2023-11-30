@@ -494,16 +494,36 @@ $(document).ready(function(){
     /* ENVÍO FORMULARIO EDICIÓN ENTIDAD PARA ACTUALIZAR INFORMACIÓN */
     $(document).on('submit', "form[id^='form_actualizar_entidad_']", function(e){
         e.preventDefault();
-        var formData = new FormData($(this)[0]);
+        // var formData = new FormData($(this)[0]);
+        
+        let datos_formulario_entidad = {
+            '_token': token,
+            'captura_id_entidad' : $("#captura_id_entidad").val(),
+            'edi_tipo_entidad' : $("#edi_tipo_entidad").val(),
+            'otra_entidad_edit' : $("#otra_entidad_edit").val(),
+            'nombre_entidad' : $("#nombre_entidad").val(),
+            'nit_entidad' : $("#nit_entidad").val(),
+            'entidad_telefono' : $("#entidad_telefono").val(),
+            'entidad_telefono_otro' : $("#entidad_telefono_otro").val(),
+            'entidad_email' : $("#entidad_email").val(),
+            'entidad_email_otro' : $("#entidad_email_otro").val(),
+            'entidad_direccion' : $("#entidad_direccion").val(),
+            'edi_entidad_departamento' : $("#edi_entidad_departamento").val(),
+            'edi_entidad_ciudad' : $("#edi_entidad_ciudad").val(),
+            'edi_entidad_medio_noti' : $("#edi_entidad_medio_noti").val(),
+            'entidad_sucursal' : $("#entidad_sucursal").val(),
+            'entidad_dirigido' : $("#entidad_dirigido").val(),
+            'edit_estado_entidad' : $("#edit_estado_entidad").val(),
+        };
 
         $.ajax({
             url: $('#ruta_guardar_ed_identidad').val(),
             type: "post",
             dataType: "json",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
+            data: datos_formulario_entidad,
+            // cache: false,
+            // contentType: false,
+            // processData: false,
             success:function(response){
                 $('#mostrar_barra_editar_entidad').addClass('d-none');
                 $("#btn_actualizar_entidad").removeClass('d-none');

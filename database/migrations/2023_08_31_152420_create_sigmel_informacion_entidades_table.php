@@ -13,21 +13,21 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_entidades', function (Blueprint $table) {
             $table->increments('Id_Entidad');
-            $table->integer('IdTipo_entidad')->nullable();
+            $table->integer('IdTipo_entidad');
             $table->string('Otro_entidad', 50)->nullable();
-            $table->string('Nombre_entidad', 100)->nullable();
-            $table->string('Nit_entidad', 20)->nullable();
+            $table->string('Nombre_entidad', 100);
+            $table->string('Nit_entidad', 20);
             $table->text('Telefonos');
-            $table->text('Otros_Telefonos');
+            $table->text('Otros_Telefonos')->nullable();
             $table->text('Emails');
-            $table->text('Otros_Emails');
+            $table->text('Otros_Emails')->nullable();
             $table->text('Direccion');
-            $table->integer('Id_Departamento')->nullable();
-            $table->integer('Id_Ciudad')->nullable();
-            $table->integer('Id_Medio_Noti')->nullable();
+            $table->integer('Id_Departamento');
+            $table->integer('Id_Ciudad');
+            $table->integer('Id_Medio_Noti');
             $table->text('Sucursal');
             $table->text('Dirigido');
-            $table->enum('Estado_entidad', ['activo', 'inactivo'])->default('activo')->nullable();
+            $table->enum('Estado_entidad', ['activo', 'inactivo'])->default('activo');
             $table->timestamps();
         });
     }

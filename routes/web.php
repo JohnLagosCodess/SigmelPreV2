@@ -232,6 +232,10 @@ Route::get('/Sigmel/RolCoordinador', [CoordinadorController::class, 'show'])->na
 Route::get('/Sigmel/RolAdministrador/GestionInicialNuevo', [AdministradorController::class, 'mostrarVistaGestionInicialNuevo'])->name('gestionInicialNuevo');
 // Acción: Rellenar los selectores del formulario acorde al parametro indicado
 Route::post('/cargarselectores', [AdministradorController::class, 'cargueListadoSelectores']);
+// Acción: Verficar que la columna Modulo_nuevo de la tabla sigmel_informacion_parametrizaciones_clientes este en si para permitir ejecutar la paramétrica
+Route::post('/validacionParametricaEnSi', [AdministradorController::class, 'validacionParametricaEnSi']);
+
+
 // Acción: Registrar evento
 Route::post('/Sigmel/RolAdministrador/CreacionEvento', [AdministradorController::class, 'creacionEvento'])->name('creacionEvento');
 // Acción: Consulta de Nro identificacion afiliado y fecha evento para saber si permite un registro de evento nuevo

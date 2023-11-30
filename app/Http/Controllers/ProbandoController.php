@@ -36,12 +36,13 @@ class ProbandoController extends Controller
         $time = time();
         $date = date("Y-m-d h:i:s", $time);
         
-        /* $datos_nuevos = [
-            'nombre' => 'Paula Gomez Cantor',
+        $datos_nuevos = [
+            'nombre' => 'Michael Jackson',
+            'F_prueba' => $date,
             'created_at' => $date,
             'updated_at' => $date
         ];
-        sigmel_probando::on('mysql2')->insert($datos_nuevos); */
+        sigmel_probando::on('mysql2')->insert($datos_nuevos);
 
         /* COMO OBTENER EL ID DE UN REGISTRO INSERTADO */
         /* $id_ult = sigmel_probando::on('mysql2')->select('id')->latest('id')->first();

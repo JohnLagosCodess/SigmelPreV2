@@ -259,7 +259,7 @@ class EntidadesController extends Controller
             ];
             sigmel_auditorias_entidades::on('sigmel_auditorias')->insert($registro_actividad);
         
-            return back()->with('entidad_creado', 'Equipo de trabajo creado correctamente.');
+            return back()->with('entidad_creado', 'Entidad creada correctamente.');
 
         }
 
@@ -301,42 +301,39 @@ class EntidadesController extends Controller
         sigmel_informacion_entidades::on('sigmel_gestiones')->where('Id_Entidad', $id_entidad)
         ->update($update_entidad);
 
-         /* REGISTRO ACTIVIDAD PARA AUDITORIA */
-         $accion_realizada = "Actuliza Entidad° {$id_entidad}";
-         $registro_actividad = [
-             'Id_Entidad' => $request->edi_tipo_entidad,
-             'IdTipo_entidad' => $request->tipo_entidad,
-             'Otro_entidad' => $request->otra_entidad,
-             'Nombre_entidad' => $request->nombre_entidad,
-             'Nit_entidad' => $request->nit_entidad,
-             'Telefonos' => $request->entidad_telefono,
-             'Otros_Telefonos' => $request->entidad_telefono_otro,
-             'Emails' => $request->entidad_email,
-             'Otros_Emails' => $request->entidad_email_otro,
-             'Direccion' => $request->entidad_direccion,
-             'Id_Departamento' => $request->entidad_departamento,
-             'Id_Ciudad' => $request->entidad_ciudad,
-             'Id_Medio_Noti' => $request->entidad_medio_noti,
-             'Sucursal' => $request->entidad_sucursal,
-             'Dirigido' => $request->entidad_dirigido,
-             'Estado_entidad' => $request->estado_entidad,
-             'id_usuario_sesion' => Auth::id(),
-             'nombre_usuario_sesion' => Auth::user()->name,
-             'acccion_realizada' => $accion_realizada,
-             'fecha_registro_accion' => $date
-         ];
-         sigmel_auditorias_entidades::on('sigmel_auditorias')->insert($registro_actividad);
+        /* REGISTRO ACTIVIDAD PARA AUDITORIA */
+        $accion_realizada = "Actuliza Entidad° {$id_entidad}";
+        $registro_actividad = [
+            'Id_Entidad' => $request->captura_id_entidad,
+            'IdTipo_entidad' => $request->edi_tipo_entidad,
+            'Otro_entidad' => $request->otra_entidad_edit,
+            'Nombre_entidad' => $request->nombre_entidad,
+            'Nit_entidad' => $request->nit_entidad,
+            'Telefonos' => $request->entidad_telefono,
+            'Otros_Telefonos' => $request->entidad_telefono_otro,
+            'Emails' => $request->entidad_email,
+            'Otros_Emails' => $request->entidad_email_otro,
+            'Direccion' => $request->entidad_direccion,
+            'Id_Departamento' => $request->edi_entidad_departamento,
+            'Id_Ciudad' => $request->edi_entidad_ciudad,
+            'Id_Medio_Noti' => $request->edi_entidad_medio_noti,
+            'Sucursal' => $request->entidad_sucursal,
+            'Dirigido' => $request->entidad_dirigido,
+            'Estado_entidad' => $request->edit_estado_entidad,
+            'id_usuario_sesion' => Auth::id(),
+            'nombre_usuario_sesion' => Auth::user()->name,
+            'acccion_realizada' => $accion_realizada,
+            'fecha_registro_accion' => $date
+        ];
+
+        sigmel_auditorias_entidades::on('sigmel_auditorias')->insert($registro_actividad);
 
         $mensajes = array(
             "parametro" => 'exito',
-            "mensaje" => 'Información de Entidad actualizada satisfactoriamente. Para visualizar los cambios debe hacer clic en el botón Actualizar.'
+            "mensaje" => 'Entidad actualizada satisfactoriamente. Para visualizar los cambios debe hacer clic en el botón Actualizar.'
         );
 
-
-
         return json_decode(json_encode($mensajes, true));
-
-
     }
 
 }

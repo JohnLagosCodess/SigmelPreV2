@@ -280,7 +280,7 @@ $(document).ready(function () {
         $("form[id^='form_editar_evento_']").attr("action", url_editar_evento);    
     });
 
-    /* CREACIÓN Y AGREGACIÓN DEL MODAL NUEVO SERVICIO AL CONTENEDOR DE REDENRIZAMIENTO */
+    /* CREACIÓN Y AGREGACIÓN DEL MODAL NUEVO SERVICIO AL CONTENEDOR DE RENDERIZAMIENTO */
     $(document).on('mouseover', "a[id^='btn_nuevo_servicio_']", function(){
         var id_evento_nuevo_servicio =  $(this).data("id_evento_nuevo_servicio"); //ID EVENTO
         var id_proceso_nuevo_servicio =  $(this).data("id_proceso_nuevo_servicio"); // ID PROCESO ACTUAL
@@ -361,6 +361,10 @@ $(document).ready(function () {
                             </div>\
                             <div class="mostrar_mensaje_creo_servicio alert alert-success mt-2 mr-auto d-none" role="alert"></div>\
                             <div class="modal-footer">\
+                                <div class="alert alert-danger no_ejecutar_parametrica_mod_consultar d-none" role="alert">\
+                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> No puede crear el servicio debido a que el proceso, servicio y/o acción seleccionados no tienen una parametrización\
+                                    asociada. Debe configurar una.\
+                                </div>\
                                 <input type="hidden" class="form-control" id="nro_evento_'+id_evento_nuevo_servicio+'" value="'+id_evento_nuevo_servicio+'">\
                                 <a href="javascript:void(0);" class="text-dark text-md mr-auto" data-toggle="modal" data-target="#modalListaDocumentos" id="cargue_documentos_evento_'+id_evento_nuevo_servicio+'">\
                                 <i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>\
@@ -391,11 +395,12 @@ $(document).ready(function () {
 
         let token = $("input[name='_token']").val();
 
-        /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Servicio */
         let id_proceso_actual = $('.renderizar_nuevo_servicio').find("input[id^='id_proceso_actual_']").val();
         let id_servicio_actual = $('.renderizar_nuevo_servicio').find("input[id^='id_servicio_actual_']").val();
         let nro_evento = $('.renderizar_nuevo_servicio').find("input[id^='nro_evento_']").val();
-
+        let id_asignacion = $('.renderizar_nuevo_servicio').find("input[id^='tupla_servicio_evento_']").val();
+        
+        /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Servicio */
         let selector_nuevo_servicio = $('.renderizar_nuevo_servicio').find("select[id^='nuevo_servicio_']").attr("id");
         
         let datos_listado_servicios_nuevo_servicio = {
@@ -403,9 +408,10 @@ $(document).ready(function () {
             'parametro' : "listado_servicios_nuevo_servicio",
             'id_proceso_actual' : id_proceso_actual,
             'id_servicio_actual': id_servicio_actual,
-            'nro_evento': nro_evento
+            'nro_evento': nro_evento,
+            'id_asignacion': id_asignacion,
         };
-
+        
         $.ajax({
             type:'POST',
             url:'/cargarselectores',
@@ -432,28 +438,82 @@ $(document).ready(function () {
         });
 
         /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Acción */
-        let datos_listado_accion = {
-            '_token': token,
-            'parametro' : "listado_accion_nuevo_servicio",
-        };
+        var selector_nueva_accion_nuevo_servicio = $('.renderizar_nuevo_servicio').find("select[id^='nueva_accion_']").attr("id");
+        $("#"+selector_nuevo_servicio).change(function(){
+            // 'Id_servicio': id_servicio_actual,
+            let datos_listado_accion = {
+                '_token': token,
+                'parametro' : "listado_accion_nuevo_servicio",
+                'Id_proceso' : id_proceso_actual,
+                'Id_servicio': $(this).val(),
+                'nro_evento': nro_evento,
+                'Id_asignacion': id_asignacion
+            };
+            
+            $.ajax({
+                type:'POST',
+                url:'/cargarselectores',
+                data: datos_listado_accion,
+                success:function(data) {
+                    if (data.length > 0) {
+                        $("#"+selector_nueva_accion_nuevo_servicio).empty();
+                        $("#"+selector_nueva_accion_nuevo_servicio).append('<option></option>');
+            
+                        let claves = Object.keys(data);
+                        for (let i = 0; i < claves.length; i++) {
+                            $("#"+selector_nueva_accion_nuevo_servicio).append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Nombre_accion"]+'</option>');
+                        }
 
-        let selector_nueva_accion_nuevo_servicio = $('.renderizar_nuevo_servicio').find("select[id^='nueva_accion_']").attr("id");
-
-        $.ajax({
-            type:'POST',
-            url:'/cargarselectores',
-            data: datos_listado_accion,
-            success:function(data) {
-                $("#"+selector_nueva_accion_nuevo_servicio).empty();
-                $("#"+selector_nueva_accion_nuevo_servicio).append('<option value="" selected>Seleccione</option>');
-    
-                let claves = Object.keys(data);
-                for (let i = 0; i < claves.length; i++) {
-                    $("#"+selector_nueva_accion_nuevo_servicio).append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Nombre_accion"]+'</option>');
+                        $(".no_ejecutar_parametrica_mod_consultar").addClass('d-none');
+                        $('.renderizar_nuevo_servicio').find("a[id^='cargue_documentos_evento_']").removeClass('d-none');
+                        $('.renderizar_nuevo_servicio').find("button[id^='crear_servicio_evento_']").removeClass('d-none');
+                    } else {
+                        $("#"+selector_nueva_accion_nuevo_servicio).empty();
+                        $("#"+selector_nueva_accion_nuevo_servicio).append('<option></option>');
+                        $(".no_ejecutar_parametrica_mod_consultar").removeClass('d-none');
+                        $('.renderizar_nuevo_servicio').find("a[id^='cargue_documentos_evento_']").addClass('d-none');
+                        $('.renderizar_nuevo_servicio').find("button[id^='crear_servicio_evento_']").addClass('d-none');
+                    }
                 }
-    
-            }
+            });
         });
+
+        /* VALIDACIÓN PARA DETERMINAR QUE LA PARAMÉTRICA QUE SE CONFIGURE PARA EL MÓDULO CONSULTAR ESTE EN UN VALOR DE SI EN LA TABLA sigmel_informacion_parametrizaciones_clientes */
+        var validar_mod_consultar = setInterval(() => {
+            if(id_proceso_actual != '' && $("#"+selector_nuevo_servicio).val() != '' && $("#"+selector_nueva_accion_nuevo_servicio).val() != ''){
+                let datos_ejecutar_parametrica_mod_consultar= {
+                    '_token': token,
+                    'parametro': "validarSiModConsultar",
+                    'Id_proceso': id_proceso_actual,
+                    'Id_servicio': $("#"+selector_nuevo_servicio).val(),
+                    'Id_accion': $("#"+selector_nueva_accion_nuevo_servicio).val(),
+                    'nro_evento': nro_evento
+                };
+                $.ajax({
+                    type:'POST',
+                    url:'/validacionParametricaEnSi',
+                    data: datos_ejecutar_parametrica_mod_consultar,
+                    success:function(data) {
+                        if(data.length > 0){
+                            if (data[0]["Modulo_consultar"] !== "Si") {
+                                // $("#"+selector_nueva_accion_nuevo_servicio).empty();
+                                // $("#"+selector_nueva_accion_nuevo_servicio).append('<option></option>');
+                                $(".no_ejecutar_parametrica_mod_consultar").removeClass('d-none');
+                                $('.renderizar_nuevo_servicio').find("a[id^='cargue_documentos_evento_']").addClass('d-none');
+                                $('.renderizar_nuevo_servicio').find("button[id^='crear_servicio_evento_']").addClass('d-none');
+                            } else {
+                                $(".no_ejecutar_parametrica_mod_consultar").addClass('d-none');
+                                $('.renderizar_nuevo_servicio').find("a[id^='cargue_documentos_evento_']").removeClass('d-none');
+                                $('.renderizar_nuevo_servicio').find("button[id^='crear_servicio_evento_']").removeClass('d-none');
+                                clearInterval(validar_mod_consultar);
+                            }
+                        }
+                    
+                    }
+                });
+            }
+            
+        }, 500);
 
         /* INICIALIZACIÓN DEL SELECT2 DE LISTADO PROFESIONALES DEPENDIENDO DEL PROCESO. */
         $("select[id^='nuevo_profesional_']").select2({
@@ -493,7 +553,6 @@ $(document).ready(function () {
 
 
     });
-
 
     /* CAPTURA ID EVENTO PARA PINTAR EL LISTADO DE DOCUMENTOS PERTENENCIENTES A EL */
     $(document).on('click', "a[id^='cargue_documentos_evento_']", function(){
@@ -597,7 +656,7 @@ $(document).ready(function () {
             var nombres_keys = pair[0];
             datos_nuevo_servicio[nombres_keys] = pair[1];
         }
-
+        
         $.ajax({
             url: "/crearNuevoServicio",
             type: "post",
@@ -614,7 +673,6 @@ $(document).ready(function () {
                         $('.mostrar_mensaje_creo_servicio').addClass('d-none');
                     $('.mostrar_mensaje_creo_servicio').empty();
                     }, 9000);
-
                 }
             }         
         });
@@ -736,6 +794,10 @@ $(document).ready(function () {
                             </div>\
                             <div class="mostrar_mensaje_creo_proceso alert alert-success mt-2 mr-auto d-none" role="alert"></div>\
                             <div class="modal-footer">\
+                                <div class="alert alert-danger no_ejecutar_parametrica_mod_consultar d-none" role="alert">\
+                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> No puede crear el proceso debido a que el proceso, servicio y/o acción seleccionados no tienen una parametrización\
+                                    asociada. Debe configurar una.\
+                                </div>\
                                 <input type="hidden" class="form-control" id="nro_evento_nuevo_proceso_'+id_evento_nuevo_proceso+'" value="'+id_evento_nuevo_proceso+'">\
                                 <a href="javascript:void(0);" class="text-dark text-md mr-auto" data-toggle="modal" data-target="#modalListaDocumentos" id="cargue_documentos_nuevo_proceso_evento_'+id_evento_nuevo_proceso+'">\
                                 <i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>\
@@ -764,10 +826,12 @@ $(document).ready(function () {
 
         let token = $("input[name='_token']").val();
 
-        /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Proceso */
         let ident_evento_actual = $('.renderizar_nuevo_proceso').find("input[id^='nro_evento_nuevo_proceso_']").val();
         let selector_nuevo_proceso = $('.renderizar_nuevo_proceso').find("select[id^='selector_nuevo_proceso_']").attr("id");
+        let nro_evento_nuevo_proceso = $('.renderizar_nuevo_proceso').find("input[id^='nro_evento_nuevo_proceso_']").val();
+        let id_asignacion = $('.renderizar_nuevo_proceso').find("input[id^='tupla_proceso_evento_']").val();
 
+        /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Proceso */
         let datos_listado_procesos_nuevo_proceso = {
             '_token': token,
             'parametro' : "listado_procesos_nuevo_proceso",
@@ -806,28 +870,90 @@ $(document).ready(function () {
         });
 
         /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Acción */
-        let datos_listado_accion_nuevo_proceso = {
-            '_token': token,
-            'parametro' : "listado_accion_nuevo_proceso",
-        };
+        let selector_nueva_accion_nuevo_proceso = $(".renderizar_nuevo_proceso").find("select[id^='nueva_accion_nuevo_proceso_']").attr("id");
+        var selector_nuevo_servicio = $('.renderizar_nuevo_proceso').find("select[id^='selector_nuevo_servicio_']").attr("id");
+        var id_proceso_escogido = $('.renderizar_nuevo_proceso').find("select[id^='selector_nuevo_proceso_']").attr("id");
 
-        let selector_nueva_accion_nuevo_proceso = $(".renderizar_nuevo_proceso").find("select[id^='nueva_accion_nuevo_proceso_").attr("id");
+        $("#"+selector_nuevo_servicio).change(function(){
 
-        $.ajax({
-            type:'POST',
-            url:'/cargarselectores',
-            data: datos_listado_accion_nuevo_proceso,
-            success:function(data) {
-                $("#"+selector_nueva_accion_nuevo_proceso).empty();
-                $("#"+selector_nueva_accion_nuevo_proceso).append('<option value="" selected>Seleccione</option>');
-    
-                let claves = Object.keys(data);
-                for (let i = 0; i < claves.length; i++) {
-                    $("#"+selector_nueva_accion_nuevo_proceso).append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Nombre_accion"]+'</option>');
+            let datos_listado_accion_nuevo_proceso = {
+                '_token': token,
+                'parametro' : "listado_accion_nuevo_proceso",
+                'Id_proceso' : $("#"+id_proceso_escogido).val(),
+                'Id_servicio': $(this).val(),
+                'nro_evento': nro_evento_nuevo_proceso,
+                'Id_asignacion': id_asignacion
+            };
+            // console.log(datos_listado_accion_nuevo_proceso);
+            $.ajax({
+                type:'POST',
+                url:'/cargarselectores',
+                data: datos_listado_accion_nuevo_proceso,
+                success:function(data) {
+                    if (data.length > 0) {
+                        $("#"+selector_nueva_accion_nuevo_proceso).empty();
+                        $("#"+selector_nueva_accion_nuevo_proceso).append('<option></option>');
+        
+                        let claves = Object.keys(data);
+                        for (let i = 0; i < claves.length; i++) {
+                            $("#"+selector_nueva_accion_nuevo_proceso).append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Nombre_accion"]+'</option>');
+                        }
+
+                        $(".no_ejecutar_parametrica_mod_consultar").addClass('d-none');
+                        $('.renderizar_nuevo_proceso').find("a[id^='cargue_documentos_nuevo_proceso_evento_']").removeClass('d-none');
+                        $('.renderizar_nuevo_proceso').find("button[id^='crear_proceso_evento_']").removeClass('d-none');
+
+                    } else {
+                        $("#"+selector_nueva_accion_nuevo_proceso).empty();
+                        $("#"+selector_nueva_accion_nuevo_proceso).append('<option></option>');
+
+                        $(".no_ejecutar_parametrica_mod_consultar").removeClass('d-none');
+                        $('.renderizar_nuevo_proceso').find("a[id^='cargue_documentos_nuevo_proceso_evento_']").addClass('d-none');
+                        $('.renderizar_nuevo_proceso').find("button[id^='crear_proceso_evento_']").addClass('d-none');
+
+                    }
                 }
-    
-            }
+            });
+
         });
+
+        /* VALIDACIÓN PARA DETERMINAR QUE LA PARAMÉTRICA QUE SE CONFIGURE PARA EL MÓDULO CONSULTAR ESTE EN UN VALOR DE SI EN LA TABLA sigmel_informacion_parametrizaciones_clientes */
+        var validar_mod_consultar = setInterval(() => {
+            if($("#"+id_proceso_escogido).val() != '' && $("#"+selector_nuevo_servicio).val() != '' && $("#"+selector_nueva_accion_nuevo_proceso).val() != ''){
+                let datos_ejecutar_parametrica_mod_consultar= {
+                    '_token': token,
+                    'parametro': "validarSiModConsultar",
+                    'Id_proceso': $("#"+id_proceso_escogido).val(),
+                    'Id_servicio': $("#"+selector_nuevo_servicio).val(),
+                    'Id_accion': $("#"+selector_nueva_accion_nuevo_proceso).val(),
+                    'nro_evento': nro_evento_nuevo_proceso
+                };
+                // console.log(datos_ejecutar_parametrica_mod_consultar);
+                $.ajax({
+                    type:'POST',
+                    url:'/validacionParametricaEnSi',
+                    data: datos_ejecutar_parametrica_mod_consultar,
+                    success:function(data) {
+                        if(data.length > 0){
+                            if (data[0]["Modulo_consultar"] !== "Si") {
+                                // $("#"+selector_nueva_accion_nuevo_servicio).empty();
+                                // $("#"+selector_nueva_accion_nuevo_servicio).append('<option></option>');
+                                $(".no_ejecutar_parametrica_mod_consultar").removeClass('d-none');
+                                $('.renderizar_nuevo_proceso').find("a[id^='cargue_documentos_nuevo_proceso_evento_']").addClass('d-none');
+                                $('.renderizar_nuevo_proceso').find("button[id^='crear_proceso_evento_']").addClass('d-none');
+                            } else {
+                                $(".no_ejecutar_parametrica_mod_consultar").addClass('d-none');
+                                $('.renderizar_nuevo_proceso').find("a[id^='cargue_documentos_nuevo_proceso_evento_']").removeClass('d-none');
+                                $('.renderizar_nuevo_proceso').find("button[id^='crear_proceso_evento_']").removeClass('d-none');
+                                clearInterval(validar_mod_consultar);
+                            }
+                        }
+                    
+                    }
+                });
+            }
+            
+        }, 500);
 
 
         /* INICIALIZACIÓN DEL SELECT2 DE LISTADO PROFESIONALES DEPENDIENDO DEL PROCESO. */
@@ -838,7 +964,7 @@ $(document).ready(function () {
         
     });
 
-    /* CARGUE DE INFORMACIÓN DEL SELECTOR DE Servicios y Profesionales que dependen del proceso. */
+    /* CARGUE DE INFORMACIÓN DEL SELECTOR de Servicios y Profesionales que dependen del proceso. */
     $(document).on('change', "select[id^='selector_nuevo_proceso_']", function(){
         let id_servicio_actual_nuevo_proceso = $('.renderizar_nuevo_proceso').find("input[id^='id_servicio_actual_']").val();
         let nro_evento_nuevo_proceso = $('.renderizar_nuevo_proceso').find("input[id^='nro_evento_nuevo_proceso_']").val();
@@ -861,8 +987,9 @@ $(document).ready(function () {
             url:'/cargarselectores',
             data: datos_listado_servicios_nuevo_proceso,
             success:function(data) {
+                // console.log(data);
                 $("#"+selector_nuevo_servicio).empty();
-                $("#"+selector_nuevo_servicio).append('<option value="" selected>Seleccione</option>');
+                $("#"+selector_nuevo_servicio).append('<option></option>');
     
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
@@ -1060,7 +1187,6 @@ $(document).ready(function () {
             var nombres_keys = pair[0];
             datos_nuevo_proceso[nombres_keys] = pair[1];
         }
-
         $.ajax({
             url: "/crearNuevoProceso",
             type: "post",

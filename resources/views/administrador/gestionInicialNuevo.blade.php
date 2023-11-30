@@ -41,6 +41,13 @@
                 <div class="row">
                     {{-- AQUI VA EL FORMULARIO COMPLETO --}}
                     <div class="col-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="alert alert-info mensaje_confirmacion_cargar_evento" role="alert">
+                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Debe cargar los documentos obligatorios para crear el evento.
+                                </div>
+                            </div>
+                        </div>
                         {{-- CLIENTE Y TIPO DE CLIENTE --}}
                         <div class="row">
                             <div class="col-sm">
@@ -52,7 +59,9 @@
                             <div class="col-sm">
                                 <div class="form-group">
                                     <label for="tipo_cliente" class="col-form-label">Tipo de Cliente <span style="color:red;">(*)</span></label>
-                                    <select class="tipo_cliente custom-select" name="tipo_cliente" id="tipo_cliente" required></select>
+                                    {{-- <select class="tipo_cliente custom-select" name="tipo_cliente" id="tipo_cliente" required></select> --}}
+                                    <input type="hidden" name="tipo_cliente" id="tipo_cliente">
+                                    <input type="text" class="form-control" id="nombre_tipo_cliente" readonly>
                                 </div>
                             </div>
                             <div class="col-sm columna_otro_tipo_cliente">
@@ -385,7 +394,7 @@
                                                     <select class="arl_info_laboral custom-select" name="arl_info_laboral" id="arl_info_laboral"></select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm otro_arl_info_laboral ">
+                                            <div class="col-sm otro_arl_info_laboral d-none">
                                                 <div class="form-group">
                                                     <label for="otra_arl_info_laboral" class="col-form-label">Otra ARL</label>
                                                     <input type="text" class="otra_arl_info_laboral form-control" name="otra_arl_info_laboral" id="otra_arl_info_laboral">
@@ -435,7 +444,7 @@
                                                     <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral" disabled></select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm columna_pais_exterior_info_laboral ">
+                                            <div class="col-sm columna_pais_exterior_info_laboral d-none">
                                                 <div class="form-group">
                                                     <label for="pais_exterior_info_laboral" class="col-form-label">País Exterior</label>
                                                     <input type="text" class="pais_exterior_info_laboral form-control" name="pais_exterior_info_laboral" id="pais_exterior_info_laboral">
@@ -647,9 +656,11 @@
                 </div>
             </div>
             <div class="card-footer">
-                <div class="alert alert-info mensaje_confirmacion_cargar_evento" role="alert">
-                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Debe cargar los documentos obligatorios para crear el evento.
+                <div class="alert alert-danger no_ejecutar_parametrica_mod_nuevo d-none" role="alert">
+                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> No puede crear el evento debido a que el proceso, servicio y acción seleccionados no tienen una parametrización
+                    asociada. Debe configurar una.
                 </div>
+
                 <div class="grupo_botones" style="float: left;">
                     <input type="reset" id="btn_borrar" class="btn btn-info" value="Restablecer">
                     <input type="submit" id="btn_guardar_evento" class="btn btn-info d-none" value="Guardar">
