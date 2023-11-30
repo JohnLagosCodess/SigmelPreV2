@@ -14,16 +14,24 @@ class sigmel_informacion_asignacion_eventos extends Model
     protected $primaryKey = 'Id_Asignacion';
 
     protected $fillable = [
-    'ID_evento',
-    'Id_proceso',
-    'Id_servicio',
-    'Id_accion',
-    'Descripcion',
-    'F_alerta',
-    'Id_Estado_procesos',
-    'F_accion',
-    'N_de_orden',
-    'Nombre_usuario',
-    'F_registro',
+        'ID_evento',
+        'Id_proceso',
+        'Visible_Nuevo_Proceso',
+        'Id_servicio',
+        'Visible_Nuevo_Servicio',
+        'Id_accion',
+        'Descripcion',
+        'F_alerta',
+        'Id_Estado_evento',
+        'F_accion',
+        'F_radicacion',
+        'N_de_orden',
+        'Id_proceso_anterior',
+        'Id_servicio_anterior',
+        'F_asignacion_calificacion',
+        'Id_profesional',
+        'Nombre_profesional',
+        'Nombre_usuario',
+        'F_registro'
     ];
 }

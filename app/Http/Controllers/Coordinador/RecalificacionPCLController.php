@@ -3305,20 +3305,21 @@ class RecalificacionPCLController extends Controller
         $total_otras = $request -> total_otras;
         $total_rol_areas = $request -> total_rol_areas;       
         
-        
+        //echo $higiene_personal;
+
         if ($request -> bandera_LaboralActivo_guardar_actualizar == 'Guardar') {
             
-            /* $Ultimo_Id_Asignacion = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
-            ->where([['ID_evento', $Id_Evento_decreto]])
-            ->max('Id_Asignacion');
+            // $Ultimo_Id_Asignacion = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
+            // ->where([['ID_evento', $Id_Evento_decreto]])
+            // ->max('Id_Asignacion');
     
-            $Estado_Recalificacion_laboral = [
-                'Estado_Recalificacion' => 'Inactivo'
-            ];
+            // $Estado_Recalificacion_laboral = [
+            //     'Estado_Recalificacion' => 'Inactivo'
+            // ];
             
-            sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
-            ->where([['ID_evento', $Id_Evento_decreto], ['Id_Asignacion', $Ultimo_Id_Asignacion]])
-            ->update($Estado_Recalificacion_laboral); */
+            // sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
+            // ->where([['ID_evento', $Id_Evento_decreto], ['Id_Asignacion', $Ultimo_Id_Asignacion]])
+            // ->update($Estado_Recalificacion_laboral);
 
             $datos_laboralmenteActivo = [
                 'ID_evento' => $Id_Evento_decreto,

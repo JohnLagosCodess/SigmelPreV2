@@ -62,22 +62,79 @@ class BandejaNotifiController extends Controller
 
         if($BandejaNotifiTotal == 'CargaBandejaNotifi'){
 
-            $bandejaNotifisin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
+            $bandejaNotifi = cndatos_bandeja_eventos::on('sigmel_gestiones')
             ->where([
                 ['Nombre_proceso_actual', '=', 'Notificaciones']
             ])
-            ->whereNull('Nombre_proceso_anterior');
-
-            $bandejaNotifi = cndatos_bandeja_eventos::on('sigmel_gestiones')
-            ->where([
-                ['Nombre_proceso_actual', '=', 'Notificaciones'],
-                ['Id_proceso_anterior', '<>', 4]
-            ])
-            ->union($bandejaNotifisin_Pro_ant)
             ->get();
 
+            // $bandejaNotifisin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
+            // ->where([
+            //     ['Nombre_proceso_actual', '=', 'Notificaciones']
+            // ])
+            // ->whereNull('Nombre_proceso_anterior');
+
+            // $bandejaNotifi = cndatos_bandeja_eventos::on('sigmel_gestiones')
+            // ->where([
+            //     ['Nombre_proceso_actual', '=', 'Notificaciones'],
+            //     ['Id_proceso_anterior', '<>', 4]
+            // ])
+            // ->union($bandejaNotifisin_Pro_ant)
+            // ->get();
+
+            // $Ids_Nombre_proceso_anterior = response()->json([]);
+            
+            // foreach ($bandejaOrigen as $item) {
+            //     // Accede a cada propiedad del objeto dentro del bucle
+            //     $Id_Asignacion_bandeja = $item->Id_Asignacion;
+            //     $ID_evento_bandeja = $item->ID_evento;
+            //     $Id_proceso_bandeja = $item->Id_proceso;
+
+            //     $validar_proceso_anterior = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            //     ->select('Id_proceso')
+            //     ->where([['ID_evento', $ID_evento_bandeja], ['Id_Asignacion', '<', $Id_Asignacion_bandeja]])
+            //     ->orderBy('Id_Asignacion', 'desc')
+            //     ->limit(1)
+            //     ->get();
+            //     //echo $validar_proceso_anterior[0]->Id_proceso;
+            //     if (count($validar_proceso_anterior) > 0) {
+            //         $validar_Nombre_proceso_anterior = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            //         ->select('Nombre_proceso')->where([['Id_proceso', $validar_proceso_anterior[0]->Id_proceso]])
+            //         ->limit(1)->get();    
+            //         //echo $validar_Nombre_proceso_anterior[0]->Nombre_proceso;    
+            //         $Ids_Nombre_proceso_anterior = response()->json([
+            //             'Id_Proceso_anterior' => $validar_proceso_anterior[0]->Id_proceso,
+            //             'Nombre_proceso_anterior' => $validar_Nombre_proceso_anterior[0]->Nombre_proceso,
+            //         ]);
+    
+            //         $Ids_Nombre_proceso_anterior_array = json_decode($Ids_Nombre_proceso_anterior->getContent(), true);
+                    
+            //         $arraybandejaNotifi = json_decode(json_encode($bandejaOrigen, true));
+    
+            //         $arraybandejaNotifi[0]->Id_Proceso_anterior = $Ids_Nombre_proceso_anterior_array['Id_Proceso_anterior'];
+            //         $arraybandejaNotifi[0]->Nombre_proceso_anterior = $Ids_Nombre_proceso_anterior_array['Nombre_proceso_anterior'];
+                    
+            //     } else {
+            //         $validar_Nombre_proceso_anterior = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            //         ->select('Nombre_proceso')->where([['Id_proceso', $Id_proceso_bandeja]])
+            //         ->limit(1)->get(); 
+
+            //         $Ids_Nombre_proceso_anterior = response()->json([
+            //             'Id_Proceso_anterior' => $Id_proceso_bandeja,
+            //             'Nombre_proceso_anterior' => $validar_Nombre_proceso_anterior[0]->Nombre_proceso,
+            //         ]);
+    
+            //         $Ids_Nombre_proceso_anterior_array = json_decode($Ids_Nombre_proceso_anterior->getContent(), true);
+                    
+            //         $arraybandejaNotifi = json_decode(json_encode($bandejaOrigen, true));
+    
+            //         $arraybandejaNotifi[0]->Id_Proceso_anterior = $Ids_Nombre_proceso_anterior_array['Id_Proceso_anterior'];
+            //         $arraybandejaNotifi[0]->Nombre_proceso_anterior = $Ids_Nombre_proceso_anterior_array['Nombre_proceso_anterior'];
+                    
+            //     }
+            // }
             $arraybandejaNotifi = json_decode(json_encode($bandejaNotifi, true));
-            return response()->json($arraybandejaNotifi);
+            return response()->json($bandejaNotifi);
 
         }
     }
@@ -91,23 +148,26 @@ class BandejaNotifiController extends Controller
         switch (true) {
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and !empty($consultar_g_dias)):
 
-                    $bandejaNotifisin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Notificaciones'],
                         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
                     ])
-                    ->whereNull('Nombre_proceso_anterior')
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
-                    
-                    $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                            ['Nombre_proceso_actual', '=', 'Notificaciones'],
-                            ['Id_proceso_anterior', '<>', 4],
-                            ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
-                        ])            
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
-                    ->union($bandejaNotifisin_Pro_ant)
                     ->get();
+
+                    // ->whereNull('Nombre_proceso_anterior')
+                    // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
+                    
+                    // $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    // ->where([
+                    //         ['Nombre_proceso_actual', '=', 'Notificaciones'],
+                    //         ['Id_proceso_anterior', '<>', 4],
+                    //         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
+                    //     ])            
+                    // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    // ->union($bandejaNotifisin_Pro_ant)
+                    // ->get();
             
                     $arraybandejaNotifiFiltros = json_decode(json_encode($bandejaNotifiFiltros, true));
                     if (count($arraybandejaNotifiFiltros)>0) {
@@ -123,21 +183,25 @@ class BandejaNotifiController extends Controller
             break;
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and empty($consultar_g_dias)):
                     
-                    $bandejaNotifisin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                        ['Nombre_proceso_actual', '=', 'Notificaciones']
-                    ])
-                    ->whereNull('Nombre_proceso_anterior')
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
-
                     $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
-                            ['Nombre_proceso_actual', '=', 'Notificaciones'],
-                            ['Id_proceso_anterior', '<>', 4],
-                        ])            
+                        ['Nombre_proceso_actual', '=', 'Notificaciones'],
+                    ])
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
-                    ->union($bandejaNotifisin_Pro_ant)
-                    ->get();                    
+                    ->get();
+
+
+                    // ->whereNull('Nombre_proceso_anterior')
+                    // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
+
+                    // $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    // ->where([
+                    //         ['Nombre_proceso_actual', '=', 'Notificaciones'],
+                    //         ['Id_proceso_anterior', '<>', 4],
+                    //     ])            
+                    // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    // ->union($bandejaNotifisin_Pro_ant)
+                    // ->get();                    
 
                     $arraybandejaNotifiFiltros = json_decode(json_encode($bandejaNotifiFiltros, true));
                     if (count($arraybandejaNotifiFiltros)>0) {
@@ -153,21 +217,23 @@ class BandejaNotifiController extends Controller
             break;
             case (empty($consultar_f_desde) and empty($consultar_f_hasta) and !empty($consultar_g_dias)):
                     
-                    $bandejaNotifisin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Notificaciones'],
                         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
                     ])
-                    ->whereNull('Nombre_proceso_anterior');
-                    
-                    $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                            ['Nombre_proceso_actual', '=', 'Notificaciones'],
-                            ['Id_proceso_anterior', '<>', 4],
-                            ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
-                        ])            
-                    ->union($bandejaNotifisin_Pro_ant)
                     ->get();
+
+                    // ->whereNull('Nombre_proceso_anterior');
+                    
+                    // $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    // ->where([
+                    //         ['Nombre_proceso_actual', '=', 'Notificaciones'],
+                    //         ['Id_proceso_anterior', '<>', 4],
+                    //         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
+                    //     ])            
+                    // ->union($bandejaNotifisin_Pro_ant)
+                    // ->get();
                 
                     $arraybandejaNotifiFiltros = json_decode(json_encode($bandejaNotifiFiltros, true));
                     if (count($arraybandejaNotifiFiltros)>0) {

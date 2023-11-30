@@ -2232,7 +2232,7 @@ $(document).ready(function(){
         if (definirDecreto_deficiencia == 1) {
             if($.trim(total_rol_ocupacional12) == 0 && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){
                 total_rol_ocupacional = 0;
-            }else if($.trim(total_rol_ocupacional12) == 0 && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){                
+            }else if($.trim(total_rol_ocupacional12) > 0 && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){                
                 total_rol_ocupacional = Number(total_rol_ocupacional12);
             }else if($.trim(total_rol_ocupacional12) == 0 && $.trim(total_rol_ocupacional13) > 0 && $.trim(total_rol_ocupacional14) == 0){                
                 total_rol_ocupacional = Number(total_rol_ocupacional13);

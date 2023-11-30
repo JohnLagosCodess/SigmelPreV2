@@ -108,7 +108,9 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="id_evento">ID evento</label>
-                                            <input type="text" class="form-control" name="id_evento" id="id_evento" value="{{$array_datos_calificacionPclTecnica[0]->ID_evento}}" disabled>
+                                            <br>
+                                            {{-- DATOS PARA VER EDICIÓN DE EVENTO --}}
+                                            <a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer; font-weight: bold;" class="btn text-info" type="button"><?php if(!empty($array_datos_calificacionPclTecnica[0]->ID_evento)){echo $array_datos_calificacionPclTecnica[0]->ID_evento;}?></a>
                                         </div>
                                     </div>
                                 </div>
@@ -511,6 +513,19 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="card-header text-center" style="border: 1.5px solid black;">
+                                <h5>Título II Valoración del Rol Laboral, Rol ocupacional y otras Áreas ocupacionales (50%)</h5>
+                            </div>   
+                            <div class="card-body">
+                                <div class="row" style="text-align: right">
+                                    <div class="col-12">
+                                        <div class="form-group" style="align-content: center">                                               
+                                            <label for="total_rol_areas">Total valoración del Rol Laboral, Rol Ocupacional y otras Áreas ocupacionales(50%):</label>                                            
+                                            <input type="text" id="total_rol_areas" name="total_rol_areas" value="0"  readonly="">                                                                                                                                                                                                                                                                                                    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         @elseif (!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 3)
                             <div class="card-body">
                                 <div class="row">
@@ -868,7 +883,7 @@
                     </div>                                                                                                                                                                                    
                     <!-- Valoracion Laboral-->
                     <div class="card-info columna_row1_valoracion_laboral"  @if ($decreto_1507=='1' && !empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion === 1) style="display:block" @else style="display:none" @endif>
-                        <div class="card-header " style="border: 1.5px solid black;">
+                        <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Título II Valoración del Rol Laboral, Rol ocupacional y otras Áreas ocupacionales (50%)</h5>
                         </div>
                         <div class="card-body">
@@ -1157,7 +1172,7 @@
                                             @if (!empty($array_laboralmente_Activo[0]->Total_rol_laboral))
                                                 <input type="text" id="resultado_rol_laboral_30" name="resultado_rol_laboral_30" value="{{$array_laboralmente_Activo[0]->Total_rol_laboral}}" readonly="">                                                
                                             @else
-                                                <input type="text" id="resultado_rol_laboral_30" name="resultado_rol_laboral_30"  readonly="">                                                
+                                                <input type="text" id="resultado_rol_laboral_30" name="resultado_rol_laboral_30" value="0" readonly="">                                                
                                             @endif
                                         </div>
                                     </div>
@@ -6877,98 +6892,100 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox">
-                                                @if (!empty($array_dictamen_pericial[0]->Enfermedad_catastrofica))
-                                                    <input class="custom-control-input" type="checkbox" id="enfermedad_catastrofica" name="enfermedad_catastrofica" value="Enfermedad Catastrófica" checked>
+                                @if (!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion <> 2)
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    @if (!empty($array_dictamen_pericial[0]->Enfermedad_catastrofica))
+                                                        <input class="custom-control-input" type="checkbox" id="enfermedad_catastrofica" name="enfermedad_catastrofica" value="Enfermedad Catastrófica" checked>
+                                                    @else
+                                                        <input class="custom-control-input" type="checkbox" id="enfermedad_catastrofica" name="enfermedad_catastrofica" value="Enfermedad Catastrófica">                                                    
+                                                    @endif
+                                                    <label for="enfermedad_catastrofica" class="custom-control-label">Enfermedad Catastrófica</label>
+                                                </div>
+                                            </div>
+                                        </div>                                                                            
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    @if (!empty($array_dictamen_pericial[0]->Enfermedad_congenita))
+                                                        <input class="custom-control-input" type="checkbox" id="enfermedad_congenita" name="enfermedad_congenita" value="Enfermedad Congénita o cercana al nacimiento" checked>
+                                                    @else
+                                                        <input class="custom-control-input" type="checkbox" id="enfermedad_congenita" name="enfermedad_congenita" value="Enfermedad Congénita o cercana al nacimiento">                                                    
+                                                    @endif
+                                                    <label for="enfermedad_congenita" class="custom-control-label">Enfermedad Congénita o cercana al nacimiento</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="tipo_enfermedad">Tipo de enfermedad</label>
+                                                @if (!empty($array_dictamen_pericial[0]->Tipo_enfermedad))
+                                                    <select class="tipo_enfermedad custom-select" name="tipo_enfermedad" id="tipo_enfermedad" style="width: 100%;">
+                                                        <option value="{{$array_dictamen_pericial[0]->Tipo_enfermedad}}">{{$array_dictamen_pericial[0]->TipoEnfermedad}}</option>
+                                                        <option value="">Seleccione una opción</option>
+                                                    </select>
                                                 @else
-                                                    <input class="custom-control-input" type="checkbox" id="enfermedad_catastrofica" name="enfermedad_catastrofica" value="Enfermedad Catastrófica">                                                    
+                                                    <select class="tipo_enfermedad custom-select" name="tipo_enfermedad" id="tipo_enfermedad" style="width: 100%;">
+                                                        <option value="">Seleccione una opción</option>
+                                                    </select>                                                
                                                 @endif
-                                                <label for="enfermedad_catastrofica" class="custom-control-label">Enfermedad Catastrófica</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="tipo_clasificacion">Clasificación condición de salud - Tipo de enfermedad</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    @if (!empty($array_dictamen_pericial[0]->Requiere_tercera_persona))
+                                                        <input class="dependencia_justificacion custom-control-input" type="checkbox" id="requiere_persona" name="requiere_persona" value="Requiere tercera persona" checked>
+                                                    @else
+                                                        <input class="custom-control-input" type="checkbox" id="requiere_persona" name="requiere_persona" value="Requiere tercera persona">                                                    
+                                                    @endif
+                                                    <label for="requiere_persona" class="custom-control-label">Requiere tercera persona</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    @if (!empty($array_dictamen_pericial[0]->Requiere_tercera_persona_decisiones))
+                                                        <input class="dependencia_justificacion custom-control-input" type="checkbox" id="requiere_decisiones_persona" name="requiere_decisiones_persona" value="Requiere de tercera persona para la toma de decisiones" checked>
+                                                    @else
+                                                        <input class="custom-control-input" type="checkbox" id="requiere_decisiones_persona" name="requiere_decisiones_persona" value="Requiere de tercera persona para la toma de decisiones">                                                    
+                                                    @endif
+                                                    <label for="requiere_decisiones_persona" class="custom-control-label">Requiere de tercera persona para la toma de decisiones</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    @if (!empty($array_dictamen_pericial[0]->Requiere_dispositivo_apoyo))
+                                                        <input class="dependencia_justificacion custom-control-input" type="checkbox" id="requiere_dispositivo_apoyo" name="requiere_dispositivo_apoyo" value="Requiere de dispositivo de apoyo" checked>
+                                                    @else
+                                                        <input class="custom-control-input" type="checkbox" id="requiere_dispositivo_apoyo" name="requiere_dispositivo_apoyo" value="Requiere de dispositivo de apoyo">                                                    
+                                                    @endif
+                                                    <label for="requiere_dispositivo_apoyo" class="custom-control-label">Requiere de dispositivo de apoyo</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 d-none" id="justiDependencia">
+                                            <div class="form-group">
+                                                <label for="justi_dependencia">Justificación de dependencia</label>
+                                                @if (!empty($array_dictamen_pericial[0]->Justificacion_dependencia))
+                                                    <textarea id="justi_dependencia" class="form-control" name="justi_dependencia" cols="90" rows="4">{{$array_dictamen_pericial[0]->Justificacion_dependencia}}</textarea>
+                                                @else
+                                                    <textarea id="justi_dependencia" class="form-control" name="justi_dependencia" cols="90" rows="4"></textarea>                                                
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox">
-                                                @if (!empty($array_dictamen_pericial[0]->Enfermedad_congenita))
-                                                    <input class="custom-control-input" type="checkbox" id="enfermedad_congenita" name="enfermedad_congenita" value="Enfermedad Congénita o cercana al nacimiento" checked>
-                                                @else
-                                                    <input class="custom-control-input" type="checkbox" id="enfermedad_congenita" name="enfermedad_congenita" value="Enfermedad Congénita o cercana al nacimiento">                                                    
-                                                @endif
-                                                <label for="enfermedad_congenita" class="custom-control-label">Enfermedad Congénita o cercana al nacimiento</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                            <label for="tipo_enfermedad">Tipo de enfermedad</label>
-                                            @if (!empty($array_dictamen_pericial[0]->Tipo_enfermedad))
-                                                <select class="tipo_enfermedad custom-select" name="tipo_enfermedad" id="tipo_enfermedad" style="width: 100%;">
-                                                    <option value="{{$array_dictamen_pericial[0]->Tipo_enfermedad}}">{{$array_dictamen_pericial[0]->TipoEnfermedad}}</option>
-                                                    <option value="">Seleccione una opción</option>
-                                                </select>
-                                            @else
-                                                <select class="tipo_enfermedad custom-select" name="tipo_enfermedad" id="tipo_enfermedad" style="width: 100%;">
-                                                    <option value="">Seleccione una opción</option>
-                                                </select>                                                
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                            <label for="tipo_clasificacion">Clasificación condición de salud - Tipo de enfermedad</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox">
-                                                @if (!empty($array_dictamen_pericial[0]->Requiere_tercera_persona))
-                                                    <input class="dependencia_justificacion custom-control-input" type="checkbox" id="requiere_persona" name="requiere_persona" value="Requiere tercera persona" checked>
-                                                @else
-                                                    <input class="custom-control-input" type="checkbox" id="requiere_persona" name="requiere_persona" value="Requiere tercera persona">                                                    
-                                                @endif
-                                                <label for="requiere_persona" class="custom-control-label">Requiere tercera persona</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox">
-                                                @if (!empty($array_dictamen_pericial[0]->Requiere_tercera_persona_decisiones))
-                                                    <input class="dependencia_justificacion custom-control-input" type="checkbox" id="requiere_decisiones_persona" name="requiere_decisiones_persona" value="Requiere de tercera persona para la toma de decisiones" checked>
-                                                @else
-                                                    <input class="custom-control-input" type="checkbox" id="requiere_decisiones_persona" name="requiere_decisiones_persona" value="Requiere de tercera persona para la toma de decisiones">                                                    
-                                                @endif
-                                                <label for="requiere_decisiones_persona" class="custom-control-label">Requiere de tercera persona para la toma de decisiones</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox">
-                                                @if (!empty($array_dictamen_pericial[0]->Requiere_dispositivo_apoyo))
-                                                    <input class="dependencia_justificacion custom-control-input" type="checkbox" id="requiere_dispositivo_apoyo" name="requiere_dispositivo_apoyo" value="Requiere de dispositivo de apoyo" checked>
-                                                @else
-                                                    <input class="custom-control-input" type="checkbox" id="requiere_dispositivo_apoyo" name="requiere_dispositivo_apoyo" value="Requiere de dispositivo de apoyo">                                                    
-                                                @endif
-                                                <label for="requiere_dispositivo_apoyo" class="custom-control-label">Requiere de dispositivo de apoyo</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 d-none" id="justiDependencia">
-                                        <div class="form-group">
-                                            <label for="justi_dependencia">Justificación de dependencia</label>
-                                            @if (!empty($array_dictamen_pericial[0]->Justificacion_dependencia))
-                                                <textarea id="justi_dependencia" class="form-control" name="justi_dependencia" cols="90" rows="4">{{$array_dictamen_pericial[0]->Justificacion_dependencia}}</textarea>
-                                            @else
-                                                <textarea id="justi_dependencia" class="form-control" name="justi_dependencia" cols="90" rows="4"></textarea>                                                
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
+                                @endif
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group"> 
@@ -6999,6 +7016,16 @@
         <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="{{$array_datos_calificacionPclTecnica[0]->Id_Asignacion}}">
         <button type="submit" id="botonEnvioVista" style="display:none !important;"></button>
     </form> 
+
+    <form action="{{route('gestionInicialEdicion')}}" id="formularioLlevarEdicionEvento" method="POST">
+        @csrf
+        <input type="hidden" name="bandera_buscador_clt" id="bandera_buscador_clt" value="desdeclt">
+        <input hidden="hidden" type="text" name="newIdEvento" id="newIdEvento" value="<?php if(!empty($array_datos_calificacionPclTecnica[0]->ID_evento)){echo $array_datos_calificacionPclTecnica[0]->ID_evento;}?>">
+        <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="<?php if(!empty($array_datos_calificacionPclTecnica[0]->Id_Asignacion)){echo $array_datos_calificacionPclTecnica[0]->Id_Asignacion;}?>">
+        <input hidden="hidden" type="text" name="newIdproceso" id="newIdproceso" value="<?php if(!empty($array_datos_calificacionPclTecnica[0]->Id_proceso)){ echo $array_datos_calificacionPclTecnica[0]->Id_proceso;}?>">
+        <input hidden="hidden" type="text" name="newIdservicio" id="newIdservicio" value="<?php if(!empty($array_datos_calificacionPclTecnica[0]->Id_Servicio)){ echo $array_datos_calificacionPclTecnica[0]->Id_Servicio;}?>">
+        <button type="submit" id="botonVerEdicionEvento" style="display:none !important;"></button>
+   </form>
 
     @if (count($hay_agudeza_visual) == 0)
         {{-- MODAL NUEVA DEFICIENCIA VISUAL --}}
@@ -7041,6 +7068,12 @@
         // Realizar las acciones que quieres al hacer clic en el botón
         document.getElementById('formularioEnvio').submit();
     });    
+
+    document.getElementById('botonVerEdicionEvento').addEventListener('click', function(event) {
+        event.preventDefault();
+        // Realizar las acciones que quieres al hacer clic en el botón
+        document.getElementById('formularioLlevarEdicionEvento').submit();
+    });
 
     //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE EXAMENES E INTERCONSULTAS
     $(document).ready(function(){

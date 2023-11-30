@@ -25,6 +25,9 @@ return new class extends Migration
             $table->date('F_accion')->nullable();
             $table->date('F_radicacion')->nullable();
             $table->string('N_de_orden', 20)->nullable();
+            $table->integer('Id_proceso_anterior')->nullable();
+            $table->integer('Id_servicio_anterior')->nullable();
+            $table->dateTime('F_asignacion_calificacion')->nullable();
             $table->integer('Id_profesional')->nullable();
             $table->text('Nombre_profesional')->nullable();
             $table->text('Nombre_usuario');

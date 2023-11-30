@@ -59,20 +59,78 @@ class BandejaJuntasController extends Controller
 
         if($BandejaJuntasTotal == 'CargaBandejaJuntas'){
 
-            $bandejaJuntassin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
+            $bandejaJuntas = cndatos_bandeja_eventos::on('sigmel_gestiones')
             ->where([
                 ['Nombre_proceso_actual', '=', 'Juntas']
             ])
-            ->whereNull('Nombre_proceso_anterior');
-
-            $bandejaJuntas = cndatos_bandeja_eventos::on('sigmel_gestiones')
-            ->where([
-                ['Nombre_proceso_actual', '=', 'Juntas'],
-                ['Id_proceso_anterior', '<>', 3]
-            ])
-            ->union($bandejaJuntassin_Pro_ant)
             ->get();
 
+            // $bandejaJuntassin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
+            // ->where([
+            //     ['Nombre_proceso_actual', '=', 'Juntas']
+            // ])
+            // ->whereNull('Nombre_proceso_anterior');
+
+            // $bandejaJuntas = cndatos_bandeja_eventos::on('sigmel_gestiones')
+            // ->where([
+            //     ['Nombre_proceso_actual', '=', 'Juntas'],
+            //     ['Id_proceso_anterior', '<>', 3]
+            // ])
+            // ->union($bandejaJuntassin_Pro_ant)
+            // ->get();
+
+            // $Ids_Nombre_proceso_anterior = response()->json([]);
+            
+            // foreach ($bandejaJuntas as $item) {
+            //     // Accede a cada propiedad del objeto dentro del bucle
+            //     $Id_Asignacion_bandeja = $item->Id_Asignacion;
+            //     $ID_evento_bandeja = $item->ID_evento;
+            //     $Id_proceso_bandeja = $item->Id_proceso;
+
+            //     $validar_proceso_anterior = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            //     ->select('Id_proceso')
+            //     ->where([['ID_evento', $ID_evento_bandeja], ['Id_Asignacion', '<', $Id_Asignacion_bandeja]])
+            //     ->orderBy('Id_Asignacion', 'desc')
+            //     ->limit(1)
+            //     ->get();
+            //     //echo $validar_proceso_anterior[0]->Id_proceso;
+            //     if (count($validar_proceso_anterior) > 0) {                    
+            //         $validar_Nombre_proceso_anterior = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            //         ->select('Nombre_proceso')->where([['Id_proceso', $validar_proceso_anterior[0]->Id_proceso]])
+            //         ->limit(1)->get();
+    
+            //         //echo $validar_Nombre_proceso_anterior[0]->Nombre_proceso;
+    
+            //         $Ids_Nombre_proceso_anterior = response()->json([
+            //             'Id_Proceso_anterior' => $validar_proceso_anterior[0]->Id_proceso,
+            //             'Nombre_proceso_anterior' => $validar_Nombre_proceso_anterior[0]->Nombre_proceso,
+            //         ]);
+    
+            //         $Ids_Nombre_proceso_anterior_array = json_decode($Ids_Nombre_proceso_anterior->getContent(), true);
+                    
+            //         $arraybandejaJuntas = json_decode(json_encode($bandejaJuntas, true));
+    
+            //         $arraybandejaJuntas[0]->Id_Proceso_anterior = $Ids_Nombre_proceso_anterior_array['Id_Proceso_anterior'];
+            //         $arraybandejaJuntas[0]->Nombre_proceso_anterior = $Ids_Nombre_proceso_anterior_array['Nombre_proceso_anterior'];
+            //     } else {
+            //         $validar_Nombre_proceso_anterior = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            //         ->select('Nombre_proceso')->where([['Id_proceso', $Id_proceso_bandeja]])
+            //         ->limit(1)->get(); 
+
+            //         $Ids_Nombre_proceso_anterior = response()->json([
+            //             'Id_Proceso_anterior' => $Id_proceso_bandeja,
+            //             'Nombre_proceso_anterior' => $validar_Nombre_proceso_anterior[0]->Nombre_proceso,
+            //         ]);
+    
+            //         $Ids_Nombre_proceso_anterior_array = json_decode($Ids_Nombre_proceso_anterior->getContent(), true);
+
+            //         $arraybandejaJuntas = json_decode(json_encode($bandejaJuntas, true));
+                    
+            //         $arraybandejaJuntas[0]->Id_Proceso_anterior = $Ids_Nombre_proceso_anterior_array['Id_Proceso_anterior'];
+            //         $arraybandejaJuntas[0]->Nombre_proceso_anterior = $Ids_Nombre_proceso_anterior_array['Nombre_proceso_anterior'];
+            //     }
+            // }
+            
             $arraybandejaJuntas = json_decode(json_encode($bandejaJuntas, true));
             return response()->json($arraybandejaJuntas);
 
@@ -87,23 +145,26 @@ class BandejaJuntasController extends Controller
         switch (true) {
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and !empty($consultar_g_dias)):
 
-                    $bandejaJuntassin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Juntas'],
                         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
                     ])
-                    ->whereNull('Nombre_proceso_anterior')
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
-                    
-                    $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                            ['Nombre_proceso_actual', '=', 'Juntas'],
-                            ['Id_proceso_anterior', '<>', 3],
-                            ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
-                        ])            
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
-                    ->union($bandejaJuntassin_Pro_ant)
                     ->get();
+
+                    // ->whereNull('Nombre_proceso_anterior')
+                    // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
+                    
+                    // $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    // ->where([
+                    //         ['Nombre_proceso_actual', '=', 'Juntas'],
+                    //         ['Id_proceso_anterior', '<>', 3],
+                    //         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
+                    //     ])            
+                    // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    // ->union($bandejaJuntassin_Pro_ant)
+                    // ->get();
             
                     $arraybandejaJuntasFiltros = json_decode(json_encode($bandejaJuntasFiltros, true));
                     if (count($arraybandejaJuntasFiltros)>0) {
@@ -119,21 +180,24 @@ class BandejaJuntasController extends Controller
             break;
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and empty($consultar_g_dias)):
                     
-                    $bandejaJuntassin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                        ['Nombre_proceso_actual', '=', 'Juntas']
-                    ])
-                    ->whereNull('Nombre_proceso_anterior')
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
-
                     $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
-                            ['Nombre_proceso_actual', '=', 'Juntas'],
-                            ['Id_proceso_anterior', '<>', 3],
-                        ])            
+                        ['Nombre_proceso_actual', '=', 'Juntas'],
+                    ])
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
-                    ->union($bandejaJuntassin_Pro_ant)
-                    ->get();                    
+                    ->get();
+
+                    // ->whereNull('Nombre_proceso_anterior')
+                    // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
+
+                    // $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    // ->where([
+                    //         ['Nombre_proceso_actual', '=', 'Juntas'],
+                    //         ['Id_proceso_anterior', '<>', 3],
+                    //     ])            
+                    // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    // ->union($bandejaJuntassin_Pro_ant)
+                    // ->get();                    
 
                     $arraybandejaJuntasFiltros = json_decode(json_encode($bandejaJuntasFiltros, true));
                     if (count($arraybandejaJuntasFiltros)>0) {
@@ -149,21 +213,23 @@ class BandejaJuntasController extends Controller
             break;
             case (empty($consultar_f_desde) and empty($consultar_f_hasta) and !empty($consultar_g_dias)):
                     
-                    $bandejaJuntassin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Juntas'],
                         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
                     ])
-                    ->whereNull('Nombre_proceso_anterior');
-                    
-                    $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                            ['Nombre_proceso_actual', '=', 'Juntas'],
-                            ['Id_proceso_anterior', '<>', 3],
-                            ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
-                        ])            
-                    ->union($bandejaJuntassin_Pro_ant)
                     ->get();
+
+                    // ->whereNull('Nombre_proceso_anterior');
+                    
+                    // $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    // ->where([
+                    //         ['Nombre_proceso_actual', '=', 'Juntas'],
+                    //         ['Id_proceso_anterior', '<>', 3],
+                    //         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
+                    //     ])            
+                    // ->union($bandejaJuntassin_Pro_ant)
+                    // ->get();
                 
                     $arraybandejaJuntasFiltros = json_decode(json_encode($bandejaJuntasFiltros, true));
                     if (count($arraybandejaJuntasFiltros)>0) {

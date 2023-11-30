@@ -67,22 +67,256 @@ class CoordinadorController extends Controller
         $BandejaPClTotal = $request->BandejaPClTotal;        
 
         if($BandejaPClTotal == 'CargaBandejaPCl'){
-
-            $bandejaPCLsin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
+            // Consultar la vista de mysql, traer eventos acorde al proceso
+            $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
             ->where([
                 ['Nombre_proceso_actual', '=', 'Calificación PCL']
             ])
-            ->whereNull('Nombre_proceso_anterior');
+            ->get();  
+            // $ID_evento_bandeja = $bandejaPCL[0]->ID_evento;
+            // $Id_proceso_bandeja = $bandejaPCL[0]->Id_proceso;
+            
+            // // Json vacio para llenado en Else en caso de que no haya un proceso anterior
+            // $Ids_Nombre_proceso_anterior = response()->json([]);
+            
+            // // validacion de la vista
+            // if (!empty($bandejaPCL[0]->Nombre_proceso_actual)) {
+            //     $datos_bandejaPCl = [];
+            //     foreach ($bandejaPCL as $item) {
+            //         // Accede a cada propiedad del objeto dentro del bucle  para capturar el id_asignacion                  
+            //         $datos_bandejaPCl[]=[                        
+            //             'Id_Asignacion_bandeja_actual' => $item->Id_Asignacion,
+            //         ];
+            //     }      
+                
+            //     // cantidad de id_asignacion 
+            //     $cantidad_Id_Asignacion = count($datos_bandejaPCl);
 
-            $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
-            ->where([
-                ['Nombre_proceso_actual', '=', 'Calificación PCL'],
-                ['Id_proceso_anterior', '<>', 2]
-            ])
-            ->union($bandejaPCLsin_Pro_ant)
-            ->get();
+            //     // Validar si existe un porceso anterior con los Id_Asignacion del array $datos_bandejaPCl
+            //     if ($cantidad_Id_Asignacion > 0) {
+            //         //$cantidad_Id_Asignacion += 1; 
+            //         $validar_proceso_anterior = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            //         ->select('Id_proceso', 'Id_Asignacion')
+            //         ->where('ID_evento', $ID_evento_bandeja);
+            //         $maxIdAsignacionBandeja = max(array_column($datos_bandejaPCl, 'Id_Asignacion_bandeja_actual'));
+            //         $validar_proceso_anterior = $validar_proceso_anterior
+            //         ->where('Id_Asignacion', '<', $maxIdAsignacionBandeja)
+            //         ->orderBy('Id_Asignacion', 'desc')
+            //         ->limit($cantidad_Id_Asignacion)
+            //         ->get();                   
+            //         // foreach ($datos_bandejaPCl as $dato) {
+            //         //     $validar_proceso_anterior->orWhere(function ($query) use ($dato) {
+            //         //         $query->where('Id_Asignacion', '<', $dato['Id_Asignacion_bandeja_actual']);
+            //         //     });
+            //         // }
+            //         // $validar_proceso_anterior = $validar_proceso_anterior
+            //         // ->orderBy('Id_Asignacion', 'desc')
+            //         // ->limit($cantidad_Id_Asignacion)
+            //         // ->get();  
+                    
+            //         if (count($validar_proceso_anterior) > 0) {
+                        
+            //             // Se construyen los id del proceso y asignacion
+            //             $proceso_id = [];
+            //             $asignacion_id = [];
+            //             foreach ($validar_proceso_anterior as $key) {
+            //                 $proceso_id[]=[                        
+            //                     'Id_Proceso_anterior' => $key->Id_proceso
+            //                 ];    
+            //                 $asignacion_id[] = [
+            //                     'Id_Asignacion_bandeja' => $key->Id_Asignacion
+            //                 ];
+            //             }  
+                        
+            //             // Validar el nombre del proceso anterior en base a los id_procesos optenidos en el array  $proceso_id
+            //             $validar_Nombre_proceso_anterior = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            //             ->select('Nombre_proceso', 'Id_proceso')->whereIn('Id_proceso', $proceso_id)
+            //             ->groupBy('Nombre_proceso')
+            //             ->get();  
+            //             // construir array para los nombres de los procesos
+            //             $nombre_proceso = [];
+            //             foreach ($validar_Nombre_proceso_anterior as $value) {
+            //                 $nombre_proceso[] = [
+            //                     'Nombre_proceso_anterior' => $value->Nombre_proceso,
+            //                     'Id_proceso' => $value->Id_proceso,
+            //                 ];
+            //             }
+                       
+            //             // acondicionar los array acorde al order la consulta Inicial de $bandejaPCL
+            //             //array_shift($proceso_id);                                            
+            //             $orden_proceso_id = array_reverse($proceso_id);
+            //             //array_pop($asignacion_id);                        
+            //             $orden_asignacion_id = array_reverse($asignacion_id);
+                        
+            //             //Combinar los array de  orden_proceso_id y nombre_proceso acorde al proceso
+            //             foreach ($orden_proceso_id as $key => $value) {
+            //                 foreach ($nombre_proceso as $item) {
+            //                     if ($value['Id_Proceso_anterior'] == $item['Id_proceso']) {
+            //                         $orden_proceso_id[$key]['Nombre_proceso_anterior'] = $item['Nombre_proceso_anterior'];
+            //                         break;
+            //                     }
+            //                 }
+            //             }
+                        
+            //             // combinar array anterior orden_proceso_id con el array orden_asignacion_id 
+            //             $combinar_proceso_asignacion = array();
+            //             foreach ($orden_asignacion_id as $key => $valor) {
+            //                 if (isset($orden_proceso_id[$key])) {
+            //                     // Fusionar arrays
+            //                     $combinar_proceso_asignacion[] = array_merge($orden_proceso_id[$key], $valor);
+            //                 }
+            //             }                   
+                        
+            //             if (count($combinar_proceso_asignacion) === count($datos_bandejaPCl)) {
+            //                 $numElementos = count($combinar_proceso_asignacion);
+                        
+            //                 for ($i = 0; $i < $numElementos; $i++) {
+            //                     // Combinar los sub-arrays uno a uno
+            //                     $array_datos_proce_asignacion[] = array_merge($combinar_proceso_asignacion[$i], $datos_bandejaPCl[$i]);
+            //                 }
+            //             }
+                        
+            //             // se convierte el array  $bandejaPCL a un object
+            //             $arraybandejaPCL = json_decode(json_encode($bandejaPCL, true));
+                       
+            //             //Combinar el array object con el array combinar_proceso_asignacion
+            //             foreach ($arraybandejaPCL as $key2 => $value2) {
+            //                 foreach ($array_datos_proce_asignacion as $value1) {
+            //                     // Verifica si los Id_Asignacion coinciden
+            //                     if ($value2->Id_Asignacion == $value1['Id_Asignacion_bandeja_actual']) {
+            //                         // Agrega las propiedades al segundo array
+            //                         $arraybandejaPCL[$key2]->Id_Proceso_anterior = $value1['Id_Proceso_anterior'];
+            //                         $arraybandejaPCL[$key2]->Nombre_proceso_anterior = $value1['Nombre_proceso_anterior'];
+            //                     }
+            //                 }
+            //             }
+            //         } 
+            //         // else {    
+            //         //     // Validar el nombre del proceso que viene siendo el mismo ya que no hay uno anterior                
+            //         //     $validar_Nombre_proceso_anterior = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            //         //     ->select('Nombre_proceso')->where([['Id_proceso', $Id_proceso_bandeja]])
+            //         //     ->limit(1)->get(); 
+    
+            //         //     // Se alimenta el Json Vacio
+            //         //     $Ids_Nombre_proceso_anterior = response()->json([
+            //         //         'Id_Proceso_anterior' => $Id_proceso_bandeja,
+            //         //         'Nombre_proceso_anterior' => $validar_Nombre_proceso_anterior[0]->Nombre_proceso,
+            //         //     ]);
+            //         //     // Se Captura los valosres del json y se agregan al object $arraybandejaPCL
+            //         //     $Ids_Nombre_proceso_anterior_array = json_decode($Ids_Nombre_proceso_anterior->getContent(), true);
+            //         //     $arraybandejaPCL = json_decode(json_encode($bandejaPCL, true));
+            //         //     $arraybandejaPCL[0]->Id_Proceso_anterior = $Ids_Nombre_proceso_anterior_array['Id_Proceso_anterior'];
+            //         //     $arraybandejaPCL[0]->Nombre_proceso_anterior = $Ids_Nombre_proceso_anterior_array['Nombre_proceso_anterior'];
+            //         // }
+                    
+            //     } 
+            //     // else {
+            //     //     $validar_proceso_anterior = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            //     //     ->select('Id_proceso', 'Id_Asignacion')
+            //     //     ->where('ID_evento', $ID_evento_bandeja);
+            //     //     foreach ($datos_bandejaPCl as $dato) {
+            //     //         $validar_proceso_anterior->where('Id_Asignacion', '<', $dato['Id_Asignacion_bandeja_actual']);
+            //     //     }                    
+            //     //     $validar_proceso_anterior = $validar_proceso_anterior
+            //     //     ->orderBy('Id_Asignacion', 'desc')
+            //     //     ->limit($cantidad_Id_Asignacion)
+            //     //     ->get(); 
+            //     //     // Si se cumple la validacion anterior entra al IF Si no entra al Else y Utiliza el Json
+                    
+            //     //     if (count($validar_proceso_anterior) > 0) {
+                        
+            //     //         // Se construyen los id del proceso y asignacion
+            //     //         $proceso_id = [];
+            //     //         $asignacion_id = [];
+            //     //         foreach ($validar_proceso_anterior as $key) {
+            //     //             $proceso_id[]=[                        
+            //     //                 'Id_Proceso_anterior' => $key->Id_proceso
+            //     //             ];    
+            //     //             $asignacion_id[] = [
+            //     //                 'Id_Asignacion_bandeja' => $key->Id_Asignacion
+            //     //             ];
+            //     //         }  
+                        
+            //     //         // Validar el nombre del proceso anterior en base a los id_procesos optenidos en el array  $proceso_id
+            //     //         $validar_Nombre_proceso_anterior = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            //     //         ->select('Nombre_proceso', 'Id_proceso')->whereIn('Id_proceso', $proceso_id)
+            //     //         ->groupBy('Nombre_proceso')
+            //     //         ->get();  
+            //     //         // construir array para los nombres de los procesos
+            //     //         $nombre_proceso = [];
+            //     //         foreach ($validar_Nombre_proceso_anterior as $value) {
+            //     //             $nombre_proceso[] = [
+            //     //                 'Nombre_proceso_anterior' => $value->Nombre_proceso,
+            //     //                 'Id_proceso' => $value->Id_proceso,
+            //     //             ];
+            //     //         }
+                        
+            //     //         $orden_proceso_id = array_reverse($proceso_id);
+                        
+            //     //         $orden_asignacion_id = array_reverse($asignacion_id);
+                        
+            //     //         //Combinar los array de  orden_proceso_id y nombre_proceso acorde al proceso
+            //     //         foreach ($orden_proceso_id as $key => $value) {
+            //     //             foreach ($nombre_proceso as $item) {
+            //     //                 if ($value['Id_Proceso_anterior'] == $item['Id_proceso']) {
+            //     //                     $orden_proceso_id[$key]['Nombre_proceso_anterior'] = $item['Nombre_proceso_anterior'];
+            //     //                     break;
+            //     //                 }
+            //     //             }
+            //     //         }
+                        
+            //     //         // combinar array anterior orden_proceso_id con el array orden_asignacion_id 
+            //     //         $combinar_proceso_asignacion = array();
+            //     //         foreach ($orden_asignacion_id as $key => $valor) {
+            //     //             if (isset($orden_proceso_id[$key])) {
+            //     //                 // Fusionar arrays
+            //     //                 $combinar_proceso_asignacion[] = array_merge($orden_proceso_id[$key], $valor);
+            //     //             }
+            //     //         }                   
+                        
+            //     //         if (count($combinar_proceso_asignacion) === count($datos_bandejaPCl)) {
+            //     //             $numElementos = count($combinar_proceso_asignacion);
+                        
+            //     //             for ($i = 0; $i < $numElementos; $i++) {
+            //     //                 // Combinar los sub-arrays uno a uno
+            //     //                 $array_datos_proce_asignacion[] = array_merge($combinar_proceso_asignacion[$i], $datos_bandejaPCl[$i]);
+            //     //             }
+            //     //         }
+                        
+            //     //         // se convierte el array  $bandejaPCL a un object
+            //     //         $arraybandejaPCL = json_decode(json_encode($bandejaPCL, true));
+            //     //         // Combinar el array object con el array combinar_proceso_asignacion
+            //     //         foreach ($arraybandejaPCL as $key2 => $value2) {
+            //     //             foreach ($array_datos_proce_asignacion as $value1) {
+            //     //                 // Verifica si los Id_Asignacion coinciden
+            //     //                 if ($value2->Id_Asignacion == $value1['Id_Asignacion_bandeja_actual']) {
+            //     //                     // Agrega las propiedades al segundo array
+            //     //                     $arraybandejaPCL[$key2]->Id_Proceso_anterior = $value1['Id_Proceso_anterior'];
+            //     //                     $arraybandejaPCL[$key2]->Nombre_proceso_anterior = $value1['Nombre_proceso_anterior'];
+            //     //                 }
+            //     //             }
+            //     //         }
+            //     //     } else {    
+            //     //         // Validar el nombre del proceso que viene siendo el mismo ya que no hay uno anterior                
+            //     //         $validar_Nombre_proceso_anterior = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            //     //         ->select('Nombre_proceso')->where([['Id_proceso', $Id_proceso_bandeja]])
+            //     //         ->limit(1)->get(); 
 
-            $arraybandejaPCL = json_decode(json_encode($bandejaPCL, true));
+            //     //         // Se alimenta el Json Vacio
+            //     //         $Ids_Nombre_proceso_anterior = response()->json([
+            //     //             'Id_Proceso_anterior' => $Id_proceso_bandeja,
+            //     //             'Nombre_proceso_anterior' => $validar_Nombre_proceso_anterior[0]->Nombre_proceso,
+            //     //         ]);
+            //     //         // Se Captura los valosres del json y se agregan al object $arraybandejaPCL
+            //     //         $Ids_Nombre_proceso_anterior_array = json_decode($Ids_Nombre_proceso_anterior->getContent(), true);
+            //     //         $arraybandejaPCL = json_decode(json_encode($bandejaPCL, true));
+            //     //         $arraybandejaPCL[0]->Id_Proceso_anterior = $Ids_Nombre_proceso_anterior_array['Id_Proceso_anterior'];
+            //     //         $arraybandejaPCL[0]->Nombre_proceso_anterior = $Ids_Nombre_proceso_anterior_array['Nombre_proceso_anterior'];
+            //     //     }
+            //     // }
+            // }  
+
+            $arraybandejaPCL = json_decode(json_encode($bandejaPCL, true));  
             return response()->json($arraybandejaPCL);
 
         }
@@ -97,27 +331,146 @@ class CoordinadorController extends Controller
         switch (true) {
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and !empty($consultar_g_dias)):
 
-                    $bandejaPCLsin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    // Consultar la vista de mysql, traer eventos acorde al proceso
+                    $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Calificación PCL'],
-                        ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
+                        ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
                     ])
-                    ->whereNull('Nombre_proceso_anterior')
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
-                    
-                    $bandejaPCLFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                            ['Nombre_proceso_actual', '=', 'Calificación PCL'],
-                            ['Id_proceso_anterior', '<>', 2],
-                            ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
-                        ])            
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
-                    ->union($bandejaPCLsin_Pro_ant)
-                    ->get();
-            
-                    $arraybandejaPCLFiltros = json_decode(json_encode($bandejaPCLFiltros, true));
-                    if (count($arraybandejaPCLFiltros)>0) {
-                        return response()->json($arraybandejaPCLFiltros);                        
+                    ->get(); 
+                    
+                    // if (count($bandejaPCL)>0) {
+                    //     $ID_evento_bandeja = $bandejaPCL[0]->ID_evento;
+                    //     $Id_proceso_bandeja = $bandejaPCL[0]->Id_proceso;                        
+                    // }
+
+                    // // Json vacio para llenado en Else en caso de que no haya un proceso anterior
+                    // $Ids_Nombre_proceso_anterior = response()->json([]);
+                    
+                    // // validacion de la vista
+                    // if (!empty($bandejaPCL[0]->Nombre_proceso_actual)) {
+                    //     $datos_bandejaPCl = [];
+                    //     foreach ($bandejaPCL as $item) {
+                    //         // Accede a cada propiedad del objeto dentro del bucle  para capturar el id_asignacion                  
+                    //         $datos_bandejaPCl[]=[                        
+                    //             'Id_Asignacion_bandeja_actual' => $item->Id_Asignacion,
+                    //         ];
+                    //     }      
+                        
+                    //     // cantidad de id_asignacion 
+                    //     $cantidad_Id_Asignacion = count($datos_bandejaPCl);
+                        
+                    //     // Validar si existe un porceso anterior con los Id_Asignacion del array $datos_bandejaPCl
+                    //     if ($cantidad_Id_Asignacion > 0) {
+                            
+                    //         $validar_proceso_anterior = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                    //         ->select('Id_proceso', 'Id_Asignacion')
+                    //         ->where('ID_evento', $ID_evento_bandeja); 
+                    //         // foreach ($datos_bandejaPCl as $dato) {
+                    //         //     $validar_proceso_anterior->orWhere(function ($query) use ($dato) {
+                    //         //         $query->where('Id_Asignacion', '<', $dato['Id_Asignacion_bandeja_actual']);
+                    //         //     });
+                    //         // }               
+                    //         $maxIdAsignacionBandeja = max(array_column($datos_bandejaPCl, 'Id_Asignacion_bandeja_actual'));
+                    //         $validar_proceso_anterior = $validar_proceso_anterior
+                    //         ->where('Id_Asignacion', '<', $maxIdAsignacionBandeja)
+                    //         ->orderBy('Id_Asignacion', 'desc')
+                    //         ->limit($cantidad_Id_Asignacion)
+                    //        ->get();  
+                    //         // $validar_proceso_anterior = $validar_proceso_anterior
+                    //         // ->orderBy('Id_Asignacion', 'desc')
+                    //         // //->limit($cantidad_Id_Asignacion)
+                    //         // ->get();  
+
+                    //         if (count($validar_proceso_anterior) > 0) {
+                                
+                    //             // Se construyen los id del proceso y asignacion
+                    //             $proceso_id = [];
+                    //             $asignacion_id = [];
+                    //             foreach ($validar_proceso_anterior as $key) {
+                    //                 $proceso_id[]=[                        
+                    //                     'Id_Proceso_anterior' => $key->Id_proceso
+                    //                 ];    
+                    //                 $asignacion_id[] = [
+                    //                     'Id_Asignacion_bandeja' => $key->Id_Asignacion
+                    //                 ];
+                    //             }  
+                                
+                    //             // Validar el nombre del proceso anterior en base a los id_procesos optenidos en el array  $proceso_id
+                    //             $validar_Nombre_proceso_anterior = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                    //             ->select('Nombre_proceso', 'Id_proceso')->whereIn('Id_proceso', $proceso_id)
+                    //             ->groupBy('Nombre_proceso')
+                    //             ->get();  
+                    //             // construir array para los nombres de los procesos
+                    //             $nombre_proceso = [];
+                    //             foreach ($validar_Nombre_proceso_anterior as $value) {
+                    //                 $nombre_proceso[] = [
+                    //                     'Nombre_proceso_anterior' => $value->Nombre_proceso,
+                    //                     'Id_proceso' => $value->Id_proceso,
+                    //                 ];
+                    //             }
+                                                           
+                    //             // acondicionar los array acorde al order la consulta Inicial de $bandejaPCL
+                    //             //array_shift($proceso_id);                                            
+                    //             $orden_proceso_id = array_reverse($proceso_id);
+                    //             //array_pop($asignacion_id);                        
+                    //             $orden_asignacion_id = array_reverse($asignacion_id);                                
+                                
+                    //             //Combinar los array de  orden_proceso_id y nombre_proceso acorde al proceso
+                    //             foreach ($orden_proceso_id as $key => $value) {
+                    //                 foreach ($nombre_proceso as $item) {
+                    //                     if ($value['Id_Proceso_anterior'] == $item['Id_proceso']) {
+                    //                         $orden_proceso_id[$key]['Nombre_proceso_anterior'] = $item['Nombre_proceso_anterior'];
+                    //                         break;
+                    //                     }
+                    //                 }
+                    //             }
+                                
+                    //             // combinar array anterior orden_proceso_id con el array orden_asignacion_id 
+                    //             $combinar_proceso_asignacion = array();
+                    //             foreach ($orden_asignacion_id as $key => $valor) {
+                    //                 if (isset($orden_proceso_id[$key])) {
+                    //                     // Fusionar arrays
+                    //                     $combinar_proceso_asignacion[] = array_merge($orden_proceso_id[$key], $valor);
+                    //                 }
+                    //             }                   
+                               
+                    //             // for ($i = 1; $i <= $cantidad_Id_Asignacion; $i++) {
+                    //             //     array_pop($combinar_proceso_asignacion);
+                    //             // }
+                                
+                    //             if (count($combinar_proceso_asignacion) === count($datos_bandejaPCl)) {
+                    //                 $numElementos = count($combinar_proceso_asignacion);
+                                
+                    //                 for ($i = 0; $i < $numElementos; $i++) {
+                    //                     // Combinar los sub-arrays uno a uno
+                    //                     $array_datos_proce_asignacion[] = array_merge($combinar_proceso_asignacion[$i], $datos_bandejaPCl[$i]);
+                    //                 }
+                    //             }
+                                
+                    //             // se convierte el array  $bandejaPCL a un object
+                    //             $arraybandejaPCL = json_decode(json_encode($bandejaPCL, true));
+
+                                
+                    //             //Combinar el array object con el array combinar_proceso_asignacion
+                    //             foreach ($arraybandejaPCL as $key2 => $value2) {
+                    //                 foreach ($array_datos_proce_asignacion as $value1) {
+                    //                     // Verifica si los Id_Asignacion coinciden
+                    //                     if ($value2->Id_Asignacion == $value1['Id_Asignacion_bandeja_actual']) {
+                    //                         // Agrega las propiedades al segundo array
+                    //                         $arraybandejaPCL[$key2]->Id_Proceso_anterior = $value1['Id_Proceso_anterior'];
+                    //                         $arraybandejaPCL[$key2]->Nombre_proceso_anterior = $value1['Nombre_proceso_anterior'];
+                    //                     }
+                    //                 }
+                    //             }
+                    //         } 
+                                                        
+                    //     }                         
+                    // }                   
+                    $arraybandejaPCL = json_decode(json_encode($bandejaPCL, true));            
+                    if (count($bandejaPCL)>0){                                                
+                        return response()->json($arraybandejaPCL);                        
                     }else{
                         $mensajes = array(
                             "parametro" => 'sin_datos',
@@ -128,26 +481,146 @@ class CoordinadorController extends Controller
                     }                    
             break;
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and empty($consultar_g_dias)):
-                    
-                    $bandejaPCLsin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
+
+                    // Consultar la vista de mysql, traer eventos acorde al proceso
+                    $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
-                        ['Nombre_proceso_actual', '=', 'Calificación PCL']
+                        ['Nombre_proceso_actual', '=', 'Calificación PCL'],
                     ])
-                    ->whereNull('Nombre_proceso_anterior')
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
-
-                    $bandejaPCLFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                            ['Nombre_proceso_actual', '=', 'Calificación PCL'],
-                            ['Id_proceso_anterior', '<>', 2],
-                        ])            
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
-                    ->union($bandejaPCLsin_Pro_ant)
-                    ->get();                    
+                    ->get(); 
+                    
+                    // if (count($bandejaPCL)>0) {
+                    //     $ID_evento_bandeja = $bandejaPCL[0]->ID_evento;
+                    //     $Id_proceso_bandeja = $bandejaPCL[0]->Id_proceso;                        
+                    // }
 
-                    $arraybandejaPCLFiltros = json_decode(json_encode($bandejaPCLFiltros, true));
-                    if (count($arraybandejaPCLFiltros)>0) {
-                        return response()->json($arraybandejaPCLFiltros);
+                    // // Json vacio para llenado en Else en caso de que no haya un proceso anterior
+                    // $Ids_Nombre_proceso_anterior = response()->json([]);
+                    
+                    // // validacion de la vista
+                    // if (!empty($bandejaPCL[0]->Nombre_proceso_actual)) {
+                    //     $datos_bandejaPCl = [];
+                    //     foreach ($bandejaPCL as $item) {
+                    //         // Accede a cada propiedad del objeto dentro del bucle  para capturar el id_asignacion                  
+                    //         $datos_bandejaPCl[]=[                        
+                    //             'Id_Asignacion_bandeja_actual' => $item->Id_Asignacion,
+                    //         ];
+                    //     }      
+                        
+                    //     // cantidad de id_asignacion 
+                    //     $cantidad_Id_Asignacion = count($datos_bandejaPCl);
+                        
+                    //     // Validar si existe un porceso anterior con los Id_Asignacion del array $datos_bandejaPCl
+                    //     if ($cantidad_Id_Asignacion > 0) {
+                            
+                    //         $validar_proceso_anterior = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                    //         ->select('Id_proceso', 'Id_Asignacion')
+                    //         ->where('ID_evento', $ID_evento_bandeja); 
+                    //         // foreach ($datos_bandejaPCl as $dato) {
+                    //         //     $validar_proceso_anterior->orWhere(function ($query) use ($dato) {
+                    //         //         $query->where('Id_Asignacion', '<', $dato['Id_Asignacion_bandeja_actual']);
+                    //         //     });
+                    //         // }               
+                    //         $maxIdAsignacionBandeja = max(array_column($datos_bandejaPCl, 'Id_Asignacion_bandeja_actual'));
+                    //         $validar_proceso_anterior = $validar_proceso_anterior
+                    //         ->where('Id_Asignacion', '<', $maxIdAsignacionBandeja)
+                    //         ->orderBy('Id_Asignacion', 'desc')
+                    //         ->limit($cantidad_Id_Asignacion)
+                    //        ->get();  
+                    //         // $validar_proceso_anterior = $validar_proceso_anterior
+                    //         // ->orderBy('Id_Asignacion', 'desc')
+                    //         // //->limit($cantidad_Id_Asignacion)
+                    //         // ->get();  
+
+                    //         if (count($validar_proceso_anterior) > 0) {
+                                
+                    //             // Se construyen los id del proceso y asignacion
+                    //             $proceso_id = [];
+                    //             $asignacion_id = [];
+                    //             foreach ($validar_proceso_anterior as $key) {
+                    //                 $proceso_id[]=[                        
+                    //                     'Id_Proceso_anterior' => $key->Id_proceso
+                    //                 ];    
+                    //                 $asignacion_id[] = [
+                    //                     'Id_Asignacion_bandeja' => $key->Id_Asignacion
+                    //                 ];
+                    //             }  
+                                
+                    //             // Validar el nombre del proceso anterior en base a los id_procesos optenidos en el array  $proceso_id
+                    //             $validar_Nombre_proceso_anterior = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                    //             ->select('Nombre_proceso', 'Id_proceso')->whereIn('Id_proceso', $proceso_id)
+                    //             ->groupBy('Nombre_proceso')
+                    //             ->get();  
+                    //             // construir array para los nombres de los procesos
+                    //             $nombre_proceso = [];
+                    //             foreach ($validar_Nombre_proceso_anterior as $value) {
+                    //                 $nombre_proceso[] = [
+                    //                     'Nombre_proceso_anterior' => $value->Nombre_proceso,
+                    //                     'Id_proceso' => $value->Id_proceso,
+                    //                 ];
+                    //             }
+                                                           
+                    //             // acondicionar los array acorde al order la consulta Inicial de $bandejaPCL
+                    //             //array_shift($proceso_id);                                            
+                    //             $orden_proceso_id = array_reverse($proceso_id);
+                    //             //array_pop($asignacion_id);                        
+                    //             $orden_asignacion_id = array_reverse($asignacion_id);                                
+                                
+                    //             //Combinar los array de  orden_proceso_id y nombre_proceso acorde al proceso
+                    //             foreach ($orden_proceso_id as $key => $value) {
+                    //                 foreach ($nombre_proceso as $item) {
+                    //                     if ($value['Id_Proceso_anterior'] == $item['Id_proceso']) {
+                    //                         $orden_proceso_id[$key]['Nombre_proceso_anterior'] = $item['Nombre_proceso_anterior'];
+                    //                         break;
+                    //                     }
+                    //                 }
+                    //             }
+                                
+                    //             // combinar array anterior orden_proceso_id con el array orden_asignacion_id 
+                    //             $combinar_proceso_asignacion = array();
+                    //             foreach ($orden_asignacion_id as $key => $valor) {
+                    //                 if (isset($orden_proceso_id[$key])) {
+                    //                     // Fusionar arrays
+                    //                     $combinar_proceso_asignacion[] = array_merge($orden_proceso_id[$key], $valor);
+                    //                 }
+                    //             }                   
+                               
+                    //             // for ($i = 1; $i <= $cantidad_Id_Asignacion; $i++) {
+                    //             //     array_pop($combinar_proceso_asignacion);
+                    //             // }
+                                
+                    //             if (count($combinar_proceso_asignacion) === count($datos_bandejaPCl)) {
+                    //                 $numElementos = count($combinar_proceso_asignacion);
+                                
+                    //                 for ($i = 0; $i < $numElementos; $i++) {
+                    //                     // Combinar los sub-arrays uno a uno
+                    //                     $array_datos_proce_asignacion[] = array_merge($combinar_proceso_asignacion[$i], $datos_bandejaPCl[$i]);
+                    //                 }
+                    //             }
+                                
+                    //             // se convierte el array  $bandejaPCL a un object
+                    //             $arraybandejaPCL = json_decode(json_encode($bandejaPCL, true));
+
+                                
+                    //             //Combinar el array object con el array combinar_proceso_asignacion
+                    //             foreach ($arraybandejaPCL as $key2 => $value2) {
+                    //                 foreach ($array_datos_proce_asignacion as $value1) {
+                    //                     // Verifica si los Id_Asignacion coinciden
+                    //                     if ($value2->Id_Asignacion == $value1['Id_Asignacion_bandeja_actual']) {
+                    //                         // Agrega las propiedades al segundo array
+                    //                         $arraybandejaPCL[$key2]->Id_Proceso_anterior = $value1['Id_Proceso_anterior'];
+                    //                         $arraybandejaPCL[$key2]->Nombre_proceso_anterior = $value1['Nombre_proceso_anterior'];
+                    //                     }
+                    //                 }
+                    //             }
+                    //         } 
+                                                        
+                    //     }                         
+                    // }   
+                    $arraybandejaPCL = json_decode(json_encode($bandejaPCL, true)); 
+                    if (count($bandejaPCL)>0) {
+                        return response()->json($arraybandejaPCL);
                     }else{
                         $mensajes = array(
                             "parametro" => 'sin_datos',
@@ -158,26 +631,146 @@ class CoordinadorController extends Controller
                     }
             break;
             case (empty($consultar_f_desde) and empty($consultar_f_hasta) and !empty($consultar_g_dias)):
-                    
-                    $bandejaPCLsin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
+
+                    // Consultar la vista de mysql, traer eventos acorde al proceso
+                    $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Calificación PCL'],
-                        ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
-                    ])
-                    ->whereNull('Nombre_proceso_anterior');
+                        ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
+                    ])                    
+                    ->get(); 
                     
-                    $bandejaPCLFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                            ['Nombre_proceso_actual', '=', 'Calificación PCL'],
-                            ['Id_proceso_anterior', '<>', 2],
-                            ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
-                        ])            
-                    ->union($bandejaPCLsin_Pro_ant)
-                    ->get();
-                
-                    $arraybandejaPCLFiltros = json_decode(json_encode($bandejaPCLFiltros, true));
-                    if (count($arraybandejaPCLFiltros)>0) {
-                        return response()->json($arraybandejaPCLFiltros);
+                    // if (count($bandejaPCL)>0) {
+                    //     $ID_evento_bandeja = $bandejaPCL[0]->ID_evento;
+                    //     $Id_proceso_bandeja = $bandejaPCL[0]->Id_proceso;                        
+                    // }
+
+                    // // Json vacio para llenado en Else en caso de que no haya un proceso anterior
+                    // $Ids_Nombre_proceso_anterior = response()->json([]);
+                    
+                    // // validacion de la vista
+                    // if (!empty($bandejaPCL[0]->Nombre_proceso_actual)) {
+                    //     $datos_bandejaPCl = [];
+                    //     foreach ($bandejaPCL as $item) {
+                    //         // Accede a cada propiedad del objeto dentro del bucle  para capturar el id_asignacion                  
+                    //         $datos_bandejaPCl[]=[                        
+                    //             'Id_Asignacion_bandeja_actual' => $item->Id_Asignacion,
+                    //         ];
+                    //     }      
+                        
+                    //     // cantidad de id_asignacion 
+                    //     $cantidad_Id_Asignacion = count($datos_bandejaPCl);
+                        
+                    //     // Validar si existe un porceso anterior con los Id_Asignacion del array $datos_bandejaPCl
+                    //     if ($cantidad_Id_Asignacion > 0) {
+                            
+                    //         $validar_proceso_anterior = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                    //         ->select('Id_proceso', 'Id_Asignacion')
+                    //         ->where('ID_evento', $ID_evento_bandeja); 
+                    //         // foreach ($datos_bandejaPCl as $dato) {
+                    //         //     $validar_proceso_anterior->orWhere(function ($query) use ($dato) {
+                    //         //         $query->where('Id_Asignacion', '<', $dato['Id_Asignacion_bandeja_actual']);
+                    //         //     });
+                    //         // }               
+                    //         $maxIdAsignacionBandeja = max(array_column($datos_bandejaPCl, 'Id_Asignacion_bandeja_actual'));
+                    //         $validar_proceso_anterior = $validar_proceso_anterior
+                    //         ->where('Id_Asignacion', '<', $maxIdAsignacionBandeja)
+                    //         ->orderBy('Id_Asignacion', 'desc')
+                    //         ->limit($cantidad_Id_Asignacion)
+                    //        ->get();  
+                    //         // $validar_proceso_anterior = $validar_proceso_anterior
+                    //         // ->orderBy('Id_Asignacion', 'desc')
+                    //         // //->limit($cantidad_Id_Asignacion)
+                    //         // ->get();  
+
+                    //         if (count($validar_proceso_anterior) > 0) {
+                                
+                    //             // Se construyen los id del proceso y asignacion
+                    //             $proceso_id = [];
+                    //             $asignacion_id = [];
+                    //             foreach ($validar_proceso_anterior as $key) {
+                    //                 $proceso_id[]=[                        
+                    //                     'Id_Proceso_anterior' => $key->Id_proceso
+                    //                 ];    
+                    //                 $asignacion_id[] = [
+                    //                     'Id_Asignacion_bandeja' => $key->Id_Asignacion
+                    //                 ];
+                    //             }  
+                                
+                    //             // Validar el nombre del proceso anterior en base a los id_procesos optenidos en el array  $proceso_id
+                    //             $validar_Nombre_proceso_anterior = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                    //             ->select('Nombre_proceso', 'Id_proceso')->whereIn('Id_proceso', $proceso_id)
+                    //             ->groupBy('Nombre_proceso')
+                    //             ->get();  
+                    //             // construir array para los nombres de los procesos
+                    //             $nombre_proceso = [];
+                    //             foreach ($validar_Nombre_proceso_anterior as $value) {
+                    //                 $nombre_proceso[] = [
+                    //                     'Nombre_proceso_anterior' => $value->Nombre_proceso,
+                    //                     'Id_proceso' => $value->Id_proceso,
+                    //                 ];
+                    //             }
+                                                           
+                    //             // acondicionar los array acorde al order la consulta Inicial de $bandejaPCL
+                    //             //array_shift($proceso_id);                                            
+                    //             $orden_proceso_id = array_reverse($proceso_id);
+                    //             //array_pop($asignacion_id);                        
+                    //             $orden_asignacion_id = array_reverse($asignacion_id);                                
+                                
+                    //             //Combinar los array de  orden_proceso_id y nombre_proceso acorde al proceso
+                    //             foreach ($orden_proceso_id as $key => $value) {
+                    //                 foreach ($nombre_proceso as $item) {
+                    //                     if ($value['Id_Proceso_anterior'] == $item['Id_proceso']) {
+                    //                         $orden_proceso_id[$key]['Nombre_proceso_anterior'] = $item['Nombre_proceso_anterior'];
+                    //                         break;
+                    //                     }
+                    //                 }
+                    //             }
+                                
+                    //             // combinar array anterior orden_proceso_id con el array orden_asignacion_id 
+                    //             $combinar_proceso_asignacion = array();
+                    //             foreach ($orden_asignacion_id as $key => $valor) {
+                    //                 if (isset($orden_proceso_id[$key])) {
+                    //                     // Fusionar arrays
+                    //                     $combinar_proceso_asignacion[] = array_merge($orden_proceso_id[$key], $valor);
+                    //                 }
+                    //             }                   
+                               
+                    //             // for ($i = 1; $i <= $cantidad_Id_Asignacion; $i++) {
+                    //             //     array_pop($combinar_proceso_asignacion);
+                    //             // }
+                                
+                    //             if (count($combinar_proceso_asignacion) === count($datos_bandejaPCl)) {
+                    //                 $numElementos = count($combinar_proceso_asignacion);
+                                
+                    //                 for ($i = 0; $i < $numElementos; $i++) {
+                    //                     // Combinar los sub-arrays uno a uno
+                    //                     $array_datos_proce_asignacion[] = array_merge($combinar_proceso_asignacion[$i], $datos_bandejaPCl[$i]);
+                    //                 }
+                    //             }
+                                
+                    //             // se convierte el array  $bandejaPCL a un object
+                    //             $arraybandejaPCL = json_decode(json_encode($bandejaPCL, true));
+
+                                
+                    //             //Combinar el array object con el array combinar_proceso_asignacion
+                    //             foreach ($arraybandejaPCL as $key2 => $value2) {
+                    //                 foreach ($array_datos_proce_asignacion as $value1) {
+                    //                     // Verifica si los Id_Asignacion coinciden
+                    //                     if ($value2->Id_Asignacion == $value1['Id_Asignacion_bandeja_actual']) {
+                    //                         // Agrega las propiedades al segundo array
+                    //                         $arraybandejaPCL[$key2]->Id_Proceso_anterior = $value1['Id_Proceso_anterior'];
+                    //                         $arraybandejaPCL[$key2]->Nombre_proceso_anterior = $value1['Nombre_proceso_anterior'];
+                    //                     }
+                    //                 }
+                    //             }
+                    //         } 
+                                                        
+                    //     }                         
+                    // } 
+                    $arraybandejaPCL = json_decode(json_encode($bandejaPCL, true));                  
+                    if (count($bandejaPCL)>0) {
+                        return response()->json($arraybandejaPCL);
                     }else{
                         $mensajes = array(
                             "parametro" => 'sin_datos',

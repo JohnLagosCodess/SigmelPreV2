@@ -61,11 +61,18 @@ class CalificacionPCLController extends Controller
         $user = Auth::user();
         $time = time();
         $date = date("Y-m-d", $time);
-        $newIdAsignacion=$request->newIdAsignacion;
-        $newIdEvento = $request->newIdEvento;
+
+        if (!empty($request->newIdAsignacion)) {
+            $newIdAsignacion=$request->newIdAsignacion;
+            $newIdEvento = $request->newIdEvento;            
+        } else {
+            $newIdAsignacion=$request->Id_asignacion_pcl;
+            $newIdEvento = $request->Id_evento_pcl;            
+        }
 
         $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newIdAsignacion));
         $array_datos_destinatarios = DB::select('CALL psrcomunicados(?)', array($newIdEvento));
+        
         //Consulta Vista a mostrar
         $TraeVista= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_lista_procesos_servicios as p')
         ->select('v.nombre_renderizar')
@@ -1050,9 +1057,14 @@ class CalificacionPCLController extends Controller
         }
         $user = Auth::user();
 
-        $Id_evento_calitec=$request->Id_evento_pcl;
-        $Id_asignacion_calitec = $request->Id_asignacion_pcl;
-
+        if (!empty($request->Id_asignacion_pcl)) {
+            $Id_evento_calitec=$request->Id_evento_pcl;
+            $Id_asignacion_calitec = $request->Id_asignacion_pcl;            
+        }else{
+            $Id_evento_calitec=$request->Id_evento_calitec;
+            $Id_asignacion_calitec = $request->Id_asignacion_calitec; 
+        }
+        //$Id_servicio_balt = $request->Id_servicio_calitec;
         $hay_agudeza_visual = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
         ->where('ID_evento', $Id_evento_calitec)->get();
 
@@ -1296,7 +1308,7 @@ class CalificacionPCLController extends Controller
                     return 0;
                 }
             });            
-            print_r($deficiencias);
+            //print_r($deficiencias);
             foreach ($deficiencias as $key => $value) {
                 if (strpos($value, "(si)") !== false) {
                     //$deficiencias[$key] = 23.20;
@@ -1308,7 +1320,7 @@ class CalificacionPCLController extends Controller
                     $deficiencias[$key] = $resultadoMSD;
                 }
             }
-            print_r($deficiencias);            
+            //print_r($deficiencias);            
             while(count($deficiencias) > 1) {
                 $a = $deficiencias[0];
                 $b = $deficiencias[1];

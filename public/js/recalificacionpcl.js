@@ -867,7 +867,7 @@ $(document).ready(function(){
     var opt_tabla9_cuidado_salud = $("[id^='cuidado_salud_']").is(":checked") ? $("[id^='cuidado_salud_']:checked").val() : 0;
     var opt_tabla9_control_dieta = $("[id^='control_dieta_']").is(":checked") ? $("[id^='control_dieta_']:checked").val() : 0;
     var opt_total_tabla9 = $("[id='resultado_tabla9']").val() || 0;
-
+    //console.log(opt_tabla9_higiene_personal);
     $("[name='lavarse']").on("change", function(){
         opt_tabla9_lavarse = $(this).val();
         $(this).val(opt_tabla9_lavarse);
@@ -882,7 +882,7 @@ $(document).ready(function(){
 
     $("[name='higiene_personal']").on("change", function(){
         opt_tabla9_higiene_personal = $(this).val();
-        $(this).val(opt_tabla9_cuidado_cuerpo);
+        $(this).val(opt_tabla9_higiene_personal);
         iniciarIntervaloTotaltabla9();
     });
 
@@ -1845,6 +1845,12 @@ $(document).ready(function(){
         var total_rol_areas = $('#total_rol_areas').val();    
         var bandera_LaboralActivo_guardar_actualizar =$('#bandera_LaboralActivo_guardar_actualizar').val();       
         
+        // console.log(escuchar);
+        // console.log(comunicarse_escrito);
+        // console.log(cuidado_cuerpo);
+        // console.log(higiene_personal);
+        // console.log(quehaceres_casa);
+
         var datos_agregarLaboralmenteActivo ={
             '_token': token,
             'Id_Evento_decreto':Id_EventoDecreto,
@@ -2449,14 +2455,14 @@ $(document).ready(function(){
         if (definirDecreto_deficiencia == 1) {
             if($.trim(total_rol_ocupacional12) == 0 && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){
                 total_rol_ocupacional = 0;
-            }else if($.trim(total_rol_ocupacional12) == 0 && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){                
+            }else if($.trim(total_rol_ocupacional12) > 0 && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) == 0){                
                 total_rol_ocupacional = Number(total_rol_ocupacional12);
             }else if($.trim(total_rol_ocupacional12) == 0 && $.trim(total_rol_ocupacional13) > 0 && $.trim(total_rol_ocupacional14) == 0){                
                 total_rol_ocupacional = Number(total_rol_ocupacional13);
             }else if($.trim(total_rol_ocupacional12) == 0 && $.trim(total_rol_ocupacional13) == 0 && $.trim(total_rol_ocupacional14) > 0){               
                 total_rol_ocupacional = Number(total_rol_ocupacional14);
             }
-            total_rol_laboral = $('#total_rol_areas').val();
+            total_rol_laboral = $('#total_rol_areas').val();                       
             if($.trim(total_deficiencia) == 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) === ""){
                 porcentajePcl = 0;
             }else if($.trim(total_deficiencia) > 0 && $.trim(total_rol_ocupacional) == 0 && $.trim(total_rol_laboral) === ""){
@@ -2492,22 +2498,22 @@ $(document).ready(function(){
             $('#Total_Deficiencia50').focus(function() {
                 $("#Total_Deficiencia50").on("input", function() {
                     total_deficiencia1999 = $(this).val();
-                    if ($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) === "") {
+                    if ($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) == 0) {
                         porcentajePcl = 0;
-                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) === ""){
+                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) == 0){
                         porcentajePcl = Number(total_deficiencia1999);
-                    }else if($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) === ""){
+                    }else if($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) == 0){
                         porcentajePcl = Number(dicapacidad_total);
-                    }else if($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) > 0){
+                    }else if($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) > 0){
                         porcentajePcl = Number(minusvalia_total);
-                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) === ""){
+                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) == 0){
                         porcentajePcl = Number(total_deficiencia1999) + Number(dicapacidad_total);
-                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) > 0){
+                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) > 0){
                         porcentajePcl = Number(total_deficiencia1999) + Number(minusvalia_total);
                     }else if($.trim(total_deficiencia1999) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){
-                        porcentajePcl = Number(dicapacidad_total) + Number(minusvalia_total);
-                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){                            
-                        porcentajePcl = Number(total_deficiencia1999) + Number(dicapacidad_total) + Number(minusvalia_total);                            
+                        porcentajePcl = Number(dicapacidad_total) + Number(minusvalia_total);                
+                    }else if($.trim(total_deficiencia1999) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){                   
+                        porcentajePcl = Number(total_deficiencia1999) + Number(dicapacidad_total) + Number(minusvalia_total);                
                     }                   
                     
                     $("#porcentaje_pcl").val(Math.round(porcentajePcl));
@@ -2527,21 +2533,21 @@ $(document).ready(function(){
                 });
             });                 
             
-            if ($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) === "") {
+            if ($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) == 0) {
                 porcentajePcl = 0;
-            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) === ""){
+            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) == 0){
                 porcentajePcl = Number(total_deficiencia);
-            }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) === ""){
+            }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) == 0){
                 porcentajePcl = Number(dicapacidad_total);
-            }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) > 0){
+            }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) > 0){
                 porcentajePcl = Number(minusvalia_total);
-            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) === ""){
+            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) == 0){
                 porcentajePcl = Number(total_deficiencia) + Number(dicapacidad_total);
-            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) === "" && $.trim(minusvalia_total) > 0){
+            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) > 0){
                 porcentajePcl = Number(total_deficiencia) + Number(minusvalia_total);
             }else if($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){
-                porcentajePcl = Number(dicapacidad_total) + Number(minusvalia_total);
-            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){                
+                porcentajePcl = Number(dicapacidad_total) + Number(minusvalia_total);                
+            }else if($.trim(total_deficiencia) > 0 && $.trim(dicapacidad_total) > 0 && $.trim(minusvalia_total) > 0){                   
                 porcentajePcl = Number(total_deficiencia) + Number(dicapacidad_total) + Number(minusvalia_total);                
             }                   
                 

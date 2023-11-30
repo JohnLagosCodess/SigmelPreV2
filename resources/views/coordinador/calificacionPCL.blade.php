@@ -80,7 +80,9 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="id_evento">ID evento</label>
-                                                <input type="text" class="form-control" name="id_evento" id="id_evento" value="{{$array_datos_calificacionPcl[0]->ID_evento}}" disabled>
+                                                <br>
+                                                {{-- DATOS PARA VER EDICIÓN DE EVENTO --}}
+                                                <a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer; font-weight: bold;" class="btn text-info" type="button"><?php if(!empty($array_datos_calificacionPcl[0]->ID_evento)){echo $array_datos_calificacionPcl[0]->ID_evento;}?></a>                                                
                                             </div>
                                         </div>
                                     </div>
@@ -146,7 +148,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fecha_asignacion_calificacion">Fecha de asignación para calificación</label>
-                                                <input type="text" class="form-control" name="fecha_asignacion_calificacion" id="fecha_asignacion_calificacion" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                                <input type="datetime-local" class="form-control" name="fecha_asignacion_calificacion" id="fecha_asignacion_calificacion" style="color: red;">
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -332,6 +334,15 @@
             <input hidden="hidden" type="text" name="Id_asignacion_pcl" id="Id_asignacion_pcl" value="{{$array_datos_calificacionPcl[0]->Id_Asignacion}}">
             <button type="submit" id="botonFormulario2" style="display: none; !important"></button>
         </form>
+        <form action="{{route('gestionInicialEdicion')}}" id="formularioLlevarEdicionEvento" method="POST">
+            @csrf
+            <input type="hidden" name="bandera_buscador_clpcl" id="bandera_buscador_clpcl" value="desdeclpcl">
+            <input hidden="hidden" type="text" name="newIdEvento" id="newIdEvento" value="<?php if(!empty($array_datos_calificacionPcl[0]->ID_evento)){echo $array_datos_calificacionPcl[0]->ID_evento;}?>">
+            <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="<?php if(!empty($array_datos_calificacionPcl[0]->Id_Asignacion)){echo $array_datos_calificacionPcl[0]->Id_Asignacion;}?>">
+            <input hidden="hidden" type="text" name="newIdproceso" id="newIdproceso" value="<?php if(!empty($array_datos_calificacionPcl[0]->Id_proceso)){ echo $array_datos_calificacionPcl[0]->Id_proceso;}?>">
+            <input hidden="hidden" type="text" name="newIdservicio" id="newIdservicio" value="<?php if(!empty($array_datos_calificacionPcl[0]->Id_Servicio)){ echo $array_datos_calificacionPcl[0]->Id_Servicio;}?>">
+            <button type="submit" id="botonVerEdicionEvento" style="display:none !important;"></button>
+       </form>
     </div>
     {{-- Modal solicitud documentos - seguimientos --}}
     <div class="row">
@@ -377,7 +388,7 @@
                                                 <td>{{$prueba->Nombre_solicitante}}</td>
                                                 <td>{{$prueba->F_recepcion_documento}}</td>
                                                 <td>
-                                                    <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila_visual_{{$prueba->Id_Documento_Solicitado}}" data-id_fila_quitar="{{$prueba->Id_Documento_Solicitado}}" data-clase_fila="fila_visual_{{$prueba->Id_Documento_Solicitado}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
+                                                    {{-- <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila_visual_{{$prueba->Id_Documento_Solicitado}}" data-id_fila_quitar="{{$prueba->Id_Documento_Solicitado}}" data-clase_fila="fila_visual_{{$prueba->Id_Documento_Solicitado}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div> --}}
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -980,6 +991,7 @@
 @stop
 @section('js')
     <script>
+        
         //funcion para habilitar el historial de acciones
         function historialDeAcciones() {
             var div = document.getElementById("historialAcciones");
@@ -1027,8 +1039,14 @@
         
     </script>
 
-    {{-- SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE LISTADOS DE DOCUMENTOS SOLICITADOS --}}
     <script type="text/javascript">
+        document.getElementById('botonVerEdicionEvento').addEventListener('click', function(event) {
+            event.preventDefault();
+            // Realizar las acciones que quieres al hacer clic en el botón
+            document.getElementById('formularioLlevarEdicionEvento').submit();
+        });
+        
+        //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE LISTADOS DE DOCUMENTOS SOLICITADOS
         $(document).ready(function(){
             $(".centrar").css('text-align', 'center');
             var listado_docs_solicitados = $('#listado_docs_solicitados').DataTable({
