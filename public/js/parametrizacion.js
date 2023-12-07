@@ -11,6 +11,92 @@ $(document).ready(function(){
     });
     
     /* INICIO PROGRAMACIÓN PARAMETRIZACIÓN PROCESO ORIGEN ATEL */
+    
+    /* TABLA PARA REALIZAR DESCARGA DEL EXCEL */
+    $('#tabla_origen_atel_descarga thead tr').clone(true).addClass('filters_origen_atel_descarga').appendTo('#tabla_origen_atel_descarga thead');
+    var tabla_origen_atel_descarga = $("#tabla_origen_atel_descarga").DataTable({
+        orderCellsTop: true,
+        fixedHeader: true,
+        // searching: false,
+        info: false,
+        paging: false,
+        "destroy": true,
+        dom: 'Bfrtip',
+        initComplete: function () {
+            var api = this.api();
+
+            // Columnas específicas a las que se aplicará el código de filtros
+            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+            
+            // Para cada columna
+            api.columns().eq(0).each(function (colIdx) {
+                // Verifica si la columna actual está en la lista de columnas objetivo
+                if (targetColumns.includes(colIdx)) {
+                    // Set the header cell to contain the input element
+                    var cell = $('.filters_origen_atel_descarga th').eq(
+                        $(api.column(colIdx).header()).index()
+                    );
+
+                    var title = $(cell).text();
+                    // Modifica la condición para excluir el último filtro
+                    if (title !== 'Detalle' && $(cell).attr('class') !== 'centrar sorting_disabled') {
+                        $(cell).html('<input type="text" style="width:100%;"/>');
+                        $('input', $('.filters_origen_atel_descarga th').eq($(api.column(colIdx).header()).index())).off('keyup change')
+                        .on('change', function (e) {
+                                // Obtiene el valor de búsqueda
+                                $(this).attr('title', $(this).val());
+                                var regexr = '({search})';
+                                api
+                                    .column(colIdx)
+                                    .search(
+                                        this.value != ''
+                                            ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                            : '',
+                                        this.value != '',
+                                        this.value == ''
+                                    )
+                                    .draw();
+                        })
+                        .on('keyup', function (e) {
+                            e.stopPropagation();
+                            var cursorPosition = this.selectionStart;
+                            $(this).trigger('change');
+                            $(this)
+                                .focus()[0]
+                                .setSelectionRange(cursorPosition, cursorPosition);
+                        });
+                    } 
+                    else {
+                        $(cell).html('<input type="hidden" style="width:100%;"/>');
+                    }
+                }
+            });
+
+        },
+        buttons:{
+            dom:{
+                buttons:{
+                    className: 'btn'
+                }
+            },
+            buttons:[
+                {
+                    extend:"excel",
+                    title: 'Listado Parametrización Proceso Origen ATEL',
+                    text:'Exportar datos',
+                    className: 'btn btn-info',
+                    "excelStyles": [                      // Add an excelStyles definition
+                                                
+                    ],
+                    exportOptions: {
+                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]
+                    }
+                }
+            ]
+        },
+    });
+    
+    autoAdjustColumns(tabla_origen_atel_descarga);
 
     /* CREACIÓN DE DATATABLE PARAMETRIZACIÓN ORIGEN ATEL */
     var tabla_parametrizar_origen_atel = '';
@@ -59,6 +145,16 @@ $(document).ready(function(){
                                             this.value == ''
                                         )
                                         .draw();
+                                        
+                                        
+                                    tabla_origen_atel_descarga.column(colIdx).search(
+                                        this.value != ''
+                                            ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                            : '',
+                                        this.value != '',
+                                        this.value == ''
+                                    )
+                                    .draw();
                             })
                             .on('keyup', function (e) {
                                 e.stopPropagation();
@@ -77,27 +173,27 @@ $(document).ready(function(){
     
             },
             dom: 'Bfrtip',
-            buttons:{
-                dom:{
-                    buttons:{
-                        className: 'btn'
-                    }
-                },
-                buttons:[
-                    {
-                        extend:"excel",
-                        title: 'Listado Parametrización Proeso Origen ATEL',
-                        text:'Exportar datos',
-                        className: 'btn btn-info',
-                        "excelStyles": [                      // Add an excelStyles definition
+            // buttons:{
+            //     dom:{
+            //         buttons:{
+            //             className: 'btn'
+            //         }
+            //     },
+            //     buttons:[
+            //         {
+            //             extend:"excel",
+            //             title: 'Listado Parametrización Proceso Origen ATEL',
+            //             text:'Exportar datos',
+            //             className: 'btn btn-info',
+            //             "excelStyles": [                      // Add an excelStyles definition
                                                     
-                        ],
-                        exportOptions: {
-                            columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]
-                        }
-                    }
-                ]
-            },
+            //             ],
+            //             exportOptions: {
+            //                 columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]
+            //             }
+            //         }
+            //     ]
+            // },
             "language":{
                 "search": "Buscar",
                 "lengthMenu": "Mostrar _MENU_ resgistros por página",
@@ -114,8 +210,11 @@ $(document).ready(function(){
         });
         
         autoAdjustColumns(tabla_parametrizar_origen_atel);
-    });
 
+        $('button[aria-controls="parametrizar_origen_atel"]').hide();
+        $('input[aria-controls="tabla_origen_atel_descarga"]').hide();
+    });
+    
     /* SETEO DE LOS DATOS DE LA PARAMETRIZACIÓN DEL PROCESO ORIGEN ATEL (SOLAMENTE CUANDO SE ENCUENTREN) */
     $(document).on('click', 'a[id^="bd_editar_fila_origen_atel_"]', function(){
         var id_fila_parametrizacion_editar = $(this).data("id_fila_parametrizacion_editar");
@@ -268,6 +367,91 @@ $(document).ready(function(){
 
     /* INICIO PROGRAMACIÓN PARAMETRIZACIÓN PROCESO CALIFICACIÓN PCL */
 
+    /* TABLA PARA REALIZAR DESCARGA DEL EXCEL */
+    $('#tabla_calificacion_pcl_descarga thead tr').clone(true).addClass('filters_calificacion_pcl_descarga').appendTo('#tabla_calificacion_pcl_descarga thead');
+    var tabla_calificacion_pcl_descarga = $("#tabla_calificacion_pcl_descarga").DataTable({
+        orderCellsTop: true,
+        fixedHeader: true,
+        info: false,
+        paging: false,
+        "destroy": true,
+        dom: 'Bfrtip',
+        initComplete: function () {
+            var api = this.api();
+
+            // Columnas específicas a las que se aplicará el código de filtros
+            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+            
+            // Para cada columna
+            api.columns().eq(0).each(function (colIdx) {
+                // Verifica si la columna actual está en la lista de columnas objetivo
+                if (targetColumns.includes(colIdx)) {
+                    // Set the header cell to contain the input element
+                    var cell = $('.filters_calificacion_pcl_descarga th').eq(
+                        $(api.column(colIdx).header()).index()
+                    );
+                    
+                    var title = $(cell).text();
+                    
+                    // Modifica la condición para excluir el último filtro
+                    if (title !== 'Detalle' && $(cell).attr('class') !== 'centrar sorting_disabled') {
+                        $(cell).html('<input type="text" style="width:100%;"/>');
+                        $('input', $('.filters_calificacion_pcl_descarga th').eq($(api.column(colIdx).header()).index())).off('keyup change')
+                        .on('change', function (e) {
+                            // Obtiene el valor de búsqueda
+                            $(this).attr('title', $(this).val());
+                            var regexr = '({search})';
+                            api
+                            .column(colIdx)
+                            .search(
+                                this.value != ''
+                                    ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                    : '',
+                                this.value != '',
+                                this.value == ''
+                            )
+                            .draw();
+                        })
+                        .on('keyup', function (e) {
+                            e.stopPropagation();
+                            var cursorPosition = this.selectionStart;
+                            $(this).trigger('change');
+                            $(this)
+                                .focus()[0]
+                                .setSelectionRange(cursorPosition, cursorPosition);
+                        });
+                    } 
+                    else {
+                        $(cell).html('<input type="hidden" style="width:100%;"/>');
+                    }
+                }
+            });
+        },
+        buttons:{
+            dom:{
+                buttons:{
+                    className: 'btn'
+                }
+            },
+            buttons:[
+                {
+                    extend:"excel",
+                    title: 'Listado Parametrización Proceso Calificación PCL',
+                    text:'Exportar datos',
+                    className: 'btn btn-info',
+                    "excelStyles": [                      // Add an excelStyles definition
+                                                
+                    ],
+                    exportOptions: {
+                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]
+                    }
+                }
+            ]
+        },
+    });
+
+    autoAdjustColumns(tabla_calificacion_pcl_descarga);
+
     /* CREACIÓN DE DATATABLE PARAMETRIZACIÓN CALIFICACIÓN PCL */
     var tabla_parametrizar_calificacion_pcl = '';
     $("#btn_abrir_parametrica_calificacion_pcl").click(function(){
@@ -303,19 +487,28 @@ $(document).ready(function(){
                             $(cell).html('<input type="text" style="width:100%;"/>');
                             $('input', $('.filters_calificacion_pcl th').eq($(api.column(colIdx).header()).index())).off('keyup change')
                             .on('change', function (e) {
-                                    // Obtiene el valor de búsqueda
-                                    $(this).attr('title', $(this).val());
-                                    var regexr = '({search})';
-                                    api
-                                        .column(colIdx)
-                                        .search(
-                                            this.value != ''
-                                                ? regexr.replace('{search}', '(((' + this.value + ')))')
-                                                : '',
-                                            this.value != '',
-                                            this.value == ''
-                                        )
-                                        .draw();
+                                // Obtiene el valor de búsqueda
+                                $(this).attr('title', $(this).val());
+                                var regexr = '({search})';
+                                api
+                                .column(colIdx)
+                                .search(
+                                    this.value != ''
+                                        ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                        : '',
+                                    this.value != '',
+                                    this.value == ''
+                                )
+                                .draw();
+
+                                tabla_calificacion_pcl_descarga.column(colIdx).search(
+                                    this.value != ''
+                                        ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                        : '',
+                                    this.value != '',
+                                    this.value == ''
+                                )
+                                .draw();
                             })
                             .on('keyup', function (e) {
                                 e.stopPropagation();
@@ -331,30 +524,29 @@ $(document).ready(function(){
                         }
                     }
                 });
-    
             },
             dom: 'Bfrtip',
-            buttons:{
-                dom:{
-                    buttons:{
-                        className: 'btn'
-                    }
-                },
-                buttons:[
-                    {
-                        extend:"excel",
-                        title: 'Listado Parametrización Proeso Calificación PCL',
-                        text:'Exportar datos',
-                        className: 'btn btn-info',
-                        "excelStyles": [                      // Add an excelStyles definition
+            // buttons:{
+            //     dom:{
+            //         buttons:{
+            //             className: 'btn'
+            //         }
+            //     },
+            //     buttons:[
+            //         {
+            //             extend:"excel",
+            //             title: 'Listado Parametrización Proceso Calificación PCL',
+            //             text:'Exportar datos',
+            //             className: 'btn btn-info',
+            //             "excelStyles": [                      // Add an excelStyles definition
                                                     
-                        ],
-                        exportOptions: {
-                            columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]
-                        }
-                    }
-                ]
-            },
+            //             ],
+            //             exportOptions: {
+            //                 columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]
+            //             }
+            //         }
+            //     ]
+            // },
             "language":{
                 "search": "Buscar",
                 "lengthMenu": "Mostrar _MENU_ resgistros por página",
@@ -371,7 +563,9 @@ $(document).ready(function(){
         });
     
         autoAdjustColumns(tabla_parametrizar_calificacion_pcl);
-    })
+        $('button[aria-controls="parametrizar_calificacion_pcl"]').hide();
+        $('input[aria-controls="tabla_calificacion_pcl_descarga"]').hide();
+    });
 
     /* SETEO DE LOS DATOS DE LA PARAMETRIZACIÓN DEL PROCESO CALIFICACIÓN PCL (SOLAMENTE CUANDO SE ENCUENTREN) */
     $(document).on('click', 'a[id^="bd_editar_fila_calificacion_pcl_"]', function(){
@@ -524,6 +718,90 @@ $(document).ready(function(){
 
     /* INICIO PROGRAMACIÓN PARAMETRIZACIÓN PROCESO JUNTAS */
 
+    /* TABLA PARA REALIZAR DESCARGA DEL EXCEL */
+    $('#tabla_juntas_descarga thead tr').clone(true).addClass('filters_juntas_descarga').appendTo('#tabla_juntas_descarga thead');
+    var tabla_juntas_descarga = $("#tabla_juntas_descarga").DataTable({
+        orderCellsTop: true,
+        fixedHeader: true,
+        info: false,
+        paging: false,
+        "destroy": true,
+        dom: 'Bfrtip',
+        initComplete: function () {
+            var api = this.api();
+
+            // Columnas específicas a las que se aplicará el código de filtros
+            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+            
+            // Para cada columna
+            api.columns().eq(0).each(function (colIdx) {
+                // Verifica si la columna actual está en la lista de columnas objetivo
+                if (targetColumns.includes(colIdx)) {
+                    // Set the header cell to contain the input element
+                    var cell = $('.filters_juntas_descarga th').eq(
+                        $(api.column(colIdx).header()).index()
+                    );
+                    
+                    var title = $(cell).text();
+                    
+                    // Modifica la condición para excluir el último filtro
+                    if (title !== 'Detalle' && $(cell).attr('class') !== 'centrar sorting_disabled') {
+                        $(cell).html('<input type="text" style="width:100%;"/>');
+                        $('input', $('.filters_juntas_descarga th').eq($(api.column(colIdx).header()).index())).off('keyup change')
+                        .on('change', function (e) {
+                            // Obtiene el valor de búsqueda
+                            $(this).attr('title', $(this).val());
+                            var regexr = '({search})';
+                            api
+                            .column(colIdx)
+                            .search(
+                                this.value != ''
+                                    ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                    : '',
+                                this.value != '',
+                                this.value == ''
+                            )
+                            .draw();
+                        })
+                        .on('keyup', function (e) {
+                            e.stopPropagation();
+                            var cursorPosition = this.selectionStart;
+                            $(this).trigger('change');
+                            $(this)
+                                .focus()[0]
+                                .setSelectionRange(cursorPosition, cursorPosition);
+                        });
+                    } 
+                    else {
+                        $(cell).html('<input type="hidden" style="width:100%;"/>');
+                    }
+                }
+            });
+        },
+        buttons:{
+            dom:{
+                buttons:{
+                    className: 'btn'
+                }
+            },
+            buttons:[
+                {
+                    extend:"excel",
+                    title: 'Listado Parametrización Proceso Juntas',
+                    text:'Exportar datos',
+                    className: 'btn btn-info',
+                    "excelStyles": [                      // Add an excelStyles definition
+                                                
+                    ],
+                    exportOptions: {
+                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]
+                    }
+                }
+            ]
+        },
+    });
+    autoAdjustColumns(tabla_juntas_descarga);
+
     /* CREACIÓN DE DATATABLE PARAMETRIZACIÓN JUNTAS */
     var tabla_parametrizar_juntas = '';
     $("#btn_abrir_parametrica_juntas").click(function(){
@@ -559,19 +837,29 @@ $(document).ready(function(){
                             $(cell).html('<input type="text" style="width:100%;"/>');
                             $('input', $('.filters_juntas th').eq($(api.column(colIdx).header()).index())).off('keyup change')
                             .on('change', function (e) {
-                                    // Obtiene el valor de búsqueda
-                                    $(this).attr('title', $(this).val());
-                                    var regexr = '({search})';
-                                    api
-                                        .column(colIdx)
-                                        .search(
-                                            this.value != ''
-                                                ? regexr.replace('{search}', '(((' + this.value + ')))')
-                                                : '',
-                                            this.value != '',
-                                            this.value == ''
-                                        )
-                                        .draw();
+                                // Obtiene el valor de búsqueda
+                                $(this).attr('title', $(this).val());
+                                var regexr = '({search})';
+                                api
+                                .column(colIdx)
+                                .search(
+                                    this.value != ''
+                                        ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                        : '',
+                                    this.value != '',
+                                    this.value == ''
+                                )
+                                .draw();
+                                
+                                tabla_juntas_descarga.column(colIdx).search(
+                                    this.value != ''
+                                        ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                        : '',
+                                    this.value != '',
+                                    this.value == ''
+                                )
+                                .draw();
+
                             })
                             .on('keyup', function (e) {
                                 e.stopPropagation();
@@ -587,30 +875,29 @@ $(document).ready(function(){
                         }
                     }
                 });
-    
             },
             dom: 'Bfrtip',
-            buttons:{
-                dom:{
-                    buttons:{
-                        className: 'btn'
-                    }
-                },
-                buttons:[
-                    {
-                        extend:"excel",
-                        title: 'Listado Parametrización Proeso Calificación PCL',
-                        text:'Exportar datos',
-                        className: 'btn btn-info',
-                        "excelStyles": [                      // Add an excelStyles definition
+            // buttons:{
+            //     dom:{
+            //         buttons:{
+            //             className: 'btn'
+            //         }
+            //     },
+            //     buttons:[
+            //         {
+            //             extend:"excel",
+            //             title: 'Listado Parametrización Proceso Juntas',
+            //             text:'Exportar datos',
+            //             className: 'btn btn-info',
+            //             "excelStyles": [                      // Add an excelStyles definition
                                                     
-                        ],
-                        exportOptions: {
-                            columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]
-                        }
-                    }
-                ]
-            },
+            //             ],
+            //             exportOptions: {
+            //                 columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]
+            //             }
+            //         }
+            //     ]
+            // },
             "language":{
                 "search": "Buscar",
                 "lengthMenu": "Mostrar _MENU_ resgistros por página",
@@ -627,6 +914,8 @@ $(document).ready(function(){
         });
     
         autoAdjustColumns(tabla_parametrizar_juntas);
+        $('button[aria-controls="parametrizar_juntas"]').hide();
+        $('input[aria-controls="tabla_juntas_descarga"]').hide();
     })
 
     /* SETEO DE LOS DATOS DE LA PARAMETRIZACIÓN DEL PROCESO JUNTAS (SOLAMENTE CUANDO SE ENCUENTREN) */
@@ -784,28 +1073,28 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
     
     /* INICIALIZACIÓN SELECT 2 LISTADO DE SERVICIOS ASOCIADOS */
     $(".servicio_asociado_origen_atel_"+num_consecutivo).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO ESTADOS */
     $(".estado_origen_atel_"+num_consecutivo).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES A EJECUTAR */
     $(".accion_ejecutar_origen_atel_"+num_consecutivo).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES ANTECESORAS */
     $(".accion_antecesora_origen_atel_"+num_consecutivo).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
@@ -1074,28 +1363,28 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
 function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_editar){
     /* INICIALIZACIÓN SELECT 2 LISTADO DE SERVICIOS ASOCIADOS */
     $(".bd_servicio_asociado_origen_atel_"+id_parametrizacion_origen_atel_editar).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO ESTADOS */
     $(".bd_estado_origen_atel_"+id_parametrizacion_origen_atel_editar).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES A EJECUTAR */
     $(".bd_accion_ejecutar_origen_atel_"+id_parametrizacion_origen_atel_editar).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES ANTECESORAS */
     $(".bd_accion_antecesora_origen_atel_"+id_parametrizacion_origen_atel_editar).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
@@ -1324,28 +1613,28 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
     
     /* INICIALIZACIÓN SELECT 2 LISTADO DE SERVICIOS ASOCIADOS */
     $(".servicio_asociado_calificacion_pcl_"+num_consecutivo).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO ESTADOS */
     $(".estado_calificacion_pcl_"+num_consecutivo).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES A EJECUTAR */
     $(".accion_ejecutar_calificacion_pcl_"+num_consecutivo).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES ANTECESORAS */
     $(".accion_antecesora_calificacion_pcl_"+num_consecutivo).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
@@ -1614,28 +1903,28 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
 function edicion_parametrizacion_calificacion_pcl(id_parametrizacion_calificacion_pcl_editar){
     /* INICIALIZACIÓN SELECT 2 LISTADO DE SERVICIOS ASOCIADOS */
     $(".bd_servicio_asociado_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO ESTADOS */
     $(".bd_estado_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES A EJECUTAR */
     $(".bd_accion_ejecutar_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES ANTECESORAS */
     $(".bd_accion_antecesora_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
@@ -1864,28 +2153,28 @@ function funciones_elementos_fila_parametrizar_juntas(num_consecutivo){
     
     /* INICIALIZACIÓN SELECT 2 LISTADO DE SERVICIOS ASOCIADOS */
     $(".servicio_asociado_juntas_"+num_consecutivo).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO ESTADOS */
     $(".estado_juntas_"+num_consecutivo).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES A EJECUTAR */
     $(".accion_ejecutar_juntas_"+num_consecutivo).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES ANTECESORAS */
     $(".accion_antecesora_juntas_"+num_consecutivo).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
@@ -2154,28 +2443,28 @@ function funciones_elementos_fila_parametrizar_juntas(num_consecutivo){
 function edicion_parametrizacion_juntas(id_parametrizacion_juntas_editar){
     /* INICIALIZACIÓN SELECT 2 LISTADO DE SERVICIOS ASOCIADOS */
     $(".bd_servicio_asociado_juntas_"+id_parametrizacion_juntas_editar).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO ESTADOS */
     $(".bd_estado_juntas_"+id_parametrizacion_juntas_editar).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES A EJECUTAR */
     $(".bd_accion_ejecutar_juntas_"+id_parametrizacion_juntas_editar).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES ANTECESORAS */
     $(".bd_accion_antecesora_juntas_"+id_parametrizacion_juntas_editar).select2({
-        width: '140px',
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });

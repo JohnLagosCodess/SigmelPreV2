@@ -40,6 +40,12 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    $(".accion").select2({
+        width: '100%',
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
     // llenado de selectores
 
     let token = $('input[name=_token]').val();
@@ -112,7 +118,74 @@ $(document).ready(function(){
             }
         }
     });
+
+    // LISTADO DE ACCIONES 
+    var datos_listado_accion = {
+        '_token': token,
+        'parametro' : "listado_accion",
+        'Id_proceso' : $("#Id_proceso").val(),
+        'Id_servicio': $("#Id_servicio").val(),
+        'nro_evento': $("#newId_evento").val(),
+        'Id_asignacion': $("#newId_asignacion").val()
+    };
     
+    $.ajax({
+        type: 'POST',
+        url: 'selectoresModuloCalificacionPCL',
+        data: datos_listado_accion,
+        success:function(data){
+            if (data.length > 0) {
+                $("#accion").empty();
+                $("#accion").append('<option></option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    if (data[claves[i]]["Id_Accion"] == $("#bd_id_accion").val()) {
+                        $("#accion").append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Nombre_accion"]+'</option>');
+                    } else {
+                        $("#accion").append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Nombre_accion"]+'</option>');
+                    }
+                }
+                
+                $(".no_ejecutar_parametrica_modulo_principal").addClass('d-none');
+                $("#Edicion").removeClass('d-none');
+            }else{
+                $("#accion").empty();
+                $("#accion").append('<option></option>');
+
+                $(".no_ejecutar_parametrica_modulo_principal").removeClass('d-none');
+                $("#Edicion").addClass('d-none');
+            }
+        }
+    });
+
+    $("#accion").change(function(){
+        let datos_ejecutar_parametrica_mod_principal = {
+            '_token': token,
+            'parametro': "validarSiModPrincipal",
+            'Id_proceso': $("#Id_proceso").val(),
+            'Id_servicio': $("#Id_servicio").val(),
+            'Id_accion': $(this).val(),
+            'nro_evento': $("#newId_evento").val()
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/validacionParametricaEnSi',
+            data: datos_ejecutar_parametrica_mod_principal,
+            success:function(data) {
+                if(data.length > 0){
+                    if (data[0]["Modulo_principal"] !== "Si") {
+                        $(".no_ejecutar_parametrica_modulo_principal").removeClass('d-none');
+                        $("#Edicion").addClass('d-none');
+                    } else {
+                        $(".no_ejecutar_parametrica_modulo_principal").addClass('d-none');
+                        $("#Edicion").removeClass('d-none');
+                    }
+                }
+            
+            }
+        });
+    });
 
     /* Obtener el ID del evento a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id evento */
     $("input[id^='listadodocumento_']").click(function(){
@@ -193,6 +266,7 @@ $(document).ready(function(){
         var newId_evento = $('#newId_evento').val();
         var newId_asignacion = $('#newId_asignacion').val();
         var Id_proceso = $('#Id_proceso').val();
+        var Id_servicio = $("#Id_servicio").val();
         var modalidad_calificacion = $('#modalidad_calificacion').val();
         var f_accion = $('#f_accion').val();
         var accion = $('#accion').val();
@@ -209,6 +283,7 @@ $(document).ready(function(){
             'newId_evento':newId_evento,
             'newId_asignacion':newId_asignacion,
             'Id_proceso':Id_proceso,
+            'Id_servicio': Id_servicio,
             'modalidad_calificacion':modalidad_calificacion,
             'f_accion':f_accion,
             'accion':accion,
@@ -234,13 +309,13 @@ $(document).ready(function(){
                     setTimeout(function(){
                         $('.alerta_calificacion').addClass('d-none');
                         $('.alerta_calificacion').empty(); 
-                        //location.reload();                       
+                        location.reload();                      
                     }, 3000);
                 }                
             }
         })        
         // location.reload();
-    }) 
+    });
 
     // llenado del formulario para la captura de la modal de Agregar Seguimiento
 
@@ -1637,6 +1712,7 @@ $(document).on('change', "select[id^='lista_docs_fila_']", function(){
         $('#contenedor_otro_doc_fila_'+consecutivo[0]).empty();
     }
 });
+
 /* Si se selecciona la opción Otro Cual Inserta un campo de texto (SELECTOR DE SOLICITANTES) */
 $(document).on('change', "select[id^='lista_solicitante_fila_']", function(){
     var id_selecccionado = $(this).attr("id");

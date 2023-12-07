@@ -58,6 +58,12 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    $(".accion").select2({
+        width: '100%',
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
     // llenado de selectores
     let token = $('input[name=_token]').val();
 
@@ -160,6 +166,74 @@ $(document).ready(function(){
         }
     });
 
+    // LISTADO DE ACCIONES 
+    var datos_listado_accion = {
+        '_token': token,
+        'parametro' : "listado_accion",
+        'Id_proceso' : $("#Id_proceso").val(),
+        'Id_servicio': $("#Id_servicio").val(),
+        'nro_evento': $("#newId_evento").val(),
+        'Id_asignacion': $("#newId_asignacion").val()
+    };
+    
+    $.ajax({
+        type: 'POST',
+        url: 'selectoresJuntas',
+        data: datos_listado_accion,
+        success:function(data){
+            if (data.length > 0) {
+                $("#accion").empty();
+                $("#accion").append('<option></option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    if (data[claves[i]]["Id_Accion"] == $("#bd_id_accion").val()) {
+                        $("#accion").append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Nombre_accion"]+'</option>');
+                    } else {
+                        $("#accion").append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Nombre_accion"]+'</option>');
+                    }
+                }
+                
+                $(".no_ejecutar_parametrica_modulo_principal").addClass('d-none');
+                $("#Edicion").removeClass('d-none');
+            }else{
+                $("#accion").empty();
+                $("#accion").append('<option></option>');
+
+                $(".no_ejecutar_parametrica_modulo_principal").removeClass('d-none');
+                $("#Edicion").addClass('d-none');
+            }
+        }
+    });
+
+    $("#accion").change(function(){
+        let datos_ejecutar_parametrica_mod_principal = {
+            '_token': token,
+            'parametro': "validarSiModPrincipal",
+            'Id_proceso': $("#Id_proceso").val(),
+            'Id_servicio': $("#Id_servicio").val(),
+            'Id_accion': $(this).val(),
+            'nro_evento': $("#newId_evento").val()
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/validacionParametricaEnSi',
+            data: datos_ejecutar_parametrica_mod_principal,
+            success:function(data) {
+                if(data.length > 0){
+                    if (data[0]["Modulo_principal"] !== "Si") {
+                        $(".no_ejecutar_parametrica_modulo_principal").removeClass('d-none');
+                        $("#Edicion").addClass('d-none');
+                    } else {
+                        $(".no_ejecutar_parametrica_modulo_principal").addClass('d-none');
+                        $("#Edicion").removeClass('d-none');
+                    }
+                }
+            
+            }
+        });
+    });
+
     //Mostrar Historial de acciones
     $('#Hacciones').click(function(){
         $('#borrar_tabla_historial_acciones').empty();
@@ -244,6 +318,7 @@ $(document).ready(function(){
         var newId_evento = $('#newId_evento').val();
         var newId_asignacion = $('#newId_asignacion').val();
         var Id_proceso = $('#Id_proceso').val();
+        var Id_servicio = $("#Id_servicio").val();
         var f_accion = $('#f_accion').val();
         var accion = $('#accion').val();
         var fecha_alerta = $('#fecha_alerta').val();
@@ -258,6 +333,7 @@ $(document).ready(function(){
             'newId_evento':newId_evento,
             'newId_asignacion':newId_asignacion,
             'Id_proceso':Id_proceso,
+            'Id_servicio': Id_servicio,
             'f_accion':f_accion,
             'accion':accion,
             'fecha_alerta':fecha_alerta,

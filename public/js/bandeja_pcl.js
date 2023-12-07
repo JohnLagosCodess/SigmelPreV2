@@ -1,14 +1,29 @@
 $(document).ready(function () {
 
-    // Inicializacion del select2 del listado de servicio y profesional bandeja de PCL
-
-    $(".redireccionar").select2({
+    // Inicialización select2 listado de procesos parametrizados
+    $(".procesos_parametrizados").select2({
+        width: '100%',
         placeholder:"Selecione una opción",
         allowClear:false
-
     });
 
+    // Inicializacion del select2 del listado de servicios
+    $(".redireccionar").select2({
+        width: '100%',
+        placeholder:"Selecione una opción",
+        allowClear:false
+    });
+
+    // Inicialización select 2 listado de accciones
+    $(".accion").select2({
+        width: '100%',
+        placeholder:"Selecione una opción",
+        allowClear:false
+    });
+
+    // Inicialización select2 listado profesional bandeja de PCL
     $(".profesional").select2({
+        width: '100%',
         placeholder:"Seleccione una opción",
         allowClear:false
     });
@@ -16,49 +31,144 @@ $(document).ready(function () {
     //llenado de selectores 
     let token = $('input[name=_token]').val();
 
-    //Listado de seleccion profecional bandeja PCL
-
-    let datos_lista_profesional={
+    // listado de procesos que almenos tiene configurado una paramétrica
+    let datos_lista_procesos_parametrizados = {
         '_token':token,
-        'parametro':"lista_profesional_pcl"
+        'parametro':"listado_procesos_parametrizados"
     }
 
     $.ajax({
         type:'POST',
         url:'/selectoresBandejaPCL',
-        data: datos_lista_profesional,
+        data: datos_lista_procesos_parametrizados,
         success:function (data) {
-            //console.log(data)
-            //$('#profesional').empty();
-            $('#profesional').append('<option value="" selected>Seleccione</option>');
-            let profecionalpcl = Object.keys(data);
-            for (let i = 0; i < profecionalpcl.length; i++) {
-                $('#profesional').append('<option value="'+data[profecionalpcl[i]]['id']+'">'+data[profecionalpcl[i]]['name']+'</option>')
-            }
-            
-        }
-    });
-
-    //Listado de servicio de badeja PCl
-    let datos_lista_servicio = {
-        '_token': token,
-        'parametro':"lista_servicios_pcl"
-    };
-
-    $.ajax({
-        type:'POST',
-        url:'/selectoresBandejaPCL',
-        data: datos_lista_servicio,
-        success:function(data){
             // console.log(data);
-            $('#redireccionar').empty();
-            $('#redireccionar').append('<option value="" selected>Seleccione</option>');
-            let serviciopcl = Object.keys(data);
-            for (let i =0; i < serviciopcl.length; i++ ){
-                $('#redireccionar').append('<option value="'+data[serviciopcl[i]]['Id_Servicio']+'">'+data[serviciopcl[i]]['Nombre_servicio']+'</option>');
+            $('#procesos_parametrizados').append('<option value="" selected>Seleccione</option>');
+            let procesos_parametrizados = Object.keys(data);
+            for (let i = 0; i < procesos_parametrizados.length; i++) {
+                $('#procesos_parametrizados').append('<option value="'+data[procesos_parametrizados[i]]['Id_proceso']+'">'+data[procesos_parametrizados[i]]['Nombre_proceso']+'</option>')
             }
         }
     });
+
+    //Listado de servicios de bandeja PCl
+    $('#procesos_parametrizados').change(function(){
+        let datos_lista_servicio = {
+            '_token': token,
+            'parametro':"lista_servicios_pcl",
+            'id_proceso': $(this).val()
+        };
+        $.ajax({
+            type:'POST',
+            url:'/selectoresBandejaPCL',
+            data: datos_lista_servicio,
+            success:function(data){
+                // console.log(data);
+                $('#accion').empty();
+                $('#profesional').empty();
+                $(".columna_selector_profesional").slideUp('slow');
+                $('#redireccionar').empty();
+                $('#redireccionar').append('<option></option>');
+                let serviciopcl = Object.keys(data);
+                for (let i =0; i < serviciopcl.length; i++ ){
+                    $('#redireccionar').append('<option value="'+data[serviciopcl[i]]['Id_Servicio']+'">'+data[serviciopcl[i]]['Nombre_servicio']+'</option>');
+                }
+            }
+        });
+    });
+
+
+    $(".columna_selector_profesional").slideUp('slow');
+    // listado de acciones a ejecutar dependiendo del proceso y servicio (es decir lo de parametrizaciones)
+    $("#redireccionar").change(function(){
+        let datos_listado_accion = {
+            '_token': token,
+            'Id_proceso': $("#procesos_parametrizados").val(),
+            'Id_servicio': $(this).val(),
+        //    'Id_asignacion' : arrayIdCheckActualizar,
+            'parametro' : "listado_accion"
+        };
+   
+        $.ajax({
+            type:'POST',
+            url:'/selectoresBandejaPCL',
+            data: datos_listado_accion,
+            success:function(data) {
+                if (data.length > 0) {
+                    $('#accion').empty();
+                    $('#accion').append('<option></option>');
+                    let claves = Object.keys(data);
+                    for (let i = 0; i < claves.length; i++) {
+                        $('#accion').append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Nombre_accion"]+'</option>');
+                    }
+                    
+                    $(".no_ejecutar_parametrica_bandeja_trabajo").addClass('d-none');
+                    $("#btn_guardar").removeClass('d-none');
+                } else {
+                    $('#accion').empty();
+                    $('#accion').append('<option></option>');
+
+                    $(".no_ejecutar_parametrica_bandeja_trabajo").removeClass('d-none');
+                    $("#btn_guardar").addClass('d-none');
+                }
+            }
+        });
+    });
+
+    /* VALIDACIÓN PARA DETERMINAR QUE LA PARAMÉTRICA QUE SE CONFIGURE PARA EL MÓDULO NUEVO ESTE EN UN VALOR DE SI EN LA TABLA sigmel_informacion_parametrizaciones_clientes */
+    var validar_bandeja_trabajo = setInterval(() => {
+        if($("#procesos_parametrizados").val() != '' && $("#redireccionar").val() != '' && $("#accion").val() != ''){
+            let datos_ejecutar_parametrica_bandeja_trabajo = {
+                '_token': token,
+                'parametro': "validarSiBandejaTrabajo",
+                'Id_proceso': $("#procesos_parametrizados").val(),
+                'Id_servicio': $("#redireccionar").val(),
+                'Id_accion': $("#accion").val(),
+            };
+            // console.log(datos_ejecutar_parametrica_bandeja_trabajo);
+            $.ajax({
+                type:'POST',
+                url:'/validacionParametricaEnSi',
+                data: datos_ejecutar_parametrica_bandeja_trabajo,
+                success:function(data) {
+                    // console.log(data);
+                    if(data.length > 0){
+                        if (data[0]["Bandeja_trabajo"] !== "Si") {
+                            $(".no_ejecutar_parametrica_bandeja_trabajo").removeClass('d-none');
+                            $("#btn_guardar").addClass('d-none');
+                            $(".columna_selector_profesional").slideUp('slow');
+                        } else {
+                            $(".no_ejecutar_parametrica_bandeja_trabajo").addClass('d-none');
+                            $("#btn_guardar").removeClass('d-none');
+                            clearInterval(validar_bandeja_trabajo);
+
+                            // Cargue Listado de seleccion profesional bandeja PCL
+                            $(".columna_selector_profesional").slideDown('slow');
+                            let datos_lista_profesional={
+                                '_token':token,
+                                'parametro':"lista_profesional_pcl"
+                            }
+
+                            $.ajax({
+                                type:'POST',
+                                url:'/selectoresBandejaPCL',
+                                data: datos_lista_profesional,
+                                success:function (data) {
+                                    //console.log(data)
+                                    $('#profesional').empty();
+                                    $('#profesional').append('<option value="" selected>Seleccione</option>');
+                                    let profecionalpcl = Object.keys(data);
+                                    for (let i = 0; i < profecionalpcl.length; i++) {
+                                        $('#profesional').append('<option value="'+data[profecionalpcl[i]]['id']+'">'+data[profecionalpcl[i]]['name']+'</option>')
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+        }
+    }, 500);
 
     //captura de data sin Filtros        
     let datos_sin_filtro = {            
@@ -127,10 +237,7 @@ $(document).ready(function () {
         
     });
     
-    
-
     //Llenado del formulario para captura de data para dataTable
-
     $('#form_filtro_bandejaPcl').submit(function (e) {
         e.preventDefault();
         var consultar_f_desde = $('#consultar_f_desde').val();
@@ -239,9 +346,7 @@ $(document).ready(function () {
 
     })
 
-
     //Dimensionar o ajustar columnas de la tabla
-
     var dimensionartable = 0;    
     $(".PCLbandeja").hover(function(){
         dimensionartable++;
@@ -252,7 +357,6 @@ $(document).ready(function () {
 
         
     //Datatable Bandeja PCL
-    
     $('#Bandeja_Pcl thead tr').clone(true).addClass('filters').appendTo('#Bandeja_Pcl thead');
     function capturar_informacion_bandejaPCL(response, index, value) {        
         $('#Bandeja_Pcl').DataTable({            
@@ -405,7 +509,6 @@ $(document).ready(function () {
     }
     
     //Seteo de todos los checkbox
-
     $(document).on('change', "#toggleButton", function () {         
         var isChecked = $(this).is(":checked");
 
@@ -432,7 +535,6 @@ $(document).ready(function () {
     })        
 
     //Ocultar boton del datatable
-
     setTimeout(() => {
         var botonFiltrar = $('#contenedorTable').parents();
         var contendorBotoFiltrar = botonFiltrar[1].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[0].classList[0];
@@ -474,14 +576,18 @@ $(document).ready(function () {
 
         if (arrayIdCheckActualizar.length > 0) {            
 
-            var profesional = $('#profesional').val();
+            var proceso_parametrizado = $('#procesos_parametrizados').val();
             var redireccionar = $('#redireccionar').val();
-            //var token = $('meta[name="csrf-token"]').attr('content');
+            var accion = $("#accion").val();
+            var profesional = $('#profesional').val();
+
             let token = $('input[name=_token]').val();
                         
             var datos_actualizar = {
+                'proceso_parametrizado': proceso_parametrizado,
+                'redireccionar': redireccionar,
+                'accion': accion,
                 'profesional': profesional,
-                'redireccionar': redireccionar
             }
             
             var datos_enviar ={
@@ -504,24 +610,24 @@ $(document).ready(function () {
                             $('.mostrar_mensaje_actualizo_bandeja').addClass('d-none');
                             $('.mostrar_mensaje_actualizo_bandeja').empty();
                             location.reload();
-                        }, 2000);
+                        }, 6000);
                     }else{
                         $('.mostrar_mensaje_No_actualizo_bandeja').removeClass('d-none');
                         $('.mostrar_mensaje_No_actualizo_bandeja').append('<strong>'+response.mensaje+'</strong>');
                         setTimeout(function(){
                             $('.mostrar_mensaje_No_actualizo_bandeja').addClass('d-none');
                             $('.mostrar_mensaje_No_actualizo_bandeja').empty();                            
-                        }, 2000);
+                        }, 6000);
                     }  
                 }
             });
         }else{
             $('.mostrar_mensaje_No_actualizo_bandeja').removeClass('d-none');
-            $('.mostrar_mensaje_No_actualizo_bandeja').append('<strong>Debe seleccionar un registro en la tabla y el Profesional o Redireccionar a, para Actualizar</strong>');
+            $('.mostrar_mensaje_No_actualizo_bandeja').append('<strong>Debe seleccionar un registro en la tabla, seleccionar un proceso, redirección y acción y/o profesional para actualizar.</strong>');
             setTimeout(function(){
                 $('.mostrar_mensaje_No_actualizo_bandeja').addClass('d-none');
                 $('.mostrar_mensaje_No_actualizo_bandeja').empty();
-            }, 2000);
+            }, 6000);
         }
     });
 });

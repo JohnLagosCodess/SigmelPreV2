@@ -1,13 +1,30 @@
 $(document).ready(function () {
 
-    // Inicializacion del select2 del listado de servicio y profesional bandeja de Juntas
+    // Inicialización select2 listado de procesos parametrizados
+    $(".procesos_parametrizados").select2({
+        width: '100%',
+        placeholder:"Selecione una opción",
+        allowClear:false
+    });
+
+    // Inicializacion del select2 del listado de servicios
     $(".redireccionar").select2({
+        width: '100%',
         placeholder:"Selecione una opción",
         allowClear:false
 
     });
 
+    // Inicialización select 2 listado de accciones
+    $(".accion").select2({
+        width: '100%',
+        placeholder:"Selecione una opción",
+        allowClear:false
+    });
+
+    // Inicialización select2 listado profesional bandeja de Juntas
     $(".profesional").select2({
+        width: '100%',
         placeholder:"Seleccione una opción",
         allowClear:false
     });
@@ -15,52 +32,149 @@ $(document).ready(function () {
     //llenado de selectores 
     let token = $('input[name=_token]').val();
 
-    //Listado de seleccion profecional bandeja Juntas
-
-    let datos_lista_profesional={
+    // listado de procesos que almenos tiene configurado una paramétrica
+    let datos_lista_procesos_parametrizados = {
         '_token':token,
-        'parametro':"lista_profesional_juntas"
+        'parametro':"listado_procesos_parametrizados"
     }
 
     $.ajax({
         type:'POST',
         url:'/selectoresBandejaJuntas',
-        data: datos_lista_profesional,
+        data: datos_lista_procesos_parametrizados,
         success:function (data) {
-            $('#profesional').append('<option value="" selected>Seleccione</option>');
-            let profecionaljuntas = Object.keys(data);
-            for (let i = 0; i < profecionaljuntas.length; i++) {
-                $('#profesional').append('<option value="'+data[profecionaljuntas[i]]['id']+'">'+data[profecionaljuntas[i]]['name']+'</option>')
+            // console.log(data);
+            $('#procesos_parametrizados').append('<option value="" selected>Seleccione</option>');
+            let procesos_parametrizados = Object.keys(data);
+            for (let i = 0; i < procesos_parametrizados.length; i++) {
+                $('#procesos_parametrizados').append('<option value="'+data[procesos_parametrizados[i]]['Id_proceso']+'">'+data[procesos_parametrizados[i]]['Nombre_proceso']+'</option>')
             }
-            
         }
     });
 
-    //Listado de servicio de badeja Juntas
-    let datos_lista_servicio = {
-        '_token': token,
-        'parametro':"lista_servicios_juntas"
-    };
-    $.ajax({
-        type:'POST',
-        url:'/selectoresBandejaJuntas',
-        data: datos_lista_servicio,
-        success:function(data){
-            // console.log(data);
-            $('#redireccionar').empty();
-            $('#redireccionar').append('<option value="" selected>Seleccione</option>');
-            let serviciojuntas = Object.keys(data);
-            for (let i =0; i < serviciojuntas.length; i++ ){
-                $('#redireccionar').append('<option value="'+data[serviciojuntas[i]]['Id_Servicio']+'">'+data[serviciojuntas[i]]['Nombre_servicio']+'</option>');
+    //Listado de servicios de bandeja Juntas
+    $('#procesos_parametrizados').change(function(){
+        let datos_lista_servicio = {
+            '_token': token,
+            'parametro':"lista_servicios_juntas",
+            'id_proceso': $(this).val()
+        };
+        $.ajax({
+            type:'POST',
+            url:'/selectoresBandejaJuntas',
+            data: datos_lista_servicio,
+            success:function(data){
+                $('#accion').empty();
+                $('#profesional').empty();
+                $(".columna_selector_profesional").slideUp('slow');
+                $('#redireccionar').empty();
+                $('#redireccionar').append('<option value="" selected>Seleccione</option>');
+                let serviciojuntas = Object.keys(data);
+                for (let i =0; i < serviciojuntas.length; i++ ){
+                    $('#redireccionar').append('<option value="'+data[serviciojuntas[i]]['Id_Servicio']+'">'+data[serviciojuntas[i]]['Nombre_servicio']+'</option>');
+                }
             }
-        }
+        });
     });
+
+    $(".columna_selector_profesional").slideUp('slow');
+    // listado de acciones a ejecutar dependiendo del proceso y servicio (es decir lo de parametrizaciones)
+    $("#redireccionar").change(function(){
+        let datos_listado_accion = {
+            '_token': token,
+            'Id_proceso': $("#procesos_parametrizados").val(),
+            'Id_servicio': $(this).val(),
+        //    'Id_asignacion' : arrayIdCheckActualizar,
+            'parametro' : "listado_accion"
+        };
+   
+        $.ajax({
+            type:'POST',
+            url:'/selectoresBandejaJuntas',
+            data: datos_listado_accion,
+            success:function(data) {
+                if (data.length > 0) {
+                    $('#accion').empty();
+                    $('#accion').append('<option></option>');
+                    let claves = Object.keys(data);
+                    for (let i = 0; i < claves.length; i++) {
+                        $('#accion').append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Nombre_accion"]+'</option>');
+                    }
+                    
+                    $(".no_ejecutar_parametrica_bandeja_trabajo").addClass('d-none');
+                    $("#btn_guardar").removeClass('d-none');
+                } else {
+                    $('#accion').empty();
+                    $('#accion').append('<option></option>');
+
+                    $(".no_ejecutar_parametrica_bandeja_trabajo").removeClass('d-none');
+                    $("#btn_guardar").addClass('d-none');
+                }
+            }
+        });
+    });
+
+    /* VALIDACIÓN PARA DETERMINAR QUE LA PARAMÉTRICA QUE SE CONFIGURE PARA EL MÓDULO NUEVO ESTE EN UN VALOR DE SI EN LA TABLA sigmel_informacion_parametrizaciones_clientes */
+    var validar_bandeja_trabajo = setInterval(() => {
+        if($("#procesos_parametrizados").val() != '' && $("#redireccionar").val() != '' && $("#accion").val() != ''){
+            let datos_ejecutar_parametrica_bandeja_trabajo = {
+                '_token': token,
+                'parametro': "validarSiBandejaTrabajo",
+                'Id_proceso': $("#procesos_parametrizados").val(),
+                'Id_servicio': $("#redireccionar").val(),
+                'Id_accion': $("#accion").val(),
+            };
+            // console.log(datos_ejecutar_parametrica_bandeja_trabajo);
+            $.ajax({
+                type:'POST',
+                url:'/validacionParametricaEnSi',
+                data: datos_ejecutar_parametrica_bandeja_trabajo,
+                success:function(data) {
+                    // console.log(data);
+                    if(data.length > 0){
+                        if (data[0]["Bandeja_trabajo"] !== "Si") {
+                            $(".no_ejecutar_parametrica_bandeja_trabajo").removeClass('d-none');
+                            $("#btn_guardar").addClass('d-none');
+                            $(".columna_selector_profesional").slideUp('slow');
+                        } else {
+                            $(".no_ejecutar_parametrica_bandeja_trabajo").addClass('d-none');
+                            $("#btn_guardar").removeClass('d-none');
+                            clearInterval(validar_bandeja_trabajo);
+
+                            // Listado de seleccion profecional bandeja Juntas
+                            $(".columna_selector_profesional").slideDown('slow');
+                            let datos_lista_profesional={
+                                '_token':token,
+                                'parametro':"lista_profesional_juntas"
+                            }
+                        
+                            $.ajax({
+                                type:'POST',
+                                url:'/selectoresBandejaJuntas',
+                                data: datos_lista_profesional,
+                                success:function (data) {
+                                    $('#profesional').empty();
+                                    $('#profesional').append('<option value="" selected>Seleccione</option>');
+                                    let profecionaljuntas = Object.keys(data);
+                                    for (let i = 0; i < profecionaljuntas.length; i++) {
+                                        $('#profesional').append('<option value="'+data[profecionaljuntas[i]]['id']+'">'+data[profecionaljuntas[i]]['name']+'</option>')
+                                    }
+                                    
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+        }
+    }, 500);
 
     //captura de data sin Filtros        
     let datos_sin_filtro = {            
         '_token': token,
         'BandejaJuntasTotal': "CargaBandejaJuntas"
     };
+
     $.ajax({
         type:'POST',
         url:'/sinfiltrosBandejaJuntas',
@@ -103,6 +217,7 @@ $(document).ready(function () {
         }
         
     });
+
     //Captura id Checkbox para extraer su value
     var arrayIdCheckActualizar = [];
     $(document).on('change', "input[id^='actualizar_id_asignacion_']", function(){
@@ -116,6 +231,7 @@ $(document).ready(function () {
         }       
         
     });
+
     //Llenado del formulario para captura de data para dataTable
     $('#form_filtro_bandejaJuntas').submit(function (e) {
         e.preventDefault();
@@ -224,6 +340,7 @@ $(document).ready(function () {
         }, 3000);
 
     })
+
     //Dimensionar o ajustar columnas de la tabla
     var dimensionartable = 0;    
     $(".Juntasbandeja").hover(function(){
@@ -232,6 +349,7 @@ $(document).ready(function () {
             $('.detallejuntas').click();		
         }
     }); 
+
     //Datatable Bandeja Juntas
     $('#Bandeja_Juntas thead tr').clone(true).addClass('filters').appendTo('#Bandeja_Juntas thead');
     function capturar_informacion_bandejaJuntas(response, index, value) {        
@@ -393,9 +511,9 @@ $(document).ready(function () {
             }
         });        
     }
-    //Seteo de todos los checkbox
 
-     $(document).on('change', "#toggleButton", function () {         
+    //Seteo de todos los checkbox
+    $(document).on('change', "#toggleButton", function () {         
         var isChecked = $(this).is(":checked");
 
         if (isChecked) {
@@ -421,7 +539,6 @@ $(document).ready(function () {
     }) 
 
     //Ocultar boton del datatable
-
     setTimeout(() => {
         var botonFiltrar = $('#contenedorTable').parents();
         var contendorBotoFiltrar = botonFiltrar[1].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[0].classList[0];
@@ -462,14 +579,18 @@ $(document).ready(function () {
 
         if (arrayIdCheckActualizar.length > 0) {            
 
-            var profesional = $('#profesional').val();
+            var proceso_parametrizado = $('#procesos_parametrizados').val();
             var redireccionar = $('#redireccionar').val();
-            //var token = $('meta[name="csrf-token"]').attr('content');
+            var accion = $("#accion").val();
+            var profesional = $('#profesional').val();
+
             let token = $('input[name=_token]').val();
                         
             var datos_actualizar = {
-                'profesional': profesional,
-                'redireccionar': redireccionar
+                'proceso_parametrizado': proceso_parametrizado,
+                'redireccionar': redireccionar,
+                'accion': accion,
+                'profesional': profesional
             }
             
             var datos_enviar ={
@@ -492,14 +613,14 @@ $(document).ready(function () {
                             $('.mostrar_mensaje_actualizo_bandeja').addClass('d-none');
                             $('.mostrar_mensaje_actualizo_bandeja').empty();
                             location.reload();
-                        }, 2000);
+                        }, 6000);
                     }else{
                         $('.mostrar_mensaje_No_actualizo_bandeja').removeClass('d-none');
                         $('.mostrar_mensaje_No_actualizo_bandeja').append('<strong>'+response.mensaje+'</strong>');
                         setTimeout(function(){
                             $('.mostrar_mensaje_No_actualizo_bandeja').addClass('d-none');
                             $('.mostrar_mensaje_No_actualizo_bandeja').empty();                            
-                        }, 2000);
+                        }, 6000);
                     }  
                 }
             });
@@ -509,7 +630,7 @@ $(document).ready(function () {
             setTimeout(function(){
                 $('.mostrar_mensaje_No_actualizo_bandeja').addClass('d-none');
                 $('.mostrar_mensaje_No_actualizo_bandeja').empty();
-            }, 2000);
+            }, 6000);
         }
     });
 

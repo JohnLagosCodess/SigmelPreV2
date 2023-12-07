@@ -41,9 +41,10 @@
                                             <div class="form-group">
                                                 <label for="cliente">Cliente</label>
                                                 <input type="text" class="form-control" name="cliente" id="cliente" value="{{$array_datos_calificacionJuntas[0]->Nombre_Cliente}}" disabled>
-                                                <input hidden="hidden" type="text" class="form-control" name="newId_evento" id="newId_evento" value="{{$array_datos_calificacionJuntas[0]->ID_evento}}">
-                                                <input hidden="hidden" type="text" class="form-control" name="newId_asignacion" id="newId_asignacion" value="{{$array_datos_calificacionJuntas[0]->Id_Asignacion}}">
-                                                <input hidden="hidden" type="text" class="form-control" name="Id_proceso" id="Id_proceso" value="{{$array_datos_calificacionJuntas[0]->Id_proceso}}">
+                                                <input type="hidden" class="form-control" name="newId_evento" id="newId_evento" value="{{$array_datos_calificacionJuntas[0]->ID_evento}}">
+                                                <input type="hidden" class="form-control" name="newId_asignacion" id="newId_asignacion" value="{{$array_datos_calificacionJuntas[0]->Id_Asignacion}}">
+                                                <input type="hidden" class="form-control" name="Id_proceso" id="Id_proceso" value="{{$array_datos_calificacionJuntas[0]->Id_proceso}}">
+                                                <input type="hidden" class="form-control" id="Id_servicio" value="{{$array_datos_calificacionJuntas[0]->Id_Servicio}}">
                                                 @if (count($dato_validacion_no_aporta_docs) > 0)
                                                 <input hidden="hidden" type="text" class="form-control" data-id_tupla_no_aporta="{{$dato_validacion_no_aporta_docs[0]->Id_Documento_Solicitado}}" id="validacion_aporta_doc" value="{{$dato_validacion_no_aporta_docs[0]->Aporta_documento}}">
                                                 @endif
@@ -208,56 +209,59 @@
                                 </div>
                             </div>                                    
                         </div>
-                        <div class="row col-12" id="aumentarColAccionRealizar">                                    
-                            <div class="card-info">
-                                <div class="card-header text-center" style="border: 1.5px solid black;">
-                                    <h5>Acción a realizar</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="fecha_accion">Fecha de acción <span style="color: red;">(*)</span></label>
-                                                @if (!empty($array_datos_calificacionJuntas[0]->F_accion_realizar))
-                                                    <input type="date" class="form-control" name="fecha_accion" id="fecha_accion" value="{{$array_datos_calificacionJuntas[0]->F_accion_realizar}}" disabled>
-                                                    <input hidden="hidden" type="date" class="form-control" name="f_accion" id="f_accion" value="{{$array_datos_calificacionJuntas[0]->F_accion_realizar}}">
-                                                @else
-                                                    <input type="date" class="form-control" name="fecha_accion" id="fecha_accion" value="{{now()->format('Y-m-d')}}" disabled>
-                                                    <input hidden="hidden" type="date" class="form-control" name="f_accion" id="f_accion" value="{{now()->format('Y-m-d')}}">
-                                                @endif
+                        <div class="row" id="aumentarColAccionRealizar">
+                            <div class="col-12">
+                                <div class="card-info">
+                                    <div class="card-header text-center" style="border: 1.5px solid black;">
+                                        <h5>Acción a realizar</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="fecha_accion">Fecha de acción <span style="color: red;">(*)</span></label>
+                                                    @if (!empty($array_datos_calificacionJuntas[0]->F_accion_realizar))
+                                                        <input type="date" class="form-control" name="fecha_accion" id="fecha_accion" value="{{$array_datos_calificacionJuntas[0]->F_accion_realizar}}" disabled>
+                                                        <input hidden="hidden" type="date" class="form-control" name="f_accion" id="f_accion" value="{{$array_datos_calificacionJuntas[0]->F_accion_realizar}}">
+                                                    @else
+                                                        <input type="date" class="form-control" name="fecha_accion" id="fecha_accion" value="{{now()->format('Y-m-d')}}" disabled>
+                                                        <input hidden="hidden" type="date" class="form-control" name="f_accion" id="f_accion" value="{{now()->format('Y-m-d')}}">
+                                                    @endif
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="accion">Acción <span style="color: red;">(*)</span></label>
-                                                <select class="custom-select" name="accion" id="accion" style="color: red;">
-                                                    <option value="NO ESTA DEFINIDO">NO ESTA DEFINIDO</option>
-                                                </select>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="accion">Acción <span style="color: red;">(*)</span></label>
+                                                    <input type="hidden" id="bd_id_accion" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Id_accion)){echo $array_datos_calificacionJuntas[0]->Id_accion;}?>">
+                                                    <select class="custom-select accion" name="accion" id="accion" style="color: red;">
+                                                        {{-- <option value="NO ESTA DEFINIDO">NO ESTA DEFINIDO</option> --}}
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="fecha_alerta">Fecha de alerta</label>
-                                                <input type="date" class="form-control" name="fecha_alerta" id="fecha_alerta" min="{{now()->format('Y-m-d')}}" value="{{$array_datos_calificacionJuntas[0]->F_alerta}}">
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="fecha_alerta">Fecha de alerta</label>
+                                                    <input type="date" class="form-control" name="fecha_alerta" id="fecha_alerta" min="{{now()->format('Y-m-d')}}" value="{{$array_datos_calificacionJuntas[0]->F_alerta}}">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="enviar">Enviar a <span style="color: red;">(*)</span></label>
-                                                <select class="custom-select" name="enviar" id="enviar" style="color: red;">
-                                                    <option value="NO ESTA DEFINIDO">NO ESTA DEFINIDO</option>
-                                                </select>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="enviar">Enviar a <span style="color: red;">(*)</span></label>
+                                                    <select class="custom-select" name="enviar" id="enviar" style="color: red;">
+                                                        <option value="NO ESTA DEFINIDO">NO ESTA DEFINIDO</option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label for="descripcion_accion">Descripción acción</label>
-                                                <textarea class="form-control" name="descripcion_accion" id="descripcion_accion" cols="30" rows="5" style="resize: none;">{{$array_datos_calificacionJuntas[0]->Descripcion_accion}}</textarea>                                                
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="descripcion_accion">Descripción acción</label>
+                                                    <textarea class="form-control" name="descripcion_accion" id="descripcion_accion" cols="30" rows="5" style="resize: none;">{{$array_datos_calificacionJuntas[0]->Descripcion_accion}}</textarea>                                                
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>                                    
+                                </div>                                    
+                            </div>                           
                         </div>
                     </div>
                     <!-- Historial de Acciones -->
@@ -290,6 +294,10 @@
                 </div>
             </div>
             <div class="card-footer">
+                <div class="alert alert-danger no_ejecutar_parametrica_modulo_principal d-none" role="alert">
+                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> No puede actualizar la información debido a que el proceso, servicio y/o acción no tienen una parametrización
+                    asociada. Debe configurar una.
+                </div>
                 <div class="grupo_botones">
                     <input type="reset" id="Borrar" class="btn btn-info" value="Restablecer">
                     @if (empty($array_datos_calificacionJuntas[0]->Accion_realizar))

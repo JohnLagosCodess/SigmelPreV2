@@ -48,6 +48,11 @@ use App\Models\sigmel_informacion_laboralmente_activo_eventos;
 use App\Models\sigmel_informacion_libro2_libro3_eventos;
 use App\Models\sigmel_informacion_rol_ocupacional_eventos;
 use App\Models\sigmel_lista_tipo_eventos;
+
+use App\Models\sigmel_informacion_eventos;
+use App\Models\sigmel_informacion_parametrizaciones_clientes;
+use App\Models\sigmel_informacion_acciones;
+
 use Psy\Readline\Hoa\Console;
 use Svg\Tag\Rect;
 use App\Models\sigmel_lista_procesos_servicios;
@@ -222,6 +227,97 @@ class CalificacionPCLController extends Controller
             return response()->json($info_listado_modalidad_calificacion);
 
         }
+
+        if($parametro = "listado_accion"){
+            /* Iniciamos trayendo las acciones a ejecutar configuradas en la tabla de parametrizaciones
+            dependiendo del id del cliente, id del proceso, id del servicio, estado activo */
+            
+            $array_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->select('Cliente')->where('ID_evento', $request->nro_evento)->first();
+
+            $id_cliente = $array_id_cliente["Cliente"];
+
+            $acciones_a_ejecutar = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Accion_ejecutar')
+            ->where([
+                ['sipc.Id_cliente', '=', $id_cliente],
+                ['sipc.Id_proceso', '=', $request->Id_proceso],
+                ['sipc.Servicio_asociado', '=', $request->Id_servicio],
+                ['sipc.Status_parametrico', '=', 'Activo']
+            ])->get();
+
+            $info_acciones_a_ejecutar = json_decode(json_encode($acciones_a_ejecutar, true));
+
+            if (count($info_acciones_a_ejecutar) > 0) {
+                // Extraemos las acciones antecesoras a partir de las acciones a ejecutar
+                $array_acciones_ejecutar = [];
+                for ($i=0; $i < count($info_acciones_a_ejecutar); $i++) { 
+                    array_push($array_acciones_ejecutar, $info_acciones_a_ejecutar[$i]->Accion_ejecutar);
+                };
+                $extraccion_acciones_antecesoras = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+                ->select('Accion_ejecutar','Accion_antecesora')
+                ->where([
+                    ['Id_cliente', '=', $id_cliente],
+                    ['Id_proceso', '=', $request->Id_proceso],
+                    ['Servicio_asociado', '=', $request->Id_servicio],
+                ])
+                ->whereIn('Accion_ejecutar', $array_acciones_ejecutar)
+                ->get();
+                
+                $info_extraccion_acciones_antecesoras = json_decode(json_encode($extraccion_acciones_antecesoras, true));
+
+                // En caso de que almenos exista una acción antecesora, se debe analizar si esta acción 
+                // (que depende de una acción ejecutar) está en la tabla de auditorias de asignacion de eventos dependiendo
+                // del id del proceso y el id del servicio. El id de la accion a ejecutar estaría dentro de las opciones a mostrar solo si se encuentra el id
+                // de la accion antecesora en dicha tabla
+                if (count($info_extraccion_acciones_antecesoras) > 0) {
+                    
+                    foreach ($info_extraccion_acciones_antecesoras as $key => $value) {
+                        if ($info_extraccion_acciones_antecesoras[$key]->Accion_antecesora !== null) {
+                            $busqueda_accion_antecesora = DB::table(getDatabaseName('sigmel_auditorias') .'sigmel_auditorias_informacion_asignacion_eventos as saiae')
+                            ->select('saiae.Aud_Id_accion')
+                            ->where([
+                                ['saiae.Aud_Id_Asignacion', '=', $request->Id_asignacion],
+                                ['saiae.Aud_ID_evento', '=', $request->nro_evento],
+                                ['saiae.Aud_Id_proceso', '=', $request->Id_proceso],
+                                ['saiae.Aud_Id_servicio', '=', $request->Id_servicio],
+                                ['saiae.Aud_Id_accion', $info_extraccion_acciones_antecesoras[$key]->Accion_antecesora]
+                            ])
+                            ->get();
+
+                            // Si no existe en la tabla debe eliminar la información de la acción a ejecutar ya que esta no se debe mostrar.
+                            if (count($busqueda_accion_antecesora) == 0) {
+                                unset($info_extraccion_acciones_antecesoras[$key]);
+                            }
+                        }
+                    }
+                    
+                    $info_extraccion_acciones_antecesoras = array_values($info_extraccion_acciones_antecesoras);
+                    
+                    /* echo "<pre>";
+                    print_r($info_extraccion_acciones_antecesoras);
+                    echo "</pre>"; */
+
+                    // Extraemos los id de las acciones a ejecutar para buscarlas en la tabla sigmel_informacion_acciones;
+                    $array_listado_acciones = [];
+                    for ($a=0; $a < count($info_extraccion_acciones_antecesoras); $a++) { 
+                        array_push($array_listado_acciones, $info_extraccion_acciones_antecesoras[$a]->Accion_ejecutar);
+                    }
+
+                    // print_r($array_listado_acciones);
+                    $listado_acciones = sigmel_informacion_acciones::on('sigmel_gestiones')
+                    ->select('Id_Accion', 'Accion as Nombre_accion')
+                    ->where([
+                        ['Status_accion', '=', 'Activo']
+                    ])
+                    ->whereIn('Id_Accion', $array_listado_acciones)
+                    ->get();
+
+                    $info_listado_acciones_nuevo_servicio = json_decode(json_encode($listado_acciones, true));
+                    return response()->json(($info_listado_acciones_nuevo_servicio));
+                }
+            }
+        }
     }
 
     public function guardarCalificacionPCL(Request $request){
@@ -235,6 +331,7 @@ class CalificacionPCLController extends Controller
         $newIdAsignacion = $request->newId_asignacion;
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
+        $Id_servicio = $request->Id_servicio;
 
         // validacion de bandera para guardar o actualizar
         if ($request->bandera_accion_guardar_actualizar == 'Guardar') {
@@ -256,7 +353,33 @@ class CalificacionPCLController extends Controller
                 'F_registro' => $date,
             ];
 
-            $datos_info_actualizarAsignacionEvento= [              
+            // Extraemos el id estado de la tabla de parametrizaciones dependiendo del
+            // id del cliente, id proceso, id servicio, id accion. Este id irá como estado inicial
+            // en la creación de un evento
+            // MAURO PARAMETRICA
+            $array_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->select('Cliente')->where('ID_evento', $newIdEvento)->first();
+
+            $id_cliente = $array_id_cliente["Cliente"];
+
+            $estado_acorde_a_parametrica = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Estado')
+            ->where([
+                ['sipc.Id_cliente', '=', $id_cliente],
+                ['sipc.Id_proceso', '=', $Id_proceso],
+                ['sipc.Servicio_asociado', '=', $Id_servicio],
+                ['sipc.Accion_ejecutar','=',  $request->accion]
+            ])->get();
+
+            if(count($estado_acorde_a_parametrica)>0){
+                $Id_Estado_evento = $estado_acorde_a_parametrica[0]->Estado;
+            }else{
+                $Id_Estado_evento = 223;
+            }
+
+            $datos_info_actualizarAsignacionEvento= [      
+                'Id_accion' => $request->accion,
+                'Id_Estado_evento' => $Id_Estado_evento,
                 'F_alerta' => $request->fecha_alerta,                
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
@@ -308,7 +431,33 @@ class CalificacionPCLController extends Controller
                 'F_registro' => $date,
             ];
 
-            $datos_info_actualizarAsignacionEvento= [              
+            // Extraemos el id estado de la tabla de parametrizaciones dependiendo del
+            // id del cliente, id proceso, id servicio, id accion. Este id irá como estado inicial
+            // en la creación de un evento
+            // MAURO PARAMETRICA
+            $array_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->select('Cliente')->where('ID_evento', $newIdEvento)->first();
+
+            $id_cliente = $array_id_cliente["Cliente"];
+
+            $estado_acorde_a_parametrica = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Estado')
+            ->where([
+                ['sipc.Id_cliente', '=', $id_cliente],
+                ['sipc.Id_proceso', '=', $Id_proceso],
+                ['sipc.Servicio_asociado', '=', $Id_servicio],
+                ['sipc.Accion_ejecutar','=',  $request->accion]
+            ])->get();
+
+            if(count($estado_acorde_a_parametrica)>0){
+                $Id_Estado_evento = $estado_acorde_a_parametrica[0]->Estado;
+            }else{
+                $Id_Estado_evento = 223;
+            }
+
+            $datos_info_actualizarAsignacionEvento= [      
+                'Id_accion' => $request->accion,
+                'Id_Estado_evento' => $Id_Estado_evento, 
                 'F_alerta' => $request->fecha_alerta,                
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,

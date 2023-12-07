@@ -1,11 +1,16 @@
 @extends('adminlte::page')
-@section('title', 'Parametrizacion')
+@section('title', 'Parametrizaciones')
 
 @section('css')
 <style>
     body {
       max-width: 100%;
       overflow-x: hidden;
+    }
+
+    table tr td:nth-child(4) {
+      width: 100px;
+      color: green;
     }
   </style>
 @stop
@@ -75,6 +80,176 @@
                                             </div>
                                         </div>
                                         <div class="table-responsive">
+                                            <table id="tabla_origen_atel_descarga" class="table table-striped table-bordered d-none" style="width:100%;">
+                                                <thead>
+                                                    <tr class="bg-info">
+                                                        <th>Detalle</th>
+                                                        <th>N°</th>
+                                                        <th>Fecha creación de movimiento</th>
+                                                        <th>Servicio asociado</th>
+                                                        <th>Estado</th>
+                                                        <th>Accion a ejecutar</th>
+                                                        <th>Acción antecesora</th>
+                                                        <th>Módulo Nuevo</th>
+                                                        <th>Módulo Consultar</th>
+                                                        <th>Bandeja de Trabajo</th>
+                                                        <th>Módulo principal</th>
+                                                        <th>Detiene tiempo de gestión</th>
+                                                        <th>Enviar a</th>
+                                                        <th>Bandeja de trabajo destino</th>
+                                                        <th>Copia a facturación</th>
+                                                        <th>Tiempo de  alerta (horas)</th>
+                                                        <th>Porcentaje alerta (Naranja)</th>
+                                                        <th>Porcentaje alerta (Rojo)</th>
+                                                        <th>Equipo de trabajo asociado</th>
+                                                        <th>Status paramétrico</th>
+                                                        <th>Motivo / Descripción de movimiento</th>
+                                                        <th>Usuario</th>
+                                                        <th>Fecha actualización de movimiento</th>
+                                                        <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_parametrizacion_origen_atel"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php if(!empty($listado_parametrizaciones_proceso_origen_atel)): ?>
+                                                        <?php $conteo_general_proceso_origen_atel = 0;?>
+                                                        @foreach ($listado_parametrizaciones_proceso_origen_atel as $parametrizacion_origen_atel_editar)
+                                                            <?php $conteo_general_proceso_origen_atel = $conteo_general_proceso_origen_atel + 1;?>
+                                                            <tr>
+                                                                {{-- detalle --}}
+                                                                <td>
+                                                                    <div style="text-align:center;">
+                                                                        <a href="javascript:void(0);" class="d-none1" id="bd_editar_fila_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" data-id_fila_parametrizacion_editar="{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}"><i class="fa fa-sm fa-pen text-primary"></i></a>
+                                                                        <a href="javascript:void(0);" class="d-none" id="bd_guardar_fila_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}"><i class="fa fa-sm fa-check text-success"></i></a>
+                                                                    </div>
+                                                                </td>
+                                                                {{-- n° --}}
+                                                                <td><div style="text-align:center;">{{$conteo_general_proceso_origen_atel}}<input type="hidden" id="contador_origen_atel_{{$conteo_general_proceso_origen_atel}}" value="{{$conteo_general_proceso_origen_atel}}"></div></td>
+                                                                {{-- fecha creacion movimiento --}}
+                                                                <td>
+                                                                    {{$parametrizacion_origen_atel_editar->F_creacion_movimiento}}
+                                                                </td>
+                                                                {{-- servicio asociado --}}
+                                                                <td>
+                                                                    {{$parametrizacion_origen_atel_editar->Nombre_servicio}}
+                                                                </td>
+                                                                {{-- estado --}}
+                                                                <td>
+                                                                    {{$parametrizacion_origen_atel_editar->Nombre_estado}}
+                                                                </td>
+                                                                {{-- accion ejecutar --}}
+                                                                <td>
+                                                                    {{$parametrizacion_origen_atel_editar->Nombre_accion}}
+                                                                </td>
+                                                                {{-- acción antecesora --}}
+                                                                <td>
+                                                                    {{$parametrizacion_origen_atel_editar->Nombre_accion_antecesora}}
+                                                                </td>
+                                                                {{-- mod nuevo --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_origen_atel_editar->Modulo_nuevo == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- mod consultar --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_origen_atel_editar->Modulo_consultar == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- bandeja trabajo --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_origen_atel_editar->Bandeja_trabajo == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- mod principal --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_origen_atel_editar->Modulo_principal == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- detiene tiempo --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_origen_atel_editar->Detiene_tiempo_gestion == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- enviar a --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_origen_atel_editar->Enviar_a_bandeja_trabajo_destino == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- bandeja trabajo destino --}}
+                                                                <td>
+                                                                    {{$parametrizacion_origen_atel_editar->Nombre_bandeja_trabajo_destino}}
+                                                                </td>
+                                                                {{-- copia facturacion --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_origen_atel_editar->Copia_facturacion == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- tiempo alerta --}}
+                                                                <td>
+                                                                    {{$parametrizacion_origen_atel_editar->Tiempo_alerta}}
+                                                                </td>
+                                                                {{-- porcentaje alerta naranja --}}
+                                                                <td>
+                                                                    {{$parametrizacion_origen_atel_editar->Porcentaje_alerta_naranja}}
+                                                                </td>
+                                                                {{-- porcentaje alerta roja --}}
+                                                                <td>
+                                                                    {{$parametrizacion_origen_atel_editar->Porcentaje_alerta_roja}}
+                                                                </td>
+                                                                {{-- equipo trabajo --}}
+                                                                <td>
+                                                                    {{$parametrizacion_origen_atel_editar->Nombre_equipo_trabajo}}
+                                                                </td>
+                                                                {{-- status --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_origen_atel_editar->Status_parametrico == "Activo"): ?>
+                                                                        Activo
+                                                                    <?php else: ?>
+                                                                        Inactivo
+                                                                    <?php endif ?>
+                                                                </td>
+                                                                {{-- motivo descripcion --}}
+                                                                <td>
+                                                                    {{$parametrizacion_origen_atel_editar->Motivo_descripcion_movimiento}}
+                                                                </td>
+                                                                {{-- usuairo --}}
+                                                                <td>
+                                                                    {{$parametrizacion_origen_atel_editar->Nombre_usuario}}
+                                                                </td>
+                                                                {{-- fecha actualizacion movimiento --}}
+                                                                <td>
+                                                                    {{$parametrizacion_origen_atel_editar->F_actualizacion_movimiento}}
+                                                                </td>
+                                                                <td>
+                                                                    <div style="text-align:center;">-<div>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    <?php endif ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="table-responsive">
                                             <table id="parametrizar_origen_atel" class="table table-striped table-bordered" style="width:100%;">
                                                 <thead>
                                                     <tr class="bg-info">
@@ -126,7 +301,7 @@
                                                                 {{-- servicio asociado --}}
                                                                 <input type="hidden" id="bd_id_servicio_asociado_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Servicio_asociado}}">
                                                                 <td>
-                                                                    <select style="width:140px;" class="custom-select bd_servicio_asociado_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" id="bd_servicio_asociado_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" disabled>
+                                                                    <select style="width:240px;" class="custom-select bd_servicio_asociado_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" id="bd_servicio_asociado_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
                                                                         <option value="{{$parametrizacion_origen_atel_editar->Servicio_asociado}}" selected>{{$parametrizacion_origen_atel_editar->Nombre_servicio}}</option>
                                                                     </select>
@@ -134,7 +309,7 @@
                                                                 {{-- estado --}}
                                                                 <input type="hidden" id="bd_id_estado_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Estado}}">
                                                                 <td>
-                                                                    <select style="width:140px;" class="custom-select bd_estado_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" id="bd_estado_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" disabled>
+                                                                    <select style="width:240px;" class="custom-select bd_estado_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" id="bd_estado_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
                                                                         <option value="{{$parametrizacion_origen_atel_editar->Estado}}" selected>{{$parametrizacion_origen_atel_editar->Nombre_estado}}</option>
                                                                     </select>
@@ -142,7 +317,7 @@
                                                                 {{-- accion ejecutar --}}
                                                                 <input type="hidden" id="bd_id_accion_ejecutar_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Accion_ejecutar}}">
                                                                 <td>
-                                                                    <select style="width:140px;" disabled class="custom-select bd_accion_ejecutar_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" id="bd_accion_ejecutar_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" disabled>
+                                                                    <select style="width:240px;" disabled class="custom-select bd_accion_ejecutar_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" id="bd_accion_ejecutar_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
                                                                         <option value="{{$parametrizacion_origen_atel_editar->Accion_ejecutar}}" selected>{{$parametrizacion_origen_atel_editar->Nombre_accion}}</option>
                                                                     </select>
@@ -150,7 +325,7 @@
                                                                 {{-- acción antecesora --}}
                                                                 <input type="hidden" id="bd_id_accion_antecesora_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Accion_antecesora}}">
                                                                 <td>
-                                                                    <select style="width:140px;" class="custom-select bd_accion_antecesora_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" id="bd_accion_antecesora_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" disabled>
+                                                                    <select style="width:240px;" class="custom-select bd_accion_antecesora_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" id="bd_accion_antecesora_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
                                                                         <option value="{{$parametrizacion_origen_atel_editar->Accion_antecesora}}" selected>{{$parametrizacion_origen_atel_editar->Nombre_accion_antecesora}}</option>
                                                                     </select>
@@ -330,6 +505,178 @@
                                             </div>
                                         </div>
                                         <div class="table-responsive">
+                                            <table id="tabla_calificacion_pcl_descarga" class="table table-striped table-bordered d-none" style="width:100%;">
+                                                <thead>
+                                                    <tr class="bg-info">
+                                                        <th>Detalle</th>
+                                                        <th>N°</th>
+                                                        <th>Fecha creación de movimiento</th>
+                                                        <th>Servicio asociado</th>
+                                                        <th>Estado</th>
+                                                        <th>Accion a ejecutar</th>
+                                                        <th>Acción antecesora</th>
+                                                        <th>Módulo Nuevo</th>
+                                                        <th>Módulo Consultar</th>
+                                                        <th>Bandeja de Trabajo</th>
+                                                        <th>Módulo principal</th>
+                                                        <th>Detiene tiempo de gestión</th>
+                                                        <th>Enviar a</th>
+                                                        <th>Bandeja de trabajo destino</th>
+                                                        <th>Copia a facturación</th>
+                                                        <th>Tiempo de  alerta (horas)</th>
+                                                        <th>Porcentaje alerta (Naranja)</th>
+                                                        <th>Porcentaje alerta (Rojo)</th>
+                                                        <th>Equipo de trabajo asociado</th>
+                                                        <th>Status paramétrico</th>
+                                                        <th>Motivo / Descripción de movimiento</th>
+                                                        <th>Usuario</th>
+                                                        <th>Fecha actualización de movimiento</th>
+                                                        <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_parametrizacion_calificacion_pcl"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php if(!empty($listado_parametrizaciones_proceso_calificacion_pcl)): ?>
+                                                        <?php $conteo_general_proceso_calificacion_pcl = 0;?>
+                                                        @foreach ($listado_parametrizaciones_proceso_calificacion_pcl as $parametrizacion_calificacion_pcl_editar)
+                                                            <?php $conteo_general_proceso_calificacion_pcl= $conteo_general_proceso_calificacion_pcl + 1;?>
+                                                            <tr>
+                                                                {{-- detalle --}}
+                                                                <td>
+                                                                    <div style="text-align:center;">
+                                                                        <a href="javascript:void(0);" class="d-none1" id="bd_editar_fila_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" data-id_fila_parametrizacion_editar="{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}"><i class="fa fa-sm fa-pen text-primary"></i></a>
+                                                                        <a href="javascript:void(0);" class="d-none" id="bd_guardar_fila_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}"><i class="fa fa-sm fa-check text-success"></i></a>
+                                                                    </div>
+                                                                </td>
+                                                                {{-- n° --}}
+                                                                <td><div style="text-align:center;">{{$conteo_general_proceso_calificacion_pcl}}<input type="hidden" id="contador_calificacion_pcl_{{$conteo_general_proceso_calificacion_pcl}}" value="{{$conteo_general_proceso_calificacion_pcl}}"></div></td>
+                                                                {{-- fecha creacion movimiento --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->F_creacion_movimiento}}
+                                                                </td>
+                                                                {{-- servicio asociado --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->Nombre_servicio}}
+                                                                </td>
+                                                                {{-- estado --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->Nombre_estado}}
+                                                                </td>
+                                                                {{-- accion ejecutar --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->Nombre_accion}}
+                                                                </td>
+                                                                {{-- acción antecesora --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->Nombre_accion_antecesora}}
+                                                                </td>
+                                                                {{-- mod nuevo --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_calificacion_pcl_editar->Modulo_nuevo == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- mod consultar --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_calificacion_pcl_editar->Modulo_consultar == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- bandeja trabajo --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_calificacion_pcl_editar->Bandeja_trabajo == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- mod principal --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_calificacion_pcl_editar->Modulo_principal == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- detiene tiempo --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_calificacion_pcl_editar->Detiene_tiempo_gestion == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- enviar a --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_calificacion_pcl_editar->Enviar_a_bandeja_trabajo_destino == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- bandeja trabajo destino --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->Nombre_bandeja_trabajo_destino}}
+                                                                </td>
+                                                                {{-- copia facturacion --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_calificacion_pcl_editar->Copia_facturacion == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- tiempo alerta --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->Tiempo_alerta}}
+                                                                </td>
+                                                                {{-- porcentaje alerta naranja --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->Porcentaje_alerta_naranja}}
+                                                                </td>
+                                                                {{-- porcentaje alerta roja --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->Porcentaje_alerta_roja}}
+                                                                </td>
+                                                                {{-- equipo trabajo --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->Nombre_equipo_trabajo}}
+                                                                </td>
+                                                                {{-- status --}}
+                                                                <td>
+                                                                    <select style="width:140px;" class="custom-select bd_status_parametrico_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_status_parametrico_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
+                                                                        <option></option>
+                                                                        <?php if($parametrizacion_calificacion_pcl_editar->Status_parametrico == "Activo"): ?>
+                                                                            Activo
+                                                                        <?php else: ?>
+                                                                            Inactivo
+                                                                        <?php endif ?>
+                                                                </td>
+                                                                {{-- motivo descripcion --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->Motivo_descripcion_movimiento}}
+                                                                </td>
+                                                                {{-- usuairo --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->Nombre_usuario}}
+                                                                </td>
+                                                                {{-- fecha actualizacion movimiento --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->F_actualizacion_movimiento}}
+                                                                </td>
+                                                                <td>
+                                                                    <div style="text-align:center;">-<div>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    <?php endif ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="table-responsive">
                                             <table id="parametrizar_calificacion_pcl" class="table table-striped table-bordered" style="width:100%;">
                                                 <thead>
                                                     <tr class="bg-info">
@@ -381,7 +728,7 @@
                                                                 {{-- servicio asociado --}}
                                                                 <input type="hidden" id="bd_id_servicio_asociado_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Servicio_asociado}}">
                                                                 <td>
-                                                                    <select style="width:140px;" class="custom-select bd_servicio_asociado_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_servicio_asociado_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
+                                                                    <select style="width:240px;" class="custom-select bd_servicio_asociado_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_servicio_asociado_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
                                                                         <option value="{{$parametrizacion_calificacion_pcl_editar->Servicio_asociado}}" selected>{{$parametrizacion_calificacion_pcl_editar->Nombre_servicio}}</option>
                                                                     </select>
@@ -389,7 +736,7 @@
                                                                 {{-- estado --}}
                                                                 <input type="hidden" id="bd_id_estado_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Estado}}">
                                                                 <td>
-                                                                    <select style="width:140px;" class="custom-select bd_estado_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_estado_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
+                                                                    <select style="width:240px;" class="custom-select bd_estado_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_estado_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
                                                                         <option value="{{$parametrizacion_calificacion_pcl_editar->Estado}}" selected>{{$parametrizacion_calificacion_pcl_editar->Nombre_estado}}</option>
                                                                     </select>
@@ -397,7 +744,7 @@
                                                                 {{-- accion ejecutar --}}
                                                                 <input type="hidden" id="bd_id_accion_ejecutar_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Accion_ejecutar}}">
                                                                 <td>
-                                                                    <select style="width:140px;" disabled class="custom-select bd_accion_ejecutar_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_accion_ejecutar_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
+                                                                    <select style="width:240px;" disabled class="custom-select bd_accion_ejecutar_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_accion_ejecutar_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
                                                                         <option value="{{$parametrizacion_calificacion_pcl_editar->Accion_ejecutar}}" selected>{{$parametrizacion_calificacion_pcl_editar->Nombre_accion}}</option>
                                                                     </select>
@@ -405,7 +752,7 @@
                                                                 {{-- acción antecesora --}}
                                                                 <input type="hidden" id="bd_id_accion_antecesora_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Accion_antecesora}}">
                                                                 <td>
-                                                                    <select style="width:140px;" class="custom-select bd_accion_antecesora_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_accion_antecesora_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
+                                                                    <select style="width:240px;" class="custom-select bd_accion_antecesora_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_accion_antecesora_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
                                                                         <option value="{{$parametrizacion_calificacion_pcl_editar->Accion_antecesora}}" selected>{{$parametrizacion_calificacion_pcl_editar->Nombre_accion_antecesora}}</option>
                                                                     </select>
@@ -585,6 +932,176 @@
                                             </div>
                                         </div>
                                         <div class="table-responsive">
+                                            <table id="tabla_juntas_descarga" class="table table-striped table-bordered d-none" style="width:100%;">
+                                                <thead>
+                                                    <tr class="bg-info">
+                                                        <th>Detalle</th>
+                                                        <th>N°</th>
+                                                        <th>Fecha creación de movimiento</th>
+                                                        <th>Servicio asociado</th>
+                                                        <th>Estado</th>
+                                                        <th>Accion a ejecutar</th>
+                                                        <th>Acción antecesora</th>
+                                                        <th>Módulo Nuevo</th>
+                                                        <th>Módulo Consultar</th>
+                                                        <th>Bandeja de Trabajo</th>
+                                                        <th>Módulo principal</th>
+                                                        <th>Detiene tiempo de gestión</th>
+                                                        <th>Enviar a</th>
+                                                        <th>Bandeja de trabajo destino</th>
+                                                        <th>Copia a facturación</th>
+                                                        <th>Tiempo de  alerta (horas)</th>
+                                                        <th>Porcentaje alerta (Naranja)</th>
+                                                        <th>Porcentaje alerta (Rojo)</th>
+                                                        <th>Equipo de trabajo asociado</th>
+                                                        <th>Status paramétrico</th>
+                                                        <th>Motivo / Descripción de movimiento</th>
+                                                        <th>Usuario</th>
+                                                        <th>Fecha actualización de movimiento</th>
+                                                        <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_parametrizacion_juntas"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php if(!empty($listado_parametrizaciones_proceso_juntas)): ?>
+                                                        <?php $conteo_general_proceso_juntas = 0;?>
+                                                        @foreach ($listado_parametrizaciones_proceso_juntas as $parametrizacion_juntas_editar)
+                                                            <?php $conteo_general_proceso_juntas= $conteo_general_proceso_juntas + 1;?>
+                                                            <tr>
+                                                                {{-- detalle --}}
+                                                                <td>
+                                                                    <div style="text-align:center;">
+                                                                        <a href="javascript:void(0);" class="d-none1" id="bd_editar_fila_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" data-id_fila_parametrizacion_editar="{{$parametrizacion_juntas_editar->Id_parametrizacion}}"><i class="fa fa-sm fa-pen text-primary"></i></a>
+                                                                        <a href="javascript:void(0);" class="d-none" id="bd_guardar_fila_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}"><i class="fa fa-sm fa-check text-success"></i></a>
+                                                                    </div>
+                                                                </td>
+                                                                {{-- n° --}}
+                                                                <td><div style="text-align:center;">{{$conteo_general_proceso_juntas}}<input type="hidden" id="contador_juntas_{{$conteo_general_proceso_juntas}}" value="{{$conteo_general_proceso_juntas}}"></div></td>
+                                                                {{-- fecha creacion movimiento --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->F_creacion_movimiento}}
+                                                                </td>
+                                                                {{-- servicio asociado --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->Nombre_servicio}}
+                                                                </td>
+                                                                {{-- estado --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->Nombre_estado}}
+                                                                </td>
+                                                                {{-- accion ejecutar --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->Nombre_accion}}
+                                                                </td>
+                                                                {{-- acción antecesora --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->Nombre_accion_antecesora}}
+                                                                </td>
+                                                                {{-- mod nuevo --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_juntas_editar->Modulo_nuevo == "Si"):?>
+                                                                        Si
+                                                                    <?php else:?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- mod consultar --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_juntas_editar->Modulo_consultar == "Si"):?>
+                                                                        Si
+                                                                    <?php else:?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- bandeja trabajo --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_juntas_editar->Bandeja_trabajo == "Si"):?>
+                                                                        Si
+                                                                    <?php else:?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- mod principal --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_juntas_editar->Modulo_principal == "Si"):?>
+                                                                        Si
+                                                                    <?php else:?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- detiene tiempo --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_juntas_editar->Detiene_tiempo_gestion == "Si"):?>
+                                                                        Si
+                                                                    <?php else:?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- enviar a --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_juntas_editar->Enviar_a_bandeja_trabajo_destino == "Si"):?>
+                                                                        Si
+                                                                    <?php else:?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- bandeja trabajo destino --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->Nombre_bandeja_trabajo_destino}}
+                                                                </td>
+                                                                {{-- copia facturacion --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_juntas_editar->Copia_facturacion == "Si"):?>
+                                                                        Si
+                                                                    <?php else:?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- tiempo alerta --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->Tiempo_alerta}}
+                                                                </td>
+                                                                {{-- porcentaje alerta naranja --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->Porcentaje_alerta_naranja}}
+                                                                </td>
+                                                                {{-- porcentaje alerta roja --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->Porcentaje_alerta_roja}}
+                                                                </td>
+                                                                {{-- equipo trabajo --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->Nombre_equipo_trabajo}}
+                                                                </td>
+                                                                {{-- status --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_juntas_editar->Status_parametrico == "Activo"): ?>
+                                                                        Activo
+                                                                    <?php else: ?>
+                                                                        Inactivo
+                                                                    <?php endif ?>
+                                                                </td>
+                                                                {{-- motivo descripcion --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->Motivo_descripcion_movimiento}}
+                                                                </td>
+                                                                {{-- usuairo --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->Nombre_usuario}}
+                                                                </td>
+                                                                {{-- fecha actualizacion movimiento --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->F_actualizacion_movimiento}}
+                                                                </td>
+                                                                <td>
+                                                                    <div style="text-align:center;">-<div>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    <?php endif ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="table-responsive">
                                             <table id="parametrizar_juntas" class="table table-striped table-bordered" style="width:100%;">
                                                 <thead>
                                                     <tr class="bg-info">
@@ -636,7 +1153,7 @@
                                                                 {{-- servicio asociado --}}
                                                                 <input type="hidden" id="bd_id_servicio_asociado_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Servicio_asociado}}">
                                                                 <td>
-                                                                    <select style="width:140px;" class="custom-select bd_servicio_asociado_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" id="bd_servicio_asociado_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" disabled>
+                                                                    <select style="width:240px;" class="custom-select bd_servicio_asociado_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" id="bd_servicio_asociado_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
                                                                         <option value="{{$parametrizacion_juntas_editar->Servicio_asociado}}" selected>{{$parametrizacion_juntas_editar->Nombre_servicio}}</option>
                                                                     </select>
@@ -644,7 +1161,7 @@
                                                                 {{-- estado --}}
                                                                 <input type="hidden" id="bd_id_estado_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Estado}}">
                                                                 <td>
-                                                                    <select style="width:140px;" class="custom-select bd_estado_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" id="bd_estado_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" disabled>
+                                                                    <select style="width:240px;" class="custom-select bd_estado_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" id="bd_estado_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
                                                                         <option value="{{$parametrizacion_juntas_editar->Estado}}" selected>{{$parametrizacion_juntas_editar->Nombre_estado}}</option>
                                                                     </select>
@@ -652,7 +1169,7 @@
                                                                 {{-- accion ejecutar --}}
                                                                 <input type="hidden" id="bd_id_accion_ejecutar_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Accion_ejecutar}}">
                                                                 <td>
-                                                                    <select style="width:140px;" disabled class="custom-select bd_accion_ejecutar_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" id="bd_accion_ejecutar_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" disabled>
+                                                                    <select style="width:240px;" disabled class="custom-select bd_accion_ejecutar_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" id="bd_accion_ejecutar_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
                                                                         <option value="{{$parametrizacion_juntas_editar->Accion_ejecutar}}" selected>{{$parametrizacion_juntas_editar->Nombre_accion}}</option>
                                                                     </select>
@@ -660,7 +1177,7 @@
                                                                 {{-- acción antecesora --}}
                                                                 <input type="hidden" id="bd_id_accion_antecesora_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Accion_antecesora}}">
                                                                 <td>
-                                                                    <select style="width:140px;" class="custom-select bd_accion_antecesora_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" id="bd_accion_antecesora_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" disabled>
+                                                                    <select style="width:240px;" class="custom-select bd_accion_antecesora_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" id="bd_accion_antecesora_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
                                                                         <option value="{{$parametrizacion_juntas_editar->Accion_antecesora}}" selected>{{$parametrizacion_juntas_editar->Nombre_accion_antecesora}}</option>
                                                                     </select>

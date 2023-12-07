@@ -121,24 +121,39 @@
                                 <div class="mostrar_mensaje_actualizo_bandeja alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                 <div class="mostrar_mensaje_No_actualizo_bandeja alert alert-danger mt-2 mr-auto d-none" role="alert"></div>        
                                 <div class="row">
-                                    <div class="col-sm-6">
+                                    <div class="col-sm">
                                         <div class="form-group">
-                                            <label for="profesional" class="col-form-label">Profesional</label>
-                                            <select class="profesional custom-select" id="profesional">
-                                            </select>
+                                            <label for="procesos_parametrizados" class="col-form-label">Procesos</label>
+                                            <select class="procesos_parametrizados custom-select" id="procesos_parametrizados" name="procesos_parametrizados"></select>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
+                                    <div class="col-sm">
                                         <div class="form-group">
                                             <label for="redireccionar" class="col-form-label">Redireccionar a</label>
                                             <select class="redireccionar custom-select" id="redireccionar" name="redireccionar"></select>
                                         </div>
-                                    </div>                            
+                                    </div>
+                                    <div class="col-sm">
+                                        <div class="form-group">
+                                            <label for="accion" class="col-form-label">Acción</label>
+                                            <select class="accion custom-select" id="accion" name="accion"></select>
+                                        </div>
+                                    </div>                 
+                                    <div class="col-sm columna_selector_profesional">
+                                        <div class="form-group">
+                                            <label for="profesional" class="col-form-label">Profesional</label>
+                                            <select class="profesional custom-select" id="profesional"></select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="card-footer">
+                        <div class="alert alert-danger no_ejecutar_parametrica_bandeja_trabajo d-none" role="alert">
+                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong> No puede mover la información debido a que el proceso, servicio y/o acción seleccionados no tienen una parametrización
+                            asociada. Debe configurar una.
+                        </div>
                         <div class="grupo_botones" style="float: left;">
                             <input type="submit" id="btn_guardar" class="btn btn-info" value="Actualizar">
                             <input type="button" id="btn_expor_datos" class="btn btn-info" value="Exportar datos"> 

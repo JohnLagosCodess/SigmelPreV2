@@ -610,6 +610,7 @@ Route::post('/modalComunicadoJuntas', [CalificacionJuntasController::class, 'mos
 Route::post('/actualizarComunicadoJuntas', [CalificacionJuntasController::class, 'actualizarComunicadoJuntas']);
 // Acción: Insertar Agregar Seguimiento
 Route::post('/registrarCausalSeguimientoJuntas', [CalificacionJuntasController::class, 'guardarAgregarSeguimientoJuntas']);
+
 //18/11/2023
 // Vista: Módulo Controversia Juntas
 Route::post('/calificacionJuntas/controversiaJuntas', [ControversiaJuntasController::class, 'mostrarVistaPronunciamientoJuntas'])->name('controversiaJuntas');
@@ -620,6 +621,29 @@ Route::post('/selectoresJuntasControversia', [ControversiaJuntasController::clas
 Route::post('/guardarInfoServiPronunciaJuntas', [ControversiaJuntasController::class, 'guardarInfoServiPronunciaJuntas']);
 // Accion: Registrar Datos de controvertido Modulo Juntas
 Route::post('/registrarControvertidoJuntas', [ControversiaJuntasController::class, 'guardarControvertidoMoJuntas']);
+// Accion: Registrar Datos de emitido JRCI
+Route::post('/registrarEmitidoJrci', [ControversiaJuntasController::class, 'guardarEmitidoMoJrci']);
+// Accion: Registrar Datos de revision JRCI
+Route::post('/registrarRevisionJrci', [ControversiaJuntasController::class, 'guardarRevisionMoJrci']);
+// Accion: Registrar Datos de revision JRCI
+Route::post('/registrarRecursoJrci', [ControversiaJuntasController::class, 'guardarRecursoMoJrci']);
+// Accion: Registrar Datos de partes JRCI
+Route::post('/registrarPartesJrci', [ControversiaJuntasController::class, 'guardarParteMoJrci']);
+// Accion: Registrar Datos de partes Controversia JRCI
+Route::post('/registrarPartesControJrci', [ControversiaJuntasController::class, 'guardarParteControMoJrci']);
+// Accion: Registrar Datos de partes reposicion JRCI
+Route::post('/registrarDatosRepoJrci', [ControversiaJuntasController::class, 'guardarDatosRepoMoJrci']);
+// Accion: Registrar Revisión ante recurso de reposición de la Junta Regional
+Route::post('/registrarReposicionJrci', [ControversiaJuntasController::class, 'guardarRegiRepoMoJrci']);
+// Accion: Registrar Apelación de recurso ante la JNCI
+Route::post('/registrarApelaJrci', [ControversiaJuntasController::class, 'guardarRegiApelaMoJrci']);
+// Accion: Registrar Acta Ejecutoria emitida por JRCI
+Route::post('/registrarActaJrci', [ControversiaJuntasController::class, 'guardarRegiActaMoJrci']);
+// Accion: Registrar Datos de emitido JRCI
+Route::post('/registrarEmitidoJnci', [ControversiaJuntasController::class, 'guardarEmitidoMoJnci']);
+
+// Acción: Eliminar registros Diagnosticos motivo de calificacion visualmente e inactiva en la DB
+Route::post('/eliminarDiagnosticosMotivoCalificacionContro', [ControversiaJuntasController::class, 'eliminarDiagnosticoMotivoCalificacionContro']);
 
 // Acción: Mostrar vista ADICIÓN DX DTO
 Route::get('/adicionDxDtoOrigen', [AdicionDxDTO::class, 'mostrarVistaAdicionDxDTO'])->name('adicionDxDtoOrigen');
@@ -668,7 +692,7 @@ Route::post('/GuardarActualizarFirmasCliente', [AdministradorController::class, 
 Route::post('/GuardarActualizarFirmasProveedor', [AdministradorController::class, 'GuardarActualizarFirmasProveedor']);
 
 // 08/11/2023: Parametrización
-Route::post('/Sigmel/RolAdministrador/mostrarVistaParametrizacion', [ParametrizacionController::class, 'mostrarVistaParametrizacion'])->name('mostrarVistaParametrizacion');
+Route::post('/Sigmel/RolAdministrador/Parametrizaciones', [ParametrizacionController::class, 'mostrarVistaParametrizacion'])->name('mostrarVistaParametrizacion');
 // Acción: Traer datos para la vista de parametrización
 Route::post('/CargueSelectoresParametrizar', [ParametrizacionController::class, 'CargueSelectoresParametrizar']);
 

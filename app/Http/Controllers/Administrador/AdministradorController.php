@@ -63,10 +63,12 @@ use App\Models\sigmel_informacion_servicios_contratados;
 use App\Models\sigmel_informacion_ans_clientes;
 use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_firmas_proveedores;
+use App\Models\sigmel_informacion_entidades;
 
 /* Parametrizaciones */
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
+
 class AdministradorController extends Controller
 {
     
@@ -1986,6 +1988,15 @@ class AdministradorController extends Controller
             ])
             ->get();
 
+            /* $listado_nombre_solicitante = sigmel_informacion_entidades::on('sigmel_gestiones')
+            ->select('Id_Entidad as Id_Nombre_solicitante', 'Nombre_entidad as Nombre_solicitante')
+            ->where([
+                ['IdTipo_entidad', '=', $request->id_solicitante],
+                ['Estado_entidad', '=', 'activo']
+            ])
+            ->get(); */
+
+
             $info_listado_nombre_solicitante = json_decode(json_encode($listado_nombre_solicitante, true));
             return response()->json(($info_listado_nombre_solicitante));
         }
@@ -2546,6 +2557,44 @@ class AdministradorController extends Controller
     
             $info_casilla_mod_consultar = json_decode(json_encode($casilla_mod_consultar, true));
             return response()->json($info_casilla_mod_consultar);
+        }
+
+        if ($parametro == "validarSiBandejaTrabajo") {
+            // $array_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
+            // ->select('Cliente')->where('ID_evento', $request->nro_evento)->first();
+
+            // $id_cliente = $array_id_cliente["Cliente"];
+
+            $casilla_bandeja_trabajo = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Bandeja_trabajo')
+            ->where([
+                // ['sipc.Id_cliente', '=', $id_cliente],
+                ['sipc.Id_proceso', '=', $request->Id_proceso],
+                ['sipc.Servicio_asociado', '=', $request->Id_servicio],
+                ['sipc.Accion_ejecutar', '=', $request->Id_accion]
+            ])->get();
+    
+            $info_casilla_bandeja_trabajo = json_decode(json_encode($casilla_bandeja_trabajo, true));
+            return response()->json($info_casilla_bandeja_trabajo);
+        }
+
+        if ($parametro == "validarSiModPrincipal") {
+            $array_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->select('Cliente')->where('ID_evento', $request->nro_evento)->first();
+
+            $id_cliente = $array_id_cliente["Cliente"];
+
+            $casilla_mod_principal = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Modulo_principal')
+            ->where([
+                ['sipc.Id_cliente', '=', $id_cliente],
+                ['sipc.Id_proceso', '=', $request->Id_proceso],
+                ['sipc.Servicio_asociado', '=', $request->Id_servicio],
+                ['sipc.Accion_ejecutar', '=', $request->Id_accion]
+            ])->get();
+    
+            $info_casilla_mod_principal = json_decode(json_encode($casilla_mod_principal, true));
+            return response()->json($info_casilla_mod_principal);
         }
     }
 
