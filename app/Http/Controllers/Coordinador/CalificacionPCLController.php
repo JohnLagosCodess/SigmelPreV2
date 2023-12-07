@@ -35,6 +35,7 @@ use App\Models\sigmel_info_campimetria_ojo_der_eventos;
 use App\Models\sigmel_informacion_agudeza_visual_eventos;
 use App\Models\sigmel_lista_tablas_1507_decretos;
 use App\Models\cndatos_info_comunicado_eventos;
+use App\Models\sigmel_clientes;
 use App\Models\sigmel_historial_acciones_eventos;
 use App\Models\sigmel_informacion_agudeza_auditiva_eventos;
 use App\Models\sigmel_informacion_decreto_eventos;
@@ -44,6 +45,9 @@ use App\Models\sigmel_informacion_pericial_eventos;
 use App\Models\sigmel_lista_cie_diagnosticos;
 use App\Models\sigmel_lista_clases_decretos;
 use App\Models\sigmel_informacion_deficiencias_alteraciones_eventos;
+use App\Models\sigmel_informacion_entidades;
+use App\Models\sigmel_informacion_firmas_clientes;
+use App\Models\sigmel_informacion_laboral_eventos;
 use App\Models\sigmel_informacion_laboralmente_activo_eventos;
 use App\Models\sigmel_informacion_libro2_libro3_eventos;
 use App\Models\sigmel_informacion_rol_ocupacional_eventos;
@@ -696,14 +700,18 @@ class CalificacionPCLController extends Controller
         $radioafiliado_comunicado = $request->radioafiliado_comunicado;
         $radioempresa_comunicado = $request->radioempresa_comunicado;
         $radioOtro = $request->radioOtro;
-        $total_agregarcopias = '';
+        $firmarcomunicado = $request->firmarcomunicado;        
+        if (!empty($firmarcomunicado)) {
+            $firmacliente = implode($firmarcomunicado);
+        } else {
+            $firmacliente = '';
+        }   
         $agregar_copia = $request->agregar_copia;
-        $agregarcopias = implode(", ", $agregar_copia);
-        if ($agregarcopias == 'CopiaVacia') {
-            $total_agregarcopias = '';
+        if (!empty($agregar_copia)) {
+            $total_agregarcopias = implode(", ", $agregar_copia);                
         }else{
-            $total_agregarcopias = $agregarcopias;
-        }
+            $total_agregarcopias = '';
+        }        
         if(!empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && empty($radioOtro)){
             $destinatario = 'Afiliado';
         }elseif(empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado) && empty($radioOtro)){
@@ -737,6 +745,7 @@ class CalificacionPCLController extends Controller
             'Forma_envio' => $request->forma_envio,
             'Elaboro' => $request->elaboro2,
             'Reviso' => $request->reviso,
+            'Firmar_Comunicado' => $firmacliente,
             'Agregar_copia' => $total_agregarcopias,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
@@ -822,14 +831,18 @@ class CalificacionPCLController extends Controller
         $radioafiliado_comunicado_editar = $request->radioafiliado_comunicado_editar;
         $radioempresa_comunicado_editar = $request->radioempresa_comunicado_editar;
         $radioOtro_editar = $request->radioOtro_editar;
-        $total_agregarcopias = '';
-        $agregar_copia_editar = $request->agregar_copia_editar;
-        $agregarcopias = implode(", ", $agregar_copia_editar);
-        if ($agregarcopias == 'CopiaVacia') {
-            $total_agregarcopias = '';
+        $firmarcomunicado = $request->firmarcomunicado_editar;
+        if (!empty($firmarcomunicado)) {
+            $firmacliente = implode($firmarcomunicado);
+        } else {
+            $firmacliente = '';
+        }        
+        $agregar_copia = $request->agregar_copia_editar;
+        if (!empty($agregar_copia)) {
+            $total_agregarcopias = implode(", ", $agregar_copia);                
         }else{
-            $total_agregarcopias = $agregarcopias;
-        }
+            $total_agregarcopias = '';
+        }  
         if(!empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar) && empty($radioOtro_editar)){
             $destinatario = 'Afiliado';
         }elseif(empty($radioafiliado_comunicado_editar) && !empty($radioempresa_comunicado_editar) && empty($radioOtro_editar)){
@@ -864,6 +877,7 @@ class CalificacionPCLController extends Controller
             'Forma_envio' => $request->forma_envio_editar,
             'Elaboro' => $request->elaboro2_editar,
             'Reviso' => $request->reviso_editar,
+            'Firmar_Comunicado' => $firmacliente,
             'Agregar_copia' => $total_agregarcopias,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
@@ -961,18 +975,20 @@ class CalificacionPCLController extends Controller
         $nombre_ciudad = $ciudad_info_comunicado[0]->Nombre_municipio;
         $reviso_lider = $reviso_info_lider[0]->name;
         $forma_envio = $forma_info_envio[0]->Nombre_parametro;
-
-        $total_copias = [];
-
-        if($_SERVER['REQUEST_METHOD'] == 'POST') {            
-            // Obtén el valor de todos los inputs dentro de un div con el ID "myDiv"
-            foreach ($_POST as $key => $value) {
-                // Verifica si el nombre del input contiene "myDiv" en su nombre
-                if (strpos($key, 'input') !== false) {                    
-                    array_push($total_copias, $value);                    
-                }
-            }
-        }
+        
+        // Validamos si los checkbox esta marcados
+        $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
+        $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
+        $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
+        $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
+        $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+        $total_copias = array_filter(array(
+            'edit_copia_afiliado' => $edit_copias_afiliado,
+            'edit_copia_empleador' => $edit_copias_empleador,
+            'edit_copia_eps' => $edit_copias_eps,
+            'edit_copia_afp' => $edit_copias_afp,
+            'edit_copia_arl' => $edit_copias_arl,
+        ));   
         sleep(2);              
         $Id_comunicado = $request->Id_comunicado_act;
         $ID_evento = $request->Id_evento_act;
@@ -994,12 +1010,83 @@ class CalificacionPCLController extends Controller
         $Forma_envios = $forma_envio;
         $Elaboro = $request->elaboro2_act;
         $Cargo = $cargo_profesional;
-        $Reviso_lider = $reviso_lider;
-        $Agregar_copias = implode(", ",$total_copias);
+        $Reviso_lider = $reviso_lider;        
         $Nombre_usuario = $nombre_usuario;
         $F_registro = $date;
- 
-        // Obtener los datos del formulario
+        // Filtramos las llaves del array
+        extract($total_copias);
+        // Creamos array para empezar a llenarlos con las copias
+        $Agregar_copias = [];
+        if (isset($edit_copia_afiliado)) {
+            $emailAfiliado = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+            ->select('Email')
+            ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+            ->get();
+            $afiliadoEmail = $emailAfiliado[0]->Email;            
+            $Agregar_copias['Afiliado'] = $afiliadoEmail;            
+        } 
+        
+        if(isset($edit_copia_empleador)) {
+            echo 'esta aqui';
+            $nomb_email_Empleador = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
+            ->select('Empresa', 'Email')
+            ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+            ->get();
+            $empleador_nomb = $nomb_email_Empleador[0]->Empresa;
+            $empleador_email = $nomb_email_Empleador[0]->Email;            
+            $Agregar_copias['Empleador'] = $empleador_nomb.' '.$empleador_email;            
+        }
+
+        if (isset($edit_copia_eps)) {
+            $nomb_email_eps = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
+            ->select('siae.Id_eps', 'sie.Nombre_entidad', 'sie.Emails')
+            ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+            ->get(); 
+            $eps_nomb = $nomb_email_eps[0]->Nombre_entidad;
+            $eps_email = $nomb_email_eps[0]->Emails;
+            $Agregar_copias['EPS'] = $eps_nomb.' '.$eps_email;
+        }
+
+        if (isset($edit_copia_afp)) {
+            $nomb_email_afp = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
+            ->select('siae.Id_afp', 'sie.Nombre_entidad', 'sie.Emails')
+            ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+            ->get(); 
+            $afp_nomb = $nomb_email_afp[0]->Nombre_entidad;
+            $afp_email = $nomb_email_afp[0]->Emails;
+            $Agregar_copias['AFP'] = $afp_nomb.' '.$afp_email;
+        }
+
+        if (isset($edit_copia_arl)) {
+            $nomb_email_arl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
+            ->select('siae.Id_arl', 'sie.Nombre_entidad', 'sie.Emails')
+            ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+            ->get();
+            $arl_nomb = $nomb_email_arl[0]->Nombre_entidad;
+            $arl_email = $nomb_email_arl[0]->Emails;
+            $Agregar_copias['ARL'] = $arl_nomb.' '.$arl_email;
+        }
+
+        // validamos si el checkbox de la firma esta marcado
+        $validarFirma = isset($request->firmarcomunicado_editar) ? 'Firmar Documento' : 'No lleva firma';
+        
+        if ($validarFirma == 'Firmar Documento') {            
+            $idcliente = sigmel_clientes::on('sigmel_gestiones')->select('Id_cliente', 'Nombre_cliente')
+            ->where('Nombre_cliente', $Cliente)->get();
+    
+            $firmaclientecompleta = sigmel_informacion_firmas_clientes::on('sigmel_gestiones')->select('Firma')
+            ->where('Id_cliente', $idcliente[0]->Id_cliente)->get();
+            
+            $Firma_cliente = $firmaclientecompleta[0]->Firma;
+        }else{
+            $Firma_cliente = '';
+        }
+        
+        //Obtener los datos del formulario
+
         $data = [
             'ID_evento' => $ID_evento,
             'Id_Asignacion' => $Id_Asignacion,
@@ -1021,6 +1108,7 @@ class CalificacionPCLController extends Controller
             'Nombre_ciudad' => $Nombre_ciudad,
             'Asunto' => $Asunto,
             'Cuerpo_comunicado' => $Cuerpo_comunicado,
+            'Firma_cliente' => $Firma_cliente,
             'Anexos' => $Anexos,
             'Forma_envio' => $Forma_envios,
             'Elaboro' => $Elaboro,
@@ -1030,6 +1118,7 @@ class CalificacionPCLController extends Controller
             'Nombre_usuario' => $Nombre_usuario,
             'F_registro' => $F_registro,
         ];
+
         // Crear una instancia de Dompdf
 
         $pdf = app('dompdf.wrapper');
@@ -1044,7 +1133,7 @@ class CalificacionPCLController extends Controller
         ->select('F_accion', 'Nombre_usuario', 'Accion_realizada', 'Descripcion')
         ->where('ID_evento', $request->ID_evento)
         ->orderBy('F_accion', 'asc')
-        ->get();
+        ->get();        
 
         return response()->json($datos_info_historial_acciones);
     }
@@ -1056,7 +1145,7 @@ class CalificacionPCLController extends Controller
             return redirect('/');
         }
         $user = Auth::user();
-
+        // validar si las variables Evento y Asignacion vienen desde el modulo princinpal o desde el modulo gestion inicial edicion
         if (!empty($request->Id_asignacion_pcl)) {
             $Id_evento_calitec=$request->Id_evento_pcl;
             $Id_asignacion_calitec = $request->Id_asignacion_pcl;            
@@ -1537,6 +1626,15 @@ class CalificacionPCLController extends Controller
             $TotalDeficiencia50 =0;
         }
 
+        $array_tipo_fecha_evento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_eventos as sie')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'sie.Tipo_evento')
+        ->select('sie.ID_evento', 'sie.Tipo_evento', 'slte.Nombre_evento', 'sie.F_evento')
+        ->where('sie.ID_evento', $Id_evento_calitec)
+        ->get();
+        // echo '<pre>';
+        //     print_r($array_tipo_fecha_evento[0]->F_evento);
+        // echo '</pre>';
+
         $array_dictamen_pericial =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'side.Tipo_evento')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
@@ -1547,7 +1645,7 @@ class CalificacionPCLController extends Controller
         'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia')
         ->where([['side.ID_evento',$Id_evento_calitec], ['side.Id_Asignacion',$Id_asignacion_calitec]])->get();        
 
-        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo','array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_dictamen_pericial'));
+        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo','array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_dictamen_pericial'));
     }
 
     public function cargueListadoSelectoresCalifcacionTecnicaPcl(Request $request){

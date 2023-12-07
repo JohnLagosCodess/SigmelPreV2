@@ -333,7 +333,7 @@ $(document).ready(function(){
                     data-forma_envio_comunicado="'+data[i]["Forma_envio"]+'" data-nombre_envio_comunicado="'+data[i]["Nombre_forma_envio"]+'"\
                     data-elaboro_comunicado="'+data[i]["Elaboro"]+'"\
                     data-reviso_comunicado="'+data[i]["Reviso"]+'" data-revisonombre_comunicado="'+data[i]["Nombre_lider"]+'"\
-                    data-agregar_copia="'+data[i]["Agregar_copia"]+'">\
+                    data-firma_cliente="'+data[i]["Firmar_Comunicado"]+'" data-agregar_copia="'+data[i]["Agregar_copia"]+'">\
                     <i class="fas fa-file-pdf text-info"></i> Editar</a>';
                     
                     data[i]['Editarcomunicado'] = comunicadoNradico;
@@ -388,7 +388,7 @@ $(document).ready(function(){
     $(document).on('mouseover',"input[id^='Pdf']", function(){
         let url_editar_evento = $('#action_actualizar_comunicado').val();        
         $('form[name="formu_comunicado"]').attr("action", url_editar_evento);    
-        $('form[name="formu_comunicado"]').removeAttr('id');
+        $('form[name="formu_comunicado"]').removeAttr('id');        
     });
 
     $(document).on('mouseover',"input[id^='Editar_comunicados']", function(){ 
@@ -396,7 +396,22 @@ $(document).ready(function(){
         $('form[name="formu_comunicado"]').removeAttr('action');
 
     });
+    var AlertaPdf;
+    $(document).on('click', "input[id='Pdf']", function () {                       
+        AlertaPdf = setTimeout(() => {            
+            $('#mostrar_barra_descarga_pdf').removeClass('d-none');                        
+            $('#Pdf').attr('disabled', true);
+            $('#Editar_comunicados').attr('disabled', true);
+        }, 1000);
+       
+        setTimeout(function() {
+            clearTimeout(AlertaPdf);
+            $('#mostrar_barra_descarga_pdf').addClass('d-none');                        
+            $('#Pdf').attr('disabled', false);  
+            $('#Editar_comunicados').attr('disabled', false);
+        }, 10000);
 
+    })     
     
     // Creacion de la modal para la edicion del comunicado 
     $(document).on('click', "a[id^='EditarComunicado_']", function(){
@@ -412,7 +427,7 @@ $(document).ready(function(){
                 //console.log("El valor no es un número entero");
             }
         });
-        $('#contenedorCopia2').empty();
+        //$('#contenedorCopia2').empty();
         var id_comunicado =  $(this).data("id_comunicado"); 
         var id_evento =  $(this).data("id_evento");     
         var id_asignacion =  $(this).data("id_asignacion");     
@@ -442,6 +457,7 @@ $(document).ready(function(){
         var elaboro_comunicado =  $(this).data("elaboro_comunicado"); 
         var reviso_comunicado =  $(this).data("reviso_comunicado");     
         var revisonombre_comunicado =  $(this).data("revisonombre_comunicado");  
+        var firma_cliente = $(this).data("firma_cliente");
         var agregar_copia =  $(this).data("agregar_copia");
         document.getElementById('ciudad_comunicado_editar').value=ciudad_comunicado;
         document.getElementById('Id_comunicado_act').value=id_comunicado;
@@ -568,14 +584,34 @@ $(document).ready(function(){
         });
         document.getElementById('elaboro_editar').value=elaboro_comunicado;
         document.getElementById('elaboro2_editar').value=elaboro_comunicado;
-
-        var arregloRegistros = agregar_copia.split(","); 
-        for (var i = 0; i < arregloRegistros.length; i++) { 
-            //duplicate2(arregloRegistros[i]);            
-            if (arregloRegistros[i]) {
-                duplicate2(arregloRegistros[i]);
+        // Validar si va la firma del cliente
+        $("input[id^='firmarcomunicado_editar']").each(function() {
+            const checkboxValue = $(this).val();
+            if (firma_cliente.includes(checkboxValue)) {
+                $(this).prop('checked', true);
+            }else{
+                $(this).prop('checked', false);
             }
-        }
+        });
+        //document.getElementById('firmarcomunicado_editar').value=firma_cliente;
+        // var arregloRegistros = agregar_copia.split(","); 
+        // for (var i = 0; i < arregloRegistros.length; i++) { 
+        //     //duplicate2(arregloRegistros[i]);            
+        //     if (arregloRegistros[i]) {
+        //         duplicate2(arregloRegistros[i]);
+        //     }
+        // }
+        
+        
+        //Valida si tiene alguna copia
+        $("input[id^='edit_copia_']").each(function() {
+            const checkboxValue = $(this).val();
+            if (agregar_copia.includes(checkboxValue)) {
+                $(this).prop('checked', true);
+            }else{
+                $(this).prop('checked', false);
+            }
+        });
         $('input[type="radio"]').change(function(){
             var destinarioPrincipal = $(this).val();            
             var datos_destinarioPrincipal ={
@@ -864,23 +900,46 @@ $(document).ready(function(){
         var forma_envio = $('#forma_envio_editar').val();
         var elaboro2 = $('#elaboro2_editar').val();
         var reviso = $('#reviso_editar').val();
-        var arrayinputs = [];
+        var firmarcomunicadoPcl = [];
+        $('input[type="checkbox"]').each(function() {
+            var firmarcomunicado = $(this).attr('id');   
+            if (firmarcomunicado === 'firmarcomunicado_editar') {                
+                if ($(this).is(':checked')) {                
+                var Valorfirmarcomunicado = $(this).val();
+                firmarcomunicadoPcl.push(Valorfirmarcomunicado);
+                }
+            }
+        });
+        //var arrayinputs = [];
         // Función para capturar los valores de todos los inputs de Agregar copia
-        function capturarValores() {            
-            var contenedor = document.getElementById("contenedorCopia2");                        
-            var inputs = contenedor.getElementsByTagName("input");                        
-            for (var i = 0; i < inputs.length; i++) {                
-                var valor = inputs[i].value;
-            arrayinputs.push(valor)
+        // function capturarValores() {            
+        //     var contenedor = document.getElementById("contenedorCopia2");                        
+        //     var inputs = contenedor.getElementsByTagName("input");                        
+        //     for (var i = 0; i < inputs.length; i++) {                
+        //         var valor = inputs[i].value;
+        //     arrayinputs.push(valor)
+        //     }
+        //     if (arrayinputs.length === 0) {
+        //         arrayinputs = ['CopiaVacia'];
+        //     }else{
+        //         arrayinputs;  
+        //     }
+        // }    
+        // capturarValores();
+        //console.log(arrayinputs); 
+        var EditComunicadosPcl = [];
+
+       $('input[type="checkbox"]').each(function() {
+            var copiaComunicado2 = $(this).attr('id');            
+            if (copiaComunicado2 === 'edit_copia_afiliado' || copiaComunicado2 === 'edit_copia_empleador' || 
+                copiaComunicado2 === 'edit_copia_eps' || copiaComunicado2 === 'edit_copia_afp' || 
+                copiaComunicado2 === 'edit_copia_arl') {                
+                if ($(this).is(':checked')) {                
+                var relacionCopiaValor2 = $(this).val();
+                EditComunicadosPcl.push(relacionCopiaValor2);
+                }
             }
-            if (arrayinputs.length === 0) {
-                arrayinputs = ['CopiaVacia'];
-            }else{
-                arrayinputs;  
-            }
-        }    
-        capturarValores();
-        //console.log(arrayinputs);        
+       });       
         let token = $('input[name=_token]').val();        
         var datos_actualizarComunicado = {
             '_token': token,
@@ -911,7 +970,8 @@ $(document).ready(function(){
             'forma_envio_editar':forma_envio,
             'elaboro2_editar':elaboro2,
             'reviso_editar':reviso,
-            'agregar_copia_editar':arrayinputs,
+            'firmarcomunicado_editar':firmarcomunicadoPcl,
+            'agregar_copia_editar':EditComunicadosPcl,
         }
 
         document.querySelector("#Editar_comunicados").disabled = true;     
@@ -1249,23 +1309,47 @@ $(document).ready(function(){
         var forma_envio = $('#forma_envio').val();
         var elaboro2 = $('#elaboro2').val();
         var reviso = $('#reviso').val();
-        var arrayinputs = [];
-        // Función para capturar los valores de todos los inputs de Agregar copia
-        function capturarValores() {            
-            var contenedor = document.getElementById("contenedorCopia");                        
-            var inputs = contenedor.getElementsByTagName("input");                        
-            for (var i = 0; i < inputs.length; i++) {                
-                var valor = inputs[i].value;
-            arrayinputs.push(valor)
+        var firmarcomunicadoPcl = [];
+        $('input[type="checkbox"]').each(function() {
+            var firmarcomunicado = $(this).attr('id');   
+            if (firmarcomunicado === 'firmarcomunicado') {                
+                if ($(this).is(':checked')) {                
+                var Valorfirmarcomunicado = $(this).val();
+                firmarcomunicadoPcl.push(Valorfirmarcomunicado);
+                }
             }
-            if (arrayinputs.length === 0) {
-                arrayinputs = ['CopiaVacia'];
-            }else{
-                arrayinputs;  
-            }
-        }
-        capturarValores();
+        });
+        //console.log(firmarcomunicadoPcl);
+        // var arrayinputs = [];
+        // // Función para capturar los valores de todos los inputs de Agregar copia
+        // function capturarValores() {            
+        //     var contenedor = document.getElementById("contenedorCopia");                        
+        //     var inputs = contenedor.getElementsByTagName("input");                        
+        //     for (var i = 0; i < inputs.length; i++) {                
+        //         var valor = inputs[i].value;
+        //     arrayinputs.push(valor)
+        //     }
+        //     if (arrayinputs.length === 0) {
+        //         arrayinputs = ['CopiaVacia'];
+        //     }else{
+        //         arrayinputs;  
+        //     }
+        // }
+        // capturarValores();
         //console.log(arrayinputs);        
+        var copiaComunicadosPcl = [];
+
+        $('input[type="checkbox"]').each(function() {
+            var copiaComunicado = $(this).attr('id');            
+            if (copiaComunicado === 'copia_afiliado' || copiaComunicado === 'copia_empleador' || 
+                copiaComunicado === 'copia_eps' || copiaComunicado === 'copia_afp' || 
+                copiaComunicado === 'copia_arl') {                
+                if ($(this).is(':checked')) {                
+                var relacionCopiaValor = $(this).val();
+                copiaComunicadosPcl.push(relacionCopiaValor);
+                }
+            }
+        });
         let token = $('input[name=_token]').val();        
         var datos_generarComunicado = {
             '_token': token,
@@ -1295,7 +1379,8 @@ $(document).ready(function(){
             'forma_envio':forma_envio,
             'elaboro2':elaboro2,
             'reviso':reviso,
-            'agregar_copia':arrayinputs,
+            'firmarcomunicado':firmarcomunicadoPcl,
+            'agregar_copia':copiaComunicadosPcl,
         }
         
         document.querySelector("#Generar_comunicados").disabled = true;   

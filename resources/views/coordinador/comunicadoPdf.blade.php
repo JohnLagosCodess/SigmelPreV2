@@ -6,6 +6,19 @@
             .justificado{
                 text-align: justify;
                 padding-left: 40px;
+                white-space: pre-wrap;
+            }
+            .firma{
+                text-align: justify;
+                padding-left: 40px;
+            }
+            .copias{
+                text-align: justify;
+                padding-left: 40px;
+            }
+            .justificados{                
+                padding-left: 40px;
+                white-space: pre-wrap;
             }
             .ajustetd{
                 text-align: justify;
@@ -117,25 +130,24 @@
                         <td class="justificado">{{$T_documento}}: {{$N_identificacion}}</td>
                     </tr>
                     <tr>
-                        <td class="justificado">Siniestro: {{$ID_evento}}</td>
+                        <td class="justificado"><b>Siniestro: </b>{{$ID_evento}}</td>
                     </tr>
                 </table>
             </div>
             <div class="row">
                 <div class="col-12">
                     <div class="form-group">
-                        <p class="justificado">{{$Cuerpo_comunicado}}</p>
+                        <p class="justificados">{{$Cuerpo_comunicado}}</p>
                     </div>
                 </div>
             </div>                 
             <div class="row">
                 <table>
-                    <tr>
-                        <td><u class="justificado">{{$Nombre_usuario}}</u></td>
-                    </tr>
-                    <tr>
-                        <td class="justificado">Firma Módulo clientes</td>
-                    </tr>
+                    <tr>                        
+                        <td class="firma">                                                       
+                            <?=$Firma_cliente?>
+                        </td>
+                    </tr>                    
                     <tr>
                         <td class="justificado">{{$Nombre_usuario}}</td>
                     </tr>
@@ -149,28 +161,87 @@
                 <table>
                     <tr>
                         @if ($Anexos == '')
-                            <td class="justificado">Anexo: 0 folios</td>                         
+                            <td class="justificado"><b>Anexo: </b>0 folios</td>                         
                         @else
-                            <td class="justificado">Anexo: {{$Anexos}} folios</td>                                                     
+                            <td class="justificado"><b>Anexo: </b>{{$Anexos}} folios</td>                                                     
                         @endif
                     </tr>
-                    <tr>
-                        @if ($Agregar_copia == '')
-                            <td class="justificado">Copia: No se registran copias</td>                            
-                        @else
-                            <td class="justificado">Copia: {{$Agregar_copia}}</td>                            
-                        @endif
-                    </tr>
+                    @if (count($Agregar_copia) == 0)
+                        <tr>
+                            <td class="justificado"><b>Copia: </b>No se registran copias</td>                                                                                
+                        </tr>
+                    @else
+                        <tr>
+                            <td class="justificado"><b>Copia:</b></td>                            
+                        </tr>
+                        <?php 
+                            $Afiliado = 'Afiliado';
+                            $Empleador = 'Empleador';
+                            $EPS = 'EPS';
+                            $AFP = 'AFP';
+                            $ARL = 'ARL';
+                        ?>
+                        <?php 
+                            if (isset($Agregar_copia[$Afiliado])) { ?>
+                                <tr>
+                                    <td class="copias">
+                                        <b>Afiliado: </b><?=$Agregar_copia['Afiliado'];?>
+                                    </td>
+                                </tr>
+                            <?php       
+                            }
+                        ?>
+                        <?php 
+                            if (isset($Agregar_copia[$Empleador])) { ?>
+                                <tr>
+                                    <td class="copias">
+                                        <b>Empleador: </b><?=$Agregar_copia['Empleador'];?>
+                                    </td>
+                                </tr>
+                            <?php       
+                            }
+                        ?>
+                        <?php 
+                            if (isset($Agregar_copia[$EPS])) { ?>
+                                <tr>
+                                    <td class="copias">
+                                        <b>EPS: </b><?=$Agregar_copia['EPS'];?>
+                                    </td>
+                                </tr>
+                            <?php       
+                            }
+                        ?>
+                        <?php 
+                            if (isset($Agregar_copia[$AFP])) { ?>
+                                <tr>
+                                    <td class="copias">
+                                        <b>AFP: </b><?=$Agregar_copia['AFP'];?>
+                                    </td>
+                                </tr>
+                            <?php       
+                            }
+                        ?>
+                        <?php 
+                            if (isset($Agregar_copia[$ARL])) { ?>
+                                <tr>
+                                    <td class="copias">
+                                        <b>ARL: </b><?=$Agregar_copia['ARL'];?>
+                                    </td>
+                                </tr>
+                            <?php       
+                            }
+                        ?>
+                    @endif
                 </table>
             </div>
             <br>
             <div class="row">
                 <table>
                     <tr>
-                        <td class="justificado">Elaboró: {{$Elaboro}}</td>
+                        <td class="justificado"><b>Elaboró: </b>{{$Elaboro}}</td>
                     </tr>
                     <tr>
-                        <td class="justificado">Revisó: {{$Reviso}}</td>
+                        <td class="justificado"><b>Revisó: </b>{{$Reviso}}</td>
                     </tr>
                     <tr>
                         <td class="justificado">Forma de envió: {{$Forma_envio}}</td>

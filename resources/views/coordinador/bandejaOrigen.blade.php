@@ -105,7 +105,6 @@
                                         <th>Fecha Tercera seguimiento</th>
                                         <th>Fecha recepción documentos</th>
                                         <th>Fecha asignación para DTO</th>
-                                        <th>Fecha de asignación para calificación</th>
                                         <th>Fecha devolución comité</th>
                                         <th>Fecha acción</th>
                                     </tr>

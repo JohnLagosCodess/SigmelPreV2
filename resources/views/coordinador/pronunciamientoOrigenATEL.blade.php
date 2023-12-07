@@ -53,7 +53,9 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="id_evento">ID evento</label>
-                                            <input type="text" class="form-control" name="id_evento" id="id_evento" value="{{$array_datos_pronunciamientoOrigen[0]->ID_evento}}" disabled>
+                                            <br>
+                                            {{-- DATOS PARA VER EDICIÓN DE EVENTO --}}
+                                            <a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer; font-weight: bold;" class="btn text-info" type="button"><?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;}?></a>                                            
                                         </div>
                                     </div>
                                 </div>
@@ -197,7 +199,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-4 m_fecha_evento" style="display:none">
+                                    <div class="col-4" id="div_tipo_evento">
                                         <div class="form-group">
                                             <label for="fecha_evento">Fecha del evento<span style="color: red;">(*)</span></label>
                                             @if (!empty($info_pronuncia[0]->Fecha_evento))
@@ -249,9 +251,9 @@
                                                 <table id="listado_diagnostico_cie10" class="table table-striped table-bordered" width="100%">
                                                     <thead>
                                                         <tr class="bg-info">
-                                                            <th>CIE10</th>
-                                                            <th>Nombre CIE10</th>
-                                                            <th>Origen CIE10</th>
+                                                            <th style="width: 340px !important;">CIE10</th>
+                                                            <th style="width: 340px !important;">Nombre CIE10</th>
+                                                            <th style="width: 340px !important;">Origen CIE10</th>
                                                             <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_cie10_fila"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                         </tr>
                                                     </thead>
@@ -283,13 +285,13 @@
                                 <div class="row">
                                     <div class="col-1">
                                         <div class="form-group">
-                                            <label for="decision">Decisión:</label>
+                                            <label for="decision">Decisión:<span style="color: red;">(*)</span></label>
                                         </div>
                                     </div>
                                     <div class="col-2">
                                         <div class="form-group">
                                             <div class="form-check custom-control custom-radio">
-                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="decision_pr" id="di_acuerdo_pr" value="Acuerdo" <?php if(!empty($info_pronuncia[0]->Decision) && $info_pronuncia[0]->Decision=='Acuerdo'){ ?> checked <?php } ?>>
+                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="decision_pr" id="di_acuerdo_pr" value="Acuerdo" <?php if(!empty($info_pronuncia[0]->Decision) && $info_pronuncia[0]->Decision=='Acuerdo'){ ?> checked <?php } ?> required>
                                                 <label class="form-check-label custom-control-label" for="di_acuerdo_pr"><strong>Acuerdo</strong></label>
                                             </div>
                                         </div>
@@ -297,7 +299,7 @@
                                     <div class="col-2">
                                         <div class="form-group">
                                             <div class="form-check custom-control custom-radio">
-                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="decision_pr" id="di_desacuerdo_pr" value="Desacuerdo" <?php if(!empty($info_pronuncia[0]->Decision) && $info_pronuncia[0]->Decision=='Desacuerdo'){ ?> checked <?php } ?>>
+                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="decision_pr" id="di_desacuerdo_pr" value="Desacuerdo" <?php if(!empty($info_pronuncia[0]->Decision) && $info_pronuncia[0]->Decision=='Desacuerdo'){ ?> checked <?php } ?> required>
                                                 <label class="form-check-label custom-control-label" for="di_desacuerdo_pr"><strong>Desacuerdo</strong></label>
                                             </div>
                                         </div>
@@ -305,7 +307,7 @@
                                     <div class="col-2">
                                         <div class="form-group">
                                             <div class="form-check custom-control custom-radio">
-                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="decision_pr" id="di_silencio_pr" value="Silencio" <?php if(!empty($info_pronuncia[0]->Decision) && $info_pronuncia[0]->Decision=='Silencio'){ ?> checked <?php } ?>>
+                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="decision_pr" id="di_silencio_pr" value="Silencio" <?php if(!empty($info_pronuncia[0]->Decision) && $info_pronuncia[0]->Decision=='Silencio'){ ?> checked <?php } ?> required>
                                                 <label class="form-check-label custom-control-label" for="di_silencio_pr"><strong>Silencio</strong></label>
                                             </div>
                                         </div>
@@ -320,18 +322,17 @@
                                             @if (!empty($info_pronuncia[0]->Fecha_pronuncia))
                                                 <p>{{$info_pronuncia[0]->Fecha_pronuncia}}</p>
                                             @else
-                                                <p>{{now()->format('Y-m-d')}}</p>
+                                                <p>{{now()->format('Y-m-d h:i:s')}}</p>
                                             @endif
-                                            <input hidden="hidden" class="form-control" type="date" name="fecha_pronuncia" id="fecha_pronuncia2" value="{{now()->format('Y-m-d')}}">
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label for="asunto_cali">Asunto<span style="color: red;">(*)</span></label>
                                             @if (!empty($info_pronuncia[0]->Asunto_cali))
-                                                <input type="text" class="mayus_general form-control" name="asunto_cali" id="asunto_cali" value="{{$info_pronuncia[0]->Asunto_cali}}" required>
+                                                <input type="text" class="form-control" name="asunto_cali" id="asunto_cali" value="{{$info_pronuncia[0]->Asunto_cali}}" required>
                                             @else
-                                                <input type="text" class="mayus_general form-control" name="asunto_cali" id="asunto_cali" value="" required>
+                                                <input type="text" class="form-control" name="asunto_cali" id="asunto_cali" value="" required>
                                             @endif
                                         </div>
                                     </div>
@@ -339,9 +340,9 @@
                                         <div class="form-group">
                                             <label for="sustenta_cali">Sustentación<span style="color: red;">(*)</span></label>
                                             @if (!empty($info_pronuncia[0]->Sustenta_cali))
-                                                <textarea class="mayus_general form-control" name="sustenta_cali" id="sustenta_cali" cols="30" rows="5" style="resize: none;">{{$info_pronuncia[0]->Sustenta_cali}}</textarea>
+                                                <textarea class="form-control" name="sustenta_cali" id="sustenta_cali" cols="30" rows="5" style="resize: none;">{{$info_pronuncia[0]->Sustenta_cali}}</textarea>
                                             @else
-                                                <textarea class="mayus_general form-control" name="sustenta_cali" id="sustenta_cali" cols="30" rows="5" style="resize: none;"></textarea>
+                                                <textarea class="form-control" name="sustenta_cali" id="sustenta_cali" cols="30" rows="5" style="resize: none;"></textarea>
                                             @endif
                                         </div>
                                     </div>
@@ -407,6 +408,18 @@
                                                     <input class="custom-control-input" type="checkbox" id="junta_regional" name="junta_regional" value="junta_regi" @if (!empty($info_pronuncia[0]->Copia_junta_regional) && $info_pronuncia[0]->Copia_junta_regional=='junta_regi') checked @endif>
                                                     <label for="junta_regional" class="custom-control-label">Junta Regional de Calificación de invalidez</label>                 
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4" id="div_cual">
+                                        <div class="form-group">
+                                            <label for="junta_regional_cual">¿Cuál?<span style="color: red;">(*)</span></label>
+                                            <select class="junta_regional_cual custom-select" name="junta_regional_cual" id="junta_regional_cual">
+                                                @if (!empty($info_pronuncia[0]->Junta_regional_cual)  && $info_pronuncia[0]->Copia_junta_regional <>'undefined')
+                                                    <option value="{{$info_pronuncia[0]->Junta_regional_cual}}" selected>{{$info_pronuncia[0]->Ciudad_Junta}}</option>
+                                                 @else
+                                                    <option value="">Seleccione una opción</option>
+                                                 @endif
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -558,6 +571,16 @@
         <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="{{$array_datos_pronunciamientoOrigen[0]->Id_Asignacion}}">
         <button type="submit" id="botonEnvioVista" style="display:none !important;"></button>
     </form> 
+    <!--Retonar al modulo Modulo Nuevo edicion -->
+    <form action="{{route('gestionInicialEdicion')}}" id="formularioLlevarEdicionEvento" method="POST">
+        @csrf
+        <input type="hidden" name="bandera_buscador_proori" id="bandera_buscador_proori" value="desdeproori">
+        <input hidden="hidden" type="text" name="newIdEvento" id="newIdEvento" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;}?>">
+        <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_Asignacion)){echo $array_datos_pronunciamientoOrigen[0]->Id_Asignacion;}?>">
+        <input hidden="hidden" type="text" name="newIdproceso" id="newIdproceso" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_proceso)){ echo $array_datos_pronunciamientoOrigen[0]->Id_proceso;}?>">
+        <input hidden="hidden" type="text" name="newIdservicio" id="newIdservicio" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_Servicio)){ echo $array_datos_pronunciamientoOrigen[0]->Id_Servicio;}?>">
+        <button type="submit" id="botonVerEdicionEvento" style="display:none !important;"></button>
+   </form>
 @stop
 @section('js')
     <script type="text/javascript">
@@ -565,6 +588,11 @@
             event.preventDefault();
             // Realizar las acciones que quieres al hacer clic en el botón
             document.getElementById('formularioEnvio').submit();
+        });
+        document.getElementById('botonVerEdicionEvento').addEventListener('click', function(event) {
+            event.preventDefault();
+            // Realizar las acciones que quieres al hacer clic en el botón
+            document.getElementById('formularioLlevarEdicionEvento').submit();
         });
         $(document).ready(function(){
             //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE DIAGNOSTCO CIE10

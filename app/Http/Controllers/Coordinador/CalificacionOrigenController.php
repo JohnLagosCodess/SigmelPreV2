@@ -163,7 +163,7 @@ class CalificacionOrigenController extends Controller
        $segundo_seguimiento = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
        ->select('*')
        ->where([
-           ['Causal_seguimiento', '=', 'Segudo seguimiento'],
+           ['Causal_seguimiento', '=', 'Segundo seguimiento'],
            ['Estado', '=', 'Activo'],
            ['Id_proceso', '=', '1'],
            ['ID_evento', '=', $newIdEvento]

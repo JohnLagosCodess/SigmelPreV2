@@ -80,7 +80,10 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="id_evento">ID evento</label>
-                                            <input type="text" class="form-control" name="id_evento" id="id_evento" value="{{$array_datos_calificacionOrigen[0]->ID_evento}}" disabled>
+                                            <br>
+                                            <input hidden="hidden" type="text" class="form-control" name="id_evento" id="id_evento" value="{{$array_datos_calificacionOrigen[0]->ID_evento}}" disabled>
+                                            {{-- DATOS PARA VER EDICIÓN DE EVENTO --}}
+                                            <a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer; font-weight: bold;" class="btn text-info" type="button"><?php if(!empty($array_datos_calificacionOrigen[0]->ID_evento)){echo $array_datos_calificacionOrigen[0]->ID_evento;}?></a>                                            
                                         </div>
                                     </div>
                                 </div>
@@ -152,13 +155,13 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="profesional_calificador">Profesional Calificador</label>
-                                            <input type="text" class="form-control" name="profesional_calificador" id="profesional_calificador" value="{{$array_datos_calificacionOrigen[0]->Asignado_por}}" disabled>
+                                            <input type="text" class="form-control" name="profesional_calificador" id="profesional_calificador" value="{{$array_datos_calificacionOrigen[0]->Nombre_profesional}}" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="tipo_profesional_calificador">Tipo Profesional calificador</label>
-                                            <input type="text" class="form-control" name="tipo_profesional_calificador" id="tipo_profesional_calificador" value="{{$array_datos_calificacionOrigen[0]->Asignado_por}}" disabled>
+                                            <input type="text" class="form-control" name="tipo_profesional_calificador" id="tipo_profesional_calificador" value="{{$array_datos_calificacionOrigen[0]->Tipo_Profesional_calificador}}" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -333,6 +336,16 @@
         <input hidden="hidden" type="text" name="Id_proceso_calitec" id="Id_proceso_calitec" value="{{$array_datos_calificacionOrigen[0]->Id_proceso}}">
         <button type="submit" id="botonFormulario2" style="display: none; !important"></button>
     </form>
+    <!--Retonar al modulo Modulo Nuevo edicion -->
+    <form action="{{route('gestionInicialEdicion')}}" id="formularioLlevarEdicionEvento" method="POST">
+        @csrf
+        <input type="hidden" name="bandera_buscador_calori" id="bandera_buscador_calori" value="desdecalori">
+        <input hidden="hidden" type="text" name="newIdEvento" id="newIdEvento" value="<?php if(!empty($array_datos_calificacionOrigen[0]->ID_evento)){echo $array_datos_calificacionOrigen[0]->ID_evento;}?>">
+        <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Id_Asignacion)){echo $array_datos_calificacionOrigen[0]->Id_Asignacion;}?>">
+        <input hidden="hidden" type="text" name="newIdproceso" id="newIdproceso" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Id_proceso)){ echo $array_datos_calificacionOrigen[0]->Id_proceso;}?>">
+        <input hidden="hidden" type="text" name="newIdservicio" id="newIdservicio" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Id_Servicio)){ echo $array_datos_calificacionOrigen[0]->Id_Servicio;}?>">
+        <button type="submit" id="botonVerEdicionEvento" style="display:none !important;"></button>
+   </form>
 </div>
 {{-- Modal solicitud documentos - seguimientos --}}
 <div class="row">
@@ -360,7 +373,7 @@
                                         </select>
                                     </div>
                                 </div> 
-                                <div class="col-6">
+                                <div class="col-6" id="div_GrupoDocumental">
                                     <div class="form-group">
                                         <label for="grupo_documental">Grupo documental<span style="color: red;">(*)</span></label>
                                         <select class="grupo_documental custom-select " name="grupo_documental" id="grupo_documental" <?php if(!empty($dato_articulo_12[0]->Articulo_12) && $dato_articulo_12[0]->Articulo_12=='No_mas_seguimiento'){ ?> disabled <?php } ?> required>
@@ -372,7 +385,7 @@
                                         </select>
                                     </div>
                                 </div> 
-                                <div class="col-12">
+                                <div class="col-12" id="div_DocumentosSugeridos">
                                     <div class="form-group">
                                         <div class="table-responsive">
                                             <table id="listado_docs_sugeridos" class="table table-striped table-bordered" width="100%">
@@ -416,10 +429,10 @@
                                             <table id="listado_docs_seguimiento" class="table table-striped table-bordered" width="100%">
                                                 <thead>
                                                     <tr class="bg-info">
-                                                        <th>F solicitud documento</th>
+                                                        <th>Fecha solicitud documento</th>
                                                         <th style="width:164.719px !important;">Documento</th>
                                                         <th>Solicitada a</th>
-                                                        <th>F recepción de documento</th>
+                                                        <th>Fecha recepción de documentos</th>
                                                         <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_fila" <?php if(!empty($dato_articulo_12[0]->Articulo_12) && $dato_articulo_12[0]->Articulo_12=='No_mas_seguimiento'){ ?> style="display:none" <?php } ?>><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                     </tr>
                                                 </thead>
@@ -432,7 +445,7 @@
                                                                 <td>{{$prueba->Nombre_solicitante}}</td>
                                                                 <td>{{$prueba->F_recepcion_documento}}</td>
                                                                 <td>
-                                                                    <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila_visual_{{$prueba->Id_Documento_Solicitado}}" data-id_fila_quitar="{{$prueba->Id_Documento_Solicitado}}" data-clase_fila="fila_visual_{{$prueba->Id_Documento_Solicitado}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
+                                                                    {{-- <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila_visual_{{$prueba->Id_Documento_Solicitado}}" data-id_fila_quitar="{{$prueba->Id_Documento_Solicitado}}" data-clase_fila="fila_visual_{{$prueba->Id_Documento_Solicitado}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div> --}}
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -517,7 +530,7 @@
                                         @endif
                                         @if (empty(($segundo_seguimiento[0]->Causal_seguimiento)))
                                             <tr id="segundo_seguimiento">
-                                                <td><input type="text" id="segundo_causal" name="segundo_causal" value="Segudo seguimiento" readonly></td>
+                                                <td><input type="text" id="segundo_causal" name="segundo_causal" value="Segundo seguimiento" readonly></td>
                                                 <td><input type="date" id="f_estipulada2" name="f_estipulada2" disabled></td>
                                                 <td><input type="date" id="f_seguimiento2" name="f_seguimiento2"  disabled></td>
                                                 <td><textarea id="descrip_seguimiento2" class="form-control" name="descrip_seguimiento2" cols="90" rows="2"></textarea></td>
@@ -544,7 +557,7 @@
                                                 <td>{{$segui->Descripcion_seguimiento}}</td>
                                                 <td>{{$segui->Nombre_usuario}}</td>
                                                 <td>
-                                                    <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila_visual_segui_{{$segui->Id_Seguimiento}}" data-id_fila_quitar_segui="{{$segui->Id_Seguimiento}}" data-clase_fila="fila_visual_segui_{{$segui->Id_Seguimiento}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
+                                                    {{-- <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila_visual_segui_{{$segui->Id_Seguimiento}}" data-id_fila_quitar_segui="{{$segui->Id_Seguimiento}}" data-clase_fila="fila_visual_segui_{{$segui->Id_Seguimiento}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div> --}}
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -624,7 +637,7 @@
                                         <input class="scalesR" type="radio" name="afiliado_comunicado" id="afiliado_comunicado" value="Afiliado" style="margin-left: revert;" required>
                                     </div>
                                     <div class="col-3">
-                                        <label for="empresa_comunicado"><strong>Empresa</strong></label>
+                                        <label for="empresa_comunicado"><strong>Empleador</strong></label>
                                         <input class="scalesR" type="radio" name="afiliado_comunicado" id="empresa_comunicado" value="Empresa" style="margin-left: revert;" required>
                                     </div>
                                     <div class="col-3">
@@ -904,7 +917,7 @@
                                         <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="afiliado_comunicado_editar" value="Afiliado" style="margin-left: revert;" required>
                                     </div>
                                     <div class="col-3">
-                                        <label for="empresa_comunicado"><strong>Empresa</strong></label>
+                                        <label for="empresa_comunicado"><strong>Empleador</strong></label>
                                         <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="empresa_comunicado_editar" value="Empresa" style="margin-left: revert;" required>
                                     </div>
                                     <div class="col-3">
@@ -1103,6 +1116,14 @@
                                             <input type="submit" id="Pdf" class="btn btn-info" value="Pdf">                            
                                         </div>
                                     </div>
+                                    <div class="col-6">
+                                        <div class="text-center">                                
+                                            <button class="btn btn-info d-none" type="button" id="mostrar_barra_descarga_pdf" disabled>
+                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                Descargando PDF por favor espere...
+                                            </button>
+                                        </div>
+                                    </div>
                                     <div class="col-12">
                                         <div class="alerta_editar_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                     </div>
@@ -1124,6 +1145,7 @@
 @include('//.administrador.modalcarguedocumentos')
 @stop
 @section('js')
+
     {{-- SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE LISTADOS DE DOCUMENTOS SEGUIMIENTO --}}
     <script type="text/javascript">
          $(document).ready(function(){
@@ -1272,8 +1294,12 @@
             event.preventDefault();
             // Realizar las acciones que quieres al hacer clic en el botón
             document.getElementById('formulario2').submit();
+        });        
+        document.getElementById('botonVerEdicionEvento').addEventListener('click', function(event) {
+            event.preventDefault();
+            // Realizar las acciones que quieres al hacer clic en el botón
+            document.getElementById('formularioLlevarEdicionEvento').submit();
         });
-        
          //Elimina sessionStorage
          sessionStorage.removeItem("scrollTop");
     </script>

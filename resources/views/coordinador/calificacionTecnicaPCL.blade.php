@@ -6829,6 +6829,11 @@
                                                     <option value="{{$array_dictamen_pericial[0]->Tipo_evento}}" selected>{{$array_dictamen_pericial[0]->Nombre_evento}}</option>
                                                     <option value="">Seleccione una opción</option>
                                                 </select>
+                                            @elseif(!empty($array_tipo_fecha_evento[0]->Tipo_evento))
+                                                <select class="tipo_evento custom-select" name="tipo_evento" id="tipo_evento" style="width: 100%;" required>
+                                                    <option value="{{$array_tipo_fecha_evento[0]->Tipo_evento}}" selected>{{$array_tipo_fecha_evento[0]->Nombre_evento}}</option>
+                                                    <option value="">Seleccione una opción</option>
+                                                </select>
                                             @else
                                                 <select class="tipo_evento custom-select" name="tipo_evento" id="tipo_evento" style="width: 100%;" required>
                                                     <option value="">Seleccione una opción</option>
@@ -6851,11 +6856,13 @@
                                             @endif
                                         </div>
                                     </div>
-                                    <div class="col-3">
+                                    <div class="col-3" id="div_tipo_evento">
                                         <div class="form-group">
                                             <label for="f_evento_pericial">Fecha de evento<span style="color: red;">(*)</span></label>
-                                            @if (!empty($array_dictamen_pericial[0]->F_evento))
+                                            @if (!empty($array_dictamen_pericial[0]->F_evento) && $array_dictamen_pericial[0]->F_evento !== '0000-00-00')                                                
                                                 <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_dictamen_pericial[0]->F_evento}}" max="{{now()->format('Y-m-d')}}" required>                                                                                                
+                                            @elseif(!empty($array_tipo_fecha_evento[0]->F_evento))
+                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_tipo_fecha_evento[0]->F_evento}}" max="{{now()->format('Y-m-d')}}" required>                                                                                                
                                             @else
                                                 <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" max="{{now()->format('Y-m-d')}}" required>                                                
                                             @endif                                        
@@ -6865,9 +6872,9 @@
                                         <div class="form-group">
                                             <label for="f_estructura_pericial">Fecha de estructuración<span style="color: red;">(*)</span></label>                                            
                                             @if (!empty($array_dictamen_pericial[0]->F_estructuracion))
-                                                <input type="date" class="form-control" id="f_estructura_pericial" name="f_estructura_pericial" value="{{$array_dictamen_pericial[0]->F_estructuracion}}" max="{{now()->format('Y-m-d')}}" required>                                                
+                                                <input type="date" class="f_estructura_pericial form-control" id="f_estructura_pericial" name="f_estructura_pericial" value="{{$array_dictamen_pericial[0]->F_estructuracion}}" max="{{now()->format('Y-m-d')}}" required>                                                
                                             @else
-                                                <input type="date" class="form-control" id="f_estructura_pericial" name="f_estructura_pericial" max="{{now()->format('Y-m-d')}}" required>                                                
+                                                <input type="date" class="f_estructura_pericial form-control" id="f_estructura_pericial" name="f_estructura_pericial" max="{{now()->format('Y-m-d')}}" required>                                                
                                             @endif
                                         </div>
                                     </div>
@@ -7016,7 +7023,7 @@
         <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="{{$array_datos_calificacionPclTecnica[0]->Id_Asignacion}}">
         <button type="submit" id="botonEnvioVista" style="display:none !important;"></button>
     </form> 
-
+    <!--Retonar al modulo Modulo Nuevo edicion -->
     <form action="{{route('gestionInicialEdicion')}}" id="formularioLlevarEdicionEvento" method="POST">
         @csrf
         <input type="hidden" name="bandera_buscador_clt" id="bandera_buscador_clt" value="desdeclt">

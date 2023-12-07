@@ -40,6 +40,26 @@
                     <input hidden="hidden" type="text" name="Id_servicio_calitec" id="Id_servicio_calitec" value="<?php echo $_POST['newIdservicio'];?>">
                     <button type="submit" id="btn_regreso_clt" style="display: none; !important"></button>
                 </form>
+            <?php elseif (isset($_POST['bandera_buscador_rec']) &&  $_POST['bandera_buscador_rec'] == 'desderec' ): ?>
+                <a onclick="document.getElementById('btn_regreso_rec').click();"   class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <form action="{{route("recalificacionPCL")}}" id="Regreso_Rec" method="POST">            
+                    @csrf
+                    <input hidden="hidden" type="text" name="Id_evento_recali" id="Id_evento_recali" value="<?php echo $_POST['newIdEvento'];?>">
+                    <input hidden="hidden" type="text" name="Id_asignacion_recali" id="Id_asignacion_recali" value="<?php echo $_POST['newIdAsignacion'];?>">
+                    <input hidden="hidden" type="text" name="Id_proceso_recali" id="Id_proceso_recali" value="<?php echo $_POST['newIdproceso'];?>">
+                    <input hidden="hidden" type="text" name="Id_servicio_recali" id="Id_servicio_recali" value="<?php echo $_POST['newIdservicio'];?>">
+                    <button type="submit" id="btn_regreso_rec" style="display: none; !important"></button>
+                </form>
+            <?php elseif (isset($_POST['bandera_buscador_pro']) &&  $_POST['bandera_buscador_pro'] == 'desdepro' ): ?>
+                <a onclick="document.getElementById('btn_regreso_pro').click();"   class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <form action="{{route("pronunciamientoPCL")}}" id="Regreso_Pro" method="POST">            
+                    @csrf
+                    <input hidden="hidden" type="text" name="Id_evento_pcl" id="Id_evento_pcl" value="<?php echo $_POST['newIdEvento'];?>">
+                    <input hidden="hidden" type="text" name="Id_asignacion_pcl" id="Id_asignacion_pcl" value="<?php echo $_POST['newIdAsignacion'];?>">
+                    <input hidden="hidden" type="text" name="Id_proceso_pronun" id="Id_proceso_pronun" value="<?php echo $_POST['newIdproceso'];?>">
+                    <input hidden="hidden" type="text" name="Id_servicio_pronun" id="Id_servicio_pronun" value="<?php echo $_POST['newIdservicio'];?>">
+                    <button type="submit" id="btn_regreso_pro" style="display: none; !important"></button>
+                </form>
             <?php elseif (isset($_POST['bandera_buscador_clpcl']) &&  $_POST['bandera_buscador_clpcl'] == 'desdeclpcl' ): ?>
                 <a onclick="document.getElementById('btn_regreso_clpcl').click();"   class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
                 <form action="{{route("calificacionPCL")}}" id="Regreso_ClPcl" method="POST">            
@@ -49,7 +69,27 @@
                     <input hidden="hidden" type="text" name="Id_proceso_pcl" id="Id_proceso_pcl" value="<?php echo $_POST['newIdproceso'];?>">
                     <input hidden="hidden" type="text" name="Id_servicio_pcl" id="Id_servicio_pcl" value="<?php echo $_POST['newIdservicio'];?>">
                     <button type="submit" id="btn_regreso_clpcl" style="display: none; !important"></button>
-                </form>
+                </form>    
+            <?php elseif (isset($_POST['bandera_buscador_proori']) &&  $_POST['bandera_buscador_proori'] == 'desdeproori' ): ?>
+                <a onclick="document.getElementById('btn_regreso_proori').click();"   class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <form action="{{route("pronunciamientoOrigen")}}" id="Regreso_ProOri" method="POST">            
+                    @csrf
+                    <input hidden="hidden" type="text" name="Id_evento_calitec" id="Id_evento_calitec" value="<?php echo $_POST['newIdEvento'];?>">
+                    <input hidden="hidden" type="text" name="Id_asignacion_calitec" id="Id_asignacion_calitec" value="<?php echo $_POST['newIdAsignacion'];?>">
+                    <input hidden="hidden" type="text" name="Id_proceso_pcl" id="Id_proceso_pcl" value="<?php echo $_POST['newIdproceso'];?>">
+                    <input hidden="hidden" type="text" name="Id_servicio_pcl" id="Id_servicio_pcl" value="<?php echo $_POST['newIdservicio'];?>">
+                    <button type="submit" id="btn_regreso_proori" style="display: none; !important"></button>
+                </form>         
+            <?php elseif (isset($_POST['bandera_buscador_calori']) &&  $_POST['bandera_buscador_calori'] == 'desdecalori' ): ?>
+                <a onclick="document.getElementById('btn_regreso_calori').click();"   class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <form action="{{route("calificacionOrigen")}}" id="Regreso_ClOri" method="POST">            
+                    @csrf
+                    <input hidden="hidden" type="text" name="newIdEvento" id="newIdEvento" value="<?php echo $_POST['newIdEvento'];?>">
+                    <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="<?php echo $_POST['newIdAsignacion'];?>">
+                    <input hidden="hidden" type="text" name="Id_proceso_pcl" id="Id_proceso_pcl" value="<?php echo $_POST['newIdproceso'];?>">
+                    <input hidden="hidden" type="text" name="Id_servicio_pcl" id="Id_servicio_pcl" value="<?php echo $_POST['newIdservicio'];?>">
+                    <button type="submit" id="btn_regreso_calori" style="display: none; !important"></button>
+                </form>            
             <?php endif ?>
         </div>
         <div class="col-2" style="text-align: left !important;">

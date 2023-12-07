@@ -2401,7 +2401,7 @@ $(document).ready(function(){
             justiDependencia.removeClass('d-none');
         }
 
-        var valorFecha = $('input[type="date"].f_evento_pericial').val();        
+        var valorFecha = $('input[type="date"].f_estructura_pericial').val();        
         if (typeof valorFecha === "undefined") {
             $('#ActualizarLaboralActivo').prop('disabled', false);
             $('#GuardarLaboralActivo').prop('disabled', false);
@@ -2585,7 +2585,21 @@ $(document).ready(function(){
         }
 
     });   
-    
+    // Ocultar o habilitar la Fecha de Evento en el dictamen pericial
+    $('#tipo_evento').change(function () {
+        var valorSeleccionado = $(this).val();
+        if (valorSeleccionado != 2) {
+            $('#div_tipo_evento').removeClass('d-none');
+        } else if (valorSeleccionado == 2) {
+            $('#div_tipo_evento').addClass('d-none');
+        } 
+    });
+    var t_evento = $('#tipo_evento').val();
+    if (t_evento == 2) {
+        $('#div_tipo_evento').addClass('d-none');
+    }else{
+        $('#div_tipo_evento').removeClass('d-none');
+    }
     $('#form_dictamen_pericial').submit(function (e){
         e.preventDefault();              
         
