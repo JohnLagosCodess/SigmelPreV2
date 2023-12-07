@@ -43,6 +43,7 @@ $(document).ready(function(){
     });
 
     $(".junta_regional_cual").select2({
+        width: '100%',
         placeholder:"Seleccione una opción",
         allowClear:false
     });
@@ -219,46 +220,24 @@ $(document).ready(function(){
     });
 
     /* VALIDACIÓN MOSTRAR FECHA EVENTO DE ACUERDO A TIPO EVENTO  */ 
-    var opt_tipo_evento;
-    $("#tipo_evento").change(function(){
-        opt_tipo_evento = parseInt($(this).val());
-        $("#tipo_evento").val(opt_tipo_evento);
-        iniciarIntervalo_tEvento();
+    // Ocultar o habilitar la Fecha de Evento en el dictamen pericial
+    $('#tipo_evento').change(function () {
+        var valorSeleccionado = $(this).val();
+        if (valorSeleccionado != 2) {
+            $('#div_tipo_evento').removeClass('d-none');
+            $('#fecha_evento').prop('required', true);
+        } else if (valorSeleccionado == 2) {
+            $('#div_tipo_evento').addClass('d-none');
+            $('#fecha_evento').prop('required', false);
+        } 
     });
-    // Función para validar items a mostrar
-    const tiempoDeslizamiento = 'slow';
-    function iniciarIntervalo_tEvento() {
-         // Selección de los elementos que se deslizarán
-         const elementosDeslizar = [
-            '.m_fecha_evento'
-        ];
-        intervalo = setInterval(() => {
-            switch (opt_tipo_evento) {
-                case 1:
-                    elementosDeslizar.forEach(elemento => {
-                        $(elemento).slideDown(tiempoDeslizamiento);
-                    }); 
-                    $('#fecha_evento').prop('required', true);
-                break;
-                
-                case 2: 
-                    elementosDeslizar.forEach(elemento => {
-                        $(elemento).slideUp(tiempoDeslizamiento);
-                    });
-                    $('#fecha_evento').prop('required', false);
-                break;
-
-                default:
-                    // Deslizar hacia arriba (ocultar) los elementos
-                    elementosDeslizar.forEach(elemento => {
-                        $(elemento).slideUp(tiempoDeslizamiento);
-                    });
-                    $('#fecha_evento').prop('required', false);
-                break;
-            }
-
-        }, 500);
-
+    var t_evento = $('#tipo_evento').val();
+    if (t_evento == 2) {
+        $('#div_tipo_evento').addClass('d-none');
+        $('#fecha_evento').prop('required', false);
+    }else{
+        $('#div_tipo_evento').removeClass('d-none');
+        $('#fecha_evento').prop('required', true);
     }
 
     /* VALIDACIÓN MOSTRAR RANGO PCL */
@@ -355,40 +334,27 @@ $(document).ready(function(){
 
     }
     /* VALIDACIÓN MOSTRAR CUAL JUNTA REGIONAL */
-    var opt_cual_junta;
-    $("#junta_regional").on("change", function(){
-        opt_cual_junta = $(this).val();
-        $(this).val(opt_cual_junta);
-        iniciarIntervalo_junta();
+    
+    $('#div_cual').hide();
+    $("#junta_regional").change(function() {
+        // Verificar si está marcado
+        if ($(this).prop("checked")) {
+            $('#div_cual').slideDown('slow');
+            $('#junta_regional_cual').prop('required', true);
+        } else {
+            $('#div_cual').slideUp('up');
+            $('#junta_regional_cual').prop('required', false);
+        }
     });
-    // Función para validar items a mostrar
-    const tiempoDeslizamiento3 = 'slow';
-    function iniciarIntervalo_junta() {
-         // Selección de los elementos que se deslizarán
-         const elementosDeslizar3 = [
-            '.c_cualJunta'
-        ];
-        intervaloJu = setInterval(() => {
-            //console.log(opt_cual_junta)
-            switch (opt_cual_junta) {
-                case "junta_regi":
-                    elementosDeslizar3.forEach(elemento => {
-                        $(elemento).slideDown(tiempoDeslizamiento3);
-                    }); 
-                    $('#junta_regional_cual').prop('required', true);
-                break;
-                default:
-                    // Deslizar hacia arriba (ocultar) los elementos
-                    elementosDeslizar3.forEach(elemento => {
-                        $(elemento).slideUp(tiempoDeslizamiento3);
-                    });
-                    $('#junta_regional_cual').prop('required', false);
-                break;
-            }
 
-        }, 500);
+    var junta_regionalcheckbox = document.getElementById("junta_regional");
 
+    // Verificar si está marcado al cargar la página
+    if (junta_regionalcheckbox.checked) {
+        $('#div_cual').slideDown('slow');
+        $('#junta_regional_cual').prop('required', true);
     }
+    
     /*Validar Cargue de archivo Pronuncia*/
     $("#DocPronuncia").change(function() {
         var file = this.files[0];
@@ -454,7 +420,6 @@ $(document).ready(function(){
         formData.append('porcentaje_pcl', $('#porcentaje_pcl').val());
         formData.append('rango_pcl', $('#rango_pcl').val());
         formData.append('decision_pr', $("[id^='di_']").filter(":checked").val());
-        formData.append('fecha_pronuncia2', $('#fecha_pronuncia2').val());
         formData.append('asunto_cali', $('#asunto_cali').val());
         formData.append('sustenta_cali', $('#sustenta_cali').val());
         formData.append('copia_afiliado', $('#copia_afiliado').filter(":checked").val());
@@ -547,7 +512,8 @@ $(document).ready(function(){
 function funciones_elementos_fila_diagnosticos(num_consecutivo) {
     // Inicializacion de select 2
     $("#lista_Cie10_fila_"+num_consecutivo).select2({
-        width: '100%',
+        //width: '100%',
+        width: '340px',
         placeholder: "Seleccione",
         allowClear: false
     });
@@ -573,7 +539,7 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
             // $("select[id^='lista_Cie10_fila_']").empty();
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $("#lista_Cie10_fila_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Cie_diagnostico"]+'">'+data[claves[i]]["CIE10"]+'</option>');
+                $("#lista_Cie10_fila_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Cie_diagnostico"]+'">'+data[claves[i]]["CIE10"]+' - '+data[claves[i]]["Descripcion_diagnostico"]+'</option>');
             }
         }
     });

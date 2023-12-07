@@ -2700,8 +2700,8 @@ $(document).ready(function(){
             $('#GuardrDictamenPericial').prop('disabled', false);
         }else if($('#GuardarDecreto').length){
             //botones
-            $('#origen_firme').prop('disabled', false);
-            $('#origen_cobertura').prop('disabled', false);
+            $('#origen_firme').prop('disabled', true);
+            $('#origen_cobertura').prop('disabled', true);
             $('#decreto_califi').prop('disabled', false);
             $('#guardar_datos_examenes').prop('disabled', true);
             $('#guardar_datos_cie10').prop('disabled', true);
@@ -2940,6 +2940,21 @@ $(document).ready(function(){
         } */
 
     });   
+    // Ocultar o habilitar la Fecha de Evento en el dictamen pericial
+    $('#tipo_evento').change(function () {
+        var valorSeleccionado = $(this).val();
+        if (valorSeleccionado != 2) {
+            $('#div_tipo_evento').removeClass('d-none');
+        } else if (valorSeleccionado == 2) {
+            $('#div_tipo_evento').addClass('d-none');
+        } 
+    });
+    var t_evento = $('#tipo_evento').val();
+    if (t_evento == 2) {
+        $('#div_tipo_evento').addClass('d-none');
+    }else{
+        $('#div_tipo_evento').removeClass('d-none');
+    }
     // Formulario para guardar Dictamen pericial
     $('#form_dictamen_pericial').submit(function (e){
         e.preventDefault();

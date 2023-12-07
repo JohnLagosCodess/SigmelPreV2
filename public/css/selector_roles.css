@@ -73,6 +73,10 @@
     scale: 2;
 }
 
+#div_cual {
+    display: none;
+}
+
 .custom-checkboxtipo {
     display: inline-block;
     width: 20px;

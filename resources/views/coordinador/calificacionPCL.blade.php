@@ -81,7 +81,8 @@
                                                 <div class="form-group">
                                                     <label for="id_evento">ID evento</label>
                                                     <br>
-                                                    {{-- DATOS PARA VER EDICIÓN DE EVENTO --}}
+                                                    <input hidden="hidden" type="text" class="form-control" name="id_evento" id="id_evento" value="{{$array_datos_calificacionPcl[0]->ID_evento}}" disabled>
+                                                {{-- DATOS PARA VER EDICIÓN DE EVENTO --}}
                                                     <a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer; font-weight: bold;" class="btn text-info" type="button"><?php if(!empty($array_datos_calificacionPcl[0]->ID_evento)){echo $array_datos_calificacionPcl[0]->ID_evento;}?></a>                                                
                                                 </div>
                                             </div>
@@ -149,7 +150,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fecha_asignacion_calificacion">Fecha de asignación para calificación</label>
-                                                <input type="datetime-local" class="form-control" name="fecha_asignacion_calificacion" id="fecha_asignacion_calificacion" style="color: red;">
+                                                <input type="datetime-local" class="form-control" name="fecha_asignacion_calificacion" id="fecha_asignacion_calificacion" value="{{$array_datos_calificacionPcl[0]->Fecha_asignacion_calif}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -383,7 +384,7 @@
                                                 <th style="width:164.719px !important;">Documento</th>
                                                 <th style="width:200px !important;">Descripción</th>
                                                 <th>Solicitada a</th>
-                                                <th>Fecha recepción de documento</th>
+                                                <th>Fecha recepción de documentos</th>
                                                 <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_fila"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                             </tr>
                                         </thead>
@@ -616,7 +617,7 @@
                                             <input class="scalesR" type="radio" name="afiliado_comunicado" id="afiliado_comunicado" value="Afiliado" style="margin-left: revert;" required>
                                         </div>
                                         <div class="col-3">
-                                            <label for="empresa_comunicado"><strong>Empresa</strong></label>
+                                            <label for="empresa_comunicado"><strong>Empleador</strong></label>
                                             <input class="scalesR" type="radio" name="afiliado_comunicado" id="empresa_comunicado" value="Empresa" style="margin-left: revert;" required>
                                         </div>
                                         <div class="col-3">
@@ -686,7 +687,7 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-3">
+                                        <div class="col-2">
                                             <div class="form-group">
                                                 <label for="anexos">Anexos</label>
                                                 <input class="form-control" type="number" name="anexos" id="anexos">
@@ -715,6 +716,15 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-1">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    <br>
+                                                    <input class="custom-control-input" type="checkbox" id="firmarcomunicado" name="firmarcomunicado" value="firmar comunicado">
+                                                    <label for="firmarcomunicado" class="custom-control-label">Firmar</label>                 
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="row" id="contenedorCopia">
                                         {{-- <div class="col-6">
@@ -722,12 +732,57 @@
                                                 <input class="form-control" type="text" name="agregar_copia" id="agregar_copia" placeholder="Copia 1">
                                             </div>
                                         </div> --}}
-                                        <div class="col-12">
+                                        {{-- <div class="col-12">
                                             <div class="form-group"> 
                                                 <label for="agregar_copia">Agregar copia</label>
                                                 <button class="btn btn-info" type="button" onclick="duplicate()" style="border-radius: 50%">
                                                    <i class="fas fa-plus"></i>
                                                 </button>
+                                            </div>
+                                        </div> --}}
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="agregar_copia">Agregar copia</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="copia_afiliado" name="copia_afiliado" value="Afiliado">
+                                                        <label for="copia_afiliado" class="custom-control-label">Afiliado</label>                 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="copia_empleador" name="copia_empleador" value="Empleador">
+                                                        <label for="copia_empleador" class="custom-control-label">Empleador</label>                 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="copia_eps" name="copia_eps" value="EPS">
+                                                        <label for="copia_eps" class="custom-control-label">EPS</label>                 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="copia_afp" name="copia_afp" value="AFP">
+                                                        <label for="copia_afp" class="custom-control-label">AFP</label>                 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="copia_arl" name="copia_arl" value="ARL">
+                                                        <label for="copia_arl" class="custom-control-label">ARL</label>                 
+                                                </div>
                                             </div>
                                         </div>
                                     </div>                                                                        
@@ -843,7 +898,7 @@
                                             <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="afiliado_comunicado_editar" value="Afiliado" style="margin-left: revert;" required>
                                         </div>
                                         <div class="col-3">
-                                            <label for="empresa_comunicado"><strong>Empresa</strong></label>
+                                            <label for="empresa_comunicado"><strong>Empleador</strong></label>
                                             <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="empresa_comunicado_editar" value="Empresa" style="margin-left: revert;" required>
                                         </div>
                                         <div class="col-3">
@@ -921,7 +976,7 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-3">
+                                        <div class="col-2">
                                             <div class="form-group">
                                                 <label for="anexos_act">Anexos</label>
                                                 <input class="form-control" type="number" name="anexos_act" id="anexos_editar">
@@ -950,6 +1005,15 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-1">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    <br>
+                                                    <input class="custom-control-input" type="checkbox" id="firmarcomunicado_editar" name="firmarcomunicado_editar" value="firmar comunicado">
+                                                    <label for="firmarcomunicado_editar" class="custom-control-label">Firmar</label>                 
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="row">
                                         {{-- <div class="col-6">
@@ -957,7 +1021,7 @@
                                                 <input class="form-control" type="text" name="agregar_copia" id="agregar_copia" placeholder="Copia 1">
                                             </div>
                                         </div> --}}
-                                        <div class="col-12">
+                                        {{-- <div class="col-12">
                                             <div class="form-group"> 
                                                 <label for="agregar_copia">Agregar copia</label>
                                                 <button class="btn btn-info" type="button" onclick="duplicate3()" style="border-radius: 50%">
@@ -965,7 +1029,52 @@
                                                 </button>
                                             </div>
                                         </div>
-                                        <div class="row col-12" id="contenedorCopia2"></div>
+                                        <div class="row col-12" id="contenedorCopia2"></div> --}}
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="agregar_copia">Agregar copia</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="edit_copia_afiliado" name="edit_copia_afiliado" value="Afiliado">
+                                                        <label for="edit_copia_afiliado" class="custom-control-label">Afiliado</label>                 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="edit_copia_empleador" name="edit_copia_empleador" value="Empleador">
+                                                        <label for="edit_copia_empleador" class="custom-control-label">Empleador</label>                 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="edit_copia_eps" name="edit_copia_eps" value="EPS">
+                                                        <label for="edit_copia_eps" class="custom-control-label">EPS</label>                 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="edit_copia_afp" name="edit_copia_afp" value="AFP">
+                                                        <label for="edit_copia_afp" class="custom-control-label">AFP</label>                 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="edit_copia_arl" name="edit_copia_arl" value="ARL">
+                                                        <label for="edit_copia_arl" class="custom-control-label">ARL</label>                 
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="card-footer">
@@ -974,6 +1083,14 @@
                                             <div class="form-group">
                                                 <input type="button" id="Editar_comunicados" class="btn btn-info" value="Actualizar">
                                                 <input type="submit" id="Pdf" class="btn btn-info" value="Pdf">                            
+                                            </div>                                            
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-center">                                
+                                                <button class="btn btn-info d-none" type="button" id="mostrar_barra_descarga_pdf" disabled>
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                    Descargando PDF por favor espere...
+                                                </button>
                                             </div>
                                         </div>
                                         <div class="col-12">

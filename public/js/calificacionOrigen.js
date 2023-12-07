@@ -60,6 +60,33 @@ $(document).ready(function(){
         }
     });
 
+    // Validar el tipo de Evento 
+    var tipo_evento_listado_docSeguimiento = $('#tipo_evento_doc').val();
+
+    if (tipo_evento_listado_docSeguimiento == 3 || tipo_evento_listado_docSeguimiento == 4) {
+        $('#div_GrupoDocumental').addClass('d-none');
+        $('#div_GrupoDocumental').attr('required', false);
+        $('#div_DocumentosSugeridos').addClass('d-none');
+    }
+
+    // Ocultar el grupo documental y documentos sugeridos 
+
+    $('#tipo_evento_doc').on('change', function() {
+        // Actualizar la variable tipo_evento_listado_docSeguimiento con el nuevo valor seleccionado
+        var tipo_evento_lista_docSeguimiento = $(this).val();
+        
+        if (tipo_evento_lista_docSeguimiento == 3 || tipo_evento_lista_docSeguimiento == 4) {
+            $('#div_GrupoDocumental').addClass('d-none');
+            $('#div_GrupoDocumental').attr('required', false);
+            $('#div_DocumentosSugeridos').addClass('d-none');
+        } else {
+            $('#div_GrupoDocumental').removeClass('d-none');
+            $('#div_GrupoDocumental').attr('required', true);
+            $('#div_DocumentosSugeridos').removeClass('d-none');
+        }
+        
+      });
+
     //Listado Grupo documental 
     var tipo_evento_doc = $('#tipo_evento_doc').val();
     let datos_lista_grupo_documental = {
@@ -82,7 +109,6 @@ $(document).ready(function(){
             }
         }
     });
-
     // Listado Grupo documental cuando se realice cambio
     $('#tipo_evento_doc').change( function(){
         let id_tipo_evento = $('#tipo_evento_doc').val();
@@ -1044,6 +1070,23 @@ $(document).ready(function(){
         $('form[name="formu_comunicado"]').removeAttr('action');
 
     });
+
+    var AlertaPdf;
+    $(document).on('click', "input[id='Pdf']", function () {                       
+        AlertaPdf = setTimeout(() => {            
+            $('#mostrar_barra_descarga_pdf').removeClass('d-none');                        
+            $('#Pdf').attr('disabled', true);
+            $('#Editar_comunicados').attr('disabled', true);
+        }, 1000);
+       
+        setTimeout(function() {
+            clearTimeout(AlertaPdf);
+            $('#mostrar_barra_descarga_pdf').addClass('d-none');                        
+            $('#Pdf').attr('disabled', false);  
+            $('#Editar_comunicados').attr('disabled', false);
+        }, 10000);
+
+    })  
 
     // Creacion de la modal para la edicion del comunicado 
     $(document).on('click', "a[id^='EditarComunicado_']", function(){

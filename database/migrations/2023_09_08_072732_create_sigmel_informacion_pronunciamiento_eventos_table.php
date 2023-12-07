@@ -34,7 +34,7 @@ return new class extends Migration
             $table->string('Porcentaje_pcl', 5)->nullable();
             $table->string('Rango_pcl', 20)->nullable();
             $table->string('Decision', 12)->nullable();
-            $table->date('Fecha_pronuncia')->nullable();
+            $table->dateTime('Fecha_pronuncia')->nullable();
             $table->text('Asunto_cali')->nullable();
             $table->text('Sustenta_cali')->nullable();
             $table->string('Copia_afiliado', 10)->nullable();

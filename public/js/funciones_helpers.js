@@ -200,6 +200,17 @@ $(document).ready(function () {
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
     });
 
+    // Tesxt Asunto y Sustentacion Pronunciamiento
+
+    $(document).on('keyup', "textarea[id^='asunto_cali']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
+    }); 
+
+    $(document).on('keyup', "textarea[id^='sustenta_cali']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
+    });    
 
     // TEXTAREA DESCRIPCIÓN FURAT (DTO ATEL)
     $(document).on('keyup', "textarea[id^='descripcion_FURAT']", function(){

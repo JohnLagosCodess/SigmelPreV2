@@ -339,7 +339,7 @@ class PronunciamientoPCLController extends Controller
                 'Porcentaje_pcl' => $request->porcentaje_pcl,
                 'Rango_pcl' => $request->rango_pcl,
                 'Decision' => $request->decision_pr,
-                'Fecha_pronuncia' => $request->fecha_pronuncia2,
+                'Fecha_pronuncia' => $datetime,
                 'Asunto_cali' => $request->asunto_cali,
                 'Sustenta_cali' => $request->sustenta_cali,
                 'Copia_afiliado' => $request->copia_afiliado,
@@ -418,7 +418,7 @@ class PronunciamientoPCLController extends Controller
                 'Porcentaje_pcl' => $request->porcentaje_pcl,
                 'Rango_pcl' => $request->rango_pcl,
                 'Decision' => $request->decision_pr,
-                'Fecha_pronuncia' => $request->fecha_pronuncia2,
+                'Fecha_pronuncia' => $datetime,
                 'Asunto_cali' => $request->asunto_cali,
                 'Sustenta_cali' => $request->sustenta_cali,
                 'Copia_afiliado' => $request->copia_afiliado,
@@ -459,6 +459,12 @@ class PronunciamientoPCLController extends Controller
 
         }elseif($request->bandera_pronuncia_guardar_actualizar == 'Actualizar'){
 
+            if ($request->tipo_evento == 2) {
+                $Fecha_evento = null;
+            } else {
+                $Fecha_evento = $request->fecha_evento;
+            }           
+
             $datos_info_pronunciamiento_eventos = [
                 'Id_primer_calificador' => $request->primer_calificador,
                 'Id_nombre_calificador' => $request->nombre_calificador,
@@ -471,14 +477,14 @@ class PronunciamientoPCLController extends Controller
                 'Id_tipo_pronunciamiento' => $request->tipo_pronunciamiento,
                 'Id_tipo_evento' => $request->tipo_evento,
                 'Id_tipo_origen' => $request->tipo_origen,
-                'Fecha_evento' => $request->fecha_evento,
+                'Fecha_evento' => $Fecha_evento,
                 'Dictamen_calificador' => $request->dictamen_calificador,
                 'Fecha_calificador' => $request->fecha_calificador,
                 'Fecha_estruturacion' => $request->fecha_estruturacion,
                 'Porcentaje_pcl' => $request->porcentaje_pcl,
                 'Rango_pcl' => $request->rango_pcl,
                 'Decision' => $request->decision_pr,
-                'Fecha_pronuncia' => $request->fecha_pronuncia2,
+                'Fecha_pronuncia' => $datetime,
                 'Asunto_cali' => $request->asunto_cali,
                 'Sustenta_cali' => $request->sustenta_cali,
                 'Copia_afiliado' => $request->copia_afiliado,
@@ -520,14 +526,14 @@ class PronunciamientoPCLController extends Controller
                 'Id_tipo_pronunciamiento' => $request->tipo_pronunciamiento,
                 'Id_tipo_evento' => $request->tipo_evento,
                 'Id_tipo_origen' => $request->tipo_origen,
-                'Fecha_evento' => $request->fecha_evento,
+                'Fecha_evento' => $Fecha_evento,
                 'Dictamen_calificador' => $request->dictamen_calificador,
                 'Fecha_calificador' => $request->fecha_calificador,
                 'Fecha_estruturacion' => $request->fecha_estruturacion,
                 'Porcentaje_pcl' => $request->porcentaje_pcl,
                 'Rango_pcl' => $request->rango_pcl,
                 'Decision' => $request->decision_pr,
-                'Fecha_pronuncia' => $request->fecha_pronuncia2,
+                'Fecha_pronuncia' => $datetime,
                 'Asunto_cali' => $request->asunto_cali,
                 'Sustenta_cali' => $request->sustenta_cali,
                 'Copia_afiliado' => $request->copia_afiliado,

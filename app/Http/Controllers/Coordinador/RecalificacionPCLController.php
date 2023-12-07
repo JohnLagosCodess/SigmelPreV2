@@ -40,9 +40,14 @@ class RecalificacionPCLController extends Controller
             return redirect('/');
         }
         $user = Auth::user();
-
-        $Id_evento_recali=$request->Id_evento_pcl;
-        $Id_asignacion_recali = $request->Id_asignacion_pcl;
+        // validar si las variables Evento y Asignacion vienen desde el modulo princinpal o desde el modulo gestion inicial edicion
+        if (!empty($request->Id_asignacion_pcl)) {
+            $Id_evento_recali=$request->Id_evento_pcl;
+            $Id_asignacion_recali = $request->Id_asignacion_pcl;           
+        }else{
+            $Id_evento_recali=$request->Id_evento_recali;
+            $Id_asignacion_recali = $request->Id_asignacion_recali; 
+        }
         $Id_proceso_recali = 2;
         $Id_servicioCalifi= 6;
         $Id_servicioRecalifi = 7;
