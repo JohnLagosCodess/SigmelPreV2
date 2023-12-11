@@ -476,6 +476,7 @@ class BandejaOrigenController extends Controller
         }
         $usuario = Auth::user()->name;        
         $time = time();
+        $date = date("Y-m-d", $time);
         $date_con_hora = date("Y-m-d h:i:s", $time);
 
         $IdEventoBandejaOrigen = $request->array;
@@ -537,6 +538,27 @@ class BandejaOrigenController extends Controller
                 // CASO 1: Id asignacion no es vacio y id profesional no es vacio y id servicio no es vacio
                 case (!empty($IdEventoBandejaOrigen) and !empty($Id_profesional) and !empty($Id_Servicio_redireccionar)):
             
+                    /* Verificación de que el check de detiene tiempo gestion este en sí acorde a la paramétrica */
+                    $casilla_detiene_tiempo_gestion = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+                    ->select('sipc.Detiene_tiempo_gestion')
+                    ->where([
+                        // ['sipc.Id_cliente', '=', $id_cliente],
+                        ['sipc.Id_proceso', '=', $Id_proceso],
+                        ['sipc.Servicio_asociado', '=', $Id_Servicio_redireccionar],
+                        ['sipc.Accion_ejecutar', '=', $Id_accion]
+                    ])->get();
+
+                    if(count($casilla_detiene_tiempo_gestion) > 0){
+                        $Detiene_tiempo_gestion = $casilla_detiene_tiempo_gestion[0]->Detiene_tiempo_gestion;
+                        if ($Detiene_tiempo_gestion == "Si") {
+                            $Detener_tiempo_gestion = "Si";
+                            $F_detencion_tiempo_gestion = $date;
+                        }else{
+                            $Detener_tiempo_gestion = "No";
+                            $F_detencion_tiempo_gestion = null;
+                        }
+                    };
+
                     $actualizar_bandejaOrigen = [
                         'Id_proceso' => $Id_proceso,
                         'Id_servicio' => $Id_Servicio_redireccionar,
@@ -547,7 +569,9 @@ class BandejaOrigenController extends Controller
                         'F_asignacion_calificacion' => $F_asignacion_calificacion,
                         'Id_profesional' =>  $Id_profesional,
                         'Nombre_profesional' => $nombre_profesional,
-                        'Nombre_usuario' => $usuario
+                        'Nombre_usuario' => $usuario,
+                        'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
+                        'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion
                     ];
 
                     // Insertamos los datos en un array para luego realizar la actualización
@@ -563,6 +587,27 @@ class BandejaOrigenController extends Controller
                 // CASO 2: Id asignacion no es vacio y id profesional es vacio y id servicio no es vacio
                 case (!empty($IdEventoBandejaOrigen) and empty($Id_profesional) and !empty($Id_Servicio_redireccionar)):
     
+                    /* Verificación de que el check de detiene tiempo gestion este en sí acorde a la paramétrica */
+                    $casilla_detiene_tiempo_gestion = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+                    ->select('sipc.Detiene_tiempo_gestion')
+                    ->where([
+                        // ['sipc.Id_cliente', '=', $id_cliente],
+                        ['sipc.Id_proceso', '=', $Id_proceso],
+                        ['sipc.Servicio_asociado', '=', $Id_Servicio_redireccionar],
+                        ['sipc.Accion_ejecutar', '=', $Id_accion]
+                    ])->get();
+
+                    if(count($casilla_detiene_tiempo_gestion) > 0){
+                        $Detiene_tiempo_gestion = $casilla_detiene_tiempo_gestion[0]->Detiene_tiempo_gestion;
+                        if ($Detiene_tiempo_gestion == "Si") {
+                            $Detener_tiempo_gestion = "Si";
+                            $F_detencion_tiempo_gestion = $date;
+                        }else{
+                            $Detener_tiempo_gestion = "No";
+                            $F_detencion_tiempo_gestion = null;
+                        }
+                    };
+
                     $actualizar_bandejaOrigen_Servicio = [
                         'Id_proceso' => $Id_proceso,
                         'Id_servicio' => $Id_Servicio_redireccionar,
@@ -571,6 +616,8 @@ class BandejaOrigenController extends Controller
                         'Id_proceso_anterior' => $array_id_procesos[$m],
                         'Id_servicio_anterior' => $array_id_servicios[$m],
                         'Nombre_usuario' => $usuario,
+                        'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
+                        'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion
                     ];
 
                     // Insertamos los datos en un array para luego realizar la actualización
@@ -586,6 +633,27 @@ class BandejaOrigenController extends Controller
                 // CASO 3: Id asignacion no es vacio y id profesional no es vacio y id servicio es vacio
                 case (!empty($IdEventoBandejaOrigen) and !empty($Id_profesional) and empty($Id_Servicio_redireccionar)):
     
+                    /* Verificación de que el check de detiene tiempo gestion este en sí acorde a la paramétrica */
+                    $casilla_detiene_tiempo_gestion = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+                    ->select('sipc.Detiene_tiempo_gestion')
+                    ->where([
+                        // ['sipc.Id_cliente', '=', $id_cliente],
+                        ['sipc.Id_proceso', '=', $Id_proceso],
+                        ['sipc.Servicio_asociado', '=', $Id_Servicio_redireccionar],
+                        ['sipc.Accion_ejecutar', '=', $Id_accion]
+                    ])->get();
+
+                    if(count($casilla_detiene_tiempo_gestion) > 0){
+                        $Detiene_tiempo_gestion = $casilla_detiene_tiempo_gestion[0]->Detiene_tiempo_gestion;
+                        if ($Detiene_tiempo_gestion == "Si") {
+                            $Detener_tiempo_gestion = "Si";
+                            $F_detencion_tiempo_gestion = $date;
+                        }else{
+                            $Detener_tiempo_gestion = "No";
+                            $F_detencion_tiempo_gestion = null;
+                        }
+                    };
+
                     $actualizar_bandejaOrigen_Profesional = [
                         'Id_proceso' => $Id_proceso,
                         'Id_servicio' => $Id_Servicio_redireccionar,
@@ -596,7 +664,9 @@ class BandejaOrigenController extends Controller
                         'F_asignacion_calificacion' => $F_asignacion_calificacion,
                         'Id_profesional' =>  $Id_profesional,
                         'Nombre_profesional' => $nombre_profesional,
-                        'Nombre_usuario' => $usuario
+                        'Nombre_usuario' => $usuario,
+                        'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
+                        'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion
                     ]; 
 
                     // Insertamos los datos en un array para luego realizar la actualización

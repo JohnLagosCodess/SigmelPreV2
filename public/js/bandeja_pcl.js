@@ -115,7 +115,7 @@ $(document).ready(function () {
         });
     });
 
-    /* VALIDACIÓN PARA DETERMINAR QUE LA PARAMÉTRICA QUE SE CONFIGURE PARA EL MÓDULO NUEVO ESTE EN UN VALOR DE SI EN LA TABLA sigmel_informacion_parametrizaciones_clientes */
+    /* VALIDACIÓN PARA DETERMINAR QUE LA PARAMÉTRICA QUE SE CONFIGURE PARA LA BANDEJA DE TRABAJI ESTE EN UN VALOR DE SI EN LA TABLA sigmel_informacion_parametrizaciones_clientes */
     var validar_bandeja_trabajo = setInterval(() => {
         if($("#procesos_parametrizados").val() != '' && $("#redireccionar").val() != '' && $("#accion").val() != ''){
             let datos_ejecutar_parametrica_bandeja_trabajo = {
@@ -618,7 +618,7 @@ $(document).ready(function () {
                             $('.mostrar_mensaje_No_actualizo_bandeja').addClass('d-none');
                             $('.mostrar_mensaje_No_actualizo_bandeja').empty();                            
                         }, 6000);
-                    }  
+                    }
                 }
             });
         }else{

@@ -381,12 +381,35 @@ class CalificacionPCLController extends Controller
                 $Id_Estado_evento = 223;
             }
 
+            /* Verificación de que el check de detiene tiempo gestion este en sí acorde a la paramétrica */
+            $casilla_detiene_tiempo_gestion = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Detiene_tiempo_gestion')
+            ->where([
+                ['sipc.Id_cliente', '=', $id_cliente],
+                ['sipc.Id_proceso', '=', $Id_proceso],
+                ['sipc.Servicio_asociado', '=', $Id_servicio],
+                ['sipc.Accion_ejecutar', '=', $request->accion]
+            ])->get();
+
+            if(count($casilla_detiene_tiempo_gestion) > 0){
+                $Detiene_tiempo_gestion = $casilla_detiene_tiempo_gestion[0]->Detiene_tiempo_gestion;
+                if ($Detiene_tiempo_gestion == "Si") {
+                    $Detener_tiempo_gestion = "Si";
+                    $F_detencion_tiempo_gestion = $date;
+                }else{
+                    $Detener_tiempo_gestion = "No";
+                    $F_detencion_tiempo_gestion = null;
+                }
+            };
+
             $datos_info_actualizarAsignacionEvento= [      
                 'Id_accion' => $request->accion,
                 'Id_Estado_evento' => $Id_Estado_evento,
                 'F_alerta' => $request->fecha_alerta,                
                 'Nombre_usuario' => $nombre_usuario,
-                'F_registro' => $date,
+                'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
+                'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
+                // 'F_registro' => $date,
             ];
     
             sigmel_informacion_accion_eventos::on('sigmel_gestiones')->insert($datos_info__registrarCalifcacionPcl);
@@ -459,12 +482,35 @@ class CalificacionPCLController extends Controller
                 $Id_Estado_evento = 223;
             }
 
+            /* Verificación de que el check de detiene tiempo gestion este en sí acorde a la paramétrica */
+            $casilla_detiene_tiempo_gestion = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Detiene_tiempo_gestion')
+            ->where([
+                ['sipc.Id_cliente', '=', $id_cliente],
+                ['sipc.Id_proceso', '=', $Id_proceso],
+                ['sipc.Servicio_asociado', '=', $Id_servicio],
+                ['sipc.Accion_ejecutar', '=', $request->accion]
+            ])->get();
+
+            if(count($casilla_detiene_tiempo_gestion) > 0){
+                $Detiene_tiempo_gestion = $casilla_detiene_tiempo_gestion[0]->Detiene_tiempo_gestion;
+                if ($Detiene_tiempo_gestion == "Si") {
+                    $Detener_tiempo_gestion = "Si";
+                    $F_detencion_tiempo_gestion = $date;
+                }else{
+                    $Detener_tiempo_gestion = "No";
+                    $F_detencion_tiempo_gestion = null;
+                }
+            };
+
             $datos_info_actualizarAsignacionEvento= [      
                 'Id_accion' => $request->accion,
                 'Id_Estado_evento' => $Id_Estado_evento, 
                 'F_alerta' => $request->fecha_alerta,                
                 'Nombre_usuario' => $nombre_usuario,
-                'F_registro' => $date,
+                'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
+                'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
+                // 'F_registro' => $date,
             ];
 
             sigmel_informacion_accion_eventos::on('sigmel_gestiones')
