@@ -226,33 +226,8 @@ $(document).ready(function(){
         }
     });
 
-    // listado de tipos de clientes
-    $('#cliente').change(function(){
-        let datos_lista_tipo_clientes = {
-            '_token': token,
-            'parametro' : "lista_tipo_clientes",
-            'Id_cliente': $(this).val()
-        };
-        
-        $.ajax({
-            type:'POST',
-            url:'/cargarselectores',
-            data: datos_lista_tipo_clientes,
-            success:function(data) {
-                $('#tipo_cliente').empty();
-                $('#nombre_tipo_cliente').empty();
-
-                $('#tipo_cliente').val(data[0]["Id_TipoCliente"]);
-                $('#nombre_tipo_cliente').val(data[0]["Nombre_tipo_cliente"]);
-
-                // $('#tipo_cliente').append('<option value="" selected>Seleccione</option>');
-                // let claves = Object.keys(data);
-                // for (let i = 0; i < claves.length; i++) {
-                //     $('#tipo_cliente').append('<option value="'+data[claves[i]]["Id_TipoCliente"]+'">'+data[claves[i]]["Nombre_tipo_cliente"]+'</option>');
-                // }
-            }
-        });
-    });
+    
+    
     // listado tipo de evento
     let datos_lista_tipo_evento = {
         '_token': token,
@@ -780,25 +755,55 @@ $(document).ready(function(){
         }
     });
 
-    //LISTADO PROCESO
-    let datos_listado_proceso = {
-        '_token': token,
-        'parametro' : "listado_proceso"
-    };
-    $.ajax({
-        type:'POST',
-        url:'/cargarselectores',
-        data: datos_listado_proceso,
-        success:function(data) {
-            //console.log(data);
-            $('#proceso').empty();
-            $('#proceso').append('<option value="" selected>Seleccione</option>');
-            let claves = Object.keys(data);
-            for (let i = 0; i < claves.length; i++) {
-                $('#proceso').append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
+    // listado de tipos de clientes
+    $('#cliente').change(function(){
+        let datos_lista_tipo_clientes = {
+            '_token': token,
+            'parametro' : "lista_tipo_clientes",
+            'Id_cliente': $(this).val()
+        };
+        
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_lista_tipo_clientes,
+            success:function(data) {
+                $('#tipo_cliente').empty();
+                $('#nombre_tipo_cliente').empty();
+
+                $('#tipo_cliente').val(data[0]["Id_TipoCliente"]);
+                $('#nombre_tipo_cliente').val(data[0]["Nombre_tipo_cliente"]);
+
+                // $('#tipo_cliente').append('<option value="" selected>Seleccione</option>');
+                // let claves = Object.keys(data);
+                // for (let i = 0; i < claves.length; i++) {
+                //     $('#tipo_cliente').append('<option value="'+data[claves[i]]["Id_TipoCliente"]+'">'+data[claves[i]]["Nombre_tipo_cliente"]+'</option>');
+                // }
             }
-        }
+        });
+
+        //LISTADO PROCESO
+        let datos_listado_proceso = {
+            '_token': token,
+            'parametro' : "listado_proceso",
+            'Id_cliente': $(this).val()
+        };
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_listado_proceso,
+            success:function(data) {
+                //console.log(data);
+                $('#proceso').empty();
+                $('#proceso').append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $('#proceso').append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
+                }
+            }
+        });
     });
+    
 
     // LISTADO DE SERVICIOS
     $('#proceso').change(function(){

@@ -84,7 +84,7 @@ $(document).ready(function () {
 
     $('#descripcion_equipo_trabajo').keyup(function(){
         var textoEscrito = $(this).val();
-        $(this).val(LetraMayusCadaPalabra(textoEscrito));
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
     });
 
     /* INPUTS DEL FORMULARIO DE EDICIÓN DE EQUIPOS DE TRABAJO */
@@ -94,7 +94,7 @@ $(document).ready(function () {
     });
     $(document).on('keyup', "textarea[id^='editar_descripcion_equipo_trabajo_']", function(){
         var textoEscrito = $(this).val();
-        $(this).val(LetraMayusCadaPalabra(textoEscrito));
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
     });
 
     /* INPUTS Y TEXT AREAS DEL MODAL Solicitud Documentos - Seguimientos Módulo Calificación PCL*/

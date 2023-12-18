@@ -369,7 +369,7 @@ $(document).ready(function () {
                     
                     // console.log(cell_1[0].cellIndex);
 
-                    if(cell_1[0].cellIndex != 34){
+                    if(cell_1[0].cellIndex != 35){
 
                         var cell = $('.filters th').eq(
                             $(api.column(colIdx).header()).index()
@@ -443,7 +443,7 @@ $(document).ready(function () {
                         ],
                         //Limitar columnas para el reporte
                         exportOptions: {
-                            columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34]
+                            columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35]
                         }  
                     }
                 ]
@@ -487,6 +487,7 @@ $(document).ready(function () {
                 {"data":"N_dictamen_Jrci"},
                 {"data":"F_radicado_entrada_dictamen_Jrci"},
                 {"data":"F_asignacion_pronuncia_junta"},
+                {"data":"Decision_dictamen_jrci"},
                 {"data":"N_acta_ejecutoria_emitida_Jrci"},
                 {"data":"N_radicado_de_recurso_Jrci"},
                 {"data":"Termino_controversia_propia_Jrci"},

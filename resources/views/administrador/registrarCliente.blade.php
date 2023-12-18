@@ -26,7 +26,7 @@
                             {{-- INFO BÁSICA DEL CLIENTE Y SUCURSALES --}}
                             <div class="card-info">
                                 <div class="card-header text-center" style="border: 1.5px solid black;">
-                                    <h5>Información Principal del Cliente</h5>
+                                    <h5>Información Principal</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="col-12">
@@ -112,8 +112,28 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
-                                                    <label for="ciudad" class="col-form-label">Ciudad<span style="color:red;">(*)</span></label>
+                                                    <label for="ciudad" class="col-form-label">Ciudad <span style="color:red;">(*)</span></label>
                                                     <select class="custom-select ciudad" name="ciudad" id="ciudad" disabled></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="" class="col-form-label">N° de Contrato <span style="color:red;">(*)</span></label>
+                                                    <input type="text" class="form-control" name="nro_contrato" id="nro_contrato" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="" class="col-form-label">Fecha Inicio Contrato <span style="color:red;">(*)</span></label>
+                                                    <input type="date" class="form-control" name="f_inicio_contrato" id="f_inicio_contrato" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="" class="col-form-label">Fecha Finalización Contato</label>
+                                                    <input type="date" class="form-control" name="f_finalizacion_contrato" id="f_finalizacion_contrato">
                                                 </div>
                                             </div>
                                         </div>
@@ -162,29 +182,29 @@
                                             <h5>Firmas Cliente</h5>
                                         </div>
                                         <div class="card-body">
-                                            <div class="alert alert-info" role="alert">
+                                            <div class="alert alert-warning" role="alert">
                                                 <i class="fas fa-info-circle"></i> <strong>Importante: Para el registro del cliente solo se permite 
                                                     agregar una firma, para agregar más debe ir a la edición del cliente.</strong>
                                             </div>
                                             <div class="row">
                                                 <div class="col-6">
                                                     <div class="form-group">
-                                                        <label for="" class="col-form-label">Nombre del Firmante <span style="color:red;">(*)</span></label>
-                                                        <input type="text" class="form-control" name="nombre_del_firmante_cliente" id="nombre_del_firmante_cliente" required>
+                                                        <label for="" class="col-form-label">Nombre del Firmante</label>
+                                                        <input type="text" class="form-control" name="nombre_del_firmante_cliente" id="nombre_del_firmante_cliente">
                                                     </div>
                                                 </div>
                                                 <div class="col-6">
                                                     <div class="form-group">
-                                                        <label for="" class="col-form-label">Cargo del Firmante <span style="color:red;">(*)</span></label>
-                                                        <input type="text" class="form-control" name="cargo_del_firmante_cliente" id="cargo_del_firmante_cliente" required>
+                                                        <label for="" class="col-form-label">Cargo del Firmante</label>
+                                                        <input type="text" class="form-control" name="cargo_del_firmante_cliente" id="cargo_del_firmante_cliente">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-12">
                                                     <div class="form-group">
-                                                        <label for="" class="col-form-label">Firma <span style="color:red;">(*)</span></label>
-                                                        <textarea id="firma_del_cliente" name="firma_del_cliente" required></textarea>
+                                                        <label for="" class="col-form-label">Firma</label>
+                                                        <textarea id="firma_del_cliente" name="firma_del_cliente"></textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -196,29 +216,29 @@
                                             <h5>Firmas Proveedor</h5>
                                         </div>
                                         <div class="card-body">
-                                            <div class="alert alert-info" role="alert">
+                                            <div class="alert alert-warning" role="alert">
                                                 <i class="fas fa-info-circle"></i> <strong>Importante: Para el registro del cliente solo se permite 
                                                     agregar una firma, para agregar más debe ir a la edición del cliente.</strong>
                                             </div>
                                             <div class="row">
                                                 <div class="col-6">
                                                     <div class="form-group">
-                                                        <label for="" class="col-form-label">Nombre del Firmante <span style="color:red;">(*)</span></label>
-                                                        <input type="text" class="form-control" name="nombre_del_firmante_proveedor" id="nombre_del_firmante_proveedor" required>
+                                                        <label for="" class="col-form-label">Nombre del Firmante</label>
+                                                        <input type="text" class="form-control" name="nombre_del_firmante_proveedor" id="nombre_del_firmante_proveedor">
                                                     </div>
                                                 </div>
                                                 <div class="col-6">
                                                     <div class="form-group">
-                                                        <label for="" class="col-form-label">Cargo del Firmante <span style="color:red;">(*)</span></label>
-                                                        <input type="text" class="form-control" name="cargo_del_firmante_proveedor" id="cargo_del_firmante_proveedor" required>
+                                                        <label for="" class="col-form-label">Cargo del Firmante</label>
+                                                        <input type="text" class="form-control" name="cargo_del_firmante_proveedor" id="cargo_del_firmante_proveedor">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-12">
                                                     <div class="form-group">
-                                                        <label for="" class="col-form-label">Firma <span style="color:red;">(*)</span></label>
-                                                        <textarea id="firma_del_proveedor" name="firma_del_proveedor" required></textarea>
+                                                        <label for="" class="col-form-label">Firma</label>
+                                                        <textarea id="firma_del_proveedor" name="firma_del_proveedor"></textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -233,6 +253,14 @@
                                     <h5>Servicios Contratados</h5>
                                 </div>
                                 <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="nro_consecutivo_dictamen">N° Consecutivo Dictamen <span style="color:red;">(*)</span></label>
+                                                <input type="number" class="form-control" name="nro_consecutivo_dictamen" id="nro_consecutivo_dictamen" required>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="table-responsive">
                                         <table class="table table-striped table-bordered" width="100%">
                                             <thead>
@@ -240,60 +268,67 @@
                                                     <th>Proceso</th>
                                                     <th colspan="2">Servicio</th>
                                                     <th style="width: 20% !important;">Valor Tarifa</th>
-                                                    <th style="width: 20% !important;">N° Consecutivo Dictamen</th>
+                                                    {{-- <th style="width: 20% !important;">N° Consecutivo Dictamen</th> --}}
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td rowspan="3" class="justify-content-center align-items-center">Origen ATEL</td>
+                                                    <td rowspan="3" class="justify-content-center align-items-center" style="background:white;">Origen ATEL</td>
                                                     <td>Determinación de Origen (DTO)</td>
                                                     <td class="centrar"><input type="checkbox" name="checkbox_servicio_dto" id="checkbox_servicio_dto" class="scales" value="1"></td>
                                                     <td><input type="text" class="form-control d-none soloContabilidad" name="valor_tarifa_servicio_dto" id="valor_tarifa_servicio_dto"></td>
-                                                    <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_dto" id="nro_consecutivo_servicio_dto"></td>
+                                                    {{-- <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_dto" id="nro_consecutivo_servicio_dto"></td> --}}
                                                 </tr>
                                                 <tr>
                                                     <td>Adición DX</td>
                                                     <td class="centrar"><input type="checkbox" name="checkbox_servicio_adicion_dx" id="checkbox_servicio_adicion_dx" class="scales" value="2"></td>
                                                     <td><input type="text" class="form-control d-none soloContabilidad" name="valor_tarifa_servicio_adicion_dx" id="valor_tarifa_servicio_adicion_dx"></td>
-                                                    <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_adicion_dx" id="nro_consecutivo_servicio_adicion_dx"></td>
+                                                    {{-- <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_adicion_dx" id="nro_consecutivo_servicio_adicion_dx"></td> --}}
                                                 </tr>
                                                 <tr>
                                                     <td>Pronunciamientos</td>
                                                     <td class="centrar"><input type="checkbox" name="checkbox_servicio_pronunciamiento" id="checkbox_servicio_pronunciamiento" class="scales" value="3"></td>
                                                     <td><input type="text" class="form-control d-none soloContabilidad" name="valor_tarifa_servicio_pronunciamiento" id="valor_tarifa_servicio_pronunciamiento"></td>
-                                                    <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_pronunciamiento" id="nro_consecutivo_servicio_pronunciamiento"></td>
+                                                    {{-- <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_pronunciamiento" id="nro_consecutivo_servicio_pronunciamiento"></td> --}}
                                                 </tr>
                                                 <tr>
                                                     <td rowspan="4">Calificación PCL</td>
                                                     <td>Calificación Técnica</td>
                                                     <td class="centrar"><input type="checkbox" name="checkbox_servicio_calificacion_tecnica" id="checkbox_servicio_calificacion_tecnica" class="scales" value="6"></td>
                                                     <td><input type="text" class="form-control d-none soloContabilidad" name="valor_tarifa_servicio_calificacion_tecnica" id="valor_tarifa_servicio_calificacion_tecnica"></td>
-                                                    <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_calificacion_tecnica" id="nro_consecutivo_servicio_calificacion_tecnica"></td>
+                                                    {{-- <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_calificacion_tecnica" id="nro_consecutivo_servicio_calificacion_tecnica"></td> --}}
                                                 </tr>
                                                 <tr>
                                                     <td>Recalificación</td>
                                                     <td class="centrar"><input type="checkbox" name="checkbox_servicio_recalificacion" id="checkbox_servicio_recalificacion" class="scales" value="7"></td>
                                                     <td><input type="text" class="form-control d-none soloContabilidad" name="valor_tarifa_servicio_recalificacion" id="valor_tarifa_servicio_recalificacion"></td>
-                                                    <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_recalificacion" id="nro_consecutivo_servicio_recalificacion"></td>
+                                                    {{-- <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_recalificacion" id="nro_consecutivo_servicio_recalificacion"></td> --}}
                                                 </tr>
                                                 <tr>
                                                     <td>Revisión Pensión</td>
                                                     <td class="centrar"><input type="checkbox" name="checkbox_servicio_revision_pension" id="checkbox_servicio_revision_pension" class="scales" value="8"></td>
                                                     <td><input type="text" class="form-control d-none soloContabilidad" name="valor_tarifa_servicio_revision_pension" id="valor_tarifa_servicio_revision_pension"></td>
-                                                    <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_revision_pension" id="nro_consecutivo_servicio_revision_pension"></td>
+                                                    {{-- <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_revision_pension" id="nro_consecutivo_servicio_revision_pension"></td> --}}
                                                 </tr>
                                                 <tr>
                                                     <td>Pronunciamientos</td>
                                                     <td class="centrar"><input type="checkbox" name="checkbox_servicio_pronunciamiento_pcl" id="checkbox_servicio_pronunciamiento_pcl" class="scales" value="9"></td>
                                                     <td><input type="text" class="form-control d-none soloContabilidad" name="valor_tarifa_servicio_pronunciamiento_pcl" id="valor_tarifa_servicio_pronunciamiento_pcl"></td>
-                                                    <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_pronunciamiento_pcl" id="nro_consecutivo_servicio_pronunciamiento_pcl"></td>
+                                                    {{-- <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_pronunciamiento_pcl" id="nro_consecutivo_servicio_pronunciamiento_pcl"></td> --}}
                                                 </tr>
                                                 <tr>
-                                                    <td style="background: white;">Juntas</td>
-                                                    <td>Controversias Juntas</td>
-                                                    <td class="centrar"><input type="checkbox" name="checkbox_servicio_controversias_juntas" id="checkbox_servicio_controversias_juntas" class="scales" value="12"></td>
-                                                    <td><input type="text" class="form-control d-none soloContabilidad" name="valor_tarifa_servicio_controversias_juntas" id="valor_tarifa_servicio_controversias_juntas"></td>
-                                                    <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_controversias_juntas" id="nro_consecutivo_servicio_controversias_juntas"></td>
+                                                    <td rowspan="2" style="background: white;">Juntas</td>
+                                                    <td>Controversia Origen</td>
+                                                    <td class="centrar"><input type="checkbox" name="checkbox_servicio_controversia_origen" id="checkbox_servicio_controversia_origen" class="scales" value="12"></td>
+                                                    <td><input type="text" class="form-control d-none soloContabilidad" name="valor_tarifa_servicio_controversia_origen" id="valor_tarifa_servicio_controversia_origen"></td>
+                                                    {{-- <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_controversia_origen" id="nro_consecutivo_servicio_controversia_origen"></td> --}}
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <td>Controversia Pcl</td>
+                                                    <td class="centrar"><input type="checkbox" name="checkbox_servicio_controversia_pcl" id="checkbox_servicio_controversia_pcl" class="scales" value="13"></td>
+                                                    <td><input type="text" class="form-control d-none soloContabilidad" name="valor_tarifa_servicio_controversia_pcl" id="valor_tarifa_servicio_controversia_pcl"></td>
+                                                    {{-- <td><input type="number" class="form-control d-none" name="nro_consecutivo_servicio_controversia_pcl" id="nro_consecutivo_servicio_controversia_pcl"></td> --}}
                                                 </tr>
                                                 {{-- <tr>
                                                     <td rowspan="4" style="background-color: rgba(0,0,0,.05);">Otros</td>

@@ -115,13 +115,13 @@ $(document).ready(function(){
     $("#checkbox_servicio_dto").click(function(){
         if($(this).is(":checked")){
             $("#valor_tarifa_servicio_dto").removeClass('d-none');
-            $("#nro_consecutivo_servicio_dto").removeClass('d-none');
+            // $("#nro_consecutivo_servicio_dto").removeClass('d-none');
         }else{
             $("#valor_tarifa_servicio_dto").addClass('d-none');
-            $("#nro_consecutivo_servicio_dto").addClass('d-none');
+            // $("#nro_consecutivo_servicio_dto").addClass('d-none');
 
             $("#valor_tarifa_servicio_dto").val('');
-            $("#nro_consecutivo_servicio_dto").val('');
+            // $("#nro_consecutivo_servicio_dto").val('');
         }
     });
 
@@ -129,14 +129,13 @@ $(document).ready(function(){
     $("#checkbox_servicio_adicion_dx").click(function(){
         if($(this).is(":checked")){
             $("#valor_tarifa_servicio_adicion_dx").removeClass('d-none');
-            $("#nro_consecutivo_servicio_adicion_dx").removeClass('d-none');
+            // $("#nro_consecutivo_servicio_adicion_dx").removeClass('d-none');
         }else{
             $("#valor_tarifa_servicio_adicion_dx").addClass('d-none');
-            $("#nro_consecutivo_servicio_adicion_dx").addClass('d-none');
-
+            // $("#nro_consecutivo_servicio_adicion_dx").addClass('d-none');
 
             $("#valor_tarifa_servicio_adicion_dx").val('');
-            $("#nro_consecutivo_servicio_adicion_dx").val('');
+            // $("#nro_consecutivo_servicio_adicion_dx").val('');
         }
     });
 
@@ -160,13 +159,13 @@ $(document).ready(function(){
     $("#checkbox_servicio_calificacion_tecnica").click(function(){
         if($(this).is(":checked")){
             $("#valor_tarifa_servicio_calificacion_tecnica").removeClass('d-none');
-            $("#nro_consecutivo_servicio_calificacion_tecnica").removeClass('d-none');
+            // $("#nro_consecutivo_servicio_calificacion_tecnica").removeClass('d-none');
         }else{
             $("#valor_tarifa_servicio_calificacion_tecnica").addClass('d-none');
-            $("#nro_consecutivo_servicio_calificacion_tecnica").addClass('d-none');
+            // $("#nro_consecutivo_servicio_calificacion_tecnica").addClass('d-none');
 
             $("#valor_tarifa_servicio_calificacion_tecnica").val('');
-            $("#nro_consecutivo_servicio_calificacion_tecnica").val('');
+            // $("#nro_consecutivo_servicio_calificacion_tecnica").val('');
         }
     });
 
@@ -174,13 +173,13 @@ $(document).ready(function(){
     $("#checkbox_servicio_recalificacion").click(function(){
         if($(this).is(":checked")){
             $("#valor_tarifa_servicio_recalificacion").removeClass('d-none');
-            $("#nro_consecutivo_servicio_recalificacion").removeClass('d-none');
+            // $("#nro_consecutivo_servicio_recalificacion").removeClass('d-none');
         }else{
             $("#valor_tarifa_servicio_recalificacion").addClass('d-none');
-            $("#nro_consecutivo_servicio_recalificacion").addClass('d-none');
+            // $("#nro_consecutivo_servicio_recalificacion").addClass('d-none');
 
             $("#valor_tarifa_servicio_recalificacion").val('');
-            $("#nro_consecutivo_servicio_recalificacion").val('');
+            // $("#nro_consecutivo_servicio_recalificacion").val('');
         }
     });
 
@@ -188,13 +187,13 @@ $(document).ready(function(){
     $("#checkbox_servicio_revision_pension").click(function(){
         if($(this).is(":checked")){
             $("#valor_tarifa_servicio_revision_pension").removeClass('d-none');
-            $("#nro_consecutivo_servicio_revision_pension").removeClass('d-none');
+            // $("#nro_consecutivo_servicio_revision_pension").removeClass('d-none');
         }else{
             $("#valor_tarifa_servicio_revision_pension").addClass('d-none');
-            $("#nro_consecutivo_servicio_revision_pension").addClass('d-none');
+            // $("#nro_consecutivo_servicio_revision_pension").addClass('d-none');
 
             $("#valor_tarifa_servicio_revision_pension").val('');
-            $("#nro_consecutivo_servicio_revision_pension").val('');
+            // $("#nro_consecutivo_servicio_revision_pension").val('');
         }
     });
 
@@ -214,17 +213,31 @@ $(document).ready(function(){
 
     /* PROCESO Juntas */
 
-    // Servicio Controversias Juntas
-    $("#checkbox_servicio_controversias_juntas").click(function(){
+    // Servicio Controversia Origen
+    $("#checkbox_servicio_controversia_origen").click(function(){
         if($(this).is(":checked")){
-            $("#valor_tarifa_servicio_controversias_juntas").removeClass('d-none');
-            // $("#nro_consecutivo_servicio_controversias_juntas").removeClass('d-none');
+            $("#valor_tarifa_servicio_controversia_origen").removeClass('d-none');
+            // $("#nro_consecutivo_servicio_controversia_origen").removeClass('d-none');
         }else{
-            $("#valor_tarifa_servicio_controversias_juntas").addClass('d-none');
-            // $("#nro_consecutivo_servicio_controversias_juntas").addClass('d-none');
+            $("#valor_tarifa_servicio_controversia_origen").addClass('d-none');
+            // $("#nro_consecutivo_servicio_controversia_origen").addClass('d-none');
 
-            $("#valor_tarifa_servicio_controversias_juntas").val('');
-            // $("#nro_consecutivo_servicio_controversias_juntas").val('');
+            $("#valor_tarifa_servicio_controversia_origen").val('');
+            // $("#nro_consecutivo_servicio_controversia_origen").val('');
+        }
+    });
+
+    // Servicio Controversia Pcl
+    $("#checkbox_servicio_controversia_pcl").click(function(){
+        if($(this).is(":checked")){
+            $("#valor_tarifa_servicio_controversia_pcl").removeClass('d-none');
+            // $("#nro_consecutivo_servicio_controversia_pcl").removeClass('d-none');
+        }else{
+            $("#valor_tarifa_servicio_controversia_pcl").addClass('d-none');
+            // $("#nro_consecutivo_servicio_controversia_pcl").addClass('d-none');
+
+            $("#valor_tarifa_servicio_controversia_pcl").val('');
+            // $("#nro_consecutivo_servicio_controversia_pcl").val('');
         }
     });
 
@@ -443,7 +456,7 @@ $(document).ready(function(){
                     listado_nombre_servicios.push(valor_proceso);
                     listado_nombre_servicios.push(valor_servicio);
                     listado_nombre_servicios.push($("#valor_tarifa_servicio_dto").val());
-                    listado_nombre_servicios.push($("#nro_consecutivo_servicio_dto").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_dto").val());
 
                     array_servicios_contratados.push(listado_nombre_servicios);
                     listado_nombre_servicios = [];
@@ -457,7 +470,7 @@ $(document).ready(function(){
                     listado_nombre_servicios.push(valor_proceso);
                     listado_nombre_servicios.push(valor_servicio);
                     listado_nombre_servicios.push($("#valor_tarifa_servicio_adicion_dx").val());
-                    listado_nombre_servicios.push($("#nro_consecutivo_servicio_adicion_dx").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_adicion_dx").val());
                     array_servicios_contratados.push(listado_nombre_servicios);
 
                     listado_nombre_servicios = [];
@@ -471,7 +484,7 @@ $(document).ready(function(){
                     listado_nombre_servicios.push(valor_proceso);
                     listado_nombre_servicios.push(valor_servicio);
                     listado_nombre_servicios.push($("#valor_tarifa_servicio_pronunciamiento").val());
-                    listado_nombre_servicios.push($("#nro_consecutivo_servicio_pronunciamiento").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_pronunciamiento").val());
                     array_servicios_contratados.push(listado_nombre_servicios);
 
                     listado_nombre_servicios = [];
@@ -485,7 +498,7 @@ $(document).ready(function(){
                     listado_nombre_servicios.push(valor_proceso);
                     listado_nombre_servicios.push(valor_servicio);
                     listado_nombre_servicios.push($("#valor_tarifa_servicio_calificacion_tecnica").val());
-                    listado_nombre_servicios.push($("#nro_consecutivo_servicio_calificacion_tecnica").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_calificacion_tecnica").val());
                     array_servicios_contratados.push(listado_nombre_servicios);
 
                     listado_nombre_servicios = [];
@@ -499,7 +512,7 @@ $(document).ready(function(){
                     listado_nombre_servicios.push(valor_proceso);
                     listado_nombre_servicios.push(valor_servicio);
                     listado_nombre_servicios.push($("#valor_tarifa_servicio_recalificacion").val());
-                    listado_nombre_servicios.push($("#nro_consecutivo_servicio_recalificacion").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_recalificacion").val());
                     array_servicios_contratados.push(listado_nombre_servicios);
 
                     listado_nombre_servicios = [];
@@ -513,7 +526,7 @@ $(document).ready(function(){
                     listado_nombre_servicios.push(valor_proceso);
                     listado_nombre_servicios.push(valor_servicio);
                     listado_nombre_servicios.push($("#valor_tarifa_servicio_revision_pension").val());
-                    listado_nombre_servicios.push($("#nro_consecutivo_servicio_revision_pension").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_revision_pension").val());
                     array_servicios_contratados.push(listado_nombre_servicios);
 
                     listado_nombre_servicios = [];
@@ -527,21 +540,35 @@ $(document).ready(function(){
                     listado_nombre_servicios.push(valor_proceso);
                     listado_nombre_servicios.push(valor_servicio);
                     listado_nombre_servicios.push($("#valor_tarifa_servicio_pronunciamiento_pcl").val());
-                    listado_nombre_servicios.push($("#nro_consecutivo_servicio_pronunciamiento_pcl").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_pronunciamiento_pcl").val());
                     array_servicios_contratados.push(listado_nombre_servicios);
 
                     listado_nombre_servicios = [];
                 }
             }
 
-            if (id_checkboxes_servicios_contratados === 'checkbox_servicio_controversias_juntas') {                
+            if (id_checkboxes_servicios_contratados === 'checkbox_servicio_controversia_origen') {                
                 if ($(this).is(':checked')) {                
                     var valor_servicio = $(this).val();
                     var valor_proceso = 3;
                     listado_nombre_servicios.push(valor_proceso);
                     listado_nombre_servicios.push(valor_servicio);
-                    listado_nombre_servicios.push($("#valor_tarifa_servicio_controversias_juntas").val());
-                    listado_nombre_servicios.push($("#nro_consecutivo_servicio_controversias_juntas").val());
+                    listado_nombre_servicios.push($("#valor_tarifa_servicio_controversia_origen").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_controversia_origen").val());
+                    array_servicios_contratados.push(listado_nombre_servicios);
+
+                    listado_nombre_servicios = [];
+                }
+            }
+
+            if (id_checkboxes_servicios_contratados === 'checkbox_servicio_controversia_pcl') {                
+                if ($(this).is(':checked')) {                
+                    var valor_servicio = $(this).val();
+                    var valor_proceso = 3;
+                    listado_nombre_servicios.push(valor_proceso);
+                    listado_nombre_servicios.push(valor_servicio);
+                    listado_nombre_servicios.push($("#valor_tarifa_servicio_controversia_pcl").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_controversia_pcl").val());
                     array_servicios_contratados.push(listado_nombre_servicios);
 
                     listado_nombre_servicios = [];
@@ -575,11 +602,14 @@ $(document).ready(function(){
         var guardar_datos_firmas_cliente = [];
         var datos_finales_firmas_cliente = [];
 
-        guardar_datos_firmas_cliente.push($("#nombre_del_firmante_cliente").val());
-        guardar_datos_firmas_cliente.push($("#cargo_del_firmante_cliente").val());
-        guardar_datos_firmas_cliente.push($('#firma_del_cliente').summernote('code'));
-        datos_finales_firmas_cliente.push(guardar_datos_firmas_cliente);
-        guardar_datos_firmas_cliente = [];
+        if($('#firma_del_cliente').summernote('code') != "<p><br></p>"){
+            guardar_datos_firmas_cliente.push($("#nombre_del_firmante_cliente").val());
+            guardar_datos_firmas_cliente.push($("#cargo_del_firmante_cliente").val());
+            guardar_datos_firmas_cliente.push($('#firma_del_cliente').summernote('code'));
+            datos_finales_firmas_cliente.push(guardar_datos_firmas_cliente);
+            guardar_datos_firmas_cliente = [];
+
+        };
         
         var url_imagenes = [];
         var extension_imagenes = [];
@@ -603,11 +633,13 @@ $(document).ready(function(){
         var guardar_datos_firmas_proveedor = [];
         var datos_finales_firmas_proveedor = [];
 
-        guardar_datos_firmas_proveedor.push($("#nombre_del_firmante_proveedor").val());
-        guardar_datos_firmas_proveedor.push($("#cargo_del_firmante_proveedor").val());
-        guardar_datos_firmas_proveedor.push($('#firma_del_proveedor').summernote('code'));
-        datos_finales_firmas_proveedor.push(guardar_datos_firmas_proveedor);
-        guardar_datos_firmas_proveedor = [];
+        if($('#firma_del_proveedor').summernote('code')!= "<p><br></p>"){
+            guardar_datos_firmas_proveedor.push($("#nombre_del_firmante_proveedor").val());
+            guardar_datos_firmas_proveedor.push($("#cargo_del_firmante_proveedor").val());
+            guardar_datos_firmas_proveedor.push($('#firma_del_proveedor').summernote('code'));
+            datos_finales_firmas_proveedor.push(guardar_datos_firmas_proveedor);
+            guardar_datos_firmas_proveedor = [];
+        }
         
         var url_imagenes_proveedor = [];
         var extension_imagenes_proveedor = [];
@@ -643,6 +675,10 @@ $(document).ready(function(){
             'Direccion' : $("#direccion").val(),
             'Id_Departamento' : $("#departamento").val(),
             'Id_Ciudad' : $("#ciudad").val(),
+            'Nro_Contrato': $("#nro_contrato").val(),
+            'F_inicio_contrato': $("#f_inicio_contrato").val(),
+            'F_finalizacion_contrato': $("#f_finalizacion_contrato").val(),
+            'Nro_consecutivo_dictamen': $("#nro_consecutivo_dictamen").val(),
             'Estado': $("#status_cliente").val(),
             'Codigo_cliente': $("#codigo_cliente").val(),
             'Fecha_creacion': $("#fecha_creacion").val(),
@@ -658,7 +694,7 @@ $(document).ready(function(){
             'Urls_proveedor': url_imagenes_proveedor,
             'Extensiones_firmas_proveedor': extension_imagenes_proveedor,
         };
-
+        
         $.ajax({
             type: 'POST',
             url: '/CrearCliente',

@@ -78,7 +78,10 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="id_evento">ID evento</label>
-                                                <input type="text" class="form-control" name="id_evento" id="id_evento" value="{{$array_datos_calificacionJuntas[0]->ID_evento}}" disabled>
+                                                <br>
+                                                <input hidden="hidden" type="text" class="form-control" name="id_evento" id="id_evento" value="{{$array_datos_calificacionJuntas[0]->ID_evento}}" disabled>
+                                                {{-- DATOS PARA VER EDICIÓN DE EVENTO --}}
+                                                <a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer; font-weight: bold;" class="btn text-info" type="button"><?php if(!empty($array_datos_calificacionJuntas[0]->ID_evento)){echo $array_datos_calificacionJuntas[0]->ID_evento;}?></a>                                            
                                             </div>
                                         </div>
                                     </div>
@@ -144,13 +147,13 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fecha_asignacion_juntas">Fecha de asignación para Juntas </label>
-                                                <input type="text" class="form-control" name="fecha_asignacion_juntas" id="fecha_asignacion_juntas" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                                <input type="text" class="form-control" name="fecha_asignacion_juntas" id="fecha_asignacion_juntas" value="{{$array_datos_calificacionJuntas[0]->Fecha_asignacion_calif}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fecha_dictamen_jrci">Fecha de notificación dictamen (JRCI)</label>
-                                                <input type="text" class="form-control" name="fecha_dictamen_jrci" id="fecha_dictamen_jrci" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                                <input type="text" class="form-control" name="fecha_dictamen_jrci" id="fecha_dictamen_jrci" value="{{$array_datos_calificacionJuntas[0]->F_dictamen_jrci_emitido}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -168,19 +171,19 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fecha_ejecutoria_jrci">Fecha Acta Ejecutoria emitida por JRCI</label>
-                                                <input type="text" class="form-control" name="fecha_ejecutoria_jrci" id="fecha_ejecutoria_jrci" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                                <input type="text" class="form-control" name="fecha_ejecutoria_jrci" id="fecha_ejecutoria_jrci" value="{{$array_datos_calificacionJuntas[0]->F_acta_ejecutoria_emitida_jrci}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fecha_notificacion_jrci">Fecha notificación de recurso ante JRCI</label>
-                                                <input type="text" class="form-control" name="fecha_notificacion_jrci" id="fecha_notificacion_jrci" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                                <input type="text" class="form-control" name="fecha_notificacion_jrci" id="fecha_notificacion_jrci" value="{{$array_datos_calificacionJuntas[0]->F_notificacion_recurso_jrci}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fecha_notificacion_jnci">Fecha de notificación dictamen (JNCI)</label>
-                                                <input type="text" class="form-control" name="fecha_notificacion_jnci" id="fecha_notificacion_jnci" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                                <input type="text" class="form-control" name="fecha_notificacion_jnci" id="fecha_notificacion_jnci" value="{{$array_datos_calificacionJuntas[0]->F_noti_ante_jnci}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -323,6 +326,16 @@
             <input hidden="hidden" type="text" name="Id_proceso_juntas" id="Id_proceso_juntas" value="{{$array_datos_calificacionJuntas[0]->Id_proceso}}">
             <button type="submit" id="botonFormulario2" style="display: none; !important"></button>
         </form>
+        <!--Retonar al modulo Modulo Nuevo edicion -->
+        <form action="{{route('gestionInicialEdicion')}}" id="formularioLlevarEdicionEvento" method="POST">
+            @csrf
+            <input type="hidden" name="bandera_buscador_juntas" id="bandera_buscador_juntas" value="desdejuntas">
+            <input hidden="hidden" type="text" name="newIdEvento" id="newIdEvento" value="<?php if(!empty($array_datos_calificacionJuntas[0]->ID_evento)){echo $array_datos_calificacionJuntas[0]->ID_evento;}?>">
+            <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Id_Asignacion)){echo $array_datos_calificacionJuntas[0]->Id_Asignacion;}?>">
+            <input hidden="hidden" type="text" name="newIdproceso" id="newIdproceso" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Id_proceso)){ echo $array_datos_calificacionJuntas[0]->Id_proceso;}?>">
+            <input hidden="hidden" type="text" name="newIdservicio" id="newIdservicio" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Id_Servicio)){ echo $array_datos_calificacionJuntas[0]->Id_Servicio;}?>">
+            <button type="submit" id="botonVerEdicionEvento" style="display:none !important;"></button>
+        </form>
     </div>
     {{-- Modal Gestion de controversia - Seguimiento --}}
     <div class="row">
@@ -450,6 +463,12 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
+                                                <label for="f_dictamen_controvertido">Fecha dictámen controvertido<span style="color: red;">(*)</span></label>
+                                                <input type="date" class="form-control" name="f_dictamen_controvertido" id="f_dictamen_controvertido" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->F_dictamen_controvertido;} ?>" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
                                                 <label for="f_notifi_afiliado">Fecha notificación al afiliado<span style="color: red;">(*)</span></label>
                                                 <input type="date" class="form-control" name="f_notifi_afiliado" id="f_notifi_afiliado" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado)) { echo $arrayinfo_controvertido[0]->F_notifi_afiliado;} ?>" required>
                                             </div>
@@ -570,8 +589,8 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="jrci_califi_invalidez">Junta Regional de Calificación de Invalidez (JRCI)<span style="color: red;">(*)</span></label>
-                                                <select class="custom-select jrci_califi_invalidez" name="jrci_califi_invalidez" id="jrci_califi_invalidez" style="width: 100%;" required>
+                                                <label for="jrci_califi_invalidez">Junta Regional de Calificación de Invalidez (JRCI)</label>
+                                                <select class="custom-select jrci_califi_invalidez" name="jrci_califi_invalidez" id="jrci_califi_invalidez" style="width: 100%;">
                                                     @if (!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez))
                                                         <option value="{{$arrayinfo_controvertido[0]->Jrci_califi_invalidez}}" selected>{{$arrayinfo_controvertido[0]->JrciNombre}}</option>
                                                     @else
@@ -732,7 +751,7 @@
                                                 <th style="width:164.719px !important;">Nombre Documento</th>
                                                 <th style="width:200px !important;">Descripción</th>
                                                 <th>Solicitada a</th>
-                                                <th>Fecha recepción de documento</th>
+                                                <th>Fecha recepción de documentos</th>
                                                 <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_fila" <?php if(!empty($dato_validacion_no_aporta_docs[0]->Aporta_documento) && $dato_validacion_no_aporta_docs[0]->Aporta_documento=='No'){ ?> style="display:none" <?php } ?>><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                             </tr>
                                         </thead>
@@ -755,9 +774,9 @@
                                 <x-adminlte-button class="mr-auto" id="guardar_datos_tabla" theme="info" label="Guardar"/>
                             </div>
                         </div>
-                        <div class="row" <?php if(!empty($arrayinfo_controvertido[0]->Termino_contro_califi) && $arrayinfo_controvertido[0]->Termino_contro_califi=='Fuera de términos'){ ?> style="display:none" <?php } ?>>
+                        <div class="row">
                             <!-- Cargar Documentos Estandar -->
-                            <div class="col-3 text-center">
+                            <div class="col-3 text-center" <?php if(!empty($arrayinfo_controvertido[0]->Termino_contro_califi) && $arrayinfo_controvertido[0]->Termino_contro_califi=='Fuera de términos'){ ?> style="display:none" <?php } ?>>
                                 <div class="form-group">
                                     <a href="javascript:void(0);" id="cargue_docs_modal_listado_docs" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
                                 </div>
@@ -767,19 +786,20 @@
                                     <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalGenerarComunicado"><i class="fas fa-file-pdf text-info"></i> <strong>Generar Comunicado</strong></a>
                                 </div>
                             </div>
-                            <div class="col-3 text-center">
+                            <div class="col-3 text-center" <?php if(!empty($arrayinfo_controvertido[0]->Termino_contro_califi) && $arrayinfo_controvertido[0]->Termino_contro_califi=='Fuera de términos'){ ?> style="display:none" <?php } ?>>
                                 <div class="form-group">
                                     <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalAgregarExpediente"><i class="fas fa-archive text-info"></i> <strong>Crear Expediente</strong></a>
                                 </div>
                             </div>
-                            <div class="col-3 text-center">
+                            <div class="col-3 text-center" <?php if(!empty($arrayinfo_controvertido[0]->Termino_contro_califi) && $arrayinfo_controvertido[0]->Termino_contro_califi=='Fuera de términos'){ ?> style="display:none" <?php } ?>>
                                 <div class="form-group">
                                     <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalAgregarSeguimiento"><i class="fas fa-folder-open text-info"></i> <strong>Agregar Seguimiento</strong></a>
                                 </div>
                             </div>
                         </div>
+                        
                         <!-- Historial de comunicados y expedientes -->
-                        <div class="card-info" <?php if(!empty($arrayinfo_controvertido[0]->Termino_contro_califi) && $arrayinfo_controvertido[0]->Termino_contro_califi=='Fuera de términos'){ ?> style="display:none" <?php } ?>>
+                        <div class="card-info">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Historial de comunicados y expedientes</h5>
                             </div>
@@ -1524,9 +1544,6 @@
             // Realizar las acciones que quieres al hacer clic en el botón
             document.getElementById('formulario2').submit();
         });
-        
-        //Elimina sessionStorage
-        sessionStorage.removeItem("scrollTopJuntas");
     </script>
     {{-- SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE LISTADOS DE DOCUMENTOS SOLICITADOS --}}
     <script type="text/javascript">
@@ -1581,8 +1598,7 @@
             });
 
             //Elimina sessionStorage
-            //sessionStorage.removeItem("scrollToptecnica");
-            //sessionStorage.removeItem("scrollTopPronuncia");
+            sessionStorage.removeItem("scrollTopControJuntas");
 
         });
     </script>

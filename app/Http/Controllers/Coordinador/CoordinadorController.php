@@ -85,6 +85,7 @@ class CoordinadorController extends Controller
                 // ['sipc.Id_cliente', '=', $id_cliente],
                 ['sipc.Id_proceso', '=', $request->Id_proceso],
                 ['sipc.Servicio_asociado', '=', $request->Id_servicio],
+                ['sipc.Bandeja_trabajo', '=', 'Si'],
                 ['sipc.Status_parametrico', '=', 'Activo']
             ])->get();
 

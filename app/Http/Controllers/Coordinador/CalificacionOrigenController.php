@@ -478,6 +478,7 @@ class CalificacionOrigenController extends Controller
                 ['sipc.Id_cliente', '=', $id_cliente],
                 ['sipc.Id_proceso', '=', $request->Id_proceso],
                 ['sipc.Servicio_asociado', '=', $request->Id_servicio],
+                ['sipc.Modulo_principal', '=', 'Si'],
                 ['sipc.Status_parametrico', '=', 'Activo']
             ])->get();
 

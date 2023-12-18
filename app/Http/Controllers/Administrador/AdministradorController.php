@@ -446,6 +446,10 @@ class AdministradorController extends Controller
                 'Direccion' => $request->Direccion,
                 'Id_Departamento' => $request->Id_Departamento,
                 'Id_Ciudad' => $request->Id_Ciudad,
+                'Nro_Contrato' => $request->Nro_Contrato,
+                'F_inicio_contrato' => $request->F_inicio_contrato,
+                'F_finalizacion_contrato' => $request->F_finalizacion_contrato,
+                'Nro_consecutivo_dictamen' => $request->Nro_consecutivo_dictamen,
                 'Estado' => $request->Estado,
                 'Codigo_cliente' => $request->Codigo_cliente,
                 'Nombre_usuario' => $nombre_usuario,
@@ -518,9 +522,12 @@ class AdministradorController extends Controller
                         };
         
                         // Creación de array con los campos de la tabla: sigmel_informacion_servicios_contratados
+                        // $array_tabla_servicios_contratados = ['Id_cliente','Id_proceso','Id_servicio',
+                        // 'Valor_tarifa_servicio','Nro_consecutivo_dictamen_servicio','Nombre_usuario',
+                        // 'F_registro'];
+
                         $array_tabla_servicios_contratados = ['Id_cliente','Id_proceso','Id_servicio',
-                        'Valor_tarifa_servicio','Nro_consecutivo_dictamen_servicio','Nombre_usuario',
-                        'F_registro'];
+                        'Valor_tarifa_servicio','Nombre_usuario','F_registro'];
         
                         // Combinación de los campos de la tabla con los datos
                         $array_datos_con_keys_servicios_contratados = [];
@@ -892,8 +899,6 @@ class AdministradorController extends Controller
                 return json_decode(json_encode($mensajes, true));
             }
         };
-
-       
     }
 
     public function GuardarActualizarFirmasProveedor(Request $request){
@@ -1101,7 +1106,8 @@ class AdministradorController extends Controller
 
         if($parametro == "servicios_contratados_cliente"){
             $array_servicios_contratados_cliente = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
-            ->select('Id_servicio', 'Valor_tarifa_servicio', 'Nro_consecutivo_dictamen_servicio')
+            ->select('Id_servicio', 'Valor_tarifa_servicio')
+            // ->select('Id_servicio', 'Valor_tarifa_servicio', 'Nro_consecutivo_dictamen_servicio')
             ->where('Id_cliente', $request->id_cliente_editar)->get();
 
             $informacion_servicios_contratados_cliente = json_decode(json_encode($array_servicios_contratados_cliente), true);
@@ -1368,6 +1374,10 @@ class AdministradorController extends Controller
                 'Direccion' => $request->Direccion,
                 'Id_Departamento' => $request->Id_Departamento,
                 'Id_Ciudad' => $request->Id_Ciudad,
+                'Nro_Contrato' => $request->Nro_Contrato,
+                'F_inicio_contrato' => $request->F_inicio_contrato,
+                'F_finalizacion_contrato' => $request->F_finalizacion_contrato,
+                'Nro_consecutivo_dictamen' => $request->Nro_consecutivo_dictamen,
                 'Estado' => $request->Estado,
                 'Codigo_cliente' => $request->Codigo_cliente,
                 'Logo_cliente' => $nombre_logo,
@@ -1442,8 +1452,12 @@ class AdministradorController extends Controller
                     };
     
                     // Creación de array con los campos de la tabla: sigmel_informacion_servicios_contratados
+                    // $array_tabla_servicios_contratados = ['Id_cliente','Id_proceso','Id_servicio',
+                    // 'Valor_tarifa_servicio','Nro_consecutivo_dictamen_servicio','Nombre_usuario',
+                    // 'F_registro'];
+
                     $array_tabla_servicios_contratados = ['Id_cliente','Id_proceso','Id_servicio',
-                    'Valor_tarifa_servicio','Nro_consecutivo_dictamen_servicio','Nombre_usuario',
+                    'Valor_tarifa_servicio','Nombre_usuario',
                     'F_registro'];
     
                     // Combinación de los campos de la tabla con los datos
@@ -2015,17 +2029,31 @@ class AdministradorController extends Controller
             return response()->json(($info_listado_fuente_informacion));
         }
 
-        /* LISTADO PROCESO */
+        /* LISTADO PROCESOS PAARA EL MODULO NUEVO */
         if($parametro == 'listado_proceso'){
-            $listado_proceso = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
-                ->select('Id_proceso', 'Nombre_proceso')
-                ->where('Estado', 'activo')
-                ->groupBy('Id_proceso','Nombre_proceso')
-                ->get();
+            $listado_proceso= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_lista_procesos_servicios as slps')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_servicios_contratados as sipc', 'slps.Id_proceso', '=', 'sipc.Id_proceso')
+            ->select('slps.Id_proceso', 'slps.Nombre_proceso')
+            ->where('sipc.Id_cliente', $request->Id_cliente)
+            ->whereNotNull('sipc.Id_proceso')
+            ->groupBy('slps.Id_proceso')->get();
 
             $info_listado_proceso = json_decode(json_encode($listado_proceso, true));
             return response()->json(($info_listado_proceso));
         }
+
+        /* LISTADO PROCESOS PARA CREAR UN USUARIO NUEVO */
+        if($parametro == 'listado_proceso_nuevo_usuario'){
+            $listado_proceso = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            ->select('Id_proceso', 'Nombre_proceso')
+            ->where('Estado', 'activo')
+            ->groupBy('Id_proceso','Nombre_proceso')
+            ->get();
+
+            $info_listado_proceso = json_decode(json_encode($listado_proceso, true));
+            return response()->json(($info_listado_proceso));
+        }
+
 
         /* LISTADO DE PROCESOS PARA LA EDICICIÓN DE USUARIO(MODAL FORMULARIO EDICIÓN USUARIO) */
         if($parametro == 'listado_proceso_edicion_usuario'){
@@ -2093,6 +2121,7 @@ class AdministradorController extends Controller
                 ['sipc.Id_cliente', '=', $request->Id_cliente],
                 ['sipc.Id_proceso', '=', $request->Id_proceso],
                 ['sipc.Servicio_asociado', '=', $request->Id_servicio],
+                ['sipc.Modulo_nuevo', '=', 'Si'],
                 ['sipc.Status_parametrico', '=', 'Activo']
             ])->get();
 
@@ -2215,11 +2244,12 @@ class AdministradorController extends Controller
                 ['sipc.Id_cliente', '=', $id_cliente],
                 ['sipc.Id_proceso', '=', $request->Id_proceso],
                 ['sipc.Servicio_asociado', '=', $request->Id_servicio],
+                ['sipc.Modulo_consultar', '=', 'Si'],
                 ['sipc.Status_parametrico', '=', 'Activo']
             ])->get();
 
             $info_acciones_a_ejecutar = json_decode(json_encode($acciones_a_ejecutar, true));
-
+            
             if (count($info_acciones_a_ejecutar) > 0) {
                 // Extraemos las acciones antecesoras a partir de las acciones a ejecutar
                 $array_acciones_ejecutar = [];
@@ -2331,7 +2361,6 @@ class AdministradorController extends Controller
             return response()->json(($info_listado_procesos_nuevo_proceso));
         }
 
-
         /* LISTADO DE SERVICIOS DEPENDIENDO DEL PROCESO PARA LA VISTA DE BUSCADOR DE EVENTOS (MODAL NUEVO PROCESO) 
             Se captura el evento para traer los servicios que no han sido usados en eventos
         */
@@ -2380,6 +2409,7 @@ class AdministradorController extends Controller
                 ['sipc.Id_cliente', '=', $id_cliente],
                 ['sipc.Id_proceso', '=', $request->Id_proceso],
                 ['sipc.Servicio_asociado', '=', $request->Id_servicio],
+                ['sipc.Modulo_consultar', '=', 'Si'],
                 ['sipc.Status_parametrico', '=', 'Activo']
             ])->get();
 

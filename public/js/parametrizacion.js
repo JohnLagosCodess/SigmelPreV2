@@ -26,7 +26,7 @@ $(document).ready(function(){
             var api = this.api();
 
             // Columnas específicas a las que se aplicará el código de filtros
-            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
             
             // Para cada columna
             api.columns().eq(0).each(function (colIdx) {
@@ -380,7 +380,7 @@ $(document).ready(function(){
             var api = this.api();
 
             // Columnas específicas a las que se aplicará el código de filtros
-            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
             
             // Para cada columna
             api.columns().eq(0).each(function (colIdx) {
@@ -731,7 +731,7 @@ $(document).ready(function(){
             var api = this.api();
 
             // Columnas específicas a las que se aplicará el código de filtros
-            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
             
             // Para cada columna
             api.columns().eq(0).each(function (colIdx) {

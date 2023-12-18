@@ -107,6 +107,7 @@
                                         <th>N° Dictamen (JRCI)</th>
                                         <th>Fecha de Radicado entrada Dictamen (JRCI)</th>
                                         <th>Fecha de asignación para pronunciamiento de Juntas</th>
+                                        <th>Pronunciamiento ante Dictamen de JRCI</th>
                                         <th>N° Acta Ejecutoria emitida por JRCI</th>
                                         <th>N° radicado de recurso ante JRCI</th>
                                         <th>Término de controversia propia ante JRCI</th>

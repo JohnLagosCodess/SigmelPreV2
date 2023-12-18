@@ -25,6 +25,10 @@ return new class extends Migration
             $table->text('Direccion');
             $table->integer('Id_Departamento');
             $table->integer('Id_Ciudad');
+            $table->text('Nro_Contrato')->nullable();
+            $table->date('F_inicio_contrato')->nullable();
+            $table->date('F_finalizacion_contrato')->nullable();
+            $table->text('Nro_consecutivo_dictamen')->nullable();
             $table->enum('Estado', ['Activo', 'Inactivo'])->default('Activo');
             $table->text('Codigo_cliente');
             $table->text('Logo_cliente')->nullable();

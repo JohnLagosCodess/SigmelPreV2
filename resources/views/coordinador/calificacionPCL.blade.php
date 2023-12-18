@@ -15,7 +15,7 @@
                 <a href="{{route("bandejaPCL")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
                 <button id="Hacciones" class="btn btn-info"  onclick="historialDeAcciones()"><i class="fas fa-list"></i>Historial Acciones</button>                
                 <p>
-                    <i class="far fa-eye-slash text-danger"></i> Inactivar Menú/Sub Menú &nbsp;-->
+                    {{-- <i class="far fa-eye-slash text-danger"></i> Inactivar Menú/Sub Menú &nbsp;--> --}}
                     <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
                 </p>
             </div>

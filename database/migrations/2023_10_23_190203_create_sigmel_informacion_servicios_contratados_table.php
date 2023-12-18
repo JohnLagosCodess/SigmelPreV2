@@ -17,7 +17,6 @@ return new class extends Migration
             $table->integer('Id_proceso')->nullable();
             $table->integer('Id_servicio')->nullable();
             $table->text('Valor_tarifa_servicio')->nullable();
-            $table->text('Nro_consecutivo_dictamen_servicio')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

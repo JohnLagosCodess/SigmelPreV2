@@ -1050,21 +1050,107 @@ $(document).ready(function(){
         var id_asignacion = $('#newId_asignacion').val();
         var id_proceso = $("#Id_proceso").val();
         let token = $("input[name='_token']").val();
-
         var datos_fila_quitar_examen = {
             '_token': token,
             'fila' : $(this).data("id_fila_quitar"),
             'Id_evento': id_evento,
             'Id_asignacion': id_asignacion,
             'Id_proceso': id_proceso
+            
         };
         
         $.ajax({
             type:'POST',
-            url:'eliminarDiagnosticosMotivoCalificacionContro',
+            url:'/eliminarDiagnosticosMotivoCalificacionContro',
             data: datos_fila_quitar_examen,
-            /* success:function(response){
-                // console.log(response);
+            success:function(response){
+                console.log(response);
+                if (response.parametro == "fila_diagnostico_eliminada") {
+                    $('#resultado_insercion_cie10_controvertido').empty();
+                    $('#resultado_insercion_cie10_controvertido').removeClass('d-none');
+                    $('#resultado_insercion_cie10_controvertido').addClass('alert-success');
+                    $('#resultado_insercion_cie10_controvertido').append('<strong>'+response.mensaje+'</strong>');
+                    
+                    setTimeout(() => {
+                        $('#resultado_insercion_cie10_controvertido').addClass('d-none');
+                        $('#resultado_insercion_cie10_controvertido').removeClass('alert-success');
+                        $('#resultado_insercion_cie10_controvertido').empty();
+                    }, 3000);
+                }
+                if (response.total_registros == 0) {
+                    $("#conteo_listado_diagnosticos_moticalifi").val(response.total_registros);
+                }
+            }
+        });        
+
+    });
+    // Quitar el Si como DX principal en la tabla Diagnósticos Motivo Calificacion Controvertido
+    $(document).on('click', "input[id^='checkbox_dx_principal_visual_Cie10_']", function(){
+        var fila = $(this).data("id_fila_checkbox_dx_principal_cie10_visual");
+        let token = $("input[name='_token']").val();
+
+        if ($("#checkbox_dx_principal_visual_Cie10_"+fila).is(":checked")) {
+            var informacion_actualizar = {
+                '_token': token,
+                'fila':fila,
+                'bandera': "Si",
+                'Id_evento': $('#newId_evento').val(),
+                'Id_Asignacion': $('#newId_asignacion').val(),
+                'Id_proceso': $('#Id_proceso').val()
+            }
+        } else {
+            var informacion_actualizar = {
+                '_token': token,
+                'fila':fila,
+                'bandera': "No",
+                'Id_evento': $('#newId_evento').val(),
+                'Id_Asignacion': $('#newId_asignacion').val(),
+                'Id_proceso': $('#Id_proceso').val()
+            }
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/actualizarDxPrincipalDTOATEL',
+            data: informacion_actualizar,
+            success:function(response){
+                if (response.parametro == "hecho") {
+                    $("#resultado_insercion_cie10_controvertido").empty();
+                    $("#resultado_insercion_cie10_controvertido").removeClass('d-none');
+                    $("#resultado_insercion_cie10_controvertido").addClass('alert-success');
+                    $("#resultado_insercion_cie10_controvertido").append('<strong>'+response.mensaje+'</strong>');
+
+                    setTimeout(() => {
+                        $("#resultado_insercion_cie10_controvertido").addClass('d-none');
+                        $("#resultado_insercion_cie10_controvertido").removeClass('alert-success');
+                        $("#resultado_insercion_cie10_controvertido").empty();
+                        location.reload();
+                    }, 3000);
+                }              
+            }
+        });
+    });
+    // Inactivar filas visuales cuando se eliminen de la pantalla para la tabla de Diagnósticos Motivo Calificacion emitido Jrci
+    $(document).on('click', "a[id^='btn_remover_diagnosticos_jrci_emitido']", function(){
+        var id_evento = $("#newId_evento").val();
+        var id_asignacion = $('#newId_asignacion').val();
+        var id_proceso = $("#Id_proceso").val();
+        let token = $("input[name='_token']").val();
+        var datos_fila_quitar_examen = {
+            '_token': token,
+            'fila' : $(this).data("id_fila_quitar"),
+            'Id_evento': id_evento,
+            'Id_asignacion': id_asignacion,
+            'Id_proceso': id_proceso
+            
+        };
+        
+        $.ajax({
+            type:'POST',
+            url:'/eliminarDiagnosticosMotivoCalificacionContro',
+            data: datos_fila_quitar_examen,
+            success:function(response){
+                console.log(response);
                 if (response.parametro == "fila_diagnostico_eliminada") {
                     $('#resultado_insercion_cie10_jrci_emitido').empty();
                     $('#resultado_insercion_cie10_jrci_emitido').removeClass('d-none');
@@ -1077,14 +1163,231 @@ $(document).ready(function(){
                         $('#resultado_insercion_cie10_jrci_emitido').empty();
                     }, 3000);
                 }
-                if (response.total_registros == 0) {
+                /* if (response.total_registros == 0) {
                     $("#conteo_listado_diagnosticos_moticalifi").val(response.total_registros);
-                }
-            } */
+                } */
+            }
         });        
 
     });
+    // Quitar el Si como DX principal en la tabla Diagnósticos Motivo Calificacion Emitido Jrci
+    $(document).on('click', "input[id^='checkbox_dx_principal_visual_emitido_Cie10_']", function(){
+        var fila = $(this).data("id_fila_checkbox_dx_principal_cie10_emitido_visual");
+        let token = $("input[name='_token']").val();
 
+        if ($("#checkbox_dx_principal_visual_emitido_Cie10_"+fila).is(":checked")) {
+            var informacion_actualizar = {
+                '_token': token,
+                'fila':fila,
+                'bandera': "Si",
+                'Id_evento': $('#newId_evento').val(),
+                'Id_Asignacion': $('#newId_asignacion').val(),
+                'Id_proceso': $('#Id_proceso').val()
+            }
+        } else {
+            var informacion_actualizar = {
+                '_token': token,
+                'fila':fila,
+                'bandera': "No",
+                'Id_evento': $('#newId_evento').val(),
+                'Id_Asignacion': $('#newId_asignacion').val(),
+                'Id_proceso': $('#Id_proceso').val()
+            }
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/actualizarDxPrincipalDTOATEL',
+            data: informacion_actualizar,
+            success:function(response){
+                if (response.parametro == "hecho") {
+                    $("#resultado_insercion_cie10_jrci_emitido").empty();
+                    $("#resultado_insercion_cie10_jrci_emitido").removeClass('d-none');
+                    $("#resultado_insercion_cie10_jrci_emitido").addClass('alert-success');
+                    $("#resultado_insercion_cie10_jrci_emitido").append('<strong>'+response.mensaje+'</strong>');
+
+                    setTimeout(() => {
+                        $("#resultado_insercion_cie10_jrci_emitido").addClass('d-none');
+                        $("#resultado_insercion_cie10_jrci_emitido").removeClass('alert-success');
+                        $("#resultado_insercion_cie10_jrci_emitido").empty();
+                        location.reload();
+                    }, 3000);
+                }              
+            }
+        });
+    });
+    // Inactivar filas visuales cuando se eliminen de la pantalla para la tabla de Diagnósticos Motivo Calificacion reposicion Jrci
+    $(document).on('click', "a[id^='btn_remover_diagnosticos_jrci_reposicion']", function(){
+        var id_evento = $("#newId_evento").val();
+        var id_asignacion = $('#newId_asignacion').val();
+        var id_proceso = $("#Id_proceso").val();
+        let token = $("input[name='_token']").val();
+        var datos_fila_quitar_examen = {
+            '_token': token,
+            'fila' : $(this).data("id_fila_quitar"),
+            'Id_evento': id_evento,
+            'Id_asignacion': id_asignacion,
+            'Id_proceso': id_proceso
+            
+        };
+        
+        $.ajax({
+            type:'POST',
+            url:'/eliminarDiagnosticosMotivoCalificacionContro',
+            data: datos_fila_quitar_examen,
+            success:function(response){
+                console.log(response);
+                if (response.parametro == "fila_diagnostico_eliminada") {
+                    $('#resultado_insercion_cie10_jrci_reposicion').empty();
+                    $('#resultado_insercion_cie10_jrci_reposicion').removeClass('d-none');
+                    $('#resultado_insercion_cie10_jrci_reposicion').addClass('alert-success');
+                    $('#resultado_insercion_cie10_jrci_reposicion').append('<strong>'+response.mensaje+'</strong>');
+                    
+                    setTimeout(() => {
+                        $('#resultado_insercion_cie10_jrci_reposicion').addClass('d-none');
+                        $('#resultado_insercion_cie10_jrci_reposicion').removeClass('alert-success');
+                        $('#resultado_insercion_cie10_jrci_reposicion').empty();
+                    }, 3000);
+                }
+                /* if (response.total_registros == 0) {
+                    $("#conteo_listado_diagnosticos_moticalifi").val(response.total_registros);
+                } */
+            }
+        });        
+
+    });
+    // Quitar el Si como DX principal en la tabla Diagnósticos Motivo Calificacion Emitido Jrci
+    $(document).on('click', "input[id^='checkbox_dx_principal_visual_reposicion_Cie10_']", function(){
+        var fila = $(this).data("id_fila_checkbox_dx_principal_cie10_reposicion_visual");
+        let token = $("input[name='_token']").val();
+
+        if ($("#checkbox_dx_principal_visual_reposicion_Cie10_"+fila).is(":checked")) {
+            var informacion_actualizar = {
+                '_token': token,
+                'fila':fila,
+                'bandera': "Si",
+                'Id_evento': $('#newId_evento').val(),
+                'Id_Asignacion': $('#newId_asignacion').val(),
+                'Id_proceso': $('#Id_proceso').val()
+            }
+        } else {
+            var informacion_actualizar = {
+                '_token': token,
+                'fila':fila,
+                'bandera': "No",
+                'Id_evento': $('#newId_evento').val(),
+                'Id_Asignacion': $('#newId_asignacion').val(),
+                'Id_proceso': $('#Id_proceso').val()
+            }
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/actualizarDxPrincipalDTOATEL',
+            data: informacion_actualizar,
+            success:function(response){
+                if (response.parametro == "hecho") {
+                    $("#resultado_insercion_cie10_jrci_reposicion").empty();
+                    $("#resultado_insercion_cie10_jrci_reposicion").removeClass('d-none');
+                    $("#resultado_insercion_cie10_jrci_reposicion").addClass('alert-success');
+                    $("#resultado_insercion_cie10_jrci_reposicion").append('<strong>'+response.mensaje+'</strong>');
+
+                    setTimeout(() => {
+                        $("#resultado_insercion_cie10_jrci_reposicion").addClass('d-none');
+                        $("#resultado_insercion_cie10_jrci_reposicion").removeClass('alert-success');
+                        $("#resultado_insercion_cie10_jrci_reposicion").empty();
+                        location.reload();
+                    }, 3000);
+                }              
+            }
+        });
+    });
+    // Inactivar filas visuales cuando se eliminen de la pantalla para la tabla de Diagnósticos Motivo Calificacion emision Jnci
+    $(document).on('click', "a[id^='btn_remover_diagnosticos_jnci_emitido']", function(){
+        var id_evento = $("#newId_evento").val();
+        var id_asignacion = $('#newId_asignacion').val();
+        var id_proceso = $("#Id_proceso").val();
+        let token = $("input[name='_token']").val();
+        var datos_fila_quitar_examen = {
+            '_token': token,
+            'fila' : $(this).data("id_fila_quitar"),
+            'Id_evento': id_evento,
+            'Id_asignacion': id_asignacion,
+            'Id_proceso': id_proceso
+            
+        };
+        
+        $.ajax({
+            type:'POST',
+            url:'/eliminarDiagnosticosMotivoCalificacionContro',
+            data: datos_fila_quitar_examen,
+            success:function(response){
+                console.log(response);
+                if (response.parametro == "fila_diagnostico_eliminada") {
+                    $('#resultado_insercion_cie10_jnci_emitido').empty();
+                    $('#resultado_insercion_cie10_jnci_emitido').removeClass('d-none');
+                    $('#resultado_insercion_cie10_jnci_emitido').addClass('alert-success');
+                    $('#resultado_insercion_cie10_jnci_emitido').append('<strong>'+response.mensaje+'</strong>');
+                    
+                    setTimeout(() => {
+                        $('#resultado_insercion_cie10_jnci_emitido').addClass('d-none');
+                        $('#resultado_insercion_cie10_jnci_emitido').removeClass('alert-success');
+                        $('#resultado_insercion_cie10_jnci_emitido').empty();
+                    }, 3000);
+                }
+                /* if (response.total_registros == 0) {
+                    $("#conteo_listado_diagnosticos_moticalifi").val(response.total_registros);
+                } */
+            }
+        });        
+
+    });
+    // Quitar el Si como DX principal en la tabla Diagnósticos Motivo Calificacion Emitido Jnci
+    $(document).on('click', "input[id^='checkbox_dx_principal_visual_emitido_jnci_Cie10_']", function(){
+        var fila = $(this).data("id_fila_checkbox_dx_principal_cie10_jnci_visual");
+        let token = $("input[name='_token']").val();
+
+        if ($("#checkbox_dx_principal_visual_emitido_jnci_Cie10_"+fila).is(":checked")) {
+            var informacion_actualizar = {
+                '_token': token,
+                'fila':fila,
+                'bandera': "Si",
+                'Id_evento': $('#newId_evento').val(),
+                'Id_Asignacion': $('#newId_asignacion').val(),
+                'Id_proceso': $('#Id_proceso').val()
+            }
+        } else {
+            var informacion_actualizar = {
+                '_token': token,
+                'fila':fila,
+                'bandera': "No",
+                'Id_evento': $('#newId_evento').val(),
+                'Id_Asignacion': $('#newId_asignacion').val(),
+                'Id_proceso': $('#Id_proceso').val()
+            }
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/actualizarDxPrincipalDTOATEL',
+            data: informacion_actualizar,
+            success:function(response){
+                if (response.parametro == "hecho") {
+                    $("#resultado_insercion_cie10_jnci_emitido").empty();
+                    $("#resultado_insercion_cie10_jnci_emitido").removeClass('d-none');
+                    $("#resultado_insercion_cie10_jnci_emitido").addClass('alert-success');
+                    $("#resultado_insercion_cie10_jnci_emitido").append('<strong>'+response.mensaje+'</strong>');
+
+                    setTimeout(() => {
+                        $("#resultado_insercion_cie10_jnci_emitido").addClass('d-none');
+                        $("#resultado_insercion_cie10_jnci_emitido").removeClass('alert-success');
+                        $("#resultado_insercion_cie10_jnci_emitido").empty();
+                        location.reload();
+                    }, 3000);
+                }              
+            }
+        });
+    });
     // Guardar Datos Emitido Jrci
     $('#form_guardarEmitidoJrci').submit(function (e) {
         e.preventDefault();
@@ -1360,7 +1663,6 @@ $(document).ready(function(){
             }
         })
     })
-
     // Guardar recursos reposicion Junta Regional
     $('#form_guardarRevisionRecursojrci').submit(function (e) {
         e.preventDefault();
@@ -1392,7 +1694,6 @@ $(document).ready(function(){
             }
         })
     }) 
-
     // Guardar Apelación de recurso ante la JNCI
     $('#form_guardarApelaciónJnci').submit(function (e) {
         e.preventDefault();
@@ -1428,7 +1729,6 @@ $(document).ready(function(){
             }
         })
     }) 
-
     // Guardar Acta Ejecutoria emitida por JRCI
     $('#form_guardarActaEjecuJrci').submit(function (e) {
         e.preventDefault();
@@ -1460,7 +1760,6 @@ $(document).ready(function(){
             }
         })
     }) 
-
     // Guardar Datos Emitido Jrci
     $('#form_guardarEmitidoJnci').submit(function (e) {
         e.preventDefault();
@@ -1534,6 +1833,69 @@ $(document).ready(function(){
             }
         })
     })
+    /* Obtener el ID del evento a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id evento */
+    $("input[id^='listadodocumento_']").click(function(){
+        let idobtenido = $('#newId_evento').val();
+        //console.log(idobtenido);
+        $("input[id^='EventoID_']").val(idobtenido);
+    });
+    /* Envío de Información del Documento a Cargar */
+    $("form[id^='formulario_documento_']").submit(function(e){
+
+        e.preventDefault();
+        var formData = new FormData($(this)[0]);
+        var cambio_estado = $(this).parents()[1]['children'][2]["id"];
+        var input_documento = $(this).parents()[0]['children'][0][4]["id"];
+
+        //for (var pair of formData.entries()) {
+        //   console.log(pair[0]+ ', ' + pair[1]); 
+        //}
+        // Enviamos los datos para validar y guardar el docmuento correspondiente
+        $.ajax({
+            url: "/cargarDocumentos",
+            type: "post",
+            dataType: "json",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false  ,
+            success:function(response){
+                // console.log(response);
+                if (response.parametro == "fallo") {
+                    if (response.otro != undefined) {
+                        $('#listadodocumento_'+response.otro).val('');
+                    }else{
+                        $('#'+input_documento).val('');
+                    }
+                    $('.mostrar_fallo').removeClass('d-none');
+                    $('.mostrar_fallo').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_fallo').addClass('d-none');
+                        $('.mostrar_fallo').empty();
+                    }, 6000);
+                }else if (response.parametro == "exito") {
+                    if(response.otro != undefined){
+                        $("#estadoDocumentoOtro_"+response.otro).empty();
+                        $("#estadoDocumentoOtro_"+response.otro).append('<strong class="text-success">Cargado</strong>');
+                        $('#listadodocumento_'+response.otro).prop("disabled", true);
+                        $('#CargarDocumento_'+response.otro).prop("disabled", true);
+                        $('#habilitar_modal_otro_doc').prop("disabled", true);
+                    }else{
+                        $("#"+cambio_estado).empty();
+                        $("#"+cambio_estado).append('<strong class="text-success">Cargado</strong>');
+                    }
+                    $('.mostrar_exito').removeClass('d-none');
+                    $('.mostrar_exito').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_exito').addClass('d-none');
+                        $('.mostrar_exito').empty();
+                    }, 6000);
+                }else{}
+                
+
+            }         
+        });
+    }); 
 
 });
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/

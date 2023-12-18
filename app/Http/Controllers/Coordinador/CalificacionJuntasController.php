@@ -48,7 +48,7 @@ class CalificacionJuntasController extends Controller
         // Trae informacion de controversia_juntas
         $arrayinfo_controvertido= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_controversia_juntas_eventos as j')
         ->select('j.ID_evento','j.Enfermedad_heredada','j.F_transferencia_enfermedad','j.Primer_calificador','pa.Nombre_parametro as Calificador'
-        ,'j.Nom_entidad','j.N_dictamen_controvertido','j.F_notifi_afiliado','j.Parte_controvierte_califi','pa2.Nombre_parametro as ParteCalificador','j.Nombre_controvierte_califi',
+        ,'j.Nom_entidad','j.N_dictamen_controvertido','j.F_dictamen_controvertido','j.F_notifi_afiliado','j.Parte_controvierte_califi','pa2.Nombre_parametro as ParteCalificador','j.Nombre_controvierte_califi',
         'j.N_radicado_entrada_contro','j.Contro_origen','j.Contro_pcl','j.Contro_diagnostico','j.Contro_f_estructura','j.Contro_m_califi',
         'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','pa3.Nombre_parametro as JrciNombre')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa', 'j.Primer_calificador', '=', 'pa.Id_Parametro')
@@ -429,7 +429,7 @@ class CalificacionJuntasController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
-                // 'F_registro' => $date,
+                'F_registro' => $date,
             ];
     
             sigmel_informacion_accion_eventos::on('sigmel_gestiones')->insert($datos_info_registrarCalifcacionJuntas);
@@ -530,7 +530,7 @@ class CalificacionJuntasController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
-                // 'F_registro' => $date,
+                'F_registro' => $date,
             ];
 
             sigmel_informacion_accion_eventos::on('sigmel_gestiones')
@@ -600,6 +600,7 @@ class CalificacionJuntasController extends Controller
                 'Primer_calificador' => $request->primer_calificador,
                 'Nom_entidad' => $request->nom_entidad,
                 'N_dictamen_controvertido' => $request->N_dictamen_controvertido,
+                'F_dictamen_controvertido' => $request->f_dictamen_controvertido,
                 'F_notifi_afiliado' => $request->f_notifi_afiliado,
                 'Termino_contro_califi' => $terminos,
                 'Nombre_usuario' => $nombre_usuario,
@@ -622,6 +623,7 @@ class CalificacionJuntasController extends Controller
                 'Primer_calificador' => $request->primer_calificador,
                 'Nom_entidad' => $request->nom_entidad,
                 'N_dictamen_controvertido' => $request->N_dictamen_controvertido,
+                'F_dictamen_controvertido' => $request->f_dictamen_controvertido,
                 'F_notifi_afiliado' => $request->f_notifi_afiliado,
                 'Termino_contro_califi' => $terminos,
                 'Nombre_usuario' => $nombre_usuario,

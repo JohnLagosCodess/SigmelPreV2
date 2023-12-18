@@ -41,6 +41,7 @@
                                 <th>Proceso</th>
                                 <th>Nombre del equipo de trabajo</th>
                                 <th>Líder del equipo de trabajo</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -134,6 +135,7 @@
                                     <td>{{$editar_info_equipo->Nombre_proceso}}</td>
                                     <td>{{$editar_info_equipo->Nombre_equipo}}</td>
                                     <td>{{$editar_info_equipo->Nombre_lider}}</td>
+                                    <td><?php echo ucfirst($editar_info_equipo->estado);?></td>
                                 </tr>
                             @endforeach
                         </tbody>

@@ -119,7 +119,10 @@ class ControversiaJuntasController extends Controller
             ['side.Estado', '=', 'Activo']
         ])->get(); 
 
-        return view('coordinador.controversiaJuntas', compact('user','array_datos_controversiaJuntas','arrayinfo_controvertido','array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci','array_datos_diagnostico_reposi_dictamen_jrci','array_datos_diagnostico_motcalifi_emitido_jnci'));
+        //Trae Documetos Generales del evento
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($Id_evento_juntas));
+
+        return view('coordinador.controversiaJuntas', compact('user','array_datos_controversiaJuntas','arrayinfo_controvertido','array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci','array_datos_diagnostico_reposi_dictamen_jrci','array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos'));
     }
 
     //Cargar Selectores pronunciamiento
@@ -855,19 +858,16 @@ class ControversiaJuntasController extends Controller
     }
     //Eliminar Diagnosticos
     public function eliminarDiagnosticoMotivoCalificacionContro(Request $request){
-        echo "hola_controlador";
-        /* $id_fila_diagnostico = $request->fila;
+       $id_fila_diagnostico = $request->fila;
         $fila_actualizar = [
             'Estado' => 'Inactivo'
         ];
-
         sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
         ->where([
             ['Id_Diagnosticos_motcali', $id_fila_diagnostico],
             ['ID_evento', $request->Id_evento],
             ['Id_Asignacion', $request->Id_asignacion],
             ['Id_proceso', $request->Id_proceso],
-            ['Item_servicio','Controvertido Juntas']
         ])
         ->update($fila_actualizar);
 
@@ -894,7 +894,7 @@ class ControversiaJuntasController extends Controller
             "mensaje" => 'Diagnóstico motivo de calificación y Dx Principal eliminados satisfactoriamente.'
         );
 
-        return json_decode(json_encode($mensajes, true)); */
+        return json_decode(json_encode($mensajes, true));
     }
 
 

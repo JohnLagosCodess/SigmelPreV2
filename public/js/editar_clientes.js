@@ -251,33 +251,43 @@ $(document).ready(function(){
         $('#direccion').empty();
         $('#departamento').empty();
         $('#ciudad').empty();
+        $('#nro_contrato').empty();
+        $('#f_inicio_contrato').empty();
+        $('#f_finalizacion_contrato').empty();
+        $('#nro_contrato').empty();
+        $('#f_inicio_contrato').empty();
+        $('#f_finalizacion_contrato').empty();
+        $('#nro_consecutivo_dictamen').empty();
         $("#previewImage").val('');
         
 
         $("#checkbox_servicio_dto").prop("checked", false);
         $("#valor_tarifa_servicio_dto").val('').addClass('d-none');
-        $("#nro_consecutivo_servicio_dto").val('').addClass('d-none');
+        // $("#nro_consecutivo_servicio_dto").val('').addClass('d-none');
         $("#checkbox_servicio_adicion_dx").prop("checked", false);
         $("#valor_tarifa_servicio_adicion_dx").val('').addClass('d-none');
-        $("#nro_consecutivo_servicio_adicion_dx").val('').addClass('d-none');
+        // $("#nro_consecutivo_servicio_adicion_dx").val('').addClass('d-none');
         $("#checkbox_servicio_pronunciamiento").prop("checked", false);
         $("#valor_tarifa_servicio_pronunciamiento").val('').addClass('d-none');
         // $("#nro_consecutivo_servicio_pronunciamiento").val('').addClass('d-none');
         $("#checkbox_servicio_calificacion_tecnica").prop("checked", false);
         $("#valor_tarifa_servicio_calificacion_tecnica").val('').addClass('d-none');
-        $("#nro_consecutivo_servicio_calificacion_tecnica").val('').addClass('d-none');
+        // $("#nro_consecutivo_servicio_calificacion_tecnica").val('').addClass('d-none');
         $("#checkbox_servicio_recalificacion").prop("checked", false);
         $("#valor_tarifa_servicio_recalificacion").val('').addClass('d-none');
-        $("#nro_consecutivo_servicio_recalificacion").val('').addClass('d-none');
+        // $("#nro_consecutivo_servicio_recalificacion").val('').addClass('d-none');
         $("#checkbox_servicio_revision_pension").prop("checked", false);
         $("#valor_tarifa_servicio_revision_pension").val('').addClass('d-none');
-        $("#nro_consecutivo_servicio_revision_pension").val('').addClass('d-none');
+        // $("#nro_consecutivo_servicio_revision_pension").val('').addClass('d-none');
         $("#checkbox_servicio_pronunciamiento_pcl").prop("checked", false);
         $("#valor_tarifa_servicio_pronunciamiento_pcl").val('').addClass('d-none');
         // $("#nro_consecutivo_servicio_pronunciamiento_pcl").val('').addClass('d-none');
-        $("#checkbox_servicio_controversias_juntas").prop("checked", false);
-        $("#valor_tarifa_servicio_controversias_juntas").val('').addClass('d-none');
-        // $("#nro_consecutivo_servicio_controversias_juntas").val('').addClass('d-none');
+        $("#checkbox_servicio_controversia_origen").prop("checked", false);
+        $("#valor_tarifa_servicio_controversia_origen").val('').addClass('d-none');
+        // $("#nro_consecutivo_servicio_controversia_origen").val('').addClass('d-none');
+        $("#checkbox_servicio_controversia_pcl").prop("checked", false);
+        $("#valor_tarifa_servicio_controversia_pcl").val('').addClass('d-none');
+        // $("#nro_consecutivo_servicio_controversia_pcl").val('').addClass('d-none');
 
         // $("#checkbox_servicio_pqrd").prop("checked", false);
         // $("#valor_tarifa_servicio_pqrd").val('').addClass('d-none');
@@ -339,6 +349,10 @@ $(document).ready(function(){
                 $('#linea_atencion_principal').val(data_cliente[0]["Linea_atencion_principal"]);
                 $('#otras_lineas_atencion').val(data_cliente[0]["Otras_lineas_atencion"]);
                 $('#direccion').val(data_cliente[0]["Direccion"]);
+                $('#nro_contrato').val(data_cliente[0]["Nro_Contrato"]);
+                $('#f_inicio_contrato').val(data_cliente[0]["F_inicio_contrato"]);
+                $('#f_finalizacion_contrato').val(data_cliente[0]["F_finalizacion_contrato"]);
+                $('#nro_consecutivo_dictamen').val(data_cliente[0]["Nro_consecutivo_dictamen"]);
 
                 //Listado de departamento
                 let datos_lista_departamento_cliente = {
@@ -475,7 +489,8 @@ $(document).ready(function(){
                 var valor_checkbox_servicio_recalificacion = $("#checkbox_servicio_recalificacion").val();
                 var valor_checkbox_servicio_revision_pension = $("#checkbox_servicio_revision_pension").val();
                 var valor_checkbox_servicio_pronunciamiento_pcl = $("#checkbox_servicio_pronunciamiento_pcl").val();
-                var valor_checkbox_servicio_controversias_juntas = $("#checkbox_servicio_controversias_juntas").val();
+                var valor_checkbox_servicio_controversia_origen = $("#checkbox_servicio_controversia_origen").val();
+                var valor_checkbox_servicio_controversia_pcl = $("#checkbox_servicio_controversia_pcl").val();
                 var valor_checkbox_servicio_pqrd = $("#checkbox_servicio_pqrd").val();
                 var valor_checkbox_servicio_tutelas = $("#checkbox_servicio_tutelas").val();
                 var valor_checkbox_servicio_gis = $("#checkbox_servicio_gis").val();
@@ -487,20 +502,20 @@ $(document).ready(function(){
                         if (valor_checkbox_servicio_dto == value['Id_servicio']) {
                             $("#checkbox_servicio_dto").prop("checked", true);
                             $("#valor_tarifa_servicio_dto").val(value['Valor_tarifa_servicio']).removeClass('d-none');
-                            if (value['Nro_consecutivo_dictamen_servicio'] != null) {
-                                $("#nro_consecutivo_servicio_dto").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", true);
-                            }else{
-                                $("#nro_consecutivo_servicio_dto").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", false);
-                            }
+                            // if (value['Nro_consecutivo_dictamen_servicio'] != null) {
+                            //     $("#nro_consecutivo_servicio_dto").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", true);
+                            // }else{
+                            //     $("#nro_consecutivo_servicio_dto").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", false);
+                            // }
                         }
                         if (valor_checkbox_servicio_adicion_dx == value['Id_servicio']) {
                             $("#checkbox_servicio_adicion_dx").prop("checked", true);
                             $("#valor_tarifa_servicio_adicion_dx").val(value['Valor_tarifa_servicio']).removeClass('d-none');
-                            if (value['Nro_consecutivo_dictamen_servicio'] != null) {
-                                $("#nro_consecutivo_servicio_adicion_dx").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", true);
-                            }else{
-                                $("#nro_consecutivo_servicio_adicion_dx").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", false);
-                            }
+                            // if (value['Nro_consecutivo_dictamen_servicio'] != null) {
+                            //     $("#nro_consecutivo_servicio_adicion_dx").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", true);
+                            // }else{
+                            //     $("#nro_consecutivo_servicio_adicion_dx").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", false);
+                            // }
                         }
                         if (valor_checkbox_servicio_pronunciamiento == value['Id_servicio']) {
                             $("#checkbox_servicio_pronunciamiento").prop("checked", true);
@@ -515,31 +530,31 @@ $(document).ready(function(){
                         if (valor_checkbox_servicio_calificacion_tecnica == value['Id_servicio']) {
                             $("#checkbox_servicio_calificacion_tecnica").prop("checked", true);
                             $("#valor_tarifa_servicio_calificacion_tecnica").val(value['Valor_tarifa_servicio']).removeClass('d-none');
-                            if (value['Nro_consecutivo_dictamen_servicio'] != null) {
-                                $("#nro_consecutivo_servicio_calificacion_tecnica").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", true);
-                            }else{
-                                $("#nro_consecutivo_servicio_calificacion_tecnica").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", false);
-                            }
+                            // if (value['Nro_consecutivo_dictamen_servicio'] != null) {
+                            //     $("#nro_consecutivo_servicio_calificacion_tecnica").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", true);
+                            // }else{
+                            //     $("#nro_consecutivo_servicio_calificacion_tecnica").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", false);
+                            // }
                         }
 
                         if (valor_checkbox_servicio_recalificacion == value['Id_servicio']) {
                             $("#checkbox_servicio_recalificacion").prop("checked", true);
                             $("#valor_tarifa_servicio_recalificacion").val(value['Valor_tarifa_servicio']).removeClass('d-none');
-                            if (value['Nro_consecutivo_dictamen_servicio'] != null) {
-                                $("#nro_consecutivo_servicio_recalificacion").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", true);
-                            }else{
-                                $("#nro_consecutivo_servicio_recalificacion").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", false);
-                            }
+                            // if (value['Nro_consecutivo_dictamen_servicio'] != null) {
+                            //     $("#nro_consecutivo_servicio_recalificacion").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", true);
+                            // }else{
+                            //     $("#nro_consecutivo_servicio_recalificacion").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", false);
+                            // }
                         }
                         
                         if (valor_checkbox_servicio_revision_pension == value['Id_servicio']) {
                             $("#checkbox_servicio_revision_pension").prop("checked", true);
                             $("#valor_tarifa_servicio_revision_pension").val(value['Valor_tarifa_servicio']).removeClass('d-none');
-                            if (value['Nro_consecutivo_dictamen_servicio'] != null) {
-                                $("#nro_consecutivo_servicio_revision_pension").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", true);
-                            }else{
-                                $("#nro_consecutivo_servicio_revision_pension").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", false);
-                            }
+                            // if (value['Nro_consecutivo_dictamen_servicio'] != null) {
+                            //     $("#nro_consecutivo_servicio_revision_pension").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", true);
+                            // }else{
+                            //     $("#nro_consecutivo_servicio_revision_pension").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", false);
+                            // }
                         }
 
                         if (valor_checkbox_servicio_pronunciamiento_pcl == value['Id_servicio']) {
@@ -552,13 +567,23 @@ $(document).ready(function(){
                             // }
                         }
 
-                        if (valor_checkbox_servicio_controversias_juntas == value['Id_servicio']) {
-                            $("#checkbox_servicio_controversias_juntas").prop("checked", true);
-                            $("#valor_tarifa_servicio_controversias_juntas").val(value['Valor_tarifa_servicio']).removeClass('d-none');
+                        if (valor_checkbox_servicio_controversia_origen == value['Id_servicio']) {
+                            $("#checkbox_servicio_controversia_origen").prop("checked", true);
+                            $("#valor_tarifa_servicio_controversia_origen").val(value['Valor_tarifa_servicio']).removeClass('d-none');
                             // if (value['Nro_consecutivo_dictamen_servicio'] != null) {
-                            //     $("#nro_consecutivo_servicio_controversias_juntas").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", true);
+                            //     $("#nro_consecutivo_servicio_controversia_origen").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", true);
                             // }else{
-                            //     $("#nro_consecutivo_servicio_controversias_juntas").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", false);
+                            //     $("#nro_consecutivo_servicio_controversia_origen").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", false);
+                            // }
+                        }
+
+                        if (valor_checkbox_servicio_controversia_pcl == value['Id_servicio']) {
+                            $("#checkbox_servicio_controversia_pcl").prop("checked", true);
+                            $("#valor_tarifa_servicio_controversia_pcl").val(value['Valor_tarifa_servicio']).removeClass('d-none');
+                            // if (value['Nro_consecutivo_dictamen_servicio'] != null) {
+                            //     $("#nro_consecutivo_servicio_controversia_pcl").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", true);
+                            // }else{
+                            //     $("#nro_consecutivo_servicio_controversia_pcl").val(value['Nro_consecutivo_dictamen_servicio']).removeClass('d-none').prop("readonly", false);
                             // }
                         }
 
@@ -1357,7 +1382,6 @@ $(document).ready(function(){
     // Guardar una nueva firma de proveedor
     $("#guardar_nueva_firma_proveedor").click(function(){
             
-            
         if ($("#nombre_del_firmante_proveedor").val() != '' 
             && $("#cargo_del_firmante_proveedor").val() != '' 
             && $('#firma_del_proveedor').summernote('code') != '<p><br></p>'
@@ -1448,20 +1472,20 @@ $(document).ready(function(){
     $("#checkbox_servicio_dto").click(function(){
         if($(this).is(":checked")){
             $("#valor_tarifa_servicio_dto").removeClass('d-none');
-            $("#nro_consecutivo_servicio_dto").removeClass('d-none');
+            // $("#nro_consecutivo_servicio_dto").removeClass('d-none');
 
-            if ($("#nro_consecutivo_servicio_dto").val() == '') {
-                $("#nro_consecutivo_servicio_dto").prop("readonly", false);
-            }
+            // if ($("#nro_consecutivo_servicio_dto").val() == '') {
+            //     $("#nro_consecutivo_servicio_dto").prop("readonly", false);
+            // }
         }else{
             $("#valor_tarifa_servicio_dto").addClass('d-none');
-            $("#nro_consecutivo_servicio_dto").addClass('d-none');
-
             $("#valor_tarifa_servicio_dto").val('');
-            if ($("#nro_consecutivo_servicio_dto").val() == '') {
-                $("#nro_consecutivo_servicio_dto").val('');
-                $("#nro_consecutivo_servicio_dto").prop("readonly", false);
-            }
+            // $("#nro_consecutivo_servicio_dto").addClass('d-none');
+
+            // if ($("#nro_consecutivo_servicio_dto").val() == '') {
+            //     $("#nro_consecutivo_servicio_dto").val('');
+            //     $("#nro_consecutivo_servicio_dto").prop("readonly", false);
+            // }
         }
     });
 
@@ -1469,22 +1493,22 @@ $(document).ready(function(){
     $("#checkbox_servicio_adicion_dx").click(function(){
         if($(this).is(":checked")){
             $("#valor_tarifa_servicio_adicion_dx").removeClass('d-none');
-            $("#nro_consecutivo_servicio_adicion_dx").removeClass('d-none');
+            // $("#nro_consecutivo_servicio_adicion_dx").removeClass('d-none');
 
-            if ($("#nro_consecutivo_servicio_adicion_dx").val() == '') {
-                $("#nro_consecutivo_servicio_adicion_dx").prop("readonly", false);
-            }
+            // if ($("#nro_consecutivo_servicio_adicion_dx").val() == '') {
+            //     $("#nro_consecutivo_servicio_adicion_dx").prop("readonly", false);
+            // }
 
         }else{
             $("#valor_tarifa_servicio_adicion_dx").addClass('d-none');
-            $("#nro_consecutivo_servicio_adicion_dx").addClass('d-none');
-
             $("#valor_tarifa_servicio_adicion_dx").val('');
+            
+            // $("#nro_consecutivo_servicio_adicion_dx").addClass('d-none');
 
-            if ($("#nro_consecutivo_servicio_adicion_dx").val() == '') {
-                $("#nro_consecutivo_servicio_adicion_dx").val('');
-                $("#nro_consecutivo_servicio_adicion_dx").prop("readonly", false);
-            }
+            // if ($("#nro_consecutivo_servicio_adicion_dx").val() == '') {
+            //     $("#nro_consecutivo_servicio_adicion_dx").val('');
+            //     $("#nro_consecutivo_servicio_adicion_dx").prop("readonly", false);
+            // }
         }
     });
 
@@ -1500,9 +1524,9 @@ $(document).ready(function(){
 
         }else{
             $("#valor_tarifa_servicio_pronunciamiento").addClass('d-none');
-            // $("#nro_consecutivo_servicio_pronunciamiento").addClass('d-none');
-
             $("#valor_tarifa_servicio_pronunciamiento").val('');
+            
+            // $("#nro_consecutivo_servicio_pronunciamiento").addClass('d-none');
             
             // if ($("#nro_consecutivo_servicio_pronunciamiento").val() == '') {
             //     $("#nro_consecutivo_servicio_pronunciamiento").val('');
@@ -1517,22 +1541,22 @@ $(document).ready(function(){
     $("#checkbox_servicio_calificacion_tecnica").click(function(){
         if($(this).is(":checked")){
             $("#valor_tarifa_servicio_calificacion_tecnica").removeClass('d-none');
-            $("#nro_consecutivo_servicio_calificacion_tecnica").removeClass('d-none');
+            // $("#nro_consecutivo_servicio_calificacion_tecnica").removeClass('d-none');
 
-            if ($("#nro_consecutivo_servicio_calificacion_tecnica").val() == '') {
-                $("#nro_consecutivo_servicio_calificacion_tecnica").prop("readonly", false);
-            }
+            // if ($("#nro_consecutivo_servicio_calificacion_tecnica").val() == '') {
+            //     $("#nro_consecutivo_servicio_calificacion_tecnica").prop("readonly", false);
+            // }
 
         }else{
             $("#valor_tarifa_servicio_calificacion_tecnica").addClass('d-none');
-            $("#nro_consecutivo_servicio_calificacion_tecnica").addClass('d-none');
-
             $("#valor_tarifa_servicio_calificacion_tecnica").val('');
+            
+            // $("#nro_consecutivo_servicio_calificacion_tecnica").addClass('d-none');
 
-            if ($("#nro_consecutivo_servicio_calificacion_tecnica").val() == '') {
-                $("#nro_consecutivo_servicio_calificacion_tecnica").val('');
-                $("#nro_consecutivo_servicio_calificacion_tecnica").prop("readonly", false);
-            }
+            // if ($("#nro_consecutivo_servicio_calificacion_tecnica").val() == '') {
+            //     $("#nro_consecutivo_servicio_calificacion_tecnica").val('');
+            //     $("#nro_consecutivo_servicio_calificacion_tecnica").prop("readonly", false);
+            // }
 
         }
     });
@@ -1541,21 +1565,21 @@ $(document).ready(function(){
     $("#checkbox_servicio_recalificacion").click(function(){
         if($(this).is(":checked")){
             $("#valor_tarifa_servicio_recalificacion").removeClass('d-none');
-            $("#nro_consecutivo_servicio_recalificacion").removeClass('d-none');
+            // $("#nro_consecutivo_servicio_recalificacion").removeClass('d-none');
 
-            if ($("#nro_consecutivo_servicio_recalificacion").val() == '') {
-                $("#nro_consecutivo_servicio_recalificacion").prop("readonly", false);
-            }
+            // if ($("#nro_consecutivo_servicio_recalificacion").val() == '') {
+            //     $("#nro_consecutivo_servicio_recalificacion").prop("readonly", false);
+            // }
         }else{
             $("#valor_tarifa_servicio_recalificacion").addClass('d-none');
-            $("#nro_consecutivo_servicio_recalificacion").addClass('d-none');
-
             $("#valor_tarifa_servicio_recalificacion").val('');
-
-            if ($("#nro_consecutivo_servicio_recalificacion").val() == '') {
-                $("#nro_consecutivo_servicio_recalificacion").val('');
-                $("#nro_consecutivo_servicio_recalificacion").prop("readonly", false);
-            }
+            
+            
+            // $("#nro_consecutivo_servicio_recalificacion").addClass('d-none');
+            // if ($("#nro_consecutivo_servicio_recalificacion").val() == '') {
+            //     $("#nro_consecutivo_servicio_recalificacion").val('');
+            //     $("#nro_consecutivo_servicio_recalificacion").prop("readonly", false);
+            // }
         }
     });
 
@@ -1563,21 +1587,21 @@ $(document).ready(function(){
     $("#checkbox_servicio_revision_pension").click(function(){
         if($(this).is(":checked")){
             $("#valor_tarifa_servicio_revision_pension").removeClass('d-none');
-            $("#nro_consecutivo_servicio_revision_pension").removeClass('d-none');
+            // $("#nro_consecutivo_servicio_revision_pension").removeClass('d-none');
 
-            if ($("#nro_consecutivo_servicio_revision_pension").val() == '') {
-                $("#nro_consecutivo_servicio_revision_pension").prop("readonly", false);
-            }
+            // if ($("#nro_consecutivo_servicio_revision_pension").val() == '') {
+            //     $("#nro_consecutivo_servicio_revision_pension").prop("readonly", false);
+            // }
         }else{
             $("#valor_tarifa_servicio_revision_pension").addClass('d-none');
-            $("#nro_consecutivo_servicio_revision_pension").addClass('d-none');
-
             $("#valor_tarifa_servicio_revision_pension").val('');
             
-            if ($("#nro_consecutivo_servicio_revision_pension").val() == '') {
-                $("#nro_consecutivo_servicio_revision_pension").val('');
-                $("#nro_consecutivo_servicio_revision_pension").prop("readonly", false);
-            }
+            // $("#nro_consecutivo_servicio_revision_pension").addClass('d-none');
+            
+            // if ($("#nro_consecutivo_servicio_revision_pension").val() == '') {
+            //     $("#nro_consecutivo_servicio_revision_pension").val('');
+            //     $("#nro_consecutivo_servicio_revision_pension").prop("readonly", false);
+            // }
         }
     });
 
@@ -1605,24 +1629,46 @@ $(document).ready(function(){
 
     /* PROCESO Juntas */
 
-    // Servicio Controversias Juntas
-    $("#checkbox_servicio_controversias_juntas").click(function(){
+    // Servicio Controversia Origen
+    $("#checkbox_servicio_controversia_origen").click(function(){
         if($(this).is(":checked")){
-            $("#valor_tarifa_servicio_controversias_juntas").removeClass('d-none');
-            // $("#nro_consecutivo_servicio_controversias_juntas").removeClass('d-none');
+            $("#valor_tarifa_servicio_controversia_origen").removeClass('d-none');
+            // $("#nro_consecutivo_servicio_controversia_origen").removeClass('d-none');
 
-            // if ($("#nro_consecutivo_servicio_controversias_juntas").val() == '') {
-            //     $("#nro_consecutivo_servicio_controversias_juntas").prop("readonly", false);
+            // if ($("#nro_consecutivo_servicio_controversia_origen").val() == '') {
+            //     $("#nro_consecutivo_servicio_controversia_origen").prop("readonly", false);
             // }
         }else{
-            $("#valor_tarifa_servicio_controversias_juntas").addClass('d-none');
-            // $("#nro_consecutivo_servicio_controversias_juntas").addClass('d-none');
+            $("#valor_tarifa_servicio_controversia_origen").addClass('d-none');
+            $("#valor_tarifa_servicio_controversia_origen").val('');
+            
+            // $("#nro_consecutivo_servicio_controversia_origen").addClass('d-none');
 
-            $("#valor_tarifa_servicio_controversias_juntas").val('');
+            // if ($("#nro_consecutivo_servicio_controversia_origen").val() == '') {
+            //     $("#nro_consecutivo_servicio_controversia_origen").val('');
+            //     $("#nro_consecutivo_servicio_controversia_origen").prop("readonly", false);
+            // }
+        }
+    });
 
-            // if ($("#nro_consecutivo_servicio_controversias_juntas").val() == '') {
-            //     $("#nro_consecutivo_servicio_controversias_juntas").val('');
-            //     $("#nro_consecutivo_servicio_controversias_juntas").prop("readonly", false);
+    // Servicio Controversia Pcl
+    $("#checkbox_servicio_controversia_pcl").click(function(){
+        if($(this).is(":checked")){
+            $("#valor_tarifa_servicio_controversia_pcl").removeClass('d-none');
+            // $("#nro_consecutivo_servicio_controversia_pcl").removeClass('d-none');
+    
+            // if ($("#nro_consecutivo_servicio_controversia_pcl").val() == '') {
+            //     $("#nro_consecutivo_servicio_controversia_pcl").prop("readonly", false);
+            // }
+        }else{
+            $("#valor_tarifa_servicio_controversia_pcl").addClass('d-none');
+            $("#valor_tarifa_servicio_controversia_pcl").val('');
+            
+            // $("#nro_consecutivo_servicio_controversia_pcl").addClass('d-none');
+    
+            // if ($("#nro_consecutivo_servicio_controversia_pcl").val() == '') {
+            //     $("#nro_consecutivo_servicio_controversia_pcl").val('');
+            //     $("#nro_consecutivo_servicio_controversia_pcl").prop("readonly", false);
             // }
         }
     });
@@ -1794,7 +1840,7 @@ $(document).ready(function(){
                     listado_nombre_servicios.push(valor_proceso);
                     listado_nombre_servicios.push(valor_servicio);
                     listado_nombre_servicios.push($("#valor_tarifa_servicio_dto").val());
-                    listado_nombre_servicios.push($("#nro_consecutivo_servicio_dto").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_dto").val());
 
                     array_servicios_contratados.push(listado_nombre_servicios);
                     listado_nombre_servicios = [];
@@ -1808,7 +1854,7 @@ $(document).ready(function(){
                     listado_nombre_servicios.push(valor_proceso);
                     listado_nombre_servicios.push(valor_servicio);
                     listado_nombre_servicios.push($("#valor_tarifa_servicio_adicion_dx").val());
-                    listado_nombre_servicios.push($("#nro_consecutivo_servicio_adicion_dx").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_adicion_dx").val());
                     array_servicios_contratados.push(listado_nombre_servicios);
 
                     listado_nombre_servicios = [];
@@ -1822,7 +1868,7 @@ $(document).ready(function(){
                     listado_nombre_servicios.push(valor_proceso);
                     listado_nombre_servicios.push(valor_servicio);
                     listado_nombre_servicios.push($("#valor_tarifa_servicio_pronunciamiento").val());
-                    listado_nombre_servicios.push($("#nro_consecutivo_servicio_pronunciamiento").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_pronunciamiento").val());
                     array_servicios_contratados.push(listado_nombre_servicios);
 
                     listado_nombre_servicios = [];
@@ -1836,7 +1882,7 @@ $(document).ready(function(){
                     listado_nombre_servicios.push(valor_proceso);
                     listado_nombre_servicios.push(valor_servicio);
                     listado_nombre_servicios.push($("#valor_tarifa_servicio_calificacion_tecnica").val());
-                    listado_nombre_servicios.push($("#nro_consecutivo_servicio_calificacion_tecnica").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_calificacion_tecnica").val());
                     array_servicios_contratados.push(listado_nombre_servicios);
 
                     listado_nombre_servicios = [];
@@ -1850,7 +1896,7 @@ $(document).ready(function(){
                     listado_nombre_servicios.push(valor_proceso);
                     listado_nombre_servicios.push(valor_servicio);
                     listado_nombre_servicios.push($("#valor_tarifa_servicio_recalificacion").val());
-                    listado_nombre_servicios.push($("#nro_consecutivo_servicio_recalificacion").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_recalificacion").val());
                     array_servicios_contratados.push(listado_nombre_servicios);
 
                     listado_nombre_servicios = [];
@@ -1864,7 +1910,7 @@ $(document).ready(function(){
                     listado_nombre_servicios.push(valor_proceso);
                     listado_nombre_servicios.push(valor_servicio);
                     listado_nombre_servicios.push($("#valor_tarifa_servicio_revision_pension").val());
-                    listado_nombre_servicios.push($("#nro_consecutivo_servicio_revision_pension").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_revision_pension").val());
                     array_servicios_contratados.push(listado_nombre_servicios);
 
                     listado_nombre_servicios = [];
@@ -1878,23 +1924,37 @@ $(document).ready(function(){
                     listado_nombre_servicios.push(valor_proceso);
                     listado_nombre_servicios.push(valor_servicio);
                     listado_nombre_servicios.push($("#valor_tarifa_servicio_pronunciamiento_pcl").val());
-                    listado_nombre_servicios.push($("#nro_consecutivo_servicio_pronunciamiento_pcl").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_pronunciamiento_pcl").val());
                     array_servicios_contratados.push(listado_nombre_servicios);
 
                     listado_nombre_servicios = [];
                 }
             }
 
-            if (id_checkboxes_servicios_contratados === 'checkbox_servicio_controversias_juntas') {                
+            if (id_checkboxes_servicios_contratados === 'checkbox_servicio_controversia_origen') {                
                 if ($(this).is(':checked')) {                
                     var valor_servicio = $(this).val();
                     var valor_proceso = 3;
                     listado_nombre_servicios.push(valor_proceso);
                     listado_nombre_servicios.push(valor_servicio);
-                    listado_nombre_servicios.push($("#valor_tarifa_servicio_controversias_juntas").val());
-                    listado_nombre_servicios.push($("#nro_consecutivo_servicio_controversias_juntas").val());
+                    listado_nombre_servicios.push($("#valor_tarifa_servicio_controversia_origen").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_controversia_origen").val());
                     array_servicios_contratados.push(listado_nombre_servicios);
 
+                    listado_nombre_servicios = [];
+                }
+            }
+
+            if (id_checkboxes_servicios_contratados === 'checkbox_servicio_controversia_pcl') {                
+                if ($(this).is(':checked')) {                
+                    var valor_servicio = $(this).val();
+                    var valor_proceso = 3;
+                    listado_nombre_servicios.push(valor_proceso);
+                    listado_nombre_servicios.push(valor_servicio);
+                    listado_nombre_servicios.push($("#valor_tarifa_servicio_controversia_pcl").val());
+                    // listado_nombre_servicios.push($("#nro_consecutivo_servicio_controversia_pcl").val());
+                    array_servicios_contratados.push(listado_nombre_servicios);
+            
                     listado_nombre_servicios = [];
                 }
             }
@@ -1938,6 +1998,10 @@ $(document).ready(function(){
             'Direccion' : $("#direccion").val(),
             'Id_Departamento' : $("#departamento").val(),
             'Id_Ciudad' : $("#ciudad").val(),
+            'Nro_Contrato': $("#nro_contrato").val(),
+            'F_inicio_contrato': $("#f_inicio_contrato").val(),
+            'F_finalizacion_contrato': $("#f_finalizacion_contrato").val(),
+            'Nro_consecutivo_dictamen': $("#nro_consecutivo_dictamen").val(),
             'Estado': $("#status_cliente").val(),
             'Codigo_cliente': $("#codigo_cliente").val(),
             'Fecha_creacion': $("#fecha_creacion").val(),
@@ -1983,9 +2047,6 @@ $(document).ready(function(){
                 }
             }
         });
-        
-
-
     });
 });
 

@@ -67,7 +67,7 @@ $(document).ready(function(){
     /* CARGA LISTADO DE PROCESOS */
     var datos = {
         '_token': $('input[name=_token]').val(),
-        'parametro': 'listado_proceso'
+        'parametro': 'listado_proceso_nuevo_usuario'
     };
     $.ajax({
         type:'POST',

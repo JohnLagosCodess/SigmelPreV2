@@ -106,7 +106,6 @@
                                                         <th>Motivo / Descripción de movimiento</th>
                                                         <th>Usuario</th>
                                                         <th>Fecha actualización de movimiento</th>
-                                                        <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_parametrizacion_origen_atel"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -239,9 +238,6 @@
                                                                 {{-- fecha actualizacion movimiento --}}
                                                                 <td>
                                                                     {{$parametrizacion_origen_atel_editar->F_actualizacion_movimiento}}
-                                                                </td>
-                                                                <td>
-                                                                    <div style="text-align:center;">-<div>
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -531,7 +527,6 @@
                                                         <th>Motivo / Descripción de movimiento</th>
                                                         <th>Usuario</th>
                                                         <th>Fecha actualización de movimiento</th>
-                                                        <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_parametrizacion_calificacion_pcl"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -666,9 +661,6 @@
                                                                 {{-- fecha actualizacion movimiento --}}
                                                                 <td>
                                                                     {{$parametrizacion_calificacion_pcl_editar->F_actualizacion_movimiento}}
-                                                                </td>
-                                                                <td>
-                                                                    <div style="text-align:center;">-<div>
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -958,7 +950,6 @@
                                                         <th>Motivo / Descripción de movimiento</th>
                                                         <th>Usuario</th>
                                                         <th>Fecha actualización de movimiento</th>
-                                                        <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_parametrizacion_juntas"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -1091,9 +1082,6 @@
                                                                 {{-- fecha actualizacion movimiento --}}
                                                                 <td>
                                                                     {{$parametrizacion_juntas_editar->F_actualizacion_movimiento}}
-                                                                </td>
-                                                                <td>
-                                                                    <div style="text-align:center;">-<div>
                                                                 </td>
                                                             </tr>
                                                         @endforeach
