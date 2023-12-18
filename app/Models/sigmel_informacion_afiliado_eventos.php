@@ -39,6 +39,7 @@ class sigmel_informacion_afiliado_eventos extends Model
     'Id_afp',
     'Id_arl',
     'Activo',
+    'Medio_notificacion',
     'Nombre_usuario',
     'F_registro',
     'F_actualizacion'

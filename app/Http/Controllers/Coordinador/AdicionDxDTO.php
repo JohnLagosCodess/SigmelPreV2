@@ -140,9 +140,13 @@ class AdicionDxDTO extends Controller
                 ['Tipo_lista', '=', 'Tipo de accidiente'],
                 ['Id_Parametro', $datos_bd_DTO_ATEL[0]->Tipo_accidente],
                 ['Estado', '=' ,'activo']
-            ])->get();
-
-            $nombre_tipo_accidente = $nombre_tipo_accidente[0]['Nombre_parametro'];
+            ])->get();            
+            
+            if (count($nombre_tipo_accidente) > 0) {
+                $nombre_tipo_accidente = $nombre_tipo_accidente[0]['Nombre_parametro'];
+            }else{
+                $nombre_tipo_accidente = '';
+            }
 
             $nombre_grado_severidad = sigmel_lista_parametros::on('sigmel_gestiones')
             ->select('Nombre_parametro')
@@ -152,7 +156,12 @@ class AdicionDxDTO extends Controller
                 ['Estado', '=' ,'activo']
             ])->get();
 
-            $nombre_grado_severidad = $nombre_grado_severidad[0]['Nombre_parametro'];
+            if (count($nombre_grado_severidad) > 0) {
+                $nombre_grado_severidad = $nombre_grado_severidad[0]['Nombre_parametro'];                
+            } else {
+                $nombre_grado_severidad = '';                                
+            }
+            
 
             $nombre_factor_riesgo = sigmel_lista_parametros::on('sigmel_gestiones')
             ->select('Nombre_parametro')
@@ -172,7 +181,11 @@ class AdicionDxDTO extends Controller
                 ['Estado', '=' ,'activo']
             ])->get();
 
-            $nombre_tipo_lesion = $nombre_tipo_lesion[0]['Nombre_parametro'];
+            if (count($nombre_tipo_lesion) > 0) {
+                $nombre_tipo_lesion = $nombre_tipo_lesion[0]['Nombre_parametro'];                
+            } else {
+                $nombre_tipo_lesion = '';                                
+            }            
 
             $nombre_parte_cuerpo_afectada = sigmel_lista_parametros::on('sigmel_gestiones')
             ->select('Nombre_parametro')
@@ -182,7 +195,11 @@ class AdicionDxDTO extends Controller
                 ['Estado', '=' ,'activo']
             ])->get();
 
-            $nombre_parte_cuerpo_afectada = $nombre_parte_cuerpo_afectada[0]['Nombre_parametro'];
+            if (count($nombre_parte_cuerpo_afectada) > 0) {
+                $nombre_parte_cuerpo_afectada = $nombre_parte_cuerpo_afectada[0]['Nombre_parametro'];                
+            } else {
+                $nombre_parte_cuerpo_afectada = '';                                
+            }
 
             // TRAER DATOS EXAMENES E INTERCONSULTAS DEL DTO ATEL
             if (count($info_adicion_dx) > 0) {
@@ -294,7 +311,7 @@ class AdicionDxDTO extends Controller
         // Listado cie diagnosticos motivo calificacion
         if ($parametro == 'listado_CIE10') {
             $listado_cie_diagnostico = sigmel_lista_cie_diagnosticos::on('sigmel_gestiones')
-            ->select('Id_Cie_diagnostico', 'CIE10')
+            ->select('Id_Cie_diagnostico', 'CIE10', 'Descripcion_diagnostico')
             ->where([
                 ['Estado', '=', 'activo']
             ])

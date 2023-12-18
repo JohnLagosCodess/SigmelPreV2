@@ -38,6 +38,7 @@ return new class extends Migration
             $table->integer('Id_afp')->nullable();
             $table->integer('Id_arl')->nullable();
             $table->enum('Activo', ['Si', 'No']);
+            $table->text('Medio_notificacion')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
             $table->date('F_actualizacion')->nullable();

@@ -104,9 +104,12 @@
                     <div class="card-header text-center" style="border: 1.5px solid black;">
                         <h5>Resultados de consulta</h5>
                         <input type="hidden" id="action_evento_consultar" value="{{ route('gestionInicialEdicion') }}">
+                        <input type="hidden" id="action_modulo_principal_pcl" value="{{ route('calificacionPCL') }}">
+                        <input type="hidden" id="action_modulo_principal_origen" value="{{ route('calificacionOrigen') }}">
+                        <input type="hidden" id="action_modulo_principal_noti" value="{{ route('calificacionNotifi') }}">
+                        <input type="hidden" id="action_modulo_principal_juntas" value="{{ route('calificacionJuntas') }}">
                     </div>
-                </div>
-                
+                </div>                
                 <div class="card-body">
                     <div class="table table-responsive">
                         <table id="Consulta_Eventos" class="table table-striped table-bordered" style="width:100%">

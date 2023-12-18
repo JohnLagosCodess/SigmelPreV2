@@ -297,7 +297,7 @@
                                                     <div class="col-12">
                                                         <div class="form-group">
                                                             <label for="descripcion" class="col-form-label">Descripción</label>
-                                                            <textarea class="form-control descripcion" name="descripcion" id="descripcion" rows="2" disabled><?php if(!empty($array_datos_info_laboral[0]->Descripcion)){echo $array_datos_info_laboral[0]->Descripcion;}?></textarea>
+                                                            <textarea class="form-control descripcion" name="descripcion" id="descripcion" rows="2" disabled><?php if(!empty($array_datos_info_laboral[0]->Funciones_cargo)){echo $array_datos_info_laboral[0]->Funciones_cargo;}?></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -683,6 +683,15 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <br>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="sustentacion_califi_origen" class="col-form-label">Sustentación</label>
+                                                    <textarea class="form-control sustentacion_califi_origen" name="sustentacion_califi_origen" id="sustentacion_califi_origen" rows="2" disabled><?php if(!empty($datos_bd_DTO_ATEL[0]->Sustentacion)){echo $datos_bd_DTO_ATEL[0]->Sustentacion;}?></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -704,7 +713,7 @@
                                                         <thead>
                                                             <tr class="bg-info">
                                                                 <th>Fecha Adición Dx</th>
-                                                                <th>CIE-10</th>
+                                                                <th style="width: 140px !important;">CIE-10</th>
                                                                 <th>Nombre CIE-10</th>
                                                                 <th>Descripción complementaria del DX</th>
                                                                 <th>Lateralidad Dx</th>
@@ -744,6 +753,15 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <br>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="sustentacion_adicion_dx" class="col-form-label">Sustentación Adición DX <span style="color:red;">(*)</span></label>
+                                                    <textarea class="form-control sustentacion_adicion_dx" name="sustentacion_adicion_dx" id="sustentacion_adicion_dx" rows="2" required><?php if(!empty($info_adicion_dx[0]->Sustentacion_Adicion_Dx)){echo $info_adicion_dx[0]->Sustentacion_Adicion_Dx;}?></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -753,7 +771,7 @@
                                         <h5>Calificación del Origen</h5>
                                     </div>
                                     <div class="card-body">
-                                        <div class="row">
+                                        {{-- <div class="row">
                                             <div class="col-12">
                                                 <div class="form-group">
                                                     <label for="sustentacion_califi_origen" class="col-form-label">Sustentación</label>
@@ -768,7 +786,7 @@
                                                     <textarea class="form-control sustentacion_adicion_dx" name="sustentacion_adicion_dx" id="sustentacion_adicion_dx" rows="2" required><?php if(!empty($info_adicion_dx[0]->Sustentacion_Adicion_Dx)){echo $info_adicion_dx[0]->Sustentacion_Adicion_Dx;}?></textarea>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div class="row">
                                             <div class="col-4">
                                                 <div class="form-group">

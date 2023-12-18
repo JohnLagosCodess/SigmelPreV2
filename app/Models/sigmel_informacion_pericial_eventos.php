@@ -20,6 +20,7 @@ class sigmel_informacion_pericial_eventos extends Model
     'Regimen_salud',
     'Id_solicitante',
     'Id_nombre_solicitante',
+    'Nombre_solicitante',
     'Fuente_informacion',
     'Nombre_usuario',
     'F_registro',

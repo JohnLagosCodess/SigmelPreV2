@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('Regimen_salud')->nullable();
             $table->integer('Id_solicitante')->nullable();
             $table->integer('Id_nombre_solicitante')->nullable();
+            $table->text('Nombre_solicitante')->nullable();
             $table->integer('Fuente_informacion')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');

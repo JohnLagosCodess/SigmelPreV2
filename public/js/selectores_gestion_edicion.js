@@ -96,6 +96,11 @@ $(document).ready(function(){
         allowClear: false
     });
 
+    /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE MEDIO DE NOTIFICACION AFILIADO */
+    $(".medio_notificacion_afiliado").select2({
+        placeholder: "Seleccione una opción",
+        allowClear: false
+    });
 
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO ARL (INFORMACIÓN LABORAL) */
     $(".arl_info_laboral").select2({
@@ -160,6 +165,12 @@ $(document).ready(function(){
 
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO CIUO */
     $(".codigo_ciuo").select2({
+        placeholder: "Seleccione una opción",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN DEL SELECT2 DE MEDIO NOTIFICACION LABORAL */
+    $(".medio_notificacion_laboral").select2({
         placeholder: "Seleccione una opción",
         allowClear: false
     });
@@ -607,6 +618,27 @@ $(document).ready(function(){
         }
     });
 
+    // lista medio notificacion afiliado
+    let datos_lista_medios_notificacion = {
+        '_token': token,
+        'parametro' : "medios_notificacion"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargarselectores',
+        data: datos_lista_medios_notificacion,
+        success:function(data) {
+            // console.log(data);
+            let medio_notificacionEdicion = $('select[name=medio_notificacion_afiliado]').val();
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["Nombre_parametro"] != medio_notificacionEdicion) {                    
+                    $('#medio_notificacion_afiliado').append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                }
+            }
+        }
+    });
+
     //LISTADO ARL (Información Laboral)
     let datos_lista_arl = {
         '_token': token,
@@ -870,6 +902,27 @@ $(document).ready(function(){
             for (let i = 0; i < claves.length; i++) {
                 if (data[claves[i]]["Id_Codigo"] != codigo_ciuoEdicion) {                    
                     $('#codigo_ciuo').append('<option value="'+data[claves[i]]["Id_Codigo"]+'">'+data[claves[i]]["id_codigo_ciuo"]+' - '+data[claves[i]]["Nombre_ciuo"]+'</option>');
+                }
+            }
+        }
+    });
+
+    //LISTADO MEDIOS DE NOTIFICACION
+    let datos_lista_medios_notificacion_laboral = {
+        '_token': token,
+        'parametro' : "medios_notificacion"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargarselectores',
+        data: datos_lista_medios_notificacion_laboral,
+        success:function(data) {
+            // console.log(data);
+            let medio_notificacionEdicion = $('select[name=medio_notificacion_laboral]').val();
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["Nombre_parametro"] != medio_notificacionEdicion) {                    
+                    $('#medio_notificacion_laboral').append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
                 }
             }
         }
@@ -1361,15 +1414,33 @@ $(document).ready(function(){
         }
     });
 
+    var id_solicitante_pericial = $('#solicitante').val();
+
+    if (id_solicitante_pericial == 4 || id_solicitante_pericial == 6 || id_solicitante_pericial == 7) {
+        $(".columna_otro_solicitante").removeClass('d-none');
+        $(".columna_otro_solicitante").slideDown('slow');  
+        $(".columna_nombre_solicitante").slideUp('slow');
+        $(".columna_otro_nombre_solicitante").slideUp('slow'); 
+    }
+
     /* Validación opción OTRO/¿Cuál? del selector Solicitante  */
     $('#solicitante').change(function (){
         let opt_otro_solicitante = $("#solicitante option:selected").text();
-        if (opt_otro_solicitante === "Otro/¿Cual?") {
+        if (opt_otro_solicitante === "Rama Judicial") {
             $(".columna_otro_solicitante").removeClass('d-none');
             $(".columna_otro_solicitante").slideDown('slow');
+            $(".otro_solicitante").val('');   
             $(".columna_nombre_solicitante").slideUp('slow');
             $(".columna_otro_nombre_solicitante").slideUp('slow');
-        } else {
+        } else if (opt_otro_solicitante === "Afiliado" || opt_otro_solicitante === "Pensionado") {
+            let nombre_afiliado_solicitante = $("#nombre_afiliado").val();
+            $(".columna_otro_solicitante").removeClass('d-none');
+            $(".columna_otro_solicitante").slideDown('slow');
+            $(".otro_solicitante").val(nombre_afiliado_solicitante); 
+            $(".columna_nombre_solicitante").slideUp('slow');
+            $(".columna_otro_nombre_solicitante").slideUp('slow');
+        }        
+        else {
             $(".columna_otro_solicitante").slideUp('slow');
             $(".columna_nombre_solicitante").slideDown('slow');
 
@@ -1603,13 +1674,13 @@ $(document).ready(function(){
     $("#independiente").change(function(){
         let opt_tipoempleo = $('#independiente').val();
         if (opt_tipoempleo === "Independiente"){                           
-            $(".columna_row1_laboral").slideUp('slow');
-            $(".columna_row2_laboral").slideUp('slow');
-            $(".columna_row3_laboral").slideUp('slow');
-            $(".columna_row4_laboral").slideUp('slow');
-            $(".columna_row5_laboral").slideUp('slow');
-            document.getElementById('empresa').required = false;
-            document.getElementById('nit_cc').required = false;
+            $(".columna_row1_laboral").slideDown('slow');
+            $(".columna_row2_laboral").slideDown('slow');
+            $(".columna_row3_laboral").slideDown('slow');
+            $(".columna_row4_laboral").slideDown('slow');
+            $(".columna_row5_laboral").slideDown('slow');
+            document.getElementById('empresa').required = true;
+            document.getElementById('nit_cc').required = true;
         }
     }); 
 

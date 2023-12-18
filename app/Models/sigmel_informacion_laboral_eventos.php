@@ -36,6 +36,7 @@ class sigmel_informacion_laboral_eventos extends Model
     'Antiguedad_empresa',
     'Antiguedad_cargo_empresa',
     'F_retiro',
+    'Medio_notificacion',
     'Descripcion',
     'Nombre_usuario',
     'F_registro',
