@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('Antiguedad_empresa', 3)->nullable();
             $table->string('Antiguedad_cargo_empresa')->nullable();
             $table->date('F_retiro')->nullable();
+            $table->text('Medio_notificacion')->nullable();
             $table->text('Descripcion')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');

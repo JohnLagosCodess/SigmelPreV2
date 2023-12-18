@@ -203,7 +203,7 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="fecha_radicacion" class="col-form-label">Fecha de radicación <span style="color:red;">(*)</span></label>
-                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" value="{{$array_datos_info_evento[0]->F_radicacion}}" max="{{date("Y-m-d")}}" required>
+                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" value="{{$array_datos_info_evento[0]->F_radicacion}}" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -339,7 +339,7 @@
                                                 </div>
                                                 <div class="col-sm columna_municipio_info_afiliado">
                                                     <div class="form-group">
-                                                        <label for="municipio_info_afiliado" class="col-form-label">Municipio</label>
+                                                        <label for="municipio_info_afiliado" class="col-form-label">Ciudad</label>
                                                         <select class="municipio_info_afiliado custom-select" name="municipio_info_afiliado" id="municipio_info_afiliado">
                                                             <option value="{{$array_datos_info_afiliados[0]->Id_municipio}}" selected>{{$array_datos_info_afiliados[0]->Nombre_municipio}}</option>
                                                         </select>
@@ -465,6 +465,14 @@
                                                         <label for="activo" class="col-form-label">Activo <span style="color:red;">(*)</span></label>
                                                         <select class="activo custom-select" name="activo" id="activo" required>                                                            
                                                             <option value="{{$array_datos_info_afiliados[0]->Activo}}">{{$array_datos_info_afiliados[0]->Activo}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-3">
+                                                    <div class="form-group">
+                                                        <label for="medio_notificacion_afiliado" class="col-form-label">Medio de Notificación <span style="color:red;">(*)</span></label>
+                                                        <select class="medio_notificacion_afiliado custom-select" name="medio_notificacion_afiliado" id="medio_notificacion_afiliado" required>
+                                                            <option value="{{$array_datos_info_afiliados[0]->Medio_notificacion}}">{{$array_datos_info_afiliados[0]->Medio_notificacion}}</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -605,7 +613,7 @@
                                                 </div>
                                                 <div class="col-sm columna_municipio_info_laboral">
                                                     <div class="form-group">
-                                                        <label for="municipio_info_laboral" class="col-form-label">Municipio</label>
+                                                        <label for="municipio_info_laboral" class="col-form-label">Ciudad</label>
                                                         <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral">
                                                             <option value="{{$array_datos_info_laboral[0]->Id_municipio}}">{{$array_datos_info_laboral[0]->Nombre_municipio}}</option>
                                                         </select>
@@ -698,7 +706,15 @@
                                                 <div class="col-sm">
                                                     <div class="form-group">
                                                         <label for="fecha_retiro" class="col-form-label">Fecha de retiro</label>
-                                                        <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro" value="{{$array_datos_info_laboral[0]->F_retiro}}" max="{{date("Y-m-d")}}">
+                                                        <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro" value="{{$array_datos_info_laboral[0]->F_retiro}}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm">
+                                                    <div class="form-group">
+                                                        <label for="medio_notificacion_laboral" class="col-form-label">Medio de Notificación <span style="color:red;">(*)</span></label>
+                                                        <select class="medio_notificacion_laboral custom-select" name="medio_notificacion_laboral" id="medio_notificacion_laboral" required>
+                                                            <option value="{{$array_datos_info_laboral[0]->Medio_notificacion}}">{{$array_datos_info_laboral[0]->Medio_notificacion}}</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
@@ -735,7 +751,7 @@
                                                                         <th>Email</th>
                                                                         <th>Dirección</th>
                                                                         <th>Departamento</th>
-                                                                        <th>Municipio</th>
+                                                                        <th>Ciudad</th>
                                                                         <th>Actividad económica</th>
                                                                         <th>Clase / Riesgo</th>
                                                                         <th>Persona de contacto</th>
@@ -806,8 +822,8 @@
                                             </div>     
                                             <div class="col-4 columna_otro_solicitante d-none">
                                                 <div class="form-group">
-                                                    <label for="otro_solicitante" class="col-form label">Otro solicitante</label>
-                                                    <input type="text" class="otro_solicitante form-control" name="otro_solicitante" id="otro_solicitante">
+                                                    <label for="otro_solicitante" class="col-form label">Nombre solicitante</label>
+                                                    <input type="text" class="otro_solicitante form-control" name="otro_solicitante" id="otro_solicitante" value="{{$array_datos_info_pericial[0]->Nombre_solicitante}}">
                                                 </div>
                                             </div>
                                             <div class="col-4 columna_nombre_solicitante">
@@ -989,7 +1005,7 @@
                                 </div>
                                 <div class="col-sm columna_municipio_info_laboral_registrar">
                                     <div class="form-group">
-                                        <label for="municipio_info_laboral_registrar" class="col-form-label">Municipio</label>
+                                        <label for="municipio_info_laboral_registrar" class="col-form-label">Ciudad</label>
                                         <select class="municipio_info_laboral_registrar custom-select" name="municipio_info_laboral_registrar" id="municipio_info_laboral_registrar" style="width: 261.5px;" disabled></select>
                                     </div>
                                 </div>
@@ -1172,6 +1188,29 @@
 
         function llenar_historico_empresas(response, index, value){
             $('#listado_historico_empresas').DataTable({
+                dom: 'Bfrtip',                      
+                buttons:{
+                    dom:{
+                        buttons:{
+                            className: 'btn'
+                        }
+                    },
+                    buttons:[
+                        {
+                            extend:"excel",
+                            title: 'Historico De Empresas',
+                            text:'Exportar datos',
+                            className: 'btn btn-info',
+                            "excelStyles": [                      // estilos de excel
+                                                        
+                            ],
+                            //Limitar columnas para el reporte
+                            exportOptions: {
+                                columns: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+                            }  
+                        }
+                    ]
+                }, 
                 "destroy": true,
                 "data": response,
                 "pageLength": 2,
@@ -1255,4 +1294,18 @@
             location.reload();
         });
     </script> 
+    <script>
+        $(function() {
+            $("#fecha_evento").on("change", function() {
+                var fechaEvento = $(this).val();
+                $("#fecha_radicacion").val('').attr("min", fechaEvento);
+            });
+        });
+        $(function() {
+            $("#fecha_ingreso").on("change", function() {
+                var fechaEvento = $(this).val();
+                $("#fecha_retiro").val('').attr("min", fechaEvento);
+            });
+        });
+    </script>
 @stop

@@ -594,15 +594,15 @@ $(document).ready(function(){
                     location.reload();
                 }, 3000);
 
-            } else if(vali_gr_doc==''){
-                $('#resultado_insercion').removeClass('d-none');
-                $('#resultado_insercion').addClass('alert-danger');
-                $('#resultado_insercion').append('<strong>Seleccione un grupo documental.</strong>');
-                setTimeout(() => {
-                    $('#resultado_insercion').addClass('d-none');
-                    $('#resultado_insercion').removeClass('alert-danger');
-                    $('#resultado_insercion').empty();
-                }, 3000);
+            // } else if(vali_gr_doc==''){
+            //     $('#resultado_insercion').removeClass('d-none');
+            //     $('#resultado_insercion').addClass('alert-danger');
+            //     $('#resultado_insercion').append('<strong>Seleccione un grupo documental.</strong>');
+            //     setTimeout(() => {
+            //         $('#resultado_insercion').addClass('d-none');
+            //         $('#resultado_insercion').removeClass('alert-danger');
+            //         $('#resultado_insercion').empty();
+            //     }, 3000);
             }else{
                 $('#resultado_insercion').removeClass('d-none');
                 $('#resultado_insercion').addClass('alert-danger');

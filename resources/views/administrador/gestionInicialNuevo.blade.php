@@ -102,7 +102,7 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="fecha_radicacion" class="col-form-label">Fecha de radicación <span style="color:red;">(*)</span></label>
-                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" max="{{date("Y-m-d")}}" required>
+                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -254,7 +254,7 @@
                                                 </div>
                                                 <div class="col-sm columna_municipio_info_afiliado">
                                                     <div class="form-group">
-                                                        <label for="municipio_info_afiliado" class="col-form-label">Municipio</label>
+                                                        <label for="municipio_info_afiliado" class="col-form-label">Ciudad</label>
                                                         <select class="municipio_info_afiliado custom-select" name="municipio_info_afiliado" id="municipio_info_afiliado" disabled></select>
                                                     </div>
                                                 </div>
@@ -352,6 +352,12 @@
                                                         <select class="activo custom-select" name="activo" id="activo" required></select>
                                                     </div>
                                                 </div>
+                                                <div class="col-3">
+                                                    <div class="form-group">
+                                                        <label for="medio_notificacion_afiliado" class="col-form-label">Medio de Notificación <span style="color:red;">(*)</span></label>
+                                                        <select class="medio_notificacion_afiliado custom-select" name="medio_notificacion_afiliado" id="medio_notificacion_afiliado" required></select>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         
@@ -440,7 +446,7 @@
                                             </div>
                                             <div class="col-sm columna_municipio_info_laboral ">
                                                 <div class="form-group">
-                                                    <label for="municipio_info_laboral" class="col-form-label">Municipio</label>
+                                                    <label for="municipio_info_laboral" class="col-form-label">Ciudad</label>
                                                     <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral" disabled></select>
                                                 </div>
                                             </div>
@@ -519,7 +525,13 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="fecha_retiro" class="col-form-label">Fecha de retiro</label>
-                                                    <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro" max="{{date("Y-m-d")}}">
+                                                    <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="medio_notificacion_laboral" class="col-form-label">Medio de Notificación <span style="color:red;">(*)</span></label>
+                                                    <select class="medio_notificacion_laboral custom-select" name="medio_notificacion_laboral" id="medio_notificacion_laboral" required></select>
                                                 </div>
                                             </div>
                                             <div class="col-12">
@@ -568,7 +580,7 @@
                                             </div>     
                                             <div class="col-4 columna_otro_solicitante d-none">
                                                 <div class="form-group">
-                                                    <label for="otro_solicitante" class="col-form label">Otro solicitante</label>
+                                                    <label for="otro_solicitante" class="col-form label">Nombre solicitante</label>
                                                     <input type="text" class="otro_solicitante form-control" name="otro_solicitante" id="otro_solicitante">
                                                 </div>
                                             </div>
@@ -645,7 +657,7 @@
                                         <div class="row">
                                             <div class="col-sm">
                                                 <label for="descripcion_asignacion" class="col-form label">Descripción</label>                                            
-                                                <textarea class="form-control" name="descripcion_asignacion" id="descripcion_asignacion" rows="2" required></textarea>
+                                                <textarea class="form-control" name="descripcion_asignacion" id="descripcion_asignacion" rows="2"></textarea>
                                             </div> 
                                         </div>                                    
                                     </div>
@@ -759,6 +771,20 @@
             location.reload();
         });
     })
+</script>
+<script>
+    $(function() {
+        $("#fecha_evento").on("change", function() {
+            var fechaEvento = $(this).val();
+            $("#fecha_radicacion").val('').attr("min", fechaEvento);
+        });
+    });
+    $(function() {
+        $("#fecha_ingreso").on("change", function() {
+            var fechaEvento = $(this).val();
+            $("#fecha_retiro").val('').attr("min", fechaEvento);
+        });
+    });
 </script>
 
 @stop

@@ -282,7 +282,7 @@ class DeterminacionOrigenATEL extends Controller
         // Listado cie diagnosticos motivo calificacion
         if ($parametro == 'listado_CIE10') {
             $listado_cie_diagnostico = sigmel_lista_cie_diagnosticos::on('sigmel_gestiones')
-            ->select('Id_Cie_diagnostico', 'CIE10')
+            ->select('Id_Cie_diagnostico', 'CIE10', 'Descripcion_diagnostico')
             ->where([
                 ['Estado', '=', 'activo']
             ])

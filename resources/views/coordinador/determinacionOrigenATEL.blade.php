@@ -257,7 +257,7 @@
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label for="descripcion" class="col-form-label">Descripción</label>
-                                                        <textarea class="form-control descripcion" name="descripcion" id="descripcion" rows="2" disabled><?php if(!empty($array_datos_info_laboral[0]->Descripcion)){echo $array_datos_info_laboral[0]->Descripcion;}?></textarea>
+                                                        <textarea class="form-control descripcion" name="descripcion" id="descripcion" rows="2" disabled><?php if(!empty($array_datos_info_laboral[0]->Funciones_cargo)){echo $array_datos_info_laboral[0]->Funciones_cargo;}?></textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -783,7 +783,7 @@
                                                 <table id="listado_diagnostico_cie10" class="table table-striped table-bordered" width="100%">
                                                     <thead>
                                                         <tr class="bg-info">
-                                                            <th>CIE-10</th>
+                                                            <th style="width: 340px !important;">CIE-10</th>
                                                             <th>Nombre CIE-10</th>
                                                             <th>Descripción complementaria del DX</th>
                                                             <th>Lateralidad Dx</th>

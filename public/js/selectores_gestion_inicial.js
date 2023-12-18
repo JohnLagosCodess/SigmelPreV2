@@ -97,6 +97,12 @@ $(document).ready(function(){
         allowClear: false
     });
 
+    /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE MEDIO DE NOTIFICACION AFILIADO */
+
+    $(".medio_notificacion_afiliado").select2({
+        placeholder: "Seleccione una opción",
+        allowClear: false
+    });
 
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO ARL (INFORMACIÓN LABORAL) */
     $(".arl_info_laboral").select2({
@@ -130,6 +136,12 @@ $(document).ready(function(){
 
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO CIUO */
     $(".codigo_ciuo").select2({
+        placeholder: "Seleccione una opción",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN DEL SELECT2 DE MEDIO NOTIFICACION LABORAL */
+    $(".medio_notificacion_laboral").select2({
         placeholder: "Seleccione una opción",
         allowClear: false
     });
@@ -527,6 +539,26 @@ $(document).ready(function(){
         }
     });
 
+    // lista medio notificacion afiliado
+    let datos_lista_medios_notificacion = {
+        '_token': token,
+        'parametro' : "medios_notificacion"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargarselectores',
+        data: datos_lista_medios_notificacion,
+        success:function(data) {
+            // console.log(data);
+            $('#medio_notificacion_afiliado').empty();
+            $('#medio_notificacion_afiliado').append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $('#medio_notificacion_afiliado').append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+            }
+        }
+    });
+
     //LISTADO ARL (Información Laboral)
     let datos_lista_arl = {
         '_token': token,
@@ -651,6 +683,26 @@ $(document).ready(function(){
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
                 $('#codigo_ciuo').append('<option value="'+data[claves[i]]["Id_Codigo"]+'">'+data[claves[i]]["id_codigo_ciuo"]+' - '+data[claves[i]]["Nombre_ciuo"]+'</option>');
+            }
+        }
+    });
+
+    //LISTADO MEDIOS DE NOTIFICACION
+    let datos_lista_medios_notificacion_laboral = {
+        '_token': token,
+        'parametro' : "medios_notificacion"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargarselectores',
+        data: datos_lista_medios_notificacion_laboral,
+        success:function(data) {
+            // console.log(data);
+            $('#medio_notificacion_laboral').empty();
+            $('#medio_notificacion_laboral').append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $('#medio_notificacion_laboral').append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
             }
         }
     });
@@ -1032,22 +1084,31 @@ $(document).ready(function(){
     /* Validación opción OTRO/¿Cuál? del selector Solicitante  */
     $('#solicitante').change(function (){
         let opt_otro_solicitante = $("#solicitante option:selected").text();
-        if (opt_otro_solicitante === "Otro/¿Cual?") {
+        if (opt_otro_solicitante === "Rama Judicial") {
             $(".columna_otro_solicitante").removeClass('d-none');
             $(".columna_otro_solicitante").slideDown('slow');
+            $(".otro_solicitante").val('');   
             $(".columna_nombre_solicitante").slideUp('slow');
             $(".columna_otro_nombre_solicitante").slideUp('slow');
-        } else {
+        } else if (opt_otro_solicitante === "Afiliado" || opt_otro_solicitante === "Pensionado") {
+            let nombre_afiliado_solicitante = $("#nombre_afiliado").val();
+            $(".columna_otro_solicitante").removeClass('d-none');
+            $(".columna_otro_solicitante").slideDown('slow');
+            $(".otro_solicitante").val(nombre_afiliado_solicitante); 
+            $(".columna_nombre_solicitante").slideUp('slow');
+            $(".columna_otro_nombre_solicitante").slideUp('slow');
+        }        
+        else {
             $(".columna_otro_solicitante").slideUp('slow');
             $(".columna_nombre_solicitante").slideDown('slow');
 
-        }
+        }        
     });
 
     /* Validación opción OTRO/¿Cuál? del selector Nombre Solicitante  */
     $('#nombre_solicitante').change(function (){
         let opt_otro_nombre_solicitante = $("#nombre_solicitante option:selected").text();
-        if (opt_otro_nombre_solicitante === "Otro/¿Cual?") {
+        if (opt_otro_nombre_solicitante === "Rama Judicial") {
             $(".columna_otro_nombre_solicitante").removeClass('d-none');
             $(".columna_otro_nombre_solicitante").slideDown('slow');
         } else {
@@ -1118,6 +1179,7 @@ $(document).ready(function(){
                             $('.columna_identificacion_apoderado').addClass('d-none');
                         }
                         $('#activo').val(data[claves_info_afiliado[i]]["Activo"]).change();
+                        $('#medio_notificacion_afiliado').val(data[claves_info_afiliado[i]]["Medio_notificacion"]).change();
                     }
                 }
                 else{
@@ -1146,6 +1208,7 @@ $(document).ready(function(){
                     $('#nombre_apoderado').val('');
                     $('#nro_identificacion_apoderado').val('');
                     $('#activo').val('').change();
+                    ('#medio_notificacion_afiliado').val('').change();
                 }
             }
         });
@@ -1201,6 +1264,7 @@ $(document).ready(function(){
                         $('#antiguedad_empresa').val(data[claves_info_laboral[i]]["Antiguedad_empresa"]);
                         $('#antiguedad_cargo').val(data[claves_info_laboral[i]]["Antiguedad_cargo_empresa"]);
                         $('#fecha_retiro').val(data[claves_info_laboral[i]]["F_retiro"]);
+                        $('#medio_notificacion_laboral').val(data[claves_info_laboral[i]]["Medio_notificacion"]).change();
                         $('#descripcion').val(data[claves_info_laboral[i]]["Descripcion"]);
                     }
                 }
@@ -1227,6 +1291,7 @@ $(document).ready(function(){
                     $('#antiguedad_empresa').val('');
                     $('#antiguedad_cargo').val('');
                     $('#fecha_retiro').val('');
+                    $('#medio_notificacion_laboral').val('');
                     $('#descripcion').val('');
                 }
             }
@@ -1456,13 +1521,13 @@ $(document).ready(function(){
     $("#independiente").change(function(){
         let opt_tipoempleo = $('#independiente').val();
         if (opt_tipoempleo === "Independiente"){                           
-            $(".columna_row1_laboral").slideUp('slow');
-            $(".columna_row2_laboral").slideUp('slow');
-            $(".columna_row3_laboral").slideUp('slow');
-            $(".columna_row4_laboral").slideUp('slow');
-            $(".columna_row5_laboral").slideUp('slow');
-            document.getElementById('empresa').required = false;
-            document.getElementById('nit_cc').required = false;
+            $(".columna_row1_laboral").slideDown('slow');
+            $(".columna_row2_laboral").slideDown('slow');
+            $(".columna_row3_laboral").slideDown('slow');
+            $(".columna_row4_laboral").slideDown('slow');
+            $(".columna_row5_laboral").slideDown('slow');
+            document.getElementById('empresa').required = true;
+            document.getElementById('nit_cc').required = true;
         }
     }); 
 

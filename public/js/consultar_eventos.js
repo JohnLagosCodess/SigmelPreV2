@@ -75,10 +75,66 @@ $(document).ready(function () {
                                 '<input type="hidden" name="newIdEvento" value="'+data[i]["ID_evento"]+'">'+
                                 '</form>';
                                 data[i]['consulta_evento'] = IrEvento;
-                            }                
+                            }     
                             
-                            Ver = '<a href="javascript:void(0);"><i class="far fa-eye text-info"></i></a>';
-                            data[i]['Ver'] = Ver;
+                            if (data[i]['ID_evento'] != '' &&  data[i]['Id_proceso'] == 1) {
+                                Ver = '<form id="form_modulo_principal_origen'+data[i]["ID_evento"]+'_'+data[i]["Id_Asignacion"]+'" action="" method="POST">'+
+                                '<input type="hidden" name="_token" value="'+token+'">'+
+                                '<label for="evento_modulo_origen_'+data[i]["ID_evento"]+'_'+data[i]["Id_Asignacion"]+'"><i class="far fa-eye text-info"></i></label>'+
+                                '<input class="btn btn-icon-only text-info btn-sm" id="evento_modulo_origen_'+data[i]["ID_evento"]+'_'+data[i]["Id_Asignacion"]+'" type="submit" style="font-weight: bold;" value="'+data[i]["ID_evento"]+'">'+
+                                '<input type="hidden" name="badera_modulo_principal_origen" id="badera_modulo_principal_origen" value="desdebus_mod_origen">'+
+                                '<input type="hidden" name="newIdEvento" value="'+data[i]["ID_evento"]+'">'+
+                                '<input type="hidden" name="newIdProceso" value="'+data[i]["Id_proceso"]+'">'+
+                                '<input type="hidden" name="newIdServicio" value="'+data[i]["Id_Servicio"]+'">'+
+                                '<input type="hidden" name="newIdAsignacion" value="'+data[i]["Id_Asignacion"]+'">'+
+                                '</form>';
+                                data[i]['Ver'] = Ver;
+                            } 
+
+                            if (data[i]['ID_evento'] != '' &&  data[i]['Id_proceso'] == 2) {
+                                Ver = '<form id="form_modulo_principal_pcl_'+data[i]["ID_evento"]+'_'+data[i]["Id_Asignacion"]+'" action="" method="POST">'+
+                                '<input type="hidden" name="_token" value="'+token+'">'+
+                                '<label for="evento_modulo_pcl_'+data[i]["ID_evento"]+'_'+data[i]["Id_Asignacion"]+'"><i class="far fa-eye text-info"></i></label>'+
+                                '<input class="btn btn-icon-only text-info btn-sm" id="evento_modulo_pcl_'+data[i]["ID_evento"]+'_'+data[i]["Id_Asignacion"]+'" type="submit" style="font-weight: bold;" value="'+data[i]["ID_evento"]+'">'+
+                                '<input type="hidden" name="badera_modulo_principal_pcl" id="badera_modulo_principal_pcl" value="desdebus_mod_pcl">'+
+                                '<input type="hidden" name="newIdEvento" value="'+data[i]["ID_evento"]+'">'+
+                                '<input type="hidden" name="newIdProceso" value="'+data[i]["Id_proceso"]+'">'+
+                                '<input type="hidden" name="newIdServicio" value="'+data[i]["Id_Servicio"]+'">'+
+                                '<input type="hidden" name="newIdAsignacion" value="'+data[i]["Id_Asignacion"]+'">'+
+                                '</form>';
+                                data[i]['Ver'] = Ver;
+                            } 
+
+                            if (data[i]['ID_evento'] != '' &&  data[i]['Id_proceso'] == 3) {
+                                Ver = '<form id="form_modulo_principal_juntas_'+data[i]["ID_evento"]+'_'+data[i]["Id_Asignacion"]+'" action="" method="POST">'+
+                                '<input type="hidden" name="_token" value="'+token+'">'+
+                                '<label for="evento_modulo_juntas_'+data[i]["ID_evento"]+'_'+data[i]["Id_Asignacion"]+'"><i class="far fa-eye text-info"></i></label>'+
+                                '<input class="btn btn-icon-only text-info btn-sm" id="evento_modulo_juntas_'+data[i]["ID_evento"]+'_'+data[i]["Id_Asignacion"]+'" type="submit" style="font-weight: bold;" value="'+data[i]["ID_evento"]+'">'+
+                                '<input type="hidden" name="badera_modulo_principal_juntas" id="badera_modulo_principal_juntas" value="desdebus_mod_juntas">'+
+                                '<input type="hidden" name="newIdEvento" value="'+data[i]["ID_evento"]+'">'+
+                                '<input type="hidden" name="newIdProceso" value="'+data[i]["Id_proceso"]+'">'+
+                                '<input type="hidden" name="newIdServicio" value="'+data[i]["Id_Servicio"]+'">'+
+                                '<input type="hidden" name="newIdAsignacion" value="'+data[i]["Id_Asignacion"]+'">'+
+                                '</form>';
+                                data[i]['Ver'] = Ver;
+                            } 
+
+                            if (data[i]['ID_evento'] != '' &&  data[i]['Id_proceso'] == 4) {
+                                Ver = '<form id="form_modulo_principal_noti_'+data[i]["ID_evento"]+'_'+data[i]["Id_Asignacion"]+'" action="" method="POST">'+
+                                '<input type="hidden" name="_token" value="'+token+'">'+
+                                '<label for="evento_modulo_noti_'+data[i]["ID_evento"]+'_'+data[i]["Id_Asignacion"]+'"><i class="far fa-eye text-info"></i></label>'+
+                                '<input class="btn btn-icon-only text-info btn-sm" id="evento_modulo_noti_'+data[i]["ID_evento"]+'_'+data[i]["Id_Asignacion"]+'" type="submit" style="font-weight: bold;" value="'+data[i]["ID_evento"]+'">'+
+                                '<input type="hidden" name="badera_modulo_principal_noti" id="badera_modulo_principal_noti" value="desdebus_mod_noti">'+
+                                '<input type="hidden" name="newIdEvento" value="'+data[i]["ID_evento"]+'">'+
+                                '<input type="hidden" name="newIdProceso" value="'+data[i]["Id_proceso"]+'">'+
+                                '<input type="hidden" name="newIdServicio" value="'+data[i]["Id_Servicio"]+'">'+
+                                '<input type="hidden" name="newIdAsignacion" value="'+data[i]["Id_Asignacion"]+'">'+
+                                '</form>';
+                                data[i]['Ver'] = Ver;
+                            }
+                            
+                            // Ver = '<a href="javascript:void(0);"><i class="far fa-eye text-info"></i></a>';
+                            // data[i]['Ver'] = Ver;
 
                             // Validación para crear el modal del formulario de nuevo servicio
                             if(data[i]['Nombre_servicio'] == 'Determinación del Origen (DTO) ATEL' || data[i]['Nombre_servicio'] == 'Adición DX' || data[i]['Nombre_servicio'] == 'Calificación técnica' || data[i]['Nombre_servicio'] == 'Recalificación' || data[i]['Nombre_servicio'] == 'Revisión pensión'){
@@ -278,6 +334,26 @@ $(document).ready(function () {
     $(document).on('mouseover',"input[id^='edit_evento_']", function(){
         let url_editar_evento = $('#action_evento_consultar').val();
         $("form[id^='form_editar_evento_']").attr("action", url_editar_evento);    
+    });
+
+    $(document).on('mouseover',"label[for^='evento_modulo_origen_']", function(){
+        let url_editar_evento = $('#action_modulo_principal_origen').val();
+        $("form[id^='form_modulo_principal_origen']").attr("action", url_editar_evento);    
+    });
+
+    $(document).on('mouseover',"label[for^='evento_modulo_pcl_']", function(){
+        let url_editar_evento = $('#action_modulo_principal_pcl').val();
+        $("form[id^='form_modulo_principal_pcl_']").attr("action", url_editar_evento);    
+    });
+
+    $(document).on('mouseover',"label[for^='evento_modulo_juntas_']", function(){
+        let url_editar_evento = $('#action_modulo_principal_juntas').val();
+        $("form[id^='form_modulo_principal_juntas_']").attr("action", url_editar_evento);    
+    });
+
+    $(document).on('mouseover',"label[for^='evento_modulo_noti_']", function(){
+        let url_editar_evento = $('#action_modulo_principal_noti').val();
+        $("form[id^='form_modulo_principal_noti_']").attr("action", url_editar_evento);    
     });
 
     /* CREACIÓN Y AGREGACIÓN DEL MODAL NUEVO SERVICIO AL CONTENEDOR DE RENDERIZAMIENTO */

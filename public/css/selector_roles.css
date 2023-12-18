@@ -77,6 +77,16 @@
     display: none;
 }
 
+.btn-icon-only {
+    border: none;
+    padding: 0;
+    background: none;
+}
+
+.btn-icon-only[value] {
+    display: none;
+}
+
 .custom-checkboxtipo {
     display: inline-block;
     width: 20px;

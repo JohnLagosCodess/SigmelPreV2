@@ -12,7 +12,11 @@
 <div class="row">
     <div class="col-8">
         <div>
-            <a href="{{route("bandejaOrigen")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+            <?php if (isset($_POST['badera_modulo_principal_origen']) &&  $_POST['badera_modulo_principal_origen'] == 'desdebus_mod_origen' ):?>
+                <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>            
+            <?php else: ?>
+                <a href="{{route("bandejaOrigen")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+            <?php endif ?>
             <button id="Hacciones" class="btn btn-info"  onclick="historialDeAcciones()"><i class="fas fa-list"></i>Historial Acciones</button>                
             <p>
                 <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>

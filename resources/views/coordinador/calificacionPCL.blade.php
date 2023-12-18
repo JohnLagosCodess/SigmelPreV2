@@ -12,10 +12,20 @@
     <div class="row">
         <div class="col-8">
             <div>
-                <a href="{{route("bandejaPCL")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <?php if (isset($_POST['badera_modulo_principal_origen']) &&  $_POST['badera_modulo_principal_origen'] == 'desdebus_mod_origen' ):?>
+                <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <?php elseif (isset($_POST['badera_modulo_principal_pcl']) &&  $_POST['badera_modulo_principal_pcl'] == 'desdebus_mod_pcl' ):?>
+                    <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <?php elseif (isset($_POST['badera_modulo_principal_juntas']) &&  $_POST['badera_modulo_principal_juntas'] == 'desdebus_mod_juntas' ):?>
+                    <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <?php elseif (isset($_POST['badera_modulo_principal_noti']) &&  $_POST['badera_modulo_principal_noti'] == 'desdebus_mod_noti' ):?>
+                    <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <?php else: ?>
+                    <a href="{{route("bandejaPCL")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <?php endif ?>
                 <button id="Hacciones" class="btn btn-info"  onclick="historialDeAcciones()"><i class="fas fa-list"></i>Historial Acciones</button>                
                 <p>
-                    <i class="far fa-eye-slash text-danger"></i> Inactivar Menú/Sub Menú &nbsp;-->
+                    {{-- <i class="far fa-eye-slash text-danger"></i> Inactivar Menú/Sub Menú &nbsp; --}}
                     <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
                 </p>
             </div>
