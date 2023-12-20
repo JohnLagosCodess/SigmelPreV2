@@ -1367,6 +1367,7 @@ $(document).ready(function(){
                                 '<td>'+
                                     '<form id="form_editar_evento" action="" method="POST">'+
                                         '<input type="hidden" name="_token" value="'+token+'">'+
+                                        '<input type="hidden" name="bandera_mod_nuevo" value="retornar_mod_nuevo">'+
                                         '<input class="btn btn-info" id="edit_evento" type="submit" value="Editar">'+
                                         '<input type="hidden" name="newIdEvento" value="'+data[registro[i]]["ID_evento"]+'">'+
                                     '</form>'+

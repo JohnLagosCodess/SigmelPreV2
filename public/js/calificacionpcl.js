@@ -50,6 +50,29 @@ $(document).ready(function(){
 
     let token = $('input[name=_token]').val();
 
+    /* FUNCIONALIDAD DESCARGA DOCUMENTO */
+    $("a[id^='btn_generar_descarga_']").click(function(){
+        var id_documento = $(this).data('id_documento_descargar');
+        var nombre_documento = $("#nombre_documento_descarga_"+id_documento).val();
+        var extension_documento = $("#extension_documento_descarga_"+id_documento).val();
+        var id_evento = nombre_documento.match(/\d+/g).join('');
+    
+        // Crear un enlace temporal para la descarga
+        var enlaceDescarga = document.createElement('a');
+        enlaceDescarga.href = '/descargar-archivo/'+nombre_documento+'.'+extension_documento+'/'+id_evento;
+        enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+        enlaceDescarga.style.display = 'none';
+        document.body.appendChild(enlaceDescarga);
+    
+        // Simular clic en el enlace para iniciar la descarga
+        enlaceDescarga.click();
+    
+        // Eliminar el enlace después de la descarga
+        setTimeout(function() {
+            document.body.removeChild(enlaceDescarga);
+        }, 1000);
+    });
+
     //Listado de Modalidad calificacion PCL
 
     let datos_lista_modalidad_calificacion = {

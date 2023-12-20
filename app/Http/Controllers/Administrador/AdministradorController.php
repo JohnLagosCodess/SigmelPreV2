@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CargarDocRequest;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 // use Illuminate\Validation\Rules\File;
 
 use Illuminate\Support\Facades\File;
@@ -3329,7 +3330,6 @@ class AdministradorController extends Controller
         return response()->json($informacion_laboral);
     }
 
-
     /* TODO LO REFERENTE AL FORMULARIO DE EDICIÓN DE EVENTO */
     public function ConsultaIDEvento(Request $request){
         $idEventodigitado = $request->IdEvento;
@@ -3970,7 +3970,98 @@ class AdministradorController extends Controller
 
         sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_historial_acciones);
         sleep(2);
-        return redirect()->route('gestionInicialNuevo')->with('evento_actualizado', 'Evento actualizado Sactifactoriamente');
+        // return redirect()->route('gestionInicialNuevo')->with('evento_actualizado', 'Evento actualizado Sactifactoriamente');
+        
+        $user = Auth::user();
+        $newIdEvento = $IdEventoactulizar;
+        // $parametro = $request->parametro;
+
+        $array_datos_info_evento =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_eventos as sie')
+        ->leftJoin('sigmel_gestiones.sigmel_clientes as slc', 'sie.Cliente', '=', 'slc.Id_Cliente')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_clientes as sltc', 'sie.Tipo_cliente', '=', 'sltc.Id_TipoCliente')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'sie.Tipo_evento', '=', 'slte.Id_Evento')
+        ->select('sie.Cliente', 'slc.Nombre_cliente', 'sie.Tipo_cliente', 'sltc.Nombre_tipo_cliente', 'sie.Tipo_evento',
+        'slte.Nombre_evento', 'sie.ID_evento', 'sie.F_evento', 'sie.F_radicacion')
+        ->where([['sie.ID_evento', '=', $newIdEvento]])->get();  
+        
+        $array_datos_info_afiliados =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_tipo_doc', 'siae.Tipo_documento', '=', 'slp_tipo_doc.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_tipo_genero', 'siae.Genero', '=', 'slp_tipo_genero.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_estado_civil', 'siae.Estado_civil', '=', 'slp_estado_civil.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_nivel_escolar', 'siae.Nivel_escolar', '=', 'slp_nivel_escolar.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_dominancias as sld', 'siae.Id_dominancia', '=', 'sld.Id_Dominancia')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'siae.Id_departamento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sldm1.Id_municipios', '=', 'siae.Id_municipio')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_tipo_afiliado', 'siae.Tipo_afiliado', '=', 'slp_tipo_afiliado.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sle', 'sle.Id_Entidad', '=', 'siae.Id_eps')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sle1', 'sle1.Id_Entidad', '=', 'siae.Id_afp')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sle2', 'sle2.Id_Entidad', '=', 'siae.Id_arl')
+        ->select('siae.Id_Afiliado', 'siae.ID_evento', 'siae.F_registro', 'siae.Nombre_afiliado', 'siae.Direccion', 'siae.Tipo_documento',
+        'slp_tipo_doc.Nombre_parametro as Nombre_documento', 'siae.Nro_identificacion', 'siae.F_nacimiento', 'siae.Edad', 'siae.Genero',
+        'slp_tipo_genero.Nombre_parametro as Nombre_genero', 'siae.Email', 'siae.Telefono_contacto', 'siae.Estado_civil',
+        'slp_estado_civil.Nombre_parametro as Nombre_estado_civil', 'siae.Nivel_escolar', 'slp_nivel_escolar.Nombre_parametro as Nombre_nivel_escolar',
+        'sld.Id_dominancia', 'sld.Nombre_dominancia as Dominancia', 'siae.Id_departamento', 'sldm.Nombre_departamento',
+        'siae.Id_municipio', 'sldm1.Nombre_municipio', 'siae.Ocupacion', 'siae.Tipo_afiliado', 'slp_tipo_afiliado.Nombre_parametro as Nombre_tipo_afiliado',
+        'siae.Ibc', 'siae.Id_eps', 'sle.Nombre_entidad as Nombre_eps', 'siae.Id_afp', 'sle1.Nombre_entidad as Nombre_afp', 'siae.Id_arl', 'sle2.Nombre_entidad as Nombre_arl',
+        'siae.Apoderado', 'siae.Nombre_apoderado', 'siae.Nro_identificacion_apoderado', 'siae.Activo', 'siae.Medio_notificacion')
+        ->where([['siae.ID_evento','=',$newIdEvento]])
+        ->orderBy('siae.F_registro', 'desc')
+        ->limit(1)
+        ->get();
+
+        $array_datos_info_laboral=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sla', 'sla.Id_entidad', '=', 'sile.Id_arl')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'sile.Id_departamento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldms', 'sldms.Id_municipios', '=', 'sile.Id_municipio')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_actividad_economicas as slae', 'slae.Id_ActEco', '=', 'sile.Id_actividad_economica')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_clase_riesgos as slcr', 'slcr.Id_Riesgo', '=', 'sile.Id_clase_riesgo')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_ciuo_codigos as slcc', 'slcc.Id_Codigo', '=', 'sile.Id_codigo_ciuo')
+        ->select('sile.ID_evento', 'sile.Tipo_empleado','sile.Id_arl', 'sla.Nombre_entidad as Nombre_arl', 'sile.Empresa', 'sile.Nit_o_cc', 'sile.Telefono_empresa',
+        'sile.Email', 'sile.Direccion', 'sile.Id_departamento', 'sldm.Nombre_departamento', 'sile.Id_municipio', 
+        'sldms.Nombre_municipio', 'sile.Id_actividad_economica', 'slae.Nombre_actividad', 'sile.Id_clase_riesgo', 
+        'slcr.Nombre_riesgo', 'sile.Persona_contacto', 'sile.Telefono_persona_contacto', 'sile.Id_codigo_ciuo', 'slcc.Nombre_ciuo', 
+        'sile.F_ingreso', 'sile.Cargo', 'sile.Funciones_cargo', 'sile.Antiguedad_empresa', 'sile.Antiguedad_cargo_empresa', 
+        'sile.F_retiro', 'sile.Medio_notificacion', 'sile.Descripcion')
+        ->where([['sile.ID_evento','=', $newIdEvento]])
+        ->orderBy('sile.F_registro', 'desc')
+        ->limit(1)
+        ->get();
+
+        $array_datos_info_pericial=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_pericial_eventos as sipe')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_motivo_solicitudes as slms', 'slms.Id_Solicitud', '=', 'sipe.Id_motivo_solicitud')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sipe.Tipo_vinculacion')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'sipe.Regimen_salud')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_solicitantes as sls', 'sls.Id_solicitante', '=', 'sipe.Id_solicitante')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_solicitantes as slsn', 'slsn.Id_nombre_solicitante', '=', 'sipe.Id_nombre_solicitante')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpf', 'slpf.Id_Parametro', '=', 'sipe.Fuente_informacion')
+        ->select('sipe.ID_evento', 'sipe.Id_motivo_solicitud', 'slms.Nombre_solicitud', 'sipe.Tipo_vinculacion', 'slp.Nombre_parametro as tipo_viculacion',
+        'sipe.Regimen_salud', 'slps.Nombre_parametro as regimen_salud', 'sipe.Id_solicitante', 'sls.Solicitante', 'sipe.Id_nombre_solicitante',
+        'sipe.Nombre_solicitante', 'sipe.Fuente_informacion', 'slpf.Nombre_parametro as fuente_informacion')
+        ->where([['sipe.ID_evento','=', $newIdEvento]])
+        ->orderBy('sipe.F_registro', 'desc')
+        ->limit(1)
+        ->get();
+
+        /* $array_datos_info_asignacion=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slps', 'slps.Id_proceso', '=', 'siae.Id_proceso')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slpss', 'slpss.Id_servicio', '=', 'siae.Id_servicio')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_acciones_procesos_servicios as slaps', 'slaps.Id_Accion', '=', 'siae.Id_accion')
+        ->select('siae.ID_evento', 'siae.Id_proceso', 'slps.Nombre_proceso', 'siae.Id_servicio', 'slpss.Nombre_servicio',
+        'siae.Id_accion', 'slaps.Nombre_accion', 'siae.Descripcion', 'siae.F_alerta')
+        ->where([['siae.ID_evento', '=', $newIdEvento]])
+        ->orderBy('siae.F_registro', 'Desc')
+        ->limit(1)
+        ->get(); */          
+
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento)); 
+        
+        // return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
+        // 'array_datos_info_laboral', 'array_datos_info_pericial', 'arraylistado_documentos'))->with('evento_actualizado', 'Evento actualizado Sactifactoriamente');
+
+        return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
+        'array_datos_info_laboral', 'array_datos_info_pericial', 'arraylistado_documentos'))
+        ->with('evento_actualizado', 'Evento actualizado Satisfactoriamente');
+
     }
 
     public function registrarOtraEmpresa(Request $request){
@@ -4331,6 +4422,41 @@ class AdministradorController extends Controller
 
         }
 
+    }
+
+    public function DescargarDocumentos(Request $request, $nombreArchivo, $id_evento)
+    {
+        // Validar la extensión del archivo
+        $extensionesPermitidas = ['pdf', 'xls', 'xlsx', 'doc', 'docx', 'jpeg', 'png'];
+        $extensionArchivo = pathinfo($nombreArchivo, PATHINFO_EXTENSION);
+
+        if (!in_array($extensionArchivo, $extensionesPermitidas)) {
+            return response()->json(['error' => 'Extensión de archivo no permitida.'], 400);
+        }
+
+        // Ruta completa al archivo
+        $rutaArchivo = public_path('Documentos_Eventos/'.$id_evento.'/' . $nombreArchivo);
+
+        // Verificar si el archivo existe
+        if (file_exists($rutaArchivo)) {
+            // Generar un nombre de descarga más amigable
+            // $nombreDescarga = Str::slug(pathinfo($nombreArchivo, PATHINFO_FILENAME)) . '.' . $extensionArchivo;
+            $nombreDescarga = $nombreArchivo;
+
+            // Crear la respuesta stream para descargar el archivo
+            $response = new StreamedResponse(function () use ($rutaArchivo) {
+                readfile($rutaArchivo);
+            });
+
+            // Establecer los encabezados para la descarga
+            $response->headers->set('Content-Type', mime_content_type($rutaArchivo));
+            $response->headers->set('Content-Disposition', 'attachment; filename="' . $nombreDescarga . '"');
+
+            return $response;
+        } else {
+            // Si el archivo no existe, retornar un error 404
+            return response()->json(['error' => 'Archivo no encontrado.'], 404);
+        }
     }
 
     public function consultaHistorialAcciones (Request $request){

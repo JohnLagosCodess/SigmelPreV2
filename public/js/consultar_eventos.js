@@ -625,9 +625,6 @@ $(document).ready(function () {
                 }
             }
         });
-
-
-
     });
 
     /* CAPTURA ID EVENTO PARA PINTAR EL LISTADO DE DOCUMENTOS PERTENENCIENTES A EL */
@@ -685,7 +682,7 @@ $(document).ready(function () {
                                         <input  type="text" name="EventoID" id="EventoID_'+arraylistado_documentos["Id_Documento"]+'" value="'+id_consultar_documentos_evento+'">\
                                     </div>\
                                     <div class="row">\
-                                            <p>'+(arraylistado_documentos["nombre_Documento"] != "" ? arraylistado_documentos["nombre_Documento"] : '')+'</p>\
+                                            <p>'+(arraylistado_documentos["nombre_Documento"] != "" ? arraylistado_documentos["nombre_Documento"]+'.'+arraylistado_documentos["formato_documento"] : '')+'</p>\
                                             <div class="input-group">\
                                                 <input type="file" class="form-control select-doc" name="listadodocumento" id="listadodocumento_'+arraylistado_documentos["Id_Documento"]+'"\
                                                 aria-describedby="Carguedocumentos" aria-label="Upload"'+(arraylistado_documentos["Requerido"] === 'Si' ? 'required' : '')+'>&nbsp;\
@@ -697,6 +694,15 @@ $(document).ready(function () {
                                 </form>\
                             ')+'\
                             </td>\
+                            <td>'+(arraylistado_documentos["estado_documento"] == "Cargado" ? '\
+                                <div class="d-none">\
+                                    <input type="text" id="nombre_documento_descarga_'+arraylistado_documentos["Id_Documento"]+'" value="'+arraylistado_documentos["nombre_Documento"]+'">\
+                                    <input type="text" id="extension_documento_descarga_'+arraylistado_documentos["Id_Documento"]+'" value="'+arraylistado_documentos["formato_documento"]+'">\
+                                </div>\
+                                <div class="text-center">\
+                                    <a href="javascript:void(0);" id="btn_generar_descarga_'+arraylistado_documentos["Id_Documento"]+'" data-id_documento_descargar="'+arraylistado_documentos["Id_Documento"]+'"><i class="fas fa-download text-info"></i></a>\
+                                </div>\
+                            ': '')+'</td>\
                             <td class="text-center" style="width: 10% !important;">\
                                 <input type="checkbox" class="scales" name="checkdocumentos" id="check_documento_'+arraylistado_documentos["Id_Documento"]+'"\
                                 '+(arraylistado_documentos["Requerido"] === "Si" ? 'checked disabled' : 'disabled')+'\
@@ -707,8 +713,9 @@ $(document).ready(function () {
                 });
             }
         });
-
     });
+
+
 
     /* CREACIÓN DE NUEVO SERVICIO */
     $(document).on('submit', "form[id^='form_nuevo_servicio_evento_']", function(e){
@@ -1158,7 +1165,7 @@ $(document).ready(function () {
                                         <input  type="text" name="EventoID" id="EventoID_'+arraylistado_documentos["Id_Documento"]+'" value="'+id_consultar_documentos_evento+'">\
                                     </div>\
                                     <div class="row">\
-                                            <p>'+(arraylistado_documentos["nombre_Documento"] != "" ? arraylistado_documentos["nombre_Documento"] : '')+'</p>\
+                                            <p>'+(arraylistado_documentos["nombre_Documento"] != "" ? arraylistado_documentos["nombre_Documento"]+'.'+arraylistado_documentos["formato_documento"] : '')+'</p>\
                                             <div class="input-group">\
                                                 <input type="file" class="form-control select-doc" name="listadodocumento" id="listadodocumento_'+arraylistado_documentos["Id_Documento"]+'"\
                                                 aria-describedby="Carguedocumentos" aria-label="Upload"'+(arraylistado_documentos["Requerido"] === 'Si' ? 'required' : '')+'>&nbsp;\
@@ -1170,6 +1177,15 @@ $(document).ready(function () {
                                 </form>\
                             ')+'\
                             </td>\
+                            <td>'+(arraylistado_documentos["estado_documento"] == "Cargado" ? '\
+                                <div class="d-none">\
+                                    <input type="text" id="nombre_documento_descarga_'+arraylistado_documentos["Id_Documento"]+'" value="'+arraylistado_documentos["nombre_Documento"]+'">\
+                                    <input type="text" id="extension_documento_descarga_'+arraylistado_documentos["Id_Documento"]+'" value="'+arraylistado_documentos["formato_documento"]+'">\
+                                </div>\
+                                <div class="text-center">\
+                                    <a href="javascript:void(0);" id="btn_generar_descarga_'+arraylistado_documentos["Id_Documento"]+'" data-id_documento_descargar="'+arraylistado_documentos["Id_Documento"]+'"><i class="fas fa-download text-info"></i></a>\
+                                </div>\
+                            ': '')+'</td>\
                             <td class="text-center" style="width: 10% !important;">\
                                 <input type="checkbox" class="scales" name="checkdocumentos" id="check_documento_'+arraylistado_documentos["Id_Documento"]+'"\
                                 '+(arraylistado_documentos["Requerido"] === "Si" ? 'checked disabled' : 'disabled')+'\
@@ -1183,6 +1199,29 @@ $(document).ready(function () {
 
     });
 
+    /* FUNCIONALIDAD DESCARGA DOCUMENTO */
+    $(document).on('click', "a[id^='btn_generar_descarga_']", function(){
+    // $("a[id^='btn_generar_descarga_']").click(function(){
+        var id_documento = $(this).data('id_documento_descargar');
+        var nombre_documento = $("#nombre_documento_descarga_"+id_documento).val();
+        var extension_documento = $("#extension_documento_descarga_"+id_documento).val();
+        var id_evento = nombre_documento.match(/\d+/g).join('');
+    
+        // Crear un enlace temporal para la descarga
+        var enlaceDescarga = document.createElement('a');
+        enlaceDescarga.href = '/descargar-archivo/'+nombre_documento+'.'+extension_documento+'/'+id_evento;
+        enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+        enlaceDescarga.style.display = 'none';
+        document.body.appendChild(enlaceDescarga);
+    
+        // Simular clic en el enlace para iniciar la descarga
+        enlaceDescarga.click();
+    
+        // Eliminar el enlace después de la descarga
+        setTimeout(function() {
+            document.body.removeChild(enlaceDescarga);
+        }, 1000);
+    });
 
     /* ENVÍO DE INFORMACIÓN DEL DOCUMENTO A CARGAR (APLICA PARA LOS DOCUMENTOS EN AMBOS MODALES: SERVICIO Y PROCESO) */
     $(document).on('submit', "form[id^='formulario_documento_']", function(e){

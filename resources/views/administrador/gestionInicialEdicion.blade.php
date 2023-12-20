@@ -89,10 +89,24 @@
                     <input hidden="hidden" type="text" name="Id_proceso_pcl" id="Id_proceso_pcl" value="<?php echo $_POST['newIdproceso'];?>">
                     <input hidden="hidden" type="text" name="Id_servicio_pcl" id="Id_servicio_pcl" value="<?php echo $_POST['newIdservicio'];?>">
                     <button type="submit" id="btn_regreso_calori" style="display: none; !important"></button>
-                </form>            
+                </form> 
+            <?php elseif (isset($_POST['bandera_buscador_juntas']) &&  $_POST['bandera_buscador_juntas'] == 'desdejuntas' ): ?>
+                <a onclick="document.getElementById('btn_regreso_juntas').click();"   class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <form action="{{route("calificacionJuntas")}}" id="Regreso_Juntas" method="POST">            
+                    @csrf
+                    <input hidden="hidden" type="text" name="newIdEvento" id="newIdEvento" value="<?php echo $_POST['newIdEvento'];?>">
+                    <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="<?php echo $_POST['newIdAsignacion'];?>">
+                    <input hidden="hidden" type="text" name="Id_proceso_pcl" id="Id_proceso_pcl" value="<?php echo $_POST['newIdproceso'];?>">
+                    <input hidden="hidden" type="text" name="Id_servicio_pcl" id="Id_servicio_pcl" value="<?php echo $_POST['newIdservicio'];?>">
+                    <button type="submit" id="btn_regreso_juntas" style="display: none; !important"></button>
+                </form>
+            <?php elseif(isset($_POST['bandera_mod_nuevo']) && $_POST['bandera_mod_nuevo'] == "retornar_mod_nuevo"): ?>
+                <a href="{{route("gestionInicialNuevo")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>           
+            <?php else: ?>
+                <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>           
             <?php endif ?>
         </div>
-        <div class="col-2" style="text-align: left !important;">
+        <div class="col-2" style="text-align: left !important; margin-left: -120px;">
             <a href="javascript:void(0);" data-toggle="modal" data-target="#modalHistorialAcciones" class="btn btn-info" id="cargar_historial_acciones"><i class="fas fa-list"></i> Historial Acciones</a>
         </div>
     </div>
@@ -121,6 +135,14 @@
     </x-adminlte-modal>
 
     <h5>Los campos marcados con <span style="color:red;">(*)</span> son obligatorios.</h5>
+    <div class="col-12">
+        <?php if(isset($evento_actualizado) && !empty($evento_actualizado)):?>
+            <div class="alert alert-success mt-2" role="alert">
+                <strong>{{$evento_actualizado}}</strong>
+            </div>
+        <?php endif?>
+
+    </div>
     <div class="card-info" style="border: 1px solid black;">
         <div class="card-header text-center">
             <h4>Edición de Evento: {{$array_datos_info_evento[0]->ID_evento}}</h4>

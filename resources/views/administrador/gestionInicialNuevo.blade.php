@@ -28,11 +28,11 @@
                         <strong>{{session()->get('mensaje_confirmacion_nuevo_evento')}}</strong>
                     </div>
                 @endif
-                @if (session()->get('evento_actualizado'))
+                {{-- @if (session()->get('evento_actualizado'))
                     <div class="alert alert-success mt-2" role="alert">
                         <strong>{{session()->get('evento_actualizado')}}</strong>
                     </div>
-                @endif
+                @endif --}}
                 @if (session()->get('confirmacion_evento_no_creado'))
                     <div class="alert alert-danger mt-2" role="alert">
                         <strong>{{session()->get('confirmacion_evento_no_creado')}}</strong>

@@ -230,8 +230,8 @@ Route::get('/Sigmel/RolAdministrador', [AdministradorController::class, 'show'])
 Route::get('/Sigmel/RolCoordinador', [CoordinadorController::class, 'show'])->name('IndexCoordinador');
 // Vista: Index Rol Profesional 15/12/2023
 Route::get('/Sigmel/Profesional', [ProfesionalController::class, 'show'])->name('IndexProfesional');
-// Vista: Index Rol Profesional 15/12/2023
-Route::get('/Sigmel/Profesional', [ProfesionalController::class, 'show'])->name('IndexProfesional');
+// Vista: Index Rol Auxiliar 18/12/2023
+Route::get('/Sigmel/Auxiliar', [ProfesionalController::class, 'show'])->name('IndexAuxiliar');
 // Vista: Index Rol Analista 15/12/2023
 Route::get('/Sigmel/Analista', [AnalistaController::class, 'show'])->name('IndexAnalista');
 
@@ -259,6 +259,9 @@ Route::post('/consultarInfoLaboralLlenar', [AdministradorController::class, 'lle
 
 // Acción: Cargar documentos en Gestion Inicial Nuevo
 Route::post('/cargarDocumentos', [AdministradorController::class, 'cargaListadoDocumentosInicialNuevo'])->name('cargaDocumento');
+
+// Acción: Descargar Documentos
+Route::get('/descargar-archivo/{nombreArchivo}/{id_evento}', [AdministradorController::class, 'DescargarDocumentos']);
 
 Route::post('/registrarOtraEmpresa', [AdministradorController::class, 'registrarOtraEmpresa']);
 // Acción: Traer el listado de historicos de empresa dependiendo del numero de identificacion del afiliado
