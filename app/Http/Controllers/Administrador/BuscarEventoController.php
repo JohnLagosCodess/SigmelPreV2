@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\cndatos_eventos;
+use App\Models\sigmel_clientes;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_controversia_juntas_eventos;
 use App\Models\sigmel_informacion_decreto_eventos;
@@ -1913,10 +1914,34 @@ class BuscarEventoController extends Controller
         $actualizar_estado_bandera_nuevo_servicio = [
             'Visible_Nuevo_Servicio' => 'No'
         ];
-
         sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->where('Id_Asignacion', $request->tupla_servicio_escogido)
         ->update($actualizar_estado_bandera_nuevo_servicio);
 
+        $consecutivo_Dictamen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_eventos as sie', 'siae.ID_evento', '=', 'sie.ID_evento')
+        ->leftJoin('sigmel_gestiones.sigmel_clientes as sc', 'sie.Cliente', '=', 'sc.Id_cliente')
+        ->where('sie.Cliente',$request->id_clientes)
+        ->max('Consecutivo_dictamen');
+
+        if ($consecutivo_Dictamen > 0) {
+            // Validar que el servicio solo sean Origen (Dto y Adx) y PCL (Calificacion tecnica, Recalificacion y Revision pension)
+            $procesoActual = $request->id_proceso_actual;
+            $servicioNuevo = $request->nuevo_servicio;
+            if ($procesoActual == 1 && $servicioNuevo <> 3 || $procesoActual == 2 && $servicioNuevo <> 9) {                
+                $numero_consecutivo_Dictamen = $consecutivo_Dictamen + 1;
+
+                $actualizar_id_cliente = [
+                    'Nro_consecutivo_dictamen' =>$numero_consecutivo_Dictamen + 1,            
+                ];
+                
+                sigmel_clientes::on('sigmel_gestiones')->where('Id_cliente',$request->id_clientes)
+                ->update($actualizar_id_cliente);
+        
+            } else {
+                $numero_consecutivo_Dictamen = null;
+            }            
+        }
+        
         if ($request->nuevo_profesional <> "") {
             $id_profesional = $request->nuevo_profesional;
             $nombre_profesional = $request->nombre_profesional;
@@ -1980,6 +2005,7 @@ class BuscarEventoController extends Controller
             'Id_proceso_anterior' => $request->id_proceso_actual,
             'Id_servicio_anterior' => $request->id_servicio_actual,
             'F_asignacion_calificacion' => $F_asignacion_calificacion,
+            'Consecutivo_dictamen' => $numero_consecutivo_Dictamen,
             'Id_profesional' => $id_profesional,
             'Nombre_profesional' => $nombre_profesional,
             'Nombre_usuario' => $nombre_usuario,
@@ -2019,6 +2045,30 @@ class BuscarEventoController extends Controller
 
         sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->where('Id_Asignacion', $request->tupla_proceso_escogido)
         ->update($actualizar_estado_bandera_nuevo_proceso);
+
+        $consecutivo_Dictamen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_eventos as sie', 'siae.ID_evento', '=', 'sie.ID_evento')
+        ->leftJoin('sigmel_gestiones.sigmel_clientes as sc', 'sie.Cliente', '=', 'sc.Id_cliente')
+        ->where('sie.Cliente',$request->id_clientes)
+        ->max('Consecutivo_dictamen');
+
+        if ($consecutivo_Dictamen > 0) {
+            // Validar que el servicio solo sean Origen (Dto y Adx) y PCL (Calificacion tecnica, Recalificacion y Revision pension)
+            $procesoNuevo = $request->selector_nuevo_proceso;
+            $servicioNuevo = $request->selector_nuevo_servicio;
+            if ($procesoNuevo == 1 && $servicioNuevo <> 3 || $procesoNuevo == 2 && $servicioNuevo <> 9) {                
+                $numero_consecutivo_Dictamen = $consecutivo_Dictamen + 1;
+                $actualizar_id_cliente = [
+                    'Nro_consecutivo_dictamen' =>$numero_consecutivo_Dictamen + 1,            
+                ];
+        
+                sigmel_clientes::on('sigmel_gestiones')->where('Id_cliente',$request->id_clientes)
+                ->update($actualizar_id_cliente);
+
+            } else {
+                $numero_consecutivo_Dictamen = null;
+            }            
+        }
 
         if ($request->nuevo_profesional_nuevo_proceso <> "") {
             $id_profesional = $request->nuevo_profesional_nuevo_proceso;
@@ -2082,6 +2132,7 @@ class BuscarEventoController extends Controller
             'Id_proceso_anterior' => $request->id_proceso_actual_nuevo_proceso,
             'Id_servicio_anterior' => $request->id_servicio_actual_nuevo_proceso,
             'F_asignacion_calificacion' => $F_asignacion_calificacion,
+            'Consecutivo_dictamen' => $numero_consecutivo_Dictamen,
             'N_de_orden' => $N_orden_evento,
             'Id_profesional' => $id_profesional,
             'Nombre_profesional' => $nombre_profesional,

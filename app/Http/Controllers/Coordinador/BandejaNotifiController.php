@@ -173,16 +173,27 @@ class BandejaNotifiController extends Controller
 
     public function sinFiltroBandejaNotifi(Request $request){
 
-        $BandejaNotifiTotal = $request->BandejaNotifiTotal;        
+        $BandejaNotifiTotal = $request->BandejaNotifiTotal;
+        $newId_rol = $request->newId_rol; 
+        $newId_user = $request->newId_user;     
 
         if($BandejaNotifiTotal == 'CargaBandejaNotifi'){
 
-            $bandejaNotifi = cndatos_bandeja_eventos::on('sigmel_gestiones')
-            ->where([
-                ['Nombre_proceso_actual', '=', 'Notificaciones']
-            ])
-            ->get();
-
+            if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
+            
+                $bandejaNotifi = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['Nombre_proceso_actual', '=', 'Notificaciones'],
+                    ['Id_profesional', '=', $newId_user]
+                ])
+                ->get();
+            }else{
+                $bandejaNotifi = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['Nombre_proceso_actual', '=', 'Notificaciones']
+                ])
+                ->get();
+            }
             // $bandejaNotifisin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
             // ->where([
             //     ['Nombre_proceso_actual', '=', 'Notificaciones']
@@ -259,9 +270,22 @@ class BandejaNotifiController extends Controller
         $consultar_f_desde = $request->consultar_f_desde;
         $consultar_f_hasta = $request->consultar_f_hasta;
         $consultar_g_dias = $request->consultar_g_dias;
+        $newId_rol = $request->newId_rol; 
+        $newId_user = $request->newId_user; 
               
         switch (true) {
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and !empty($consultar_g_dias)):
+
+                if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
+                        $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['Nombre_proceso_actual', '=', 'Notificaciones'],
+                            ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
+                            ['Id_profesional', '=', $newId_user]
+                        ])
+                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ->get();
+                }else{
 
                     $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
@@ -270,7 +294,7 @@ class BandejaNotifiController extends Controller
                     ])
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
-
+                }
                     // ->whereNull('Nombre_proceso_anterior')
                     // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
                     
@@ -298,6 +322,16 @@ class BandejaNotifiController extends Controller
             break;
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and empty($consultar_g_dias)):
                     
+                if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional  
+                    $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    ->where([
+                        ['Nombre_proceso_actual', '=', 'Notificaciones'],
+                        ['Id_profesional', '=', $newId_user]
+                    ])
+                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    ->get();
+                }else{
+
                     $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Notificaciones'],
@@ -305,6 +339,7 @@ class BandejaNotifiController extends Controller
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
 
+                }
 
                     // ->whereNull('Nombre_proceso_anterior')
                     // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
@@ -332,6 +367,15 @@ class BandejaNotifiController extends Controller
             break;
             case (empty($consultar_f_desde) and empty($consultar_f_hasta) and !empty($consultar_g_dias)):
                     
+                if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional  
+                    $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    ->where([
+                        ['Nombre_proceso_actual', '=', 'Notificaciones'],
+                        ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
+                        ['Id_profesional', '=', $newId_user]
+                    ])
+                    ->get();
+                }else{
                     $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Notificaciones'],
@@ -339,6 +383,8 @@ class BandejaNotifiController extends Controller
                     ])
                     ->get();
 
+
+                }
                     // ->whereNull('Nombre_proceso_anterior');
                     
                     // $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')

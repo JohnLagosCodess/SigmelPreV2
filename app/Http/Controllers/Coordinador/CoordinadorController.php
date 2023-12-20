@@ -179,15 +179,26 @@ class CoordinadorController extends Controller
 
     public function sinFiltroBandejaPCL(Request $request){
 
-        $BandejaPClTotal = $request->BandejaPClTotal;        
+        $BandejaPClTotal = $request->BandejaPClTotal;
+        $newId_rol = $request->newId_rol; 
+        $newId_user = $request->newId_user;             
 
         if($BandejaPClTotal == 'CargaBandejaPCl'){
             // Consultar la vista de mysql, traer eventos acorde al proceso
-            $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
-            ->where([
-                ['Nombre_proceso_actual', '=', 'Calificación PCL']
-            ])
-            ->get();  
+            if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
+                $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['Nombre_proceso_actual', '=', 'Calificación PCL'],
+                    ['Id_profesional', '=', $newId_user]
+                ])
+                ->get();  
+            }else{
+                $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['Nombre_proceso_actual', '=', 'Calificación PCL'],
+                ])
+                ->get();  
+            }
             // $ID_evento_bandeja = $bandejaPCL[0]->ID_evento;
             // $Id_proceso_bandeja = $bandejaPCL[0]->Id_proceso;
             
@@ -442,18 +453,33 @@ class CoordinadorController extends Controller
         $consultar_f_desde = $request->consultar_f_desde;
         $consultar_f_hasta = $request->consultar_f_hasta;
         $consultar_g_dias = $request->consultar_g_dias;
+        $newId_rol = $request->newId_rol; 
+        $newId_user = $request->newId_user; 
               
         switch (true) {
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and !empty($consultar_g_dias)):
 
                     // Consultar la vista de mysql, traer eventos acorde al proceso
-                    $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                        ['Nombre_proceso_actual', '=', 'Calificación PCL'],
-                        ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
-                    ])
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
-                    ->get(); 
+                    if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
+                        $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['Nombre_proceso_actual', '=', 'Calificación PCL'],
+                            ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
+                            ['Id_profesional', '=', $newId_user]
+                        ])
+                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ->get(); 
+
+                    }else{
+
+                        $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['Nombre_proceso_actual', '=', 'Calificación PCL'],
+                            ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
+                        ])
+                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ->get(); 
+                    }
                     
                     // if (count($bandejaPCL)>0) {
                     //     $ID_evento_bandeja = $bandejaPCL[0]->ID_evento;
@@ -598,13 +624,23 @@ class CoordinadorController extends Controller
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and empty($consultar_g_dias)):
 
                     // Consultar la vista de mysql, traer eventos acorde al proceso
-                    $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                        ['Nombre_proceso_actual', '=', 'Calificación PCL'],
-                    ])
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
-                    ->get(); 
-                    
+                    if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
+                        $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['Nombre_proceso_actual', '=', 'Calificación PCL'],
+                            ['Id_profesional', '=', $newId_user]
+                        ])
+                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ->get(); 
+
+                    }else{
+                        $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['Nombre_proceso_actual', '=', 'Calificación PCL'],
+                        ])
+                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ->get(); 
+                    }
                     // if (count($bandejaPCL)>0) {
                     //     $ID_evento_bandeja = $bandejaPCL[0]->ID_evento;
                     //     $Id_proceso_bandeja = $bandejaPCL[0]->Id_proceso;                        
@@ -748,13 +784,24 @@ class CoordinadorController extends Controller
             case (empty($consultar_f_desde) and empty($consultar_f_hasta) and !empty($consultar_g_dias)):
 
                     // Consultar la vista de mysql, traer eventos acorde al proceso
-                    $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                        ['Nombre_proceso_actual', '=', 'Calificación PCL'],
-                        ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
-                    ])                    
-                    ->get(); 
-                    
+                    if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
+                        $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['Nombre_proceso_actual', '=', 'Calificación PCL'],
+                            ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
+                            ['Id_profesional', '=', $newId_user]
+                        ])                    
+                        ->get(); 
+                    }else{
+                        $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['Nombre_proceso_actual', '=', 'Calificación PCL'],
+                            ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
+                        ])                    
+                        ->get(); 
+
+                    }
+                        
                     // if (count($bandejaPCL)>0) {
                     //     $ID_evento_bandeja = $bandejaPCL[0]->ID_evento;
                     //     $Id_proceso_bandeja = $bandejaPCL[0]->Id_proceso;                        

@@ -319,7 +319,7 @@
                                     <div class="col-3">
                                         <div class="form-group">
                                             <label for="nro_consecutivo_dictamen">N° Consecutivo Dictamen <span style="color:red;">(*)</span></label>
-                                            <input type="number" class="form-control" name="nro_consecutivo_dictamen" id="nro_consecutivo_dictamen" required>
+                                            <input type="number" class="form-control" name="nro_consecutivo_dictamen" id="nro_consecutivo_dictamen" disabled>
                                         </div>
                                     </div>
                                 </div>

@@ -32,17 +32,18 @@ class DeterminacionOrigenATEL extends Controller
 
         $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion_dto_atel));
 
-        $consecutivo_dto_atel = sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
-        ->max('Numero_dictamen');
-        
-        if ($consecutivo_dto_atel > 0) {
-            $numero_consecutivo = $consecutivo_dto_atel + 1;
-        }else{
-            $numero_consecutivo = 0000000 + 1;
-        }
 
-        // Formatear el número consecutivo a 7 dígitos
-        $numero_consecutivo = str_pad($numero_consecutivo, 7, "0", STR_PAD_LEFT);
+        // $consecutivo_dto_atel = sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
+        // ->max('Numero_dictamen');
+        
+        // if ($consecutivo_dto_atel > 0) {
+        //     $numero_consecutivo = $consecutivo_dto_atel + 1;
+        // }else{
+        //     $numero_consecutivo = 0000000 + 1;
+        // }
+
+        // // Formatear el número consecutivo a 7 dígitos
+        // $numero_consecutivo = str_pad($numero_consecutivo, 7, "0", STR_PAD_LEFT);
 
         // Obtenemos la informaciópn de  la tabla sigmel_informacion_dto_atel_eventos
         $datos_bd_DTO_ATEL = sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
@@ -189,7 +190,7 @@ class DeterminacionOrigenATEL extends Controller
         ->distinct()
         ->get();
 
-        return view('coordinador.determinacionOrigenATEL', compact('user', 'array_datos_calificacion_origen', 'numero_consecutivo', 
+        return view('coordinador.determinacionOrigenATEL', compact('user', 'array_datos_calificacion_origen', 
         'motivo_solicitud_actual', 'datos_apoderado_actual', 
         'array_datos_info_laboral', 'listado_documentos_solicitados', 
         'dato_articulo_12', 'array_datos_diagnostico_motcalifi',

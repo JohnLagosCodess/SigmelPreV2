@@ -31,6 +31,7 @@ class sigmel_informacion_decreto_eventos extends Model
     'Total_Deficiencia50',
     'Porcentaje_pcl',
     'Rango_pcl',
+    'Monto_indemnizacion',
     'Tipo_evento',
     'Origen',
     'F_evento',

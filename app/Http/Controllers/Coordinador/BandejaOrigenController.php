@@ -22,9 +22,30 @@ class BandejaOrigenController extends Controller
         if(!Auth::check()){
             return redirect('/');
         }
-        $user = Auth::user();        
+        $id_usuario = Auth::id();
+        $email_usuario = Auth::user()->email;
 
-        return view('coordinador.bandejaOrigen', compact('user'));
+        $datos = DB::table('sigmel_roles as sr')
+                        ->leftJoin("sigmel_usuarios_roles as sur", 'sr.id', '=', 'sur.rol_id') 
+                        ->leftJoin("users as u", 'u.id', '=', 'sur.usuario_id' ) 
+                        ->select("sr.nombre_rol")
+                        ->where([
+                            ['u.id', '=', $id_usuario],
+                            ['u.email', '=', $email_usuario],
+                        ])
+                        ->get();
+
+        $informacion_usuario = json_decode(json_encode($datos), true);
+        if (count($informacion_usuario) > 0) {
+            $rol_usuario = $informacion_usuario[0]['nombre_rol'];
+            
+            $user = Auth::user();
+            $user->rol_usuario = $rol_usuario;
+            return view('coordinador.bandejaOrigen', compact('user'));
+
+        }else{
+            return redirect()->route('login');
+        }
     }
 
     //Selectores Bandeja Origen
@@ -168,16 +189,27 @@ class BandejaOrigenController extends Controller
 
     public function sinFiltroBandejaOrigen(Request $request){
 
-        $BandejaOrigenTotal = $request->BandejaOrigenTotal;        
+        $BandejaOrigenTotal = $request->BandejaOrigenTotal;
+        $newId_rol = $request->newId_rol; 
+        $newId_user = $request->newId_user;     
 
         if($BandejaOrigenTotal == 'CargaBandejaOrigen'){
 
             // Consultar la vista de mysql, traer eventos acorde al proceso
-            $bandejaOrigen = cndatos_bandeja_eventos::on('sigmel_gestiones')
-            ->where([
-                ['Nombre_proceso_actual', '=', 'Origen']
-            ])
-            ->get();
+            if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
+                $bandejaOrigen = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['Nombre_proceso_actual', '=', 'Origen'],
+                    ['Id_profesional', '=', $newId_user]
+                ])
+                ->get();
+            }else{
+                $bandejaOrigen = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['Nombre_proceso_actual', '=', 'Origen']
+                ])
+                ->get();
+            }
             // $ID_evento_bandeja = $bandejaOrigen[0]->ID_evento;
             // $Id_proceso_bandeja = $bandejaOrigen[0]->Id_proceso;
 
@@ -330,17 +362,31 @@ class BandejaOrigenController extends Controller
         $consultar_f_desde = $request->consultar_f_desde;
         $consultar_f_hasta = $request->consultar_f_hasta;
         $consultar_g_dias = $request->consultar_g_dias;
+        $newId_rol = $request->newId_rol; 
+        $newId_user = $request->newId_user; 
               
         switch (true) {
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and !empty($consultar_g_dias)):
 
-                    $bandejaOrigenFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                        ['Nombre_proceso_actual', '=', 'Origen'],
-                        ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
-                    ])
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
-                    ->get();
+                     // Consultar la vista de mysql, traer eventos acorde al proceso
+                    if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
+                        $bandejaOrigenFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['Nombre_proceso_actual', '=', 'Origen'],
+                            ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
+                            ['Id_profesional', '=', $newId_user]
+                        ])
+                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ->get();
+                    }else{
+                        $bandejaOrigenFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['Nombre_proceso_actual', '=', 'Origen'],
+                            ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
+                        ])
+                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ->get();
+                    }
                     // ->whereNull('Nombre_proceso_anterior')
                     // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
                     
@@ -368,13 +414,23 @@ class BandejaOrigenController extends Controller
             break;
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and empty($consultar_g_dias)):
                     
-                    $bandejaOrigenFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                        ['Nombre_proceso_actual', '=', 'Origen'],
-                    ])
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
-                    ->get();
-
+                    // Consultar la vista de mysql, traer eventos acorde al proceso
+                    if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
+                        $bandejaOrigenFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['Nombre_proceso_actual', '=', 'Origen'],
+                            ['Id_profesional', '=', $newId_user]
+                        ])
+                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ->get();
+                    }else{
+                        $bandejaOrigenFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['Nombre_proceso_actual', '=', 'Origen'],
+                        ])
+                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ->get();
+                    }
                     // ->whereNull('Nombre_proceso_anterior')
                     // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
 
@@ -401,13 +457,24 @@ class BandejaOrigenController extends Controller
             break;
             case (empty($consultar_f_desde) and empty($consultar_f_hasta) and !empty($consultar_g_dias)):
                     
-                    $bandejaOrigenFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                        ['Nombre_proceso_actual', '=', 'Origen'],
-                        ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
-                    ])
-                    ->get();
+                    // Consultar la vista de mysql, traer eventos acorde al proceso
+                    if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
+                        $bandejaOrigenFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['Nombre_proceso_actual', '=', 'Origen'],
+                            ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
+                            ['Id_profesional', '=', $newId_user]
+                        ])
+                        ->get();
+                    }else{
+                        $bandejaOrigenFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['Nombre_proceso_actual', '=', 'Origen'],
+                            ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
+                        ])
+                        ->get();
 
+                    }
                     // ->whereNull('Nombre_proceso_anterior');
                     
                     // $bandejaOrigenFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')

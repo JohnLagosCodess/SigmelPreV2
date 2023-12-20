@@ -1835,7 +1835,7 @@ class CalificacionPCLController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'side.Tipo_evento')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
-        ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
+        ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Monto_indemnizacion', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
         'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
         'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
         'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia')
@@ -3677,7 +3677,8 @@ class CalificacionPCLController extends Controller
         $total_minusvalia = $request->total_minusvalia;
         $total_porcentajePcl = $Total_Deficiencia50 + $total_discapacidades + $total_minusvalia;
         $porcentaje_pcl = $request->porcentaje_pcl;  
-        $rango_pcl = $request->rango_pcl;        
+        $rango_pcl = $request->rango_pcl;    
+        $monto_inde = $request->monto_inde;        
         $tipo_evento = $request->tipo_evento;        
         $tipo_origen = $request->tipo_origen;  
         $f_evento_pericial = $request->f_evento_pericial;
@@ -3702,6 +3703,7 @@ class CalificacionPCLController extends Controller
                 'Total_Deficiencia50' => $Total_Deficiencia50,
                 'Porcentaje_pcl' => $total_porcentajePcl,
                 'Rango_pcl' => $rango_pcl,
+                'Monto_indemnizacion' => $monto_inde,
                 'Tipo_evento' => $tipo_evento,
                 'Origen' => $tipo_origen,
                 'F_evento' => $f_evento_pericial,
@@ -3728,6 +3730,7 @@ class CalificacionPCLController extends Controller
                 'Total_Deficiencia50' => $Total_Deficiencia50,
                 'Porcentaje_pcl' => $porcentaje_pcl,
                 'Rango_pcl' => $rango_pcl,
+                'Monto_indemnizacion' => $monto_inde,
                 'Tipo_evento' => $tipo_evento,
                 'Origen' => $tipo_origen,
                 'F_evento' => $f_evento_pericial,

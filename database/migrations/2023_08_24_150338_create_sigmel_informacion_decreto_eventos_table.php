@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_decreto_eventos', function (Blueprint $table) {
             $table->increments('Id_decreto');
-            $table->integer('ID_Evento');
+            $table->text('ID_Evento');
             $table->integer('Id_proceso');
             $table->integer('Id_Asignacion');
             $table->integer('Origen_firme');
@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('Total_Deficiencia50',10)->nullable();
             $table->text('Porcentaje_pcl');
             $table->text('Rango_pcl');
+            $table->text('Monto_indemnizacion');
             $table->text('Tipo_evento');
             $table->text('Origen');
             $table->date('F_evento');
