@@ -160,13 +160,13 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="f_dictamen">Fecha Dictamen</label>
-                                                    <input type="text" class="form-control" name="fecha_dictamen" id="fecha_dictamen" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                                    <input type="text" class="form-control" name="fecha_dictamen" id="fecha_dictamen" value="{{$array_datos_calificacion_origen[0]->F_registro_asignacion}}" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="nro_dictamen">Dictamen N°</label>
-                                                    <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Numero_dictamen)){echo $datos_bd_DTO_ATEL[0]->Numero_dictamen;}?>" disabled>   
+                                                    <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" value="<?php if(!empty($array_datos_calificacion_origen[0]->Consecutivo_dictamen)){echo $array_datos_calificacion_origen[0]->Consecutivo_dictamen;}?>" disabled>   
                                                 </div>
                                             </div>
                                             <div class="col-4">

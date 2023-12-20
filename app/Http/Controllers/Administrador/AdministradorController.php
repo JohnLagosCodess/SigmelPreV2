@@ -3138,6 +3138,30 @@ class AdministradorController extends Controller
             }
             
             /* RECOLECCIÓN INFORMACIÓN PARA LA TABLA: sigmel_informacion_asignacion_eventos */
+            $id_clientes = $request->cliente;
+
+            $consultarid_clientes = DB::table(getDatabaseName('sigmel_gestiones') .  'sigmel_informacion_eventos as sie')
+            ->leftJoin('sigmel_gestiones.sigmel_clientes as sc', 'sie.Cliente', '=', 'sc.Id_cliente')
+            ->select('sie.Cliente', 'sc.Nro_consecutivo_dictamen')
+            ->where('sie.Cliente',$id_clientes)->get();
+
+            if (count($consultarid_clientes) > 0) {
+                $procesoid = $request->proceso;
+                $servicioid = $request->servicio;
+                if ($procesoid == 1 && $servicioid <> 3 || $procesoid == 2 && $servicioid <> 9) {                    
+                    $consecutivoDictamen = $consultarid_clientes[0]->Nro_consecutivo_dictamen;  
+                    
+                    $actualizar_id_cliente = [
+                        'Nro_consecutivo_dictamen' =>$consecutivoDictamen + 1,            
+                    ];
+                    
+                    sigmel_clientes::on('sigmel_gestiones')->where('Id_cliente',$id_clientes)
+                    ->update($actualizar_id_cliente);              
+                } else {
+                    $consecutivoDictamen = '';                
+                }
+                
+            }
 
             $datos_info_asignacion_evento =[
                 'ID_evento' => $request->id_evento,
@@ -3151,6 +3175,7 @@ class AdministradorController extends Controller
                 'N_de_orden' => $N_orden_evento,
                 'Id_proceso_anterior' => $request->proceso,
                 'Id_servicio_anterior' => $request->servicio,
+                'Consecutivo_dictamen' => $consecutivoDictamen,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date
             ];

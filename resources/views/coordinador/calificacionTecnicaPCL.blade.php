@@ -111,6 +111,7 @@
                                             <br>
                                             {{-- DATOS PARA VER EDICIÓN DE EVENTO --}}
                                             <a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer; font-weight: bold;" class="btn text-info" type="button"><?php if(!empty($array_datos_calificacionPclTecnica[0]->ID_evento)){echo $array_datos_calificacionPclTecnica[0]->ID_evento;}?></a>
+                                            <input type="hidden" name="id_evento" id="id_evento" value="{{$array_datos_calificacionPclTecnica[0]->ID_evento}}">
                                         </div>
                                     </div>
                                 </div>
@@ -126,17 +127,13 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="fecha_dictamen">Fecha Dictamen</label>
-                                            <input type="text" class="form-control" name="fecha_dictamen" id="fecha_dictamen" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                            <input type="text" class="form-control" name="fecha_dictamen" id="fecha_dictamen" value="{{$array_datos_calificacionPclTecnica[0]->F_registro_asignacion}}" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="numero_dictamen">N° Dictamen</label>
-                                            @if (empty($array_info_decreto_evento[0]->Numero_dictamen))
-                                                <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" value="{{$numero_consecutivo}}" disabled>                                                
-                                            @else
-                                                <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" value="{{$array_info_decreto_evento[0]->Numero_dictamen}}" disabled>
-                                            @endif
+                                            <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" value="{{$array_datos_calificacionPclTecnica[0]->Consecutivo_dictamen}}" disabled>                                                                                                                                        
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -699,7 +696,7 @@
                             </div>
                         @endif
                         <div class="card-info columna_row1_auditivo" @if ($decreto_1507=='1' && !empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion <> 2 && $datos_demos[0]->Decreto_calificacion <> 3) style="display:block" @else style="display:none" @endif>                            
-                            <a href="#" id="btn_abrir_modal_auditivo" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal"
+                            <a href="javascript:void(0);" id="btn_abrir_modal_auditivo" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal"
                                 @if (count($array_agudeza_Auditiva) > 0)
                                     style="cursor: not-allowed;"
                                 @else
@@ -6797,7 +6794,7 @@
                         <form id="form_dictamen_pericial" action="POST">                            
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-6">
+                                    <div class="col-4">
                                         <div class="form-group">
                                             <label for="porcentaje_pcl">% PCL</label>
                                             @if(!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 2)
@@ -6809,7 +6806,7 @@
                                             @endif
                                         </div>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-4">
                                         <div class="form-group">
                                             <label for="rango_pcl">Rango PCL</label>
                                             @if(!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 2)
@@ -6818,6 +6815,18 @@
                                                 <input type="text" class="form-control" name="rango_pcl" id="rango_pcl" value="{{$array_dictamen_pericial[0]->Rango_pcl}}" disabled>                                                
                                             @else
                                                 <input type="text" class="form-control" name="rango_pcl" id="rango_pcl" disabled>                                                
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="monto_inde">Monto Indemnización (Meses)</label>
+                                            @if(!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 2)
+                                                <input type="text" class="form-control" name="monto_inde" id="monto_inde" value="0" disabled>                                                
+                                            @elseif(!empty($array_dictamen_pericial[0]->Monto_indemnizacion))
+                                                <input type="text" class="form-control" name="monto_inde" id="monto_inde" value="{{$array_dictamen_pericial[0]->Monto_indemnizacion}}" disabled>                                                
+                                            @else
+                                                <input type="text" class="form-control" name="monto_inde" id="monto_inde" disabled>                                                
                                             @endif
                                         </div>
                                     </div>

@@ -141,7 +141,7 @@ $(document).ready(function () {
                                 if(data[i]['Visible_Nuevo_Servicio'] == 'Si'){
                                     agregar_nuevo_servicio = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoServicio_'+data[i]["ID_evento"]+'" id="btn_nuevo_servicio_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Servicio"\
                                      data-id_evento_nuevo_servicio="'+data[i]["ID_evento"]+'" data-id_proceso_nuevo_servicio="'+data[i]["Id_proceso"]+'" data-nombre_proceso_nuevo_servicio="'+data[i]["Nombre_proceso"]+'" \
-                                     data-id_servicio_nuevo_servicio="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_servicio="'+data[i]["Id_Asignacion"]+'"><i class="fa fa-puzzle-piece text-info"></i></a>';
+                                     data-id_servicio_nuevo_servicio="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_servicio="'+data[i]["Id_Asignacion"]+'" data-id_cliente="'+data[i]["Id_cliente"]+'"><i class="fa fa-puzzle-piece text-info"></i></a>';
                                     
                                     data[i]['agregar_nuevo_servicio'] = agregar_nuevo_servicio;
 
@@ -156,7 +156,7 @@ $(document).ready(function () {
                             if(data[i]['Visible_Nuevo_Proceso'] == 'Si'){
                                 agregar_nuevo_proceso = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoProceso_'+data[i]["ID_evento"]+'" id="btn_nuevo_proceso_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Proceso"\
                                 data-id_evento_nuevo_proceso="'+data[i]["ID_evento"]+'" data-id_proceso_nuevo_proceso="'+data[i]["Id_proceso"]+'"\
-                                data-id_servicio_nuevo_proceso="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_proceso="'+data[i]["Id_Asignacion"]+'"><i class="far fa-clone text-info"></i></a>';
+                                data-id_servicio_nuevo_proceso="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_proceso="'+data[i]["Id_Asignacion"]+'" data-id_cliente="'+data[i]["Id_cliente"]+'"><i class="far fa-clone text-info"></i></a>';
                                 data[i]['agregar_nuevo_proceso'] = agregar_nuevo_proceso; 
                             }else{
                                 data[i]['agregar_nuevo_proceso'] = ""; 
@@ -363,7 +363,7 @@ $(document).ready(function () {
         var nombre_proceso_nuevo_servicio =  $(this).data("nombre_proceso_nuevo_servicio"); // NOMBRE PROCESO ACTUAL
         var id_servicio_nuevo_servicio =  $(this).data("id_servicio_nuevo_servicio"); //ID SERVICIO ACTUAL
         var id_asignacion_nuevo_servicio =  $(this).data("id_asignacion_nuevo_servicio"); // ID TUPLA DE SERVICIO (PARA COLOCAR ESTADO DE VISIBLE EN NO)
-
+        var id_cliente = $(this).data("id_cliente"); // ID DEL CLIENTE
         var fecha_de_hoy = $("#fecha_de_hoy").val();
 
         $string_html_modal_nuevo_servicio = '\
@@ -379,6 +379,7 @@ $(document).ready(function () {
                         <form id="form_nuevo_servicio_evento_'+id_evento_nuevo_servicio+'" method="POST">\
                             <div class="modal-body">\
                                 <p>Los campos marcados con <span style="color:red;">(*)</span> son de obligatorio diligenciamiento para guardar la información.</p>\
+                                <input type="hidden" class="form-control" name="id_clientes" id="id_clientes_'+id_cliente+'" value="'+id_cliente+'">\
                                 <div class="row">\
                                     <div class="col-12">\
                                         <div class="form-group row">\
@@ -714,6 +715,7 @@ $(document).ready(function () {
     $(document).on('submit', "form[id^='form_nuevo_servicio_evento_']", function(e){
         e.preventDefault();
 
+        let id_clientes = $('.renderizar_nuevo_servicio').find("input[id^='id_clientes_']").val();        
         let nro_evento = $('.renderizar_nuevo_servicio').find("input[id^='nro_evento_']").val();
         let tupla_servicio_escogido = $('.renderizar_nuevo_servicio').find("input[id^='tupla_servicio_evento_']").val();
         let token = $("input[name='_token']").val();
@@ -724,6 +726,7 @@ $(document).ready(function () {
             '_token': token,
             'nombre_profesional': nombre_profesional_escogido,
             'id_evento': nro_evento,
+            'id_clientes': id_clientes,
             'tupla_servicio_escogido': tupla_servicio_escogido
         };
 
@@ -790,7 +793,7 @@ $(document).ready(function () {
         var id_proceso_nuevo_proceso =  $(this).data("id_proceso_nuevo_proceso"); // ID PROCESO ACTUAL
         var id_servicio_nuevo_proceso =  $(this).data("id_servicio_nuevo_proceso"); //ID SERVICIO ACTUAL
         var id_asignacion_nuevo_proceso =  $(this).data("id_asignacion_nuevo_proceso"); // ID TUPLA DE PROCESO (PARA COLOCAR ESTADO DE VISIBLE EN NO)
-
+        var id_cliente = $(this).data("id_cliente"); // ID DEL CLIENTE
         var fecha_de_hoy = $("#fecha_de_hoy").val();
 
         $string_html_modal_nuevo_proceso = '\
@@ -806,6 +809,7 @@ $(document).ready(function () {
                         <form id="form_nuevo_proceso_evento_'+id_evento_nuevo_proceso+'" method="POST">\
                             <div class="modal-body">\
                                 <p>Los campos marcados con <span style="color:red;">(*)</span> son de obligatorio diligenciamiento para guardar la información.</p>\
+                                <input type="hidden" class="form-control" name="id_clientes" id="id_clientes_'+id_cliente+'" value="'+id_cliente+'">\
                                 <div class="row">\
                                     <div class="col-12">\
                                         <div class="form-group row">\
@@ -901,7 +905,7 @@ $(document).ready(function () {
         });
 
         let token = $("input[name='_token']").val();
-
+        let id_clientes = $('.renderizar_nuevo_proceso').find("input[id^='id_clientes_']").val();
         let ident_evento_actual = $('.renderizar_nuevo_proceso').find("input[id^='nro_evento_nuevo_proceso_']").val();
         let selector_nuevo_proceso = $('.renderizar_nuevo_proceso').find("select[id^='selector_nuevo_proceso_']").attr("id");
         let nro_evento_nuevo_proceso = $('.renderizar_nuevo_proceso').find("input[id^='nro_evento_nuevo_proceso_']").val();
@@ -911,7 +915,8 @@ $(document).ready(function () {
         let datos_listado_procesos_nuevo_proceso = {
             '_token': token,
             'parametro' : "listado_procesos_nuevo_proceso",
-            'ident_evento_actual': ident_evento_actual
+            'ident_evento_actual': ident_evento_actual,
+            'id_clientes': id_clientes
         };
         
         $.ajax({

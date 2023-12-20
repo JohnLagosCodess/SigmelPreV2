@@ -2254,7 +2254,7 @@ $(document).ready(function(){
                 porcentajePcl = Number(total_deficiencia) + Number(total_rol_laboral);            
             }      
             //console.log(porcentajePcl);
-            $("#porcentaje_pcl").val(Math.round(porcentajePcl));
+            $("#porcentaje_pcl").val(porcentajePcl.toFixed(2));
             if (porcentajePcl == 0) {
                 $("#rango_pcl").val('PCL 0');
             }else if (porcentajePcl < 5) {
@@ -2293,7 +2293,7 @@ $(document).ready(function(){
                         porcentajePcl = Number(total_deficiencia1999) + Number(dicapacidad_total) + Number(minusvalia_total);                
                     }                  
                     
-                    $("#porcentaje_pcl").val(Math.round(porcentajePcl));
+                    $("#porcentaje_pcl").val(porcentajePcl.toFixed(2));
                     if (porcentajePcl == 0) {
                         $("#rango_pcl").val('PCL 0');
                     }else if (porcentajePcl < 5) {
@@ -2329,7 +2329,7 @@ $(document).ready(function(){
             }
 
             //console.log(porcentajePcl);
-            $("#porcentaje_pcl").val(Math.round(porcentajePcl));
+            $("#porcentaje_pcl").val(porcentajePcl.toFixed(2));
             if (porcentajePcl == 0) {
                 $("#rango_pcl").val('PCL 0');
             }else if (porcentajePcl < 5) {
@@ -2347,7 +2347,7 @@ $(document).ready(function(){
         }else if(definirDecreto_deficiencia == 2) {            
             porcentajePcl = 0;   
             //console.log(porcentajePcl);
-            $("#porcentaje_pcl").val(Math.round(porcentajePcl));
+            $("#porcentaje_pcl").val(porcentajePcl.toFixed(2));
             if (porcentajePcl == 0) {
                 $("#rango_pcl").val('PCL 0');
             }else if (porcentajePcl < 5) {
@@ -2364,7 +2364,7 @@ $(document).ready(function(){
         }else{            
             porcentajePcl = 0;      
             //console.log(porcentajePcl);
-            $("#porcentaje_pcl").val(Math.round(porcentajePcl));
+            $("#porcentaje_pcl").val(porcentajePcl.toFixed(2));
             if (porcentajePcl == 0) {
                 $("#rango_pcl").val('PCL 0');
             }else if (porcentajePcl < 5) {
@@ -2378,8 +2378,17 @@ $(document).ready(function(){
             }else if(porcentajePcl > 50){
                 $("#rango_pcl").val('Mayor a 50%');            
             }      
-        }       
+        }  
+
+        // Calculo dle monto de indemnizacion (meses)
         
+        // Calculo dle monto de indemnizacion (meses)
+        if (porcentajePcl == 0) {
+            $("#monto_inde").val(0);
+        } else {
+            var montoIndemnizacion = ((porcentajePcl / 2) - 0.5);
+            $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
+        }
 
         var tercerapersona = $("#requiere_persona");
         var tomadecisiones = $("#requiere_decisiones_persona");
@@ -2632,6 +2641,7 @@ $(document).ready(function(){
         var total_minusvalia = $('#total_minusvalia').val();
         var porcentaje_pcl = $('#porcentaje_pcl').val();
         var rango_pcl = $('#rango_pcl').val();
+        var monto_inde = $('#monto_inde').val();
         var tipo_evento = $('#tipo_evento').val();
         var tipo_origen = $('#tipo_origen').val();
         var f_evento_pericial = $('#f_evento_pericial').val();
@@ -2658,6 +2668,7 @@ $(document).ready(function(){
             'total_minusvalia':total_minusvalia,
             'porcentaje_pcl':porcentaje_pcl,
             'rango_pcl':rango_pcl,
+            'monto_inde':monto_inde,
             'tipo_evento':tipo_evento,
             'tipo_origen':tipo_origen,
             'f_evento_pericial':f_evento_pericial,

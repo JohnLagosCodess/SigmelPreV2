@@ -28,6 +28,7 @@ return new class extends Migration
             $table->integer('Id_proceso_anterior')->nullable();
             $table->integer('Id_servicio_anterior')->nullable();
             $table->dateTime('F_asignacion_calificacion')->nullable();
+            $table->text('Consecutivo_dictamen')->nullable();
             $table->integer('Id_profesional')->nullable();
             $table->text('Nombre_profesional')->nullable();
             $table->enum('Detener_tiempo_gestion', ['Si','No'])->nullable();

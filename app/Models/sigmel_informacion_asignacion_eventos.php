@@ -29,6 +29,7 @@ class sigmel_informacion_asignacion_eventos extends Model
         'Id_proceso_anterior',
         'Id_servicio_anterior',
         'F_asignacion_calificacion',
+        'Consecutivo_dictamen',
         'Id_profesional',
         'Nombre_profesional',
         'Nombre_usuario',
