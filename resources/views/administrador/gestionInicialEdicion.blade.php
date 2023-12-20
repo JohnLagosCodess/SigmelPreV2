@@ -89,7 +89,17 @@
                     <input hidden="hidden" type="text" name="Id_proceso_pcl" id="Id_proceso_pcl" value="<?php echo $_POST['newIdproceso'];?>">
                     <input hidden="hidden" type="text" name="Id_servicio_pcl" id="Id_servicio_pcl" value="<?php echo $_POST['newIdservicio'];?>">
                     <button type="submit" id="btn_regreso_calori" style="display: none; !important"></button>
-                </form>            
+                </form> 
+            <?php elseif (isset($_POST['bandera_buscador_juntas']) &&  $_POST['bandera_buscador_juntas'] == 'desdejuntas' ): ?>
+                <a onclick="document.getElementById('btn_regreso_juntas').click();"   class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <form action="{{route("calificacionJuntas")}}" id="Regreso_Juntas" method="POST">            
+                    @csrf
+                    <input hidden="hidden" type="text" name="newIdEvento" id="newIdEvento" value="<?php echo $_POST['newIdEvento'];?>">
+                    <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="<?php echo $_POST['newIdAsignacion'];?>">
+                    <input hidden="hidden" type="text" name="Id_proceso_pcl" id="Id_proceso_pcl" value="<?php echo $_POST['newIdproceso'];?>">
+                    <input hidden="hidden" type="text" name="Id_servicio_pcl" id="Id_servicio_pcl" value="<?php echo $_POST['newIdservicio'];?>">
+                    <button type="submit" id="btn_regreso_juntas" style="display: none; !important"></button>
+                </form>              
             <?php endif ?>
         </div>
         <div class="col-2" style="text-align: left !important;">

@@ -170,16 +170,27 @@ class BandejaJuntasController extends Controller
 
     public function sinFiltroBandejaJuntas(Request $request){
 
-        $BandejaJuntasTotal = $request->BandejaJuntasTotal;        
+        $BandejaJuntasTotal = $request->BandejaJuntasTotal;
+        $newId_rol = $request->newId_rol; 
+        $newId_user = $request->newId_user;           
 
         if($BandejaJuntasTotal == 'CargaBandejaJuntas'){
 
-            $bandejaJuntas = cndatos_bandeja_eventos::on('sigmel_gestiones')
-            ->where([
-                ['Nombre_proceso_actual', '=', 'Juntas']
-            ])
-            ->get();
+            if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional 
+                $bandejaJuntas = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['Nombre_proceso_actual', '=', 'Juntas'],
+                    ['Id_profesional', '=', $newId_user]
+                ])
+                ->get();
+            }else{
+                $bandejaJuntas = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['Nombre_proceso_actual', '=', 'Juntas']
+                ])
+                ->get();
 
+            }
             // $bandejaJuntassin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
             // ->where([
             //     ['Nombre_proceso_actual', '=', 'Juntas']
@@ -257,10 +268,22 @@ class BandejaJuntasController extends Controller
         $consultar_f_desde = $request->consultar_f_desde;
         $consultar_f_hasta = $request->consultar_f_hasta;
         $consultar_g_dias = $request->consultar_g_dias;
+        $newId_rol = $request->newId_rol; 
+        $newId_user = $request->newId_user; 
               
         switch (true) {
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and !empty($consultar_g_dias)):
 
+                if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
+                    $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    ->where([
+                        ['Nombre_proceso_actual', '=', 'Juntas'],
+                        ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
+                        ['Id_profesional', '=', $newId_user]
+                    ])
+                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    ->get();
+                }else{
                     $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Juntas'],
@@ -268,7 +291,7 @@ class BandejaJuntasController extends Controller
                     ])
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
-
+                }
                     // ->whereNull('Nombre_proceso_anterior')
                     // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
                     
@@ -296,12 +319,23 @@ class BandejaJuntasController extends Controller
             break;
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and empty($consultar_g_dias)):
                     
+                if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
+                    $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    ->where([
+                        ['Nombre_proceso_actual', '=', 'Juntas'],
+                        ['Id_profesional', '=', $newId_user]
+                    ])
+                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    ->get();
+                
+                }else{
                     $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Juntas'],
                     ])
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
+                }
 
                     // ->whereNull('Nombre_proceso_anterior')
                     // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
@@ -329,6 +363,15 @@ class BandejaJuntasController extends Controller
             break;
             case (empty($consultar_f_desde) and empty($consultar_f_hasta) and !empty($consultar_g_dias)):
                     
+                if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
+                    $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    ->where([
+                        ['Nombre_proceso_actual', '=', 'Juntas'],
+                        ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
+                        ['Id_profesional', '=', $newId_user]
+                    ])
+                    ->get();
+                }else{
                     $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Juntas'],
@@ -336,6 +379,7 @@ class BandejaJuntasController extends Controller
                     ])
                     ->get();
 
+                }
                     // ->whereNull('Nombre_proceso_anterior');
                     
                     // $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
