@@ -3,7 +3,9 @@
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
-            
+            <?php 
+                $dato_rol=$captura_id_rol = session('id_cambio_rol');
+            ?>
         </div>
     </div>
 
@@ -115,11 +117,19 @@
                                             </div>
                                         </div>
                                         <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="servicio">Servicio</label><br>
-                                                <a onclick="document.getElementById('botonFormulario2').click();" style="cursor:pointer;" id="servicio_Pcl"><i class="fa fa-puzzle-piece text-info"></i> <strong class="text-dark">{{$array_datos_calificacionPcl[0]->Nombre_servicio}}</strong></a>
-                                                <input type="hidden" class="form-control" name="servicio" id="servicio" value="{{$array_datos_calificacionPcl[0]->Nombre_servicio}}">
-                                            </div>
+                                            @if ($dato_rol=='3')
+                                                <div class="form-group">
+                                                    <label for="servicio">Servicio</label><br>
+                                                    <i class="fa fa-puzzle-piece text-info"></i> <strong class="text-dark">{{$array_datos_calificacionPcl[0]->Nombre_servicio}}</strong>
+                                                    <input type="hidden" class="form-control" name="servicio" id="servicio" value="{{$array_datos_calificacionPcl[0]->Nombre_servicio}}">
+                                                </div>
+                                            @else
+                                                <div class="form-group">
+                                                    <label for="servicio">Servicio</label><br>
+                                                    <a onclick="document.getElementById('botonFormulario2').click();" style="cursor:pointer;" id="servicio_Pcl"><i class="fa fa-puzzle-piece text-info"></i> <strong class="text-dark">{{$array_datos_calificacionPcl[0]->Nombre_servicio}}</strong></a>
+                                                    <input type="hidden" class="form-control" name="servicio" id="servicio" value="{{$array_datos_calificacionPcl[0]->Nombre_servicio}}">
+                                                </div>
+                                            @endif
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">

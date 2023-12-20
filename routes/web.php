@@ -231,7 +231,7 @@ Route::get('/Sigmel/RolCoordinador', [CoordinadorController::class, 'show'])->na
 // Vista: Index Rol Profesional 15/12/2023
 Route::get('/Sigmel/Profesional', [ProfesionalController::class, 'show'])->name('IndexProfesional');
 // Vista: Index Rol Auxiliar 18/12/2023
-Route::get('/Sigmel/Profesional', [ProfesionalController::class, 'show'])->name('IndexAuxiliar');
+Route::get('/Sigmel/Auxiliar', [ProfesionalController::class, 'show'])->name('IndexAuxiliar');
 // Vista: Index Rol Analista 15/12/2023
 Route::get('/Sigmel/Analista', [AnalistaController::class, 'show'])->name('IndexAnalista');
 

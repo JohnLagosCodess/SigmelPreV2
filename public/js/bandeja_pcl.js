@@ -173,7 +173,9 @@ $(document).ready(function () {
     //captura de data sin Filtros        
     let datos_sin_filtro = {            
         '_token': token,
-        'BandejaPClTotal': "CargaBandejaPCl"
+        'BandejaPClTotal': "CargaBandejaPCl",
+        'newId_rol': $("#newId_rol").val(),
+        'newId_user': $("#newId_user").val(),
     };
     
     $.ajax({
@@ -263,7 +265,9 @@ $(document).ready(function () {
                 '_token': $('input[name=_token]').val(),
                 'consultar_f_desde': consultar_f_desde,
                 'consultar_f_hasta': consultar_f_hasta,
-                'consultar_g_dias': consultar_g_dias
+                'consultar_g_dias': consultar_g_dias,
+                'newId_rol': $("#newId_rol").val(),
+                'newId_user': $("#newId_user").val(),
             }
 
             $.ajax({
