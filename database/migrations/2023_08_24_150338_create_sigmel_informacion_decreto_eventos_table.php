@@ -42,7 +42,8 @@ return new class extends Migration
             $table->text('Requiere_tercera_persona')->nullable();
             $table->text('Requiere_tercera_persona_decisiones')->nullable();
             $table->text('Requiere_dispositivo_apoyo')->nullable();
-            $table->text('Justificacion_dependencia');
+            $table->text('Justificacion_dependencia')->nullable();
+            $table->text('N_radicado')->nullable();            
             $table->text('Estado_decreto')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');

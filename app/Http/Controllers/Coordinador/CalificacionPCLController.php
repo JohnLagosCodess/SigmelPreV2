@@ -56,10 +56,11 @@ use App\Models\sigmel_lista_tipo_eventos;
 use App\Models\sigmel_informacion_eventos;
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
-
+use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
 use Psy\Readline\Hoa\Console;
 use Svg\Tag\Rect;
 use App\Models\sigmel_lista_procesos_servicios;
+use App\Models\sigmel_lista_regional_juntas;
 
 class CalificacionPCLController extends Controller
 {
@@ -111,7 +112,7 @@ class CalificacionPCLController extends Controller
        ->orderBy('N_radicado', 'desc')
        ->limit(1)
        ->get();
-       
+        
        if(count($radicadocomunicado)==0){
            $fechaActual = date("Ymd");
            // Obtener el último valor de la base de datos o archivo
@@ -1275,8 +1276,13 @@ class CalificacionPCLController extends Controller
     
             $firmaclientecompleta = sigmel_informacion_firmas_clientes::on('sigmel_gestiones')->select('Firma')
             ->where('Id_cliente', $idcliente[0]->Id_cliente)->get();
+
+            if(count($firmaclientecompleta) > 0){
+                $Firma_cliente = $firmaclientecompleta[0]->Firma;
+            }else{
+                $Firma_cliente = '';
+            }
             
-            $Firma_cliente = $firmaclientecompleta[0]->Firma;
         }else{
             $Firma_cliente = '';
         }
@@ -1341,6 +1347,8 @@ class CalificacionPCLController extends Controller
             return redirect('/');
         }
         $user = Auth::user();
+        $time = time();
+        $date = date("Y-m-d", $time);
         // validar si las variables Evento y Asignacion vienen desde el modulo princinpal o desde el modulo gestion inicial edicion
         if (!empty($request->Id_asignacion_pcl)) {
             $Id_evento_calitec=$request->Id_evento_pcl;
@@ -1827,21 +1835,79 @@ class CalificacionPCLController extends Controller
         ->select('sie.ID_evento', 'sie.Tipo_evento', 'slte.Nombre_evento', 'sie.F_evento')
         ->where('sie.ID_evento', $Id_evento_calitec)
         ->get();
-        // echo '<pre>';
-        //     print_r($array_tipo_fecha_evento[0]->F_evento);
-        // echo '</pre>';
+
+        $array_comite_interdisciplinario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comite_interdisciplinario_eventos as sicie')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sicie.Nombre_dest_principal')
+        ->select('sicie.ID_evento', 'sicie.Id_proceso', 'sicie.Id_Asignacion', 'sicie.Visar', 'sicie.Profesional_comite', 'sicie.F_visado_comite',
+        'sicie.Oficio_pcl', 'sicie.Oficio_incapacidad', 'sicie.Destinatario_principal', 'sicie.Otro_destinatario', 'sicie.Tipo_destinatario', 
+        'sicie.Nombre_dest_principal', 'sie.Nombre_entidad', 'sicie.Nombre_destinatario','sicie.Nit_cc', 'sicie.Direccion_destinatario', 
+        'sicie.Telefono_destinatario', 'sicie.Email_destinatario', 'sicie.Departamento_destinatario', 'sicie.Ciudad_destinatario', 
+        'sicie.Asunto', 'sicie.Cuerpo_comunicado', 'sicie.Copia_empleador', 'sicie.Copia_eps', 'sicie.Copia_afp', 'sicie.Copia_arl', 
+        'sicie.Copia_jr', 'sicie.Cual_jr', 'sicie.Copia_jn', 'sicie.Anexos', 'sicie.Elaboro', 'sicie.Reviso', 'sicie.Firmar', 'sicie.Ciudad', 
+        'sicie.F_correspondecia', 'sicie.N_radicado', 'sicie.Nombre_usuario', 'sicie.F_registro')        
+        ->where([
+            ['ID_evento',$Id_evento_calitec],
+            ['Id_Asignacion',$Id_asignacion_calitec]
+        ])
+        ->get();
+
+        // creación de consecutivo para el comunicado
+        $radicadocomunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        ->select('N_radicado')
+        ->where([
+            ['ID_evento',$Id_evento_calitec],
+            ['F_comunicado',$date],
+            ['Id_proceso','2']
+        ])
+        ->orderBy('N_radicado', 'desc')
+        ->limit(1)
+        ->get();
+            
+        if(count($radicadocomunicado)==0){
+            $fechaActual = date("Ymd");
+            // Obtener el último valor de la base de datos o archivo
+            $consecutivoP1 = "SAL-PCL";
+            $consecutivoP2 = $fechaActual;
+            $consecutivoP3 = '000000';
+            $ultimoDigito = substr($consecutivoP3, -6);
+            $consecutivoInicial = $consecutivoP1.$consecutivoP2.$consecutivoP3; 
+            $nuevoConsecutivo = $ultimoDigito + 1;
+            // Reiniciar el consecutivo si es un nuevo día
+            if (date("Ymd") != $fechaActual) {
+                $nuevoConsecutivo = 0;
+            }
+            // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
+            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
+            $consecutivo = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted;            
+        }else{
+            $fechaActual = date("Ymd");
+            $ultimoConsecutivo = $radicadocomunicado[0]->N_radicado;
+            $ultimoDigito = substr($ultimoConsecutivo, -6);
+            $nuevoConsecutivo = $ultimoDigito + 1;
+            // Reiniciar el consecutivo si es un nuevo día
+            if (date("Ymd") != $fechaActual) {
+                $nuevoConsecutivo = 0;
+            }
+            // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
+            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
+            $consecutivo = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted;
+        }
 
         $array_dictamen_pericial =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'side.Tipo_evento')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
-        ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Monto_indemnizacion', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
+        ->select('side.N_radicado','side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Monto_indemnizacion', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
         'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
         'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
-        'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia')
+        'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.Nombre_usuario',
+        'side.F_registro')
         ->where([['side.ID_evento',$Id_evento_calitec], ['side.Id_Asignacion',$Id_asignacion_calitec]])->get();        
 
-        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo','array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_dictamen_pericial'));
+        $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$Id_evento_calitec], ['Id_Asignacion',$Id_asignacion_calitec], ['T_documento','N/A']])->get();  
+
+        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo','array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinario', 'consecutivo', 'array_dictamen_pericial', 'array_comunicados_correspondencia'));
     }
 
     public function cargueListadoSelectoresCalifcacionTecnicaPcl(Request $request){
@@ -1983,6 +2049,65 @@ class CalificacionPCLController extends Controller
             return response()->json($info_listado_Agudeza_auditiva);
             
         }
+
+        // listado destinatario
+        if($parametro == 'listado_destinatarios'){
+            $listado_solicitante = sigmel_lista_solicitantes::on('sigmel_gestiones')
+                ->select('Id_solicitante', 'Solicitante')
+                ->whereIn('Solicitante', ['ARL','AFP','EPS','Afiliado','Empleador','Otro'])
+                ->groupBy('Id_solicitante','Solicitante')
+                ->get();
+
+            $info_listado_solicitante = json_decode(json_encode($listado_solicitante, true));
+            return response()->json(($info_listado_solicitante));
+        }
+
+        // listaoo nombre de destinatario
+        if($parametro == "nombre_destinatariopri"){
+            /* $listado_nombre_solicitante = sigmel_lista_solicitantes::on('sigmel_gestiones')
+            ->select('Id_Nombre_solicitante', 'Nombre_solicitante')
+            ->where([
+                ['Id_solicitante', '=', $request->id_solicitante],
+                ['Estado', '=', 'activo']
+            ])
+            ->get(); */
+
+            $listado_nombre_solicitante = sigmel_informacion_entidades::on('sigmel_gestiones')
+            ->select('Id_Entidad as Id_Nombre_solicitante', 'Nombre_entidad as Nombre_solicitante')
+            ->where([
+                ['IdTipo_entidad', '=', $request->id_solicitante],
+                ['Estado_entidad', '=', 'activo']
+            ])
+            ->get();
+
+
+            $info_listado_nombre_solicitante = json_decode(json_encode($listado_nombre_solicitante, true));
+            return response()->json(($info_listado_nombre_solicitante));
+        }
+
+        //Lista juntas regional
+        if($parametro == "lista_regional_junta"){
+            $datos_tipo_junta = sigmel_lista_regional_juntas::on('sigmel_gestiones')
+                ->select('Id_juntaR','Ciudad_Junta')
+                ->where([
+                    ['Estado', '=', 'activo'],
+                ])
+                ->get();
+
+            $informacion_datos_tipo_junta = json_decode(json_encode($datos_tipo_junta, true));
+            return response()->json($informacion_datos_tipo_junta);
+        }
+
+        //Lista Lider de procesos
+        if($parametro == "lista_reviso"){
+            $array_datos_reviso =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+            ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+            ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
+            ->where([['sgt.Id_proceso_equipo', '=', $request->idProcesoLider]])->get();
+
+            $informacion_datos_reviso = json_decode(json_encode($array_datos_reviso, true));
+            return response()->json($informacion_datos_reviso);
+        }        
 
         // Listados tipo evento
         if ($parametro == 'lista_tipo_evento') {
@@ -3658,6 +3783,244 @@ class CalificacionPCLController extends Controller
         }
 
     }
+    // Comite Interdisciplinario
+
+    public function guardarcomiteinterdisciplinario(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $nombre_usuario = Auth::user()->name;
+        $date = date("Y-m-d", $time);
+        $Id_EventoDecreto = $request->Id_EventoDecreto;
+        $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
+        $Id_Asignacion_Dcreto = $request->Id_Asignacion_Dcreto;
+        $visar = $request->visar;
+        $profesional_comite = $request->profesional_comite;
+        $f_visado_comite = $request->f_visado_comite;
+
+        $datos_comiteInterdisciplinario = [
+            'ID_evento' => $Id_EventoDecreto,
+            'Id_proceso' => $Id_ProcesoDecreto,
+            'Id_Asignacion' => $Id_Asignacion_Dcreto,
+            'Visar' => $visar,
+            'Profesional_comite' => $profesional_comite,
+            'F_visado_comite' => $f_visado_comite,
+            'Nombre_usuario' => $nombre_usuario,
+            'F_registro' => $date
+        ];
+        sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')->insert($datos_comiteInterdisciplinario);            
+        $mensajes = array(
+            "parametro" => 'insertar_comite_interdisciplinario',
+            "mensaje" => 'Comite Interdisciplinario guardado satisfactoriamente.'
+        );    
+        return json_decode(json_encode($mensajes, true));
+    }
+
+    // Correspondencia
+
+    public function guardarcorrespondencia(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $nombre_usuario = Auth::user()->name;
+        $date = date("Y-m-d", $time);
+
+        $Id_EventoDecreto = $request->Id_EventoDecreto;
+        $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
+        $Id_Asignacion_Dcreto = $request->Id_Asignacion_Dcreto;
+        $oficiopcl = $request->oficiopcl;
+        $oficioinca = $request->oficioinca;
+        if ($oficiopcl == '') {
+            $oficiopcl = 'No';
+        }
+        if($oficioinca == ''){
+            $oficioinca = 'No';
+        }
+        $destinatario_principal = $request->destinatario_principal;
+        $otrodestinariop = $request->otrodestinariop;
+        $tipo_destinatario_principal = $request->tipo_destinatario_principal;
+        $nombre_destinatariopri = $request->nombre_destinatariopri;
+        $Nombre_dest_principal_afi_empl = $request->Nombre_dest_principal_afi_empl;
+        if ($tipo_destinatario_principal == '') {
+            $tipo_destinatario_principal = null;
+            $nombre_destinatariopri = null;
+            $Nombre_dest_principal_afi_empl = null;
+        }
+        if($tipo_destinatario_principal != 8){
+            $nombre_destinatario = null;
+            $nitcc_destinatario = null;
+            $direccion_destinatario = null;
+            $telefono_destinatario = null;
+            $email_destinatario = null;
+            $departamento_destinatario = null;
+            $ciudad_destinatario = null;
+        }else{
+            $nombre_destinatario = $request->nombre_destinatario;
+            $nitcc_destinatario = $request->nitcc_destinatario;
+            $direccion_destinatario = $request->direccion_destinatario;
+            $telefono_destinatario = $request->telefono_destinatario;
+            $email_destinatario = $request->email_destinatario;
+            $departamento_destinatario = $request->departamento_destinatario;
+            $ciudad_destinatario = $request->ciudad_destinatario;
+        }
+        $Asunto = $request->Asunto;
+        $cuerpo_comunicado = $request->cuerpo_comunicado;
+        $empleador = $request->empleador;
+        $eps = $request->eps;
+        $afp = $request->afp;
+        $arl = $request->arl;
+        $jrci = $request->jrci;        
+        $cual = $request->cual;
+        if($cual == ''){
+            $cual = null;
+        }
+        $jnci = $request->jnci;
+        $anexos = $request->anexos;
+        $elaboro = $request->elaboro;
+        $reviso = $request->reviso;
+        $firmar = $request->firmar;
+        $ciudad = $request->ciudad;
+        $f_correspondencia = $request->f_correspondencia;
+        $radicado = $request->radicado;
+        $bandera_correspondecia_guardar_actualizar = $request->bandera_correspondecia_guardar_actualizar;
+
+        if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
+            $datos_correspondencia = [
+                'Oficio_pcl' => $oficiopcl,
+                'Oficio_incapacidad' => $oficioinca,
+                'Destinatario_principal' => $destinatario_principal,
+                'Otro_destinatario' => $otrodestinariop,
+                'Tipo_destinatario' => $tipo_destinatario_principal,
+                'Nombre_dest_principal' => $nombre_destinatariopri,
+                'Nombre_dest_principal_afi_empl' => $Nombre_dest_principal_afi_empl,
+                'Nombre_destinatario' => $nombre_destinatario,
+                'Nit_cc' => $nitcc_destinatario,
+                'Direccion_destinatario' => $direccion_destinatario,
+                'Telefono_destinatario' => $telefono_destinatario,
+                'Email_destinatario' => $email_destinatario,
+                'Departamento_destinatario' => $departamento_destinatario,
+                'Ciudad_destinatario' => $ciudad_destinatario,
+                'Asunto' => $Asunto,
+                'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Copia_empleador' => $empleador,
+                'Copia_eps' => $eps,
+                'Copia_afp' => $afp,
+                'Copia_arl' => $arl,
+                'Copia_jr' => $jrci,
+                'Cual_jr' => $cual,
+                'Copia_jn' => $jnci,
+                'Anexos' => $anexos,
+                'Elaboro' => $elaboro,
+                'Reviso' => $reviso,
+                'Firmar' => $firmar,
+                'Ciudad' => $ciudad,
+                'F_correspondecia' => $f_correspondencia,
+                'N_radicado' => $radicado,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date
+            ];
+    
+            sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento',$Id_EventoDecreto],
+                ['Id_Asignacion',$Id_Asignacion_Dcreto]
+            ])->update($datos_correspondencia);       
+    
+            $datos_info_comunicado_eventos = [
+                'ID_Evento' => $Id_EventoDecreto,
+                'Id_proceso' => $Id_ProcesoDecreto,
+                'Id_Asignacion' => $Id_Asignacion_Dcreto,
+                'Ciudad' => $ciudad,
+                'F_comunicado' => $date,
+                'N_radicado' => $radicado,
+                'Cliente' => 'N/A',
+                'Nombre_afiliado' => $destinatario_principal,
+                'T_documento' => 'N/A',
+                'N_identificacion' => 'N/A',
+                'Destinatario' => 'N/A',
+                'Nombre_destinatario' => 'N/A',
+                'Nit_cc' => 'N/A',
+                'Direccion_destinatario' => 'N/A',
+                'Telefono_destinatario' => '001',
+                'Email_destinatario' => 'N/A',
+                'Id_departamento' => '001',
+                'Id_municipio' => '001',
+                'Asunto'=> $Asunto,
+                'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Forma_envio' => '0',
+                'Elaboro' => $elaboro,
+                'Reviso' => $reviso,
+                'Anexos' => $anexos,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];
+    
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+    
+            $mensajes = array(
+                "parametro" => 'insertar_correspondencia',
+                "mensaje" => 'Correspondencia guardada satisfactoriamente.'
+            );
+    
+            return json_decode(json_encode($mensajes, true));
+            
+        } 
+        elseif($bandera_correspondecia_guardar_actualizar == 'Actualizar') {
+            $datos_correspondencia = [
+                'Oficio_pcl' => $oficiopcl,
+                'Oficio_incapacidad' => $oficioinca,
+                'Destinatario_principal' => $destinatario_principal,
+                'Otro_destinatario' => $otrodestinariop,
+                'Tipo_destinatario' => $tipo_destinatario_principal,
+                'Nombre_dest_principal' => $nombre_destinatariopri,
+                'Nombre_dest_principal_afi_empl' => $Nombre_dest_principal_afi_empl,
+                'Nombre_destinatario' => $nombre_destinatario,
+                'Nit_cc' => $nitcc_destinatario,
+                'Direccion_destinatario' => $direccion_destinatario,
+                'Telefono_destinatario' => $telefono_destinatario,
+                'Email_destinatario' => $email_destinatario,
+                'Departamento_destinatario' => $departamento_destinatario,
+                'Ciudad_destinatario' => $ciudad_destinatario,
+                'Asunto' => $Asunto,
+                'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Copia_empleador' => $empleador,
+                'Copia_eps' => $eps,
+                'Copia_afp' => $afp,
+                'Copia_arl' => $arl,
+                'Copia_jr' => $jrci,
+                'Cual_jr' => $cual,
+                'Copia_jn' => $jnci,
+                'Anexos' => $anexos,
+                'Elaboro' => $elaboro,
+                'Reviso' => $reviso,
+                'Firmar' => $firmar,
+                'Ciudad' => $ciudad,
+                'F_correspondecia' => $f_correspondencia,
+                'N_radicado' => $radicado,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date
+            ];
+    
+            sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento',$Id_EventoDecreto],
+                ['Id_Asignacion',$Id_Asignacion_Dcreto]
+            ])->update($datos_correspondencia);       
+    
+            $mensajes = array(
+                "parametro" => 'actualizar_correspondencia',
+                "mensaje" => 'Correspondencia actualizada satisfactoriamente.'
+            );
+    
+            return json_decode(json_encode($mensajes, true));
+        }
+        
+
+    }
+
+    // Dictame Pericial
 
     public function guardardictamenPericial(Request $request){
 
@@ -3676,6 +4039,7 @@ class CalificacionPCLController extends Controller
         $total_discapacidades = $request->total_discapacidades;
         $total_minusvalia = $request->total_minusvalia;
         $total_porcentajePcl = $Total_Deficiencia50 + $total_discapacidades + $total_minusvalia;
+        $radicado_dictamen = $request->radicado_dictamen;
         $porcentaje_pcl = $request->porcentaje_pcl;  
         $rango_pcl = $request->rango_pcl;    
         $monto_inde = $request->monto_inde;        
@@ -3717,6 +4081,7 @@ class CalificacionPCLController extends Controller
                 'Requiere_tercera_persona_decisiones' => $requiere_decisiones_persona,
                 'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
                 'Justificacion_dependencia' => $justi_dependencia,
+                'N_radicado'=> $radicado_dictamen,
                 'Estado_decreto' => 'Cerrado',
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
@@ -3724,10 +4089,42 @@ class CalificacionPCLController extends Controller
             sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
             ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial); 
 
+            $datos_info_comunicado_eventos = [
+                'ID_Evento' => $Id_EventoDecreto,
+                'Id_proceso' => $Id_ProcesoDecreto,
+                'Id_Asignacion' => $Id_Asignacion_Dcreto,
+                'Ciudad' => 'N/A',
+                'F_comunicado' => $date,
+                'N_radicado' => $radicado_dictamen,
+                'Cliente' => 'N/A',
+                'Nombre_afiliado' => 'N/A',
+                'T_documento' => 'N/A',
+                'N_identificacion' => 'N/A',
+                'Destinatario' => 'N/A',
+                'Nombre_destinatario' => 'N/A',
+                'Nit_cc' => 'N/A',
+                'Direccion_destinatario' => 'N/A',
+                'Telefono_destinatario' => '001',
+                'Email_destinatario' => 'N/A',
+                'Id_departamento' => '001',
+                'Id_municipio' => '001',
+                'Asunto'=> 'N/A',
+                'Cuerpo_comunicado' => 'N/A',
+                'Forma_envio' => '0',
+                'Elaboro' => $nombre_usuario,
+                'Reviso' => 'N/A',
+                'Anexos' => 'N/A',
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];
+    
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+
         }else{
             $datos_dictamenPericial =[
                 'Suma_combinada' => $suma_combinada,
                 'Total_Deficiencia50' => $Total_Deficiencia50,
+                'N_radicado'=> $radicado_dictamen,
                 'Porcentaje_pcl' => $porcentaje_pcl,
                 'Rango_pcl' => $rango_pcl,
                 'Monto_indemnizacion' => $monto_inde,
@@ -3751,6 +4148,37 @@ class CalificacionPCLController extends Controller
     
             sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
             ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial);  
+
+            $datos_info_comunicado_eventos = [
+                'ID_Evento' => $Id_EventoDecreto,
+                'Id_proceso' => $Id_ProcesoDecreto,
+                'Id_Asignacion' => $Id_Asignacion_Dcreto,
+                'Ciudad' => 'N/A',
+                'F_comunicado' => $date,
+                'N_radicado' => $radicado_dictamen,
+                'Cliente' => 'N/A',
+                'Nombre_afiliado' => 'N/A',
+                'T_documento' => 'N/A',
+                'N_identificacion' => 'N/A',
+                'Destinatario' => 'N/A',
+                'Nombre_destinatario' => 'N/A',
+                'Nit_cc' => 'N/A',
+                'Direccion_destinatario' => 'N/A',
+                'Telefono_destinatario' => '001',
+                'Email_destinatario' => 'N/A',
+                'Id_departamento' => '001',
+                'Id_municipio' => '001',
+                'Asunto'=> 'N/A',
+                'Cuerpo_comunicado' => 'N/A',
+                'Forma_envio' => '0',
+                'Elaboro' => $nombre_usuario,
+                'Reviso' => 'N/A',
+                'Anexos' => 'N/A',
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];
+    
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
         }
 
         $mensajes = array(
