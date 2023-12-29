@@ -168,6 +168,16 @@ $(document).ready(function () {
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
     });
 
+    $(document).on('keyup', "input[id^='Asunto']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
+    });
+
+    $(document).on('keyup', "textarea[id^='cuerpo_comunicado']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        
+    });
+
     $(document).on('keyup', "textarea[id^='sustenta_fecha']", function(){
         var textoEscrito = $(this).val();
         $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));        

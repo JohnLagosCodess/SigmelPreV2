@@ -18,6 +18,9 @@ use App\Models\sigmel_informacion_diagnosticos_eventos;
 use App\Models\sigmel_informacion_pericial_eventos;
 use App\Models\sigmel_informacion_eventos;
 use App\Models\cndatos_eventos;
+use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
+use App\Models\sigmel_informacion_comunicado_eventos;
+use App\Models\sigmel_lista_regional_juntas;
 
 class DeterminacionOrigenATEL extends Controller
 {
@@ -26,6 +29,8 @@ class DeterminacionOrigenATEL extends Controller
             return redirect('/');
         }
         $user = Auth::user();
+        $time = time();
+        $date = date("Y-m-d", $time);
         $Id_evento_dto_atel = $request->Id_evento_calitec;
         $Id_asignacion_dto_atel = $request->Id_asignacion_calitec;
         $Id_proceso_dto_atel = $request->Id_proceso_calitec;
@@ -190,11 +195,60 @@ class DeterminacionOrigenATEL extends Controller
         ->distinct()
         ->get();
 
+        $array_comite_interdisciplinario = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        ->where([
+            ['ID_evento',$Id_evento_dto_atel],
+            ['Id_Asignacion',$Id_asignacion_dto_atel]
+        ])
+        ->get(); 
+
+        // creación de consecutivo para el comunicado
+        $radicadocomunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        ->select('N_radicado')
+        ->where([
+            ['ID_evento',$Id_evento_dto_atel],
+            ['F_comunicado',$date],
+            ['Id_proceso','1']
+        ])
+        ->orderBy('N_radicado', 'desc')
+        ->limit(1)
+        ->get();
+            
+        if(count($radicadocomunicado)==0){
+            $fechaActual = date("Ymd");
+            // Obtener el último valor de la base de datos o archivo
+            $consecutivoP1 = "SAL-ORI";
+            $consecutivoP2 = $fechaActual;
+            $consecutivoP3 = '000000';
+            $ultimoDigito = substr($consecutivoP3, -6);
+            $consecutivoInicial = $consecutivoP1.$consecutivoP2.$consecutivoP3; 
+            $nuevoConsecutivo = $ultimoDigito + 1;
+            // Reiniciar el consecutivo si es un nuevo día
+            if (date("Ymd") != $fechaActual) {
+                $nuevoConsecutivo = 0;
+            }
+            // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
+            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
+            $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted;            
+        }else{
+            $fechaActual = date("Ymd");
+            $ultimoConsecutivo = $radicadocomunicado[0]->N_radicado;
+            $ultimoDigito = substr($ultimoConsecutivo, -6);
+            $nuevoConsecutivo = $ultimoDigito + 1;
+            // Reiniciar el consecutivo si es un nuevo día
+            if (date("Ymd") != $fechaActual) {
+                $nuevoConsecutivo = 0;
+            }
+            // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
+            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
+            $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted;
+        }
+
         return view('coordinador.determinacionOrigenATEL', compact('user', 'array_datos_calificacion_origen', 
         'motivo_solicitud_actual', 'datos_apoderado_actual', 
         'array_datos_info_laboral', 'listado_documentos_solicitados', 
         'dato_articulo_12', 'array_datos_diagnostico_motcalifi',
-        'array_datos_examenes_interconsultas', 'array_datos_historico_laboral', 'datos_bd_DTO_ATEL', 'nombre_del_evento_guardado'));
+        'array_datos_examenes_interconsultas', 'array_datos_historico_laboral', 'datos_bd_DTO_ATEL', 'nombre_del_evento_guardado','array_comite_interdisciplinario', 'consecutivo'));
     }
 
     public function cargueListadoSelectoresDTOATEL(Request $request){
@@ -379,6 +433,30 @@ class DeterminacionOrigenATEL extends Controller
             $info_origen_vali_3 = json_decode(json_encode($listado_origen_vali_3, true));
             return response()->json($info_origen_vali_3);
         }
+
+        //Lista juntas regional
+        if($parametro == "lista_regional_junta"){
+            $datos_tipo_junta = sigmel_lista_regional_juntas::on('sigmel_gestiones')
+                ->select('Id_juntaR','Ciudad_Junta')
+                ->where([
+                    ['Estado', '=', 'activo'],
+                ])
+                ->get();
+
+            $informacion_datos_tipo_junta = json_decode(json_encode($datos_tipo_junta, true));
+            return response()->json($informacion_datos_tipo_junta);
+        }
+
+        //Lista Lider de procesos
+        if($parametro == "lista_reviso"){
+            $array_datos_reviso =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+            ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+            ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
+            ->where([['sgt.Id_proceso_equipo', '=', $request->idProcesoLider]])->get();
+
+            $informacion_datos_reviso = json_decode(json_encode($array_datos_reviso, true));
+            return response()->json($informacion_datos_reviso);
+        }  
 
     }
 
@@ -694,5 +772,182 @@ class DeterminacionOrigenATEL extends Controller
         );
 
         return json_decode(json_encode($mensajes, true)); 
+    }
+
+    // Comite InterdisciplinarioDTO
+
+    public function guardarcomiteinterdisciplinarioDto(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $nombre_usuario = Auth::user()->name;
+        $date = date("Y-m-d", $time);
+        $Id_Evento_dto_atel = $request->Id_Evento_dto_atel;
+        $Id_Proceso_dto_atel = $request->Id_Proceso_dto_atel;
+        $Id_Asignacion_dto_atel = $request->Id_Asignacion_dto_atel;
+        $visar = $request->visar;
+        $profesional_comite = $request->profesional_comite;
+        $f_visado_comite = $request->f_visado_comite;
+
+        $datos_comiteInterdisciplinario = [
+            'ID_evento' => $Id_Evento_dto_atel,
+            'Id_proceso' => $Id_Proceso_dto_atel,
+            'Id_Asignacion' => $Id_Asignacion_dto_atel,
+            'Visar' => $visar,
+            'Profesional_comite' => $profesional_comite,
+            'F_visado_comite' => $f_visado_comite,
+            'Nombre_usuario' => $nombre_usuario,
+            'F_registro' => $date
+        ];
+        sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')->insert($datos_comiteInterdisciplinario);            
+        $mensajes = array(
+            "parametro" => 'insertar_comite_interdisciplinario',
+            "mensaje" => 'Comite Interdisciplinario guardado satisfactoriamente.'
+        );    
+        return json_decode(json_encode($mensajes, true));
+    }
+
+    // CorrespondenciaDTO
+
+    public function guardarcorrespondenciaDto(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $nombre_usuario = Auth::user()->name;
+        $date = date("Y-m-d", $time);
+
+        $Id_Evento_dto_atel = $request->Id_Evento_dto_atel;
+        $Id_Proceso_dto_atel = $request->Id_Proceso_dto_atel;
+        $Id_Asignacion_dto_atel = $request->Id_Asignacion_dto_atel;
+        $destinatario_principal = $request->destinatario_principal;
+        $Asunto = $request->Asunto;
+        $cuerpo_comunicado = $request->cuerpo_comunicado;
+        $empleador = $request->empleador;
+        $eps = $request->eps;
+        $afp = $request->afp;
+        $arl = $request->arl;
+        $jrci = $request->jrci;        
+        $cual = $request->cual;
+        if($cual == ''){
+            $cual = null;
+        }
+        $jnci = $request->jnci;
+        $anexos = $request->anexos;
+        $elaboro = $request->elaboro;
+        $reviso = $request->reviso;
+        $firmar = $request->firmar;
+        $ciudad = $request->ciudad;
+        $f_correspondencia = $request->f_correspondencia;
+        $radicado = $request->radicado;
+        $bandera_correspondecia_guardar_actualizar = $request->bandera_correspondecia_guardar_actualizar;
+
+        if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
+            $datos_correspondencia = [
+                'Destinatario_principal' => $destinatario_principal,
+                'Asunto' => $Asunto,
+                'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Copia_empleador' => $empleador,
+                'Copia_eps' => $eps,
+                'Copia_afp' => $afp,
+                'Copia_arl' => $arl,
+                'Copia_jr' => $jrci,
+                'Cual_jr' => $cual,
+                'Copia_jn' => $jnci,
+                'Anexos' => $anexos,
+                'Elaboro' => $elaboro,
+                'Reviso' => $reviso,
+                'Firmar' => $firmar,
+                'Ciudad' => $ciudad,
+                'F_correspondecia' => $f_correspondencia,
+                'N_radicado' => $radicado,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date
+            ];
+    
+            sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento',$Id_Evento_dto_atel],
+                ['Id_Asignacion',$Id_Asignacion_dto_atel]
+            ])->update($datos_correspondencia);       
+    
+            $datos_info_comunicado_eventos = [
+                'ID_Evento' => $Id_Evento_dto_atel,
+                'Id_proceso' => $Id_Proceso_dto_atel,
+                'Id_Asignacion' => $Id_Asignacion_dto_atel,
+                'Ciudad' => $ciudad,
+                'F_comunicado' => $date,
+                'N_radicado' => $radicado,
+                'Cliente' => 'N/A',
+                'Nombre_afiliado' => $destinatario_principal,
+                'T_documento' => 'N/A',
+                'N_identificacion' => 'N/A',
+                'Destinatario' => 'N/A',
+                'Nombre_destinatario' => 'N/A',
+                'Nit_cc' => 'N/A',
+                'Direccion_destinatario' => 'N/A',
+                'Telefono_destinatario' => '001',
+                'Email_destinatario' => 'N/A',
+                'Id_departamento' => '001',
+                'Id_municipio' => '001',
+                'Asunto'=> $Asunto,
+                'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Forma_envio' => '0',
+                'Elaboro' => $elaboro,
+                'Reviso' => $reviso,
+                'Anexos' => $anexos,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];
+    
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+    
+            $mensajes = array(
+                "parametro" => 'insertar_correspondencia',
+                "mensaje" => 'Correspondencia guardada satisfactoriamente.'
+            );
+    
+            return json_decode(json_encode($mensajes, true));
+            
+        } 
+        elseif($bandera_correspondecia_guardar_actualizar == 'Actualizar') {
+            $datos_correspondencia = [
+                'Destinatario_principal' => $destinatario_principal,
+                'Asunto' => $Asunto,
+                'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Copia_empleador' => $empleador,
+                'Copia_eps' => $eps,
+                'Copia_afp' => $afp,
+                'Copia_arl' => $arl,
+                'Copia_jr' => $jrci,
+                'Cual_jr' => $cual,
+                'Copia_jn' => $jnci,
+                'Anexos' => $anexos,
+                'Elaboro' => $elaboro,
+                'Reviso' => $reviso,
+                'Firmar' => $firmar,
+                'Ciudad' => $ciudad,
+                'F_correspondecia' => $f_correspondencia,
+                'N_radicado' => $radicado,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date
+            ];
+    
+            sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento',$Id_Evento_dto_atel],
+                ['Id_Asignacion',$Id_Asignacion_dto_atel]
+            ])->update($datos_correspondencia);       
+    
+            $mensajes = array(
+                "parametro" => 'actualizar_correspondencia',
+                "mensaje" => 'Correspondencia actualizada satisfactoriamente.'
+            );
+    
+            return json_decode(json_encode($mensajes, true));
+        }
+        
+
     }
 }

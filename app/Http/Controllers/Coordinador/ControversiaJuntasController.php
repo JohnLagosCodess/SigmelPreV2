@@ -11,10 +11,13 @@ use Illuminate\Support\Facades\File;
 use App\Models\sigmel_lista_parametros;
 use App\Models\sigmel_lista_califi_decretos;
 use App\Models\sigmel_calendarios;
+use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
+use App\Models\sigmel_informacion_comunicado_eventos;
 use App\Models\sigmel_informacion_controversia_juntas_eventos;
 use App\Models\sigmel_informacion_diagnosticos_eventos;
-
-
+use App\Models\sigmel_informacion_entidades;
+use App\Models\sigmel_lista_regional_juntas;
+use App\Models\sigmel_lista_solicitantes;
 
 class ControversiaJuntasController extends Controller
 {
@@ -121,8 +124,65 @@ class ControversiaJuntasController extends Controller
 
         //Trae Documetos Generales del evento
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($Id_evento_juntas));
+        
+        $array_comite_interdisciplinario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comite_interdisciplinario_eventos as sicie')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sicie.Nombre_dest_principal')
+        ->select('sicie.ID_evento', 'sicie.Id_proceso', 'sicie.Id_Asignacion', 'sicie.Visar', 'sicie.Profesional_comite', 'sicie.F_visado_comite',
+        'sicie.Destinatario_principal', 'sicie.Otro_destinatario', 'sicie.Tipo_destinatario', 'sicie.Nombre_dest_principal', 'sie.Nombre_entidad',
+        'sicie.Nombre_destinatario','sicie.Nit_cc', 'sicie.Direccion_destinatario', 'sicie.Telefono_destinatario', 'sicie.Email_destinatario',
+        'sicie.Departamento_destinatario', 'sicie.Ciudad_destinatario', 'sicie.Asunto', 'sicie.Cuerpo_comunicado', 'sicie.Copia_empleador',
+        'sicie.Copia_eps', 'sicie.Copia_afp', 'sicie.Copia_arl', 'sicie.Copia_jr', 'sicie.Cual_jr', 'sicie.Copia_jn', 'sicie.Anexos',
+        'sicie.Elaboro', 'sicie.Reviso', 'sicie.Firmar', 'sicie.Ciudad', 'sicie.F_correspondecia', 'sicie.N_radicado', 'sicie.Nombre_usuario',
+        'sicie.F_registro')        
+        ->where([
+            ['ID_evento',$Id_evento_juntas],
+            ['Id_Asignacion',$Id_asignacion_juntas]
+        ])
+        ->get(); 
 
-        return view('coordinador.controversiaJuntas', compact('user','array_datos_controversiaJuntas','arrayinfo_controvertido','array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci','array_datos_diagnostico_reposi_dictamen_jrci','array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos'));
+        // creación de consecutivo para el comunicado
+        $radicadocomunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        ->select('N_radicado')
+        ->where([
+            ['ID_evento',$Id_evento_juntas],
+            ['F_comunicado',$date],
+            ['Id_proceso','2']
+        ])
+        ->orderBy('N_radicado', 'desc')
+        ->limit(1)
+        ->get();
+            
+        if(count($radicadocomunicado)==0){
+            $fechaActual = date("Ymd");
+            // Obtener el último valor de la base de datos o archivo
+            $consecutivoP1 = "SAL-JUN";
+            $consecutivoP2 = $fechaActual;
+            $consecutivoP3 = '000000';
+            $ultimoDigito = substr($consecutivoP3, -6);
+            $consecutivoInicial = $consecutivoP1.$consecutivoP2.$consecutivoP3; 
+            $nuevoConsecutivo = $ultimoDigito + 1;
+            // Reiniciar el consecutivo si es un nuevo día
+            if (date("Ymd") != $fechaActual) {
+                $nuevoConsecutivo = 0;
+            }
+            // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
+            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
+            $consecutivo = "SAL-JUN" . $fechaActual . $nuevoConsecutivoFormatted;            
+        }else{
+            $fechaActual = date("Ymd");
+            $ultimoConsecutivo = $radicadocomunicado[0]->N_radicado;
+            $ultimoDigito = substr($ultimoConsecutivo, -6);
+            $nuevoConsecutivo = $ultimoDigito + 1;
+            // Reiniciar el consecutivo si es un nuevo día
+            if (date("Ymd") != $fechaActual) {
+                $nuevoConsecutivo = 0;
+            }
+            // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
+            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
+            $consecutivo = "SAL-JUN" . $fechaActual . $nuevoConsecutivoFormatted;
+        }
+
+        return view('coordinador.controversiaJuntas', compact('user','array_datos_controversiaJuntas','arrayinfo_controvertido','array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci','array_datos_diagnostico_reposi_dictamen_jrci','array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 'array_comite_interdisciplinario', 'consecutivo'));
     }
 
     //Cargar Selectores pronunciamiento
@@ -270,6 +330,79 @@ class ControversiaJuntasController extends Controller
             $informacion_datos_tipo_decreto_jnci_re= json_decode(json_encode($datos_tipo_decreto_jnci_re, true));
             return response()->json($informacion_datos_tipo_decreto_jnci_re);
         }
+
+        //Lista tipo destinatario
+        if($parametro == "lista_tipo_destinatario"){
+            $datos_lista_tipo_destinatario = sigmel_lista_parametros::on('sigmel_gestiones')
+                ->select('Id_Parametro','Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Tipo Destinatario'],
+                    ['Estado', '=', 'activo'],
+                ])
+                ->get();
+
+            $informacion_datos_lista_tipo_destinatario = json_decode(json_encode($datos_lista_tipo_destinatario, true));
+            return response()->json($informacion_datos_lista_tipo_destinatario);
+        }
+
+        // listado destinatario
+        if($parametro == 'listado_destinatarios'){
+            $listado_solicitante = sigmel_lista_solicitantes::on('sigmel_gestiones')
+                ->select('Id_solicitante', 'Solicitante')
+                ->whereIn('Solicitante', ['ARL','AFP','EPS','Afiliado','Empleador','Otro'])
+                ->groupBy('Id_solicitante','Solicitante')
+                ->get();
+
+            $info_listado_solicitante = json_decode(json_encode($listado_solicitante, true));
+            return response()->json(($info_listado_solicitante));
+        }
+
+        // listaoo nombre de destinatario
+        if($parametro == "nombre_destinatariopri"){
+            /* $listado_nombre_solicitante = sigmel_lista_solicitantes::on('sigmel_gestiones')
+            ->select('Id_Nombre_solicitante', 'Nombre_solicitante')
+            ->where([
+                ['Id_solicitante', '=', $request->id_solicitante],
+                ['Estado', '=', 'activo']
+            ])
+            ->get(); */
+
+            $listado_nombre_solicitante = sigmel_informacion_entidades::on('sigmel_gestiones')
+            ->select('Id_Entidad as Id_Nombre_solicitante', 'Nombre_entidad as Nombre_solicitante')
+            ->where([
+                ['IdTipo_entidad', '=', $request->id_solicitante],
+                ['Estado_entidad', '=', 'activo']
+            ])
+            ->get();
+
+
+            $info_listado_nombre_solicitante = json_decode(json_encode($listado_nombre_solicitante, true));
+            return response()->json(($info_listado_nombre_solicitante));
+        }
+
+        //Lista juntas regional
+        if($parametro == "lista_regional_junta"){
+            $datos_tipo_junta = sigmel_lista_regional_juntas::on('sigmel_gestiones')
+                ->select('Id_juntaR','Ciudad_Junta')
+                ->where([
+                    ['Estado', '=', 'activo'],
+                ])
+                ->get();
+
+            $informacion_datos_tipo_junta = json_decode(json_encode($datos_tipo_junta, true));
+            return response()->json($informacion_datos_tipo_junta);
+        }
+
+        //Lista Lider de procesos
+        if($parametro == "lista_reviso"){
+            $array_datos_reviso =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+            ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+            ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
+            ->where([['sgt.Id_proceso_equipo', '=', $request->idProcesoLider]])->get();
+
+            $informacion_datos_reviso = json_decode(json_encode($array_datos_reviso, true));
+            return response()->json($informacion_datos_reviso);
+        }  
     }
 
     //Guarda informacion de controvertido Juntas Modulo
@@ -897,6 +1030,231 @@ class ControversiaJuntasController extends Controller
         return json_decode(json_encode($mensajes, true));
     }
 
+    // Comite Interdisciplinario
 
+    // public function guardarcomiteinterdisciplinarioJuntas(Request $request){
+    //     if (!Auth::check()) {
+    //         return redirect('/');
+    //     }
+    //     $time = time();
+    //     $nombre_usuario = Auth::user()->name;
+    //     $date = date("Y-m-d", $time);
+    //     $newId_evento = $request->newId_evento;
+    //     $Id_proceso = $request->Id_proceso;
+    //     $newId_asignacion = $request->newId_asignacion;
+    //     $visar = $request->visar;
+    //     $profesional_comite = $request->profesional_comite;
+    //     $f_visado_comite = $request->f_visado_comite;
 
+    //     $datos_comiteInterdisciplinario = [
+    //         'ID_evento' => $newId_evento,
+    //         'Id_proceso' => $Id_proceso,
+    //         'Id_Asignacion' => $newId_asignacion,
+    //         'Visar' => $visar,
+    //         'Profesional_comite' => $profesional_comite,
+    //         'F_visado_comite' => $f_visado_comite,
+    //         'Nombre_usuario' => $nombre_usuario,
+    //         'F_registro' => $date
+    //     ];
+    //     sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')->insert($datos_comiteInterdisciplinario);            
+    //     $mensajes = array(
+    //         "parametro" => 'insertar_comite_interdisciplinario',
+    //         "mensaje" => 'Comite Interdisciplinario guardado satisfactoriamente.'
+    //     );    
+    //     return json_decode(json_encode($mensajes, true));
+    // }
+
+    // Correspondencia
+
+    public function guardarcorrespondenciaJuntas(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $nombre_usuario = Auth::user()->name;
+        $date = date("Y-m-d", $time);
+
+        $newId_evento = $request->newId_evento;
+        $Id_proceso = $request->Id_proceso;
+        $newId_asignacion = $request->newId_asignacion;
+        $destinatario_principal = $request->destinatario_principal;
+        $otrodestinariop = $request->otrodestinariop;
+        $tipo_destinatario_principal = $request->tipo_destinatario_principal;
+        $nombre_destinatariopri = $request->nombre_destinatariopri;
+        $Nombre_dest_principal_afi_empl = $request->Nombre_dest_principal_afi_empl;
+        if ($tipo_destinatario_principal == '') {
+            $tipo_destinatario_principal = null;
+            $nombre_destinatariopri = null;
+            $Nombre_dest_principal_afi_empl = null;
+        }
+        if($tipo_destinatario_principal != 8){
+            $nombre_destinatario = null;
+            $nitcc_destinatario = null;
+            $direccion_destinatario = null;
+            $telefono_destinatario = null;
+            $email_destinatario = null;
+            $departamento_destinatario = null;
+            $ciudad_destinatario = null;
+        }else{
+            $nombre_destinatario = $request->nombre_destinatario;
+            $nitcc_destinatario = $request->nitcc_destinatario;
+            $direccion_destinatario = $request->direccion_destinatario;
+            $telefono_destinatario = $request->telefono_destinatario;
+            $email_destinatario = $request->email_destinatario;
+            $departamento_destinatario = $request->departamento_destinatario;
+            $ciudad_destinatario = $request->ciudad_destinatario;
+        }
+        $Asunto = $request->Asunto;
+        $cuerpo_comunicado = $request->cuerpo_comunicado;
+        $empleador = $request->empleador;
+        $eps = $request->eps;
+        $afp = $request->afp;
+        $arl = $request->arl;
+        $jrci = $request->jrci;        
+        $cual = $request->cual;
+        if($cual == ''){
+            $cual = null;
+        }
+        $jnci = $request->jnci;
+        $anexos = $request->anexos;
+        $elaboro = $request->elaboro;
+        $reviso = $request->reviso;
+        $firmar = $request->firmar;
+        $ciudad = $request->ciudad;
+        $f_correspondencia = $request->f_correspondencia;
+        $radicado = $request->radicado;
+        $bandera_correspondecia_guardar_actualizar = $request->bandera_correspondecia_guardar_actualizar;
+
+        if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
+            $datos_correspondencia = [
+                'ID_evento' => $newId_evento,
+                'Id_proceso' => $Id_proceso,
+                'Id_Asignacion' => $newId_asignacion,
+                'Visar' => 'No',
+                'Profesional_comite' => null,
+                'F_visado_comite' => null,
+                'Destinatario_principal' => $destinatario_principal,
+                'Otro_destinatario' => $otrodestinariop,
+                'Tipo_destinatario' => $tipo_destinatario_principal,
+                'Nombre_dest_principal' => $nombre_destinatariopri,
+                'Nombre_dest_principal_afi_empl' => $Nombre_dest_principal_afi_empl,
+                'Nombre_destinatario' => $nombre_destinatario,
+                'Nit_cc' => $nitcc_destinatario,
+                'Direccion_destinatario' => $direccion_destinatario,
+                'Telefono_destinatario' => $telefono_destinatario,
+                'Email_destinatario' => $email_destinatario,
+                'Departamento_destinatario' => $departamento_destinatario,
+                'Ciudad_destinatario' => $ciudad_destinatario,
+                'Asunto' => $Asunto,
+                'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Copia_empleador' => $empleador,
+                'Copia_eps' => $eps,
+                'Copia_afp' => $afp,
+                'Copia_arl' => $arl,
+                'Copia_jr' => $jrci,
+                'Cual_jr' => $cual,
+                'Copia_jn' => $jnci,
+                'Anexos' => $anexos,
+                'Elaboro' => $elaboro,
+                'Reviso' => $reviso,
+                'Firmar' => $firmar,
+                'Ciudad' => $ciudad,
+                'F_correspondecia' => $f_correspondencia,
+                'N_radicado' => $radicado,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date
+            ];
+    
+            sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+            ->insert($datos_correspondencia);       
+    
+            $datos_info_comunicado_eventos = [
+                'ID_Evento' => $newId_evento,
+                'Id_proceso' => $Id_proceso,
+                'Id_Asignacion' => $newId_asignacion,
+                'Ciudad' => $ciudad,
+                'F_comunicado' => $date,
+                'N_radicado' => $radicado,
+                'Cliente' => 'N/A',
+                'Nombre_afiliado' => $destinatario_principal,
+                'T_documento' => 'N/A',
+                'N_identificacion' => 'N/A',
+                'Destinatario' => 'N/A',
+                'Nombre_destinatario' => 'N/A',
+                'Nit_cc' => 'N/A',
+                'Direccion_destinatario' => 'N/A',
+                'Telefono_destinatario' => '001',
+                'Email_destinatario' => 'N/A',
+                'Id_departamento' => '001',
+                'Id_municipio' => '001',
+                'Asunto'=> $Asunto,
+                'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Forma_envio' => '0',
+                'Elaboro' => $elaboro,
+                'Reviso' => $reviso,
+                'Anexos' => $anexos,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];
+    
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+    
+            $mensajes = array(
+                "parametro" => 'insertar_correspondencia',
+                "mensaje" => 'Correspondencia guardada satisfactoriamente.'
+            );
+    
+            return json_decode(json_encode($mensajes, true));
+            
+        } 
+        elseif($bandera_correspondecia_guardar_actualizar == 'Actualizar') {
+            $datos_correspondencia = [
+                'Destinatario_principal' => $destinatario_principal,
+                'Otro_destinatario' => $otrodestinariop,
+                'Tipo_destinatario' => $tipo_destinatario_principal,
+                'Nombre_dest_principal' => $nombre_destinatariopri,
+                'Nombre_dest_principal_afi_empl' => $Nombre_dest_principal_afi_empl,
+                'Nombre_destinatario' => $nombre_destinatario,
+                'Nit_cc' => $nitcc_destinatario,
+                'Direccion_destinatario' => $direccion_destinatario,
+                'Telefono_destinatario' => $telefono_destinatario,
+                'Email_destinatario' => $email_destinatario,
+                'Departamento_destinatario' => $departamento_destinatario,
+                'Ciudad_destinatario' => $ciudad_destinatario,
+                'Asunto' => $Asunto,
+                'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Copia_empleador' => $empleador,
+                'Copia_eps' => $eps,
+                'Copia_afp' => $afp,
+                'Copia_arl' => $arl,
+                'Copia_jr' => $jrci,
+                'Cual_jr' => $cual,
+                'Copia_jn' => $jnci,
+                'Anexos' => $anexos,
+                'Elaboro' => $elaboro,
+                'Reviso' => $reviso,
+                'Firmar' => $firmar,
+                'Ciudad' => $ciudad,
+                'F_correspondecia' => $f_correspondencia,
+                'N_radicado' => $radicado,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date
+            ];
+    
+            sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento',$newId_evento],
+                ['Id_Asignacion',$newId_asignacion]
+            ])->update($datos_correspondencia);       
+    
+            $mensajes = array(
+                "parametro" => 'actualizar_correspondencia',
+                "mensaje" => 'Correspondencia actualizada satisfactoriamente.'
+            );
+    
+            return json_decode(json_encode($mensajes, true));
+        }
+        
+
+    }
 }

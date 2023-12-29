@@ -45,6 +45,7 @@ class sigmel_informacion_decreto_eventos extends Model
     'Requiere_tercera_persona_decisiones',
     'Requiere_dispositivo_apoyo',
     'Justificacion_dependencia',
+    'N_radicado',
     'Estado_decreto',
     'Nombre_usuario',
     'F_registro',
