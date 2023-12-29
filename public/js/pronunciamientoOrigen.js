@@ -47,6 +47,18 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    $(".tipo_entidad").select2({
+        width: '100%',
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".nombre_entidad").select2({
+        width: '100%',
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
     // llenado de selectores
     let token = $('input[name=_token]').val();
 
@@ -210,8 +222,115 @@ $(document).ready(function(){
             }
         }
     });
-    /* VALIDACIÓN MOSTRAR FECHA EVENTO DE ACUERDO A TIPO EVENTO  */ 
 
+    // Validación checkbox destinatario principal
+    $("#destinatario_principal").change(function(){
+        if ($(this).is(':checked')) {
+            $(".columna_tipo_entidad").removeClass('d-none');
+            $(".columna_tipo_entidad").slideDown('slow');
+
+            $(".columna_nombre_entidad").removeClass('d-none');
+            $(".columna_nombre_entidad").slideDown('slow');
+        }else{
+            $(".columna_tipo_entidad").addClass('d-none');
+            $(".columna_tipo_entidad").slideUp('slow');
+
+            $(".columna_nombre_entidad").addClass('d-none');
+            $(".columna_nombre_entidad").slideUp('slow');
+
+            $('#nombre_entidad').empty();
+            $('#nombre_entidad').append('<option></option>');
+
+        }
+    });
+
+    // validación dato bd del check destinatario principal para mostrar los selectores de entidad y nombre de entidad
+    if ($("#bd_checkbox_destinatario_principal").val() == "Si" ) {
+        $(".columna_tipo_entidad").removeClass('d-none');
+        $(".columna_tipo_entidad").slideDown('slow');
+        $(".columna_nombre_entidad").removeClass('d-none');
+        $(".columna_nombre_entidad").slideDown('slow');
+    } else {
+        $(".columna_tipo_entidad").addClass('d-none');
+        $(".columna_tipo_entidad").slideUp('slow');
+        $(".columna_nombre_entidad").addClass('d-none');
+        $(".columna_nombre_entidad").slideUp('slow');
+    }
+
+    // listado de tipos de entidad
+    let datos_lista_tipo_entidad = {
+        '_token': token,
+        'parametro':"lista_tipo_entidad"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/selectoresPronunciamientoOrigen',
+        data: datos_lista_tipo_entidad,
+        success:function(data) {
+            //console.log(data);
+            $('#tipo_entidad').empty();
+            $('#tipo_entidad').append('<option></option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if($("#bd_tipo_entidad").val() != '' && data[claves[i]]["Id_Entidad"] == $("#bd_tipo_entidad").val()){
+                    $('#tipo_entidad').append('<option value="'+data[claves[i]]["Id_Entidad"]+'" selected>'+data[claves[i]]["Tipo_Entidad"]+'</option>');
+                }else{
+                    $('#tipo_entidad').append('<option value="'+data[claves[i]]["Id_Entidad"]+'">'+data[claves[i]]["Tipo_Entidad"]+'</option>');
+                }
+            }
+        }
+    });
+
+    // Listado de nombre de entidades dependiendo del tipo de entidad
+    if ($("#bd_tipo_entidad").val() != "") {
+        let datos_nombre_entidad = {
+            '_token': token,
+            'parametro':"nombre_entidad",
+            'id_tipo_entidad': $("#bd_tipo_entidad").val()
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/selectoresPronunciamientoOrigen',
+            data: datos_nombre_entidad,
+            success:function(data) {
+                //console.log(data);
+                $('#nombre_entidad').empty();
+                $('#nombre_entidad').append('<option></option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    if($("#bd_nombre_entidad").val() != '' && data[claves[i]]["Id_Entidad"] == $("#bd_nombre_entidad").val()){
+                        $('#nombre_entidad').append('<option value="'+data[claves[i]]["Id_Entidad"]+'" selected>'+data[claves[i]]["Nombre_entidad"]+'</option>');
+                    }else{
+                        $('#nombre_entidad').append('<option value="'+data[claves[i]]["Id_Entidad"]+'">'+data[claves[i]]["Nombre_entidad"]+'</option>');
+                    }
+                }
+            }
+        });
+    };
+
+    $('#tipo_entidad').change(function(){
+        let datos_nombre_entidad = {
+            '_token': token,
+            'parametro':"nombre_entidad",
+            'id_tipo_entidad': $(this).val()
+        };
+        $.ajax({
+            type:'POST',
+            url:'/selectoresPronunciamientoOrigen',
+            data: datos_nombre_entidad,
+            success:function(data) {
+                $('#nombre_entidad').empty();
+                $('#nombre_entidad').append('<option></option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $('#nombre_entidad').append('<option value="'+data[claves[i]]["Id_Entidad"]+'">'+data[claves[i]]["Nombre_entidad"]+'</option>');
+                }
+            }
+        });
+    });
+
+    /* VALIDACIÓN MOSTRAR FECHA EVENTO DE ACUERDO A TIPO EVENTO  */ 
     $('#tipo_evento').change(function () {
         var valorSeleccionado = $(this).val();
         if (valorSeleccionado != 2) {
@@ -381,6 +500,9 @@ $(document).ready(function(){
         formData.append('decision_pr', $("[id^='di_']").filter(":checked").val());
         formData.append('asunto_cali', $('#asunto_cali').val());
         formData.append('sustenta_cali', $('#sustenta_cali').val());
+        formData.append('destinatario_principal', $('#destinatario_principal').filter(":checked").val());
+        formData.append('tipo_entidad', $("#tipo_entidad").val());
+        formData.append('nombre_entidad', $("#nombre_entidad").val());
         formData.append('copia_afiliado', $('#copia_afiliado').filter(":checked").val());
         formData.append('copia_empleador', $('#copia_empleador').filter(":checked").val());
         formData.append('copia_eps', $('#copia_eps').filter(":checked").val());

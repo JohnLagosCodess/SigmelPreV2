@@ -390,6 +390,33 @@
                                 <h5>Correspondecia</h5>
                             </div>
                             <div class="card-body">
+                                <div class="row">
+                                    <div class="col-2">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="hidden" id="bd_checkbox_destinatario_principal" value="<?php if(!empty($info_pronuncia[0]->Destinatario_principal)){ echo $info_pronuncia[0]->Destinatario_principal;} ?>">
+                                                <input class="custom-control-input" type="checkbox" id="destinatario_principal" name="destinatario_principal" value="Si" @if (!empty($info_pronuncia[0]->Destinatario_principal) && $info_pronuncia[0]->Destinatario_principal=='Si') checked @endif>
+                                                <label for="destinatario_principal" class="custom-control-label">Destinatario Principal</label>                 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="columna_tipo_entidad form-group" style="display:none">
+                                            <label for="" class="col-form-label">Entidad</label>
+                                            <input type="hidden" id="bd_tipo_entidad" value="<?php if(!empty($info_pronuncia[0]->Tipo_entidad)){ echo $info_pronuncia[0]->Tipo_entidad;} ?>">
+                                            <select class="custom-select tipo_entidad" name="tipo_entidad" id="tipo_entidad">
+                                                <option></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="columna_nombre_entidad form-group" style="display:none">
+                                            <label for="" class="col-form-label">Nombre Entidad</label>
+                                            <input type="hidden" id="bd_nombre_entidad" value="<?php if(!empty($info_pronuncia[0]->Nombre_entidad)){ echo $info_pronuncia[0]->Nombre_entidad;} ?>">
+                                            <select class="custom-select nombre_entidad" name="nombre_entidad" id="nombre_entidad"></select>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="row text-center">
                                     <div class="col-12">
                                         <div class="form-group">
