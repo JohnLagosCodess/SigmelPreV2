@@ -23,6 +23,7 @@ class sigmel_informacion_adiciones_dx_eventos extends Model
         'Otros_relacion_documentos',
         'Sustentacion_Adicion_Dx',
         'Origen',
+        'N_radicado',
         'Nombre_usuario',
         'F_registro'
     ];

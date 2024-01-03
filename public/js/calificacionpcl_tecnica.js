@@ -426,7 +426,6 @@ $(document).ready(function(){
             '.columna_row1_interconsulta',
             '.columna_row1_motivo_cali',
             '.columna_row1_deficiencia',
-            '.columna_row1_comite_interdisciplinario',
             '.columna_row1_dictamen'
         ];
         
@@ -3002,12 +3001,19 @@ $(document).ready(function(){
         $('#div_cual').slideDown('slow');        
     }
 
-    // validar numero de radicado
+    // validar asunto
 
-    var radicadocorrespondencia = $("#radicado").val();
-    if (radicadocorrespondencia !== '') {
+    var asuntocorrespondencia = $("#Asunto").val();
+    if (asuntocorrespondencia !== '') {
         $("#div_correspondecia").addClass('d-none');
     }
+
+    // Habilitar formulario de correspondencia
+
+    var editar_correspondencia = $('#editar_correspondencia');
+        editar_correspondencia.click(function(){
+        $("#div_correspondecia").removeClass('d-none');
+    });
 
     //Captura Formulario Correspondencia
     $('#form_correspondencia').submit(function (e){

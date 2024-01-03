@@ -21,7 +21,9 @@ use App\Models\sigmel_informacion_diagnosticos_eventos;
 use App\Models\sigmel_informacion_adiciones_dx_eventos;
 use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
 use App\Models\sigmel_informacion_comunicado_eventos;
+use App\Models\sigmel_informacion_entidades;
 use App\Models\sigmel_lista_regional_juntas;
+use App\Models\sigmel_lista_solicitantes;
 
 class AdicionDxDTO extends Controller
 {
@@ -316,13 +318,15 @@ class AdicionDxDTO extends Controller
             $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted;
         }
         
+        $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$Id_evento], ['Id_Asignacion',$Id_asignacion], ['T_documento','N/A']])->get(); 
 
         return view('coordinador.adicionDxDtoOrigen', compact('user', 'datos_bd_DTO_ATEL', 'bandera_hay_dto', 'array_datos_calificacion_origen', 
         'bandera_tipo_evento', 'nombre_del_evento_guardado', 'numero_consecutivo', 'motivo_solicitud_actual',
         'datos_apoderado_actual', 'array_datos_info_laboral', 'nombre_tipo_accidente','nombre_grado_severidad',
         'nombre_factor_riesgo','nombre_tipo_lesion','nombre_parte_cuerpo_afectada',
         'listado_documentos_solicitados', 'dato_articulo_12', 'array_datos_examenes_interconsultas',
-        'array_datos_diagnostico_motcalifi', 'info_adicion_dx', 'array_datos_diagnostico_adicionales','array_comite_interdisciplinario', 'consecutivo'));
+        'array_datos_diagnostico_motcalifi', 'info_adicion_dx', 'array_datos_diagnostico_adicionales','array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia'));
     }
 
     public function cargueListadoSelectoresAdicionDx(Request $request){
@@ -458,6 +462,41 @@ class AdicionDxDTO extends Controller
             ->get();
             $info_origen_vali_3 = json_decode(json_encode($listado_origen_vali_3, true));
             return response()->json($info_origen_vali_3);
+        }
+
+        // listado destinatario
+        if($parametro == 'listado_destinatarios'){
+            $listado_solicitante = sigmel_lista_solicitantes::on('sigmel_gestiones')
+                ->select('Id_solicitante', 'Solicitante')
+                ->whereIn('Solicitante', ['ARL','AFP','EPS','Afiliado','Empleador','Otro'])
+                ->groupBy('Id_solicitante','Solicitante')
+                ->get();
+
+            $info_listado_solicitante = json_decode(json_encode($listado_solicitante, true));
+            return response()->json(($info_listado_solicitante));
+        }
+
+        // listaoo nombre de destinatario
+        if($parametro == "nombre_destinatariopri"){
+            /* $listado_nombre_solicitante = sigmel_lista_solicitantes::on('sigmel_gestiones')
+            ->select('Id_Nombre_solicitante', 'Nombre_solicitante')
+            ->where([
+                ['Id_solicitante', '=', $request->id_solicitante],
+                ['Estado', '=', 'activo']
+            ])
+            ->get(); */
+
+            $listado_nombre_solicitante = sigmel_informacion_entidades::on('sigmel_gestiones')
+            ->select('Id_Entidad as Id_Nombre_solicitante', 'Nombre_entidad as Nombre_solicitante')
+            ->where([
+                ['IdTipo_entidad', '=', $request->id_solicitante],
+                ['Estado_entidad', '=', 'activo']
+            ])
+            ->get();
+
+
+            $info_listado_nombre_solicitante = json_decode(json_encode($listado_nombre_solicitante, true));
+            return response()->json(($info_listado_nombre_solicitante));
         }
 
         //Lista juntas regional
@@ -622,6 +661,7 @@ class AdicionDxDTO extends Controller
                 'Otros_relacion_documentos' => $request->Otros_relacion_documentos,
                 'Sustentacion_Adicion_Dx' => $request->Sustentacion_Adicion_Dx,
                 'Origen' => $request->Origen,
+                'N_radicado' => $request->radicado_dictamen,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date
             ];
@@ -632,6 +672,36 @@ class AdicionDxDTO extends Controller
 
         if ($Id_Adiciones_Dx == "") {
             sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')->insert($datos_formulario);
+            $datos_info_comunicado_eventos = [
+                'ID_Evento' => $request->ID_Evento,
+                'Id_proceso' => $request->Id_proceso,
+                'Id_Asignacion' => $request->Id_Asignacion,
+                'Ciudad' => 'N/A',
+                'F_comunicado' => $date,
+                'N_radicado' => $request->radicado_dictamen,
+                'Cliente' => 'N/A',
+                'Nombre_afiliado' => 'N/A',
+                'T_documento' => 'N/A',
+                'N_identificacion' => 'N/A',
+                'Destinatario' => 'N/A',
+                'Nombre_destinatario' => 'N/A',
+                'Nit_cc' => 'N/A',
+                'Direccion_destinatario' => 'N/A',
+                'Telefono_destinatario' => '001',
+                'Email_destinatario' => 'N/A',
+                'Id_departamento' => '001',
+                'Id_municipio' => '001',
+                'Asunto'=> 'N/A',
+                'Cuerpo_comunicado' => 'N/A',
+                'Forma_envio' => '0',
+                'Elaboro' => $nombre_usuario,
+                'Reviso' => 'N/A',
+                'Anexos' => 'N/A',
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];
+    
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
             $mensaje = 'Información guardada satisfactoriamente.';
         } else {
             sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')
@@ -695,7 +765,41 @@ class AdicionDxDTO extends Controller
         $Id_Evento = $request->Id_Evento;
         $Id_Proceso_adicion_dx = $request->Id_Proceso_adicion_dx;
         $Id_Asignacion_adicion_dx = $request->Id_Asignacion_adicion_dx;
+        $oficiopcl = $request->oficiopcl;
+        $oficioinca = $request->oficioinca;
+        if ($oficiopcl == '') {
+            $oficiopcl = 'No';
+        }
+        if($oficioinca == ''){
+            $oficioinca = 'No';
+        }
         $destinatario_principal = $request->destinatario_principal;
+        $otrodestinariop = $request->otrodestinariop;
+        $tipo_destinatario_principal = $request->tipo_destinatario_principal;
+        $nombre_destinatariopri = $request->nombre_destinatariopri;
+        $Nombre_dest_principal_afi_empl = $request->Nombre_dest_principal_afi_empl;
+        if ($tipo_destinatario_principal == '') {
+            $tipo_destinatario_principal = null;
+            $nombre_destinatariopri = null;
+            $Nombre_dest_principal_afi_empl = null;
+        }
+        if($tipo_destinatario_principal != 8){
+            $nombre_destinatario = null;
+            $nitcc_destinatario = null;
+            $direccion_destinatario = null;
+            $telefono_destinatario = null;
+            $email_destinatario = null;
+            $departamento_destinatario = null;
+            $ciudad_destinatario = null;
+        }else{
+            $nombre_destinatario = $request->nombre_destinatario;
+            $nitcc_destinatario = $request->nitcc_destinatario;
+            $direccion_destinatario = $request->direccion_destinatario;
+            $telefono_destinatario = $request->telefono_destinatario;
+            $email_destinatario = $request->email_destinatario;
+            $departamento_destinatario = $request->departamento_destinatario;
+            $ciudad_destinatario = $request->ciudad_destinatario;
+        }
         $Asunto = $request->Asunto;
         $cuerpo_comunicado = $request->cuerpo_comunicado;
         $empleador = $request->empleador;
@@ -719,7 +823,20 @@ class AdicionDxDTO extends Controller
 
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
+                'Oficio_pcl' => $oficiopcl,
+                'Oficio_incapacidad' => $oficioinca,
                 'Destinatario_principal' => $destinatario_principal,
+                'Otro_destinatario' => $otrodestinariop,
+                'Tipo_destinatario' => $tipo_destinatario_principal,
+                'Nombre_dest_principal' => $nombre_destinatariopri,
+                'Nombre_dest_principal_afi_empl' => $Nombre_dest_principal_afi_empl,
+                'Nombre_destinatario' => $nombre_destinatario,
+                'Nit_cc' => $nitcc_destinatario,
+                'Direccion_destinatario' => $direccion_destinatario,
+                'Telefono_destinatario' => $telefono_destinatario,
+                'Email_destinatario' => $email_destinatario,
+                'Departamento_destinatario' => $departamento_destinatario,
+                'Ciudad_destinatario' => $ciudad_destinatario,
                 'Asunto' => $Asunto,
                 'Cuerpo_comunicado' => $cuerpo_comunicado,
                 'Copia_empleador' => $empleador,
@@ -787,7 +904,20 @@ class AdicionDxDTO extends Controller
         } 
         elseif($bandera_correspondecia_guardar_actualizar == 'Actualizar') {
             $datos_correspondencia = [
+                'Oficio_pcl' => $oficiopcl,
+                'Oficio_incapacidad' => $oficioinca,
                 'Destinatario_principal' => $destinatario_principal,
+                'Otro_destinatario' => $otrodestinariop,
+                'Tipo_destinatario' => $tipo_destinatario_principal,
+                'Nombre_dest_principal' => $nombre_destinatariopri,
+                'Nombre_dest_principal_afi_empl' => $Nombre_dest_principal_afi_empl,
+                'Nombre_destinatario' => $nombre_destinatario,
+                'Nit_cc' => $nitcc_destinatario,
+                'Direccion_destinatario' => $direccion_destinatario,
+                'Telefono_destinatario' => $telefono_destinatario,
+                'Email_destinatario' => $email_destinatario,
+                'Departamento_destinatario' => $departamento_destinatario,
+                'Ciudad_destinatario' => $ciudad_destinatario,
                 'Asunto' => $Asunto,
                 'Cuerpo_comunicado' => $cuerpo_comunicado,
                 'Copia_empleador' => $empleador,

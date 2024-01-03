@@ -39,6 +39,7 @@ class sigmel_informacion_dto_atel_eventos extends Model
         'Otros_relacion_documentos',
         'Sustentacion',
         'Origen',
+        'N_radicado',
         'Nombre_usuario',
         'F_registro'
     ];

@@ -824,6 +824,11 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="form-group">
+                                                @if(!empty($datos_bd_DTO_ATEL[0]->N_radicado))    
+                                                    <input type="hidden" class="form-control" name="radicado_dictamen" id="radicado_dictamen" value="{{$datos_bd_DTO_ATEL[0]->N_radicado}}" disabled>                                                
+                                                @else
+                                                    <input type="hidden" class="form-control" name="radicado_dictamen" id="radicado_dictamen" value="{{$consecutivo}}" disabled> 
+                                                @endif
                                                 <label for="sustentacion_califi_origen" class="col-form-label">Sustentación <span style="color:red;">(*)</span></label>
                                                 <textarea class="form-control sustentacion_califi_origen" name="sustentacion_califi_origen" id="sustentacion_califi_origen" rows="2" required><?php if(!empty($datos_bd_DTO_ATEL[0]->Sustentacion)){echo $datos_bd_DTO_ATEL[0]->Sustentacion;}?></textarea>
                                             </div>
@@ -865,7 +870,7 @@
         </form>
         <div class="card-body">
             <!-- Comite Interdisciplinario -->                    
-            <div class="card-info">
+            <div class="card-info d-none" id="div_comite_interdisciplinario">
                 <div class="card-header text-center" style="border: 1.5px solid black;">
                     <h5>Comité Interdiciplinario</h5>
                 </div>
@@ -929,11 +934,152 @@
                         <div class="row">
                             <div class="col-3">
                                 <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        @if (!empty($array_comite_interdisciplinario[0]->Oficio_pcl) && $array_comite_interdisciplinario[0]->Oficio_pcl == 'Si')
+                                            <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si" checked>
+                                        @else
+                                            <input class="custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si">                                                    
+                                        @endif
+                                        <label for="oficiopcl" class="custom-control-label">Oficio PCL</label>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        @if (!empty($array_comite_interdisciplinario[0]->Oficio_incapacidad) && $array_comite_interdisciplinario[0]->Oficio_incapacidad == 'Si')
+                                            <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" checked>
+                                        @else
+                                            <input class="custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si">                                                    
+                                        @endif
+                                        <label for="oficioinca" class="custom-control-label">Oficio Incapacidad</label>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="form-group">
                                     <label for="destinatario_principal">Destinatario Principal</label>                                            
                                     <input type="text" class="form-control" name="destinatario_principal" id="destinatario_principal" value="{{$array_datos_calificacion_origen[0]->Nombre_afiliado}}" disabled>
                                 </div>
                             </div>
-                            <div class="col-9">
+                            <div class="col-3">
+                                <div class="form-group text-center">
+                                    <div class="custom-control custom-checkbox">
+                                        @if (!empty($array_comite_interdisciplinario[0]->Otro_destinatario))
+                                            <input class="dependencia_justificacion custom-control-input" type="checkbox" id="otrodestinariop" name="otrodestinariop" value="Si" checked>
+                                        @else
+                                            <input class="custom-control-input" type="checkbox" id="otrodestinariop" name="otrodestinariop" value="Si">                                                    
+                                        @endif
+                                        <label for="otrodestinariop" class="custom-control-label">Otro Destinatario Principal</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3" id=div_tipo_destinatario_principal>
+                                <div class="form-group">
+                                    <label for="tipo_destinatario_principal">Tipo Destinatario Principal<span style="color: red;">(*)</span></label>
+                                    <input type="hidden" id="db_tipo_destinatario_principal" value="<?php if(!empty($array_comite_interdisciplinario[0]->Tipo_destinatario)){ echo $array_comite_interdisciplinario[0]->Tipo_destinatario;}?>">                                                
+                                    <select class="tipo_destinatario_principal custom-select" name="tipo_destinatario_principal" id="tipo_destinatario_principal" style="width: 100%">                                                    
+                                    </select>                                                
+                                </div>
+                            </div>
+                            <div class="col-3" id="div_nombre_destinatariopri">
+                                <div class="form-group">
+                                    <label for="nombre_destinatariopri">Nombre del destinatario principal<span style="color: red;">(*)</span></label>
+                                    <input type="hidden" id="db_nombre_destinatariopri" value="<?php if(!empty($array_comite_interdisciplinario[0]->Nombre_dest_principal)){ echo $array_comite_interdisciplinario[0]->Nombre_dest_principal;}?>">                                                                                                
+                                    <select class="nombre_destinatariopri custom-select" name="nombre_destinatariopri" id="nombre_destinatariopri" style="width: 100%">                                                    
+                                    </select>                                                
+                                </div>      
+                            </div>
+                            <div class="col-3" id="div_nombre_destinatariopri_afi_">
+                                <div class="form-group">
+                                    <label for="nombre_destinatario_afi">Nombre del destinatario principal<span style="color: red;">(*)</span></label>
+                                    <input type="text" class="form-control" name="nombre_destinatario_afi" id="nombre_destinatario_afi" value="{{$array_datos_calificacion_origen[0]->Nombre_afiliado}}" disabled>
+                                </div>      
+                            </div>
+                            <div class="col-3" id="div_nombre_destinatariopri_empl">
+                                <div class="form-group">
+                                    <label for="nombre_destinatario_emp">Nombre del destinatario principal<span style="color: red;">(*)</span></label>
+                                    <input type="text" class="form-control" name="nombre_destinatario_emp" id="nombre_destinatario_emp" value="{{$array_datos_calificacion_origen[0]->Empleador_afi}}" disabled>
+                                </div>      
+                            </div>
+                        </div>
+                        <div class="row" id="div_datos_otro_destinatario">
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="nombre_destinatario">Nombre destinatario</label>
+                                    @if(!empty($array_comite_interdisciplinario[0]->Nombre_destinatario))
+                                        <input type="text" class="form-control" name="nombre_destinatario" id="nombre_destinatario" value="{{$array_comite_interdisciplinario[0]->Nombre_destinatario}}" >                                                
+                                    @else
+                                        <input type="text" class="form-control" name="nombre_destinatario" id="nombre_destinatario" >                                                
+                                    @endif
+                                </div>      
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="nitcc_destinatario">NIT / CC</label>
+                                    @if(!empty($array_comite_interdisciplinario[0]->Nit_cc))
+                                        <input type="text" class="form-control" name="nitcc_destinatario" id="nitcc_destinatario" value="{{$array_comite_interdisciplinario[0]->Nit_cc}}" >                                                
+                                    @else
+                                        <input type="text" class="form-control" name="nitcc_destinatario" id="nitcc_destinatario" >                                                
+                                    @endif
+                                </div>      
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="direccion_destinatario">Dirección destinatario</label>
+                                    @if(!empty($array_comite_interdisciplinario[0]->Direccion_destinatario))
+                                        <input type="text" class="form-control" name="direccion_destinatario" id="direccion_destinatario" value="{{$array_comite_interdisciplinario[0]->Direccion_destinatario}}" >                                                
+                                    @else
+                                        <input type="text" class="form-control" name="direccion_destinatario" id="direccion_destinatario" >                                                
+                                    @endif
+                                </div>      
+                            </div>                                    
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="telefono_destinatario">Teléfono destinatario</label>
+                                    @if(!empty($array_comite_interdisciplinario[0]->Telefono_destinatario))
+                                        <input type="text" class="form-control" name="telefono_destinatario" id="telefono_destinatario" value="{{$array_comite_interdisciplinario[0]->Telefono_destinatario}}" >                                                
+                                    @else
+                                        <input type="text" class="form-control" name="telefono_destinatario" id="telefono_destinatario" >                                                
+                                    @endif
+                                </div>      
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="email_destinatario">E-mail destinatario</label>
+                                    @if(!empty($array_comite_interdisciplinario[0]->Email_destinatario))                                                    
+                                        <input type="email" class="form-control" name="email_destinatario" id="email_destinatario" value="{{$array_comite_interdisciplinario[0]->Email_destinatario}}" >                                                
+                                    @else
+                                        <input type="email" class="form-control" name="email_destinatario" id="email_destinatario" >                                                
+                                    @endif
+                                </div>      
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="departamento_destinatario">Departamento</label>
+                                    @if(!empty($array_comite_interdisciplinario[0]->Departamento_destinatario))
+                                        <input type="text" class="form-control" name="departamento_destinatario" id="departamento_destinatario" value="{{$array_comite_interdisciplinario[0]->Departamento_destinatario}}" >                                                
+                                    @else
+                                        <input type="text" class="form-control" name="departamento_destinatario" id="departamento_destinatario" >                                                
+                                    @endif
+                                </div>      
+                            </div>                                        
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="ciudad_destinatario">Ciudad</label>
+                                    @if(!empty($array_comite_interdisciplinario[0]->Ciudad_destinatario))
+                                        <input type="text" class="form-control" name="ciudad_destinatario" id="ciudad_destinatario" value="{{$array_comite_interdisciplinario[0]->Ciudad_destinatario}}" >                                                
+                                    @else
+                                        <input type="text" class="form-control" name="ciudad_destinatario" id="ciudad_destinatario" >                                                
+                                    @endif
+                                </div>      
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
                                 <div class="form-group">
                                     <label for="Asunto">Asunto<span style="color: red;">(*)</label>
                                     @if(!empty($array_comite_interdisciplinario[0]->Asunto))
@@ -1178,7 +1324,55 @@
                         <input type="submit" class="btn btn-outline-danger" value="GENERAR">
                     </div>
                 </form>
-            </div>              
+            </div>
+            <!-- Comunicados - Dictamen y Oficio remisorio -->                    
+            <div class="card-info d-none" id="div_comunicado_dictamen_oficioremisorio">
+                <div class="card-header text-center" style="border: 1.5px solid black;">
+                    <h5>Comunicados</h5>
+                </div>
+                <form id="form_comunicado_dictamen_oficioremisorio" action="POST">                            
+                    <div class="card-body">
+                        <div class="row">  
+                            <div class="col-12">
+                                <div class="form-group">                                            
+                                    <div class="table-responsive">
+                                        <table id="listado_comunicados_clpcl" class="table table-striped table-bordered" width="100%">
+                                            <thead>
+                                                <tr class="bg-info">
+                                                    <th>N° de Radicado</th>
+                                                    <th>Elaboró</th>
+                                                    <th>Fecha de comunicado</th>
+                                                    <th>Acción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($array_comunicados_correspondencia as $comunicados)
+                                                <tr>
+                                                    <td>{{$comunicados->N_radicado}}</td>
+                                                    <td>{{$comunicados->Elaboro}}</td>
+                                                    <td>{{$comunicados->F_comunicado}}</td>     
+                                                    @if ($comunicados->Ciudad == 'N/A')
+                                                        <td>
+                                                            <i class="far fa-eye text-info"></i>
+                                                        </td>                                                                
+                                                    @else
+                                                        <td>
+                                                            <i class="far fa-eye text-info"></i>
+                                                            <label for="editar_correspondencia"><i class="fa fa-pen text-info"></i></label>
+                                                            <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia" type="button" style="font-weight: bold;">
+                                                        </td>
+                                                    @endif
+                                                </tr>                                                        
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>                     
+                        </div>                                                                
+                    </div>
+                </form>
+            </div>               
         </div>
     </div>
     {{-- Retornar al modulo de calificacionOrigen --}}
