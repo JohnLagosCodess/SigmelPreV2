@@ -7484,7 +7484,8 @@
                                                             @else
                                                                 <td>
                                                                     <i class="far fa-eye text-info"></i>
-                                                                    <i class="fa fa-pen text-info"></i>
+                                                                    <label for="editar_correspondencia"><i class="fa fa-pen text-info"></i></label>
+                                                                    <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia" type="button" style="font-weight: bold;">
                                                                 </td>
                                                             @endif
                                                         </tr>                                                        

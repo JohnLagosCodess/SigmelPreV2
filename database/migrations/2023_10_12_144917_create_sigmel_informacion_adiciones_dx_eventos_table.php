@@ -23,6 +23,7 @@ return new class extends Migration
             $table->text('Otros_relacion_documentos')->nullable();
             $table->text('Sustentacion_Adicion_Dx');
             $table->integer('Origen');
+            $table->text('N_radicado')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

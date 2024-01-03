@@ -1223,8 +1223,7 @@ class CalificacionPCLController extends Controller
             $Agregar_copias['Afiliado'] = $afiliadoEmail;            
         } 
         
-        if(isset($edit_copia_empleador)) {
-            echo 'esta aqui';
+        if(isset($edit_copia_empleador)) {            
             $nomb_email_Empleador = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
             ->select('Empresa', 'Email')
             ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
@@ -4016,8 +4015,6 @@ class CalificacionPCLController extends Controller
     
             return json_decode(json_encode($mensajes, true));
         }
-        
-
     }
 
     // Dictame Pericial
@@ -4124,7 +4121,6 @@ class CalificacionPCLController extends Controller
             $datos_dictamenPericial =[
                 'Suma_combinada' => $suma_combinada,
                 'Total_Deficiencia50' => $Total_Deficiencia50,
-                'N_radicado'=> $radicado_dictamen,
                 'Porcentaje_pcl' => $porcentaje_pcl,
                 'Rango_pcl' => $rango_pcl,
                 'Monto_indemnizacion' => $monto_inde,
@@ -4141,6 +4137,7 @@ class CalificacionPCLController extends Controller
                 'Requiere_tercera_persona_decisiones' => $requiere_decisiones_persona,
                 'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
                 'Justificacion_dependencia' => $justi_dependencia,
+                'N_radicado'=> $radicado_dictamen,
                 'Estado_decreto' => 'Cerrado',
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
