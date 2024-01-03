@@ -741,6 +741,10 @@ Route::post('/EnvioParametrizacionJuntas', [ParametrizacionController::class, 'E
 Route::post('/ActualizarParametrizacionJuntas', [ParametrizacionController::class, 'ActualizarParametrizacionJuntas']);
 
 
+/* DESCARGA DE PROFORMAS */
+/* Proforma Notificación DML ORIGEN ATEL */
+Route::post('/DescargaProformaDML', [DeterminacionOrigenATEL::class, 'DescargaProformaDML']);
+
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 

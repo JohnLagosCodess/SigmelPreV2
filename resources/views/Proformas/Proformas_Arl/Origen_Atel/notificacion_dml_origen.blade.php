@@ -44,9 +44,9 @@
             top:300px;
         }
         .logo_footer{
-                width: auto;
-                height: 150px;
-            }
+            width: auto;
+            height: 150px;
+        }
         .tabla_footer{
             width: 100%;
             font-family: sf-pro-display-black, sans-serif;
@@ -59,11 +59,11 @@
         .negrita{
             font-weight: bold;
         }
-        .cursiva{
-            font-family: 'Times New Roman';
+        .fuente_todo_texto{
+            font-family: Arial;
             /* font-size: 13.3px; */
             font-size: 15px;
-            font-style: italic;
+            /* font-style: italic; */
         }
         .tabla1{
             width: 80%;
@@ -137,33 +137,33 @@
             <tbody>
                 <tr>
                     <td>
-                        <p class="cursiva">{{$nombreCiudad}}, {{$fechaFormateada}}</p>
-                        <p class="cursiva" style="margin-top: 50px;"><span class="negrita">Señor (a):</span>
+                        <p class="fuente_todo_texto">{{$ciudad}}, {{$fecha}}</p>
+                        <p class="fuente_todo_texto" style="margin-top: 50px;"><span class="negrita">Señor (a):</span>
                             <br>
                             {{$nombre_afiliado}}
                         </p>
-                        <p class="cursiva"><span class="negrita">Correo:</span>
+                        {{-- <p class="fuente_todo_texto"><span class="negrita">Correo:</span>
                             <br>
                             {{$correo_afiliado}}
-                        </p>
-                        <p class="cursiva"><span class="negrita">Dirección:</span>
+                        </p> --}}
+                        <p class="fuente_todo_texto"><span class="negrita">Dirección:</span>
                             <br>
                             {{$direccion_afiliado}}
                         </p>
-                        <p class="cursiva"><span class="negrita">Teléfono:</span>
+                        <p class="fuente_todo_texto"><span class="negrita">Teléfono:</span>
                             <br>
                             {{$telefonos_afiliado}}
                         </p>
-                        <p class="cursiva"><span class="negrita">Ciudad:</span>
+                        <p class="fuente_todo_texto"><span class="negrita">Ciudad:</span>
                             <br>
                             {{$municipio_afiliado}} - {{$departamento_afiliado}}
                         </p>
                     </td>
                     <td>
                         <div class="cuadro">
-                            <p class="cursiva"><span class="negrita">Nro. Radicado 12345678</span></p>
-                            <p class="cursiva"><span class="negrita">Cc 1030651087</span></p>
-                            <p class="cursiva"><span class="negrita">Siniestro: 987456321</span></p>
+                            <p class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$nro_radicado}}</span></p>
+                            <p class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></p>
+                            <p class="fuente_todo_texto"><span class="negrita">Siniestro: {{$nro_siniestro}}</span></p>
                         </div>
                     </td>
                 </tr>
@@ -174,21 +174,21 @@
         <table class="tabla1">
             <tbody>
                 <tr>
-                    <td class="cursiva"><span class="negrita">Asunto:</span></td>
-                    <td class="cursiva"><span class="negrita">CALIFICACIÓN DE ORIGEN</span></td>
+                    <td class="fuente_todo_texto"><span class="negrita">Asunto:</span></td>
+                    <td class="fuente_todo_texto"><span class="negrita">CALIFICACIÓN DE ORIGEN</span></td>
                 </tr>
                 <tr>
-                    <td class="cursiva"><span class="negrita">Identificación</span></td>
-                    <td class="cursiva">{{$identificacion}}</td>
+                    <td class="fuente_todo_texto"><span class="negrita">Identificación</span></td>
+                    <td class="fuente_todo_texto">{{$identificacion}}</td>
                 </tr>
                 <tr>
-                    <td class="cursiva"><span class="negrita">Fecha del Siniestro</span></td>
-                    <td class="cursiva">{{$fecha_evento}}</td>
+                    <td class="fuente_todo_texto"><span class="negrita">Fecha del Siniestro</span></td>
+                    <td class="fuente_todo_texto">{{$fecha_evento}}</td>
                 </tr>
             </tbody>
         </table>
         <br><br>
-        <section class="cursiva">
+        <section class="fuente_todo_texto">
             Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.
             <br><br>
             De la manera más atenta queremos informar el resultado de la calificación realizada por el Grupo Interdisciplinario de Calificación de Origen y
@@ -202,38 +202,92 @@
                 @endforeach
             </ul>
         </section>
-        <section class="cursiva">
+        <section class="fuente_todo_texto">
             El dictamen de calificación del que anexó copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, de acuerdo al Decreto 0019  de 2012 artículo 142, en la Carrera 10 Nº 18 - 36 piso 4°, 
             Edificio José María Córdoba, Bogotá D.C. Favor informar en la carta el motivo de su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen.
             <br><br>
         </section>
-        <section class="cursiva">
+        <section class="fuente_todo_texto">
             Cualquier información adicional con gusto será atendida por el Auditor Técnico en el teléfono 7435333 Ext. 14626 en Bogotá.
         </section>
-        <br><br>
-        <section class="cursiva">
+        <br>
+        <section class="fuente_todo_texto">
             Cordialmente,
             <br><br>
             <div class="firma">
-                <img src="data:image/png;base64,{{ $imagenBase64_header }}" class="logo_header">
+                {{-- <img src="data:image/png;base64,{{ $imagenBase64_header }}" class="logo_header"> --}}
+                <?=$Firma_cliente?>
             </div>
-            <div class="cursiva">
+            <div class="fuente_todo_texto">
                 Dirección de Servicios Médicos de Seguridad Social
                 <br>
                 Convenio Codess Seguros de Vida  Alfa S.A
             </div>
         </section>
         <br>
-        <section class="cursiva">
+        <section class="fuente_todo_texto">
             <span class="negrita">Elboró:</span> {{$nombre_usuario}}
             <br><br>
-            Copia:
-            <br>
-            <div class="copias">
-
-            </div>
+            <table style="text-align: justify;">
+                @if (count($Agregar_copia) == 0)
+                    <tr>
+                        <td><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
+                    </tr>
+                @else
+                    <tr>
+                        <td class="justificado"><span class="negrita">Copia:</span></td>                            
+                    </tr>
+                    <?php 
+                        $Afiliado = 'Afiliado';
+                        $Empleador = 'Empleador';
+                        $EPS = 'EPS';
+                        $AFP = 'AFP';
+                        $ARL = 'ARL';
+                    ?>
+                    <?php 
+                        if (isset($Agregar_copia[$Empleador])) { ?>
+                            <tr>
+                                <td>
+                                    <span class="negrita">Empleador: </span><?=$Agregar_copia['Empleador'];?>
+                                </td>
+                            </tr>
+                        <?php       
+                        }
+                    ?>
+                    <?php 
+                        if (isset($Agregar_copia[$EPS])) { ?>
+                            <tr>
+                                <td class="copias">
+                                    <span class="negrita">EPS: </span><?=$Agregar_copia['EPS'];?>
+                                </td>
+                            </tr>
+                        <?php       
+                        }
+                    ?>
+                    <?php 
+                        if (isset($Agregar_copia[$AFP])) { ?>
+                            <tr>
+                                <td class="copias">
+                                    <span class="negrita">AFP: </span><?=$Agregar_copia['AFP'];?>
+                                </td>
+                            </tr>
+                        <?php       
+                        }
+                    ?>
+                    <?php 
+                        if (isset($Agregar_copia[$ARL])) { ?>
+                            <tr>
+                                <td class="copias">
+                                    <span class="negrita">ARL: </span><?=$Agregar_copia['ARL'];?>
+                                </td>
+                            </tr>
+                        <?php       
+                        }
+                    ?>
+                @endif
+            </table>
         </section>
-        <section class="cursiva" style="color: #828282;">
+        <section class="fuente_todo_texto" style="color: #828282;">
             <br>
             “Finalmente, reiteramos que en nuestra Compañía contamos con la mejor disposición para atender sus quejas y
             reclamos a través del defensor consumidor financiero, en la Av. Calle 26 No 59-15, local 6 y 7. Conmutador:

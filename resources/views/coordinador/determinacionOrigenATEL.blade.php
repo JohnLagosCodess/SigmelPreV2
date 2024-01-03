@@ -1135,7 +1135,7 @@
                                         <input type="submit" id="ActualizarCorrespondencia" name="ActualizarCorrespondencia" class="btn btn-info" value="Actualizar">
                                         <input hidden="hidden" type="text" id="bandera_correspondecia_guardar_actualizar" value="Actualizar">
                                     @endif                                         
-                                                                                                                             
+                                    
                                 </div>
                             </div>
                             <div id="div_alerta_Correspondencia" class="col-12 d-none">
@@ -1144,6 +1144,38 @@
                                 </div>
                             </div>
                         </div> 
+                    </div>
+                </form>
+                <form  id="Form_dml_origen_pdf" method="POST">
+                    @csrf
+                    <div class="d-none1">
+                        {{-- Nro Radicado --}}
+                        <input type="text" name="nro_radicado" id="nro_radicado" value="<?php if(!empty($array_comite_interdisciplinario[0]->N_radicado)){echo $array_comite_interdisciplinario[0]->N_radicado;}else{echo $consecutivo;}?>">
+                        {{-- Tipo de documento --}}
+                        <input type="text" name="tipo_identificacion" id="tipo_identificacion" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nombre_tipo_documento)){echo $array_datos_calificacion_origen[0]->Nombre_tipo_documento;}?>">
+                        {{-- Nro de documento --}}
+                        <input type="text" name="num_identificacion" id="num_identificacion" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nro_identificacion)){echo $array_datos_calificacion_origen[0]->Nro_identificacion;}?>">
+                        {{-- Siniestro --}}
+                        <input type="text" name="nro_siniestro" id="nro_siniestro" value="<?php if(!empty($array_datos_calificacion_origen[0]->ID_evento)){echo $array_datos_calificacion_origen[0]->ID_evento;} ?>">
+                        {{-- Ciudad --}}
+                        <input type="text" name="ciudad" id="ciudad" id="ciudad" value="<?php if(!empty($array_comite_interdisciplinario[0]->Ciudad)){echo $array_comite_interdisciplinario[0]->Ciudad;}else{echo "Bogotá D.C";}?>">       
+                        {{-- Fecha --}}
+                        <input type="date" name="fecha" id="fecha" value="<?php if(!empty($array_comite_interdisciplinario[0]->F_correspondecia)){echo $array_comite_interdisciplinario[0]->F_correspondecia;}else{echo now()->format('Y-m-d');}?>">
+                        {{-- Nombre afiliado --}}
+                        <input type="text" name="nombre_afiliado" id="nombre_afiliado" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nombre_afiliado)){echo $array_datos_calificacion_origen[0]->Nombre_afiliado;}?>">
+                        {{-- Dirección afliado --}}
+                        <input type="text" name="direccion_afiliado" id="direccion_afiliado" value="<?php if(!empty($array_datos_calificacion_origen[0]->Direccion)){echo $array_datos_calificacion_origen[0]->Direccion;}?>">
+                        {{-- Telefono afiliado --}}
+                        <input type="text" name="telefono_afiliado" id="telefono_afiliado" value="<?php if(!empty($array_datos_calificacion_origen[0]->Telefono_contacto)){echo $array_datos_calificacion_origen[0]->Telefono_contacto;}?>">
+                        {{-- Id asignacion para consultar los diagnosticos --}}
+                        <input type="text" name="Id_Asignacion_consulta_dx" id="Id_Asignacion_consulta_dx" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_Asignacion)){echo $array_datos_calificacion_origen[0]->Id_Asignacion;}?>">
+                        {{-- Id proceso para consultar los diagnosticos --}}
+                        <input type="text" name="Id_Proceso_consulta_dx" id="Id_Proceso_consulta_dx" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_proceso)){echo $array_datos_calificacion_origen[0]->Id_proceso;}?>">
+                        {{-- Id del cliente para consultar el nombre del cliente --}}
+                        <input type="text" name="Id_cliente_firma" id="Id_cliente_firma" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_cliente)){echo $array_datos_calificacion_origen[0]->Id_cliente;}?>">
+                        {{-- Tipo de evento --}}
+                        <input type="text" name="nombre_evento" id="nombre_evento" value="{{$nombre_del_evento_guardado}}">
+                        <input type="submit" class="btn btn-outline-danger" value="GENERAR">
                     </div>
                 </form>
             </div>              

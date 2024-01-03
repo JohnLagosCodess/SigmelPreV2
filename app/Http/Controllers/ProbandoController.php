@@ -320,17 +320,22 @@ class ProbandoController extends Controller
         "Banano", "Sandía", "Papaya", "Durazno", "Arándanos");
         
         $data = [
-            'nombreCiudad' => $nombreCiudad,
-            'fechaFormateada' => $fechaFormateada,
+            'ciudad' => $nombreCiudad,
+            'fecha' => $fechaFormateada,
             'nombre_afiliado' => 'Mauro Estefan Ramírez Aranguren',
             'correo_afiliado' => 'mauro.ramirez@codess.org.co',
             'direccion_afiliado' => 'Calle 41 A Sur # 72 H - 03',
             'telefonos_afiliado' => '3124431689',
             'municipio_afiliado' => 'Bogotá D.C.',
             'departamento_afiliado' => 'Bogotá D.C.',
+            'nro_radicado' => '1234578',
+            'tipo_identificacion' => 'Cc',
+            'num_identificacion' => '1030651087',
+            'nro_siniestro' => '987456321',
             'identificacion' => '1030651087',
             'fecha_evento' => $date,
             'diagnosticos_cie10' => $diagnosticos_cie10,
+            'Firma_cliente' => 'gola',
             'nombre_usuario' => Auth::user()->name
         ];
 

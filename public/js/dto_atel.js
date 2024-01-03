@@ -1637,6 +1637,64 @@ $(document).ready(function(){
         })
     })
 
+    // Captura Formulario PDF Notificación DML ORIGEN
+    $("#Form_dml_origen_pdf").submit(function (e){
+        e.preventDefault();              
+       
+        // Captura de variables del formulario
+        var nro_radicado = $("#nro_radicado").val();
+        var tipo_identificacion = $("#tipo_identificacion").val();
+        var num_identificacion = $("#num_identificacion").val();
+        var nro_siniestro = $("#nro_siniestro").val();
+        var ciudad = $("#ciudad").val();
+        var fecha = $("#fecha").val();
+        var nombre_afiliado = $("#nombre_afiliado").val();
+        var direccion_afiliado = $("#direccion_afiliado").val();
+        var telefono_afiliado = $("#telefono_afiliado").val();
+        var Id_Asignacion_consulta_dx = $("#Id_Asignacion_consulta_dx").val();
+        var Id_Proceso_consulta_dx = $("#Id_Proceso_consulta_dx").val();
+        var nombre_evento = $("#nombre_evento").val();
+        //checkbox de Copias de partes interesadas
+        var copia_empleador = $('#empleador').filter(":checked").val();
+        var copia_eps = $('#eps').filter(":checked").val();
+        var copia_afp = $('#afp').filter(":checked").val();
+        var copia_arl = $('#arl').filter(":checked").val();
+        var firmar = $('#firmar').filter(":checked").val();
+        var Id_cliente_firma = $('#Id_cliente_firma').val();
+
+        datos_generacion_pdf_dml_origen = {
+            '_token': token, 
+            'nro_radicado': nro_radicado,
+            'tipo_identificacion': tipo_identificacion,
+            'num_identificacion': num_identificacion,
+            'nro_siniestro': nro_siniestro,
+            'ciudad': ciudad,
+            'fecha': fecha,
+            'nombre_afiliado': nombre_afiliado,
+            'direccion_afiliado': direccion_afiliado,
+            'telefono_afiliado': telefono_afiliado,
+            'Id_Asignacion_consulta_dx': Id_Asignacion_consulta_dx,
+            'Id_Proceso_consulta_dx': Id_Proceso_consulta_dx,
+            'nombre_evento': nombre_evento,
+            'copia_empleador': copia_empleador,
+            'copia_eps': copia_eps,
+            'copia_afp': copia_afp,
+            'copia_arl': copia_arl,
+            'firmar': firmar,
+            'Id_cliente_firma': Id_cliente_firma
+        };
+         
+        console.log(datos_generacion_pdf_dml_origen);
+        $.ajax({    
+            type:'POST',
+            url:'/DescargaProformaDML',
+            data: datos_generacion_pdf_dml_origen,
+            success: function(response){
+
+            }          
+        })
+
+    });
 });
 
 
