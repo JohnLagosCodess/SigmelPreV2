@@ -31,6 +31,9 @@
                 @csrf
                 <input type="submit" class="btn btn-outline-danger" value="GENERAR">
             </form><br>
+            <!-- Muestra el código QR generado -->
+            {!! $codigoQR !!}
+            <br>
         </div>
         <div class="col-12">
             <br>

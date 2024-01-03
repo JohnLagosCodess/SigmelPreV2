@@ -42,7 +42,7 @@ class PronunciamientoPCLController extends Controller
         ,'pr.Nit_calificador','pr.Dir_calificador','pr.Email_calificador','pr.Telefono_calificador','pr.Depar_calificador','pr.Ciudad_calificador'
         ,'pr.Id_tipo_pronunciamiento','p.Nombre_parametro as Tpronuncia','pr.Id_tipo_evento','ti.Nombre_evento','pr.Id_tipo_origen','or.Nombre_parametro as T_origen'
         ,'pr.Fecha_evento','pr.Dictamen_calificador','pr.Fecha_calificador','pr.Fecha_estruturacion','pr.Porcentaje_pcl','pr.Rango_pcl'
-        ,'pr.Decision','pr.Fecha_pronuncia','pr.Asunto_cali','pr.Sustenta_cali','pr.Copia_afiliado','pr.copia_empleador','pr.Copia_eps'
+        ,'pr.Decision','pr.Fecha_pronuncia','pr.Asunto_cali','pr.Sustenta_cali','pr.Destinatario_principal','pr.Tipo_entidad','pr.Nombre_entidad','pr.Copia_afiliado','pr.copia_empleador','pr.Copia_eps'
         ,'pr.Copia_afp','pr.Copia_arl','pr.Copia_junta_regional','pr.Copia_junta_nacional','pr.Junta_regional_cual','j.Ciudad_Junta'
         ,'pr.N_anexos','pr.Elaboro_pronuncia','pr.Reviso_Pronuncia','pr.Ciudad_correspon','pr.N_radicado','pr.Firmar','pr.Fecha_correspondencia'
         ,'pr.Archivo_pronuncia')
@@ -240,6 +240,30 @@ class PronunciamientoPCLController extends Controller
             return response()->json($informacion_datos_lider_grupo);
         }
 
+        // Listado tipo entidad
+        if($parametro == "lista_tipo_entidad"){
+            $listado_tipo_entidad = sigmel_lista_entidades::on('sigmel_gestiones')
+            ->select('Id_Entidad', 'Tipo_Entidad')
+            ->where([
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_tipo_entidad = json_decode(json_encode($listado_tipo_entidad, true));
+            return response()->json($info_listado_tipo_entidad);
+        }
+
+        // listado nombre entidad
+        if ($parametro == "nombre_entidad") {
+            $listado_nombres_entidades = sigmel_informacion_entidades::on("sigmel_gestiones")
+            ->select('Id_Entidad', 'Nombre_entidad')
+            ->where(
+                [['IdTipo_entidad', $request->id_tipo_entidad]]
+            )->get();
+
+            $info_listado_nombres_entidades = json_decode(json_encode($listado_nombres_entidades, true));
+            return response()->json($info_listado_nombres_entidades);
+        }
 
     }
 
@@ -314,6 +338,17 @@ class PronunciamientoPCLController extends Controller
                 $nombre_final_documento_en_carpeta='N/A';
             }
         }
+
+        if ($request->destinatario_principal == "Si") {
+            $destinatario_principal = "Si";
+            $tipo_entidad = $request->tipo_entidad;
+            $nombre_entidad = $request->nombre_entidad;
+        }else{
+            $destinatario_principal = "No";
+            $tipo_entidad = null;
+            $nombre_entidad = null;
+        }
+
         //valida la acción del botón
         if ($request->bandera_pronuncia_guardar_actualizar == 'Guardar') {
         
@@ -342,6 +377,9 @@ class PronunciamientoPCLController extends Controller
                 'Fecha_pronuncia' => $datetime,
                 'Asunto_cali' => $request->asunto_cali,
                 'Sustenta_cali' => $request->sustenta_cali,
+                'Destinatario_principal' => $destinatario_principal,
+                'Tipo_entidad' => $tipo_entidad,
+                'Nombre_entidad' => $nombre_entidad,
                 'Copia_afiliado' => $request->copia_afiliado,
                 'Copia_empleador' => $request->copia_empleador,
                 'Copia_eps' => $request->copia_eps,
@@ -421,6 +459,9 @@ class PronunciamientoPCLController extends Controller
                 'Fecha_pronuncia' => $datetime,
                 'Asunto_cali' => $request->asunto_cali,
                 'Sustenta_cali' => $request->sustenta_cali,
+                'Destinatario_principal' => $destinatario_principal,
+                'Tipo_entidad' => $tipo_entidad,
+                'Nombre_entidad' => $nombre_entidad,
                 'Copia_afiliado' => $request->copia_afiliado,
                 'Copia_empleador' => $request->copia_empleador,
                 'Copia_eps' => $request->copia_eps,
@@ -487,6 +528,9 @@ class PronunciamientoPCLController extends Controller
                 'Fecha_pronuncia' => $datetime,
                 'Asunto_cali' => $request->asunto_cali,
                 'Sustenta_cali' => $request->sustenta_cali,
+                'Destinatario_principal' => $destinatario_principal,
+                'Tipo_entidad' => $tipo_entidad,
+                'Nombre_entidad' => $nombre_entidad,
                 'Copia_afiliado' => $request->copia_afiliado,
                 'Copia_empleador' => $request->copia_empleador,
                 'Copia_eps' => $request->copia_eps,
@@ -536,6 +580,9 @@ class PronunciamientoPCLController extends Controller
                 'Fecha_pronuncia' => $datetime,
                 'Asunto_cali' => $request->asunto_cali,
                 'Sustenta_cali' => $request->sustenta_cali,
+                'Destinatario_principal' => $destinatario_principal,
+                'Tipo_entidad' => $tipo_entidad,
+                'Nombre_entidad' => $nombre_entidad,
                 'Copia_afiliado' => $request->copia_afiliado,
                 'Copia_empleador' => $request->copia_empleador,
                 'Copia_eps' => $request->copia_eps,

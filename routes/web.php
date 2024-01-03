@@ -745,6 +745,7 @@ Route::post('/ActualizarParametrizacionJuntas', [ParametrizacionController::clas
 
 
 Route::get('/Sigmel/pruebas', [ProbandoController::class, 'index']);
+Route::get('/Sigmel/proformas', [ProbandoController::class, 'mostrarProformas']);
 // GENERAR EXCEL CON PHPSPREADSHEET
 // Route::post('/Sigmel/pruebas', [ProbandoController::class, 'generar'])->name('generarExcel');
 Route::post('/Sigmel/pruebas', [ProbandoController::class, 'generarPDF'])->name('generarPDF');
@@ -758,3 +759,5 @@ Route::controller(ProbandoController::class)->group(function(){
     Route::post('/Sigmel/probando-import-xlsx-sin_encabezados', 'importarXlsxSinEncabezados')->name('ImportarXlsxSinEncabezados');
     Route::post('/Sigmel/probando-import-xlsx-con_encabezados', 'importarXlsxConEncabezados')->name('ImportarXlsxConEncabezados');
 });
+
+Route::get('test', fn () => phpinfo());
