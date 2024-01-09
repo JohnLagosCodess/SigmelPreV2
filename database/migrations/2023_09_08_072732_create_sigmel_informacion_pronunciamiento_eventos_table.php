@@ -37,6 +37,9 @@ return new class extends Migration
             $table->dateTime('Fecha_pronuncia')->nullable();
             $table->text('Asunto_cali')->nullable();
             $table->text('Sustenta_cali')->nullable();
+            $table->enum('Destinatario_principal',['Si', 'No'])->nullable();
+            $table->integer('Tipo_entidad')->nullable();
+            $table->integer('Nombre_entidad')->nullable();
             $table->string('Copia_afiliado', 10)->nullable();
             $table->string('Copia_empleador', 10)->nullable();
             $table->string('Copia_eps', 4)->nullable();

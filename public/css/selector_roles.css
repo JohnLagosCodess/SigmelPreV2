@@ -77,6 +77,22 @@
     display: none;
 }
 
+#div_tipo_destinatario_principal{
+    display: none;
+}
+
+#div_nombre_destinatariopri{
+    display: none;
+}
+
+#div_nombre_destinatariopri_afi_{
+    display: none;
+}
+
+#div_nombre_destinatariopri_empl{
+    display: none;
+}
+
 .btn-icon-only {
     border: none;
     padding: 0;

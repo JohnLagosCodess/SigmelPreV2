@@ -25,6 +25,28 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    // Incialización de select2 Correspondencia
+
+    $(".tipo_destinatario_principal").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".nombre_destinatariopri").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".cual").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".reviso").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
     var token = $('input[name=_token]').val();
 
     // llenado de selector de motivos de solicitud
@@ -46,6 +68,133 @@ $(document).ready(function(){
                     $('#motivo_solicitud').append('<option value="'+data[listado_motivo_solicitud[i]]['Id_Solicitud']+'" selected>'+data[listado_motivo_solicitud[i]]['Nombre_solicitud']+'</option>');
                 }else{
                     $('#motivo_solicitud').append('<option value="'+data[listado_motivo_solicitud[i]]['Id_Solicitud']+'">'+data[listado_motivo_solicitud[i]]['Nombre_solicitud']+'</option>');
+                }
+            }
+        }
+    });
+
+    // Listado tipo destinatario
+
+    let datos_lista_tipo_destinatario = {
+        '_token': token,
+        'parametro' : "listado_destinatarios"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargueListadoSelectoresAdicionDx',
+        data: datos_lista_tipo_destinatario,
+        success:function(data) {
+            $('#tipo_destinatario_principal').append('<option value="" selected>Seleccione</option>');
+            //let IdCalifi_contro = $('select[name=tipo_destinatario_principal]').val();
+            let partecontro = Object.keys(data);
+            for (let i = 0; i < partecontro.length; i++) {
+                if (data[partecontro[i]]['Id_solicitante'] == $('#db_tipo_destinatario_principal').val()) {  
+                    $('#tipo_destinatario_principal').append('<option value="'+data[partecontro[i]]["Id_solicitante"]+'" selected>'+data[partecontro[i]]["Solicitante"]+'</option>');
+                }else{                    
+                    $('#tipo_destinatario_principal').append('<option value="'+data[partecontro[i]]["Id_solicitante"]+'">'+data[partecontro[i]]["Solicitante"]+'</option>');
+                }
+            }
+        }        
+    });
+
+    // Listado tipo nombre destinatario
+
+    if($('select[name=nombre_destinatariopri]').val() !== ''){
+        $('#nombre_destinatariopri').prop('disabled', false);
+        let id_solicitante = $('#db_tipo_destinatario_principal').val();
+        let datos_listado_nombre_solicitante = {
+            '_token': token,
+            'parametro' : "nombre_destinatariopri",
+            'id_solicitante': id_solicitante
+        };
+        
+        $.ajax({
+            type:'POST',
+            url:'/cargueListadoSelectoresAdicionDx',
+            data: datos_listado_nombre_solicitante,
+            success:function(data) {
+                let nombre_solicitanteEdicion = $('select[name=nombre_destinatariopri]').val();                
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    if (data[claves[i]]['Id_Nombre_solicitante'] == $('#db_nombre_destinatariopri').val()) {  
+                        $('#nombre_destinatariopri').append('<option value="'+data[claves[i]]["Id_Nombre_solicitante"]+'" selected>'+data[claves[i]]["Nombre_solicitante"]+'</option>');
+                    }else{                    
+                        $('#nombre_destinatariopri').append('<option value="'+data[claves[i]]["Id_Nombre_solicitante"]+'">'+data[claves[i]]["Nombre_solicitante"]+'</option>');
+                    }
+                }
+            }
+        });
+    }
+
+    $('#tipo_destinatario_principal').change(function(){
+        $('#nombre_destinatariopri').empty();
+        $('#nombre_destinatariopri').prop('disabled', false);
+        let id_solicitante = $('#tipo_destinatario_principal').val();
+        let datos_listado_nombre_destinatariopri = {
+            '_token': token,
+            'parametro' : "nombre_destinatariopri",
+            'id_solicitante': id_solicitante
+        };
+        $.ajax({
+            type:'POST',
+            url:'/cargueListadoSelectoresAdicionDx',
+            data: datos_listado_nombre_destinatariopri,
+            success:function(data) {
+                $('#nombre_destinatariopri').append('<option value="" selected>Seleccione</option>');
+                //let IdCalifi_contro = $('select[name=nombre_destinatariopri]').val();
+                let partecontro = Object.keys(data);
+                for (let i = 0; i < partecontro.length; i++) {
+                    //console.log(data[partecontro[i]]['Id_Nombre_solicitante']);
+                    if (data[partecontro[i]]['Id_Nombre_solicitante'] == $('#db_nombre_destinatariopri').val()) {  
+                        $('#nombre_destinatariopri').append('<option value="'+data[partecontro[i]]["Id_Nombre_solicitante"]+'" selected>'+data[partecontro[i]]["Nombre_solicitante"]+'</option>');
+                    }else{                    
+                        $('#nombre_destinatariopri').append('<option value="'+data[partecontro[i]]["Id_Nombre_solicitante"]+'">'+data[partecontro[i]]["Nombre_solicitante"]+'</option>');
+                    }
+                }
+            }
+        });
+    });
+
+    //Listado juntas regional Correspondencia
+    let datos_lista_regional_junta = {
+        '_token': token,
+        'parametro':"lista_regional_junta"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargueListadoSelectoresAdicionDx',
+        data: datos_lista_regional_junta,
+        success:function(data) {
+            //console.log(data);
+            let IdJunta = $('select[name=cual]').val();
+            let primercali = Object.keys(data);
+            for (let i = 0; i < primercali.length; i++) {
+                if (data[primercali[i]]['Id_juntaR'] != IdJunta) {  
+                    $('#cual').append('<option value="'+data[primercali[i]]["Ciudad_Junta"]+'">'+data[primercali[i]]["Ciudad_Junta"]+'</option>');
+                }
+            }
+        }
+    });
+
+    // Listado Reviso (Lideres del grupos de trabajo segun proceso PCL)
+    var idProcesoLider = $("#Id_Proceso_adicion_dx").val();
+    let datos_lista_reviso = {
+        '_token': token,
+        'parametro':"lista_reviso",
+        'idProcesoLider':idProcesoLider
+    };
+
+    $.ajax({
+        type:'POST',
+        url:'/cargueListadoSelectoresAdicionDx',
+        data: datos_lista_reviso,
+        success:function(data){
+            //console.log(data);
+            let NombreReviso = $('select[name=reviso]').val();
+            let nombreRevisoPcl = Object.keys(data);
+            for (let i = 0; i < nombreRevisoPcl.length; i++) {
+                if (data[nombreRevisoPcl[i]]['name'] != NombreReviso) {                    
+                    $('#reviso').append('<option value="'+data[nombreRevisoPcl[i]]['name']+'">'+data[nombreRevisoPcl[i]]['name']+'</option>');
                 }
             }
         }
@@ -739,6 +888,7 @@ $(document).ready(function(){
                     'Otros_relacion_documentos': $("#otros_docs").val(),
                     'Sustentacion_Adicion_Dx': $("#sustentacion_adicion_dx").val(),
                     'Origen': $("#origen_dto_atel").val(),
+                    'radicado_dictamen': $("#radicado_dictamen").val(),                    
                 };
             } else {
                 // Actualizar Información
@@ -783,6 +933,418 @@ $(document).ready(function(){
         }
 
     });
+
+    if ($('#ActualizarAdicionDx').length) {
+        $('#div_comite_interdisciplinario').removeClass('d-none');
+        $('#div_comunicado_dictamen_oficioremisorio').removeClass('d-none');
+    }
+
+    // Captura del nombre del usuario que marca el checkbox Visar
+    var NombreUsuario = $("#NombreUsuario").val();
+    var Visar = $("#visar");
+
+    Visar.change(function(){
+        if ($(this).prop('checked')) {
+            $("#profesional_comite").val(NombreUsuario);            
+        } else {            
+            $("#profesional_comite").val('');            
+        }
+    });    
+    
+    //Captura Formulario Comite Interdisciplinario
+    $('#form_comite_interdisciplinario').submit(function (e){
+        e.preventDefault(); 
+
+        var Id_Evento = $('#Id_Evento').val();
+        var Id_Proceso_adicion_dx = $('#Id_Proceso_adicion_dx').val();
+        var Id_Asignacion_adicion_dx  = $('#Id_Asignacion_adicion_dx').val();
+        var visar = $('#visar').val();
+        var profesional_comite = $('#profesional_comite').val();
+        var f_visado_comite = $('#f_visado_comite').val();
+       
+        var datos_comiteInterdisciplianario={
+            '_token': token,            
+            'Id_Evento':Id_Evento,
+            'Id_Proceso_adicion_dx':Id_Proceso_adicion_dx,
+            'Id_Asignacion_adicion_dx':Id_Asignacion_adicion_dx,
+            'visar':visar,
+            'profesional_comite':profesional_comite,
+            'f_visado_comite':f_visado_comite,
+        }
+
+        $.ajax({    
+            type:'POST',
+            url:'/guardarcomitesinterdisciplinarioADX',
+            data: datos_comiteInterdisciplianario,
+            success: function(response){
+                if (response.parametro == 'insertar_comite_interdisciplinario') {
+                    $('#GuardarComiteInter').prop('disabled', true);
+                    $('#div_alerta_comiteInter').removeClass('d-none');
+                    $('.alerta_comiteInter').append('<strong>'+response.mensaje+'</strong>');                                            
+                    setTimeout(function(){
+                        $('#div_alerta_comiteInter').addClass('d-none');
+                        $('.alerta_comiteInter').empty();   
+                        location.reload();
+                    }, 3000);   
+                }
+            }          
+        })
+    }) 
+
+    var profesional_comite = $("#profesional_comite").val();
+    if (profesional_comite !== '') {
+        $("#GuardarComiteInter").prop('disabled', true);
+        $("#div_correspondecia").removeClass('d-none');
+    }
+
+    // Validar cual de los oficios esta marcado
+
+    var oficiopclcorres = $('#oficiopcl');
+    var oficioincacorres = $('#oficioinca');
+    
+    oficiopclcorres.change(function(){
+        if ($(this).prop('checked')) {
+            oficioincacorres.prop('disabled', true);            
+        }else{
+            oficioincacorres.prop('disabled', false);            
+        }
+    });
+
+    oficioincacorres.change(function(){
+        if ($(this).prop('checked')) {
+            oficiopclcorres.prop('disabled', true);            
+        }else{
+            oficiopclcorres.prop('disabled', false);            
+        }
+    });
+
+    if (oficiopclcorres.prop('checked')) {
+        oficioincacorres.prop('disabled', true);                    
+    }
+    if (oficioincacorres.prop('checked')) {
+        oficiopclcorres.prop('disabled', true);                    
+    }
+    // validar si el otro destinatario principal esta marcado
+
+    var otrodestinariop = $("#otrodestinariop");
+    otrodestinariop.change(function(){
+        if ($(this).prop('checked')) {     
+            $('#tipo_destinatario_principal').empty();
+
+            $(".tipo_destinatario_principal").select2({
+                placeholder:"Seleccione una opción",
+                allowClear:false
+            });            
+            
+            let datos_lista_tipo_destinatario = {
+                '_token': token,
+                'parametro' : "listado_destinatarios"
+            };
+            $.ajax({
+                type:'POST',
+                url:'/selectoresJuntasControversia',
+                data: datos_lista_tipo_destinatario,
+                success:function(data) {
+                    $('#tipo_destinatario_principal').append('<option value="" selected>Seleccione</option>');
+                    let IdCalifi_contro = $('select[name=tipo_destinatario_principal]').val();
+                    let partecontro = Object.keys(data);
+                    for (let i = 0; i < partecontro.length; i++) {
+                        if (data[partecontro[i]]['Id_solicitante'] == $('#db_tipo_destinatario_principal').val()) {  
+                            $('#tipo_destinatario_principal').append('<option value="'+data[partecontro[i]]["Id_solicitante"]+'" selected>'+data[partecontro[i]]["Solicitante"]+'</option>');
+                        }else{                    
+                            $('#tipo_destinatario_principal').append('<option value="'+data[partecontro[i]]["Id_solicitante"]+'">'+data[partecontro[i]]["Solicitante"]+'</option>');
+                        }
+                    }
+                }
+                
+            });
+
+            if($('select[name=nombre_destinatariopri]').val() !== ''){
+                $('#nombre_destinatariopri').prop('disabled', false);
+                let id_solicitante = $('#db_tipo_destinatario_principal').val();
+                let datos_listado_nombre_solicitante = {
+                    '_token': token,
+                    'parametro' : "nombre_destinatariopri",
+                    'id_solicitante': id_solicitante
+                };
+                
+                $.ajax({
+                    type:'POST',
+                    url:'/selectoresJuntasControversia',
+                    data: datos_listado_nombre_solicitante,
+                    success:function(data) {
+                        let nombre_solicitanteEdicion = $('select[name=nombre_destinatariopri]').val();                
+                        let claves = Object.keys(data);
+                        for (let i = 0; i < claves.length; i++) {
+                            if (data[claves[i]]['Id_Nombre_solicitante'] == $('#db_nombre_destinatariopri').val()) {  
+                                $('#nombre_destinatariopri').append('<option value="'+data[claves[i]]["Id_Nombre_solicitante"]+'" selected>'+data[claves[i]]["Nombre_solicitante"]+'</option>');
+                            }else{                    
+                                $('#nombre_destinatariopri').append('<option value="'+data[claves[i]]["Id_Nombre_solicitante"]+'">'+data[claves[i]]["Nombre_solicitante"]+'</option>');
+                            }
+                        }
+                    }
+                });
+            }                      
+            
+            var destinatario_principal_select = $('#db_tipo_destinatario_principal').val();
+            if (destinatario_principal_select == 8) {
+                $('#div_tipo_destinatario_principal').slideDown('slow');            
+                $('#div_datos_otro_destinatario').slideDown('slow');
+                $('#div_nombre_destinatariopri').slideUp('up');                
+            }else if(destinatario_principal_select == 4) {
+                $('#div_tipo_destinatario_principal').slideDown('slow');            
+                $('#div_datos_otro_destinatario').slideUp('up');
+                $('#div_nombre_destinatariopri').slideUp('up');
+                $('#div_nombre_destinatariopri_afi_').slideDown('slow');
+            }else if(destinatario_principal_select == 5) {
+                $('#div_tipo_destinatario_principal').slideDown('slow');            
+                $('#div_datos_otro_destinatario').slideUp('up');
+                $('#div_nombre_destinatariopri').slideUp('up');
+                $('#div_nombre_destinatariopri_empl').slideDown('slow');
+            }
+            else {
+                $('#tipo_destinatario_principal').prop('required', true);
+                $('#nombre_destinatariopri').prop('required', true);
+                $('#div_tipo_destinatario_principal').slideDown('slow');            
+                $('#div_nombre_destinatariopri').slideDown('slow');
+                $('#div_datos_otro_destinatario').slideUp('up');
+            }             
+        } else {
+            $('#div_tipo_destinatario_principal').slideUp('up');
+            $('#tipo_destinatario_principal').prop('required', false);
+            $('#tipo_destinatario_principal').empty();
+            $('#nombre_destinatariopri').prop('required', false); 
+            $('#div_nombre_destinatariopri').slideUp('up');            
+            $('#div_datos_otro_destinatario').slideUp('up'); 
+            $('#div_nombre_destinatariopri_afi_').slideUp('up');
+            $('#div_nombre_destinatariopri_empl').slideUp('up');
+        }
+    });
+
+    // validar si tipo de destinatario es igual a otro
+
+    var select_destinatario_principal = $('#tipo_destinatario_principal');
+    var select_destinatario_principal2 = $('#db_tipo_destinatario_principal').val();
+    
+    select_destinatario_principal.change(function() {
+       if ($(this).val() == 8) {
+            $('#nombre_destinatariopri').prop('required', false); 
+            $('#div_nombre_destinatariopri').slideUp('up');
+            $('#div_datos_otro_destinatario').slideDown('slow');
+            $('#div_nombre_destinatariopri_afi_').slideUp('up');
+            $('#div_nombre_destinatariopri_empl').slideUp('up');
+       }else if ($(this).val() == 4) {
+            $('#nombre_destinatariopri').prop('required', false); 
+            $('#div_nombre_destinatariopri').slideUp('up');
+            $('#div_datos_otro_destinatario').slideUp('up');
+            $('#div_nombre_destinatariopri_afi_').slideDown('slow');
+            $('#div_nombre_destinatariopri_empl').slideUp('up');
+        }else if ($(this).val() == 5) {
+            $('#nombre_destinatariopri').prop('required', false); 
+            $('#div_nombre_destinatariopri').slideUp('up');
+            $('#div_datos_otro_destinatario').slideUp('up');
+            $('#div_nombre_destinatariopri_empl').slideDown('slow');
+            $('#div_nombre_destinatariopri_afi_').slideUp('up');
+        }else {
+            $('#nombre_destinatariopri').prop('required', true); 
+            $('#div_nombre_destinatariopri').slideDown('slow');
+            $('#div_datos_otro_destinatario').slideUp('up');  
+            $('#div_nombre_destinatariopri_afi_').slideUp('up');
+            $('#div_nombre_destinatariopri_empl').slideUp('up');
+        } 
+    });
+
+    if(otrodestinariop.prop('checked')){           
+        $('#div_tipo_destinatario_principal').slideDown('slow');
+        if (select_destinatario_principal2 == 8) {
+            $('#div_datos_otro_destinatario').slideDown('slow');
+            $('#div_nombre_destinatariopri').slideUp('up');
+        }else if(select_destinatario_principal2 == 4) {
+            $('#div_datos_otro_destinatario').slideUp('up');
+            $('#div_nombre_destinatariopri').slideUp('up');
+            $('#div_nombre_destinatariopri_afi_').slideDown('slow');
+        }else if(select_destinatario_principal2 == 5) {
+            $('#div_datos_otro_destinatario').slideUp('up');
+            $('#div_nombre_destinatariopri').slideUp('up');
+            $('#div_nombre_destinatariopri_empl').slideDown('slow');
+        }
+        else {
+            $('#div_nombre_destinatariopri').slideDown('slow');
+            $('#div_datos_otro_destinatario').slideUp('up');
+        }        
+    }else{
+        $('#div_nombre_destinatariopri').slideUp('up'); 
+        $('#div_datos_otro_destinatario').slideUp('up');
+    }
+
+    // validar si la Junta regional esta marcada
+    
+    var juntaregionalCi = $("#jrci");
+    juntaregionalCi.change(function() {
+        if ($(this).prop('checked')) {
+            $('#div_cual').slideDown('slow');
+            $('#cual').prop('required', true);
+        }else{
+            $('#div_cual').slideUp('up');  
+            $('#cual').prop('required', false);
+        }
+    });
+
+    if (juntaregionalCi.prop('checked')) {
+        $('#div_cual').slideDown('slow');        
+    }
+
+    // validar asunto
+
+    var asuntocorrespondencia = $("#Asunto").val();
+    if (asuntocorrespondencia !== '') {
+        $("#div_correspondecia").addClass('d-none');
+    }
+
+    // Habilitar formulario de correspondencia
+
+    var editar_correspondencia = $('#editar_correspondencia');
+        editar_correspondencia.click(function(){
+        $("#div_correspondecia").removeClass('d-none');
+    });
+
+    //Captura Formulario Correspondencia
+    $('#form_correspondencia').submit(function (e){
+        e.preventDefault();              
+       
+        var Id_Evento = $('#Id_Evento').val();
+        var Id_Proceso_adicion_dx = $('#Id_Proceso_adicion_dx').val();
+        var Id_Asignacion_adicion_dx  = $('#Id_Asignacion_adicion_dx').val();
+        var oficiopcl = $('input[name="oficiopcl"]:checked').val();
+        var oficioinca = $('input[name="oficioinca"]:checked').val();
+        if (oficiopcl == undefined) {
+            oficiopcl = '';
+        }
+        if(oficioinca == undefined){
+            oficioinca = '';
+        }
+        var destinatario_principal = $('#destinatario_principal').val();        
+        var otrodestinariop = $('input[name="otrodestinariop"]:checked').val();
+        if (otrodestinariop == undefined) {
+            var tipo_destinatario_principal = '';
+            var nombre_destinatariopri = '';            
+        } else {
+            var tipo_destinatario_principal = $('#tipo_destinatario_principal').val();            
+            var nombre_destinatariopri = $('#nombre_destinatariopri').val();
+        }
+        var nombre_destinatario_afi = $('#nombre_destinatario_afi').val();
+        var nombre_destinatario_emp = $('#nombre_destinatario_emp').val();
+        if (tipo_destinatario_principal == 4) {
+            var nombre_destinatario_afi_emp = nombre_destinatario_afi;
+        } else if(tipo_destinatario_principal == 5) {
+            var nombre_destinatario_afi_emp = nombre_destinatario_emp;            
+        }
+        if(tipo_destinatario_principal == 8){
+            var nombre_destinatario = $('#nombre_destinatario').val();
+            var nitcc_destinatario = $('#nitcc_destinatario').val();
+            var direccion_destinatario = $('#direccion_destinatario').val();
+            var telefono_destinatario = $('#telefono_destinatario').val();
+            var email_destinatario = $('#email_destinatario').val();
+            var departamento_destinatario = $('#departamento_destinatario').val();
+            var ciudad_destinatario = $('#ciudad_destinatario').val();
+        }else{            
+            var nombre_destinatario = '';
+            var nitcc_destinatario = '';
+            var direccion_destinatario = '';
+            var telefono_destinatario = '';
+            var email_destinatario = '';
+            var departamento_destinatario = '';
+            var ciudad_destinatario = '';
+        }        
+        var Asunto = $('#Asunto').val();
+        var cuerpo_comunicado = $('#cuerpo_comunicado').val();
+        var empleador = $('input[name="empleador"]:checked').val();;        
+        var eps = $('input[name="eps"]:checked').val();
+        var afp = $('input[name="afp"]:checked').val();
+        var arl = $('input[name="arl"]:checked').val();
+        var jrci = $('input[name="jrci"]:checked').val();   
+            
+        if (jrci == undefined) {
+            var cual = '';                        
+        } else {
+            var cual = $('#cual').val();            
+        }       
+        var jnci = $('input[name="jnci"]:checked').val();
+        var anexos = $('#anexos').val();
+        var elaboro = $('#elaboro').val();
+        var reviso = $('#reviso').val();
+        var firmar = $('input[name="firmar"]:checked').val();
+        var ciudad = $('#ciudad').val();
+        var f_correspondencia = $('#f_correspondencia').val();
+        var radicado = $('#radicado').val();
+        var bandera_correspondecia_guardar_actualizar = $('#bandera_correspondecia_guardar_actualizar').val();
+                
+        var datos_correspondecia={
+            '_token': token,            
+            'Id_Evento':Id_Evento,
+            'Id_Proceso_adicion_dx':Id_Proceso_adicion_dx,
+            'Id_Asignacion_adicion_dx':Id_Asignacion_adicion_dx,            
+            'oficiopcl':oficiopcl,
+            'oficioinca':oficioinca,
+            'destinatario_principal':destinatario_principal,
+            'otrodestinariop' : otrodestinariop,
+            'tipo_destinatario_principal' : tipo_destinatario_principal,
+            'nombre_destinatariopri' : nombre_destinatariopri,
+            'Nombre_dest_principal_afi_empl' : nombre_destinatario_afi_emp,
+            'nombre_destinatario': nombre_destinatario,
+            'nitcc_destinatario': nitcc_destinatario,
+            'direccion_destinatario': direccion_destinatario,
+            'telefono_destinatario': telefono_destinatario,
+            'email_destinatario': email_destinatario,
+            'departamento_destinatario': departamento_destinatario,
+            'ciudad_destinatario': ciudad_destinatario,
+            'Asunto':Asunto,
+            'cuerpo_comunicado':cuerpo_comunicado,
+            'empleador':empleador,
+            'eps':eps,
+            'afp':afp,
+            'arl':arl,
+            'jrci':jrci,
+            'cual':cual,
+            'jnci':jnci,
+            'anexos':anexos,
+            'elaboro':elaboro,
+            'reviso':reviso,
+            'firmar':firmar,
+            'ciudad':ciudad,
+            'f_correspondencia':f_correspondencia,
+            'radicado':radicado,
+            'bandera_correspondecia_guardar_actualizar':bandera_correspondecia_guardar_actualizar
+        }
+
+        $.ajax({    
+            type:'POST',
+            url:'/guardarcorrespondenciaADX',
+            data: datos_correspondecia,
+            success: function(response){
+                if (response.parametro == 'insertar_correspondencia') {
+                    $('#GuardarCorrespondencia').prop('disabled', true);
+                    $('#div_alerta_Correspondencia').removeClass('d-none');
+                    $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');                                            
+                    setTimeout(function(){
+                        $('#div_alerta_Correspondencia').addClass('d-none');
+                        $('.alerta_Correspondencia').empty();   
+                        location.reload();
+                    }, 3000);   
+                }else if(response.parametro == 'actualizar_correspondencia'){
+                    $('#ActualizarCorrespondencia').prop('disabled', true);
+                    $('#div_alerta_Correspondencia').removeClass('d-none');
+                    $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');                                            
+                    setTimeout(function(){
+                        $('#div_alerta_Correspondencia').addClass('d-none');
+                        $('.alerta_Correspondencia').empty();   
+                        location.reload();
+                    }, 3000);  
+                }
+
+            }          
+        })
+    }) 
 });
 
 

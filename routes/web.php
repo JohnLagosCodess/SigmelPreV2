@@ -381,6 +381,10 @@ Route::post('/guardarLaboralmenteActivos', [CalificacionPCLController::class, 'g
 Route::post('/guardarRolOcupacionales', [CalificacionPCLController::class, 'guardarRolOcupacional']); 
 // Acción: Guardar y Actualizar Libro II Calificación de las discapacidades (20%) y Libro III Calificación de minusvalías (30%)
 Route::post('/guardarLibros2_3', [CalificacionPCLController::class, 'guardarLibro2_3']); 
+// Acción: Guardar Comite Interdisciplinario
+Route::post('/guardarcomitesinterdisciplinario', [CalificacionPCLController::class, 'guardarcomiteinterdisciplinario']); 
+// Acción: Guardar Correspondecia
+Route::post('/guardarcorrespondencias', [CalificacionPCLController::class, 'guardarcorrespondencia']); 
 // Acción: Guardar Dictamen Pericial
 Route::post('/guardardictamenesPericial', [CalificacionPCLController::class, 'guardardictamenPericial']); 
 // Acción: Guardar deficiencias Decreto Cero
@@ -453,6 +457,10 @@ Route::post('/eliminarDeficieciasDecretosCeroRe', [RecalificacionPCLController::
 Route::post('/guardarDeficieciasDecretosTresRe', [RecalificacionPCLController::class, 'guardarDeficieciasDecretoTresRe']);
 // Acción: Elimincar deficiencias Decreto tres visualmente e inactiva en la DB
 Route::post('/eliminarDeficieciasDecretosTresRe', [RecalificacionPCLController::class, 'eliminarDeficieciasDecretoTresRe']);
+// Acción: Guardar Comite Interdisciplinario
+Route::post('/guardarcomitesinterdisciplinarioRe', [RecalificacionPCLController::class, 'guardarcomiteinterdisciplinarioRe']); 
+// Acción: Guardar Correspondecia
+Route::post('/guardarcorrespondenciasRe', [RecalificacionPCLController::class, 'guardarcorrespondenciaRe']); 
 // Acción: Guardar Dictamen Pericial
 Route::post('/guardardictamenesPericialRe', [RecalificacionPCLController::class, 'guardardictamenPericialRe']); 
 
@@ -557,6 +565,10 @@ Route::post('/GuardaroActualizarInfoDTOTAEL', [DeterminacionOrigenATEL::class, '
 // Route::post('/eliminarExamenesInterconsultasDTOATEL', [DeterminacionOrigenATEL::class, 'eliminarExamenInterconsulta']);
 // Acción: Eliminar registros Diagnosticos motivo de calificacion visualmente e inactiva en la DB
 Route::post('/eliminarDiagnosticosMotivoCalificacionDTOATEL', [DeterminacionOrigenATEL::class, 'eliminarDiagnosticoMotivoCalificacion']);
+// Acción: Guardar Comite InterdisciplinarioDTO
+Route::post('/guardarcomitesinterdisciplinarioDTO', [DeterminacionOrigenATEL::class, 'guardarcomiteinterdisciplinarioDto']); 
+// Acción: Guardar CorrespondeciaRTO
+Route::post('/guardarcorrespondenciaDTO', [DeterminacionOrigenATEL::class, 'guardarcorrespondenciaDto']);
 // 02/10/2023
 // Vista: Módulo Pronunciamiento Origen
 Route::post('/calificacionOrigen/pronunciamientoOrigen', [PronunciamientoOrigenController::class, 'mostrarVistaPronunciamientoOrigen'])->name('pronunciamientoOrigen');
@@ -655,6 +667,10 @@ Route::post('/registrarEmitidoJnci', [ControversiaJuntasController::class, 'guar
 
 // Acción: Eliminar registros Diagnosticos motivo de calificacion visualmente e inactiva en la DB
 Route::post('/eliminarDiagnosticosMotivoCalificacionContro', [ControversiaJuntasController::class, 'eliminarDiagnosticoMotivoCalificacionContro']);
+// Acción: Guardar Comite InterdisciplinarioDTO
+Route::post('/guardarcomitesinterdisciplinarioJuntas', [ControversiaJuntasController::class, 'guardarcomiteinterdisciplinarioJuntas']); 
+// Acción: Guardar CorrespondeciaRTO
+Route::post('/guardarcorrespondenciasJuntas', [ControversiaJuntasController::class, 'guardarcorrespondenciaJuntas']);
 
 // Acción: Mostrar vista ADICIÓN DX DTO
 Route::get('/adicionDxDtoOrigen', [AdicionDxDTO::class, 'mostrarVistaAdicionDxDTO'])->name('adicionDxDtoOrigen');
@@ -663,6 +679,10 @@ Route::post('/adicionDxDtoOrigen', [AdicionDxDTO::class, 'mostrarVistaAdicionDxD
 Route::post('/cargueListadoSelectoresAdicionDx', [AdicionDxDTO::class, 'cargueListadoSelectoresAdicionDx']);
 // Acción: Insertar o Editar Adicion DX
 Route::post('/GuardaroActualizarInfoAdicionDX', [AdicionDxDTO::class, 'GuardaroActualizarInfoAdicionDX']);
+// Acción: Guardar Comite InterdisciplinarioDTO
+Route::post('/guardarcomitesinterdisciplinarioADX', [AdicionDxDTO::class, 'guardarcomiteinterdisciplinarioAdx']); 
+// Acción: Guardar CorrespondeciaRTO
+Route::post('/guardarcorrespondenciaADX', [AdicionDxDTO::class, 'guardarcorrespondenciaAdx']);
 
 // 17/10/2023 - CRUD ACCIONES
 // Vista: Formulario para crear una nueva acción
@@ -721,10 +741,15 @@ Route::post('/EnvioParametrizacionJuntas', [ParametrizacionController::class, 'E
 Route::post('/ActualizarParametrizacionJuntas', [ParametrizacionController::class, 'ActualizarParametrizacionJuntas']);
 
 
+/* DESCARGA DE PROFORMAS */
+/* Proforma Notificación DML ORIGEN ATEL */
+Route::post('/DescargaProformaDML', [DeterminacionOrigenATEL::class, 'DescargaProformaDML']);
+
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 
 Route::get('/Sigmel/pruebas', [ProbandoController::class, 'index']);
+Route::get('/Sigmel/proformas', [ProbandoController::class, 'mostrarProformas']);
 // GENERAR EXCEL CON PHPSPREADSHEET
 // Route::post('/Sigmel/pruebas', [ProbandoController::class, 'generar'])->name('generarExcel');
 Route::post('/Sigmel/pruebas', [ProbandoController::class, 'generarPDF'])->name('generarPDF');
@@ -738,3 +763,5 @@ Route::controller(ProbandoController::class)->group(function(){
     Route::post('/Sigmel/probando-import-xlsx-sin_encabezados', 'importarXlsxSinEncabezados')->name('ImportarXlsxSinEncabezados');
     Route::post('/Sigmel/probando-import-xlsx-con_encabezados', 'importarXlsxConEncabezados')->name('ImportarXlsxConEncabezados');
 });
+
+Route::get('test', fn () => phpinfo());

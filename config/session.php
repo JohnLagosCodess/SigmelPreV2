@@ -31,9 +31,10 @@ return [
     |
     */
 
-    'lifetime' => env('SESSION_LIFETIME', 120),
+    /* La sesión del usuario se cerrará después de 8 horas */
+    'lifetime' => env('SESSION_LIFETIME', 480),
 
-    'expire_on_close' => false,
+    'expire_on_close' => true,
 
     /*
     |--------------------------------------------------------------------------

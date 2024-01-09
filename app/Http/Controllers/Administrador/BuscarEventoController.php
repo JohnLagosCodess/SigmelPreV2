@@ -928,30 +928,39 @@ class BuscarEventoController extends Controller
                         }
                     }
                     if (count($posicionPclReca) > 0) {
-                        $ID_eventoReca = $posicionPclReca[0]['ID_evento'];
-                        $Id_procesoReca = $posicionPclReca[0]['Id_proceso'];
-                        $Id_ServicioReca = $posicionPclReca[0]['Id_Servicio'];
-                        $Id_AsignacionReca = $posicionPclReca[0]['Id_Asignacion'];
-    
-                        $resultadoRecaPcl = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
-                        ->select('ID_Evento','Id_Asignacion','Porcentaje_pcl')
-                        ->where([['Id_Asignacion',$Id_AsignacionReca], ['Id_proceso',$Id_procesoReca], ['ID_Evento',$ID_eventoReca]])
-                        ->get(); 
-                        if (count($resultadoRecaPcl) > 0) {
-                            $ProcentajePClRecaResultado = $resultadoRecaPcl[0]->Porcentaje_pcl;
-                            $IdAsignacionResultado = $resultadoRecaPcl[0]->Id_Asignacion;
-                            $ID_eventoResultado = $resultadoRecaPcl[0]->ID_Evento;
-            
-                            foreach ($posicionPclReca as &$elemento) {
-                                // Verificar si Id_Asignacion es igual a $IdAsignacionResultado
-                                if ($elemento['Id_Asignacion'] == $IdAsignacionResultado && $elemento['ID_evento'] == $ID_eventoResultado) {
-                                    // Agregar $OrigenResultado al array
-                                    $elemento['ProcentajePClRecaResultado'] = $ProcentajePClRecaResultado;
-                                }
-                            }
+                        
+                        $resultadoRecaPcl =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                        ->select('side.ID_Evento','side.Id_Asignacion','side.Porcentaje_pcl');
+                        foreach ($posicionPclReca as $item) {
+                            $resultadoRecaPcl->orWhere([
+                                ['side.Id_Asignacion', $item['Id_Asignacion']],
+                                ['side.Id_proceso', $item['Id_proceso']],
+                                ['side.ID_evento', $item['ID_evento']]
+                            ]);
+                        }
+                        $resulRecaPcl = $resultadoRecaPcl->get();                                        
+                        if (count($resulRecaPcl) > 0) {
+                            $ArrayresulRecaPcl = $resulRecaPcl->toArray();                                                 
+                            foreach ($posicionPclReca as &$item) {
+                                // Buscar el elemento correspondiente en los resultados de la consulta
+                                $resultado = array_filter($ArrayresulRecaPcl, function ($result) use ($item) {
+                                    return $result->Id_Asignacion == $item['Id_Asignacion'];
+                                });                    
+                                // Si se encuentra una coincidencia, agregar la información al array original
+                                if (!empty($resultado)) {
+                                    $resultado = reset($resultado); // Obtener el primer elemento del array de resultados
+                                    $item['ProcentajePClRecaResultado'] = $resultado->Porcentaje_pcl;
+                                } 
+                            }                          
+                            // Filtrar los elementos que contienen [OrigenDtoResultado]
+                            $posicionPclRecaFiltrado = array_filter($posicionPclReca, function ($item) {
+                                return isset($item['ProcentajePClRecaResultado']);
+                            }); 
+                            // Reorganizar los índices del array filtrado
+                            $posicionPclRecaFiltrado = array_values($posicionPclRecaFiltrado);
                             //Combinar el array object con el array 
                             foreach ($array_informacion_eventos as $key2 => $item2) {
-                                foreach ($posicionPclReca as $item1) {
+                                foreach ($posicionPclRecaFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
                                     if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                         // Agregar el elemento a la posición correspondiente
@@ -959,9 +968,10 @@ class BuscarEventoController extends Controller
                                         break; // Romper el bucle interno una vez que se encuentra la coincidencia
                                     }
                                 }
-                            }                            
-                        }                        
-                    }
+                            }
+                        }                    
+                        
+                    }                    
                     // Resultado Revision Pension Pcl
                     $posicionPclRevi = [];
                     foreach ($resultArrayEventos as $element) {
@@ -1519,30 +1529,39 @@ class BuscarEventoController extends Controller
                         }
                     }
                     if (count($posicionPclReca) > 0) {
-                        $ID_eventoReca = $posicionPclReca[0]['ID_evento'];
-                        $Id_procesoReca = $posicionPclReca[0]['Id_proceso'];
-                        $Id_ServicioReca = $posicionPclReca[0]['Id_Servicio'];
-                        $Id_AsignacionReca = $posicionPclReca[0]['Id_Asignacion'];
-    
-                        $resultadoRecaPcl = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
-                        ->select('ID_Evento','Id_Asignacion','Porcentaje_pcl')
-                        ->where([['Id_Asignacion',$Id_AsignacionReca], ['Id_proceso',$Id_procesoReca], ['ID_Evento',$ID_eventoReca]])
-                        ->get(); 
-                        if (count($resultadoRecaPcl) > 0) {
-                            $ProcentajePClRecaResultado = $resultadoRecaPcl[0]->Porcentaje_pcl;
-                            $IdAsignacionResultado = $resultadoRecaPcl[0]->Id_Asignacion;
-                            $ID_eventoResultado = $resultadoRecaPcl[0]->ID_Evento;
-            
-                            foreach ($posicionPclReca as &$elemento) {
-                                // Verificar si Id_Asignacion es igual a $IdAsignacionResultado
-                                if ($elemento['Id_Asignacion'] == $IdAsignacionResultado && $elemento['ID_evento'] == $ID_eventoResultado) {
-                                    // Agregar $OrigenResultado al array
-                                    $elemento['ProcentajePClRecaResultado'] = $ProcentajePClRecaResultado;
-                                }
-                            }
+                        
+                        $resultadoRecaPcl =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                        ->select('side.ID_Evento','side.Id_Asignacion','side.Porcentaje_pcl');
+                        foreach ($posicionPclReca as $item) {
+                            $resultadoRecaPcl->orWhere([
+                                ['side.Id_Asignacion', $item['Id_Asignacion']],
+                                ['side.Id_proceso', $item['Id_proceso']],
+                                ['side.ID_evento', $item['ID_evento']]
+                            ]);
+                        }
+                        $resulRecaPcl = $resultadoRecaPcl->get();                                        
+                        if (count($resulRecaPcl) > 0) {
+                            $ArrayresulRecaPcl = $resulRecaPcl->toArray();                                                 
+                            foreach ($posicionPclReca as &$item) {
+                                // Buscar el elemento correspondiente en los resultados de la consulta
+                                $resultado = array_filter($ArrayresulRecaPcl, function ($result) use ($item) {
+                                    return $result->Id_Asignacion == $item['Id_Asignacion'];
+                                });                    
+                                // Si se encuentra una coincidencia, agregar la información al array original
+                                if (!empty($resultado)) {
+                                    $resultado = reset($resultado); // Obtener el primer elemento del array de resultados
+                                    $item['ProcentajePClRecaResultado'] = $resultado->Porcentaje_pcl;
+                                } 
+                            }                          
+                            // Filtrar los elementos que contienen [OrigenDtoResultado]
+                            $posicionPclRecaFiltrado = array_filter($posicionPclReca, function ($item) {
+                                return isset($item['ProcentajePClRecaResultado']);
+                            }); 
+                            // Reorganizar los índices del array filtrado
+                            $posicionPclRecaFiltrado = array_values($posicionPclRecaFiltrado);
                             //Combinar el array object con el array 
                             foreach ($array_informacion_eventos as $key2 => $item2) {
-                                foreach ($posicionPclReca as $item1) {
+                                foreach ($posicionPclRecaFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
                                     if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                         // Agregar el elemento a la posición correspondiente
@@ -1550,9 +1569,10 @@ class BuscarEventoController extends Controller
                                         break; // Romper el bucle interno una vez que se encuentra la coincidencia
                                     }
                                 }
-                            }                            
-                        }                        
-                    }
+                            }
+                        }                    
+                        
+                    } 
                     // Resultado Revision Pension Pcl
                     $posicionPclRevi = [];
                     foreach ($resultArrayEventos as $element) {
