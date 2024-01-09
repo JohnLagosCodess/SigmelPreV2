@@ -25,6 +25,12 @@ $(document).ready(function(){
         allowClear: false
     });
 
+    /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE TIPO DE DOCUMENTO BENEFICIARIO */
+    $(".afi_tipo_documento").select2({
+        placeholder: "Seleccione una opción",
+        allowClear: false
+    });
+
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE GÉNERO */
     $(".genero").select2({
         placeholder: "Seleccione una opción",
@@ -57,6 +63,18 @@ $(document).ready(function(){
 
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE MUNCIPIOS (INFORMACIÓN AFILIADO) */
     $(".municipio_info_afiliado").select2({
+        placeholder: "Seleccione una opción",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE DEPARTAMENOS (INFORMACIÓN AFILIADO) */
+    $(".afi_departamento_info_afiliado").select2({
+        placeholder: "Seleccione una opción",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE MUNCIPIOS (INFORMACIÓN AFILIADO) */
+    $(".afi_municipio_info_afiliado").select2({
         placeholder: "Seleccione una opción",
         allowClear: false
     });
@@ -204,6 +222,9 @@ $(document).ready(function(){
     $('#nombre_afiliado').keyup(function(){
         $('#nombre_afiliado').val($(this).val().toUpperCase());
     });
+    $('#afi_nombre_afiliado').keyup(function(){
+        $('#afi_nombre_afiliado').val($(this).val().toUpperCase());
+    });
 
     /* VALIDACIÓN CUANDO SE ESCRIBA EL NOMBRE DEL APODERADO SIEMPRE SEA EN MAYUSCULA */
     $('#nombre_apoderado').keyup(function(){
@@ -275,6 +296,25 @@ $(document).ready(function(){
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
                 $('#tipo_documento').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+            }
+        }
+    });
+    // listado tipos de documento beneficiario
+    let datos_lista_tipo_documento_benefi = {
+        '_token': token,
+        'parametro' : "lista_tipo_documento"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargarselectores',
+        data: datos_lista_tipo_documento_benefi,
+        success:function(data) {
+            // console.log(data);
+            $('#afi_tipo_documento').empty();
+            $('#afi_tipo_documento').append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $('#afi_tipo_documento').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
             }
         }
     });
@@ -393,6 +433,50 @@ $(document).ready(function(){
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
                     $('#municipio_info_afiliado').append('<option value="'+data[claves[i]]["Id_municipios"]+'">'+data[claves[i]]["Nombre_municipio"]+'</option>');
+                }
+            }
+        });
+    });
+
+    // listado Departamentos (Informacion Afiliado / Beneficiario)
+    let datos_lista_departamentos_info_afiliado_benefi = {
+        '_token': token,
+        'parametro' : "departamentos_info_afiliado"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargarselectores',
+        data: datos_lista_departamentos_info_afiliado_benefi,
+        success:function(data) {
+            // console.log(data);
+            $('#afi_departamento_info_afiliado').empty();
+            $('#afi_departamento_info_afiliado').append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $('#afi_departamento_info_afiliado').append('<option value="'+data[claves[i]]["Id_departamento"]+'">'+data[claves[i]]["Nombre_departamento"]+'</option>');
+            }
+        }
+    });
+    // listado municipios dependiendo del departamentos (informacion afiliado)
+    $('#afi_departamento_info_afiliado').change(function(){
+        $('#afi_municipio_info_afiliado').prop('disabled', false);
+        let id_departamento_info_afiliado_benefi = $('#afi_departamento_info_afiliado').val();
+        let datos_lista_municipios_info_afiliado_benefi = {
+            '_token': token,
+            'parametro' : "municipios_info_afiliado",
+            'id_departamento_info_afiliado': id_departamento_info_afiliado_benefi
+        };
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_lista_municipios_info_afiliado_benefi,
+            success:function(data) {
+                // console.log(data);
+                $('#afi_municipio_info_afiliado').empty();
+                $('#afi_municipio_info_afiliado').append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $('#afi_municipio_info_afiliado').append('<option value="'+data[claves[i]]["Id_municipios"]+'">'+data[claves[i]]["Nombre_municipio"]+'</option>');
                 }
             }
         });
@@ -937,6 +1021,19 @@ $(document).ready(function(){
         }
     });
 
+    /* Validación opción Otro/¿Cuál? del selector Tipo de documento Beneficiario */
+    $('#afi_tipo_documento').change(function (){
+        let opt_otro_tipo_documento_benefi = $("#afi_tipo_documento option:selected").text();
+        if (opt_otro_tipo_documento_benefi === "Otro/¿Cuál?") {
+            $(".afi_otro_documento").removeClass('d-none');
+            $(".afi_otro_documento").slideDown('slow');
+            $('#afi_otro_nombre_documento').prop('required', true);
+        } else {
+            $(".afi_otro_documento").slideUp('slow');
+            $('#afi_otro_nombre_documento').prop('required', false);
+        }
+    });
+
     /* Validación opción Otro/¿Cual? del selector de Estado Civil */
     $('#estado_civil').change(function(){
         let opt_otro_estado_civil = $("#estado_civil option:selected").text();
@@ -973,6 +1070,16 @@ $(document).ready(function(){
         }
     });
 
+    /* Validación opción Exterior del selector Departamento (Información Afiliado / Beneficiario) */
+    $('#afi_departamento_info_afiliado').change(function(){
+        let opt_exterior_info_afiliado_benefi = $('#afi_departamento_info_afiliado option:selected').text();
+        if (opt_exterior_info_afiliado_benefi != "Exterior") {
+            $(".afi_columna_pais_exterior_info_afiliado").addClass('d-none');
+            $(".afi_columna_pais_exterior_info_afiliado").slideUp('slow');
+            // $('#pais_exterior_info_afiliado').prop('required', true);
+        }
+    });
+
     /* Validación opción País? del selector Municipio (Información Afiliado) */
     $('#municipio_info_afiliado').change(function(){
         let opt_exterior_info_afiliado = $('#municipio_info_afiliado option:selected').text();
@@ -986,18 +1093,60 @@ $(document).ready(function(){
         }
     });
 
+    /* Validación opción País? del selector Municipio (Información Afiliado) */
+    $('#afi_municipio_info_afiliado').change(function(){
+        let opt_exterior_info_afiliado_benefi = $('#afi_municipio_info_afiliado option:selected').text();
+        if (opt_exterior_info_afiliado_benefi === "País?") {
+            $(".afi_columna_pais_exterior_info_afiliado").removeClass('d-none');
+            $(".afi_columna_pais_exterior_info_afiliado").slideDown('slow');
+            // $('#pais_exterior_info_afiliado').prop('required', true);
+        } else {
+            $(".afi_columna_pais_exterior_info_afiliado").slideUp('slow');
+            // $('#otro_nivel_escolar').prop('required', false);
+        }
+    });
 
-    /* Validación opción Otro/¿Cuál? del selector Tipo de afiliado */
+
+    /* Validación opción Otro/¿Cuál? del selector Tipo de afiliado y campos de afiliado o beneficario */
     $('#tipo_afiliado').change(function(){
         let opt_otro_afiliado = $('#tipo_afiliado option:selected').text();
         if (opt_otro_afiliado === "Otro/¿Cuál?") {
             $(".columna_otro_tipo_afiliado").removeClass('d-none');
             $(".columna_otro_tipo_afiliado").slideDown('slow');
+            $(".nom_beneficiario").addClass('d-none');
+            $(".nom_beneficiario").addClass('d-none');
+            $(".nom_beneficiario").addClass('d-none');
+            $(".columna_identificacion_afi_beni").addClass('d-none');
+            $(".columna_tipo_documen_afi_beni").addClass('d-none');
+            $(".columna_nombre_afi_beni").addClass('d-none');
+            $(".columna_direccion_afi_beni").addClass('d-none');
+            $(".columna_depar_afi_beni").addClass('d-none');
+            $(".afi_columna_municipio_info_afiliado").addClass('d-none');
+            $(".nom_afiliado").removeClass('d-none');
             // $('#otro_tipo_afiliado').prop('required', true);
+        } else if (opt_otro_afiliado === "Beneficiario") { 
+            $(".nom_afiliado").addClass('d-none');
+            $(".nom_beneficiario").removeClass('d-none');
+            $(".columna_identificacion_afi_beni").removeClass('d-none');
+            $(".columna_tipo_documen_afi_beni").removeClass('d-none');
+            $(".columna_nombre_afi_beni").removeClass('d-none');
+            $(".columna_direccion_afi_beni").removeClass('d-none');
+            $(".columna_depar_afi_beni").removeClass('d-none');
+            $(".afi_columna_municipio_info_afiliado").removeClass('d-none');
         } else {
             $(".columna_otro_tipo_afiliado").slideUp('slow');
+            $(".nom_beneficiario").addClass('d-none');
+            $(".nom_beneficiario").addClass('d-none');
+            $(".columna_identificacion_afi_beni").addClass('d-none');
+            $(".columna_tipo_documen_afi_beni").addClass('d-none');
+            $(".columna_nombre_afi_beni").addClass('d-none');
+            $(".columna_direccion_afi_beni").addClass('d-none');
+            $(".columna_depar_afi_beni").addClass('d-none');
+            $(".afi_columna_municipio_info_afiliado").addClass('d-none');
+            $(".nom_afiliado").removeClass('d-none');
             // $('#otro_nivel_escolar').prop('required', false);
         }
+        // Campos del  formulario a mostrar
     });
 
     /* Validación opción Otro/¿Cual? del selector EPS */
@@ -1183,6 +1332,14 @@ $(document).ready(function(){
                             $('.columna_nombre_apoderado').addClass('d-none');
                             $('.columna_identificacion_apoderado').addClass('d-none');
                         }
+                        $('#afi_nombre_afiliado').val(data[claves_info_afiliado[i]]["Nombre_afiliado_benefi"]);
+                        $('#afi_direccion_info_afiliado').val(data[claves_info_afiliado[i]]["Direccion_benefi"]);
+                        $('#afi_nro_identificacion').val(data[claves_info_afiliado[i]]["Nro_identificacion_benefi"]);
+                        $('#afi_tipo_documento').val(data[claves_info_afiliado[i]]["Tipo_documento_benefi"]).change();
+                        $('#afi_departamento_info_afiliado').val(data[claves_info_afiliado[i]]["Id_departamento_benefi"]).change();
+                        setTimeout(function(){
+                            $('#afi_municipio_info_afiliado').val(data[claves_info_afiliado[i]]["Id_municipio_benefi"]).change().prop('disabled', false);
+                        }, 100);
                         $('#activo').val(data[claves_info_afiliado[i]]["Activo"]).change();
                         $('#medio_notificacion_afiliado').val(data[claves_info_afiliado[i]]["Medio_notificacion"]).change();
                     }
@@ -1211,6 +1368,12 @@ $(document).ready(function(){
                     $('.columna_nombre_apoderado').addClass('d-none');
                     $('.columna_identificacion_apoderado').addClass('d-none');
                     $('#nombre_apoderado').val('');
+                    $('#afi_nombre_afiliado').val('');
+                    $('#afi_direccion_info_afiliado').val('');
+                    $('#afi_nro_identificacion').val('');
+                    $('#afi_tipo_documento').val('').change();
+                    $('#afi_departamento_info_afiliado').val('').change();
+                    $('#afi_municipio_info_afiliado').val('').change().prop('disabled', true);
                     $('#nro_identificacion_apoderado').val('');
                     $('#activo').val('').change();
                     ('#medio_notificacion_afiliado').val('').change();

@@ -2891,6 +2891,12 @@ class AdministradorController extends Controller
                 'Id_eps' => $id_eps,
                 'Id_afp' => $id_afp,
                 'Id_arl' => $id_arl,
+                'Nombre_afiliado_benefi' => $request->afi_nombre_afiliado,
+                'Direccion_benefi' => $request->afi_direccion_info_afiliado,
+                'Nro_identificacion_benefi' => $request->afi_nro_identificacion,
+                'Tipo_documento_benefi' => $request->afi_tipo_documento,
+                'Id_departamento_benefi' => $request->afi_departamento_info_afiliado,
+                'Id_municipio_benefi' => $request->afi_municipio_info_afiliado,
                 'Activo' => $request->activo,
                 'Medio_notificacion' => $request->medio_notificacion_afiliado,
                 'Nombre_usuario' => $nombre_usuario,
@@ -3242,12 +3248,15 @@ class AdministradorController extends Controller
 
         $array_datos_info_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_tipo_doc', 'siae.Tipo_documento', '=', 'slp_tipo_doc.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_tipo_doc_benefi', 'siae.Tipo_documento_benefi', '=', 'slp_tipo_doc_benefi.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_tipo_genero', 'siae.Genero', '=', 'slp_tipo_genero.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_estado_civil', 'siae.Estado_civil', '=', 'slp_estado_civil.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_nivel_escolar', 'siae.Nivel_escolar', '=', 'slp_nivel_escolar.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_dominancias as sld', 'siae.Id_dominancia', '=', 'sld.Id_Dominancia')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'siae.Id_departamento')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sldm1.Id_municipios', '=', 'siae.Id_municipio')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm_benefi', 'sldm_benefi.Id_departamento', '=', 'siae.Id_departamento_benefi')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1_benefi', 'sldm1_benefi.Id_municipios', '=', 'siae.Id_municipio_benefi')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp_tipo_afiliado', 'siae.Tipo_afiliado', '=', 'slp_tipo_afiliado.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_eps as sle', 'sle.Id_Eps', '=', 'siae.Id_eps')
         ->leftJoin('sigmel_gestiones.sigmel_lista_afps as slafp', 'slafp.Id_Afp', '=', 'siae.Id_afp')
@@ -3290,7 +3299,16 @@ class AdministradorController extends Controller
             'siae.Nombre_apoderado',
             'siae.Nro_identificacion_apoderado',
             'siae.Activo',
-            'siae.Medio_notificacion'
+            'siae.Medio_notificacion',
+            'siae.Nombre_afiliado_benefi',
+            'siae.Tipo_documento_benefi',
+            'slp_tipo_doc_benefi.Nombre_parametro as Nombre_documento_benefi',
+            'siae.Nro_identificacion_benefi',
+            'siae.Direccion_benefi',
+            'siae.Id_departamento_benefi',
+            'siae.Id_municipio_benefi',
+            'sldm_benefi.Nombre_departamento as Nombre_departamento_benefi',
+            'sldm1_benefi.Nombre_municipio as Nombre_municipio_benefi',
         )
         ->where([
             ['siae.Nro_identificacion', '=', $request->numero_ident_afiliado]
