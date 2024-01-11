@@ -290,8 +290,7 @@ $(document).ready(function(){
         var newId_asignacion = $('#newId_asignacion').val();
         var Id_proceso = $('#Id_proceso').val();
         var Id_servicio = $("#Id_servicio").val();
-        var modalidad_calificacion = $('#modalidad_calificacion').val();
-        var f_accion = $('#f_accion').val();
+        var modalidad_calificacion = $('#modalidad_calificacion').val();        
         var accion = $('#accion').val();
         var fecha_alerta = $('#fecha_alerta').val();
         var enviar = $('#enviar').val();
@@ -308,7 +307,6 @@ $(document).ready(function(){
             'Id_proceso':Id_proceso,
             'Id_servicio': Id_servicio,
             'modalidad_calificacion':modalidad_calificacion,
-            'f_accion':f_accion,
             'accion':accion,
             'fecha_alerta':fecha_alerta,
             'enviar':enviar,

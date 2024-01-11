@@ -3265,6 +3265,12 @@ $(document).ready(function(){
         })
     }) 
 
+    //Asignar ruta del formulario para la descarga del PDF Dictamen 1507
+    // $(document).on('mouseover',"input[id^='ver_dictamenesPcl']", function(){
+    //     let url_descargarDictamen = $('#descargar_dictamenesPcl').val();        
+    //     $('form[name="ver_dictamenPcl"]').attr("action", url_descargarDictamen);                   
+    // });
+
 });
 
 $(document).ready(function(){
@@ -4231,6 +4237,10 @@ $(document).ready(function(){
 
     });
 });
+
+function redondear(numero) {
+    return Math.round(numero * 100) / 100;
+}
 
 $(document).ready(function(){
     // Obtener sessionStorage del navegador
