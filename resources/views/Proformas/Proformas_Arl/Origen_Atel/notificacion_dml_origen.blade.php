@@ -14,20 +14,18 @@
         #header {
             position: fixed; 
             /* esta ligado con el primer valor del margin */
-            /* top: -2cm; */
             top: -2.2cm;
             left: 0cm;
             width: 100%;
             text-align: right; 
         }
         .logo_header{
-            width: 350px;
+            width: 150px;
             height: auto;
         }
         #footer{
             position: fixed;
             /* esta ligado con el tercer valor del margin */
-            /* bottom: -1.2cm; */
             bottom: -2.2cm;
             left: 0cm;
             width: 100%;
@@ -67,9 +65,9 @@
         }
         .tabla1{
             width: 80%;
-            text-align: center;
+            /* text-align: justify;
             margin-left: auto;
-            margin-right: auto;
+            margin-right: auto; */
         }
         .tabla2{
             width: 100%;
@@ -96,11 +94,22 @@
 <body>
     <div id="header">
         <?php
-            $imagenPath_header = public_path('/images/logos_preformas/logo_arl_alfa.png');
-            $imagenData_header = file_get_contents($imagenPath_header);
-            $imagenBase64_header = base64_encode($imagenData_header);
+            // $imagenPath_header = public_path('/images/logos_preformas/logo_arl_alfa.png');
+            // $imagenData_header = file_get_contents($imagenPath_header);
+            // $imagenBase64_header = base64_encode($imagenData_header);
         ?>
-        <img src="data:image/png;base64,{{ $imagenBase64_header }}" class="logo_header">
+        {{-- <img src="data:image/png;base64,{{ $imagenBase64_header }}" class="logo_header"> --}}
+        <?php if($logo_header == "Sin logo"): ?>
+            <p>No logo</p>
+        <?php else: ?>
+            <?php 
+                $ruta_logo = "/logos_clientes/{$id_cliente}/{$logo_header}";
+                $imagenPath_header = public_path($ruta_logo);
+                $imagenData_header = file_get_contents($imagenPath_header);
+                $imagenBase64_header = base64_encode($imagenData_header);
+            ?>
+            <img src="data:image/png;base64,{{ $imagenBase64_header }}" class="logo_header">
+        <?php endif ?>
     </div>
     <div id="footer">
         <table class="tabla_footer">
@@ -169,32 +178,44 @@
                 </tr>
             </tbody>
         </table>
-        
         <br>
-        <table class="tabla1">
-            <tbody>
+        {{-- <table class="tabla1">
+            <tbody >
                 <tr>
                     <td class="fuente_todo_texto"><span class="negrita">Asunto:</span></td>
-                    <td class="fuente_todo_texto"><span class="negrita">CALIFICACIÓN DE ORIGEN</span></td>
+                    <td class="fuente_todo_texto"><span class="negrita">{{$asunto}}</span></td>
                 </tr>
                 <tr>
-                    <td class="fuente_todo_texto"><span class="negrita">Identificación</span></td>
+                    <td class="fuente_todo_texto"><span class="negrita">Identificación:</span></td>
                     <td class="fuente_todo_texto">{{$identificacion}}</td>
                 </tr>
                 <tr>
-                    <td class="fuente_todo_texto"><span class="negrita">Fecha del Siniestro</span></td>
+                    <td class="fuente_todo_texto"><span class="negrita">Fecha del Siniestro:</span></td>
                     <td class="fuente_todo_texto">{{$fecha_evento}}</td>
                 </tr>
             </tbody>
+        </table> --}}
+        <table class="tabla1">
+            <tbody>
+                <tr>
+                    <td>
+                        <p class="fuente_todo_texto"><span class="negrita">Asunto: {{$asunto}}</span>
+                        </p>
+                        <p class="fuente_todo_texto"><span class="negrita">Identificación: </span>{{$identificacion}}</p>
+                        <p class="fuente_todo_texto"><span class="negrita">Fecha del Siniestro: </span>{{$fecha_evento}}</p>
+                    </td>
+                </tr>
+            </tbody>
         </table>
-        <br><br>
+        <br>
         <section class="fuente_todo_texto">
-            Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.
+            {{-- Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.
             <br><br>
             De la manera más atenta queremos informar el resultado de la calificación realizada por el Grupo Interdisciplinario de Calificación de Origen y
             Pérdida de la Capacidad Laboral adscrito a la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A, 
             según lo dispuesto en los Artículo 142 del Decreto 0019 de 2012, ha determinado que el  evento reportado ante 
-            esta Administradora,  con las patologías.
+            esta Administradora,  con las patologías. --}}
+            {{$cuerpo}}
             <br>
             <ul>
                 @foreach($diagnosticos_cie10 as $diagnostico)

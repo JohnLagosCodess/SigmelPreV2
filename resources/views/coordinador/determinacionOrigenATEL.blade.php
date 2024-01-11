@@ -117,13 +117,13 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="f_dictamen">Fecha Dictamen</label>
-                                                <input type="text" class="form-control" name="fecha_dictamen" id="fecha_dictamen" value="{{$array_datos_calificacion_origen[0]->F_registro_asignacion}}" disabled>
+                                                <input type="text" class="form-control" name="fecha_dictamen" id="fecha_dictamen" value="<?php if(!empty($array_datos_calificacion_origen[0]->F_registro_asignacion)){echo $array_datos_calificacion_origen[0]->F_registro_asignacion;}?>" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="nro_dictamen">Dictamen N°</label>
-                                                <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" value="<?php if(!empty($array_datos_calificacion_origen[0]->Consecutivo_dictamen)){echo $array_datos_calificacion_origen[0]->Consecutivo_dictamen;}?>" disabled>                                                                                               
+                                                <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" value="<?php if(!empty($array_datos_calificacion_origen[0]->Consecutivo_dictamen)){echo $array_datos_calificacion_origen[0]->Consecutivo_dictamen;}?>" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -1292,86 +1292,131 @@
                         </div> 
                     </div>
                 </form>
-                <form  id="Form_dml_origen_pdf" method="POST">
-                    @csrf
-                    <div class="d-none1">
-                        {{-- Nro Radicado --}}
-                        <input type="text" name="nro_radicado" id="nro_radicado" value="<?php if(!empty($array_comite_interdisciplinario[0]->N_radicado)){echo $array_comite_interdisciplinario[0]->N_radicado;}else{echo $consecutivo;}?>">
-                        {{-- Tipo de documento --}}
-                        <input type="text" name="tipo_identificacion" id="tipo_identificacion" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nombre_tipo_documento)){echo $array_datos_calificacion_origen[0]->Nombre_tipo_documento;}?>">
-                        {{-- Nro de documento --}}
-                        <input type="text" name="num_identificacion" id="num_identificacion" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nro_identificacion)){echo $array_datos_calificacion_origen[0]->Nro_identificacion;}?>">
-                        {{-- Siniestro --}}
-                        <input type="text" name="nro_siniestro" id="nro_siniestro" value="<?php if(!empty($array_datos_calificacion_origen[0]->ID_evento)){echo $array_datos_calificacion_origen[0]->ID_evento;} ?>">
-                        {{-- Ciudad --}}
-                        <input type="text" name="ciudad" id="ciudad" id="ciudad" value="<?php if(!empty($array_comite_interdisciplinario[0]->Ciudad)){echo $array_comite_interdisciplinario[0]->Ciudad;}else{echo "Bogotá D.C";}?>">       
-                        {{-- Fecha --}}
-                        <input type="date" name="fecha" id="fecha" value="<?php if(!empty($array_comite_interdisciplinario[0]->F_correspondecia)){echo $array_comite_interdisciplinario[0]->F_correspondecia;}else{echo now()->format('Y-m-d');}?>">
-                        {{-- Nombre afiliado --}}
-                        <input type="text" name="nombre_afiliado" id="nombre_afiliado" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nombre_afiliado)){echo $array_datos_calificacion_origen[0]->Nombre_afiliado;}?>">
-                        {{-- Dirección afliado --}}
-                        <input type="text" name="direccion_afiliado" id="direccion_afiliado" value="<?php if(!empty($array_datos_calificacion_origen[0]->Direccion)){echo $array_datos_calificacion_origen[0]->Direccion;}?>">
-                        {{-- Telefono afiliado --}}
-                        <input type="text" name="telefono_afiliado" id="telefono_afiliado" value="<?php if(!empty($array_datos_calificacion_origen[0]->Telefono_contacto)){echo $array_datos_calificacion_origen[0]->Telefono_contacto;}?>">
-                        {{-- Id asignacion para consultar los diagnosticos --}}
-                        <input type="text" name="Id_Asignacion_consulta_dx" id="Id_Asignacion_consulta_dx" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_Asignacion)){echo $array_datos_calificacion_origen[0]->Id_Asignacion;}?>">
-                        {{-- Id proceso para consultar los diagnosticos --}}
-                        <input type="text" name="Id_Proceso_consulta_dx" id="Id_Proceso_consulta_dx" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_proceso)){echo $array_datos_calificacion_origen[0]->Id_proceso;}?>">
-                        {{-- Id del cliente para consultar el nombre del cliente --}}
-                        <input type="text" name="Id_cliente_firma" id="Id_cliente_firma" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_cliente)){echo $array_datos_calificacion_origen[0]->Id_cliente;}?>">
-                        {{-- Tipo de evento --}}
-                        <input type="text" name="nombre_evento" id="nombre_evento" value="{{$nombre_del_evento_guardado}}">
-                        <input type="submit" class="btn btn-outline-danger" value="GENERAR">
-                    </div>
-                </form>
+                
             </div>
             <!-- Comunicados - Dictamen y Oficio remisorio -->                    
             <div class="card-info d-none" id="div_comunicado_dictamen_oficioremisorio">
                 <div class="card-header text-center" style="border: 1.5px solid black;">
                     <h5>Comunicados</h5>
                 </div>
-                <form id="form_comunicado_dictamen_oficioremisorio" action="POST">                            
-                    <div class="card-body">
-                        <div class="row">  
-                            <div class="col-12">
-                                <div class="form-group">                                            
-                                    <div class="table-responsive">
-                                        <table id="listado_comunicados_clpcl" class="table table-striped table-bordered" width="100%">
-                                            <thead>
-                                                <tr class="bg-info">
-                                                    <th>N° de Radicado</th>
-                                                    <th>Elaboró</th>
-                                                    <th>Fecha de comunicado</th>
-                                                    <th>Acción</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($array_comunicados_correspondencia as $comunicados)
+                <div class="card-body">
+                    <div class="row">  
+                        <div class="col-12">
+                            <div class="form-group">                                            
+                                <div class="table-responsive">
+                                    <table id="listado_comunicados_clpcl" class="table table-striped table-bordered" width="100%">
+                                        <thead>
+                                            <tr class="bg-info">
+                                                <th>N° de Radicado</th>
+                                                <th>Elaboró</th>
+                                                <th>Fecha de comunicado</th>
+                                                <th>Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($array_comunicados_correspondencia as $comunicados)
                                                 <tr>
                                                     <td>{{$comunicados->N_radicado}}</td>
                                                     <td>{{$comunicados->Elaboro}}</td>
-                                                    <td>{{$comunicados->F_comunicado}}</td>     
+                                                    <td>{{$comunicados->F_comunicado}}</td>
                                                     @if ($comunicados->Ciudad == 'N/A')
                                                         <td>
-                                                            <i class="far fa-eye text-info"></i>
+                                                            {{-- <i class="far fa-eye text-info"></i> --}}
+                                                            {{-- formulario para descargar dml origen (dictamen) --}}
+                                                            <form id="Form_dml_origen_pdf_{{$comunicados->Id_Comunicado}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
+                                                                @csrf
+                                                                <div class="d-none">
+                                                                    {{-- aqui --}}
+                                                                    {{-- ID evento --}}
+                                                                    <input type="text" name="id_evento_{{$comunicados->Id_Comunicado}}" id="id_evento_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->ID_evento)){echo $array_datos_calificacion_origen[0]->ID_evento;} ?>">
+                                                                    {{-- Id asignacion --}}
+                                                                    <input type="text" name="Id_Asignacion_{{$comunicados->Id_Comunicado}}" id="Id_Asignacion_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_Asignacion)){echo $array_datos_calificacion_origen[0]->Id_Asignacion;}?>">
+                                                                    {{-- Id proceso --}}
+                                                                    <input type="text" name="Id_Proceso_{{$comunicados->Id_Comunicado}}" id="Id_Proceso_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_proceso)){echo $array_datos_calificacion_origen[0]->Id_proceso;}?>">
+                                                                    {{-- Fecha Dictamen --}}
+                                                                    <input type="text" name="f_dictamen_{{$comunicados->Id_Comunicado}}" id="f_dictamen_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->F_registro_asignacion)){echo $array_datos_calificacion_origen[0]->F_registro_asignacion;}?>">
+                                                                    {{-- N° Dictamen --}}
+                                                                    <input type="text"name="nro_dictamen_{{$comunicados->Id_Comunicado}}" id="nro_dictamen_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Consecutivo_dictamen)){echo $array_datos_calificacion_origen[0]->Consecutivo_dictamen;}?>">
+                                                                    {{-- motivo solicitud --}}
+                                                                    <input type="text" id="motivo_solicitud_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($motivo_solicitud_actual[0]->Nombre_solicitud)){echo $motivo_solicitud_actual[0]->Nombre_solicitud;}?>">
+                                                                    {{-- Id cliente --}}
+                                                                    <input type="text" name="Id_cliente_{{$comunicados->Id_Comunicado}}" id="Id_cliente_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_cliente)){echo $array_datos_calificacion_origen[0]->Id_cliente;}?>">
+                                                                    {{-- Justificacion para revision del origen del evento --}}
+                                                                    <textarea name="justi_revision_origen_{{$comunicados->Id_Comunicado}}" id="justi_revision_origen_{{$comunicados->Id_Comunicado}}" rows="2"><?php if(!empty($datos_bd_DTO_ATEL[0]->Justificacion_revision_origen)){echo $datos_bd_DTO_ATEL[0]->Justificacion_revision_origen;}?></textarea>
+                                                                    {{-- Tipo de evento --}}
+                                                                    <input type="text" name="nombre_evento_{{$comunicados->Id_Comunicado}}" id="nombre_evento_{{$comunicados->Id_Comunicado}}" value="{{$nombre_del_evento_guardado}}">
+                                                                    {{-- Mortal --}}
+                                                                    <input type="text" name="mortal_{{$comunicados->Id_Comunicado}}" id="mortal_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Mortal)){if($datos_bd_DTO_ATEL[0]->Mortal == "Si"){echo "Si";}else{echo "No";}}?>">
+                                                                    {{-- Fecha fallecimiento --}}
+                                                                    <input type="text" name="f_fallecimiento_{{$comunicados->Id_Comunicado}}" id="f_fallecimiento_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento)){echo $datos_bd_DTO_ATEL[0]->Fecha_fallecimiento;}?>">
+                                                                    {{-- Fecha evento --}}
+                                                                    <input type="text" name="f_evento_{{$comunicados->Id_Comunicado}}" id="f_evento_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_evento)){echo $datos_bd_DTO_ATEL[0]->Fecha_evento;}?>">
+                                                                    {{-- Hora del evento --}}
+                                                                    <input type="time" name="hora_evento_{{$comunicados->Id_Comunicado}}" id="hora_evento_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Hora_evento)){echo $datos_bd_DTO_ATEL[0]->Hora_evento;}?>">
+                                                                    {{-- Descripción FURAT --}}
+                                                                    <textarea name="descrip_FURAT_{{$comunicados->Id_Comunicado}}" id="descrip_FURAT_{{$comunicados->Id_Comunicado}}" rows="2"><?php if(!empty($datos_bd_DTO_ATEL[0]->Descripcion_FURAT)){echo $datos_bd_DTO_ATEL[0]->Descripcion_FURAT;}?></textarea>
+                                                                    {{-- Sustentación --}}
+                                                                    <textarea name="sustentacion_califi_origen_{{$comunicados->Id_Comunicado}}" id="sustentacion_califi_origen_{{$comunicados->Id_Comunicado}}" rows="2"><?php if(!empty($datos_bd_DTO_ATEL[0]->Sustentacion)){echo $datos_bd_DTO_ATEL[0]->Sustentacion;}?></textarea>
+                                                                    {{-- Nro de documento --}}
+                                                                    <input type="text" name="num_identificacion_{{$comunicados->Id_Comunicado}}" id="num_identificacion_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nro_identificacion)){echo $array_datos_calificacion_origen[0]->Nro_identificacion;}?>">
+                                                                </div>
+                                                                <button type="submit" id="btn_enviar_form1_{{$comunicados->Id_Comunicado}}" style="border: none; background:transparent;">
+                                                                    <i class="far fa-eye text-info"></i>
+                                                                </button>
+                                                            </form>
                                                         </td>                                                                
                                                     @else
                                                         <td>
-                                                            <i class="far fa-eye text-info"></i>
+                                                            {{-- formulario para descargar notificacion dml origen (oficio remisorio) --}}
+                                                            <form  id="Form_noti_dml_origen_pdf_{{$comunicados->Id_Comunicado}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
+                                                                @csrf
+                                                                <div class="d-none">
+                                                                    {{-- tupla tabla comunicados --}}
+                                                                    <input type="text" name="id_tupla_comunicado_{{$comunicados->Id_Comunicado}}" id="id_tupla_comunicado_{{$comunicados->Id_Comunicado}}" value="<?php echo $comunicados->Id_Comunicado;?>">
+                                                                    {{-- Asunto --}}
+                                                                    <input type="text" name="asunto_proforma_dml_{{$comunicados->Id_Comunicado}}" id="asunto_proforma_dml_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_comite_interdisciplinario[0]->Asunto)){echo strtoupper($array_comite_interdisciplinario[0]->Asunto);}else{echo "Sin Asunto";}?>">                                                
+                                                                    {{-- Tipo de documento --}}
+                                                                    <input type="text" name="tipo_identificacion_{{$comunicados->Id_Comunicado}}" id="tipo_identificacion_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nombre_tipo_documento)){echo $array_datos_calificacion_origen[0]->Nombre_tipo_documento;}?>">
+                                                                    {{-- Nro de documento --}}
+                                                                    <input type="text" name="num_identificacion_{{$comunicados->Id_Comunicado}}" id="num_identificacion_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nro_identificacion)){echo $array_datos_calificacion_origen[0]->Nro_identificacion;}?>">
+                                                                    {{-- Siniestro --}}
+                                                                    <input type="text" name="nro_siniestro_{{$comunicados->Id_Comunicado}}" id="nro_siniestro_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->ID_evento)){echo $array_datos_calificacion_origen[0]->ID_evento;} ?>">
+                                                                    {{-- Ciudad --}}
+                                                                    <input type="text" name="ciudad_{{$comunicados->Id_Comunicado}}" id="ciudad_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_comite_interdisciplinario[0]->Ciudad)){echo $array_comite_interdisciplinario[0]->Ciudad;}else{echo "Bogotá D.C.";}?>">       
+                                                                    {{-- Fecha --}}
+                                                                    <input type="date" name="fecha_{{$comunicados->Id_Comunicado}}" id="fecha_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_comite_interdisciplinario[0]->F_correspondecia)){echo $array_comite_interdisciplinario[0]->F_correspondecia;}else{echo now()->format('Y-m-d');}?>">
+                                                                    {{-- Nombre afiliado --}}
+                                                                    <input type="text" name="nombre_afiliado_{{$comunicados->Id_Comunicado}}" id="nombre_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nombre_afiliado)){echo $array_datos_calificacion_origen[0]->Nombre_afiliado;}?>">
+                                                                    {{-- Dirección afliado --}}
+                                                                    <input type="text" name="direccion_afiliado_{{$comunicados->Id_Comunicado}}" id="direccion_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Direccion)){echo $array_datos_calificacion_origen[0]->Direccion;}?>">
+                                                                    {{-- Telefono afiliado --}}
+                                                                    <input type="text" name="telefono_afiliado_{{$comunicados->Id_Comunicado}}" id="telefono_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Telefono_contacto)){echo $array_datos_calificacion_origen[0]->Telefono_contacto;}?>">
+                                                                    {{-- Id asignacion para consultar los diagnosticos --}}
+                                                                    <input type="text" name="Id_Asignacion_consulta_dx_{{$comunicados->Id_Comunicado}}" id="Id_Asignacion_consulta_dx_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_Asignacion)){echo $array_datos_calificacion_origen[0]->Id_Asignacion;}?>">
+                                                                    {{-- Id proceso para consultar los diagnosticos --}}
+                                                                    <input type="text" name="Id_Proceso_consulta_dx_{{$comunicados->Id_Comunicado}}" id="Id_Proceso_consulta_dx_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_proceso)){echo $array_datos_calificacion_origen[0]->Id_proceso;}?>">
+                                                                    {{-- Id del cliente para consultar el nombre del cliente --}}
+                                                                    <input type="text" name="Id_cliente_firma_{{$comunicados->Id_Comunicado}}" id="Id_cliente_firma_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_cliente)){echo $array_datos_calificacion_origen[0]->Id_cliente;}?>">
+                                                                    {{-- Tipo de evento --}}
+                                                                    <input type="text" name="nombre_evento_{{$comunicados->Id_Comunicado}}" id="nombre_evento_{{$comunicados->Id_Comunicado}}" value="{{$nombre_del_evento_guardado}}">
+                                                                </div>
+                                                                <button type="submit" id="btn_enviar_form_{{$comunicados->Id_Comunicado}}" style="border: none; background:transparent;">
+                                                                    <i class="far fa-eye text-info"></i>
+                                                                </button>
+                                                            </form>
                                                             <label for="editar_correspondencia"><i class="fa fa-pen text-info"></i></label>
                                                             <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia" type="button" style="font-weight: bold;">
                                                         </td>
                                                     @endif
-                                                </tr>                                                        
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                </tr>                                                      
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </div>                     
-                        </div>                                                                
-                    </div>
-                </form>
+                            </div>
+                        </div>                     
+                    </div>                                                                
+                </div>
             </div>               
         </div>
     </div>

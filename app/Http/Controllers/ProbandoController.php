@@ -259,14 +259,14 @@ class ProbandoController extends Controller
             'fecha_elab_info' => '$fecha_elab_info'
         ];
 
-        // $pdf = app('dompdf.wrapper');
-        // $pdf->loadView('/planti', $data);
-        // $fileName = 'pdfsito.pdf';
-        // $pdf->set('isHtml5ParserEnabled', true);
-        // $pdf->set('isPhpEnabled', true);
-        // return $pdf->download($fileName);
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('/planti', $data);
+        $pdf->set('isHtml5ParserEnabled', true);
+        $pdf->set('isPhpEnabled', true);
+        $fileName = 'pdfsito.pdf';
+        return $pdf->download($fileName);
 
-       // Cargar la plantilla principal
+      /*  // Cargar la plantilla principal
         $html = view('/planti', $data)->render();
 
         // Configurar DomPDF
@@ -287,7 +287,7 @@ class ProbandoController extends Controller
         $dompdf->render();
 
         // Descargar o mostrar el PDF generado
-        return $dompdf->stream('pdf_prueba.pdf');
+        return $dompdf->stream('pdf_prueba.pdf'); */
 
     }
 
@@ -379,6 +379,60 @@ class ProbandoController extends Controller
         // ));
     }
 
+    public function test_proformas(){
+
+        // return view ('otra_conexion', compact('datos_pruebas', 'user', 'codigoQR'));
+        // Generar el código QR
+        $datos = "987456321";
+        $codigoQR = QrCode::size(110)->margin(0.5)->generate($datos);
+
+        $documentos_relacionados = array(
+            array(
+                'fecha' => '06/04/2023',
+                'relacion' => 'Medicina general',
+                'descripcion' => 'Paciente de 52 años, cargo oficial de coados.'
+            ),
+            array(
+                'fecha' => '08/04/2023',
+                'relacion' => 'Ortopedia',
+                'descripcion' => 'Paciente con accidente laboral, le cae un ladrillo en el 1er artejo del p'
+            )
+        );
+
+        $dx_motivo_calificacion = array(
+            array(
+                'cie10' => 'S912',
+                'origen' => 'Laboral',
+                'nombre' => 'Herida de dedo(s) del pie con daño de la(s) uña(s)',
+                'descripcion' => 'Herida del 1er dedo del pie ',
+                'lateralidad' => 'Derecho'
+            ),
+            array(
+                'cie10' => 'S924',
+                'origen' => 'Laboral',
+                'nombre' => 'Fractura de los huesos del dedo gordo del pie',
+                'descripcion' => 'Fractura de la falange distal del pie',
+                'lateralidad' => 'Derecho'
+            )
+        );
+
+        $data = [
+            'codigoQR' => $codigoQR,
+            'logo_header' => 'logo_cliente_7.png',
+            'id_cliente' => '7',
+            'documentos_relacionados' => $documentos_relacionados,
+            'dx_motivo_calificacion' => $dx_motivo_calificacion,
+            'ID_evento' => '987456321',
+            'Id_Asignacion' => 39,
+            'Id_proceso' => 2,
+            'Radicado_comuni' => "SALPCL2024010500001"
+        ];
+
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('/Proformas/Proformas_Arl/Origen_Atel/dml_origen_atel', $data);
+        $fileName = 'pdfsito.pdf';
+        return $pdf->stream($fileName);
+    }
 
     /* EJEMPLO 1 LARAVEL EXCEL (LIBRERIA) */
     /* 
