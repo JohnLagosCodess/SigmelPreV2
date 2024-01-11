@@ -148,7 +148,7 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="tipo_afiliado" class="col-form-label">Tipo de afiliado<span style="color:red;">(*)</span></label>
-                                                    <select class="tipo_afiliado custom-select" name="tipo_afiliado" id="tipo_afiliado"></select>
+                                                    <select class="tipo_afiliado custom-select" name="tipo_afiliado" id="tipo_afiliado" required></select>
                                                 </div>
                                             </div>
                                             <div class="col-sm columna_otro_tipo_afiliado d-none">

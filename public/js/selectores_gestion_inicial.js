@@ -222,6 +222,7 @@ $(document).ready(function(){
     $('#nombre_afiliado').keyup(function(){
         $('#nombre_afiliado').val($(this).val().toUpperCase());
     });
+    
     $('#afi_nombre_afiliado').keyup(function(){
         $('#afi_nombre_afiliado').val($(this).val().toUpperCase());
     });
@@ -1113,8 +1114,6 @@ $(document).ready(function(){
         if (opt_otro_afiliado === "Otro/¿Cuál?") {
             $(".columna_otro_tipo_afiliado").removeClass('d-none');
             $(".columna_otro_tipo_afiliado").slideDown('slow');
-            $(".nom_beneficiario").addClass('d-none');
-            $(".nom_beneficiario").addClass('d-none');
             $(".nom_beneficiario").addClass('d-none');
             $(".columna_identificacion_afi_beni").addClass('d-none');
             $(".columna_tipo_documen_afi_beni").addClass('d-none');

@@ -36,6 +36,7 @@ $(document).ready(function () {
                         $('.contenedor_info_afiliado').addClass('d-none');
                         $('#span_nombre_afiliado').empty();
                         $('#span_nro_identificacion').empty();
+                        $('#span_tipo_afiliado').empty();
 
                         /* Ocultar contenedor información del evento */
                         $('.contenedor_info_evento').addClass('d-none');
@@ -51,9 +52,11 @@ $(document).ready(function () {
                         /* Habilitar contenedor informacion del afiliado */
                         $('#span_nombre_afiliado').empty();
                         $('#span_nro_identificacion').empty();
+                        $('#span_tipo_afiliado').empty();
                         $('.contenedor_info_afiliado').removeClass('d-none');
                         $('#span_nombre_afiliado').append(data[0]['Nombre_afiliado']);
                         $('#span_nro_identificacion').append(data[0]['Nro_identificacion']);
+                        $('#span_tipo_afiliado').append(data[0]['Tipo_afiliado']);
 
                         /* Habilitar contenedor información del evento */
                         $('#num_registros').empty();

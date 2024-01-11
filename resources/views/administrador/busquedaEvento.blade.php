@@ -93,6 +93,12 @@
                             <span id="span_nro_identificacion"></span>
                         </div>
                     </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label">Tipo de afiliado:</label>
+                            <span id="span_tipo_afiliado"></span>
+                        </div>
+                    </div>
                 </div>
             </div>            
         </div>

@@ -40,6 +40,12 @@ class sigmel_informacion_afiliado_eventos extends Model
     'Id_arl',
     'Activo',
     'Medio_notificacion',
+    'Nombre_afiliado_benefi',
+    'Tipo_documento_benefi',
+    'Nro_identificacion_benefi',
+    'Direccion_benefi',
+    'Id_departamento_benefi',
+    'Id_municipio_benefi',
     'Nombre_usuario',
     'F_registro',
     'F_actualizacion'

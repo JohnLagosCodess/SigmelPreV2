@@ -86,6 +86,12 @@
                                                 <input type="text" class="form-control" name="id_evento" id="id_evento" value="{{$array_datos_calificacionNoti[0]->ID_evento}}" disabled>
                                             </div>
                                         </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="tipo_evento">Tipo de afiliado</label>
+                                                <input type="text" class="form-control" name="tipo_afiliado" id="tipo_afiliado" value="{{$array_datos_calificacionNoti[0]->Tipo_afiliado}}" disabled>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>     

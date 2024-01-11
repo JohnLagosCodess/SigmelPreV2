@@ -238,10 +238,24 @@
                             <div class="col-12">
                                 <div class="card-info">
                                     <div class="card-header text-center" style="border: 1.5px solid black;">
-                                        <h5>Información del afiliado</h5>
+                                        <h5>Información del Afiliado / Beneficiario</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="tipo_afiliado" class="col-form-label">Tipo de afiliado<span style="color:red;">(*)</span></label>
+                                                    <select class="tipo_afiliado custom-select" name="tipo_afiliado" id="tipo_afiliado" required>
+                                                        <option value="{{$array_datos_info_afiliados[0]->Tipo_afiliado}}">{{$array_datos_info_afiliados[0]->Nombre_tipo_afiliado}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm columna_otro_tipo_afiliado d-none">
+                                                <div class="form-group">
+                                                    <label for="otro_tipo_afiliado" class="col-form-label">Otro Tipo de Afiliado</label>
+                                                    <input class="otro_tipo_afiliado form-control" name="otro_tipo_afiliado" id="otro_tipo_afiliado">
+                                                </div>
+                                            </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="nro_identificacion" class="col-form-label">N° de identificación <span style="color:red;">(*)</span></label>
@@ -249,6 +263,8 @@
                                                     <input type="hidden" name="nro_identificacion_enviar" value="{{$array_datos_info_afiliados[0]->Nro_identificacion}}">
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="tipo_documento" class="col-form-label">Tipo de documento <span style="color:red;">(*)</span></label>
@@ -265,7 +281,8 @@
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="nombre_afiliado" class="col-form-label">Nombre de afiliado <span style="color:red;">(*)</span></label>
+                                                    <label for="nombre_afiliado" class="col-form-label nom_afiliado">Nombre de afiliado <span style="color:red;">(*)</span></label>
+                                                    <label for="nombre_afiliado" class="col-form-label nom_beneficiario d-none">Nombre del Beneficiario <span style="color:red;">(*)</span></label>
                                                     <input type="text" class="nombre_afiliado form-control" name="nombre_afiliado" id="nombre_afiliado" value="{{$array_datos_info_afiliados[0]->Nombre_afiliado}}" required>
                                                 </div>
                                             </div>
@@ -379,20 +396,6 @@
                                                         <input type="text" class="ocupacion form-control" name="ocupacion" id="ocupacion" value="{{$array_datos_info_afiliados[0]->Ocupacion}}">
                                                     </div>
                                                 </div>
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <label for="tipo_afiliado" class="col-form-label">Tipo de afiliado</label>
-                                                        <select class="tipo_afiliado custom-select" name="tipo_afiliado" id="tipo_afiliado">
-                                                            <option value="{{$array_datos_info_afiliados[0]->Tipo_afiliado}}">{{$array_datos_info_afiliados[0]->Nombre_tipo_afiliado}}</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm columna_otro_tipo_afiliado d-none">
-                                                    <div class="form-group">
-                                                        <label for="otro_tipo_afiliado" class="col-form-label">Otro Tipo de Afiliado</label>
-                                                        <input class="otro_tipo_afiliado form-control" name="otro_tipo_afiliado" id="otro_tipo_afiliado">
-                                                    </div>
-                                                </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-sm">
@@ -496,6 +499,60 @@
                                                         <select class="medio_notificacion_afiliado custom-select" name="medio_notificacion_afiliado" id="medio_notificacion_afiliado" required>
                                                             <option value="{{$array_datos_info_afiliados[0]->Medio_notificacion}}">{{$array_datos_info_afiliados[0]->Medio_notificacion}}</option>
                                                         </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 columna_identificacion_afi_beni d-none">
+                                                    <div class="form-group">
+                                                        <label for="afi_nro_identificacion" class="col-form-label">N° de identificación afiliado<span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="afi_nro_identificacion form-control" name="afi_nro_identificacion" id="afi_nro_identificacion" value="{{$array_datos_info_afiliados[0]->Nro_identificacion_benefi}}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 columna_tipo_documen_afi_beni d-none">
+                                                    <div class="form-group">
+                                                        <label for="afi_tipo_documento" class="col-form-label">Tipo de documento afiliado<span style="color:red;">(*)</span></label>
+                                                        <select class="afi_tipo_documento custom-select" name="afi_tipo_documento" id="afi_tipo_documento">
+                                                            <option value="{{$array_datos_info_afiliados[0]->Tipo_documento_benefi}}" selected>{{$array_datos_info_afiliados[0]->Nombre_documento_benefi}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 afi_otro_documento d-none">
+                                                    <div class="form-group">
+                                                        <label for="afi_otro_nombre_documento" class="col-form-label" style="color:;">Otro Documento<span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="afi_otro_nombre_documento form-control" name="afi_otro_nombre_documento" id="afi_otro_nombre_documento">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 columna_nombre_afi_beni d-none">
+                                                    <div class="form-group">
+                                                        <label for="afi_nombre_afiliado" class="col-form-label">Nombre afiliado<span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="afi_nombre_afiliado form-control" name="afi_nombre_afiliado" id="afi_nombre_afiliado" value="{{$array_datos_info_afiliados[0]->Nombre_afiliado_benefi}}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 columna_direccion_afi_beni d-none">
+                                                    <div class="form-group">
+                                                        <label for="afi_direccion_info_afiliado" class="col-form-label">Dirección afiliado<span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="afi_direccion_info_afiliado form-control" name="afi_direccion_info_afiliado" id="afi_direccion_info_afiliado" value="{{$array_datos_info_afiliados[0]->Direccion_benefi}}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 columna_depar_afi_beni d-none">
+                                                    <div class="form-group">
+                                                        <label for="afi_departamento_info_afiliado" class="col-form-label">Departamento afiliado<span style="color:red;">(*)</span></label>
+                                                        <select class="afi_departamento_info_afiliado custom-select" name="afi_departamento_info_afiliado" id="afi_departamento_info_afiliado">
+                                                            <option value="{{$array_datos_info_afiliados[0]->Id_departamento_benefi}}" selected>{{$array_datos_info_afiliados[0]->Nombre_departamento_benefi}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 afi_columna_municipio_info_afiliado d-none">
+                                                    <div class="form-group">
+                                                        <label for="afi_municipio_info_afiliado" class="col-form-label">Ciudad afiliado<span style="color:red;">(*)</span></label>
+                                                        <select class="afi_municipio_info_afiliado custom-select" name="afi_municipio_info_afiliado" id="afi_municipio_info_afiliado" disabled>
+                                                            <option value="{{$array_datos_info_afiliados[0]->Id_municipio_benefi}}" selected>{{$array_datos_info_afiliados[0]->Nombre_municipio_benefi}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm afi_columna_pais_exterior_info_afiliado d-none">
+                                                    <div class="form-group">
+                                                        <label for="afi_pais_exterior_info_afiliado" class="col-form-label">País Exterior</label>
+                                                        <input type="text" class="afi_pais_exterior_info_afiliado form-control" name="afi_pais_exterior_info_afiliado" id="afi_pais_exterior_info_afiliado">
                                                     </div>
                                                 </div>
                                             </div>

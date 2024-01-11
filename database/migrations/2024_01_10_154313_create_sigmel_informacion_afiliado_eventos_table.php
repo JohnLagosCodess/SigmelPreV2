@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('Edad', 3)->nullable();
             $table->integer('Genero')->nullable();
             $table->text('Email')->nullable();
-            $table->string('Telefono_contacto', 22);
+            $table->string('Telefono_contacto', 120);
             $table->integer('Estado_civil')->nullable();
             $table->integer('Nivel_escolar')->nullable();
             $table->enum('Apoderado', ['Si', 'No'])->nullable();
@@ -38,6 +38,12 @@ return new class extends Migration
             $table->integer('Id_afp')->nullable();
             $table->integer('Id_arl')->nullable();
             $table->enum('Activo', ['Si', 'No']);
+            $table->string('Nombre_afiliado_benefi', 100)->nullable();
+            $table->integer('Tipo_documento_benefi')->nullable();
+            $table->string('Nro_identificacion_benefi', 25)->nullable();
+            $table->text('Direccion_benefi')->nullable();
+            $table->integer('Id_departamento_benefi')->nullable();
+            $table->integer('Id_municipio_benefi')->nullable();
             $table->text('Medio_notificacion')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');

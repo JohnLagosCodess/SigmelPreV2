@@ -98,6 +98,12 @@
                                                     <a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer; font-weight: bold;" class="btn text-info" type="button"><?php if(!empty($array_datos_calificacionPcl[0]->ID_evento)){echo $array_datos_calificacionPcl[0]->ID_evento;}?></a>                                                
                                                 </div>
                                             </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="tipo_evento">Tipo de afiliado</label>
+                                                    <input type="text" class="form-control" name="tipo_afiliado" id="tipo_afiliado" value="{{$array_datos_calificacionPcl[0]->Tipo_afiliado}}" disabled>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>                                    
