@@ -1984,33 +1984,41 @@ $(document).ready(function(){
     })
 
     // Captura Formulario PDF Notificación DML ORIGEN
-    $("#Form_dml_origen_pdf").submit(function (e){
+    $("form[id^='Form_noti_dml_origen_pdf_']").submit(function (e){
         e.preventDefault();              
        
+        var tupla_comunicado = $(this).data("tupla_comunicado");
+
         // Captura de variables del formulario
-        var nro_radicado = $("#nro_radicado").val();
-        var tipo_identificacion = $("#tipo_identificacion").val();
-        var num_identificacion = $("#num_identificacion").val();
-        var nro_siniestro = $("#nro_siniestro").val();
-        var ciudad = $("#ciudad").val();
-        var fecha = $("#fecha").val();
-        var nombre_afiliado = $("#nombre_afiliado").val();
-        var direccion_afiliado = $("#direccion_afiliado").val();
-        var telefono_afiliado = $("#telefono_afiliado").val();
-        var Id_Asignacion_consulta_dx = $("#Id_Asignacion_consulta_dx").val();
-        var Id_Proceso_consulta_dx = $("#Id_Proceso_consulta_dx").val();
-        var nombre_evento = $("#nombre_evento").val();
+        var id_tupla_comunicado = $("#id_tupla_comunicado_"+tupla_comunicado).val();
+        var asunto = $("#asunto_proforma_dml_"+tupla_comunicado).val();
+        var cuerpo = $("#cuerpo_comunicado").val();
+        // var nro_radicado = $("#nro_radicado").val();
+        var tipo_identificacion = $("#tipo_identificacion_"+tupla_comunicado).val();
+        var num_identificacion = $("#num_identificacion_"+tupla_comunicado).val();
+        var nro_siniestro = $("#nro_siniestro_"+tupla_comunicado).val();
+        var ciudad = $("#ciudad_"+tupla_comunicado).val();
+        var fecha = $("#fecha_"+tupla_comunicado).val();
+        var nombre_afiliado = $("#nombre_afiliado_"+tupla_comunicado).val();
+        var direccion_afiliado = $("#direccion_afiliado_"+tupla_comunicado).val();
+        var telefono_afiliado = $("#telefono_afiliado_"+tupla_comunicado).val();
+        var Id_Asignacion_consulta_dx = $("#Id_Asignacion_consulta_dx_"+tupla_comunicado).val();
+        var Id_Proceso_consulta_dx = $("#Id_Proceso_consulta_dx_"+tupla_comunicado).val();
+        var nombre_evento = $("#nombre_evento_"+tupla_comunicado).val();
         //checkbox de Copias de partes interesadas
         var copia_empleador = $('#empleador').filter(":checked").val();
         var copia_eps = $('#eps').filter(":checked").val();
         var copia_afp = $('#afp').filter(":checked").val();
         var copia_arl = $('#arl').filter(":checked").val();
         var firmar = $('#firmar').filter(":checked").val();
-        var Id_cliente_firma = $('#Id_cliente_firma').val();
+        var Id_cliente_firma = $('#Id_cliente_firma_'+tupla_comunicado).val();
 
-        datos_generacion_pdf_dml_origen = {
+        datos_generacion_pdf_noti_dml_origen = {
             '_token': token, 
-            'nro_radicado': nro_radicado,
+            'id_tupla_comunicado': id_tupla_comunicado,
+            'asunto': asunto,
+            'cuerpo': cuerpo,
+            // 'nro_radicado': nro_radicado,
             'tipo_identificacion': tipo_identificacion,
             'num_identificacion': num_identificacion,
             'nro_siniestro': nro_siniestro,
@@ -2029,25 +2037,112 @@ $(document).ready(function(){
             'firmar': firmar,
             'Id_cliente_firma': Id_cliente_firma
         };
-         
-        console.log(datos_generacion_pdf_dml_origen);
+        
+        $.ajax({    
+            type:'POST',
+            url:'/DescargaProformaNotiDML',
+            data: datos_generacion_pdf_noti_dml_origen,
+            xhrFields: {
+                responseType: 'blob' // Indica que la respuesta es un blob
+            },
+            success: function (response, status, xhr) {
+                var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+        
+                // Crear un enlace de descarga similar al ejemplo anterior
+                var nombre_pdf = "ORI_DML_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".pdf";
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
+        
+                // Adjuntar el enlace al documento y activar el evento de clic
+                document.body.appendChild(link);
+                link.click();
+        
+                // Eliminar el enlace del documento
+                document.body.removeChild(link);
+            },
+            error: function (error) {
+                // Manejar casos de error
+                console.error('Error al descargar el PDF:', error);
+            }       
+        });
+    });
+    
+    // Captura Formulario PDF DML ORIGEN ATEL
+    $("form[id^='Form_dml_origen_pdf_']").submit(function (e){
+        e.preventDefault();              
+       
+        var tupla_comunicado = $(this).data("tupla_comunicado");
+
+        var num_identificacion = $("#num_identificacion_"+tupla_comunicado).val();
+        var id_evento = $("#id_evento_"+tupla_comunicado).val();
+        var Id_Asignacion = $("#Id_Asignacion_"+tupla_comunicado).val();
+        var Id_Proceso = $("#Id_Proceso_"+tupla_comunicado).val();
+        var fecha_dictamen = $("#f_dictamen_"+tupla_comunicado).val();
+        var nro_dictamen = $("#nro_dictamen_"+tupla_comunicado).val();
+        var motivo_solicitud = $("#motivo_solicitud_"+tupla_comunicado).val();
+        var id_cliente = $("#Id_cliente_"+tupla_comunicado).val();
+        var justi_revision_origen = $("#justi_revision_origen_"+tupla_comunicado).val();
+        var nombre_evento = $("#nombre_evento_"+tupla_comunicado).val();
+        var mortal = $("#mortal_"+tupla_comunicado).val();
+        var f_fallecimiento = $("#f_fallecimiento_"+tupla_comunicado).val();
+        var f_evento = $("#f_evento_"+tupla_comunicado).val();
+        var hora_evento = $("#hora_evento_"+tupla_comunicado).val();
+        var furat = $("#descrip_FURAT_"+tupla_comunicado).val();
+        var origen = $("#origen_dto_atel option:selected").text();
+        var sustentacion = $("#sustentacion_califi_origen_"+tupla_comunicado).val();
+
+        datos_generacion_pdf_dml_origen = {
+            '_token': token, 
+            'id_evento': id_evento,
+            'Id_Asignacion': Id_Asignacion,
+            'Id_Proceso': Id_Proceso,
+            'fecha_dictamen': fecha_dictamen,
+            'nro_dictamen': nro_dictamen,
+            'motivo_solicitud': motivo_solicitud,
+            'id_cliente': id_cliente,
+            'justi_revision_origen': justi_revision_origen,
+            'nombre_evento': nombre_evento,
+            'mortal': mortal,
+            'f_fallecimiento': f_fallecimiento,
+            'f_evento': f_evento,
+            'hora_evento': hora_evento,
+            'furat': furat,
+            'origen': origen,
+            'sustentacion': sustentacion
+        };
+        
         $.ajax({    
             type:'POST',
             url:'/DescargaProformaDML',
             data: datos_generacion_pdf_dml_origen,
-            success: function(response){
-
-            }          
-        })
-
+            xhrFields: {
+                responseType: 'blob' // Indica que la respuesta es un blob
+            },
+            success: function (response, status, xhr) {
+                var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+        
+                // Crear un enlace de descarga similar al ejemplo anterior
+                var nombre_pdf = "ORI_OFICIO_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
+        
+                // Adjuntar el enlace al documento y activar el evento de clic
+                document.body.appendChild(link);
+                link.click();
+        
+                // Eliminar el enlace del documento
+                document.body.removeChild(link);
+            },
+            error: function (error) {
+                // Manejar casos de error
+                console.error('Error al descargar el PDF:', error);
+            }       
+        });
     });
+
 });
-
-
-
-
-
-
 
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/
 function funciones_elementos_fila_diagnosticos(num_consecutivo) {

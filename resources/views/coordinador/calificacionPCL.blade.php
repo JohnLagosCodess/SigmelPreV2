@@ -265,8 +265,7 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="fecha_accion">Fecha de acción <span style="color: red;">(*)</span></label>
-                                                    <input type="date" class="form-control" name="fecha_accion" id="fecha_accion" value="{{now()->format('Y-m-d')}}" disabled>
-                                                    <input hidden="hidden" type="date" class="form-control" name="f_accion" id="f_accion" value="{{now()->format('Y-m-d')}}">
+                                                    <input type="datetime-local" class="form-control" name="fecha_accion" id="fecha_accion" value="<?php if(!empty($array_datos_calificacionPcl[0]->F_accion_realizar)){echo $array_datos_calificacionPcl[0]->F_accion_realizar; }else{echo now()->format('Y-m-d h:i:s');} ?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-4">

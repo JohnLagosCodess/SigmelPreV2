@@ -395,6 +395,8 @@ Route::post('/eliminarDeficieciasDecretosCero', [CalificacionPCLController::clas
 Route::post('/guardarDeficieciasDecretosTres', [CalificacionPCLController::class, 'guardarDeficieciasDecretoTres']);
 // Acción: Elimincar deficiencias Decreto tres visualmente e inactiva en la DB
 Route::post('/eliminarDeficieciasDecretosTres', [CalificacionPCLController::class, 'eliminarDeficieciasDecretoTres']);
+// Acción: Generar pdf Dictamen PCL 1507
+Route::post('/generarPdfDictamenesPcl', [CalificacionPCLController::class, 'generarPdfDictamenPcl'])->name('descargar_Dictamen_PCL');
 
 // 02/10/2023
 // SUBMÓDULO RECALIFICACIÓN PCL
@@ -743,6 +745,7 @@ Route::post('/ActualizarParametrizacionJuntas', [ParametrizacionController::clas
 
 /* DESCARGA DE PROFORMAS */
 /* Proforma Notificación DML ORIGEN ATEL */
+Route::post('/DescargaProformaNotiDML', [DeterminacionOrigenATEL::class, 'DescargaProformaNotiDML']);
 Route::post('/DescargaProformaDML', [DeterminacionOrigenATEL::class, 'DescargaProformaDML']);
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
@@ -764,4 +767,4 @@ Route::controller(ProbandoController::class)->group(function(){
     Route::post('/Sigmel/probando-import-xlsx-con_encabezados', 'importarXlsxConEncabezados')->name('ImportarXlsxConEncabezados');
 });
 
-Route::get('test', fn () => phpinfo());
+Route::get('test_proformas', [ProbandoController::class, 'test_proformas']);

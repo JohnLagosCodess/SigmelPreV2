@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('Id_Asignacion');
             $table->integer('Id_proceso');
             $table->string('Modalidad_calificacion',25);
-            $table->date('F_accion');
+            $table->datetime('F_accion');
             $table->string('Accion',40);
             $table->date('F_Alerta')->nullable();
             $table->string('Enviar',40);

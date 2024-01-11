@@ -128,7 +128,7 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="fecha_dictamen">Fecha Dictamen</label>
-                                            <input type="text" class="form-control" name="fecha_dictamen" id="fecha_dictamen" value="{{$array_datos_calificacionPclTecnica[0]->F_registro_asignacion}}" disabled>
+                                            <input type="text" class="form-control" name="fecha_dictamen" id="fecha_dictamen" value="<?php if(!empty($array_comite_interdisciplinario[0]->F_visado_comite)){echo $array_comite_interdisciplinario[0]->F_visado_comite;}else{echo now()->format('Y-m-d');}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -7456,11 +7456,13 @@
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Comunicados</h5>
                         </div>
-                        <form id="form_comunicado_dictamen_oficioremisorio" action="POST">                            
+                          
+                            
                             <div class="card-body">
                                 <div class="row">  
                                     <div class="col-12">
-                                        <div class="form-group">                                            
+                                        <div class="form-group">          
+                                            <input type="hidden" id="descargar_dictamenesPcl" value="{{ route('descargar_Dictamen_PCL') }}">
                                             <div class="table-responsive">
                                                 <table id="listado_comunicados_clpcl" class="table table-striped table-bordered" width="100%">
                                                     <thead>
@@ -7472,22 +7474,34 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach ($array_comunicados_correspondencia as $comunicados)
+                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados)                                                        
                                                         <tr>
-                                                            <td>{{$comunicados->N_radicado}}</td>
-                                                            <td>{{$comunicados->Elaboro}}</td>
-                                                            <td>{{$comunicados->F_comunicado}}</td>     
-                                                            @if ($comunicados->Ciudad == 'N/A')
+                                                            <form name="ver_dictamenPcl" action="{{ route('descargar_Dictamen_PCL') }}" method="POST">  
+                                                                @csrf                        
                                                                 <td>
-                                                                    <i class="far fa-eye text-info"></i>
-                                                                </td>                                                                
-                                                            @else
-                                                                <td>
-                                                                    <i class="far fa-eye text-info"></i>
-                                                                    <label for="editar_correspondencia"><i class="fa fa-pen text-info"></i></label>
-                                                                    <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia" type="button" style="font-weight: bold;">
+                                                                    {{$comunicados->N_radicado}}
+                                                                    @if ($index === 0)
+                                                                        <input type="hidden"  name="ID_Evento_comuni" value="{{$comunicados['ID_evento']}}">
+                                                                        <input type="hidden"  name="Id_Asignacion_comuni" value="{{$comunicados['Id_Asignacion']}}">
+                                                                        <input type="hidden"  name="Id_Proceso_comuni" value="{{$comunicados['Id_proceso']}}">     
+                                                                        <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}">                                                                    
+                                                                    @endif
                                                                 </td>
-                                                            @endif
+                                                                <td>{{$comunicados->Elaboro}}</td>
+                                                                <td>{{$comunicados->F_comunicado}}</td>     
+                                                                @if ($comunicados->Ciudad == 'N/A')
+                                                                    <td>                                                                    
+                                                                        <label for="ver_dictamenesPcl"><i class="far fa-eye text-info"></i></i></label>
+                                                                        <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
+                                                                    </td>                                                                
+                                                            </form>
+                                                                @else
+                                                                    <td>
+                                                                        <i class="far fa-eye text-info"></i>
+                                                                        <label for="editar_correspondencia"><i class="fa fa-pen text-info"></i></label>
+                                                                        <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia" type="button" style="font-weight: bold;">
+                                                                    </td>
+                                                                @endif
                                                         </tr>                                                        
                                                         @endforeach
                                                     </tbody>
@@ -7497,7 +7511,7 @@
                                     </div>                     
                                 </div>                                                                
                             </div>
-                        </form>
+                        
                     </div>                     
                 </div>
             </div>
@@ -7522,7 +7536,7 @@
    </form>
 
     @if (count($hay_agudeza_visual) == 0)
-        {{-- MODAL NUEVA DEFICIENCIA VISUAL --}}
+        {{-- MODAL NUEVA DEFICIENCIA VISUAL --}}        
         @include('coordinador.campimetriaPCL')
     @else
         {{-- MODAL EDICIÓN DEFICIENCIA VISUAL --}}
