@@ -61,6 +61,7 @@ use Psy\Readline\Hoa\Console;
 use Svg\Tag\Rect;
 use App\Models\sigmel_lista_procesos_servicios;
 use App\Models\sigmel_lista_regional_juntas;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class CalificacionPCLController extends Controller
 {
@@ -332,6 +333,7 @@ class CalificacionPCLController extends Controller
         }
         $time = time();
         $date = date("Y-m-d", $time);
+        $datetime = date("Y-m-d h:i:s", $time);
         $user = Auth::user();
         $nombre_usuario = Auth::user()->name;
         $newIdAsignacion = $request->newId_asignacion;
@@ -349,7 +351,7 @@ class CalificacionPCLController extends Controller
                 'Id_Asignacion' => $request->newId_asignacion,
                 'Id_proceso' => $request->Id_proceso,
                 'Modalidad_calificacion' => $request->modalidad_calificacion,
-                'F_accion' => $request->f_accion,
+                'F_accion' => $datetime,
                 'Accion' => $request->accion,
                 'F_Alerta' => $request->fecha_alerta,
                 'Enviar' => $request->enviar,
@@ -450,7 +452,7 @@ class CalificacionPCLController extends Controller
                 'Id_Asignacion' => $request->newId_asignacion,
                 'Id_proceso' => $request->Id_proceso,
                 'Modalidad_calificacion' => $request->modalidad_calificacion,
-                'F_accion' => $request->f_accion,
+                'F_accion' => $datetime,
                 'Accion' => $request->accion,
                 'F_Alerta' => $request->fecha_alerta,
                 'Enviar' => $request->enviar,
@@ -4342,4 +4344,159 @@ class CalificacionPCLController extends Controller
         return json_decode(json_encode($mensajes, true));
 
     }  
+
+    // Generar PDF del Dictamen de PCL 1507
+
+    public function generarPdfDictamenPcl(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+        $cargo_profesional = Auth::user()->cargo;
+
+        $ID_Evento_comuni = $request->ID_Evento_comuni;
+        $Id_Asignacion_comuni = $request->Id_Asignacion_comuni;
+        $Id_Proceso_comuni = $request->Id_Proceso_comuni;
+        $Radicado_comuni = $request->Radicado_comuni;
+        
+        $datos = $ID_Evento_comuni;
+        $codigoQR = QrCode::size(110)->margin(0.5)->generate($datos);
+
+        //Captura de datos de informacion general del dictamen pericial
+
+        $fecha_dictamen = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        ->select('F_visado_comite')->where([['ID_evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();
+        if(count($fecha_dictamen) == 0){
+            $Fecha_dictamen = $date;
+        }else{
+            $Fecha_dictamen = $fecha_dictamen[0]->F_visado_comite;
+        }
+        $array_datos_info_dictamen = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();        
+        $DictamenNo = $array_datos_info_dictamen[0]->Numero_dictamen;
+
+        $motivo_solicitud_dictamen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_pericial_eventos as sipe')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_motivo_solicitudes as slms', 'slms.Id_Solicitud', '=', 'sipe.Id_motivo_solicitud')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_solicitantes as sls', 'sls.Id_solicitante', '=', 'sipe.Id_solicitante')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sipe.Id_nombre_solicitante')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sie.Id_Ciudad')
+        ->select('sipe.Id_motivo_solicitud','slms.Nombre_solicitud', 'sipe.Id_solicitante', 'sls.Solicitante', 'sipe.Id_nombre_solicitante', 
+        'sie.Nombre_entidad', 'sie.Nit_entidad', 'sie.Telefonos', 'sie.Emails', 'sie.Direccion', 'sie.Id_Ciudad', 'sldm.Nombre_municipio')
+        ->where([['ID_evento',$ID_Evento_comuni]])->limit(1)->get();        
+        $Motivo_solicitud = $motivo_solicitud_dictamen[0]->Nombre_solicitud;
+        $Id_solicitante_dic = $motivo_solicitud_dictamen[0]->Nombre_solicitud;
+
+        $array_datos_info_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'siae.Id_municipio')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldmu', 'sldmu.Id_municipios', '=', 'siae.Id_municipio_benefi')
+        ->select('siae.ID_evento', 'siae.Nombre_afiliado', 'siae.Tipo_documento', 'siae.Nro_identificacion', 'siae.F_nacimiento', 'siae.Edad', 
+        'siae.Genero', 'siae.Email', 'siae.Telefono_contacto', 'siae.Estado_civil', 'siae.Nivel_escolar', 'siae.Apoderado', 
+        'siae.Nombre_apoderado', 'siae.Nro_identificacion_apoderado', 'siae.Id_dominancia', 'siae.Direccion', 'siae.Id_departamento', 
+        'siae.Id_municipio', 'sldm.Nombre_municipio as Nombre_municipio', 'siae.Ocupacion', 'siae.Tipo_afiliado', 'siae.Ibc', 'siae.Id_eps', 
+        'siae.Id_afp', 'siae.Id_arl', 'siae.Activo', 'siae.Medio_notificacion', 'siae.Nombre_afiliado_benefi', 'siae.Tipo_documento_benefi', 
+        'siae.Nro_identificacion_benefi', 'siae.Direccion_benefi', 'siae.Id_departamento_benefi', 'siae.Id_municipio_benefi', 
+        'sldmu.Nombre_municipio as Nombre_municipio_benefi', 'siae.Nombre_usuario', 'siae.F_registro', 'F_actualizacion')
+        ->where([['ID_Evento',$ID_Evento_comuni]])->get();        
+
+        $Tipo_afiliado = $array_datos_info_afiliado[0]->Tipo_afiliado;
+
+        if ($Tipo_afiliado !== 27 ) {
+            $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado;
+            $NroIden_afiliado_dic = $array_datos_info_afiliado[0]->Nro_identificacion;
+            $Telefono_afiliado_dic = $array_datos_info_afiliado[0]->Telefono_contacto;
+            $Email_afiliado_dic = $array_datos_info_afiliado[0]->Email;
+            $Direccion_afiliado_dic = $array_datos_info_afiliado[0]->Direccion;
+            $Ciudad_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_municipio;
+        }else{
+            $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
+            $NroIden_afiliado_dic = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
+            $Telefono_afiliado_dic = '';
+            $Email_afiliado_dic = '';
+            $Direccion_afiliado_dic = $array_datos_info_afiliado[0]->Direccion_benefi;
+            $Ciudad_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
+        }
+
+        if($Id_solicitante_dic == 1 || $Id_solicitante_dic == 2 ||  $Id_solicitante_dic == 3){
+            $Solicitante_dic = $motivo_solicitud_dictamen[0]->Solicitante;
+            $Nombre_entidad_dic = $motivo_solicitud_dictamen[0]->Nombre_entidad;
+            $Nit_entidad = $motivo_solicitud_dictamen[0]->Nit_entidad;
+            $Telefonos_dic = $motivo_solicitud_dictamen[0]->Telefonos;
+            $Emails_dic = $motivo_solicitud_dictamen[0]->Emails;
+            $Direccion_dic = $motivo_solicitud_dictamen[0]->Direccion;
+            $Nombre_municipio_dic = $motivo_solicitud_dictamen[0]->Nombre_municipio;
+        }else{
+            $Solicitante_dic = $motivo_solicitud_dictamen[0]->Solicitante;
+            $Nombre_entidad_dic = $Nombre_afiliado_dic;
+            $Nit_entidad = $NroIden_afiliado_dic;
+            $Telefonos_dic = $Telefono_afiliado_dic;
+            $Emails_dic = $Email_afiliado_dic;
+            $Direccion_dic = $Direccion_afiliado_dic;
+            $Nombre_municipio_dic = $Ciudad_afiliado_dic;
+        }
+
+        //Captura de datos de informacion general de la entidad calificadora
+
+        $array_datos_info_entidad_cali = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_eventos as sie')
+        ->leftJoin('sigmel_gestiones.sigmel_clientes as sc', 'sc.Id_cliente', '=', 'sie.Cliente')
+        ->select('sie.ID_evento', 'sie.Cliente', 'sc.Nombre_cliente', 'sc.Nit', 'sc.Telefono_principal', 'sc.Direccion', 'sc.Email_principal')
+        ->where([['sie.ID_evento',$ID_Evento_comuni]])->get();                
+        
+        $Cliente = $array_datos_info_entidad_cali[0]->Cliente;
+        $Nombre_cliente_ent = $array_datos_info_entidad_cali[0]->Nombre_cliente;
+        $Nit_ent = $array_datos_info_entidad_cali[0]->Nit;
+        $Telefono_principal_ent = $array_datos_info_entidad_cali[0]->Telefono_principal;
+        $Direccion_ent = $array_datos_info_entidad_cali[0]->Direccion;
+        $Email_principal_ent = $array_datos_info_entidad_cali[0]->Email_principal;
+
+        //Captura de datos generales de la persona calificada
+
+        if ($Tipo_afiliado == 27) {
+            $Afiliado_per_cal = '';
+            $Beneficiario_per_cal = 'X';
+        }else {
+            $Afiliado_per_cal = 'X';
+            $Beneficiario_per_cal = '';
+        }
+
+        //Obtener los datos del formulario
+
+        $data = [
+            'logo_header' => 'logo_cliente_7.png',
+            'Id_cliente_ent' => $Cliente,
+            'codigoQR' => $codigoQR,
+            'ID_evento' => $ID_Evento_comuni,
+            'Id_Asignacion' => $Id_Asignacion_comuni,
+            'Id_proceso' => $Id_Proceso_comuni,
+            'Radicado_comuni' => $Radicado_comuni,
+            'Fecha_dictamen'=> $Fecha_dictamen,
+            'DictamenNo' => $DictamenNo,
+            'Motivo_solicitud' => $Motivo_solicitud,
+            'Solicitante_dic' => $Solicitante_dic,
+            'Nombre_entidad_dic' => $Nombre_entidad_dic,
+            'Nit_entidad' => $Nit_entidad,
+            'Telefonos_dic' => $Telefonos_dic,
+            'Emails_dic' => $Emails_dic,
+            'Direccion_dic' => $Direccion_dic,
+            'Nombre_municipio_dic' => $Nombre_municipio_dic,
+            'Nombre_cliente_ent' => $Nombre_cliente_ent,
+            'Nit_ent' => $Nit_ent,
+            'Telefono_principal_ent' => $Telefono_principal_ent,
+            'Direccion_ent' => $Direccion_ent,
+            'Email_principal_ent' => $Email_principal_ent,
+            'Afiliado_per_cal' => $Afiliado_per_cal,
+            'Beneficiario_per_cal' => $Beneficiario_per_cal,
+        ];
+
+        // Crear una instancia de Dompdf
+
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('/coordinador/dictamen_Pcl1507', $data);
+        
+        $fileName = 'PCL_DML_'.$Id_Asignacion_comuni.'_'.$nombre_usuario.'.pdf';
+        return $pdf->stream($fileName); 
+
+
+    }
 }

@@ -395,6 +395,8 @@ Route::post('/eliminarDeficieciasDecretosCero', [CalificacionPCLController::clas
 Route::post('/guardarDeficieciasDecretosTres', [CalificacionPCLController::class, 'guardarDeficieciasDecretoTres']);
 // Acción: Elimincar deficiencias Decreto tres visualmente e inactiva en la DB
 Route::post('/eliminarDeficieciasDecretosTres', [CalificacionPCLController::class, 'eliminarDeficieciasDecretoTres']);
+// Acción: Generar pdf Dictamen PCL 1507
+Route::post('/generarPdfDictamenesPcl', [CalificacionPCLController::class, 'generarPdfDictamenPcl'])->name('descargar_Dictamen_PCL');
 
 // 02/10/2023
 // SUBMÓDULO RECALIFICACIÓN PCL

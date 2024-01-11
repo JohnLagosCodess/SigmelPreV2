@@ -1359,19 +1359,27 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             var ajuste_tabla_4_10 = (parseInt(valor_CFM1_tabla_4_10) - parseInt(valor_FP_tabla_4_10)) + (parseInt(valor_CFM2_tabla_4_10) - parseInt(valor_FP_tabla_4_10));
             // Calculo del Literal
             var literal_tabla_4_10;
-            
-            if (ajuste_tabla_4_10 <= -2) {
+
+            if (ajuste_tabla_4_10 <= -1) {
                 literal_tabla_4_10 = "A";
-            }else if (ajuste_tabla_4_10 == -1) {
-                literal_tabla_4_10 = "B";
             }else if (ajuste_tabla_4_10 == 0) {
+                literal_tabla_4_10 = "B";
+            }else if (ajuste_tabla_4_10 >= 1) {
                 literal_tabla_4_10 = "C";
-            }else if(ajuste_tabla_4_10 == 1){
-                literal_tabla_4_10 = "D";
             }
-            else if(ajuste_tabla_4_10 >= 2){
-                literal_tabla_4_10 = "E";
-            }
+            
+            // if (ajuste_tabla_4_10 <= -2) {
+            //     literal_tabla_4_10 = "A";
+            // }else if (ajuste_tabla_4_10 == -1) {
+            //     literal_tabla_4_10 = "B";
+            // }else if (ajuste_tabla_4_10 == 0) {
+            //     literal_tabla_4_10 = "C";
+            // }else if(ajuste_tabla_4_10 == 1){
+            //     literal_tabla_4_10 = "D";
+            // }
+            // else if(ajuste_tabla_4_10 >= 2){
+            //     literal_tabla_4_10 = "E";
+            // }
   
             // Calculo de la Clase Final
             var clase_final_tabla_4_10;
@@ -1381,7 +1389,7 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
 
             if (parseInt(valor_FP_tabla_4_10) == 4 && parseInt(valor_CFM1_tabla_4_10) == 4 && parseInt(valor_CFM2_tabla_4_10) == 4) {
                 clase_final_tabla_4_10 = "4C"; 
-            }else if(parseInt(valor_CFM1_tabla_4_10) == 4 || parseInt(valor_CFM2_tabla_4_10) == 4){
+            }else if(parseInt(valor_FP_tabla_4_10) == 4 || parseInt(valor_CFM1_tabla_4_10) == 4 || parseInt(valor_CFM2_tabla_4_10) == 4){
                 clase_final_tabla_4_10 = valor_FP_tabla_4_10+"C"; 
                 //clase_final_tabla_4_10 = "4C"; 
             }
@@ -1838,7 +1846,7 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
                 literal_tabla_5_8 = "A";
             }else if (ajuste_tabla_5_8 == 0) {
                 literal_tabla_5_8 = "B";
-            }else if (ajuste_tabla_5_8 == 1) {
+            }else if (ajuste_tabla_5_8 >= 1) {
                 literal_tabla_5_8 = "C";
             }
   
@@ -2737,7 +2745,10 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             // calculo deficiencia
             if (!isNaN(ajuste_tabla_7_6) && literal_tabla_7_6 != undefined) {
                 $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                if ((parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 3) && (parseInt(valor_CFM2_tabla_7_6) == 3) && (parseInt(valor_FU_tabla_7_6) == 55)) {
+                if ((parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 3) && (parseInt(valor_CFM2_tabla_7_6) == 3) && (parseInt(valor_FU_tabla_7_6) == 45)) {
+                    clase_final_tabla_7_6 = "3A";    
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_6);
+                }else if ((parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 3) && (parseInt(valor_CFM2_tabla_7_6) == 3) && (parseInt(valor_FU_tabla_7_6) == 55)) {
                     clase_final_tabla_7_6 = "3B";    
                     $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_6);
                 }else if((parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 3) && (parseInt(valor_CFM2_tabla_7_6) == 3) && (parseInt(valor_FU_tabla_7_6) == 65)){
@@ -2755,6 +2766,7 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
                     // nuevas Opciones
                     var nuevasOpciones = [
                         { value: '', text: 'Seleccione' },
+                        { value: '45', text: '45' },
                         { value: '55', text: '55' },
                         { value: '65', text: '65' },
                     ];
