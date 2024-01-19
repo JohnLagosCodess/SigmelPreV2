@@ -1908,7 +1908,10 @@ class CalificacionPCLController extends Controller
         $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$Id_evento_calitec], ['Id_Asignacion',$Id_asignacion_calitec], ['T_documento','N/A']])->get();  
 
-        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo','array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinario', 'consecutivo', 'array_dictamen_pericial', 'array_comunicados_correspondencia'));
+        $array_comunicados_comite_inter = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$Id_evento_calitec], ['Id_Asignacion',$Id_asignacion_calitec]])->get();  
+
+        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo','array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinario', 'consecutivo', 'array_dictamen_pericial', 'array_comunicados_correspondencia', 'array_comunicados_comite_inter'));
     }
 
     public function cargueListadoSelectoresCalifcacionTecnicaPcl(Request $request){
@@ -4362,7 +4365,10 @@ class CalificacionPCLController extends Controller
         $Radicado_comuni = $request->Radicado_comuni;
         
         $datos = $ID_Evento_comuni;
+        // Codigo QR y Logo del Header
         $codigoQR = QrCode::size(110)->margin(0.5)->generate($datos);
+
+        
 
         //Captura de datos de informacion general del dictamen pericial
 
@@ -4373,31 +4379,53 @@ class CalificacionPCLController extends Controller
         }else{
             $Fecha_dictamen = $fecha_dictamen[0]->F_visado_comite;
         }
-        $array_datos_info_dictamen = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
-        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();        
+        $array_datos_info_dictamen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as sltp', 'sltp.Id_Evento', '=', 'side.Tipo_evento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpa', 'slpa.Id_Parametro', '=', 'side.Tipo_enfermedad')
+        ->select('side.ID_Evento', 'side.Id_proceso', 'side.Id_Asignacion', 'side.Origen_firme', 'side.Cobertura', 'side.Decreto_calificacion', 
+        'side.Numero_dictamen', 'side.PCL_anterior', 'side.Descripcion_nueva_calificacion', 'side.Relacion_documentos', 'side.Otros_relacion_doc', 
+        'side.Descripcion_enfermedad_actual', 'side.Suma_combinada', 'side.Total_Deficiencia50', 'side.Porcentaje_pcl', 'side.Rango_pcl', 
+        'side.Monto_indemnizacion', 'side.Tipo_evento', 'sltp.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro as Nombre_origen', 'side.F_evento', 
+        'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+        'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slpa.Nombre_parametro as Nombre_enfermedad', 'side.Requiere_tercera_persona', 
+        'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.N_radicado', 
+        'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro')
+        ->where([['side.ID_Evento',$ID_Evento_comuni], ['side.Id_Asignacion',$Id_Asignacion_comuni]])->get();        
         $DictamenNo = $array_datos_info_dictamen[0]->Numero_dictamen;
-
+                
         $motivo_solicitud_dictamen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_pericial_eventos as sipe')
         ->leftJoin('sigmel_gestiones.sigmel_lista_motivo_solicitudes as slms', 'slms.Id_Solicitud', '=', 'sipe.Id_motivo_solicitud')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sipe.Regimen_salud')
         ->leftJoin('sigmel_gestiones.sigmel_lista_solicitantes as sls', 'sls.Id_solicitante', '=', 'sipe.Id_solicitante')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sipe.Id_nombre_solicitante')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sie.Id_Ciudad')
-        ->select('sipe.Id_motivo_solicitud','slms.Nombre_solicitud', 'sipe.Id_solicitante', 'sls.Solicitante', 'sipe.Id_nombre_solicitante', 
-        'sie.Nombre_entidad', 'sie.Nit_entidad', 'sie.Telefonos', 'sie.Emails', 'sie.Direccion', 'sie.Id_Ciudad', 'sldm.Nombre_municipio')
+        ->select('sipe.Id_motivo_solicitud','slms.Nombre_solicitud', 'sipe.Regimen_salud', 'slp.Nombre_parametro as Regimenes_salud', 
+        'sipe.Id_solicitante', 'sls.Solicitante', 'sipe.Id_nombre_solicitante', 'sie.Nombre_entidad', 'sie.Nit_entidad', 'sie.Telefonos', 
+        'sie.Emails', 'sie.Direccion', 'sie.Id_Ciudad', 'sldm.Nombre_municipio')
         ->where([['ID_evento',$ID_Evento_comuni]])->limit(1)->get();        
         $Motivo_solicitud = $motivo_solicitud_dictamen[0]->Nombre_solicitud;
-        $Id_solicitante_dic = $motivo_solicitud_dictamen[0]->Nombre_solicitud;
+        $Id_solicitante_dic = $motivo_solicitud_dictamen[0]->Id_solicitante;
 
         $array_datos_info_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siae.Tipo_documento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpa', 'slpa.Id_Parametro', '=', 'siae.Nivel_escolar')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpar', 'slpar.Id_Parametro', '=', 'siae.Estado_civil')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'siae.Id_municipio')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldmu', 'sldmu.Id_municipios', '=', 'siae.Id_municipio_benefi')
-        ->select('siae.ID_evento', 'siae.Nombre_afiliado', 'siae.Tipo_documento', 'siae.Nro_identificacion', 'siae.F_nacimiento', 'siae.Edad', 
-        'siae.Genero', 'siae.Email', 'siae.Telefono_contacto', 'siae.Estado_civil', 'siae.Nivel_escolar', 'siae.Apoderado', 
-        'siae.Nombre_apoderado', 'siae.Nro_identificacion_apoderado', 'siae.Id_dominancia', 'siae.Direccion', 'siae.Id_departamento', 
-        'siae.Id_municipio', 'sldm.Nombre_municipio as Nombre_municipio', 'siae.Ocupacion', 'siae.Tipo_afiliado', 'siae.Ibc', 'siae.Id_eps', 
-        'siae.Id_afp', 'siae.Id_arl', 'siae.Activo', 'siae.Medio_notificacion', 'siae.Nombre_afiliado_benefi', 'siae.Tipo_documento_benefi', 
-        'siae.Nro_identificacion_benefi', 'siae.Direccion_benefi', 'siae.Id_departamento_benefi', 'siae.Id_municipio_benefi', 
-        'sldmu.Nombre_municipio as Nombre_municipio_benefi', 'siae.Nombre_usuario', 'siae.F_registro', 'F_actualizacion')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'siae.Id_eps')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sien', 'sien.Id_Entidad', '=', 'siae.Id_afp')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sient', 'sient.Id_Entidad', '=', 'siae.Id_arl')
+        ->select('siae.ID_evento', 'siae.Nombre_afiliado', 'siae.Tipo_documento', 'slp.Nombre_parametro as T_documento', 'siae.Nro_identificacion', 
+        'siae.F_nacimiento', 'siae.Edad', 'siae.Genero', 'siae.Email', 'siae.Telefono_contacto', 'siae.Estado_civil', 
+        'slpar.Nombre_parametro as Estado_civi', 'siae.Nivel_escolar', 'slpa.Nombre_parametro as Escolaridad', 
+        'siae.Apoderado', 'siae.Nombre_apoderado', 'siae.Nro_identificacion_apoderado', 'siae.Id_dominancia', 'siae.Direccion', 
+        'siae.Id_departamento', 'siae.Id_municipio', 'sldm.Nombre_municipio as Nombre_municipio', 'siae.Ocupacion', 'siae.Tipo_afiliado', 
+        'siae.Ibc', 'siae.Id_eps', 'sie.Nombre_entidad as Entidad_eps', 'siae.Id_afp', 'sien.Nombre_entidad as Entidad_afp', 'siae.Id_arl', 
+        'sient.Nombre_entidad as Entidad_arl', 'siae.Activo', 'siae.Medio_notificacion', 'siae.Nombre_afiliado_benefi', 
+        'siae.Tipo_documento_benefi', 'siae.Nro_identificacion_benefi', 'siae.Direccion_benefi', 'siae.Id_departamento_benefi', 
+        'siae.Id_municipio_benefi', 'sldmu.Nombre_municipio as Nombre_municipio_benefi', 'siae.Nombre_usuario', 'siae.F_registro', 
+        'F_actualizacion')
         ->where([['ID_Evento',$ID_Evento_comuni]])->get();        
 
         $Tipo_afiliado = $array_datos_info_afiliado[0]->Tipo_afiliado;
@@ -4443,27 +4471,282 @@ class CalificacionPCLController extends Controller
         ->select('sie.ID_evento', 'sie.Cliente', 'sc.Nombre_cliente', 'sc.Nit', 'sc.Telefono_principal', 'sc.Direccion', 'sc.Email_principal')
         ->where([['sie.ID_evento',$ID_Evento_comuni]])->get();                
         
-        $Cliente = $array_datos_info_entidad_cali[0]->Cliente;
+        $Cliente = $array_datos_info_entidad_cali[0]->Cliente;        
+        // Logo cliente del Header
+
+        $dato_logo_header = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Logo_cliente')
+        ->where([['Id_cliente', $Cliente]])
+        ->get();
+
+        if (count($dato_logo_header) > 0) {
+            $logo_header = $dato_logo_header[0]->Logo_cliente;
+        } else {
+            $logo_header = "Sin logo";
+        }       
+
         $Nombre_cliente_ent = $array_datos_info_entidad_cali[0]->Nombre_cliente;
         $Nit_ent = $array_datos_info_entidad_cali[0]->Nit;
         $Telefono_principal_ent = $array_datos_info_entidad_cali[0]->Telefono_principal;
         $Direccion_ent = $array_datos_info_entidad_cali[0]->Direccion;
-        $Email_principal_ent = $array_datos_info_entidad_cali[0]->Email_principal;
+        $Email_principal_ent = $array_datos_info_entidad_cali[0]->Email_principal;        
 
         //Captura de datos generales de la persona calificada
 
         if ($Tipo_afiliado == 27) {
             $Afiliado_per_cal = '';
             $Beneficiario_per_cal = 'X';
+            function separarNombreApellido($nombreCompleto) {
+                // Dividir la cadena en palabras
+                $palabras = explode(' ', $nombreCompleto);
+                $numPalabras = count($palabras);
+            
+                if ($numPalabras == 2) {
+                    $nombre = $palabras[0];
+                    $apellido = $palabras[1];
+                } elseif ($numPalabras == 3) {
+                    $nombre = $palabras[0];
+                    $apellido = implode(' ', array_slice($palabras, 1));
+                } elseif ($numPalabras == 4) {
+                    $nombre = implode(' ', array_slice($palabras, 0, 2));
+                    $apellido = implode(' ', array_slice($palabras, 2));
+                } else {
+                    $nombre = '';
+                    $apellido = '';
+                }
+            
+                return array('nombre' => $nombre, 'apellido' => $apellido);
+            }  
+            $Nombre_per_cal = $array_datos_info_afiliado[0]->Nombre_afiliado;
+            $ResultadoNombre_per_cal = separarNombreApellido($Nombre_per_cal);            
+            $Tipo_documento_per_cal = $array_datos_info_afiliado[0]->T_documento;            
+            $NroIden_per_cal = $array_datos_info_afiliado[0]->Nro_identificacion;
+            $F_nacimiento_per_cal = $array_datos_info_afiliado[0]->F_nacimiento;            
+            $Edad_per_cal = $array_datos_info_afiliado[0]->Edad;            
+            $Nivel_escolar_per_cal = $array_datos_info_afiliado[0]->Escolaridad;
+            $Estado_civil_per_cal = $array_datos_info_afiliado[0]->Estado_civi;
+            $Telefono_per_cal = $array_datos_info_afiliado[0]->Telefono_contacto;
+            $Direccion_per_cal = $array_datos_info_afiliado[0]->Direccion;
+            $Ciudad_per_cal = $array_datos_info_afiliado[0]->Nombre_municipio;
+            $Email_per_cal = $array_datos_info_afiliado[0]->Email;
+            $Nombre_ben = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
+            $Tipo_iden_ben = $array_datos_info_afiliado[0]->Tipo_documento_benefi;            
+            $Documento_iden_ben = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
+            $Telefono_iden_ben = '';
+            $Ciudad_iden_ben = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
+            //Datod del acudiente
+            if($Edad_per_cal < 18){
+                $Nombre_acudiente = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
+                $Documento_acudiente = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
+                $Telefono_acudiente = '';
+                $Ciudad_acudiente = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
+            }else{
+                $Nombre_acudiente = '';
+                $Documento_acudiente = '';
+                $Telefono_acudiente = '';
+                $Ciudad_acudiente = '';
+            }
         }else {
             $Afiliado_per_cal = 'X';
             $Beneficiario_per_cal = '';
+            function separarNombreApellido($nombreCompleto) {
+                // Dividir la cadena en palabras
+                $palabras = explode(' ', $nombreCompleto);
+                $numPalabras = count($palabras);
+            
+                if ($numPalabras == 2) {
+                    $nombre = $palabras[0];
+                    $apellido = $palabras[1];
+                } elseif ($numPalabras == 3) {
+                    $nombre = $palabras[0];
+                    $apellido = implode(' ', array_slice($palabras, 1));
+                } elseif ($numPalabras == 4) {
+                    $nombre = implode(' ', array_slice($palabras, 0, 2));
+                    $apellido = implode(' ', array_slice($palabras, 2));
+                } else {
+                    $nombre = '';
+                    $apellido = '';
+                }
+            
+                return array('nombre' => $nombre, 'apellido' => $apellido);
+            }  
+            $Nombre_per_cal = $array_datos_info_afiliado[0]->Nombre_afiliado;
+            $ResultadoNombre_per_cal = separarNombreApellido($Nombre_per_cal);            
+            $Tipo_documento_per_cal = $array_datos_info_afiliado[0]->T_documento;            
+            $NroIden_per_cal = $array_datos_info_afiliado[0]->Nro_identificacion;
+            $F_nacimiento_per_cal = $array_datos_info_afiliado[0]->F_nacimiento;            
+            $Edad_per_cal = $array_datos_info_afiliado[0]->Edad;            
+            $Nivel_escolar_per_cal = $array_datos_info_afiliado[0]->Escolaridad;
+            $Estado_civil_per_cal = $array_datos_info_afiliado[0]->Estado_civi;
+            $Telefono_per_cal = $array_datos_info_afiliado[0]->Telefono_contacto;
+            $Direccion_per_cal = $array_datos_info_afiliado[0]->Direccion;
+            $Ciudad_per_cal = $array_datos_info_afiliado[0]->Nombre_municipio;
+            $Email_per_cal = $array_datos_info_afiliado[0]->Email;
+            $Nombre_ben = '';
+            $Tipo_iden_ben = '';
+            $Documento_iden_ben = '';
+            $Telefono_iden_ben = '';
+            $Ciudad_iden_ben = '';
+            $Nombre_acudiente = '';
+            $Documento_acudiente = '';
+            $Telefono_acudiente = '';
+            $Ciudad_acudiente = '';
         }
 
-        //Obtener los datos del formulario
+        if ($Documento_iden_ben == '') {
+            $Numero_documento_afiliado = $NroIden_per_cal;
+            $Documento_afiliado = $Tipo_documento_per_cal;
+            $Nombre_afiliado_pre = $Nombre_per_cal;
+        } else {            
+            $Numero_documento_afiliado = $Documento_iden_ben;
+            $Documento_afiliado = $Tipo_iden_ben;
+            $Nombre_afiliado_pre = $Nombre_ben;
+        }
+        
 
+        //Captura de datos de Etapas del ciclo vital
+
+        $validar_laboralmente_activo = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();       
+
+        if (count($validar_laboralmente_activo) > 0) {
+            $Poblacion_edad_econo_activa = 'X';
+        }else{
+            $Poblacion_edad_econo_activa = '';
+        }        
+
+        $validar_rol_ocupacional = sigmel_informacion_rol_ocupacional_eventos::on('sigmel_gestiones')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();       
+
+        if (count($validar_rol_ocupacional) > 0) {
+            if ($validar_rol_ocupacional[0]->Poblacion_calificar == 75) {
+                $Bebe_menor3 = 'X';
+                $Ninos_adolecentes = '';
+                $Adultos_mayores = '';                
+            }elseif($validar_rol_ocupacional[0]->Poblacion_calificar == 76){
+                $Bebe_menor3 = '';
+                $Ninos_adolecentes = 'X';
+                $Adultos_mayores = '';
+            }elseif($validar_rol_ocupacional[0]->Poblacion_calificar == 77){
+                $Bebe_menor3 = '';
+                $Ninos_adolecentes = '';
+                $Adultos_mayores = 'X';
+            }
+            
+        }else{
+            $Bebe_menor3 = '';
+            $Ninos_adolecentes = '';
+            $Adultos_mayores = '';
+        } 
+
+        //Captura de datos de Afiliacion al siss:
+
+        $Regimen_salud_ecv = $motivo_solicitud_dictamen[0]->Regimen_salud;
+        
+        if($Regimen_salud_ecv == 37) {
+            $Contributivo_ecv = 'X';
+            $Subsidiado_ecv = '';
+            $No_afiliado_ecv = '';
+        }elseif($Regimen_salud_ecv == 38){
+            $Contributivo_ecv = '';
+            $Subsidiado_ecv = 'X';
+            $No_afiliado_ecv = '';
+        }elseif($Regimen_salud_ecv == 39){
+            $Contributivo_ecv = '';
+            $Subsidiado_ecv = '';
+            $No_afiliado_ecv = 'X';
+        }else{
+            $Contributivo_ecv = '';
+            $Subsidiado_ecv = '';
+            $No_afiliado_ecv = '';
+        }
+        
+        $Entidad_eps = $array_datos_info_afiliado[0]->Entidad_eps;
+        $Entidad_afp = $array_datos_info_afiliado[0]->Entidad_afp;
+        $Entidad_arl = $array_datos_info_afiliado[0]->Entidad_arl;
+
+        //Captura de datos Antecedentes laborales del calificado
+
+        $array_datos_info_antecedentes_laborales = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_ciuo_codigos as slcc', 'slcc.Id_Codigo', '=', 'sile.Id_codigo_ciuo')
+        ->select('sile.Tipo_empleado', 'sile.Cargo', 'sile.Id_codigo_ciuo', 'slcc.Nombre_ciuo', 'sile.Funciones_cargo', 'sile.Empresa', 
+        'sile.Nit_o_cc')->where([['ID_Evento',$ID_Evento_comuni]])->get();
+
+        $Tipo_empleado_laboral = $array_datos_info_antecedentes_laborales[0]->Tipo_empleado;
+
+        if ($Tipo_empleado_laboral == 'Empleado actual') {
+            $Independiente_laboral = 'X';
+            $Dedependiente_laboral = '';
+        } else {
+            $Independiente_laboral = '';
+            $Dedependiente_laboral = 'X';
+        }
+
+        $Nombre_cargo_laboral = $array_datos_info_antecedentes_laborales[0]->Cargo;
+        $Codigo_ciuo_laboral = $array_datos_info_antecedentes_laborales[0]->Nombre_ciuo;
+        $Funciones_cargo_laboral = $array_datos_info_antecedentes_laborales[0]->Funciones_cargo;
+        $Empresa_laboral = $array_datos_info_antecedentes_laborales[0]->Empresa;
+        $Nit_laboral = $array_datos_info_antecedentes_laborales[0]->Nit_o_cc;    
+        
+        //Captura de datos Realacion de documentos/examenes fisico(Descripción)
+
+        $array_datos_relacion_examentes = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();  
+
+        //Captura de datos Fundamentos para la calificacion de la perdida de la capacidad laboral y ocupacional - titulos I Y II
+
+        $Descripcion_enfermedad_actual = $array_datos_info_dictamen[0]->Descripcion_enfermedad_actual;
+
+        $array_diagnosticos_fc = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+        ->select('side.CIE10', 'slcd.CIE10 as Codigo_cie10', 'side.Nombre_CIE10', 'side.Origen_CIE10', 'slp.Nombre_parametro as Nombre_origen', 
+        'side.Deficiencia_motivo_califi_condiciones')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();  
+
+        $array_deficiencias_alteraciones = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
+        ->select('sidae.Id_tabla', 'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.FU', 'sidae.CFM1', 'sidae.CFM2', 
+        'sidae.Clase_Final', 'sidae.Deficiencia', 'sidae.CAT', 'sidae.MSD')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();  
+        
+        $Suma_combinada_fc = $array_datos_info_dictamen[0]->Suma_combinada;
+
+        $array_deficiencia_auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Estado', 'Activo']])->get();
+        
+        $array_deficiencia_visual = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get(); 
+
+        $Total_deficiencia50_fc = $array_datos_info_dictamen[0]->Total_Deficiencia50;
+
+        $array_datos_laboralmente_activo = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();  
+
+        $array_datos_rol_ocupacional = sigmel_informacion_rol_ocupacional_eventos::on('sigmel_gestiones')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();
+
+        //Captura de datos Concepto final del dictamen pericial
+        
+        $Porcentaje_Pcl_dp = $array_datos_info_dictamen[0]->Porcentaje_pcl;
+        $F_estructuracion_dp = $array_datos_info_dictamen[0]->F_estructuracion;
+        $Tipo_evento_dp = $array_datos_info_dictamen[0]->Nombre_evento;
+        $Sustentacion_F_estructuracion_dp = $array_datos_info_dictamen[0]->Sustentacion_F_estructuracion;
+        $F_evento_dp = $array_datos_info_dictamen[0]->F_evento;
+        $Origen_dp = $array_datos_info_dictamen[0]->Nombre_origen;
+        $Detalle_calificacion_dp = $array_datos_info_dictamen[0]->Detalle_calificacion;
+        $Enfermedad_catastrofica_dp = $array_datos_info_dictamen[0]->Enfermedad_catastrofica;
+        $Enfermedad_congenita_dp = $array_datos_info_dictamen[0]->Enfermedad_congenita;
+        $Nombre_enfermedad_dp = $array_datos_info_dictamen[0]->Nombre_enfermedad;
+        $Requiere_tercera_persona_dp = $array_datos_info_dictamen[0]->Requiere_tercera_persona;
+        $Requiere_tercera_persona_decisiones_dp = $array_datos_info_dictamen[0]->Requiere_tercera_persona_decisiones;
+        $Requiere_dispositivo_apoyo_dp = $array_datos_info_dictamen[0]->Requiere_dispositivo_apoyo;
+        $Justificacion_dependencia_dp = $array_datos_info_dictamen[0]->Justificacion_dependencia;
+               
+        //Obtener los datos del formulario
+        
         $data = [
-            'logo_header' => 'logo_cliente_7.png',
+            'logo_header' => $logo_header,
             'Id_cliente_ent' => $Cliente,
             'codigoQR' => $codigoQR,
             'ID_evento' => $ID_Evento_comuni,
@@ -4487,16 +4770,684 @@ class CalificacionPCLController extends Controller
             'Email_principal_ent' => $Email_principal_ent,
             'Afiliado_per_cal' => $Afiliado_per_cal,
             'Beneficiario_per_cal' => $Beneficiario_per_cal,
+            'ResultadoNombre_per_cal' => $Nombre_per_cal,
+            'Tipo_documento_per_cal' => $Tipo_documento_per_cal,
+            'NroIden_per_cal' => $NroIden_per_cal,
+            'F_nacimiento_per_cal' => $F_nacimiento_per_cal,
+            'Edad_per_cal' => $Edad_per_cal,
+            'Nivel_escolar_per_cal' => $Nivel_escolar_per_cal,
+            'Estado_civil_per_cal' => $Estado_civil_per_cal,
+            'Telefono_per_cal' => $Telefono_per_cal,
+            'Direccion_per_cal' => $Direccion_per_cal,
+            'Ciudad_per_cal' => $Ciudad_per_cal,
+            'Email_per_cal' => $Email_per_cal,
+            'Nombre_ben' => $Nombre_ben,
+            'Documento_iden_ben' => $Documento_iden_ben,
+            'Telefono_iden_ben' => $Telefono_iden_ben,
+            'Ciudad_iden_ben' => $Ciudad_iden_ben,
+            'Poblacion_edad_econo_activa' => $Poblacion_edad_econo_activa,
+            'Bebe_menor3' => $Bebe_menor3,
+            'Ninos_adolecentes' => $Ninos_adolecentes,
+            'Adultos_mayores' => $Adultos_mayores,
+            'Nombre_acudiente' => $Nombre_acudiente,
+            'Documento_acudiente' => $Documento_acudiente,
+            'Telefono_acudiente' => $Telefono_acudiente,
+            'Ciudad_acudiente' => $Ciudad_acudiente,
+            'Contributivo_ecv' => $Contributivo_ecv,
+            'Subsidiado_ecv' => $Subsidiado_ecv,
+            'No_afiliado_ecv' => $No_afiliado_ecv,
+            'Entidad_eps' => $Entidad_eps,
+            'Entidad_afp' => $Entidad_afp,
+            'Entidad_arl' => $Entidad_arl,
+            'Independiente_laboral' => $Independiente_laboral,
+            'Dedependiente_laboral' => $Dedependiente_laboral,
+            'Nombre_cargo_laboral' => $Nombre_cargo_laboral,
+            'Codigo_ciuo_laboral' => $Codigo_ciuo_laboral,
+            'Funciones_cargo_laboral' => $Funciones_cargo_laboral,
+            'Empresa_laboral' => $Empresa_laboral,
+            'Nit_laboral' => $Nit_laboral,
+            'array_datos_relacion_examentes' => $array_datos_relacion_examentes,
+            'Descripcion_enfermedad_actual' => $Descripcion_enfermedad_actual,
+            'array_diagnosticos_fc' => $array_diagnosticos_fc,
+            'array_deficiencias_alteraciones' => $array_deficiencias_alteraciones,
+            'Suma_combinada_fc' => $Suma_combinada_fc,
+            'array_deficiencia_auditiva' => $array_deficiencia_auditiva,
+            'array_deficiencia_visual' => $array_deficiencia_visual,
+            'Total_deficiencia50_fc' => $Total_deficiencia50_fc,
+            'array_datos_laboralmente_activo' => $array_datos_laboralmente_activo,
+            'array_datos_rol_ocupacional' => $array_datos_rol_ocupacional,
+            'Porcentaje_Pcl_dp' => $Porcentaje_Pcl_dp,
+            'F_estructuracion_dp' => $F_estructuracion_dp,
+            'Tipo_evento_dp' => $Tipo_evento_dp,
+            'Sustentacion_F_estructuracion_dp' => $Sustentacion_F_estructuracion_dp,
+            'F_evento_dp' => $F_evento_dp,
+            'Origen_dp' => $Origen_dp,
+            'Detalle_calificacion_dp' => $Detalle_calificacion_dp,
+            'Enfermedad_catastrofica_dp' => $Enfermedad_catastrofica_dp,
+            'Enfermedad_congenita_dp' => $Enfermedad_congenita_dp,
+            'Nombre_enfermedad_dp' => $Nombre_enfermedad_dp,
+            'Requiere_tercera_persona_dp' => $Requiere_tercera_persona_dp,
+            'Requiere_tercera_persona_decisiones_dp' => $Requiere_tercera_persona_decisiones_dp,
+            'Requiere_dispositivo_apoyo_dp' => $Requiere_dispositivo_apoyo_dp,
+            'Justificacion_dependencia_dp' => $Justificacion_dependencia_dp,
+            'Numero_documento_afiliado' => $Numero_documento_afiliado,
+            'Documento_afiliado' => $Documento_afiliado,
+            'Nombre_afiliado_pre' => $Nombre_afiliado_pre
         ];
 
         // Crear una instancia de Dompdf
 
         $pdf = app('dompdf.wrapper');
-        $pdf->loadView('/coordinador/dictamen_Pcl1507', $data);
-        
-        $fileName = 'PCL_DML_'.$Id_Asignacion_comuni.'_'.$nombre_usuario.'.pdf';
-        return $pdf->stream($fileName); 
-
-
+        $pdf->loadView('/Proformas/Proformas_Arl/PCL/dictamen_Pcl1507', $data);        
+        $nombre_pdf = 'PCL_DML_'.$Id_Asignacion_comuni.'_'.$Numero_documento_afiliado.'.pdf';    
+        //Obtener el contenido del PDF
+        $output = $pdf->output();
+        //Guardar el PDF en un archivo
+        file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni}/{$nombre_pdf}"), $output);
+        return $pdf->download($nombre_pdf);
     }
+
+    public function generarPdfDictamenPcl917(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+        $cargo_profesional = Auth::user()->cargo;
+
+        $ID_Evento_comuni = $request->ID_Evento_comuni;
+        $Id_Asignacion_comuni = $request->Id_Asignacion_comuni;
+        $Id_Proceso_comuni = $request->Id_Proceso_comuni;
+        $Radicado_comuni = $request->Radicado_comuni;
+        
+        $datos = $ID_Evento_comuni;
+        // Codigo QR y Logo del Header
+        $codigoQR = QrCode::size(110)->margin(0.5)->generate($datos);
+
+        
+
+        //Captura de datos de informacion general del dictamen pericial
+
+        $fecha_dictamen = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        ->select('F_visado_comite')->where([['ID_evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();
+        if(count($fecha_dictamen) == 0){
+            $Fecha_dictamen = $date;
+        }else{
+            $Fecha_dictamen = $fecha_dictamen[0]->F_visado_comite;
+        }
+        $array_datos_info_dictamen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as sltp', 'sltp.Id_Evento', '=', 'side.Tipo_evento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpa', 'slpa.Id_Parametro', '=', 'side.Tipo_enfermedad')
+        ->select('side.ID_Evento', 'side.Id_proceso', 'side.Id_Asignacion', 'side.Origen_firme', 'side.Cobertura', 'side.Decreto_calificacion', 
+        'side.Numero_dictamen', 'side.PCL_anterior', 'side.Descripcion_nueva_calificacion', 'side.Relacion_documentos', 'side.Otros_relacion_doc', 
+        'side.Descripcion_enfermedad_actual', 'side.Suma_combinada', 'side.Total_Deficiencia50', 'side.Porcentaje_pcl', 'side.Rango_pcl', 
+        'side.Monto_indemnizacion', 'side.Tipo_evento', 'sltp.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro as Nombre_origen', 'side.F_evento', 
+        'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+        'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slpa.Nombre_parametro as Nombre_enfermedad', 'side.Requiere_tercera_persona', 
+        'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.N_radicado', 
+        'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro')
+        ->where([['side.ID_Evento',$ID_Evento_comuni], ['side.Id_Asignacion',$Id_Asignacion_comuni]])->get();        
+        $DictamenNo = $array_datos_info_dictamen[0]->Numero_dictamen;
+                
+        $motivo_solicitud_dictamen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_pericial_eventos as sipe')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_motivo_solicitudes as slms', 'slms.Id_Solicitud', '=', 'sipe.Id_motivo_solicitud')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sipe.Regimen_salud')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_solicitantes as sls', 'sls.Id_solicitante', '=', 'sipe.Id_solicitante')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sipe.Id_nombre_solicitante')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sie.Id_Ciudad')
+        ->select('sipe.Id_motivo_solicitud','slms.Nombre_solicitud', 'sipe.Regimen_salud', 'slp.Nombre_parametro as Regimenes_salud', 
+        'sipe.Id_solicitante', 'sls.Solicitante', 'sipe.Id_nombre_solicitante', 'sie.Nombre_entidad', 'sie.Nit_entidad', 'sie.Telefonos', 
+        'sie.Emails', 'sie.Direccion', 'sie.Id_Ciudad', 'sldm.Nombre_municipio')
+        ->where([['ID_evento',$ID_Evento_comuni]])->limit(1)->get();        
+        $Motivo_solicitud = $motivo_solicitud_dictamen[0]->Nombre_solicitud;
+        $Id_solicitante_dic = $motivo_solicitud_dictamen[0]->Id_solicitante;
+
+        $array_datos_info_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siae.Tipo_documento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpa', 'slpa.Id_Parametro', '=', 'siae.Nivel_escolar')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpar', 'slpar.Id_Parametro', '=', 'siae.Estado_civil')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'siae.Id_municipio')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldmu', 'sldmu.Id_municipios', '=', 'siae.Id_municipio_benefi')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'siae.Id_eps')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sien', 'sien.Id_Entidad', '=', 'siae.Id_afp')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sient', 'sient.Id_Entidad', '=', 'siae.Id_arl')
+        ->select('siae.ID_evento', 'siae.Nombre_afiliado', 'siae.Tipo_documento', 'slp.Nombre_parametro as T_documento', 'siae.Nro_identificacion', 
+        'siae.F_nacimiento', 'siae.Edad', 'siae.Genero', 'siae.Email', 'siae.Telefono_contacto', 'siae.Estado_civil', 
+        'slpar.Nombre_parametro as Estado_civi', 'siae.Nivel_escolar', 'slpa.Nombre_parametro as Escolaridad', 
+        'siae.Apoderado', 'siae.Nombre_apoderado', 'siae.Nro_identificacion_apoderado', 'siae.Id_dominancia', 'siae.Direccion', 
+        'siae.Id_departamento', 'siae.Id_municipio', 'sldm.Nombre_municipio as Nombre_municipio', 'siae.Ocupacion', 'siae.Tipo_afiliado', 
+        'siae.Ibc', 'siae.Id_eps', 'sie.Nombre_entidad as Entidad_eps', 'siae.Id_afp', 'sien.Nombre_entidad as Entidad_afp', 'siae.Id_arl', 
+        'sient.Nombre_entidad as Entidad_arl', 'siae.Activo', 'siae.Medio_notificacion', 'siae.Nombre_afiliado_benefi', 
+        'siae.Tipo_documento_benefi', 'siae.Nro_identificacion_benefi', 'siae.Direccion_benefi', 'siae.Id_departamento_benefi', 
+        'siae.Id_municipio_benefi', 'sldmu.Nombre_municipio as Nombre_municipio_benefi', 'siae.Nombre_usuario', 'siae.F_registro', 
+        'F_actualizacion')
+        ->where([['ID_Evento',$ID_Evento_comuni]])->get();        
+
+        $Tipo_afiliado = $array_datos_info_afiliado[0]->Tipo_afiliado;
+
+        if ($Tipo_afiliado !== 27 ) {
+            $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado;            
+        }else{
+            $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;            
+        }
+
+        if($Id_solicitante_dic == 1 || $Id_solicitante_dic == 2 ||  $Id_solicitante_dic == 3){
+            $Solicitante_dic = $motivo_solicitud_dictamen[0]->Solicitante;
+            $Nombre_entidad_dic = $motivo_solicitud_dictamen[0]->Nombre_entidad;            
+        }else{
+            $Solicitante_dic = $motivo_solicitud_dictamen[0]->Solicitante;
+            $Nombre_entidad_dic = $Nombre_afiliado_dic;            
+        }
+
+        //Captura de datos de informacion general de la entidad calificadora
+
+        $array_datos_info_entidad_cali = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_eventos as sie')
+        ->leftJoin('sigmel_gestiones.sigmel_clientes as sc', 'sc.Id_cliente', '=', 'sie.Cliente')
+        ->select('sie.ID_evento', 'sie.Cliente', 'sc.Nombre_cliente', 'sc.Nit', 'sc.Telefono_principal', 'sc.Direccion', 'sc.Email_principal')
+        ->where([['sie.ID_evento',$ID_Evento_comuni]])->get();                
+        
+        $Cliente = $array_datos_info_entidad_cali[0]->Cliente;        
+        // Logo cliente del Header
+
+        $dato_logo_header = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Logo_cliente')
+        ->where([['Id_cliente', $Cliente]])
+        ->get();
+
+        if (count($dato_logo_header) > 0) {
+            $logo_header = $dato_logo_header[0]->Logo_cliente;
+        } else {
+            $logo_header = "Sin logo";
+        }       
+
+        $Nombre_cliente_ent = $array_datos_info_entidad_cali[0]->Nombre_cliente;
+        $Nit_ent = $array_datos_info_entidad_cali[0]->Nit;
+        $Telefono_principal_ent = $array_datos_info_entidad_cali[0]->Telefono_principal;
+        $Direccion_ent = $array_datos_info_entidad_cali[0]->Direccion;
+        $Email_principal_ent = $array_datos_info_entidad_cali[0]->Email_principal;        
+
+        //Captura de datos generales de la persona calificada
+
+        if ($Tipo_afiliado == 27) {
+            $Afiliado_per_cal = '';
+            $Beneficiario_per_cal = 'X';                                  
+        }else {
+            $Afiliado_per_cal = 'X';
+            $Beneficiario_per_cal = '';             
+        }        
+        $Nombre_per_cal = $array_datos_info_afiliado[0]->Nombre_afiliado;           
+        $Tipo_documento_per_cal = $array_datos_info_afiliado[0]->T_documento;            
+        $NroIden_per_cal = $array_datos_info_afiliado[0]->Nro_identificacion;
+        $F_nacimiento_per_cal = $array_datos_info_afiliado[0]->F_nacimiento;            
+        $Edad_per_cal = $array_datos_info_afiliado[0]->Edad;            
+        $Nivel_escolar_per_cal = $array_datos_info_afiliado[0]->Escolaridad;
+        $Estado_civil_per_cal = $array_datos_info_afiliado[0]->Estado_civi;
+        $Telefono_per_cal = $array_datos_info_afiliado[0]->Telefono_contacto;
+        $Direccion_per_cal = $array_datos_info_afiliado[0]->Direccion;
+        $Ciudad_per_cal = $array_datos_info_afiliado[0]->Nombre_municipio;
+        $Email_per_cal = $array_datos_info_afiliado[0]->Email;
+        $Numero_documento_afiliado = $NroIden_per_cal;  
+        $Documento_afiliado = $Tipo_documento_per_cal;
+        $Nombre_afiliado_pre = $Nombre_per_cal;       
+
+        //Captura de datos de Afiliacion al siss:
+
+        $Regimen_salud_ecv = $motivo_solicitud_dictamen[0]->Regimen_salud;
+        
+        if($Regimen_salud_ecv == 37) {
+            $Contributivo_ecv = 'X';
+            $Subsidiado_ecv = '';
+            $No_afiliado_ecv = '';
+        }elseif($Regimen_salud_ecv == 38){
+            $Contributivo_ecv = '';
+            $Subsidiado_ecv = 'X';
+            $No_afiliado_ecv = '';
+        }elseif($Regimen_salud_ecv == 39){
+            $Contributivo_ecv = '';
+            $Subsidiado_ecv = '';
+            $No_afiliado_ecv = 'X';
+        }else{
+            $Contributivo_ecv = '';
+            $Subsidiado_ecv = '';
+            $No_afiliado_ecv = '';
+        }
+        
+        $Entidad_eps = $array_datos_info_afiliado[0]->Entidad_eps;
+        $Entidad_afp = $array_datos_info_afiliado[0]->Entidad_afp;
+        $Entidad_arl = $array_datos_info_afiliado[0]->Entidad_arl;
+
+        //Captura de datos Antecedentes laborales del calificado
+
+        $array_datos_info_antecedentes_laborales = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_ciuo_codigos as slcc', 'slcc.Id_Codigo', '=', 'sile.Id_codigo_ciuo')
+        ->select('sile.Tipo_empleado', 'sile.Cargo', 'sile.Id_codigo_ciuo', 'slcc.Nombre_ciuo', 'sile.Funciones_cargo', 'sile.Empresa', 
+        'sile.Nit_o_cc')->where([['ID_Evento',$ID_Evento_comuni]])->get();
+
+        $Tipo_empleado_laboral = $array_datos_info_antecedentes_laborales[0]->Tipo_empleado;
+
+        if ($Tipo_empleado_laboral == 'Empleado actual') {
+            $Independiente_laboral = 'X';
+            $Dedependiente_laboral = '';
+        } else {
+            $Independiente_laboral = '';
+            $Dedependiente_laboral = 'X';
+        }
+
+        $Nombre_cargo_laboral = $array_datos_info_antecedentes_laborales[0]->Cargo;
+        $Codigo_ciuo_laboral = $array_datos_info_antecedentes_laborales[0]->Nombre_ciuo;
+        $Empresa_laboral = $array_datos_info_antecedentes_laborales[0]->Empresa;
+        $Nit_laboral = $array_datos_info_antecedentes_laborales[0]->Nit_o_cc;    
+        
+        //Captura de datos Realacion de documentos/examenes fisico(Descripción)
+
+        $array_datos_relacion_examentes = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();  
+
+        //Captura de datos Fundamentos para la calificacion de la perdida de la capacidad laboral y ocupacional - libros I, II y III
+
+        $Descripcion_enfermedad_actual = $array_datos_info_dictamen[0]->Descripcion_enfermedad_actual;
+
+        $array_diagnosticos_fc = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+        ->select('side.CIE10', 'slcd.CIE10 as Codigo_cie10', 'side.Nombre_CIE10', 'side.Origen_CIE10', 'slp.Nombre_parametro as Nombre_origen', 
+        'side.Deficiencia_motivo_califi_condiciones')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();  
+
+        $array_deficiencias_alteraciones = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')        
+        ->select('sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Deficiencia')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();  
+        
+        $Suma_combinada_fc = $array_datos_info_dictamen[0]->Suma_combinada;        
+
+        $Total_deficiencia50_fc = $array_datos_info_dictamen[0]->Total_Deficiencia50;
+
+        $array_datos_libros23 = sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();  
+
+        //Captura de datos Concepto final del dictamen pericial
+        
+        $Porcentaje_Pcl_dp = $array_datos_info_dictamen[0]->Porcentaje_pcl;
+        $F_estructuracion_dp = $array_datos_info_dictamen[0]->F_estructuracion;
+        $Tipo_evento_dp = $array_datos_info_dictamen[0]->Nombre_evento;
+        $Sustentacion_F_estructuracion_dp = $array_datos_info_dictamen[0]->Sustentacion_F_estructuracion;
+        $F_evento_dp = $array_datos_info_dictamen[0]->F_evento;
+        $Origen_dp = $array_datos_info_dictamen[0]->Nombre_origen;
+        $Detalle_calificacion_dp = $array_datos_info_dictamen[0]->Detalle_calificacion;
+        $Enfermedad_catastrofica_dp = $array_datos_info_dictamen[0]->Enfermedad_catastrofica;
+        $Enfermedad_congenita_dp = $array_datos_info_dictamen[0]->Enfermedad_congenita;
+        $validar_servicio_revision_pension = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        ->select('Id_servicio')->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();  
+        $Revision_pension_dp = $validar_servicio_revision_pension[0]->Id_servicio;
+        $Nombre_enfermedad_dp = $array_datos_info_dictamen[0]->Nombre_enfermedad;
+        $Requiere_tercera_persona_dp = $array_datos_info_dictamen[0]->Requiere_tercera_persona;
+        $Requiere_tercera_persona_decisiones_dp = $array_datos_info_dictamen[0]->Requiere_tercera_persona_decisiones;
+        $Requiere_dispositivo_apoyo_dp = $array_datos_info_dictamen[0]->Requiere_dispositivo_apoyo;
+        $Justificacion_dependencia_dp = $array_datos_info_dictamen[0]->Justificacion_dependencia;
+               
+        //Obtener los datos del formulario
+        
+        $data = [
+            'logo_header' => $logo_header,
+            'Id_cliente_ent' => $Cliente,
+            'codigoQR' => $codigoQR,
+            'ID_evento' => $ID_Evento_comuni,
+            'Id_Asignacion' => $Id_Asignacion_comuni,
+            'Id_proceso' => $Id_Proceso_comuni,
+            'Radicado_comuni' => $Radicado_comuni,
+            'Fecha_dictamen'=> $Fecha_dictamen,
+            'DictamenNo' => $DictamenNo,
+            'Motivo_solicitud' => $Motivo_solicitud,
+            'Solicitante_dic' => $Solicitante_dic,
+            'Nombre_entidad_dic' => $Nombre_entidad_dic,            
+            'Nombre_cliente_ent' => $Nombre_cliente_ent,
+            'Nit_ent' => $Nit_ent,
+            'Telefono_principal_ent' => $Telefono_principal_ent,
+            'Direccion_ent' => $Direccion_ent,
+            'Email_principal_ent' => $Email_principal_ent,
+            'Afiliado_per_cal' => $Afiliado_per_cal,
+            'Beneficiario_per_cal' => $Beneficiario_per_cal,
+            'ResultadoNombre_per_cal' => $Nombre_per_cal,
+            'Tipo_documento_per_cal' => $Tipo_documento_per_cal,
+            'NroIden_per_cal' => $NroIden_per_cal,
+            'F_nacimiento_per_cal' => $F_nacimiento_per_cal,
+            'Edad_per_cal' => $Edad_per_cal,
+            'Nivel_escolar_per_cal' => $Nivel_escolar_per_cal,
+            'Estado_civil_per_cal' => $Estado_civil_per_cal,
+            'Telefono_per_cal' => $Telefono_per_cal,
+            'Direccion_per_cal' => $Direccion_per_cal,
+            'Ciudad_per_cal' => $Ciudad_per_cal,
+            'Email_per_cal' => $Email_per_cal,                                   
+            'Contributivo_ecv' => $Contributivo_ecv,
+            'Subsidiado_ecv' => $Subsidiado_ecv,
+            'No_afiliado_ecv' => $No_afiliado_ecv,
+            'Entidad_eps' => $Entidad_eps,
+            'Entidad_afp' => $Entidad_afp,
+            'Entidad_arl' => $Entidad_arl,
+            'Independiente_laboral' => $Independiente_laboral,
+            'Dedependiente_laboral' => $Dedependiente_laboral,
+            'Nombre_cargo_laboral' => $Nombre_cargo_laboral,
+            'Codigo_ciuo_laboral' => $Codigo_ciuo_laboral,
+            'Empresa_laboral' => $Empresa_laboral,
+            'Nit_laboral' => $Nit_laboral,
+            'array_datos_relacion_examentes' => $array_datos_relacion_examentes,
+            'Descripcion_enfermedad_actual' => $Descripcion_enfermedad_actual,
+            'array_diagnosticos_fc' => $array_diagnosticos_fc,
+            'array_deficiencias_alteraciones' => $array_deficiencias_alteraciones,
+            'Suma_combinada_fc' => $Suma_combinada_fc,
+            'Total_deficiencia50_fc' => $Total_deficiencia50_fc,
+            'array_datos_libros23' => $array_datos_libros23,
+            'Porcentaje_Pcl_dp' => $Porcentaje_Pcl_dp,
+            'F_estructuracion_dp' => $F_estructuracion_dp,
+            'Tipo_evento_dp' => $Tipo_evento_dp,
+            'Sustentacion_F_estructuracion_dp' => $Sustentacion_F_estructuracion_dp,
+            'F_evento_dp' => $F_evento_dp,
+            'Origen_dp' => $Origen_dp,
+            'Detalle_calificacion_dp' => $Detalle_calificacion_dp,
+            'Enfermedad_catastrofica_dp' => $Enfermedad_catastrofica_dp,
+            'Enfermedad_congenita_dp' => $Enfermedad_congenita_dp,
+            'Revision_pension_dp' => $Revision_pension_dp,
+            'Nombre_enfermedad_dp' => $Nombre_enfermedad_dp,
+            'Requiere_tercera_persona_dp' => $Requiere_tercera_persona_dp,
+            'Requiere_tercera_persona_decisiones_dp' => $Requiere_tercera_persona_decisiones_dp,
+            'Requiere_dispositivo_apoyo_dp' => $Requiere_dispositivo_apoyo_dp,
+            'Justificacion_dependencia_dp' => $Justificacion_dependencia_dp,
+            'Numero_documento_afiliado' => $Numero_documento_afiliado,
+            'Documento_afiliado' => $Documento_afiliado,
+            'Nombre_afiliado_pre' => $Nombre_afiliado_pre
+        ];
+
+        // Crear una instancia de Dompdf
+
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('/Proformas/Proformas_Arl/PCL/dictamen_Pcl917', $data);        
+        $nombre_pdf = 'PCL_DML_'.$Id_Asignacion_comuni.'_'.$Numero_documento_afiliado.'.pdf';    
+        //Obtener el contenido del PDF
+        $output = $pdf->output();
+        //Guardar el PDF en un archivo
+        file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni}/{$nombre_pdf}"), $output);
+        return $pdf->download($nombre_pdf);
+    }
+
+    public function generarPdfNotificacionPcl(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+        $cargo_profesional = Auth::user()->cargo;
+
+        $ID_Evento_comuni_comite = $request->ID_Evento_comuni_comite;
+        $Id_Asignacion_comuni_comite = $request->Id_Asignacion_comuni_comite;
+        $Id_Proceso_comuni_comite = $request->Id_Proceso_comuni_comite;
+        $Radicado_comuni_comite = $request->Radicado_comuni_comite;
+
+        // Captura de datos para logo del cliente y informacion de las entidades
+
+        $array_datos_info_entidad_cali = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_eventos as sie')
+        ->leftJoin('sigmel_gestiones.sigmel_clientes as sc', 'sc.Id_cliente', '=', 'sie.Cliente')
+        ->select('sie.ID_evento', 'sie.Cliente', 'sc.Nombre_cliente', 'sc.Nit', 'sc.Telefono_principal', 'sc.Direccion', 'sc.Email_principal')
+        ->where([['sie.ID_evento',$ID_Evento_comuni_comite]])->get();                
+        
+        $Cliente = $array_datos_info_entidad_cali[0]->Cliente;        
+        // Logo cliente del Header
+        $dato_logo_header = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Logo_cliente')
+        ->where([['Id_cliente', $Cliente]])
+        ->get();
+
+        if (count($dato_logo_header) > 0) {
+            $logo_header = $dato_logo_header[0]->Logo_cliente;
+        } else {
+            $logo_header = "Sin logo";
+        } 
+
+        // Captura de datos de Comite interdiciplinario y correspondencia
+
+        $array_datos_comite_inter = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        ->where([['ID_Evento',$ID_Evento_comuni_comite], ['Id_Asignacion',$Id_Asignacion_comuni_comite]])->get(); 
+
+        $Asunto_correspondencia = $array_datos_comite_inter[0]->Asunto;
+        $Ciudad_correspondencia = $array_datos_comite_inter[0]->Ciudad;
+        $F_correspondecia = $array_datos_comite_inter[0]->F_correspondecia;        
+        $Anexos_correspondecia = $array_datos_comite_inter[0]->Anexos;
+        $Elaboro_correspondecia = $array_datos_comite_inter[0]->Elaboro;
+
+        //Captura de datos del afiliado 
+
+        $array_datos_info_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siae.Tipo_documento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpa', 'slpa.Id_Parametro', '=', 'siae.Nivel_escolar')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpar', 'slpar.Id_Parametro', '=', 'siae.Estado_civil')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as slde', 'slde.Id_departamento', '=', 'siae.Id_departamento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'siae.Id_municipio')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpara', 'slpara.Id_Parametro', '=', 'siae.Tipo_documento_benefi')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldep', 'sldep.Id_departamento', '=', 'siae.Id_departamento_benefi')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldmu', 'sldmu.Id_municipios', '=', 'siae.Id_municipio_benefi')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'siae.Id_eps')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldepa', 'sldep.Id_departamento', '=', 'sie.Id_Departamento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldmun', 'sldmu.Id_municipios', '=', 'sie.Id_Ciudad')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sien', 'sien.Id_Entidad', '=', 'siae.Id_afp')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldepar', 'sldepar.Id_departamento', '=', 'sien.Id_Departamento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldmuni', 'sldmuni.Id_municipios', '=', 'sien.Id_Ciudad')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sient', 'sient.Id_Entidad', '=', 'siae.Id_arl')
+        ->select('siae.ID_evento', 'siae.Nombre_afiliado', 'siae.Tipo_documento', 'slp.Nombre_parametro as T_documento', 
+        'siae.Nro_identificacion', 'siae.F_nacimiento', 'siae.Edad', 'siae.Genero', 'siae.Email', 'siae.Telefono_contacto', 
+        'siae.Estado_civil', 'slpar.Nombre_parametro as Estado_civi', 'siae.Nivel_escolar', 'slpa.Nombre_parametro as Escolaridad', 
+        'siae.Apoderado', 'siae.Nombre_apoderado', 'siae.Nro_identificacion_apoderado', 'siae.Id_dominancia', 'siae.Direccion', 
+        'siae.Id_departamento', 'slde.Nombre_departamento as Nombre_departamento', 'siae.Id_municipio', 'sldm.Nombre_municipio as Nombre_municipio', 
+        'siae.Ocupacion', 'siae.Tipo_afiliado', 'siae.Ibc', 'siae.Id_eps', 'sie.Nombre_entidad as Entidad_eps', 'sie.Direccion as Direccion_eps', 
+        'sie.Telefonos as Telefono_eps', 'sie.Id_Departamento', 'sldepa.Nombre_departamento as Nombre_departamento_eps', 'sie.Id_Ciudad', 
+        'sldmun.Nombre_municipio as Nombre_municipio_eps', 'siae.Id_afp', 'sien.Nombre_entidad as Entidad_afp', 
+        'sien.Direccion as Direccion_afp', 'sien.Telefonos as Telefono_afp', 'sien.Id_Departamento', 
+        'sldepar.Nombre_departamento as Nombre_departamento_afp', 'sien.Id_Ciudad', 
+        'sldepar.Nombre_municipio as Nombre_municipio_afp', 'siae.Id_arl', 'sient.Nombre_entidad as Entidad_arl', 'siae.Activo', 
+        'siae.Medio_notificacion', 'siae.Nombre_afiliado_benefi', 'siae.Tipo_documento_benefi', 'slpara.Nombre_parametro as Tipo_documento_benfi',         
+        'siae.Nro_identificacion_benefi', 'siae.Direccion_benefi', 'siae.Id_departamento_benefi', 
+        'sldep.Nombre_departamento as Nombre_departamento_benefi', 'siae.Id_municipio_benefi', 
+        'sldmu.Nombre_municipio as Nombre_municipio_benefi', 'siae.Nombre_usuario', 'siae.F_registro', 'F_actualizacion')
+        ->where([['ID_Evento',$ID_Evento_comuni_comite]])->limit(1)->get(); 
+
+        $Tipo_afiliado = $array_datos_info_afiliado[0]->Tipo_afiliado;
+
+        if ($Tipo_afiliado !== 27 ) {
+            $Nombre_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_afiliado;
+            $Direccion_afiliado_noti = $array_datos_info_afiliado[0]->Direccion;
+            $Telefono_afiliado_noti = $array_datos_info_afiliado[0]->Telefono_contacto;
+            $Departamento_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_departamento;            
+            $Ciudad_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_municipio;
+            $T_documento_noti = $array_datos_info_afiliado[0]->T_documento;            
+            $NroIden_afiliado_noti = $array_datos_info_afiliado[0]->Nro_identificacion;
+            $Email_afiliado_noti = $array_datos_info_afiliado[0]->Email;
+        }else{
+            $Nombre_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
+            $Direccion_afiliado_noti = $array_datos_info_afiliado[0]->Direccion_benefi;
+            $Telefono_afiliado_noti = '';
+            $Departamento_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_departamento_benefi;            
+            $Ciudad_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
+            $T_documento_noti = $array_datos_info_afiliado[0]->Tipo_documento_benfi;            
+            $NroIden_afiliado_noti = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
+            $Email_afiliado_noti = '';
+        }
+
+        $Nombre_eps = $array_datos_info_afiliado[0]->Entidad_eps;
+        $Direccion_eps = $array_datos_info_afiliado[0]->Direccion_eps;
+        $Telefono_eps = $array_datos_info_afiliado[0]->Telefono_eps;        
+        $Ciudad_departamento_eps = $array_datos_info_afiliado[0]->Nombre_municipio_eps.'-'.$array_datos_info_afiliado[0]->Nombre_departamento_eps;
+        $Nombre_afp = $array_datos_info_afiliado[0]->Entidad_afp;
+        $Direccion_afp = $array_datos_info_afiliado[0]->Direccion_afp;
+        $Telefono_afp = $array_datos_info_afiliado[0]->Telefono_afp;
+        $Ciudad_departamento_afp = $array_datos_info_afiliado[0]->Nombre_municipio_afp.'-'.$array_datos_info_afiliado[0]->Nombre_departamento_afp;
+
+
+        // Captura de datos del dictamen pericial
+        $array_datos_info_dictamen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as sltp', 'sltp.Id_Evento', '=', 'side.Tipo_evento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpa', 'slpa.Id_Parametro', '=', 'side.Tipo_enfermedad')
+        ->select('side.ID_Evento', 'side.Id_proceso', 'side.Id_Asignacion', 'side.Origen_firme', 'side.Cobertura', 'side.Decreto_calificacion', 
+        'side.Numero_dictamen', 'side.PCL_anterior', 'side.Descripcion_nueva_calificacion', 'side.Relacion_documentos', 'side.Otros_relacion_doc', 
+        'side.Descripcion_enfermedad_actual', 'side.Suma_combinada', 'side.Total_Deficiencia50', 'side.Porcentaje_pcl', 'side.Rango_pcl', 
+        'side.Monto_indemnizacion', 'side.Tipo_evento', 'sltp.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro as Nombre_origen', 'side.F_evento', 
+        'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+        'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slpa.Nombre_parametro as Nombre_enfermedad', 'side.Requiere_tercera_persona', 
+        'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.N_radicado', 
+        'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro')
+        ->where([['side.ID_Evento',$ID_Evento_comuni_comite], ['side.Id_Asignacion',$Id_Asignacion_comuni_comite]])->get(); 
+        
+        $PorcentajePcl_dp = $array_datos_info_dictamen[0]->Porcentaje_pcl;
+        $F_estructuracionPcl_dp = $array_datos_info_dictamen[0]->F_estructuracion;
+
+        // Captura monto indemnizacion
+
+        $Monto_indemnizacionPcl = $array_datos_info_dictamen[0]->Monto_indemnizacion;      
+
+        $parte_entera = floor($Monto_indemnizacionPcl);
+        $parte_decimal = round(($Monto_indemnizacionPcl - $parte_entera) * 100);
+        $parte_decimal_entera = (int)$parte_decimal;
+
+        function numeroALetras($numero) {
+            $unidades = array('', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve');
+            $decenas = array('', 'diez', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa');
+            $decenas_especiales = array('diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve');
+            $centenas = array('', 'cien', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos');
+        
+            $resultado = '';
+        
+            if ($numero == 0) {
+                $resultado = 'cero';
+            } elseif ($numero < 10) {
+                $resultado = $unidades[$numero];
+            } elseif ($numero < 20) {
+                $resultado = $decenas_especiales[$numero - 10];
+            } elseif ($numero < 100) {
+                $decena = floor($numero / 10);
+                $unidad = $numero % 10;
+                $resultado = $decenas[$decena];
+                if ($unidad > 0) {
+                    $resultado .= ' y ' . $unidades[$unidad];
+                }
+            } elseif ($numero < 1000) {
+                $centena = floor($numero / 100);
+                $resto = $numero % 100;
+                if ($resto == 0) {
+                    $resultado = $centenas[$centena];
+                } else {
+                    $resultado = $centenas[$centena] . ' ' . numeroALetras($resto);
+                }
+            } else {
+                $resultado = 'Número fuera de rango';
+            }
+        
+            return $resultado;
+        }
+
+        $parte_enteraletras = numeroALetras($parte_entera);                        
+        $parte_decimal_enteraletras = numeroALetras($parte_decimal_entera);        
+        $Valor_letras = '('.$parte_enteraletras.' punto '.$parte_decimal_enteraletras.')';
+
+        // Captura de los nombres CIE10
+
+        $array_diagnosticosPcl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+        ->select('side.CIE10', 'slcd.CIE10 as Codigo_cie10', 'side.Nombre_CIE10')
+        ->where([['ID_Evento',$ID_Evento_comuni_comite], ['Id_Asignacion',$Id_Asignacion_comuni_comite]])->get(); 
+        
+        $NombresCIE10 = $array_diagnosticosPcl->pluck('Nombre_CIE10')->toArray();
+        $CIE10Nombres = implode(', ', $NombresCIE10);        
+        $CIE10Nombres = preg_replace('/,(?=[^,]*$)/', ' y', $CIE10Nombres);
+
+        
+        // validamos si el checkbox de la firma esta marcado para la Captura de la firma del cliente
+        $validarFirma = isset($request->firmarcomunicado_editar) ? 'Firmar Documento' : 'No lleva firma';
+        
+        if ($validarFirma == 'Firmar Documento') {            
+            $idcliente = sigmel_clientes::on('sigmel_gestiones')->select('Id_cliente', 'Nombre_cliente')
+            ->where('Nombre_cliente', $Cliente)->get();
+    
+            $firmaclientecompleta = sigmel_informacion_firmas_clientes::on('sigmel_gestiones')->select('Firma')
+            ->where('Id_cliente', $idcliente[0]->Id_cliente)->get();
+
+            if(count($firmaclientecompleta) > 0){
+                $Firma_cliente = $firmaclientecompleta[0]->Firma;
+            }else{
+                $Firma_cliente = '';
+            }
+            
+        }else{
+            $Firma_cliente = '';
+        }
+
+        // Captura de datos de informacion laboral
+
+        $array_datos_info_laboral = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as slde', 'slde.Id_departamento', '=', 'sile.Id_departamento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sile.Id_municipio')
+        ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sile.Id_departamento', 'slde.Nombre_departamento', 
+        'sile.Id_municipio', 'sldm.Nombre_municipio')->where([['ID_Evento',$ID_Evento_comuni_comite]])->limit(1)->get();
+
+        $Nombre_empresa_noti = $array_datos_info_laboral[0]->Empresa;
+        $Direccion_empresa_noti = $array_datos_info_laboral[0]->Direccion;
+        $Telefono_empresa_noti = $array_datos_info_laboral[0]->Telefono_empresa;
+        $Ciudad_departamento_empresa_noti = $array_datos_info_laboral[0]->Nombre_municipio.'-'.$array_datos_info_laboral[0]->Nombre_departamento;        
+
+        //Obtener los datos del formulario
+        
+        $data = [
+            'logo_header' => $logo_header,
+            'Id_cliente_ent' => $Cliente,
+            'ID_evento' => $ID_Evento_comuni_comite,
+            'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+            'Id_proceso' => $Id_Proceso_comuni_comite,
+            'Radicado_comuni' => $Radicado_comuni_comite,
+            'Asunto_correspondencia' => $Asunto_correspondencia,
+            'F_correspondecia' => $F_correspondecia,
+            'Ciudad_correspondencia' => $Ciudad_correspondencia,
+            'Nombre_afiliado_noti' => $Nombre_afiliado_noti,
+            'Direccion_afiliado_noti' => $Direccion_afiliado_noti,
+            'Telefono_afiliado_noti' => $Telefono_afiliado_noti,
+            'Departamento_afiliado_noti' => $Departamento_afiliado_noti,
+            'Ciudad_afiliado_noti' => $Ciudad_afiliado_noti,
+            'T_documento_noti' => $T_documento_noti,
+            'NroIden_afiliado_noti' => $NroIden_afiliado_noti,
+            'Email_afiliado_noti' => $Email_afiliado_noti, 
+            'PorcentajePcl_dp' => $PorcentajePcl_dp,
+            'F_estructuracionPcl_dp' => $F_estructuracionPcl_dp,
+            'CIE10Nombres' => $CIE10Nombres,
+            'Monto_indemnizacionPcl' => $Monto_indemnizacionPcl,
+            'Valor_letras' => $Valor_letras,
+            'Firma_cliente' => $Firma_cliente,
+            'Anexos_correspondecia' => $Anexos_correspondecia,
+            'Elaboro_correspondecia' => $Elaboro_correspondecia,
+            'Nombre_empresa_noti' => $Nombre_empresa_noti,
+            'Direccion_empresa_noti' => $Direccion_empresa_noti,
+            'Telefono_empresa_noti' => $Telefono_empresa_noti,
+            'Ciudad_departamento_empresa_noti' => $Ciudad_departamento_empresa_noti,
+            'Nombre_eps' => $Nombre_eps,
+            'Direccion_eps' => $Direccion_eps,
+            'Telefono_eps' => $Telefono_eps,
+            'Ciudad_departamento_eps' => $Ciudad_departamento_eps,
+            'Nombre_afp' => $Nombre_afp,
+            'Direccion_afp' => $Direccion_afp,
+            'Telefono_afp' => $Telefono_afp,
+            'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
+        ];
+
+        // Crear una instancia de Dompdf
+
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('/Proformas/Proformas_Arl/PCL/notificacion_pcl_numerica', $data);        
+        $nombre_pdf = 'PCL_DML_'.$Id_Asignacion_comuni_comite.'_'.$NroIden_afiliado_noti.'.pdf';    
+        //Obtener el contenido del PDF
+        $output = $pdf->output();
+        //Guardar el PDF en un archivo
+        file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni_comite}/{$nombre_pdf}"), $output);
+        return $pdf->stream($nombre_pdf);
+        
+    }
+
+
 }
