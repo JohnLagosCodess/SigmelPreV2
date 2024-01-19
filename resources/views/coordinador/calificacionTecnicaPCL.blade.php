@@ -7474,36 +7474,89 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados)                                                        
-                                                        <tr>
-                                                            <form name="ver_dictamenPcl" action="{{ route('descargar_Dictamen_PCL') }}" method="POST">  
-                                                                @csrf                        
-                                                                <td>
-                                                                    {{$comunicados->N_radicado}}
+                                                        @if (!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion == 1)
+                                                            @foreach ($array_comunicados_correspondencia as $index => $comunicados)                                                        
+                                                            <tr>
+                                                                <form name="ver_dictamenPcl" action="{{ route('descargar_Dictamen_PCL') }}" method="POST">  
+                                                                    @csrf                        
                                                                     @if ($index === 0)
                                                                         <input type="hidden"  name="ID_Evento_comuni" value="{{$comunicados['ID_evento']}}">
                                                                         <input type="hidden"  name="Id_Asignacion_comuni" value="{{$comunicados['Id_Asignacion']}}">
                                                                         <input type="hidden"  name="Id_Proceso_comuni" value="{{$comunicados['Id_proceso']}}">     
                                                                         <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}">                                                                    
+                                                                        <td>{{$comunicados['N_radicado']}}</td>
+                                                                        <td>{{$comunicados['Elaboro']}}</td>
+                                                                        <td>{{$comunicados['F_comunicado']}}</td>     
                                                                     @endif
-                                                                </td>
-                                                                <td>{{$comunicados->Elaboro}}</td>
-                                                                <td>{{$comunicados->F_comunicado}}</td>     
-                                                                @if ($comunicados->Ciudad == 'N/A')
+                                                                    @if ($comunicados->Ciudad == 'N/A')
                                                                     <td>                                                                    
                                                                         <label for="ver_dictamenesPcl"><i class="far fa-eye text-info"></i></i></label>
                                                                         <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
                                                                     </td>                                                                
-                                                            </form>
-                                                                @else
+                                                                    @endif
+                                                                </form>
+                                                            @endforeach
+                                                            @foreach ($array_comunicados_comite_inter as $comite_inter)
+                                                                <form name="ver_notificacionPcl" action="{{ route('descargar_Notificacion_PCL') }}" method="POST">
+                                                                    @csrf
+                                                                    <input type="hidden"  name="ID_Evento_comuni_comite" value="{{$comite_inter->ID_evento}}">
+                                                                    <input type="hidden"  name="Id_Asignacion_comuni_comite" value="{{$comite_inter->Id_Asignacion}}">
+                                                                    <input type="hidden"  name="Id_Proceso_comuni_comite" value="{{$comite_inter->Id_proceso}}">    
+                                                                    <input type="hidden"  name="Radicado_comuni_comite" value="{{$comite_inter->N_radicado}}"> 
+                                                                    <td>{{$comite_inter->N_radicado}}</td>
+                                                                    <td>{{$comite_inter->Elaboro}}</td>
+                                                                    <td>{{$comite_inter->F_visado_comite}}</td>
                                                                     <td>
-                                                                        <i class="far fa-eye text-info"></i>
+                                                                        <label for="ver_notificacionesPcl"><i class="far fa-eye text-info"></i></i></label>
+                                                                        <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold;" value="">
                                                                         <label for="editar_correspondencia"><i class="fa fa-pen text-info"></i></label>
                                                                         <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia" type="button" style="font-weight: bold;">
-                                                                    </td>
-                                                                @endif
-                                                        </tr>                                                        
-                                                        @endforeach
+                                                                    </td>                                                                                                                               
+                                                                </form>
+                                                            @endforeach                                                                    
+                                                            </tr>                                                        
+                                                        @elseif(!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion == 3)
+                                                            @foreach ($array_comunicados_correspondencia as $index => $comunicados)                                                        
+                                                            <tr>
+                                                                <form name="ver_dictamenPcl" action="{{ route('descargar_Dictamen_PCL917') }}" method="POST">  
+                                                                    @csrf                        
+                                                                    @if ($index === 0)
+                                                                        <input type="hidden"  name="ID_Evento_comuni" value="{{$comunicados['ID_evento']}}">
+                                                                        <input type="hidden"  name="Id_Asignacion_comuni" value="{{$comunicados['Id_Asignacion']}}">
+                                                                        <input type="hidden"  name="Id_Proceso_comuni" value="{{$comunicados['Id_proceso']}}">     
+                                                                        <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}">                                                                    
+                                                                        <td>{{$comunicados['N_radicado']}}</td>
+                                                                        <td>{{$comunicados['Elaboro']}}</td>
+                                                                        <td>{{$comunicados['F_comunicado']}}</td>     
+                                                                    @endif
+                                                                    @if ($comunicados->Ciudad == 'N/A')
+                                                                    <td>                                                                    
+                                                                        <label for="ver_dictamenesPcl"><i class="far fa-eye text-info"></i></i></label>
+                                                                        <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
+                                                                    </td>                                                                
+                                                                    @endif
+                                                                </form>
+                                                            @endforeach
+                                                            @foreach ($array_comunicados_comite_inter as $comite_inter)
+                                                                <form name="ver_notificacionPcl" action="{{ route('descargar_Notificacion_PCL') }}" method="POST">
+                                                                    @csrf
+                                                                    <input type="hidden"  name="ID_Evento_comuni_comite" value="{{$comite_inter->ID_evento}}">
+                                                                    <input type="hidden"  name="Id_Asignacion_comuni_comite" value="{{$comite_inter->Id_Asignacion}}">
+                                                                    <input type="hidden"  name="Id_Proceso_comuni_comite" value="{{$comite_inter->Id_proceso}}">    
+                                                                    <input type="hidden"  name="Radicado_comuni_comite" value="{{$comite_inter->N_radicado}}"> 
+                                                                    <td>{{$comite_inter->N_radicado}}</td>
+                                                                    <td>{{$comite_inter->Elaboro}}</td>
+                                                                    <td>{{$comite_inter->F_visado_comite}}</td>
+                                                                    <td>
+                                                                        <label for="ver_notificacionesPcl"><i class="far fa-eye text-info"></i></i></label>
+                                                                        <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold;" value="">
+                                                                        <label for="editar_correspondencia"><i class="fa fa-pen text-info"></i></label>
+                                                                        <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia" type="button" style="font-weight: bold;">
+                                                                    </td>                                                                                                                               
+                                                                </form>
+                                                            @endforeach                                                                    
+                                                            </tr> 
+                                                        @endif
                                                     </tbody>
                                                 </table>
                                             </div>
