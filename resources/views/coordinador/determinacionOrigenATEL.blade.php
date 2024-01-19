@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 @section('title', 'DTO ATEL')
+
+@section('css')
+    <link rel="stylesheet" type="text/css" href="/plugins/summernote/summernote.min.css">
+@stop
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
@@ -1081,7 +1085,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label for="Asunto">Asunto<span style="color: red;">(*)</label>
+                                    <label for="Asunto">Asunto <span style="color: red;">(*)</label>
                                     @if(!empty($array_comite_interdisciplinario[0]->Asunto))
                                         <input type="text" class="form-control" name="Asunto" id="Asunto" value="{{$array_comite_interdisciplinario[0]->Asunto}}" required>                                                
                                     @else
@@ -1091,11 +1095,13 @@
                             </div>
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label for="cuerpo_comunicado">Cuerpo del comunicado<span style="color: red;">(*)</label>
+                                    <label for="cuerpo_comunicado">Cuerpo del comunicado <span style="color: red;">(*)</label>
+                                    <br>
+                                    <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_cie10">Diagnósticos CIE10</button>
                                     @if(!empty($array_comite_interdisciplinario[0]->Cuerpo_comunicado))
-                                        <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" cols="90" rows="4" required>{{$array_comite_interdisciplinario[0]->Cuerpo_comunicado}}</textarea>                                                                                                 
+                                        <textarea class="form-control " name="cuerpo_comunicado" id="cuerpo_comunicado" required>{{$array_comite_interdisciplinario[0]->Cuerpo_comunicado}}</textarea>
                                     @else
-                                        <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" cols="90" rows="4" required></textarea>                                                                                              
+                                        <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" required></textarea>                                                                                              
                                     @endif
                                 </div>
                             </div> 
@@ -1649,5 +1655,5 @@
 
     </script>
     <script type="text/javascript" src="/js/dto_atel.js"></script>
-   
+    <script src="/plugins/summernote/summernote.min.js"></script>
 @stop

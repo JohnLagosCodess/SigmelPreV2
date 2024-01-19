@@ -416,7 +416,7 @@ class ProbandoController extends Controller
             )
         );
 
-        $data = [
+        /* $data = [
             'codigoQR' => $codigoQR,
             'logo_header' => 'logo_cliente_7.png',
             'id_cliente' => '7',
@@ -426,10 +426,31 @@ class ProbandoController extends Controller
             'Id_Asignacion' => 39,
             'Id_proceso' => 2,
             'Radicado_comuni' => "SALPCL2024010500001"
+        ]; */
+        $time = time();
+        $date = date("Y-m-d", $time);
+
+        $data = [
+            'logo_header' => 'logo_cliente_7.png',
+            'id_cliente' => '7',
+            'ciudad' => 'Bogotá D.C.',
+            'fecha' => $date,
+            'nombre_afiliado' => 'Mauro Estefan Ramírez Aranguren',
+            'direccion_afiliado' => 'Calle 41 A Sur # 72 H - 03',
+            'telefonos_afiliado' => '3124431689',
+            'municipio_afiliado' => 'Bogotá D.C',
+            'departamento_afiliado' => 'Bogotá D.C',
+            'nro_radicado' => 'SALPRONU2024150100001',
+            'tipo_identificacion' => 'CC',
+            'num_identificacion' => '1030651087',
+            'nro_siniestro' => '987456321',
+            'asunto' => 'ACUERDO CALIFICACIÓN DE EPS',
+            'identificacion' => '1030651087',
+            'fecha_evento' => $date,
         ];
 
         $pdf = app('dompdf.wrapper');
-        $pdf->loadView('/Proformas/Proformas_Arl/Origen_Atel/dml_origen_atel', $data);
+        $pdf->loadView('/Proformas/Proformas_Arl/Origen_Atel/acuerdo_calificacion', $data);
         $fileName = 'pdfsito.pdf';
         return $pdf->stream($fileName);
     }

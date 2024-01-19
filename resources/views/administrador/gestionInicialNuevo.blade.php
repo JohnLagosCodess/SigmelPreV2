@@ -147,6 +147,12 @@
                                         <div class="row">
                                             <div class="col-sm">
                                                 <div class="form-group">
+                                                    <label for="nro_identificacion" class="col-form-label">N° de identificación <span style="color:red;">(*)</span></label>
+                                                    <input type="text" class="nro_identificacion form-control" name="nro_identificacion" id="nro_identificacion" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
                                                     <label for="tipo_afiliado" class="col-form-label">Tipo de afiliado<span style="color:red;">(*)</span></label>
                                                     <select class="tipo_afiliado custom-select" name="tipo_afiliado" id="tipo_afiliado" required></select>
                                                 </div>
@@ -155,12 +161,6 @@
                                                 <div class="form-group">
                                                     <label for="otro_tipo_afiliado" class="col-form-label">Otro Tipo de Afiliado</label>
                                                     <input class="otro_tipo_afiliado form-control" name="otro_tipo_afiliado" id="otro_tipo_afiliado">
-                                                </div>
-                                            </div>
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="nro_identificacion" class="col-form-label">N° de identificación <span style="color:red;">(*)</span></label>
-                                                    <input type="text" class="nro_identificacion form-control" name="nro_identificacion" id="nro_identificacion" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -225,8 +225,8 @@
                                             <div class="row">
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="telefono" class="col-form-label">Teléfono/Celular <span style="color:red;">(*)</span></label>
-                                                        <input type="text" class="telefono form-control" name="telefono" id="telefono" required>
+                                                        <label for="telefono" class="col-form-label">Teléfono/Celular</label>
+                                                        <input type="text" class="telefono form-control" name="telefono" id="telefono">
                                                     </div>
                                                 </div>
                                                 <div class="col-sm">
@@ -263,13 +263,13 @@
                                             <div class="row">
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="departamento_info_afiliado" class="col-form-label">Departamento</label>
-                                                        <select class="departamento_info_afiliado custom-select" name="departamento_info_afiliado" id="departamento_info_afiliado"></select>
+                                                        <label for="departamento_info_afiliado" class="col-form-label">Departamento<span style="color:red;">(*)</span></label>
+                                                        <select class="departamento_info_afiliado custom-select" name="departamento_info_afiliado" id="departamento_info_afiliado" required></select>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm columna_municipio_info_afiliado">
                                                     <div class="form-group">
-                                                        <label for="municipio_info_afiliado" class="col-form-label">Ciudad</label>
+                                                        <label for="municipio_info_afiliado" class="col-form-label">Ciudad<span style="color:red;">(*)</span></label>
                                                         <select class="municipio_info_afiliado custom-select" name="municipio_info_afiliado" id="municipio_info_afiliado" disabled></select>
                                                     </div>
                                                 </div>
@@ -296,8 +296,8 @@
                                                 </div>
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="eps" class="col-form label">EPS</label>
-                                                        <select class="eps custom-select" name="eps" id="eps"></select>
+                                                        <label for="eps" class="col-form label">EPS<span style="color:red;">(*)</span></label>
+                                                        <select class="eps custom-select" name="eps" id="eps" required></select>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm columna_otro_eps d-none">
@@ -583,7 +583,7 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="medio_notificacion_laboral" class="col-form-label">Medio de Notificación <span style="color:red;">(*)</span></label>
-                                                    <select class="medio_notificacion_laboral custom-select" name="medio_notificacion_laboral" id="medio_notificacion_laboral" required></select>
+                                                    <select class="medio_notificacion_laboral custom-select" name="medio_notificacion_laboral" id="medio_notificacion_laboral"></select>
                                                 </div>
                                             </div>
                                             <div class="col-12">
@@ -769,11 +769,12 @@
             var si_servicio = $('#servicio').val();
             var si_accion = $('#accion').val();
 
-            if (si_cliente != '' && si_tipo_cliente != '' && si_tipo_evento !='' && si_id_evento != '' && si_fecha_evento != '' &&
+            /*if (si_cliente != '' && si_tipo_cliente != '' && si_tipo_evento !='' && si_id_evento != '' && si_fecha_evento != '' &&
             si_fecha_radicacion != '' && si_nro_identificacion != '' && si_tipo_documento != '' && si_nombre_afiliado != '' &&
             si_direccion_info_afiliado != '' && si_fecha_nacimiento != '' && si_telefono != '' && si_activo != '' && 
-            si_empresa != '' && si_nit_cc != '' && si_proceso != '' && si_servicio != '' && si_accion != '') {
-                
+            si_empresa != '' && si_nit_cc != '' && si_proceso != '' && si_servicio != '' && si_accion != '') {*/
+            if(si_cliente != '' && si_tipo_cliente != '' && si_tipo_evento !='' && si_id_evento != ''  &&
+            si_fecha_radicacion != '' && si_nro_identificacion != '' && si_tipo_documento != '' && si_nombre_afiliado != ''){   
                 $('#btn_borrar').addClass('d-none');
                 $('#btn_guardar_evento').addClass('d-none');
                 $('#mostrar_barra_creacion_evento').css("display","block");

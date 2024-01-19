@@ -949,7 +949,8 @@ $(document).ready(function(){
         let datos_listado_servicios = {
             '_token': token,
             'parametro' : "listado_servicios",
-            'id_proceso' : id_proceso
+            'id_proceso' : id_proceso,
+            'id_cliente' : $("#cliente").val()
         };
         $.ajax({
             type:'POST',
@@ -1375,7 +1376,7 @@ $(document).ready(function(){
                     $('#afi_municipio_info_afiliado').val('').change().prop('disabled', true);
                     $('#nro_identificacion_apoderado').val('');
                     $('#activo').val('').change();
-                    ('#medio_notificacion_afiliado').val('').change();
+                    $('#medio_notificacion_afiliado').val('').change();
                 }
             }
         });
@@ -1626,7 +1627,7 @@ $(document).ready(function(){
 
     /* VALIDACIÓN PARA DETERMINAR QUE LA PARAMÉTRICA QUE SE CONFIGURE PARA EL MÓDULO NUEVO ESTE EN UN VALOR DE SI EN LA TABLA sigmel_informacion_parametrizaciones_clientes */
     var validar_mod_nuevo = setInterval(() => {
-        if($("#cliente").val() != '' && $("#proceso").val() != '' && $("#servicio").val() != '' && $("#accion").val() != ''){
+        if($("#cliente").val() != '' && $("#proceso").val() != '' && $("#servicio").val() != ''  && $("#accion").val() != ''){
             let datos_ejecutar_parametrica_mod_nuevo= {
                 '_token': token,
                 'parametro': "validarSiModNuevo",
@@ -1635,7 +1636,6 @@ $(document).ready(function(){
                 'Id_servicio': $("#servicio").val(),
                 'Id_accion': $("#accion").val(),
             };
-
             $.ajax({
                 type:'POST',
                 url:'/validacionParametricaEnSi',
@@ -1655,7 +1655,7 @@ $(document).ready(function(){
                 }
             });
 
-        }
+        } 
         
     }, 500);
 

@@ -1839,10 +1839,24 @@ $(document).ready(function(){
     }
 
     // Habilitar formulario de correspondencia
-
     var editar_correspondencia = $('#editar_correspondencia');
-        editar_correspondencia.click(function(){
+    editar_correspondencia.click(function(){
         $("#div_correspondecia").removeClass('d-none');
+    });
+
+    /* funcionalidad para insertar la etiqueta de los cie10 */
+    $("#cuerpo_comunicado").summernote({
+        height: 'auto',
+        toolbar: false
+    });
+    $('.note-editing-area').css("background", "white");
+    $('.note-editor').css("border", "1px solid black");
+
+    $("#btn_insertar_cie10").click(function(e){
+        e.preventDefault();
+
+        var etiqueta = "{{$diagnosticos_cie10}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta);
     });
 
     //Captura Formulario Correspondencia
@@ -1981,7 +1995,7 @@ $(document).ready(function(){
 
             }          
         })
-    })
+    });
 
     // Captura Formulario PDF Notificación DML ORIGEN
     $("form[id^='Form_noti_dml_origen_pdf_']").submit(function (e){

@@ -326,8 +326,8 @@
                                             <div class="row">
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="telefono" class="col-form-label">Teléfono/Celular <span style="color:red;">(*)</span></label>
-                                                        <input type="text" class="telefono form-control" name="telefono" id="telefono" value="{{$array_datos_info_afiliados[0]->Telefono_contacto}}" required>
+                                                        <label for="telefono" class="col-form-label">Teléfono/Celular</label>
+                                                        <input type="text" class="telefono form-control" name="telefono" id="telefono" value="{{$array_datos_info_afiliados[0]->Telefono_contacto}}">
                                                     </div>
                                                 </div>
                                                 <div class="col-sm">
@@ -370,15 +370,15 @@
                                             <div class="row">
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="departamento_info_afiliado" class="col-form-label">Departamento</label>
-                                                        <select class="departamento_info_afiliado custom-select" name="departamento_info_afiliado" id="departamento_info_afiliado">
+                                                        <label for="departamento_info_afiliado" class="col-form-label">Departamento<span style="color:red;">(*)</span></label>
+                                                        <select class="departamento_info_afiliado custom-select" name="departamento_info_afiliado" id="departamento_info_afiliado" required>
                                                             <option value="{{$array_datos_info_afiliados[0]->Id_departamento}}" selected>{{$array_datos_info_afiliados[0]->Nombre_departamento}}</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm columna_municipio_info_afiliado">
                                                     <div class="form-group">
-                                                        <label for="municipio_info_afiliado" class="col-form-label">Ciudad</label>
+                                                        <label for="municipio_info_afiliado" class="col-form-label">Ciudad<span style="color:red;">(*)</span></label>
                                                         <select class="municipio_info_afiliado custom-select" name="municipio_info_afiliado" id="municipio_info_afiliado">
                                                             <option value="{{$array_datos_info_afiliados[0]->Id_municipio}}" selected>{{$array_datos_info_afiliados[0]->Nombre_municipio}}</option>
                                                         </select>
@@ -406,8 +406,8 @@
                                                 </div>
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="eps" class="col-form label">EPS</label>
-                                                        <select class="eps custom-select" name="eps" id="eps">
+                                                        <label for="eps" class="col-form label">EPS<span style="color:red;">(*)</span></label>
+                                                        <select class="eps custom-select" name="eps" id="eps" required>
                                                             <option value="{{$array_datos_info_afiliados[0]->Id_eps}}">{{$array_datos_info_afiliados[0]->Nombre_eps}}</option>
                                                         </select>
                                                     </div>
@@ -791,7 +791,7 @@
                                                 <div class="col-sm">
                                                     <div class="form-group">
                                                         <label for="medio_notificacion_laboral" class="col-form-label">Medio de Notificación <span style="color:red;">(*)</span></label>
-                                                        <select class="medio_notificacion_laboral custom-select" name="medio_notificacion_laboral" id="medio_notificacion_laboral" required>
+                                                        <select class="medio_notificacion_laboral custom-select" name="medio_notificacion_laboral" id="medio_notificacion_laboral">
                                                             <option value="{{$array_datos_info_laboral[0]->Medio_notificacion}}">{{$array_datos_info_laboral[0]->Medio_notificacion}}</option>
                                                         </select>
                                                     </div>

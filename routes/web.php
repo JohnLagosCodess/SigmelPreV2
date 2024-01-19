@@ -744,10 +744,12 @@ Route::post('/ActualizarParametrizacionJuntas', [ParametrizacionController::clas
 
 
 /* DESCARGA DE PROFORMAS */
-/* Proforma Notificación DML ORIGEN ATEL */
+// Proforma Notificación DML ORIGEN ATEL (OFICIO REMISORIO)
 Route::post('/DescargaProformaNotiDML', [DeterminacionOrigenATEL::class, 'DescargaProformaNotiDML']);
+// Proforma DML ORIGEN (DICTAMEN)
 Route::post('/DescargaProformaDML', [DeterminacionOrigenATEL::class, 'DescargaProformaDML']);
-
+// Proforma Acuerdo Calificación de EPS
+Route::post('/DescargarProformaPronunciamiento', [PronunciamientoOrigenController::class, 'DescargarProformaPronunciamiento']);
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 

@@ -11,18 +11,22 @@
             /* arriba  derecha  abajo  izquierda */
             margin: 2.5cm 1.3cm 2.5cm 1.3cm;
         }
+
         #header {
             position: fixed; 
             /* esta ligado con el primer valor del margin */
             top: -2.2cm;
             left: 0cm;
             width: 100%;
-            text-align: right; 
+            text-align: right;
+            
         }
+
         .logo_header{
             width: 150px;
             height: auto;
         }
+
         #footer{
             position: fixed;
             /* esta ligado con el tercer valor del margin */
@@ -44,46 +48,54 @@
             transform: rotate(0deg); 
             top:300px;
         }
+
         .logo_footer{
             width: auto;
             height: 150px;
         }
+
         .tabla_footer{
-            width: 100%;
-            font-family: sf-pro-display-black, sans-serif;
-            font-size: 12px;
+            width: 100%;font-family: sf-pro-display-black, sans-serif;font-size: 12px;
         }
+
         .color_letras_alfa{
-            color: #184F56;
-            font-weight: bold;
+            color: #184F56; font-weight: bold;
         }
+
         .negrita{
             font-weight: bold;
         }
+
         .fuente_todo_texto{
             font-family: Arial;
             font-size: 15px;
         }
+
         .tabla1{
             width: 80%;
             /* text-align: justify;
             margin-left: auto;
             margin-right: auto; */
         }
+        
         .tabla2{
             width: 100%;
         }
+
         section{
             text-align: justify;
         }
-        .container{
-            margin-left: 1.5cm;
-            margin-right: 1.5cm;
-        }
+
         .cuadro{
             border: 3px solid black;
             padding-left: 6px;
         }
+
+        .content{
+            margin-left: 0.5cm;
+            margin-right: 0.5cm;
+        }
+
         /* .hijo{
             width: 2cm;
             height: 1cm;
@@ -94,12 +106,6 @@
 </head>
 <body>
     <div id="header">
-        <?php
-            // $imagenPath_header = public_path('/images/logos_preformas/logo_arl_alfa.png');
-            // $imagenData_header = file_get_contents($imagenPath_header);
-            // $imagenBase64_header = base64_encode($imagenData_header);
-        ?>
-        {{-- <img src="data:image/png;base64,{{ $imagenBase64_header }}" class="logo_header"> --}}
         <?php if($logo_header == "Sin logo"): ?>
             <p>No logo</p>
         <?php else: ?>
@@ -142,8 +148,8 @@
         ?>
         <img src="data:image/png;base64,{{ $imagenBase64_footer }}" class="logo_footer">
     </div>
-    <div class="container">
-        {{-- @for ($i=0; $i<40; $i++)
+    <div class="content">
+        {{-- @for ($i=0; $i<50; $i++)
             <div class="hijo">{{$i}}</div>
         @endfor --}}
         <table class="tabla2">
@@ -155,10 +161,6 @@
                             <br>
                             {{$nombre_afiliado}}
                         </p>
-                        {{-- <p class="fuente_todo_texto"><span class="negrita">Correo:</span>
-                            <br>
-                            {{$correo_afiliado}}
-                        </p> --}}
                         <p class="fuente_todo_texto"><span class="negrita">Dirección:</span>
                             <br>
                             {{$direccion_afiliado}}
@@ -182,23 +184,6 @@
                 </tr>
             </tbody>
         </table>
-        {{-- <br> --}}
-        {{-- <table class="tabla1">
-            <tbody >
-                <tr>
-                    <td class="fuente_todo_texto"><span class="negrita">Asunto:</span></td>
-                    <td class="fuente_todo_texto"><span class="negrita">{{$asunto}}</span></td>
-                </tr>
-                <tr>
-                    <td class="fuente_todo_texto"><span class="negrita">Identificación:</span></td>
-                    <td class="fuente_todo_texto">{{$identificacion}}</td>
-                </tr>
-                <tr>
-                    <td class="fuente_todo_texto"><span class="negrita">Fecha del Siniestro:</span></td>
-                    <td class="fuente_todo_texto">{{$fecha_evento}}</td>
-                </tr>
-            </tbody>
-        </table> --}}
         <table class="tabla1">
             <tbody>
                 <tr>
@@ -211,46 +196,22 @@
                 </tr>
             </tbody>
         </table>
-        {{-- <br> --}}
         <section class="fuente_todo_texto">
-            {{-- Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.
-            <br><br>
-            De la manera más atenta queremos informar el resultado de la calificación realizada por el Grupo Interdisciplinario de Calificación de Origen y
-            Pérdida de la Capacidad Laboral adscrito a la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A, 
-            según lo dispuesto en los Artículo 142 del Decreto 0019 de 2012, ha determinado que el evento reportado ante esta Administradora, con las patologías. --}}
-            {{-- {{$cuerpo}} --}}
-            {{-- <br> --}}
-            {{-- <ul>
-                @foreach($diagnosticos_cie10 as $diagnostico)
-                    <li>{{ $diagnostico }}</li>
-                @endforeach
-            </ul> --}}
-            <?php 
-                $patron = '/\{\{\$diagnosticos_cie10\}\}/'; 
-                if (preg_match($patron, $cuerpo)) {
-
-                    $lista_diagnosticos = '<ul>'.PHP_EOL;
-                    foreach ($diagnosticos_cie10 as $diagnostico) {
-                        $lista_diagnosticos .= '<li>'.$diagnostico.'</li>'.PHP_EOL;
-                    }
-                    $lista_diagnosticos .= '</ul>';
-
-                    $texto_modificado = str_replace('{{$diagnosticos_cie10}}', $lista_diagnosticos, $cuerpo);
+            <?php
+                $patron1 = '/\{\{\$diagnosticos_cie10\}\}/'; 
+                $patron2 = '/\{\{\$origen\}\}/'; 
+                if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo)) {
+                    # code...
+                    $texto_modificado = str_replace('{{$diagnosticos_cie10}}', $string_diagnosticos_cie10, $cuerpo);
+                    $texto_modificado = str_replace('{{$origen}}', $origen, $texto_modificado);
                     $cuerpo = $texto_modificado;
                 } else {
                     $cuerpo = "";
                 }
+                
                 print_r($cuerpo);
             ?>
         </section>
-        {{-- <section class="fuente_todo_texto">
-            El dictamen de calificación del que anexó copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, de acuerdo al Decreto 0019 de 2012 artículo 142, en la Carrera 10 Nº 18 - 36 piso 4°, 
-            Edificio José María Córdoba, Bogotá D.C. Favor informar en la carta el motivo de su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen.
-            <br><br>
-        </section>
-        <section class="fuente_todo_texto">
-            Cualquier información adicional con gusto será atendida por el Auditor Técnico en el teléfono 7435333 Ext. 14626 en Bogotá.
-        </section> --}}
         <br>
         <section class="fuente_todo_texto">
             Cordialmente,
@@ -283,6 +244,16 @@
                         $EPS = 'EPS';
                         $AFP = 'AFP';
                         $ARL = 'ARL';
+                    ?>
+                    <?php
+                    if (isset($Agregar_copia[$Afiliado])) { ?>
+                            <tr>
+                                <td>
+                                    <span class="negrita">Afiliado: </span><?=$Agregar_copia['Afiliado'];?>
+                                </td>
+                            </tr>
+                        <?php       
+                        }
                     ?>
                     <?php 
                         if (isset($Agregar_copia[$Empleador])) { ?>

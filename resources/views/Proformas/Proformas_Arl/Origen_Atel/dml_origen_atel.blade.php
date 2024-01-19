@@ -100,6 +100,10 @@
             margin: 0.2cm;
             background-color: yellow;
         } */
+        .firma_1, .firma_2, .firma_3{
+            width: auto;
+            height: 11.2%;
+        }
     </style>
 </head>
 <body>
@@ -334,9 +338,39 @@
                     <td colspan="8" class="titulo_tablas">7. RESPONSABLES DE LA CALIFICACIÓN COMITÉ INTERDISCIPLINARIO DE CALIFICACIÓN</td>
                 </tr>
                 <tr>
-                    <td colspan="2" class="dato_dinamico">Firma 1</td>
-                    <td colspan="3" class="dato_dinamico">Firma 2</td>
-                    <td colspan="3" class="dato_dinamico">Firma 3</td>
+                    <td colspan="2" class="dato_dinamico">
+                        <?php 
+                            $ruta_firma_1 = "/Firmas_provisionales/firma_lina.png";
+                            $imagenPath_firma_1 = public_path($ruta_firma_1);
+                            $imagenData_firma_1 = file_get_contents($imagenPath_firma_1);
+                            $imagenBase64_firma_1 = base64_encode($imagenData_firma_1);
+                        ?>
+                        <div style="text-align: center;">
+                            <img src="data:image/png;base64,{{ $imagenBase64_firma_1 }}" class="firma_1">
+                        </div>
+                    </td>
+                    <td colspan="3" class="dato_dinamico">
+                        <?php 
+                            $ruta_firma_2 = "/Firmas_provisionales/firma_julian.png";
+                            $imagenPath_firma_2 = public_path($ruta_firma_2);
+                            $imagenData_firma_2 = file_get_contents($imagenPath_firma_2);
+                            $imagenBase64_firma_2 = base64_encode($imagenData_firma_2);
+                        ?>
+                        <div style="text-align: center;">
+                            <img src="data:image/png;base64,{{ $imagenBase64_firma_2 }}" class="firma_2">
+                        </div>
+                    </td>
+                    <td colspan="3" class="dato_dinamico">
+                        <?php 
+                            $ruta_firma_3 = "/Firmas_provisionales/firma_liliana.png";
+                            $imagenPath_firma_3 = public_path($ruta_firma_3);
+                            $imagenData_firma_3 = file_get_contents($imagenPath_firma_3);
+                            $imagenBase64_firma_3 = base64_encode($imagenData_firma_3);
+                        ?>
+                        <div style="text-align: center;">
+                            <img src="data:image/png;base64,{{ $imagenBase64_firma_3 }}" class="firma_3">
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>

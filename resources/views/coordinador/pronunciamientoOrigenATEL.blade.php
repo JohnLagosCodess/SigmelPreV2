@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 @section('title', 'Pronunciamiento Oirgen')
+
+@section('css')
+    <link rel="stylesheet" type="text/css" href="/plugins/summernote/summernote.min.css">
+@stop
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
@@ -339,10 +343,13 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label for="sustenta_cali">Sustentación<span style="color: red;">(*)</span></label>
+                                            <br>
+                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_cie10">Diagnósticos CIE10</button>
+                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_origen">Origen</button>
                                             @if (!empty($info_pronuncia[0]->Sustenta_cali))
-                                                <textarea class="form-control" name="sustenta_cali" id="sustenta_cali" cols="30" rows="5" style="resize: none;">{{$info_pronuncia[0]->Sustenta_cali}}</textarea>
+                                                <textarea class="form-control" name="sustenta_cali" id="sustenta_cali" >{{$info_pronuncia[0]->Sustenta_cali}}</textarea>
                                             @else
-                                                <textarea class="form-control" name="sustenta_cali" id="sustenta_cali" cols="30" rows="5" style="resize: none;"></textarea>
+                                                <textarea class="form-control" name="sustenta_cali" id="sustenta_cali" ></textarea>
                                             @endif
                                         </div>
                                     </div>
@@ -577,6 +584,54 @@
                                             <input type="submit" id="GuardarPronuncia" name="GuardarPronuncia" class="btn btn-info" value="Guardar">                                                
                                             <input hidden="hidden" type="text" id="bandera_pronuncia_guardar_actualizar" value="Guardar">
                                         @endif
+
+                                        @if (!empty($info_pronuncia[0]->Decision) && $info_pronuncia[0]->Decision=='Acuerdo')
+                                            {{-- tipo de proforma --}}
+                                            <input type="hidden" id="bandera_tipo_proforma" value="proforma_acuerdo">
+                                            {{-- Tipo de documento --}}
+                                            <input type="hidden" id="tipo_identificacion" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nombre_tipo_documento)){echo $array_datos_pronunciamientoOrigen[0]->Nombre_tipo_documento;}?>">
+                                            {{-- Nro de documento --}}
+                                            <input type="hidden" id="num_identificacion" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nro_identificacion)){echo $array_datos_pronunciamientoOrigen[0]->Nro_identificacion;}?>">
+                                            {{-- Siniestro --}}
+                                            <input type="hidden" id="nro_siniestro" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;} ?>">
+                                            {{-- Nombre afiliado --}}
+                                            <input type="hidden" id="nombre_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nombre_afiliado)){echo $array_datos_pronunciamientoOrigen[0]->Nombre_afiliado;}?>">
+                                            {{-- Dirección afliado --}}
+                                            <input type="hidden" id="direccion_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Direccion)){echo $array_datos_pronunciamientoOrigen[0]->Direccion;}?>">
+                                            {{-- Telefono afiliado --}}
+                                            <input type="hidden" id="telefono_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Telefono_contacto)){echo $array_datos_pronunciamientoOrigen[0]->Telefono_contacto;}?>">
+                                            {{-- Id asignacion para consultar los diagnosticos --}}
+                                            <input type="hidden" id="Id_Asignacion_consulta_dx" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_Asignacion)){echo $array_datos_pronunciamientoOrigen[0]->Id_Asignacion;}?>">
+                                            {{-- Id proceso para consultar los diagnosticos --}}
+                                            <input type="hidden" id="Id_Proceso_consulta_dx" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_proceso)){echo $array_datos_pronunciamientoOrigen[0]->Id_proceso;}?>">
+                                            {{-- Id del cliente para consultar el nombre del cliente --}}
+                                            <input type="hidden" id="Id_cliente_firma" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_cliente)){echo $array_datos_pronunciamientoOrigen[0]->Id_cliente;}?>">
+
+                                            <button class="btn btn-info" id="generar_proforma">PDF</button>
+                                        @elseif (!empty($info_pronuncia[0]->Decision) && $info_pronuncia[0]->Decision=='Desacuerdo')
+                                            {{-- tipo de proforma --}}
+                                            <input type="hidden" id="bandera_tipo_proforma" value="proforma_desacuerdo">
+                                            {{-- Tipo de documento --}}
+                                            <input type="hidden" id="tipo_identificacion" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nombre_tipo_documento)){echo $array_datos_pronunciamientoOrigen[0]->Nombre_tipo_documento;}?>">
+                                            {{-- Nro de documento --}}
+                                            <input type="hidden" id="num_identificacion" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nro_identificacion)){echo $array_datos_pronunciamientoOrigen[0]->Nro_identificacion;}?>">
+                                            {{-- Siniestro --}}
+                                            <input type="hidden" id="nro_siniestro" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;} ?>">
+                                            {{-- Nombre afiliado --}}
+                                            <input type="hidden" id="nombre_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nombre_afiliado)){echo $array_datos_pronunciamientoOrigen[0]->Nombre_afiliado;}?>">
+                                            {{-- Dirección afliado --}}
+                                            <input type="hidden" id="direccion_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Direccion)){echo $array_datos_pronunciamientoOrigen[0]->Direccion;}?>">
+                                            {{-- Telefono afiliado --}}
+                                            <input type="hidden" id="telefono_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Telefono_contacto)){echo $array_datos_pronunciamientoOrigen[0]->Telefono_contacto;}?>">
+                                            {{-- Id asignacion para consultar los diagnosticos --}}
+                                            <input type="hidden" id="Id_Asignacion_consulta_dx" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_Asignacion)){echo $array_datos_pronunciamientoOrigen[0]->Id_Asignacion;}?>">
+                                            {{-- Id proceso para consultar los diagnosticos --}}
+                                            <input type="hidden" id="Id_Proceso_consulta_dx" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_proceso)){echo $array_datos_pronunciamientoOrigen[0]->Id_proceso;}?>">
+                                            {{-- Id del cliente para consultar el nombre del cliente --}}
+                                            <input type="hidden" id="Id_cliente_firma" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_cliente)){echo $array_datos_pronunciamientoOrigen[0]->Id_cliente;}?>">
+
+                                            <button class="btn btn-info" id="generar_proforma">Word</button>
+                                        @endif
                                     </div>
                                 </div>
                                 <div id="div_alerta_pronuncia" class="col-12 d-none">
@@ -617,7 +672,6 @@
             document.getElementById('formularioEnvio').submit();
         });
         document.getElementById('botonVerEdicionEvento').addEventListener('click', function(event) {
-            event.preventDefault();
             // Realizar las acciones que quieres al hacer clic en el botón
             document.getElementById('formularioLlevarEdicionEvento').submit();
         });
@@ -673,4 +727,5 @@
     </script>
     <script type="text/javascript" src="/js/pronunciamientoOrigen.js"></script>
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script src="/plugins/summernote/summernote.min.js"></script>
 @stop

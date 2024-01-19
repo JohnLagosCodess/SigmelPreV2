@@ -2126,12 +2126,28 @@ class AdministradorController extends Controller
 
         /* LISTADO SERVICIOS */
         if ($parametro == 'listado_servicios') {
+            // 
+            $datos_servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+            ->select('Id_servicio')
+            ->where([
+                ['Id_cliente', $request->id_cliente],
+                ['Id_proceso', $request->id_proceso]
+            ])->get();
+            
+            $info_datos_servicios_contratados = json_decode(json_encode($datos_servicios_contratados, true));
+
+            $array_servi_contratados = [];
+            for ($i=0; $i < count($info_datos_servicios_contratados); $i++) { 
+                array_push($array_servi_contratados, $info_datos_servicios_contratados[$i]->Id_servicio);
+            };
+
             $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
             ->select('Id_Servicio', 'Nombre_servicio')
             ->where([
                 ['Id_proceso', '=', $request->id_proceso],
                 ['Estado', '=', 'activo']
             ])
+            ->whereIn('Id_Servicio', $array_servi_contratados)
             ->get();
 
             $info_listado_servicios = json_decode(json_encode($listado_servicios, true));
@@ -2154,6 +2170,7 @@ class AdministradorController extends Controller
             ])->get();
 
             $info_acciones_a_ejecutar = json_decode(json_encode($acciones_a_ejecutar, true));
+            
             // Con las acciones a ejecutar, analizamos si tienen alguna acción antecesora asociada
             if (count($info_acciones_a_ejecutar) > 0) {
 
@@ -2185,14 +2202,13 @@ class AdministradorController extends Controller
                     }
                     
                     $info_extraccion_acciones_antecesoras = array_values($info_extraccion_acciones_antecesoras);
-
+                    
                     // Extraemos los id de las acciones a ejecutar para buscarlas en la tabla sigmel_informacion_acciones;
                     $array_listado_acciones = [];
                     for ($a=0; $a < count($info_extraccion_acciones_antecesoras); $a++) { 
                         array_push($array_listado_acciones, $info_extraccion_acciones_antecesoras[$a]->Accion_ejecutar);
                     }
 
-                    // print_r($array_listado_acciones);
                     $listado_acciones = sigmel_informacion_acciones::on('sigmel_gestiones')
                     ->select('Id_Accion', 'Accion')
                     ->where([
@@ -2204,8 +2220,6 @@ class AdministradorController extends Controller
                     $info_listado_acciones_nuevo_evento = json_decode(json_encode($listado_acciones, true));
                     // print_r($info_listado_acciones_nuevo_evento);
                     return response()->json(($info_listado_acciones_nuevo_evento));
-
-                    // MAURO
 
                 }
             }

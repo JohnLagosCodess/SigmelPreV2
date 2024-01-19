@@ -30,6 +30,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Carbon\Carbon;
 
 class DeterminacionOrigenATEL extends Controller
 {
@@ -1107,7 +1108,7 @@ class DeterminacionOrigenATEL extends Controller
         /* Captura de variables del formulario */
         $id_tupla_comunicado = $request->id_tupla_comunicado;
         // $nro_radicado = $request->nro_radicado;
-        $asunto = $request->asunto;
+        $asunto = strtoupper($request->asunto);
         $cuerpo = $request->cuerpo;
         $tipo_identificacion = $request->tipo_identificacion;
         $num_identificacion = $request->num_identificacion;
@@ -1286,11 +1287,11 @@ class DeterminacionOrigenATEL extends Controller
         $validarFirma = isset($request->firmar) ? 'Firmar Documento' : 'Sin Firma';
         
         if ($validarFirma == "Firmar Documento") {
-            $idcliente = sigmel_clientes::on('sigmel_gestiones')->select('Id_cliente', 'Nombre_cliente')
+            $idcliente = sigmel_clientes::on('sigmel_gestiones')->select('Id_cliente')
             ->where('Id_cliente', $request->Id_cliente_firma)->get();
     
             $firmaclientecompleta = sigmel_informacion_firmas_clientes::on('sigmel_gestiones')->select('Firma')
-            ->where('Id_cliente', $idcliente[0]->Id_cliente)->get();
+            ->where('Id_cliente', $idcliente[0]->Id_cliente)->limit(1)->get();
 
             if(count($firmaclientecompleta) > 0){
                 $Firma_cliente = $firmaclientecompleta[0]->Firma;
@@ -1305,7 +1306,7 @@ class DeterminacionOrigenATEL extends Controller
         $dato_logo_header = sigmel_clientes::on('sigmel_gestiones')
         ->select('Logo_cliente')
         ->where([['Id_cliente', $request->Id_cliente_firma]])
-        ->get();
+        ->limit(1)->get();
 
         if (count($dato_logo_header) > 0) {
             $logo_header = $dato_logo_header[0]->Logo_cliente;
@@ -1376,7 +1377,15 @@ class DeterminacionOrigenATEL extends Controller
         $mortal = $request->mortal;
         $f_fallecimiento = $request->f_fallecimiento;
         $f_evento = $request->f_evento;
-        $hora_evento = $request->hora_evento;
+        // $hora_evento = $request->hora_evento;
+        $horaOriginal = $request->input('hora_evento');
+
+        // Crear un objeto Carbon a partir de la hora original
+        $carbonHora = Carbon::createFromFormat('H:i:s', $horaOriginal);
+
+        // Obtener la hora en formato de 24 horas
+        $hora_evento = $carbonHora->format('h:i:s');
+
         $furat = $request->furat;
         $origen = $request->origen;
         $sustentacion = $request->sustentacion;
@@ -1577,7 +1586,7 @@ class DeterminacionOrigenATEL extends Controller
         $dato_logo_header = sigmel_clientes::on('sigmel_gestiones')
         ->select('Logo_cliente')
         ->where([['Id_cliente', $id_cliente]])
-        ->get();
+        ->limit(1)->get();
 
         if (count($dato_logo_header) > 0) {
             $logo_header = $dato_logo_header[0]->Logo_cliente;

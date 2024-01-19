@@ -350,17 +350,50 @@ $(document).ready(function(){
         $('#fecha_evento').prop('required', true);
     }
 
+    // Funcionalidad para insertar las etiquetas de diagnosticos cie10 y origen
+    $("#sustenta_cali").summernote({
+        height: 'auto',
+        toolbar: false
+    });
+    $('.note-editing-area').css("background", "white");
+    $('.note-editor').css("border", "1px solid black");
+
+    $("#btn_insertar_cie10").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_diagnosticos = "{{$diagnosticos_cie10}}";
+        $('#sustenta_cali').summernote('editor.insertText', etiqueta_diagnosticos);
+    });
+
+    $("#btn_insertar_origen").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_origen = "{{$origen}}";
+        $('#sustenta_cali').summernote('editor.insertText', etiqueta_origen);
+    });
+
     
-     /* VALIDACIÓN MOSTRAR ITEM DE CORRESPONDECIA */
-     var opt_correspondencia;
+    /* VALIDACIÓN MOSTRAR ITEM DE CORRESPONDECIA */
+    var opt_correspondencia;
      $("[name='decision_pr']").on("change", function(){
-         opt_correspondencia = $(this).val();
-         $(this).val(opt_correspondencia);
-         iniciarIntervalo_correspon();
-     });
-     // Función para validar items a mostrar
-     const tiempoDeslizamiento2 = 'slow';
-     function iniciarIntervalo_correspon() {
+        opt_correspondencia = $(this).val();
+        $(this).val(opt_correspondencia);
+        iniciarIntervalo_correspon();
+        
+        if (opt_correspondencia == "Acuerdo") {
+            $("#asunto_cali").val("ACUERDO CALIFICACIÓN DE EPS");
+            var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.</p><p>De manera atenta, informamos que la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A. se encuentra de acuerdo con el dictamen emitido por la EPS, respecto a las patologías&nbsp;{{$diagnosticos_cie10}} de Origen {{$origen}}.</p><p>Cualquier información adicional con gusto será atendida por el Auditor Técnico en el teléfono 7435333 Ext. 14626 en Bogotá.<br></p>";
+            $('#sustenta_cali').summernote('code', texto_insertar);
+        } else if(opt_correspondencia == "Desacuerdo") {
+            $("#asunto_cali").val("CONTROVERSIA CALIFICACIÓN DE ORIGEN DE EPS");
+            var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A. De manera atenta informamos que la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A. manifiesta su inconformidad con el dictamen emitido por la EPS, respecto de las patologías&nbsp;{{$diagnosticos_cie10}} y tal como lo establece el Artículo 142 del Decreto 0019 de 2012, solicitamos que la EPS remita el caso a la Junta Regional de Calificación de Invalidez para dirimir la controversia.</p><p>En los próximos días le enviaremos copia del pago de honorarios realizada a la Junta Regional correspondiente junto con las guías de notificación a las partes interesadas, para la remisión del expediente por la EPS.</p><p>Cualquier inquietud con gusto será atendida en la Carrera 10 #18-36 piso 4°, Edificio José María Córdova, Bogotá.<br></p>";
+            $('#sustenta_cali').summernote('code', texto_insertar);
+        }
+    });
+    
+    // Función para validar items a mostrar
+    const tiempoDeslizamiento2 = 'slow';
+    function iniciarIntervalo_correspon() {
           // Selección de los elementos que se deslizarán
           const elementosDeslizar2 = [
              '.row_correspondencia'
@@ -551,7 +584,8 @@ $(document).ready(function(){
                 }
             }
         })
-    })
+    });
+
     //Remover CIE10
     $(document).on('click', "a[id^='btn_remover_diagnosticos_moticalifi']", function(){
 
@@ -588,6 +622,96 @@ $(document).ready(function(){
 
     });
 
+    /* Generar proforma ACUERDO CALIFICACION DE EPS */
+    $("#generar_proforma").click(function(event){
+        event.preventDefault();
+
+        var token = $('input[name=_token]').val();
+        /* Captura de variables para enviar a la proforma */
+        var bandera_tipo_proforma = $("#bandera_tipo_proforma").val();
+        var ciudad = $("#ciudad_correspon").val();
+        var fecha = $("#fecha_correspon").val();
+        var nro_radicado = $("#n_radicado").val();
+        var tipo_identificacion = $("#tipo_identificacion").val();
+        var num_identificacion = $("#num_identificacion").val();
+        var nro_siniestro = $("#nro_siniestro").val();
+        var nombre_afiliado = $("#nombre_afiliado").val();
+        var direccion_afiliado = $("#direccion_afiliado").val();
+        var telefono_afiliado = $("#telefono_afiliado").val();
+        var origen = $("#tipo_origen option:selected").text();
+        var asunto = $("#asunto_cali").val();
+        var sustentacion = $("#sustenta_cali").val();
+        var Id_Asignacion_consulta_dx = $("#Id_Asignacion_consulta_dx").val();
+        var Id_Proceso_consulta_dx = $("#Id_Proceso_consulta_dx").val();
+        /* Checkbox de Copias a partes interesadas */
+        var copia_afiliado = $('#copia_afiliado').filter(":checked").val();
+        var copia_empleador = $('#copia_empleador').filter(":checked").val();
+        var copia_eps = $('#copia_eps').filter(":checked").val();
+        var copia_afp = $('#copia_afp').filter(":checked").val();
+        var copia_arl = $('#copia_arl').filter(":checked").val();
+        var firmar = $('#firmar').filter(":checked").val();
+        var Id_cliente_firma = $('#Id_cliente_firma').val();
+
+        var datos_generacion_proforma = {
+            '_token': token,
+            'bandera_tipo_proforma': bandera_tipo_proforma,
+            'ciudad': ciudad,
+            'fecha': fecha,
+            'nro_radicado': nro_radicado,
+            'tipo_identificacion': tipo_identificacion,
+            'num_identificacion': num_identificacion,
+            'nro_siniestro': nro_siniestro,
+            'nombre_afiliado': nombre_afiliado,
+            'direccion_afiliado': direccion_afiliado,
+            'telefono_afiliado': telefono_afiliado,
+            'origen': origen,
+            'asunto': asunto,
+            'sustentacion': sustentacion,
+            'Id_Asignacion_consulta_dx': Id_Asignacion_consulta_dx,
+            'Id_Proceso_consulta_dx': Id_Proceso_consulta_dx,
+            'copia_afiliado': copia_afiliado,
+            'copia_empleador': copia_empleador,
+            'copia_eps': copia_eps,
+            'copia_afp': copia_afp,
+            'copia_arl': copia_arl,
+            'firmar': firmar,
+            'Id_cliente_firma': Id_cliente_firma
+        }
+
+        $.ajax({    
+            type:'POST',
+            url:'/DescargarProformaPronunciamiento',
+            data: datos_generacion_proforma,
+            xhrFields: {
+                responseType: 'blob' // Indica que la respuesta es un blob
+            },
+            success: function (response, status, xhr) {
+                var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+        
+                // Crear un enlace de descarga similar al ejemplo anterior
+                if (bandera_tipo_proforma == "proforma_acuerdo") {
+                    var nombre_documento = "ORI_ACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".pdf";
+                } else {
+                    var nombre_documento = "ORI_DESACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".docx";                    
+                }
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
+        
+                // Adjuntar el enlace al documento y activar el evento de clic
+                document.body.appendChild(link);
+                link.click();
+        
+                // Eliminar el enlace del documento
+                document.body.removeChild(link);
+            },
+            error: function (error) {
+                // Manejar casos de error
+                console.error('Error al descargar el PDF:', error);
+            }       
+        });
+        
+    });
 
 });
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/
