@@ -401,6 +401,10 @@ Route::post('/generarPdfDictamenesPcl', [CalificacionPCLController::class, 'gene
 Route::post('/generarPdfDictamenesPcl917', [CalificacionPCLController::class, 'generarPdfDictamenPcl917'])->name('descargar_Dictamen_PCL917');
 // Acción: Generar pdf Notificacion PCL numericas
 Route::post('/generarPdfNotificacionesPcl', [CalificacionPCLController::class, 'generarPdfNotificacionPcl'])->name('descargar_Notificacion_PCL');
+// Acción: Generar pdf Dictamen PCL Cero
+Route::post('/generarPdfDictamenesPclCero', [CalificacionPCLController::class, 'generarPdfDictamenPclCero'])->name('descargar_Dictamen_PCLCero');
+// Acción: Generar pdf Notificacion PCL Cero    
+Route::post('/generarPdfNotificacionesPclCero', [CalificacionPCLController::class, 'generarPdfNotificacionPclCero'])->name('descargar_Notificacion_PCLCero');
 
 // 02/10/2023
 // SUBMÓDULO RECALIFICACIÓN PCL
@@ -469,6 +473,16 @@ Route::post('/guardarcomitesinterdisciplinarioRe', [RecalificacionPCLController:
 Route::post('/guardarcorrespondenciasRe', [RecalificacionPCLController::class, 'guardarcorrespondenciaRe']); 
 // Acción: Guardar Dictamen Pericial
 Route::post('/guardardictamenesPericialRe', [RecalificacionPCLController::class, 'guardardictamenPericialRe']); 
+// Acción: Generar pdf Dictamen PCL 1507
+Route::post('/generarPdfDictamenesPclRe', [RecalificacionPCLController::class, 'generarPdfDictamenPclRe'])->name('descargar_Dictamen_PCLRe');
+// Acción: Generar pdf Dictamen PCL 917
+Route::post('/generarPdfDictamenesPcl917Re', [RecalificacionPCLController::class, 'generarPdfDictamenPcl917Re'])->name('descargar_Dictamen_PCL917Re');
+// Acción: Generar pdf Notificacion PCL numericas
+Route::post('/generarPdfNotificacionesPclRe', [RecalificacionPCLController::class, 'generarPdfNotificacionPclRe'])->name('descargar_Notificacion_PCLRe');
+// Acción: Generar pdf Dictamen PCL Cero
+Route::post('/generarPdfDictamenesPclCeroRe', [RecalificacionPCLController::class, 'generarPdfDictamenPclCeroRe'])->name('descargar_Dictamen_PCLCeroRe');
+// Acción: Generar pdf Notificacion PCL Cero    
+Route::post('/generarPdfNotificacionesPclCeroRe', [RecalificacionPCLController::class, 'generarPdfNotificacionPclCeroRe'])->name('descargar_Notificacion_PCLCeroRe');
 
 
 Route::get  ('/Sigmel/RolAdministrador/ListarClientes', [AdministradorController::class, 'mostrarVistaListarClientes'])->name('listarClientes');

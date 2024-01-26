@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-
+    
     <style>
         @page{
             margin: 2.5cm 1.3cm 2.5cm 1.3cm;
@@ -59,7 +59,7 @@
             font-size: 15px;
         }
         .tabla1{
-            width: 80%;            
+            width: 100%;            
         }
         .tabla2{
             width: 100%;
@@ -166,23 +166,24 @@
         </table>
         <br>
         <section class="fuente_todo_texto">            
-            {{$cuerpo}}
-            <br>
-            <ul>
-                @foreach($diagnosticos_cie10 as $diagnostico)
-                    <li>{{ $diagnostico }}</li>
-                @endforeach
-            </ul>
+            <?php
+                $patron1 = '/\{\{\$PorcentajePcl_dp\}\}/'; 
+                $patron2 = '/\{\{\$F_estructuracionPcl_dp\}\}/'; 
+                $patron3 = '/\{\{\$CIE10Nombres\}\}/'; 
+                $patron4 = '/\{\{\$Monto_indemnizacionPcl\}\}/'; 
+                if (preg_match($patron1, $Cuerpo_comunicado_correspondencia) && preg_match($patron2, $Cuerpo_comunicado_correspondencia) 
+                    && preg_match($patron3, $Cuerpo_comunicado_correspondencia) && preg_match($patron4, $Cuerpo_comunicado_correspondencia)) {                    
+                    $texto_modificado = str_replace('{{$PorcentajePcl_dp}}', '<b>'.$PorcentajePcl_dp.'%'.'</b>', $Cuerpo_comunicado_correspondencia);
+                    $texto_modificado = str_replace('{{$F_estructuracionPcl_dp}}', '<b>'.$F_estructuracionPcl_dp.'</b>', $texto_modificado);
+                    $texto_modificado = str_replace('{{$CIE10Nombres}}', '<b>'.$CIE10Nombres.'</b>', $texto_modificado);
+                    $texto_modificado = str_replace('{{$Monto_indemnizacionPcl}}', '<b>'.$Monto_indemnizacionPcl.'</b>', $texto_modificado);
+                    $Cuerpo_comunicado_correspondencia = $texto_modificado;
+                } else {
+                    $Cuerpo_comunicado_correspondencia = "";
+                }                
+                print_r($Cuerpo_comunicado_correspondencia);
+            ?>
         </section>
-        {{-- <section class="fuente_todo_texto">
-            El dictamen de calificación del que anexó copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, de acuerdo al Decreto 0019  de 2012 artículo 142, en la Carrera 10 Nº 18 - 36 piso 4°, 
-            Edificio José María Córdoba, Bogotá D.C. Favor informar en la carta el motivo de su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen.
-            <br><br>
-        </section>
-        <section class="fuente_todo_texto">
-            Cualquier información adicional con gusto será atendida por el Auditor Técnico en el teléfono 7435333 Ext. 14626 en Bogotá.
-        </section>
-        <br>
         <section class="fuente_todo_texto">
             Cordialmente,
             <br><br>
@@ -194,67 +195,64 @@
                 <br>
                 Convenio Codess Seguros de Vida  Alfa S.A
             </div>
-        </section>
+            <div class="fuente_todo_texto">
+                <b>Anexos:</b> {{$Anexos_correspondecia}}
+                <br>
+                <b>Elaboró:</b> {{$Elaboro_correspondecia}}
+            </div>
+        </section>        
         <br>
         <section class="fuente_todo_texto">
-            <span class="negrita">Elboró:</span> {{$nombre_usuario}}
-            <br><br>
-            <table style="text-align: justify;">
-                @if (count($Agregar_copia) == 0)
+            <table class="tabla1" style="text-align: justify;">    
+                {{$Copia_eps_correspondecia}}            
+                @if (empty($Copia_empleador_correspondecia) && empty($Copia_eps_correspondecia) && empty($Copia_afp_correspondecia) && empty($Copia_arl_correspondecia))
                     <tr>
                         <td><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
                     </tr>
                 @else
                     <tr>
                         <td class="justificado"><span class="negrita">Copia:</span></td>                            
-                    </tr>
+                    </tr>  
                     <?php 
-                        $Afiliado = 'Afiliado';
-                        $Empleador = 'Empleador';
-                        $EPS = 'EPS';
-                        $AFP = 'AFP';
-                        $ARL = 'ARL';
-                    ?>
-                    <?php 
-                        if (isset($Agregar_copia[$Empleador])) { ?>
+                        if (!empty($Copia_empleador_correspondecia)) { ?>
                             <tr>
                                 <td>
-                                    <span class="negrita">Empleador: </span><?=$Agregar_copia['Empleador'];?>
+                                    <span class="negrita">Empresa: </span><?php echo $copiaNombre_empresa_noti.' - '.$copiaDireccion_empresa_noti.', Teléfono: '.$copiaTelefono_empresa_noti.', '.$copiaCiudad_departamento_empresa_noti;?>
+                                </td>
+                            </tr>
+                        <?php       
+                        }
+                    ?>                  
+                    <?php 
+                        if (!empty($Copia_eps_correspondecia)) { ?>
+                            <tr>
+                                <td>
+                                    <span class="negrita">EPS: </span><?php echo $Nombre_eps.' - '.$Direccion_eps.', Teléfono: '.$Telefono_eps.', '.$Ciudad_departamento_eps;?>
                                 </td>
                             </tr>
                         <?php       
                         }
                     ?>
                     <?php 
-                        if (isset($Agregar_copia[$EPS])) { ?>
+                        if (!empty($Copia_afp_correspondecia)) { ?>
                             <tr>
                                 <td class="copias">
-                                    <span class="negrita">EPS: </span><?=$Agregar_copia['EPS'];?>
+                                    <span class="negrita">AFP: </span><?php echo $Nombre_afp.' - '.$Direccion_afp.', Teléfono: '.$Telefono_afp.', '.$Ciudad_departamento_afp;?>
                                 </td>
                             </tr>
                         <?php       
                         }
                     ?>
                     <?php 
-                        if (isset($Agregar_copia[$AFP])) { ?>
+                        if (!empty($Copia_arl_correspondecia)) { ?>
                             <tr>
                                 <td class="copias">
-                                    <span class="negrita">AFP: </span><?=$Agregar_copia['AFP'];?>
+                                    <span class="negrita">ARL: </span><?php echo $Nombre_arl.' - '.$Direccion_arl.', Teléfono: '.$Telefono_arl.', '.$Ciudad_departamento_arl;?>
                                 </td>
                             </tr>
                         <?php       
                         }
-                    ?>
-                    <?php 
-                        if (isset($Agregar_copia[$ARL])) { ?>
-                            <tr>
-                                <td class="copias">
-                                    <span class="negrita">ARL: </span><?=$Agregar_copia['ARL'];?>
-                                </td>
-                            </tr>
-                        <?php       
-                        }
-                    ?>
+                    ?>                    
                 @endif
             </table>
         </section>
@@ -264,7 +262,7 @@
             reclamos a través del defensor consumidor financiero, en la Av. Calle 26 No 59-15, local 6 y 7. Conmutador:
             7435333 Extensión: 14454, Fax Ext. 14456 o Correo Electrónico:
             defensor del consumidor financiero@segurosdevidaalfa.com.co”.
-        </section> --}}
+        </section>
     </div>
 </body>
 </html>

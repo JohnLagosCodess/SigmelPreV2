@@ -334,7 +334,7 @@ $(document).ready(function(){
     //Listado Origen Concepto final del Dictamen Pericial
     let datos_lista_Origen = {
         '_token': token,
-        'parametro':"lista_origen"
+        'parametro':"lista_origen"  
     };
 
     $.ajax({
@@ -2414,7 +2414,14 @@ $(document).ready(function(){
                 $("#rango_pcl").val('Entre 30,01 y 49,99%');            
             }else if(porcentajePcl > 50){
                 $("#rango_pcl").val('Mayor a 50%');            
-            }       
+            }   
+            // Calculo del monto de indemnizacion (meses)
+            if (porcentajePcl == 0) {
+                $("#monto_inde").val(0);
+            } else {
+                var montoIndemnizacion = ((porcentajePcl / 2) - 0.5);
+                $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
+            }    
         } else if(definirDecreto_deficiencia == 3) {
 
             var total_deficiencia1999 = $('#Total_Deficiencia50');
@@ -2454,7 +2461,16 @@ $(document).ready(function(){
                     }else if(porcentajePcl > 50){
                         $("#rango_pcl").val('Mayor a 50%');            
                     }
+                    
+                    // Calculo del monto de indemnizacion (meses)
+                    if (porcentajePcl == 0) {
+                        $("#monto_inde").val(0);
+                    } else {
+                        var montoIndemnizacion = ((porcentajePcl / 2) - 0.5);
+                        $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
+                    }
                 });
+
             }); 
             
             if ($.trim(total_deficiencia) == 0 && $.trim(dicapacidad_total) == 0 && $.trim(minusvalia_total) == 0) {
@@ -2491,6 +2507,14 @@ $(document).ready(function(){
                 $("#rango_pcl").val('Mayor a 50%');            
             }
 
+            // Calculo del monto de indemnizacion (meses)
+            if (porcentajePcl == 0) {
+                $("#monto_inde").val(0);
+            } else {
+                var montoIndemnizacion = ((porcentajePcl / 2) - 0.5);
+                $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
+            }
+
         }else if(definirDecreto_deficiencia == 2) {            
             porcentajePcl = 0;   
             //console.log(porcentajePcl);
@@ -2508,6 +2532,13 @@ $(document).ready(function(){
             }else if(porcentajePcl > 50){
                 $("#rango_pcl").val('Mayor a 50%');            
             }        
+            // Calculo del monto de indemnizacion (meses)
+            if (porcentajePcl == 0) {
+                $("#monto_inde").val(0);
+            } else {
+                var montoIndemnizacion = ((porcentajePcl / 2) - 0.5);
+                $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
+            }
         }else{            
             porcentajePcl = 0;      
             //console.log(porcentajePcl);
@@ -2525,18 +2556,15 @@ $(document).ready(function(){
             }else if(porcentajePcl > 50){
                 $("#rango_pcl").val('Mayor a 50%');            
             }      
+            // Calculo del monto de indemnizacion (meses)
+            if (porcentajePcl == 0) {
+                $("#monto_inde").val(0);
+            } else {
+                var montoIndemnizacion = ((porcentajePcl / 2) - 0.5);
+                $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
+            }
         }  
-
-        // Calculo dle monto de indemnizacion (meses)
         
-        // Calculo dle monto de indemnizacion (meses)
-        if (porcentajePcl == 0) {
-            $("#monto_inde").val(0);
-        } else {
-            var montoIndemnizacion = ((porcentajePcl / 2) - 0.5);
-            $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
-        }
-
         var tercerapersona = $("#requiere_persona");
         var tomadecisiones = $("#requiere_decisiones_persona");
         var dispositivoapoyo = $("#requiere_dispositivo_apoyo");
@@ -2556,7 +2584,7 @@ $(document).ready(function(){
         if ($('input[type="checkbox"].dependencia_justificacion').is(':checked')) {
             justiDependencia.removeClass('d-none');
         }
-
+        // habilitar botones de la vista antes de guardar
         var valorFecha = $('input[type="date"].f_estructura_pericial').val();        
         if (typeof valorFecha === "undefined") {
             $('#ActualizarLaboralActivo').prop('disabled', false);
@@ -2570,61 +2598,9 @@ $(document).ready(function(){
             $('#ActualizarRolOcupacional').prop('disabled', false);
             $('#GuardarRolOcupacional').prop('disabled', false);            
             $('#ActualizarLibros2_3').prop('disabled', false); 
-        }else if(valorFecha !== ""){
-            //botones
-            $('#ActualizarLaboralActivo').prop('disabled', true);
-            $('#GuardarLaboralActivo').prop('disabled', true);            
-            $('#btn_abrir_modal_agudeza').prop('disabled', true);
-            $('#btn_abrir_modal_agudeza').css('cursor', 'not-allowed');
-            $('#btn_guardar_agudeza').prop('disabled', true);            
-            $('#btn_abrir_modal_auditivo').prop('disabled', true);
-            $('#btn_abrir_modal_auditivo').css('cursor', 'not-allowed'); 
-            $('#guardar_datos_deficiencia_alteraciones').prop('disabled', true);
-            $('#guardar_deficiencias_DecretoCero').prop('disabled', true);
-            $('#guardar_deficiencias_Decreto3').prop('disabled', true);
-            $('#guardar_datos_cie10').prop('disabled', true);
-            $('#guardar_datos_examenes').prop('disabled', true);           
-            $('#ActualizarDecreto').prop('disabled', true);
-            $('#ActualizarRolOcupacional').prop('disabled', true);
-            $('#GuardarRolOcupacional').prop('disabled', true);            
-            $('#ActualizarLibros2_3').prop('disabled', true);  
-            $('#GuardarLibros2_3').prop('disabled', true);                        
             $('#GuardrDictamenPericial').prop('disabled', true);  
-            //etiquetas a o botones de eliminar filas
-            $("a[id^='btn_remover_examen_fila_examenes_']").css({
-                cursor: "not-allowed",
-                "pointer-events": "none"
-            });
-            $("a[id^='btn_remover_diagnosticos_moticalifi']").css({
-                cursor: "not-allowed",
-                "pointer-events": "none"
-            });
-            $("a[id^='btn_remover_deficiencia_alteraciones']").css({
-                cursor: "not-allowed",
-                "pointer-events": "none"
-            });
-            $("a[id^='btn_remover_deficiencias_decretocero_']").css({
-                cursor: "not-allowed",
-                "pointer-events": "none"
-            });            
-            $("a[id^='btn_remover_deficiencias_decreto3_']").css({
-                cursor: "not-allowed",
-                "pointer-events": "none"
-            }); 
-            $("a[id^='btn_remover_examen_fila_agudeza']").css({
-                cursor: "not-allowed",
-                "pointer-events": "none"
-            });
-            $("a[id^='btn_remover_fila_']").css({
-                cursor: "not-allowed",
-                "pointer-events": "none"
-            });    
-            
-            // checkboxes
-            $("input[id^='dx_principal_deficiencia_alteraciones_']").prop('disabled', true);            
-            $("input[id^='dx_principal_deficiencia_auditiva_']").prop('disabled', true);                        
-            $("input[id^='dx_principal_deficiencia_visual_']").prop('disabled', true);
 
+        }else if(valorFecha !== ""){
             // seccion comite interdisciplinario
             $('#div_comite_interdisciplinario').removeClass('d-none');
             $('#div_comunicado_dictamen_oficioremisorio').removeClass('d-none');
@@ -2652,7 +2628,6 @@ $(document).ready(function(){
         }
         
         if(enfermedadactual !== "" && valorFecha !== ""){
-            $('#GuardrDictamenPericial').prop('disabled', true);
             $('#origen_firme').prop('disabled', true);
             $('#origen_cobertura').prop('disabled', true);
             $('#decreto_califi').prop('disabled', true); 
@@ -2797,9 +2772,64 @@ $(document).ready(function(){
             }          
         })
     }) 
-
+    // habilitar o deshabilitar botones o etiquetas de toda la vista
     var profesional_comite = $("#profesional_comite").val();
     if (profesional_comite !== '') {
+        // botones
+        $('#ActualizarLaboralActivo').prop('disabled', true);
+        $('#GuardarLaboralActivo').prop('disabled', true);            
+        $('#btn_abrir_modal_agudeza').prop('disabled', true);
+        $('#btn_abrir_modal_agudeza').css('cursor', 'not-allowed');
+        $('#btn_guardar_agudeza').prop('disabled', true);            
+        $('#btn_abrir_modal_auditivo').prop('disabled', true);
+        $('#btn_abrir_modal_auditivo').css('cursor', 'not-allowed'); 
+        $('#guardar_datos_deficiencia_alteraciones').prop('disabled', true);
+        $('#guardar_deficiencias_DecretoCero').prop('disabled', true);
+        $('#guardar_deficiencias_Decreto3').prop('disabled', true);
+        $('#guardar_datos_cie10').prop('disabled', true);
+        $('#guardar_datos_examenes').prop('disabled', true);           
+        $('#ActualizarDecreto').prop('disabled', true);
+        $('#ActualizarRolOcupacional').prop('disabled', true);
+        $('#GuardarRolOcupacional').prop('disabled', true);            
+        $('#ActualizarLibros2_3').prop('disabled', true);  
+        $('#GuardarLibros2_3').prop('disabled', true);                        
+        $('#GuardrDictamenPericial').prop('disabled', true);  
+        //etiquetas a o botones de eliminar filas
+        $("a[id^='btn_remover_examen_fila_examenes_']").css({
+            cursor: "not-allowed",
+            "pointer-events": "none"
+        });
+        $("a[id^='btn_remover_diagnosticos_moticalifi']").css({
+            cursor: "not-allowed",
+            "pointer-events": "none"
+        });
+        $("a[id^='btn_remover_deficiencia_alteraciones']").css({
+            cursor: "not-allowed",
+            "pointer-events": "none"
+        });
+        $("a[id^='btn_remover_deficiencias_decretocero_']").css({
+            cursor: "not-allowed",
+            "pointer-events": "none"
+        });            
+        $("a[id^='btn_remover_deficiencias_decreto3_']").css({
+            cursor: "not-allowed",
+            "pointer-events": "none"
+        }); 
+        $("a[id^='btn_remover_examen_fila_agudeza']").css({
+            cursor: "not-allowed",
+            "pointer-events": "none"
+        });
+        $("a[id^='btn_remover_fila_']").css({
+            cursor: "not-allowed",
+            "pointer-events": "none"
+        });    
+        
+        // checkboxes
+        $("input[id^='dx_principal_deficiencia_alteraciones_']").prop('disabled', true);            
+        $("input[id^='dx_principal_deficiencia_auditiva_']").prop('disabled', true);                        
+        $("input[id^='dx_principal_deficiencia_visual_']").prop('disabled', true);
+
+        // formulario corrrespondencia
         $("#GuardarComiteInter").prop('disabled', true);
         $("#div_correspondecia").removeClass('d-none');
     }
@@ -3065,6 +3095,13 @@ $(document).ready(function(){
         }        
         var Asunto = $('#Asunto').val();
         var cuerpo_comunicado = $('#cuerpo_comunicado').val();
+        var cuerpo_comunicado_cero = $('#cuerpo_comunicado_cero').val();
+
+        if (cuerpo_comunicado == '' || cuerpo_comunicado == undefined) {
+            var cuerpo_comunicadoPcl = cuerpo_comunicado_cero;
+        } else {
+            var cuerpo_comunicadoPcl = cuerpo_comunicado;
+        }
         var empleador = $('input[name="empleador"]:checked').val();;        
         var eps = $('input[name="eps"]:checked').val();
         var afp = $('input[name="afp"]:checked').val();
@@ -3106,7 +3143,7 @@ $(document).ready(function(){
             'departamento_destinatario': departamento_destinatario,
             'ciudad_destinatario': ciudad_destinatario,
             'Asunto':Asunto,
-            'cuerpo_comunicado':cuerpo_comunicado,
+            'cuerpo_comunicado':cuerpo_comunicadoPcl,
             'empleador':empleador,
             'eps':eps,
             'afp':afp,
@@ -3216,6 +3253,7 @@ $(document).ready(function(){
         var requiere_decisiones_persona = $('input[name="requiere_decisiones_persona"]:checked').val(); 
         var requiere_dispositivo_apoyo = $('input[name="requiere_dispositivo_apoyo"]:checked').val();         
         var justi_dependencia = $('#justi_dependencia').val();   
+        var bandera_dictamen_pericial = $('#bandera_dictamen_pericial').val();
         
         var datos_dictamenPericial={
             '_token': token,            
@@ -3244,6 +3282,7 @@ $(document).ready(function(){
             'requiere_decisiones_persona':requiere_decisiones_persona,
             'requiere_dispositivo_apoyo':requiere_dispositivo_apoyo,
             'justi_dependencia':justi_dependencia,
+            'bandera_dictamen_pericial' :bandera_dictamen_pericial,
         }
 
         $.ajax({
@@ -3265,11 +3304,107 @@ $(document).ready(function(){
         })
     }) 
 
-    //Asignar ruta del formulario para la descarga del PDF Dictamen 1507
-    // $(document).on('mouseover',"input[id^='ver_dictamenesPcl']", function(){
-    //     let url_descargarDictamen = $('#descargar_dictamenesPcl').val();        
-    //     $('form[name="ver_dictamenPcl"]').attr("action", url_descargarDictamen);                   
-    // });
+    // Funcionalidad para insertar las etiquetas de diagnosticos cie10 y origen Notificacion calificacion numerica
+    $("#cuerpo_comunicado").summernote({
+        height: 'auto',
+        toolbar: false
+    });
+    $('.note-editing-area').css("background", "white");
+    $('.note-editor').css("border", "1px solid black");
+
+    $("#Asunto").val("CALIFICACIÓN DE PÉRDIDA DE CAPACIDAD LABORAL");
+
+    var rellenar_textarea = $('#rellenar_textarea').val();
+    if( rellenar_textarea == 'Nollenar'){
+        
+        var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.</p>"+
+           "<p>De la manera más atenta queremos informar el resultado de la calificación realizada por el Equipo Interdisciplinario de Calificación "+ 
+           "de Origen, Invalidez y Pérdida de la Capacidad Laboral adscrito a la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A., "+
+           "el cual dio un porcentaje de {{$PorcentajePcl_dp}}, con fecha de estructuración del {{$F_estructuracionPcl_dp}},  que corresponde a Incapacidad "+
+           "Permanente Parcial según lo dispuesto en los Artículos 6 y 7 de la ley 776 de 2002, por  la patología {{$CIE10Nombres}}. "+
+           "Teniendo en cuenta la tabla adoptada por el Decreto 2644 de 1994, le corresponde {{$Monto_indemnizacionPcl}} meses de Ingreso Base "+
+           "de Liquidación como reconocimiento de la prestación económica.</p>"+
+           "<p>El dictamen de calificación del que anexó copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, "+
+           "de acuerdo al Decreto 0019  de 2012 artículo 142, en la Carrera 10 #18-36 piso 4°, Edificio José María Córdoba, Bogotá. Favor informar en la carta el motivo de "+
+           "su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen</p>"+
+           "<p>Si pasados los 10 días hábiles no han radicado apelación alguna, usted podrá tramitar la solicitud de pago de indemnización por incapacidad permanente parcial "+
+           "(IPP) en nuestras oficinas, paro lo cual debe anexar la siguiente documentación: 1. Certificación bancaria Original a su nombre. 2. Fotocopia de documento de "+
+           "identidad vigente. 3. Carta de autorización firmada en donde autorice a Seguros de Vida Alfa S.A. a realizar la transferencia electrónica a su cuenta acreditada.</p>"+
+           "<p>Cualquier información adicional con gusto será atendida por Auditoría Técnica de nuestra sucursal más cercana a su residencia.</p>";
+        $('#cuerpo_comunicado').summernote('code', texto_insertar);
+
+    }
+    $("#btn_insertar_porPcl").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_porPCL = "{{$PorcentajePcl_dp}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_porPCL);
+    });  
+    
+    $("#btn_insertar_F_estructuracion").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_F_estructuracion = "{{$F_estructuracionPcl_dp}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_F_estructuracion);
+    });
+
+    $("#btn_insertar_nombreCIE10").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_nombreCIE10 = "{{$CIE10Nombres}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_nombreCIE10);
+    });
+
+    $("#btn_insertar_montoInde").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_montoInde = "{{$Monto_indemnizacionPcl}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_montoInde);
+    });
+
+
+
+    // Funcionalidad para insertar las etiquetas de diagnosticos cie10 y origen Notificacion calificacion cero
+
+    $("#cuerpo_comunicado_cero").summernote({
+        height: 'auto',
+        toolbar: false
+    });
+    $('.note-editing-area').css("background", "white");
+    $('.note-editor').css("border", "1px solid black");
+
+    var rellenar_textareacero = $('#rellenar_textareacero').val();
+    
+    if( rellenar_textareacero == 'Nollenarcero'){        
+        var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A</p>"+
+           "<p>De la manera más atenta queremos informar el resultado de la calificación realizada por el Grupo Interdisciplinario de Calificación "+ 
+           "de Origen y Pérdida de la Capacidad Laboral de la Administradora de Riesgos Laborales de "+
+           "Seguros de Vida Alfa S.A. El cual dio un porcentaje de {{$PorcentajePcl_cero}}; por el diagnostico {{$CIE10Nombres_cero}} "+
+           "por lo tanto NO procede el pago de indemnización por Incapacidad Permanente Parcial, ya que de acuerdo con el Artículo 5 Ley 776 de 2002 "+
+           "<strong>“Se considera como incapacitado permanente parcial, al afiliado que, como consecuencia de un accidente de trabajo o una enfermedad profesional, "+
+           "presenta una disminución definitiva, igual o superior al 5% pero inferior al 50% de su capacidad laboral, para la cual ha sido contratado o capacitado”</strong>.</p>"+
+           "<p>El dictamen de calificación del que anexo copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, "+
+           " de acuerdo al Decreto 0019 de 2012 artículo 142, en la Carrera 10 #18-36 piso 4°, Edificio José María Córdoba, Bogotá.</p>"+
+           "<p>Favor informar en la carta el motivo de su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen "+
+           "Cualquier información adicional con gusto será atendida por Auditoría Técnica de nuestra sucursal más cercana a su residencia.</p>";
+        $('#cuerpo_comunicado_cero').summernote('code', texto_insertar);        
+    }
+
+
+    $("#btn_insertar_porPcl_cero").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_porPCL_cero = "{{$PorcentajePcl_cero}}";
+        $('#cuerpo_comunicado_cero').summernote('editor.insertText', etiqueta_porPCL_cero);
+    }); 
+    
+    $("#btn_insertar_nombreCIE10_cero").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_nombreCIE10_cero = "{{$CIE10Nombres_cero}}";
+        $('#cuerpo_comunicado_cero').summernote('editor.insertText', etiqueta_nombreCIE10_cero);
+    });
+
 
 });
 

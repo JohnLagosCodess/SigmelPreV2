@@ -340,11 +340,13 @@
             </tr>
             <tr>
                 <td colspan="2" class="titulo_labels">Dirección:</td>
-                <td colspan="4" class="dato_dinamico">{{$Direccion_per_cal}}</td>
-                <td colspan="2" class="titulo_labels">Ciudad</td>
+                <td colspan="9" class="dato_dinamico">{{$Direccion_per_cal}}</td>
+                <td colspan="2" class="titulo_labels">Ciudad:</td>
                 <td colspan="4" class="dato_dinamico">{{$Ciudad_per_cal}}</td>
+            </tr>
+            <tr>
                 <td colspan="2" class="titulo_labels">E-mail:</td>
-                <td colspan="3" class="dato_dinamico">{{$Email_per_cal}}</td>
+                <td colspan="15" class="dato_dinamico">{{$Email_per_cal}}</td>
             </tr>
             <tr>
                 <td colspan="17" class="dato_dinamico">En caso de calificar un beneficiario, anotar los datos del afiliado:</td>
@@ -641,6 +643,28 @@
                         <td colspan="2" class="centrar_dato_dinamico">{{ $deficiencias_visual->Deficiencia }}</td>
                     </tr>                   
                 @endforeach  
+            @elseif (count($array_deficiencia_visualre) > 0)
+                <?php $cumple_condicion++; ?>
+                <?php $rowspan_total += count($array_deficiencia_visualre); ?>
+                @foreach ($array_deficiencia_visualre as $index => $deficiencias_visual)
+                    <?php $conteo_deficiencias = $conteo_deficiencias + 1; ?>
+                    <tr>
+                        <td colspan="3" class="dato_dinamico">Agudeza visual</td>
+                        <td colspan="1" class="centrar_dato_dinamico">Tabla 11.3</td>
+                        <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_visual->Agudeza_Ojo_Izq_re }}</td>
+                        <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_visual->Agudeza_Ojo_Der_re }}</td>
+                        <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_visual->Agudeza_Ambos_Ojos_re }}</td>
+                        <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_visual->PAVF_re }}</td>
+                        <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_visual->DAV_re }}</td>
+                        <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_visual->Campo_Visual_Ojo_Izq_re }}</td>
+                        <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_visual->Campo_Visual_Ojo_Der_re }}</td>
+                        <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_visual->Campo_Visual_Ambos_Ojos_re }}</td>
+                        <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_visual->CVF_re }}</td>
+                        <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_visual->DCV_re }}</td>
+                        <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_visual->DSV_re }}</td>
+                        <td colspan="2" class="centrar_dato_dinamico">{{ $deficiencias_visual->Deficiencia_re }}</td>
+                    </tr>                   
+                @endforeach 
             @else
                 <tr>
                     <td colspan="3" class="dato_dinamico"></td>
@@ -2411,7 +2435,7 @@
                 <td colspan="5" class="dato_dinamico"> {{$F_evento_dp}}</td>
             </tr>
             <tr>
-                <td colspan="9" class="dato_dinamico">{{$Sustentacion_F_estructuracion_dp}}</td>
+                <td colspan="9" class="dato_dinamico">{{$Sustentacion_F_estructuracion_dp}}</td>    
                 <td colspan="3" class="titulo_labels">ORIGEN</td>
                 <td colspan="5" class="dato_dinamico"> {{$Origen_dp}}</td>
             </tr>
@@ -2429,7 +2453,7 @@
             </tr>
             <tr>
                 <td colspan="4" class="left_titulo_labels">Revisión pensión:</td>
-                <td colspan="5" class="dato_dinamico">No</td>
+                <td colspan="5" class="dato_dinamico"><?php if ($Revision_pension_dp == 8) {echo 'Si';} else { echo 'No';}?></td>
                 <td colspan="3" class="left_titulo_labels">Tipo de enfermedad / Deficiencia:</td>
                 <td colspan="5" class="dato_dinamico"><?php if (!empty($Nombre_enfermedad_dp)){ echo $Nombre_enfermedad_dp;} else {echo 'N/A';}?></td>
             </tr>

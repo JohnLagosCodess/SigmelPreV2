@@ -309,12 +309,14 @@
             </tr>
             <tr>
                 <td colspan="2" class="titulo_labels">Dirección:</td>
-                <td colspan="4" class="dato_dinamico">{{$Direccion_per_cal}}</td>
+                <td colspan="9" class="dato_dinamico">{{$Direccion_per_cal}}</td>
                 <td colspan="2" class="titulo_labels">Ciudad</td>
                 <td colspan="4" class="dato_dinamico">{{$Ciudad_per_cal}}</td>
+            </tr>                        
+            <tr>
                 <td colspan="2" class="titulo_labels">E-mail:</td>
-                <td colspan="3" class="dato_dinamico">{{$Email_per_cal}}</td>
-            </tr>                                    
+                <td colspan="15" class="dato_dinamico">{{$Email_per_cal}}</td>
+            </tr>            
             <tr>
                 <td colspan="17" class="titulo_tablas">AFILIACIÓN AL  SISS:</td>
             </tr>
