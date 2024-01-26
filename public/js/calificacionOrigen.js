@@ -873,8 +873,37 @@ $(document).ready(function(){
         }
     });
 
+    /* Funcionalidad para insertar la etiqueta de pruebas solicitadas */
+    $("#cuerpo_comunicado").summernote({
+        height: 'auto',
+        toolbar: false
+    });
+    $('.note-editing-area').css("background", "white");
+    $('.note-editor').css("border", "1px solid black");
+
+    $("#btn_insertar_pruebas").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_pruebas = "{{$pruebas_solicitadas}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_pruebas);
+    });
+
+    /* Funcionalidad radio buttons Solicitud documentos Origen y Otro documento */
+    $("[name='tipo_documento_descarga_califi']").on("change", function(){
+        var opc_seleccionada = $(this).val();
+        
+        if (opc_seleccionada == "Documento_Origen") {
+            $("#asunto").val("SOLICITUD DE PRUEBAS");
+            var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.</p><p>Con el fin de establecer la determinación de origen del accidente reportado, está entidad solicita se anexen los siguientes documentos</p><p>{{$pruebas_solicitadas}}</p><p>Lo anterior con fundamento en lo establecido en la Decreto 1072 de 2015 art. 2.2.5.1.29, 2.2.5.1.28 (integración jurídica y análoga.)</p><p>El aporte documental deberá realizarse en un tiempo menor de 30 días hábiles siguientes al recibido de ésta comunicación escrita;&nbsp; La información solicitada es en cumplimiento de lo establecido en la Resolución 1401 de 2007 por la cual se reglamenta la investigación de incidentes y accidentes de trabajo. Lo anterior con fundamento en lo establecido en el Dec.2463 de 2001, parágrafo 1, Res.0156 de 2005 art.3, y Dec.1295 de 1994, art.12: “Toda enfermedad o patología, accidente o muerte, que no hayan sido clasificados o calificados como de origen profesional, se consideran de origen Común”.</p><p>La omisión del aporte documental y de requisitos mínimos para la calificación tendría como consecuencia la generación de concepto desfavorable o de origen común refiriendo el fundamento de dicha decisión.</p>";
+            $('#cuerpo_comunicado').summernote('code', texto_insertar);
+        }else{
+            $("#asunto").val("");
+            $('#cuerpo_comunicado').summernote('code', '');
+        }
+    });
+
+
     // llenado del formulario para la captura de la modal de Generar Comunicado
-    
     $('#form_generarComunicadoOrigen').submit(function (e) {
         e.preventDefault();  
 
@@ -916,6 +945,7 @@ $(document).ready(function(){
         var elaboro2 = $('#elaboro2').val();
         var reviso = $('#reviso').val();
         var firmarcomunicado = $('#firmarcomunicado').filter(":checked").val();
+        var tipo_descarga = $("[name='tipo_documento_descarga_califi']").filter(":checked").val();
         //Copias Interesadas Origen
         var copiaComunicadoTotal = [];
 
@@ -963,9 +993,10 @@ $(document).ready(function(){
             'elaboro2':elaboro2,
             'reviso':reviso,
             'copiaComunicadoTotal':copiaComunicadoTotal,
-            'firmarcomunicado':firmarcomunicado
+            'firmarcomunicado':firmarcomunicado,
+            'tipo_descarga': tipo_descarga
         }
-        
+
         document.querySelector("#Generar_comunicados").disabled = true;   
         $.ajax({
             type:'POST',
@@ -983,8 +1014,8 @@ $(document).ready(function(){
                     }, 3000);
                 }
             }
-        })   
-    }) 
+        });  
+    }) ;
 
     // Abrir modal de agregar solictudes despues de guardar 
     if (localStorage.getItem("#Generar_comunicados")) {
@@ -1030,7 +1061,8 @@ $(document).ready(function(){
                     data-elaboro_comunicado="'+data[i]["Elaboro"]+'"\
                     data-reviso_comunicado="'+data[i]["Reviso"]+'" data-revisonombre_comunicado="'+data[i]["Nombre_lider"]+'"\
                     data-firmar_comunicado="'+data[i]["Firmar_Comunicado"]+'"\
-                    data-agregar_copia="'+data[i]["Agregar_copia"]+'">\
+                    data-agregar_copia="'+data[i]["Agregar_copia"]+'"\
+                    data-tipo_descarga="'+data[i]["Tipo_descarga"]+'">\
                     <i class="fas fa-file-pdf text-info"></i> Editar</a>';
                     
                     data[i]['Editarcomunicado'] = comunicadoNradico;
@@ -1157,6 +1189,7 @@ $(document).ready(function(){
         var revisonombre_comunicado =  $(this).data("revisonombre_comunicado"); 
         var agregar_copia =  $(this).data("agregar_copia");
         var firmar_comunicado =  $(this).data("firmar_comunicado");
+        var tipo_descarga = $(this).data("tipo_descarga");
         document.getElementById('ciudad_comunicado_editar').value=ciudad_comunicado;
         document.getElementById('Id_comunicado_act').value=id_comunicado;
         document.getElementById('Id_evento_act').value=id_evento;
@@ -1231,7 +1264,16 @@ $(document).ready(function(){
                 }
             }
 
-        });    
+        });
+
+        if (tipo_descarga == "Documento_Origen") {
+            $("#documentos_origen_editar").prop("checked", true);
+            $("#otro_documento_origen_editar").prop("checked", false);
+        } else {
+            $("#documentos_origen_editar").prop("checked", false);
+            $("#otro_documento_origen_editar").prop("checked", true);
+        }
+
         document.getElementById('nombre_destinatario_editar').value=nombre_destinatario;        
         document.getElementById('nombre_destinatario_editar2').value=nombre_destinatario;  
         document.getElementById('nic_cc_editar').value=niccc_comunicado;        
@@ -1253,7 +1295,8 @@ $(document).ready(function(){
         var ciudad_destinatario = $('#ciudad_destinatario_editar').val();
         $("#ciudad_pdf").val(ciudad_destinatario);
         document.getElementById('asunto_editar').value=asunto_comunicado;
-        document.getElementById('cuerpo_comunicado_editar').value=cuerpo_comunicado;
+        // document.getElementById('cuerpo_comunicado_editar').value=cuerpo_comunicado;
+        $("#cuerpo_comunicado_editar").summernote('code', cuerpo_comunicado);
         document.getElementById('anexos_editar').value=anexos_comunicados;
         if (firmar_comunicado == 'firmar comunicado') {
             $('#firmarcomunicado_editar').prop('checked', true);  
@@ -1540,6 +1583,36 @@ $(document).ready(function(){
         });
 
     });  
+
+    /* Funcionalidad para insertar la etiqueta de pruebas solicitadas (edición) */
+    $("#cuerpo_comunicado_editar").summernote({
+        height: 'auto',
+        toolbar: false
+    });
+    $('.note-editing-area').css("background", "white");
+    $('.note-editor').css("border", "1px solid black");
+
+    $("#btn_insertar_pruebas_editar").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_pruebas = "{{$pruebas_solicitadas}}";
+        $('#cuerpo_comunicado_editar').summernote('editor.insertText', etiqueta_pruebas);
+    });
+
+    /* Funcionalidad radio buttons Solicitud documentos Origen y Otro documento (edición) */
+    $("[name='tipo_documento_descarga_califi_editar']").on("change", function(){
+        var opc_seleccionada = $(this).val();
+        
+        if (opc_seleccionada == "Documento_Origen") {
+            $("#asunto_editar").val("SOLICITUD DE PRUEBAS");
+            var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.</p><p>Con el fin de establecer la determinación de origen del accidente reportado, está entidad solicita se anexen los siguientes documentos</p><p>{{$pruebas_solicitadas}}</p><p>Lo anterior con fundamento en lo establecido en la Decreto 1072 de 2015 art. 2.2.5.1.29, 2.2.5.1.28 (integración jurídica y análoga.)</p><p>El aporte documental deberá realizarse en un tiempo menor de 30 días hábiles siguientes al recibido de ésta comunicación escrita;&nbsp; La información solicitada es en cumplimiento de lo establecido en la Resolución 1401 de 2007 por la cual se reglamenta la investigación de incidentes y accidentes de trabajo. Lo anterior con fundamento en lo establecido en el Dec.2463 de 2001, parágrafo 1, Res.0156 de 2005 art.3, y Dec.1295 de 1994, art.12: “Toda enfermedad o patología, accidente o muerte, que no hayan sido clasificados o calificados como de origen profesional, se consideran de origen Común”.</p><p>La omisión del aporte documental y de requisitos mínimos para la calificación tendría como consecuencia la generación de concepto desfavorable o de origen común refiriendo el fundamento de dicha decisión.</p>";
+            $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
+        }else{
+            $("#asunto_editar").val("");
+            $('#cuerpo_comunicado_editar').summernote('code', '');
+        }
+    });
+
     // Actualiza comunicado de origen
     $('#Editar_comunicados').click(function (e) {
         e.preventDefault();  
@@ -1581,7 +1654,8 @@ $(document).ready(function(){
         var forma_envio = $('#forma_envio_editar').val();
         var elaboro2 = $('#elaboro2_editar').val();
         var reviso = $('#reviso_editar').val();
-        var firmarcomunicado = $('#firmarcomunicado').filter(":checked").val();
+        var firmarcomunicado = $('#firmarcomunicado_editar').filter(":checked").val();
+        var tipo_descarga = $("[name='tipo_documento_descarga_califi_editar']").filter(":checked").val();
        //Copias Interesadas Origen
        var EditComunicadoTotal = [];
 
@@ -1627,7 +1701,8 @@ $(document).ready(function(){
             'elaboro2_editar':elaboro2,
             'reviso_editar':reviso,
             'agregar_copia_editar':EditComunicadoTotal,
-            'firmarcomunicado':firmarcomunicado
+            'firmarcomunicado':firmarcomunicado,
+            'tipo_descarga':tipo_descarga
         }
 
         document.querySelector("#Editar_comunicados").disabled = true;     

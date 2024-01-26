@@ -26,9 +26,8 @@ use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_afiliado_eventos;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
-use PhpOffice\PhpWord\TemplateProcessor;
 use PhpOffice\PhpWord\Shared\Html;
-use PhpOffice\PhpWord\Shared\Converter;
+use PhpOffice\PhpWord\Style\Image;
 use Html2Text\Html2Text;
 
 class PronunciamientoOrigenController extends Controller
@@ -44,12 +43,13 @@ class PronunciamientoOrigenController extends Controller
         $Id_asignacion_calitec = $request->Id_asignacion_calitec;
         $array_datos_pronunciamientoOrigen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion_calitec));
         //Traer info informacion pronunciamiento
+        // sigmel_informacion_pronunciamiento_eventos
         $info_pronuncia= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_pronunciamiento_eventos as pr')
         ->select('pr.ID_evento','pr.Id_primer_calificador','c.Tipo_Entidad','pr.Id_nombre_calificador','e.Nombre_entidad'
         ,'pr.Nit_calificador','pr.Dir_calificador','pr.Email_calificador','pr.Telefono_calificador','pr.Depar_calificador','pr.Ciudad_calificador'
         ,'pr.Id_tipo_pronunciamiento','p.Nombre_parametro as Tpronuncia','pr.Id_tipo_evento','ti.Nombre_evento','pr.Id_tipo_origen','or.Nombre_parametro as T_origen'
         ,'pr.Fecha_evento','pr.Dictamen_calificador','pr.Fecha_calificador','pr.Fecha_estruturacion','pr.Porcentaje_pcl','pr.Rango_pcl'
-        ,'pr.Decision','pr.Fecha_pronuncia','pr.Asunto_cali','pr.Sustenta_cali','pr.Destinatario_principal','pr.Tipo_entidad','pr.Nombre_entidad','pr.Copia_afiliado','pr.copia_empleador','pr.Copia_eps'
+        ,'pr.Decision','pr.Fecha_pronuncia','pr.Asunto_cali','pr.Sustenta_cali','pr.Destinatario_principal','pr.Tipo_entidad','pr.Copia_afiliado','pr.copia_empleador','pr.Copia_eps'
         ,'pr.Copia_afp','pr.Copia_arl','pr.Copia_junta_regional','pr.Copia_junta_nacional','pr.Junta_regional_cual','j.Ciudad_Junta'
         ,'pr.N_anexos','pr.Elaboro_pronuncia','pr.Reviso_Pronuncia','pr.Ciudad_correspon','pr.N_radicado','pr.Firmar','pr.Fecha_correspondencia'
         ,'pr.Archivo_pronuncia')
@@ -633,6 +633,11 @@ class PronunciamientoOrigenController extends Controller
         $copia_arl = $request->copia_arl;
         $firmar = $request->firmar;
         $Id_cliente_firma = $request->Id_cliente_firma;
+        $nombre_entidad = $request->nombre_entidad;
+        $direccion_entidad = $request->direccion_entidad;
+        $telefono_entidad = $request->telefono_entidad;
+        $ciudad_entidad = $request->ciudad_entidad;
+        $departamento_entidad = $request->departamento_entidad;
 
         /* Creación de las variables faltantes que no están en el ajax */
         $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
@@ -891,8 +896,8 @@ class PronunciamientoOrigenController extends Controller
             return $pdf->download($nombre_pdf); 
         } else {
 
-            $fecha_radicado_alfa = $date;
-            
+            $fecha_radicado_alfa = "N/A";
+
             $phpWord = new PhpWord();
             // Configuramos la fuente y el tamaño de letra para todo el documento
             $phpWord->setDefaultFontName('Arial');
@@ -911,13 +916,26 @@ class PronunciamientoOrigenController extends Controller
             $section->setMarginTop(0.5 * 72);
             $section->setMarginBottom(0.5 * 72);
 
-            
-            /* Creación de Header */
+            // $ruta_vigilado = "/images/logos_preformas/vigilado.png";
+            // $imagenPath_vigilado = public_path($ruta_vigilado);
+
+            // $imageStyle = array(
+            //     'height' => 150,
+            //     'positioning' => Image::POSITION_ABSOLUTE,
+            //     // 'marginLeft' => -50,  // Ajusta este valor según tus necesidades
+            //     'marginRight' => -500,
+            //     'marginTop' => 600,
+            //     // 'wrappingStyle' => 'behind', 
+            // );
+
+
+            // Creación de Header
             $header = $section->addHeader();
             $imagenPath_header = public_path($ruta_logo);
             $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
+            // $header->addImage($imagenPath_vigilado, $imageStyle);
 
-            /* Creación de Contenido */
+            // Creación de Contenido
             $section->addText('Bogotá D.C, '.$fecha, array('bold' => true));
             $section->addTextBreak();
             $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
@@ -925,19 +943,19 @@ class PronunciamientoOrigenController extends Controller
                     <td>
                         <p><b>Señores:</b>
                             <br>'.
-                            $nombre_afiliado.'</br>
+                            $nombre_entidad.'</br>
                         </p>
                         <p><b>Dirección:</b>
                             <br>'.
-                            $nombre_afiliado.'</br>
+                            $direccion_entidad.'</br>
                         </p>
                         <p><b>Teléfono:</b>
                             <br>'.
-                            $nombre_afiliado.'</br>
+                            $telefono_entidad.'</br>
                         </p>
                         <p><b>Ciudad:</b>
                             <br>'.
-                            $nombre_afiliado.' - '.$nombre_afiliado.'</br>
+                            $ciudad_entidad.' - '.$departamento_entidad.'</br>
                         </p>
                     </td>
                     <td>
@@ -962,7 +980,7 @@ class PronunciamientoOrigenController extends Controller
             $section->addText('Radicado en Alfa:  '.$fecha_radicado_alfa, array('bold' => true));
 
             // Configuramos el reemplazo de la variable de los cie 10
-            $patron1 = '/\{\{\$diagnosticos_cie10\}\}/'; 
+            $patron1 = '/\{\{\$diagnosticos_cie10\}\}/';
             if (preg_match($patron1, $sustentacion)) {
                 $texto_modificado = str_replace('{{$diagnosticos_cie10}}', $string_diagnosticos_cie10, $sustentacion);
                 $texto_modificado = str_replace('</p>', '</p><br></br>', $texto_modificado);
@@ -990,7 +1008,6 @@ class PronunciamientoOrigenController extends Controller
             $nuevoStyle = 'width="'.$width.'" height="'.$height.'"';
             $htmlModificado = reemplazarStyleImg($Firma_cliente, $nuevoStyle);
             
-            ;
             Html::addHtml($section, $htmlModificado, false, true);
             $section->addTextBreak();
             $section->addText('Dirección de Servicios Médicos de Seguridad Social', array('bold' => true));
@@ -1071,9 +1088,7 @@ class PronunciamientoOrigenController extends Controller
             $textRun->addText('Página ');
             $textRun->addField('PAGE');
 
-            
-            
-
+            // Generamos el documento y luego se guarda
             $writer = new Word2007($phpWord);
             $nombre_docx = "ORI_DESACUERDO_{$Id_Asignacion_consulta_dx}_{$num_identificacion}.docx";
             $writer->save(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));

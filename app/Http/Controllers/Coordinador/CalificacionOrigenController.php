@@ -847,6 +847,7 @@ class CalificacionOrigenController extends Controller
             'Reviso' => $request->reviso,
             'Agregar_copia' => $total_copia_comunicado,
             'Firmar_Comunicado' => $request->firmarcomunicado,
+            'Tipo_descarga' => $request->tipo_descarga,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
         ];
@@ -975,6 +976,7 @@ class CalificacionOrigenController extends Controller
             'Reviso' => $request->reviso_editar,
             'Agregar_copia' => $total_copia_comunicado,
             'Firmar_Comunicado' => $request->firmarcomunicado,
+            'Tipo_descarga' => $request->tipo_descarga,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
         ];

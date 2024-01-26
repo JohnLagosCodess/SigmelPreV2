@@ -2082,7 +2082,6 @@ class AdministradorController extends Controller
             return response()->json(($info_listado_proceso));
         }
 
-
         /* LISTADO DE PROCESOS PARA LA EDICICIÓN DE USUARIO(MODAL FORMULARIO EDICIÓN USUARIO) */
         if($parametro == 'listado_proceso_edicion_usuario'){
 
@@ -2122,6 +2121,18 @@ class AdministradorController extends Controller
 
             return response()->json(($array_info_final));
 
+        }
+
+        /* LISTADO DE PROCESOS PARA LA CREACIÓN DE UN EQUIPO DE TRABAJO */
+        if($parametro == 'listado_proceso_equipo_trabajo'){
+            $listado_proceso = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            ->select('Id_proceso', 'Nombre_proceso')
+            ->where('Estado', 'activo')
+            ->groupBy('Id_proceso','Nombre_proceso')
+            ->get();
+
+            $info_listado_proceso = json_decode(json_encode($listado_proceso, true));
+            return response()->json(($info_listado_proceso));
         }
 
         /* LISTADO SERVICIOS */

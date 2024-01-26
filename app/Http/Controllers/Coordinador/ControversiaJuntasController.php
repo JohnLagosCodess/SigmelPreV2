@@ -18,6 +18,12 @@ use App\Models\sigmel_informacion_diagnosticos_eventos;
 use App\Models\sigmel_informacion_entidades;
 use App\Models\sigmel_lista_regional_juntas;
 use App\Models\sigmel_lista_solicitantes;
+use App\Models\sigmel_clientes;
+use App\Models\sigmel_informacion_firmas_clientes;
+
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Writer\Word2007;
+use PhpOffice\PhpWord\Shared\Html;
 
 class ControversiaJuntasController extends Controller
 {
@@ -36,7 +42,7 @@ class ControversiaJuntasController extends Controller
         ->select('j.ID_evento','j.Enfermedad_heredada','j.F_transferencia_enfermedad','j.Primer_calificador','pa.Nombre_parametro as Calificador'
         ,'j.Nom_entidad','j.N_dictamen_controvertido','j.F_notifi_afiliado','j.Parte_controvierte_califi','pa2.Nombre_parametro as ParteCalificador','j.Nombre_controvierte_califi',
         'j.N_radicado_entrada_contro','j.Contro_origen','j.Contro_pcl','j.Contro_diagnostico','j.Contro_f_estructura','j.Contro_m_califi',
-        'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','pa3.Nombre_parametro as JrciNombre',
+        'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','sie.Nombre_entidad as JrciNombre',
         'j.Origen_controversia','pa4.Nombre_parametro as OrigenContro','j.Manual_de_califi','d.Nombre_decreto','j.Total_deficiencia','j.Total_rol_ocupacional','j.Total_discapacidad',
         'j.Total_minusvalia','j.Porcentaje_pcl','j.Rango_pcl','j.F_estructuracion_contro','j.N_pago_jnci_contro','j.F_pago_jnci_contro','j.F_radica_pago_jnci_contro','j.N_dictamen_jrci_emitido'
         ,'j.F_dictamen_jrci_emitido','j.Origen_jrci_emitido','pa5.Nombre_parametro as OrigenEmitidoJrci','j.Manual_de_califi_jrci_emitido','d1.Nombre_decreto as Nombre_decretoJrci','j.Total_deficiencia_jrci_emitido',
@@ -56,7 +62,7 @@ class ControversiaJuntasController extends Controller
         ,'j.F_sustenta_ante_jnci','j.F_noti_ante_jnci','j.F_radica_dictamen_jnci')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa', 'j.Primer_calificador', '=', 'pa.Id_Parametro','j.')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa2', 'j.Parte_controvierte_califi', '=', 'pa2.Id_Parametro')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa3', 'j.Jrci_califi_invalidez', '=', 'pa3.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'j.Jrci_califi_invalidez', '=', 'sie.Id_Entidad')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa4', 'j.Origen_controversia', '=', 'pa4.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa5', 'j.Origen_jrci_emitido', '=', 'pa5.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa6', 'j.Causal_decision_jrci', '=', 'pa6.Id_Parametro')
@@ -1257,4 +1263,464 @@ class ControversiaJuntasController extends Controller
         
 
     }
+
+    public function DescargarProformaRecursoReposicionPcl(Request $request){
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+
+        /* Captura de variables que vienen del ajax */
+        $id_cliente = $request->id_cliente;
+        $id_evento = $request->id_evento;
+        $id_asignacion = $request->id_asignacion;
+        $id_proceso = $request->id_proceso;
+        $tipo_identificacion = $request->tipo_identificacion;
+        $num_identificacion = $request->num_identificacion;
+        $id_Jrci_califi_invalidez = $request->id_Jrci_califi_invalidez;
+        $nombre_junta_regional = $request->nombre_junta_regional;
+        $f_dictamen_jrci_emitido = $request->f_dictamen_jrci_emitido;
+        $nombre_afiliado = $request->nombre_afiliado;
+        $porcentaje_pcl_jrci_emitido = $request->porcentaje_pcl_jrci_emitido;
+        $f_estructuracion_contro_jrci_emitido = $request->f_estructuracion_contro_jrci_emitido;
+        $sustentacion_concepto_jrci = $request->sustentacion_concepto_jrci;
+        $copia_empleador = $request->copia_empleador;
+        $copia_eps = $request->copia_eps;
+        $copia_afp = $request->copia_afp;
+        $copia_arl = $request->copia_arl;
+        $asunto = strtoupper($request->asunto);
+        $cuerpo = $request->cuerpo;
+        $firmar = $request->firmar;
+        $nro_radicado = $request->nro_radicado;
+
+        /* Creación de las variables faltantes que no están en el ajax */
+
+        // Datos Junta regional
+        $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+        ->select('sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+        ->where([['sie.Id_Entidad', $id_Jrci_califi_invalidez]])->get();
+
+        $array_datos_junta_regional = json_decode(json_encode($datos_junta_regional), true);
+
+        if(count($array_datos_junta_regional)>0){
+            $direccion_junta = $array_datos_junta_regional[0]["Direccion"];
+            $telefono_junta = $array_datos_junta_regional[0]["Telefonos"];
+            $departamento_junta = $array_datos_junta_regional[0]["Nombre_departamento"];
+            $ciudad_junta = $array_datos_junta_regional[0]["Nombre_ciudad"];
+        }
+        
+        // Traer datos CIE10 (Diagnóstico motivo de calificación) jrci
+        $diagnosticos_cie10_jrci = array();
+        $datos_diagnostico_motcalifi_emitido_jrci=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
+        ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
+        'slp.Nombre_parametro as Nombre_parametro_origen', 'side.Deficiencia_motivo_califi_condiciones', 'side.Lateralidad_CIE10', 'slp2.Nombre_parametro as Nombre_parametro_lateralidad', 'side.Principal')
+        ->where([['side.ID_evento',$id_evento],
+            ['side.Id_proceso',$id_proceso],
+            ['side.Item_servicio', '=', 'Emitido JRCI'],
+            ['side.Estado', '=', 'Activo']
+        ])->get(); 
+
+        $array_datos_diagnostico_motcalifi_emitido_jrci = json_decode(json_encode($datos_diagnostico_motcalifi_emitido_jrci), true);
+
+        for ($i=0; $i < count($array_datos_diagnostico_motcalifi_emitido_jrci); $i++) { 
+            array_push($diagnosticos_cie10_jrci, $array_datos_diagnostico_motcalifi_emitido_jrci[$i]["Nombre_CIE10"]);
+        }
+
+        // Contar la cantidad de elementos en el array
+        $totalElementos = count($diagnosticos_cie10_jrci);
+
+        // Inicializar la cadena de resultado
+        $string_diagnosticos_cie10_jrci = '';
+ 
+        // Recorrer el array
+        foreach ($diagnosticos_cie10_jrci as $indice => $elemento) {
+            // Verificar si es el último elemento
+            if ($indice == $totalElementos - 1) {
+                // Si es el último, añadir solo el elemento sin coma
+                $string_diagnosticos_cie10_jrci .= $elemento;
+            } elseif ($indice == $totalElementos - 2) {
+                // Si es el antepenúltimo, añadir "y" en lugar de ","
+                $string_diagnosticos_cie10_jrci .= $elemento . " y ";
+            } else {
+                // Para cualquier otro elemento, añadir ","
+                $string_diagnosticos_cie10_jrci .= $elemento . ", ";
+            }
+        };
+ 
+        $string_diagnosticos_cie10_jrci = "<b>".$string_diagnosticos_cie10_jrci."</b>";
+        
+        /* Copias Interesadas */
+        // Validamos si los checkbox esta marcados
+        $final_copia_empleador = isset($copia_empleador) ? 'Empleador' : '';
+        $final_copia_eps = isset($copia_eps) ? 'EPS' : '';
+        $final_copia_afp = isset($copia_afp) ? 'AFP' : '';
+        $final_copia_arl = isset($copia_arl) ? 'ARL' : '';
+
+        $total_copias = array_filter(array(
+            'copia_empleador' => $final_copia_empleador,
+            'copia_eps' => $final_copia_eps,
+            'copia_afp' => $final_copia_afp,
+            'copia_arl' => $final_copia_arl,
+        )); 
+
+        sleep(2);
+        
+        // Conversión de las key en variables con sus respectivos datos
+        extract($total_copias);
+        
+        $Agregar_copias = [];
+        if(isset($copia_empleador)){
+
+            $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+            ->where([['sile.Nro_identificacion', $num_identificacion],['sile.ID_evento', $id_evento]])
+            ->get();
+
+            $nombre_empleador = $datos_empleador[0]->Empresa;
+            $direccion_empleador = $datos_empleador[0]->Direccion;
+            $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
+            $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
+            $municipio_empleador = $datos_empleador[0]->Nombre_municipio;
+
+            $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$telefono_empleador."; ".$ciudad_empleador."; ".$municipio_empleador.".";   
+        }
+
+        if (isset($copia_eps)) {
+            $datos_eps = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 
+            'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
+            ->get();
+
+            $nombre_eps = $datos_eps[0]->Nombre_eps;
+            $direccion_eps = $datos_eps[0]->Direccion;
+            if ($datos_eps[0]->Otros_Telefonos != "") {
+                $telefonos_eps = $datos_eps[0]->Telefonos.",".$datos_eps[0]->Otros_Telefonos;
+            } else {
+                $telefonos_eps = $datos_eps[0]->Telefonos;
+            }
+            $ciudad_eps = $datos_eps[0]->Nombre_ciudad;
+            $minucipio_eps = $datos_eps[0]->Nombre_municipio;
+
+            $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$telefonos_eps."; ".$ciudad_eps."; ".$minucipio_eps;
+        }
+
+        if (isset($copia_afp)) {
+            $datos_afp = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+            'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
+            ->get();
+
+            $nombre_afp = $datos_afp[0]->Nombre_afp;
+            $direccion_afp = $datos_afp[0]->Direccion;
+            if ($datos_afp[0]->Otros_Telefonos != "") {
+                $telefonos_afp = $datos_afp[0]->Telefonos.",".$datos_afp[0]->Otros_Telefonos;
+            } else {
+                $telefonos_afp = $datos_afp[0]->Telefonos;
+            }
+            $ciudad_afp = $datos_afp[0]->Nombre_ciudad;
+            $minucipio_afp = $datos_afp[0]->Nombre_municipio;
+
+            $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$telefonos_afp."; ".$ciudad_afp."; ".$minucipio_afp;
+        }
+
+        if(isset($copia_arl)){
+            $datos_arl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+            'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
+            ->get();
+
+            $nombre_arl = $datos_arl[0]->Nombre_arl;
+            $direccion_arl = $datos_arl[0]->Direccion;
+            if ($datos_arl[0]->Otros_Telefonos != "") {
+                $telefonos_arl = $datos_arl[0]->Telefonos.",".$datos_arl[0]->Otros_Telefonos;
+            } else {
+                $telefonos_arl = $datos_arl[0]->Telefonos;
+            }
+            
+            $ciudad_arl = $datos_arl[0]->Nombre_ciudad;
+            $minucipio_arl = $datos_arl[0]->Nombre_municipio;
+
+            $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+        }
+
+        /* Validación Firma Cliente */
+        $validarFirma = isset($firmar) ? 'Firmar' : 'Sin Firma';
+        
+        if ($validarFirma == "Firmar") {
+            $idcliente = sigmel_clientes::on('sigmel_gestiones')->select('Id_cliente')
+            ->where('Id_cliente', $id_cliente)->limit(1)->get();
+    
+            $firmaclientecompleta = sigmel_informacion_firmas_clientes::on('sigmel_gestiones')->select('Firma')
+            ->where('Id_cliente', $idcliente[0]->Id_cliente)->limit(1)->get();
+
+            if(count($firmaclientecompleta) > 0){
+                $Firma_cliente = $firmaclientecompleta[0]->Firma;
+            }else{
+                $Firma_cliente = 'No firma';
+            }
+        } else {
+            $Firma_cliente = 'No firma';
+        }
+
+        /* datos del logo que va en el header */
+        $dato_logo_header = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Logo_cliente')
+        ->where([['Id_cliente', $id_cliente]])
+        ->limit(1)->get();
+
+        if (count($dato_logo_header) > 0) {
+            $logo_header = $dato_logo_header[0]->Logo_cliente;
+            $ruta_logo = "/logos_clientes/{$id_cliente}/{$logo_header}";
+        } else {
+            $logo_header = "Sin logo";
+            $ruta_logo = "";
+        }
+
+        /* Construcción proforma en formato docx (word) */
+        $phpWord = new PhpWord();
+        // Configuramos la fuente y el tamaño de letra para todo el documento
+        $phpWord->setDefaultFontName('Arial');
+        $phpWord->setDefaultFontSize(12);
+        // Configuramos la alineación justificada para todo el documento
+        $phpWord->setDefaultParagraphStyle(
+            array('align' => 'both', 'spaceAfter' => 0, 'spaceBefore' => 0)
+        );
+        // Configurar el idioma del documento a español
+        $phpWord->getSettings()->setThemeFontLang(new \PhpOffice\PhpWord\Style\Language('es-ES'));
+
+        // Configuramos las margenes del documento (estrechas)
+        $section = $phpWord->addSection();
+        $section->setMarginLeft(0.5 * 72);
+        $section->setMarginRight(0.5 * 72);
+        $section->setMarginTop(0.5 * 72);
+        $section->setMarginBottom(0.5 * 72);
+
+        // Creación de Header
+        $header = $section->addHeader();
+        $imagenPath_header = public_path($ruta_logo);
+        $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
+
+        // Creación de Contenido
+        $section->addText('Bogotá D.C, '.$date, array('bold' => true));
+        $section->addTextBreak();
+        $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
+            <tr>
+                <td>
+                    <p><b>Señores:</b>
+                        <br>'.
+                        $nombre_junta_regional.'</br>
+                    </p>
+                    <p><b>Dirección:</b>
+                        <br>'.
+                        $direccion_junta.'</br>
+                    </p>
+                    <p><b>Teléfono:</b>
+                        <br>'.
+                        $telefono_junta.'</br>
+                    </p>
+                    <p><b>Ciudad:</b>
+                        <br>'.
+                        $ciudad_junta.' - '.$departamento_junta.'</br>
+                    </p>
+                </td>
+                <td>
+                    <br></br>
+                    <table style="width: 60%; border: 3px black solid;">
+                        <tr>
+                            <td>
+                                <p><b>Nro. Radicado: '.$nro_radicado.'</b></p>  
+                                <p><b>'.$tipo_identificacion." ".$num_identificacion.'</b></p>
+                                <p><b>Siniestro: '.$id_evento.'</b></p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>';
+    
+        Html::addHtml($section, $htmltabla1, false, true);
+        
+        $patron_asunto = '/\{\{\$F_DICTAMEN_JRCI\}\}/'; 
+        if (preg_match($patron_asunto, $asunto)) {
+            $asunto_modificado = str_replace('{{$F_DICTAMEN_JRCI}}', $f_dictamen_jrci_emitido, $asunto);
+            $asunto = $asunto_modificado;
+        }else{
+            $asunto = "";
+        }
+
+        $section->addText('Asunto: '.$asunto, array('bold' => true));
+        $section->addTextBreak();
+        $section->addText('Afiliado: '.$nombre_afiliado." ".$tipo_identificacion." ".$num_identificacion, array('bold' => true));
+
+        // Configuramos el reemplazo de las etiquetas del cuerpo del comunicado
+        $patron1 = '/\{\{\$nombre_afiliado\}\}/';
+        $patron2 = '/\{\{\$junta_regional\}\}/';
+        $patron3 = '/\{\{\$cie10_jrci\}\}/';
+        $patron4 = '/\{\{\$pcl_jrci\}\}/';
+        $patron5 = '/\{\{\$f_estructuracion_jrci\}\}/';
+        $patron6 = '/\{\{\$sustentacion_jrci\}\}/';
+        
+        if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) && preg_match($patron3, $cuerpo)
+        && preg_match($patron4, $cuerpo) && preg_match($patron5, $cuerpo) && preg_match($patron6, $cuerpo)) {
+
+            $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.$nombre_afiliado.'</b>', $cuerpo);
+            $cuerpo_modificado = str_replace('{{$junta_regional}}', '<b>'.$nombre_junta_regional.'</b>', $cuerpo_modificado);
+            $cuerpo_modificado = str_replace('{{$cie10_jrci}}', $string_diagnosticos_cie10_jrci, $cuerpo_modificado);
+            $cuerpo_modificado = str_replace('{{$pcl_jrci}}', '<b>'.$porcentaje_pcl_jrci_emitido.'%</b>', $cuerpo_modificado);
+            $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', $f_estructuracion_contro_jrci_emitido, $cuerpo_modificado);
+            $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+
+
+            $cuerpo_modificado = str_replace('HUGO IGNACIO GÓMEZ DAZA', '<b>HUGO IGNACIO GÓMEZ DAZA</b>', $cuerpo_modificado);
+            $cuerpo_modificado = str_replace('SEGUROS DE VIDA ALFA S.A.', '<b>SEGUROS DE VIDA ALFA S.A.</b>', $cuerpo_modificado);
+            $cuerpo_modificado = str_replace('RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN', '<b>RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN</b>', $cuerpo_modificado);
+            $cuerpo_modificado = str_replace('PCL', '<b>PCL</b>', $cuerpo_modificado);
+            $cuerpo_modificado = str_replace('calificación de PCL', '<b>calificación de PCL</b>', $cuerpo_modificado);
+            $cuerpo_modificado = str_replace('ANEXO:', '<b>ANEXO:</b>', $cuerpo_modificado);
+            $cuerpo_modificado = str_replace('NOTIFICACIONES:', '<b>NOTIFICACIONES:</b>', $cuerpo_modificado);
+            $cuerpo_modificado = str_replace('</p>', '</p><br></br>', $cuerpo_modificado);
+            $cuerpo = $cuerpo_modificado;
+
+        }else{
+            $cuerpo = "";
+        }
+
+        $section->addTextBreak();
+        Html::addHtml($section, $cuerpo, false, true);
+        $section->addTextBreak();
+        $section->addText('Cordialmente,');
+        $section->addTextBreak();
+
+        // Agregar </img> en la imagen de la firma
+        $patronetiqueta = '/<img(.*?)>/';
+        $Firma_cliente = preg_replace($patronetiqueta, '<img$1></img>', $Firma_cliente);
+        
+        // Quitamos el style y agregamos los atributos width y height
+        $patronstyle = '/<img[^>]+style="width:\s*([\d.]+)px;\s*height:\s*([\d.]+)px[^"]*"[^>]*>/';
+        preg_match($patronstyle, $Firma_cliente, $coincidencias);
+        $width = $coincidencias[1]; // Valor de width
+        $height = $coincidencias[2]; // Valor de height
+    
+        $nuevoStyle = 'width="'.$width.'" height="'.$height.'"';
+        $htmlModificado = reemplazarStyleImg($Firma_cliente, $nuevoStyle);
+        
+        Html::addHtml($section, $htmlModificado, false, true);
+        $section->addTextBreak();
+        $section->addText('HUGO IGNACIO GÓMEZ DAZA', array('bold' => true));
+        $section->addTextBreak();
+        $section->addText('Representante Legal para Asuntos de Seguridad Social', array('bold' => true));
+        $section->addTextBreak();
+        $section->addText('Convenio Codess - Seguros de Vida Alfa S.A', array('bold' => true));
+        $section->addTextBreak();
+        $section->addText('Elaboró: '.$nombre_usuario, array('bold' => true));
+        $section->addTextBreak();
+        
+        // Configuramos la tabla de copias a partes interesadas
+        $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
+        if (count($Agregar_copias) == 0) {
+            $htmltabla2 .= '
+                <tr>
+                    <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
+                </tr>';
+        } else {
+            $htmltabla2 .= '
+                <tr>
+                    <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
+                </tr>';
+
+            // $Afiliado = 'Afiliado';
+            $Empleador = 'Empleador';
+            $EPS = 'EPS';
+            $AFP = 'AFP';
+            $ARL = 'ARL';
+
+            // if (isset($Agregar_copias[$Afiliado])) {
+            //     $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
+            // }
+
+            if (isset($Agregar_copias[$Empleador])) {
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
+            }
+
+            if (isset($Agregar_copias[$EPS])) {
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
+            }
+
+            if (isset($Agregar_copias[$AFP])) {
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
+            }
+
+            if (isset($Agregar_copias[$ARL])) {
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+            }
+        }
+
+        $htmltabla2 .= '</table>';
+        Html::addHtml($section, $htmltabla2, false, true);
+        $section->addTextBreak();
+        $section->addText($nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$id_evento, array('bold' => true));
+
+        // Configuramos el footer
+        $footer = $section->addFooter();
+        $tableStyle = array(
+            'cellMargin'  => 50,
+        );
+        $phpWord->addTableStyle('myTable', $tableStyle);
+        $table = $footer->addTable('myTable');
+
+        $table->addRow();
+        $table->addCell(80000, ['gridSpan' => 2])->addText('Seguros Alfa S.A. y Seguros de Vida Alfa S.A.', array('size' => 10, 'color' => '#184F56', 'bold' => true));
+        $table->addRow();
+        $table->addCell()->addText('Líneas de atención al cliente', array('size' => 10, 'color' => '#184F56', 'bold' => true));
+        $cell = $table->addCell();
+        $textRun = $cell->addTextRun(['alignment' => 'right']);
+        $textRun->addText('www.segurosalfa.com.co', array('size' => 10, 'color' => '#184F56', 'bold' => true));
+        $table->addRow();
+        $table->addCell(80000, ['gridSpan' => 2])->addText('Bogotá: 3077032, a nivel nacional: 018000122532', array('size' => 10));
+        $table->addRow();
+        $table->addCell(80000, ['gridSpan' => 2])->addText('Habilitadas en jornada continua de lunes a viernes de 8:00 a.m. a 6:00 p.m.', array('size' => 10));
+        $table->addRow();
+        $cell1 = $table->addCell(80000, ['gridSpan' => 2]);
+        $textRun = $cell1->addTextRun(['alignment' => 'center']);
+        $textRun->addText('Página ');
+        $textRun->addField('PAGE');
+
+        // Generamos el documento y luego se guarda
+        $writer = new Word2007($phpWord);
+        $nombre_docx = "JUN_DESACUERDO_{$id_asignacion}_{$num_identificacion}.docx";
+        $writer->save(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
+        return response()->download(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
+
+    }
+}
+
+function reemplazarStyleImg($html, $nuevoStyle)
+{
+    // Utilizar expresiones regulares para encontrar y reemplazar el atributo style
+    $patron = '/<img([^>]*)style="[^"]*"[^>]*>/';
+    $htmlModificado = preg_replace_callback($patron, function ($coincidencia) use ($nuevoStyle) {
+        $imgTag = $coincidencia[0];
+        $imgTagModificado = preg_replace('/style="[^"]*"/', $nuevoStyle, $imgTag);
+        return $imgTagModificado;
+    }, $html);
+
+    return $htmlModificado;
 }

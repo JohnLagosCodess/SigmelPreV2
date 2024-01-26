@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 @section('title', 'Controversia Juntas')
+
+@section('css')
+    <link rel="stylesheet" type="text/css" href="/plugins/summernote/summernote.min.css">
+@stop
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
@@ -36,6 +40,11 @@
                 <input hidden="hidden" type="text" class="form-control" name="newId_evento" id="newId_evento" value="{{$array_datos_controversiaJuntas[0]->ID_evento}}">
                 <input hidden="hidden" type="text" class="form-control" name="newId_asignacion" id="newId_asignacion" value="{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}">
                 <input hidden="hidden" type="text" class="form-control" name="Id_proceso" id="Id_proceso" value="{{$array_datos_controversiaJuntas[0]->Id_proceso}}">
+
+                campos creados para extraer algunos datos de la proforma 
+                <input type="hidden" id="id_cliente" value="<?php if(!empty($array_datos_controversiaJuntas[0]->Id_cliente)){echo $array_datos_controversiaJuntas[0]->Id_cliente;}?>">
+                <input type="hidden" id="tipo_documento" value="<?php if(!empty($array_datos_controversiaJuntas[0]->Nombre_tipo_documento)){echo $array_datos_controversiaJuntas[0]->Nombre_tipo_documento;}?>">
+                <input type="hidden" id="id_Jrci_califi_invalidez" value="<?php if(!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez)){echo $arrayinfo_controvertido[0]->Jrci_califi_invalidez;}?>">
             </div>
             <div class="card-body">
                 <div class="row">
@@ -1406,7 +1415,7 @@
                         <!--  Correspondia -->
                         <div class="card-info" id="div_correspondecia">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
-                                <h5>Correspondecia</h5>
+                                <h5>Correspondencia</h5>
                             </div>
                             <form id="form_correspondencia" action="POST">                            
                                 <div class="card-body">
@@ -1431,7 +1440,7 @@
                                         </div>
                                         <div class="col-3" id=div_tipo_destinatario_principal>
                                             <div class="form-group">
-                                                <label for="tipo_destinatario_principal">Tipo Destinatario Principal<span style="color: red;">(*)</span></label>
+                                                <label for="tipo_destinatario_principal">Tipo Destinatario Principal <span style="color: red;">(*)</span></label>
                                                 <input type="hidden" id="db_tipo_destinatario_principal" value="<?php if(!empty($array_comite_interdisciplinario[0]->Tipo_destinatario)){ echo $array_comite_interdisciplinario[0]->Tipo_destinatario;}?>">                                                
                                                 <select class="tipo_destinatario_principal custom-select" name="tipo_destinatario_principal" id="tipo_destinatario_principal" style="width: 100%">                                                    
                                                 </select>                                                
@@ -1439,7 +1448,7 @@
                                         </div>
                                         <div class="col-3" id="div_nombre_destinatariopri">
                                             <div class="form-group">
-                                                <label for="nombre_destinatariopri">Nombre del destinatario principal<span style="color: red;">(*)</span></label>
+                                                <label for="nombre_destinatariopri">Nombre del destinatario principal <span style="color: red;">(*)</span></label>
                                                 <input type="hidden" id="db_nombre_destinatariopri" value="<?php if(!empty($array_comite_interdisciplinario[0]->Nombre_dest_principal)){ echo $array_comite_interdisciplinario[0]->Nombre_dest_principal;}?>">                                                                                                
                                                 <select class="nombre_destinatariopri custom-select" name="nombre_destinatariopri" id="nombre_destinatariopri" style="width: 100%">                                                    
                                                 </select>                                                
@@ -1447,13 +1456,13 @@
                                         </div>
                                         <div class="col-3" id="div_nombre_destinatariopri_afi_">
                                             <div class="form-group">
-                                                <label for="nombre_destinatario_afi">Nombre del destinatario principal<span style="color: red;">(*)</span></label>
+                                                <label for="nombre_destinatario_afi">Nombre del destinatario principal <span style="color: red;">(*)</span></label>
                                                 <input type="text" class="form-control" name="nombre_destinatario_afi" id="nombre_destinatario_afi" value="{{$array_datos_controversiaJuntas[0]->Nombre_afiliado}}" disabled>
                                             </div>      
                                         </div>
                                         <div class="col-3" id="div_nombre_destinatariopri_empl">
                                             <div class="form-group">
-                                                <label for="nombre_destinatario_emp">Nombre del destinatario principal<span style="color: red;">(*)</span></label>
+                                                <label for="nombre_destinatario_emp">Nombre del destinatario principal <span style="color: red;">(*)</span></label>
                                                 <input type="text" class="form-control" name="nombre_destinatario_emp" id="nombre_destinatario_emp" value="{{$array_datos_controversiaJuntas[0]->Empleador_afi}}" disabled>
                                             </div>      
                                         </div>
@@ -1534,7 +1543,9 @@
                                     <div class="row"> 
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <label for="Asunto">Asunto<span style="color: red;">(*)</label>
+                                                <label for="Asunto">Asunto <span style="color: red;">(*)</label>
+                                                <br>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_f_dictamen_jrci">Fecha Dictamen JRCI</button>
                                                 @if(!empty($array_comite_interdisciplinario[0]->Asunto))
                                                     <input type="text" class="form-control" name="Asunto" id="Asunto" value="{{$array_comite_interdisciplinario[0]->Asunto}}" required>                                                
                                                 @else
@@ -1544,11 +1555,18 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <label for="cuerpo_comunicado">Cuerpo del comunicado<span style="color: red;">(*)</label>
+                                                <label for="cuerpo_comunicado">Cuerpo del comunicado <span style="color: red;">(*)</label>
+                                                <br>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_afiliado">Nombre Afiliado</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_junta_regional">Nombre Junta Regional</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_cie10_jrci">Nombre CIE-10 JRCI</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_pcl_jrci">%Pcl JRCI</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_f_estructuracion_jrci">Fecha Estructuracion JRCI</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_sustentacion_jrci">Sustentación Concepto JRCI</button>
                                                 @if(!empty($array_comite_interdisciplinario[0]->Cuerpo_comunicado))
-                                                    <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" cols="90" rows="4" required>{{$array_comite_interdisciplinario[0]->Cuerpo_comunicado}}</textarea>                                                                                                 
+                                                    <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" required>{{$array_comite_interdisciplinario[0]->Cuerpo_comunicado}}</textarea>                                                                                                 
                                                 @else
-                                                    <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" cols="90" rows="4" required></textarea>                                                                                              
+                                                    <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" required></textarea>                                                                                              
                                                 @endif
                                             </div>
                                         </div> 
@@ -1734,7 +1752,9 @@
                                                     <input type="submit" id="ActualizarCorrespondencia" name="ActualizarCorrespondencia" class="btn btn-info" value="Actualizar">
                                                     <input hidden="hidden" type="text" id="bandera_correspondecia_guardar_actualizar" value="Actualizar">
                                                 @endif                                         
-                                                                                                                                        
+                                                @if (!empty($arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci) && $arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci=='Desacuerdo')
+                                                    <button class="btn btn-info" id="generar_proforma_recurso_reposicion_pcl">Word</button>
+                                                @endif
                                             </div>
                                         </div>
                                         <div id="div_alerta_Correspondencia" class="col-12 d-none">
@@ -2261,5 +2281,5 @@
 
     </script>
     <script type="text/javascript" src="/js/controversia_juntas.js"></script>
-
+    <script src="/plugins/summernote/summernote.min.js"></script>
 @stop

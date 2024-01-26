@@ -1277,7 +1277,7 @@ class CalificacionPCLController extends Controller
             ->where('Nombre_cliente', $Cliente)->get();
     
             $firmaclientecompleta = sigmel_informacion_firmas_clientes::on('sigmel_gestiones')->select('Firma')
-            ->where('Id_cliente', $idcliente[0]->Id_cliente)->get();
+            ->where('Id_cliente', $idcliente[0]->Id_cliente)->limit(1)->get();
 
             if(count($firmaclientecompleta) > 0){
                 $Firma_cliente = $firmaclientecompleta[0]->Firma;
@@ -1289,46 +1289,250 @@ class CalificacionPCLController extends Controller
             $Firma_cliente = '';
         }
         
-        //Obtener los datos del formulario
+        if($request->tipo_documento_descarga_califi_editar == "Documento_Origen"){
 
-        $data = [
-            'ID_evento' => $ID_evento,
-            'Id_Asignacion' => $Id_Asignacion,
-            'Id_proceso' => $Id_proceso,
-            'Ciudad' => $Ciudad,
-            'F_comunicado' => $F_comunicado,
-            'N_radicado' => $N_radicado,
-            'Cliente' => $Cliente,
-            'Nombre_afiliado' => $Nombre_afiliado,
-            'T_documento' => $T_documento,
-            'N_identificacion' => $N_identificacion,
-            'Destinatario' => $Destinatario,
-            'Nombre_destinatario' => $Nombre_destinatario,
-            'Nit_cc' => $Nit_cc,
-            'Direccion_destinatario' => $Direccion_destinatario,
-            'Telefono_destinatario' => $Telefono_destinatario,
-            'Email_destinatario' => $Email_destinatario,
-            'Nombre_departamento' => $Nombre_departamento,
-            'Nombre_ciudad' => $Nombre_ciudad,
-            'Asunto' => $Asunto,
-            'Cuerpo_comunicado' => $Cuerpo_comunicado,
-            'Firma_cliente' => $Firma_cliente,
-            'Anexos' => $Anexos,
-            'Forma_envio' => $Forma_envios,
-            'Elaboro' => $Elaboro,
-            'Cargo' => $Cargo,
-            'Reviso' => $Reviso_lider,
-            'Agregar_copia' => $Agregar_copias,
-            'Nombre_usuario' => $Nombre_usuario,
-            'F_registro' => $F_registro,
-        ];
+            $dato_fecha_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->select('F_evento')
+            ->where([['ID_evento', $ID_evento]])
+            ->get();
 
-        // Crear una instancia de Dompdf
+            /* Creación de las variables faltantes que no están en el formulario */
+            $array_datos_fecha_evento = json_decode(json_encode($dato_fecha_evento), true);
+            $fecha_evento = $array_datos_fecha_evento[0]["F_evento"];
 
-        $pdf = app('dompdf.wrapper');
-        $pdf->loadView('/coordinador/comunicadoPdf', $data);
-        $fileName = 'Comunicado_'.$N_radicado.'.pdf';
-        return $pdf->download($fileName);        
+            /* Copias Interesadas */
+            // Validamos si los checkbox esta marcados
+            $final_copia_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
+            $final_copia_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
+            $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
+            $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
+            $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+
+            $total_copias = array_filter(array(
+                'copia_afiliado' => $final_copia_afiliado,
+                'copia_empleador' => $final_copia_empleador,
+                'copia_eps' => $final_copia_eps,
+                'copia_afp' => $final_copia_afp,
+                'copia_arl' => $final_copia_arl,
+            )); 
+
+            sleep(2);
+            
+            // Conversión de las key en variables con sus respectivos datos
+            extract($total_copias);
+            
+            $Agregar_copias = [];
+            if (isset($copia_afiliado)) {
+                $emailAfiliado = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+                ->select('Email')
+                ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+                ->get();
+                $afiliadoEmail = $emailAfiliado[0]->Email;            
+                $Agregar_copias['Afiliado'] = $afiliadoEmail;            
+            }
+
+            if(isset($copia_empleador)){
+
+                $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
+                ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+                ->where([['sile.Nro_identificacion', $N_identificacion],['sile.ID_evento', $ID_evento]])
+                ->get();
+
+                $nombre_empleador = $datos_empleador[0]->Empresa;
+                $direccion_empleador = $datos_empleador[0]->Direccion;
+                $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
+                $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
+                $municipio_empleador = $datos_empleador[0]->Nombre_municipio;
+
+                $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$telefono_empleador."; ".$ciudad_empleador."; ".$municipio_empleador.".";   
+            }
+
+            if (isset($copia_eps)) {
+                $datos_eps = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 
+                'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+                ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+                ->get();
+
+                $nombre_eps = $datos_eps[0]->Nombre_eps;
+                $direccion_eps = $datos_eps[0]->Direccion;
+                if ($datos_eps[0]->Otros_Telefonos != "") {
+                    $telefonos_eps = $datos_eps[0]->Telefonos.",".$datos_eps[0]->Otros_Telefonos;
+                } else {
+                    $telefonos_eps = $datos_eps[0]->Telefonos;
+                }
+                $ciudad_eps = $datos_eps[0]->Nombre_ciudad;
+                $minucipio_eps = $datos_eps[0]->Nombre_municipio;
+
+                $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$telefonos_eps."; ".$ciudad_eps."; ".$minucipio_eps;
+            }
+
+            if (isset($copia_afp)) {
+                $datos_afp = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+                'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+                ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+                ->get();
+
+                $nombre_afp = $datos_afp[0]->Nombre_afp;
+                $direccion_afp = $datos_afp[0]->Direccion;
+                if ($datos_afp[0]->Otros_Telefonos != "") {
+                    $telefonos_afp = $datos_afp[0]->Telefonos.",".$datos_afp[0]->Otros_Telefonos;
+                } else {
+                    $telefonos_afp = $datos_afp[0]->Telefonos;
+                }
+                $ciudad_afp = $datos_afp[0]->Nombre_ciudad;
+                $minucipio_afp = $datos_afp[0]->Nombre_municipio;
+
+                $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$telefonos_afp."; ".$ciudad_afp."; ".$minucipio_afp;
+            }
+
+            if(isset($copia_arl)){
+                $datos_arl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+                'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+                ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+                ->get();
+
+                $nombre_arl = $datos_arl[0]->Nombre_arl;
+                $direccion_arl = $datos_arl[0]->Direccion;
+                if ($datos_arl[0]->Otros_Telefonos != "") {
+                    $telefonos_arl = $datos_arl[0]->Telefonos.",".$datos_arl[0]->Otros_Telefonos;
+                } else {
+                    $telefonos_arl = $datos_arl[0]->Telefonos;
+                }
+                
+                $ciudad_arl = $datos_arl[0]->Nombre_ciudad;
+                $minucipio_arl = $datos_arl[0]->Nombre_municipio;
+
+                $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+            }
+
+            /* Extraer el id del cliente */
+            $dato_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->select('Cliente')
+            ->where([['ID_evento', $ID_evento]])
+            ->get();
+
+            if (count($dato_id_cliente)>0) {
+                $id_cliente = $dato_id_cliente[0]->Cliente;
+            }
+            
+            /* datos del logo que va en el header */
+            $dato_logo_header = sigmel_clientes::on('sigmel_gestiones')
+            ->select('Logo_cliente')
+            ->where([['Id_cliente', $id_cliente]])
+            ->limit(1)->get();
+
+            if (count($dato_logo_header) > 0) {
+                $logo_header = $dato_logo_header[0]->Logo_cliente;
+            } else {
+                $logo_header = "Sin logo";
+            }
+
+            //Trae Documentos Solicitados
+            $listado_documentos_solicitados = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['ID_evento',$ID_evento],
+                ['Estado','Activo'],
+                ['Id_proceso', $Id_proceso]
+            ])
+            ->get();
+
+            $array_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados), true);
+
+            $pruebas_solicitadas = array();
+
+            for ($i=0; $i < count($array_listado_documentos_solicitados); $i++) { 
+                array_push($pruebas_solicitadas, $array_listado_documentos_solicitados[$i]["Nombre_documento"]);
+            }
+            
+            $string_pruebas_solicitadas = "<b>".implode(", ", $pruebas_solicitadas)."</b>";
+
+            $data = [
+                'logo_header' => $logo_header,
+                'id_cliente' => $id_cliente,
+                'ciudad' => $request->ciudad_comunicado_act,
+                'fecha' => $request->fecha_comunicado2_act,
+                'nombre' => $Nombre_destinatario,
+                'direccion' => $Direccion_destinatario,
+                'telefono' => $Telefono_destinatario,
+                'municipio' => $nombre_ciudad,
+                'departamento' => $nombre_departamento,
+                'nro_radicado' => $request->radicado2_act,
+                'tipo_identificacion' => $T_documento,
+                'num_identificacion' =>  $N_identificacion,
+                'nro_siniestro' => $ID_evento,
+                'asunto' => strtoupper($request->asunto_act),
+                'cuerpo' => $Cuerpo_comunicado,
+                'string_pruebas_solicitadas' => $string_pruebas_solicitadas ,
+                'fecha_evento' => $fecha_evento,
+                'Firma_cliente' => $Firma_cliente,
+                'nombre_usuario' => $nombre_usuario,
+                'Agregar_copia' => $Agregar_copias,
+            ];
+
+            // Creación y guardado del pdf
+            $pdf = app('dompdf.wrapper');
+            $pdf->loadView('/Proformas/Proformas_Arl/Origen_Atel/solicitud_pruebas', $data);
+            $nombre_pdf = "ORI_SOL_DOC_{$Id_Asignacion}_{$N_identificacion}.pdf";
+            $output = $pdf->output();
+            file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
+            return $pdf->download($nombre_pdf);
+
+        }else{
+            //Obtener los datos del formulario
+            $data = [
+                'ID_evento' => $ID_evento,
+                'Id_Asignacion' => $Id_Asignacion,
+                'Id_proceso' => $Id_proceso,
+                'Ciudad' => $Ciudad,
+                'F_comunicado' => $F_comunicado,
+                'N_radicado' => $N_radicado,
+                'Cliente' => $Cliente,
+                'Nombre_afiliado' => $Nombre_afiliado,
+                'T_documento' => $T_documento,
+                'N_identificacion' => $N_identificacion,
+                'Destinatario' => $Destinatario,
+                'Nombre_destinatario' => $Nombre_destinatario,
+                'Nit_cc' => $Nit_cc,
+                'Direccion_destinatario' => $Direccion_destinatario,
+                'Telefono_destinatario' => $Telefono_destinatario,
+                'Email_destinatario' => $Email_destinatario,
+                'Nombre_departamento' => $Nombre_departamento,
+                'Nombre_ciudad' => $Nombre_ciudad,
+                'Asunto' => $Asunto,
+                'Cuerpo_comunicado' => $Cuerpo_comunicado,
+                'Firma_cliente' => $Firma_cliente,
+                'Anexos' => $Anexos,
+                'Forma_envio' => $Forma_envios,
+                'Elaboro' => $Elaboro,
+                'Cargo' => $Cargo,
+                'Reviso' => $Reviso_lider,
+                'Agregar_copia' => $Agregar_copias,
+                'Nombre_usuario' => $Nombre_usuario,
+                'F_registro' => $F_registro,
+            ];
+
+            // Crear una instancia de Dompdf
+            $pdf = app('dompdf.wrapper');
+            $pdf->loadView('/coordinador/comunicadoPdf', $data);
+            $fileName = 'Comunicado_'.$N_radicado.'.pdf';
+            return $pdf->download($fileName);      
+        }
+
     }
 
     public function historialAcciones(Request $request){

@@ -420,8 +420,8 @@
                                                 </div>
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="afp" class="col-form label">AFP</label>
-                                                        <select class="afp custom-select" name="afp" id="afp">
+                                                        <label for="afp" class="col-form label">AFP<span style="color:red;">(*)</span></</label>
+                                                        <select class="afp custom-select" name="afp" id="afp"required>
                                                             <option value="{{$array_datos_info_afiliados[0]->Id_afp}}">{{$array_datos_info_afiliados[0]->Nombre_afp}}</option>
                                                         </select>
                                                     </div>
@@ -434,8 +434,8 @@
                                                 </div>
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="arl_info_afiliado" class="col-form label">ARL</label>
-                                                        <select class="arl_info_afiliado custom-select" name="arl_info_afiliado" id="arl_info_afiliado">
+                                                        <label for="arl_info_afiliado" class="col-form label">ARL<span style="color:red;">(*)</span></label>
+                                                        <select class="arl_info_afiliado custom-select" name="arl_info_afiliado" id="arl_info_afiliado" required>
                                                             <option value="{{$array_datos_info_afiliados[0]->Id_arl}}">{{$array_datos_info_afiliados[0]->Nombre_arl}}</option>
                                                         </select>
                                                     </div>
@@ -632,7 +632,8 @@
                                                 </div>
                                             <?php endif?>
                                         </div> 
-                                        <div class="row  columna_row1_laboral"  <?php if ($radio == 'Empleado actual'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
+                                        <input type="hidden" class="form-control" name="t_laboral" id="t_laboral" value="{{$radio}}">
+                                        <div class="row  columna_row1_laboral"  <?php if ($radio == 'Empleado actual' || $radio == 'Independiente'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
                                             <div class="row">
                                                 <div class="col-sm">
                                                     <div class="form-group">
@@ -650,13 +651,14 @@
                                                 </div>
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="empresa" class="col-form-label">Empresa <span style="color:red;">(*)</span></label>
+                                                        <label for="empresa" class="col-form-label si_nom_empresa">Empresa <span style="color:red;">(*)</span></label>
+                                                        <label for="empresa" class="col-form-label no_nom_empresa d-none">Empresa</label>
                                                         <input type="text" class="empresa form-control" name="empresa" id="empresa"  value="{{$array_datos_info_laboral[0]->Empresa}}" >
                                                     </div>
                                                 </div>
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="nit_cc" class="col-form-label">NIT / CC <span style="color:red;">(*)</span></label>
+                                                        <label for="nit_cc" class="col-form-label">NIT / CC </label>
                                                         <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc"  value="{{$array_datos_info_laboral[0]->Nit_o_cc}}" >
                                                     </div>
                                                 </div>
@@ -668,7 +670,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row columna_row2_laboral" <?php if ($radio == 'Empleado actual'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
+                                        <div class="row columna_row2_laboral" <?php if ($radio == 'Empleado actual'  || $radio == 'Independiente'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
                                             <div class="row">
                                                 <div class="col-sm">
                                                     <div class="form-group">
@@ -706,7 +708,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row columna_row3_laboral" <?php if ($radio == 'Empleado actual'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
+                                        <div class="row columna_row3_laboral" <?php if ($radio == 'Empleado actual'  || $radio == 'Independiente'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
                                             <div class="row">
                                                 <div class="col-sm">
                                                     <div class="form-group">
@@ -738,7 +740,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row columna_row4_laboral" <?php if ($radio == 'Empleado actual'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
+                                        <div class="row columna_row4_laboral" <?php if ($radio == 'Empleado actual' || $radio == 'Independiente'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
                                             <div class="row">
                                                 <div class="col-sm">
                                                     <div class="form-group">
@@ -768,7 +770,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row columna_row5_laboral" <?php if ($radio == 'Empleado actual'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
+                                        <div class="row columna_row5_laboral" <?php if ($radio == 'Empleado actual' || $radio == 'Independiente'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
                                             <div class="row">
                                                 <div class="col-sm">
                                                     <div class="form-group">
@@ -790,7 +792,8 @@
                                                 </div>
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="medio_notificacion_laboral" class="col-form-label">Medio de Notificación <span style="color:red;">(*)</span></label>
+                                                        <label for="medio_notificacion_laboral" class="col-form-label si_medio_noti">Medio de Notificación <span style="color:red;">(*)</span></label>
+                                                        <label for="medio_notificacion_laboral" class="col-form-label no_medio_noti d-none">Medio de Notificación</label>
                                                         <select class="medio_notificacion_laboral custom-select" name="medio_notificacion_laboral" id="medio_notificacion_laboral">
                                                             <option value="{{$array_datos_info_laboral[0]->Medio_notificacion}}">{{$array_datos_info_laboral[0]->Medio_notificacion}}</option>
                                                         </select>

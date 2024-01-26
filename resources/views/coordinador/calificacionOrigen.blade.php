@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 @section('title', 'Origen ATEL')
+
+@section('css')
+    <link rel="stylesheet" type="text/css" href="/plugins/summernote/summernote.min.css">
+@stop
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
@@ -8,7 +12,6 @@
             ?>
         </div>
     </div>
-
 @stop
 @section('content')
 <div class="row">
@@ -659,6 +662,25 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <div class="form-check custom-control custom-radio">
+                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="documentos_origen" value="Documento_Origen" required>
+                                                <label class="form-check-label custom-control-label" for="documentos_origen"><strong>Solicitud Documentos Origen</strong></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-group">
+                                            <div class="form-check custom-control custom-radio">
+                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="otro_documento_origen" value="Otro_Documento" required>
+                                                <label class="form-check-label custom-control-label" for="otro_documento_origen"><strong>Otro Documento</strong></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <div class="row text-center">
                                     <label for="destinatario_principal" style="margin-left: 7px;">Destinatario Principal: <span style="color: red;">(*)</span></label>                                        
                                     <div class="col-3">
@@ -730,7 +752,9 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label for="cuerpo_comunicado">Cuerpo del comunicado <span style="color: red;">(*)</span></label>
-                                            <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" cols="30" rows="5" style="resize:none;" required></textarea>
+                                            <br>
+                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_pruebas">Pruebas Solicitadas</button>
+                                            <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" style="resize:none;" required></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -938,7 +962,25 @@
                                 <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
                                     <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de cambiar el destinatario
                                     (Afiliado y Empresa) debe seleccionar nuevamente la Forma de envio y Revisó y en (Otro) todos.
-                                </div>                              
+                                </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <div class="form-check custom-control custom-radio">
+                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="documentos_origen_editar" value="Documento_Origen" required>
+                                                <label class="form-check-label custom-control-label" for="documentos_origen_editar"><strong>Solicitud Documentos Origen</strong></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-group">
+                                            <div class="form-check custom-control custom-radio">
+                                                <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="otro_documento_origen_editar" value="Otro_Documento" required>
+                                                <label class="form-check-label custom-control-label" for="otro_documento_origen_editar"><strong>Otro Documento</strong></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                          
                                 <div class="row text-center">                                  
                                     <label for="destinatario_principal_act" style="margin-left: 7px;">Destinatario Principal: <span style="color: red;">(*)</span></label>                                        
                                     <div class="col-3">
@@ -1019,7 +1061,9 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label for="cuerpo_comunicado_act">Cuerpo del comunicado <span style="color: red;">(*)</span></label>
-                                            <textarea class="form-control" name="cuerpo_comunicado_act" id="cuerpo_comunicado_editar" cols="30" rows="5" style="resize:none;" required></textarea>
+                                            <br>
+                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_pruebas_editar">Pruebas Solicitadas</button>
+                                            <textarea class="form-control" name="cuerpo_comunicado_act" id="cuerpo_comunicado_editar" style="resize:none;" required></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -1334,4 +1378,5 @@
     </script>
     <script type="text/javascript" src="/js/calificacionOrigen.js"></script>
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script src="/plugins/summernote/summernote.min.js"></script>
 @stop

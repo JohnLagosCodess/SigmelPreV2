@@ -67,6 +67,7 @@ class RolesController extends Controller
                 'email' => ['Su usuario está inactivo, por favor contacte a soporte TIC para activarlo.']
             ]);
         }else {
+            session(['id_cambio_rol' => $estado_actual_rol_principal[0]->id_rol_principal]);
             $this->crear_menu();
             // Redireccionar al usuario acorde a su rol principal teniendo encuenta que su estado sea activo
             $datos = DB::table('sigmel_roles as sr')
@@ -214,6 +215,7 @@ class RolesController extends Controller
                 ])
                 ->get();
             $id_rol = $consulta[0]->id_rol_principal;
+            
         }
         
         $datos_menu = DB::table('sigmel_menuses as sm')
