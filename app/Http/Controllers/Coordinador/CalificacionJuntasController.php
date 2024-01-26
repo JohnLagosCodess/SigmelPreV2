@@ -22,6 +22,7 @@ use App\Models\sigmel_informacion_seguimientos_eventos;
 use App\Models\sigmel_informacion_eventos;
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
+use App\Models\sigmel_informacion_entidades;
 
 class CalificacionJuntasController extends Controller
 {
@@ -50,10 +51,10 @@ class CalificacionJuntasController extends Controller
         ->select('j.ID_evento','j.Enfermedad_heredada','j.F_transferencia_enfermedad','j.Primer_calificador','pa.Nombre_parametro as Calificador'
         ,'j.Nom_entidad','j.N_dictamen_controvertido','j.F_dictamen_controvertido','j.F_notifi_afiliado','j.Parte_controvierte_califi','pa2.Nombre_parametro as ParteCalificador','j.Nombre_controvierte_califi',
         'j.N_radicado_entrada_contro','j.Contro_origen','j.Contro_pcl','j.Contro_diagnostico','j.Contro_f_estructura','j.Contro_m_califi',
-        'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','pa3.Nombre_parametro as JrciNombre')
+        'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','sie.Nombre_entidad as JrciNombre')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa', 'j.Primer_calificador', '=', 'pa.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa2', 'j.Parte_controvierte_califi', '=', 'pa2.Id_Parametro')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa3', 'j.Jrci_califi_invalidez', '=', 'pa3.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'j.Jrci_califi_invalidez', '=', 'sie.Id_Entidad')
         ->where('j.ID_evento',  '=', $newIdEvento)
         ->get();
 
@@ -200,13 +201,24 @@ class CalificacionJuntasController extends Controller
         }
         // Listado Junta Jrci Invalidez
         if($parametro == 'lista_juntas_invalidez'){
-            $listado_juntas_invalidez = sigmel_lista_parametros::on('sigmel_gestiones')
-            ->select('Id_Parametro', 'Nombre_parametro')
+            // $listado_juntas_invalidez = sigmel_lista_parametros::on('sigmel_gestiones')
+            // ->select('Id_Parametro', 'Nombre_parametro')
+            // ->where([
+            //     ['Tipo_lista', '=', 'Jrci Invalidez'],
+            //     ['Estado', '=', 'activo']
+            // ])
+            // ->get();
+            $listado_juntas_invalidez = sigmel_informacion_entidades::on('sigmel_gestiones')
+            ->select('Id_Entidad as Id_Parametro', 'Nombre_entidad as Nombre_parametro')
             ->where([
-                ['Tipo_lista', '=', 'Jrci Invalidez'],
-                ['Estado', '=', 'activo']
+                ['IdTipo_entidad', '4'],
+                ['Estado_entidad', 'activo']
             ])
             ->get();
+
+            // echo "<pre>";
+            // print_r($listado_juntas_invalidez);
+            // echo "</pre>";
 
             $info_listado_juntas_invalidez = json_decode(json_encode($listado_juntas_invalidez, true));
             return response()->json($info_listado_juntas_invalidez);

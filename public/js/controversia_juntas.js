@@ -1020,8 +1020,17 @@ $(document).ready(function(){
     var opt_concepto_repo_jrci;
     $("[name='decision_dictamen_repo_jrci']").on("change", function(){
         opt_concepto_repo_jrci = $(this).val();
-         $(this).val(opt_concepto_repo_jrci);
-         iniciarIntervalo_concepto_repo_jrci();
+        $(this).val(opt_concepto_repo_jrci);
+        iniciarIntervalo_concepto_repo_jrci();
+
+        if (opt_concepto_repo_jrci == "Desacuerdo") {
+            $("#Asunto").val("RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN AL DICTAMEN DEL {{$f_dictamen_jrci}}");
+            var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de PCL dictaminada al (la) afiliado(a) {{$nombre_afiliado}} por la {{$junta_regional}}, por los diagnósticos {{$cie10_jrci}} otorga un porcentaje de {{$pcl_jrci}}, y fecha de estructuración {{$f_estructuracion_jrci}}.</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de la calificación de PCL de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes,de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
+            $("#cuerpo_comunicado").summernote('code', texto_insertar);
+        }else{
+            $("#Asunto").val("");
+            $("#cuerpo_comunicado").summernote('code', '');
+        }
     });
     // Función para validar items a mostrar
     const tiempoDeslizamiento_concepto_repo = 'slow';
@@ -1088,7 +1097,7 @@ $(document).ready(function(){
                     });
                     $("#causal_decision_repo").empty();
                     $('#causal_decision_repo').prop('required', false);
-                    ('#sustentacion_concepto_repo_jrci').prop('required', true);
+                    $('#sustentacion_concepto_repo_jrci').prop('required', true);
                    
                  break;
             }
@@ -2271,6 +2280,63 @@ $(document).ready(function(){
         $('#div_cual').slideDown('slow');        
     }
 
+
+    /* funcionalidad etiquetas para el tema de la proforma */
+    $("#cuerpo_comunicado").summernote({
+        height: 'auto',
+        toolbar: false
+    });
+
+    $('.note-editing-area').css("background", "white");
+    $('.note-editor').css("border", "1px solid black");
+
+    $("#btn_insertar_f_dictamen_jrci").click(function(e){
+        e.preventDefault();
+        var cursorPos = $("#Asunto").prop('selectionStart');
+        var currentValue = $("#Asunto").val();
+
+        var newValue = currentValue.slice(0, cursorPos) + '{{$f_dictamen_jrci}}' + currentValue.slice(cursorPos);
+
+        // Actualiza el valor del input
+        $("#Asunto").val(newValue);
+
+        // Coloca el cursor después de la etiqueta
+        $("#Asunto").prop('selectionStart', cursorPos + 21);
+        $("#Asunto").prop('selectionEnd', cursorPos + 21);
+        $("#Asunto").focus();
+    });
+
+    $("#btn_insertar_nombre_afiliado").click(function(e){
+        e.preventDefault();
+        var etiqueta_nombre_afiliado = "{{$nombre_afiliado}}";
+        $("#cuerpo_comunicado").summernote('editor.insertText', etiqueta_nombre_afiliado);
+    });
+    $("#btn_insertar_nombre_junta_regional").click(function(e){
+        e.preventDefault();
+        var etiqueta_junta_regional = "{{$junta_regional}}";
+        $("#cuerpo_comunicado").summernote('editor.insertText', etiqueta_junta_regional);
+    });
+    $("#btn_insertar_cie10_jrci").click(function(e){
+        e.preventDefault();
+        var etiqueta_cie10_jrci = "{{$cie10_jrci}}";
+        $("#cuerpo_comunicado").summernote('editor.insertText', etiqueta_cie10_jrci);
+    });
+    $("#btn_insertar_pcl_jrci").click(function(e){
+        e.preventDefault();
+        var etiqueta_pcl_jrci = "{{$pcl_jrci}}";
+        $("#cuerpo_comunicado").summernote('editor.insertText', etiqueta_pcl_jrci);
+    });
+    $("#btn_insertar_f_estructuracion_jrci").click(function(e){
+        e.preventDefault();
+        var etiqueta_f_estructuracion_jrci = "{{$f_estructuracion_jrci}}";
+        $("#cuerpo_comunicado").summernote('editor.insertText', etiqueta_f_estructuracion_jrci);
+    });
+    $("#btn_insertar_sustentacion_jrci").click(function(e){
+        e.preventDefault();
+        var etiqueta_sustentacion_jrci = "{{$sustentacion_jrci}}";
+        $("#cuerpo_comunicado").summernote('editor.insertText', etiqueta_sustentacion_jrci);
+    });
+
     //Captura Formulario Correspondencia
     $('#form_correspondencia').submit(function (e){
         e.preventDefault();              
@@ -2397,7 +2463,91 @@ $(document).ready(function(){
 
             }          
         })
-    })
+    });
+
+    $("#generar_proforma_recurso_reposicion_pcl").click(function(event){
+        event.preventDefault();
+
+        var token = $('input[name=_token]').val();
+        // Recopilación de datos
+        var id_cliente = $("#id_cliente").val();
+        var id_evento = $("#newId_evento").val();
+        var id_asignacion = $("#newId_asignacion").val();
+        var id_proceso = $("#Id_proceso").val();
+        var tipo_identificacion = $("#tipo_documento").val();
+        var num_identificacion = $("#identificacion").val();
+        var id_Jrci_califi_invalidez = $("#id_Jrci_califi_invalidez").val();
+        var nombre_junta_regional = $("#jrci_califi_invalidez").val();
+        var f_dictamen_jrci_emitido = $("#f_dictamen_jrci_emitido").val();
+        var nombre_afiliado = $("#nombre_afiliado").val();
+        var porcentaje_pcl_jrci_emitido = $("#porcentaje_pcl_jrci_emitido").val();
+        var f_estructuracion_contro_jrci_emitido = $("#f_estructuracion_contro_jrci_emitido").val();
+        var sustentacion_concepto_jrci = $("#sustentacion_concepto_jrci").val();
+        var copia_empleador = $('#empleador').filter(":checked").val();
+        var copia_eps = $('#eps').filter(":checked").val();
+        var copia_afp = $('#afp').filter(":checked").val();
+        var copia_arl = $('#arl').filter(":checked").val();
+        var asunto = $("#Asunto").val();
+        var cuerpo = $("#cuerpo_comunicado").summernote('code');
+        var firmar = $('#firmar').filter(":checked").val();
+        var nro_radicado = $("#radicado").val();
+
+        var datos_generacion_proforma_recurso_reposicion_pcl = {
+            '_token': token,
+            'id_cliente': id_cliente,
+            'id_evento': id_evento,
+            'id_asignacion': id_asignacion,
+            'id_proceso': id_proceso,
+            'tipo_identificacion': tipo_identificacion,
+            'num_identificacion': num_identificacion,
+            'id_Jrci_califi_invalidez': id_Jrci_califi_invalidez,
+            'nombre_junta_regional': nombre_junta_regional,
+            'f_dictamen_jrci_emitido': f_dictamen_jrci_emitido,
+            'nombre_afiliado': nombre_afiliado,
+            'porcentaje_pcl_jrci_emitido': porcentaje_pcl_jrci_emitido,
+            'f_estructuracion_contro_jrci_emitido': f_estructuracion_contro_jrci_emitido,
+            'sustentacion_concepto_jrci': sustentacion_concepto_jrci,
+            'copia_empleador': copia_empleador,
+            'copia_eps': copia_eps,
+            'copia_afp': copia_afp,
+            'copia_arl': copia_arl,
+            'asunto': asunto,
+            'cuerpo': cuerpo,
+            'firmar': firmar,
+            'nro_radicado': nro_radicado
+        }
+        
+        $.ajax({    
+            type:'POST',
+            url:'/DescargarProformaRecursoReposicionPcl',
+            data: datos_generacion_proforma_recurso_reposicion_pcl,
+            xhrFields: {
+                responseType: 'blob' // Indica que la respuesta es un blob
+            },
+            success: function (response, status, xhr) {
+                var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+        
+                // Crear un enlace de descarga similar al ejemplo anterior
+                var nombre_documento = "JUN_DESACUERDO_"+id_asignacion+"_"+num_identificacion+".docx";                    
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
+        
+                // Adjuntar el enlace al documento y activar el evento de clic
+                document.body.appendChild(link);
+                link.click();
+        
+                // Eliminar el enlace del documento
+                document.body.removeChild(link);
+            },
+            error: function (error) {
+                // Manejar casos de error
+                console.error('Error al descargar el word:', error);
+            }       
+        });
+
+
+    });
 
 });
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/

@@ -754,6 +754,7 @@ Route::post('/DescargaProformaNotiDML', [DeterminacionOrigenATEL::class, 'Descar
 Route::post('/DescargaProformaDML', [DeterminacionOrigenATEL::class, 'DescargaProformaDML']);
 // Proforma Acuerdo Calificación de EPS
 Route::post('/DescargarProformaPronunciamiento', [PronunciamientoOrigenController::class, 'DescargarProformaPronunciamiento']);
+Route::post('/DescargarProformaRecursoReposicionPcl', [ControversiaJuntasController::class, 'DescargarProformaRecursoReposicionPcl']);
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 

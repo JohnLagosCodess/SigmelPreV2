@@ -375,7 +375,7 @@ $(document).ready(function(){
     
     /* VALIDACIÓN MOSTRAR ITEM DE CORRESPONDECIA */
     var opt_correspondencia;
-     $("[name='decision_pr']").on("change", function(){
+    $("[name='decision_pr']").on("change", function(){
         opt_correspondencia = $(this).val();
         $(this).val(opt_correspondencia);
         iniciarIntervalo_correspon();
@@ -651,6 +651,11 @@ $(document).ready(function(){
         var copia_arl = $('#copia_arl').filter(":checked").val();
         var firmar = $('#firmar').filter(":checked").val();
         var Id_cliente_firma = $('#Id_cliente_firma').val();
+        var nombre_entidad = $("#nom_entidad").val();
+        var direccion_entidad = $("#dir_calificador").val();
+        var telefono_entidad = $("#telefono_calificador").val();
+        var ciudad_entidad = $("#ciudad_calificador").val();
+        var departamento_entidad = $("#depar_calificador").val();
 
         var datos_generacion_proforma = {
             '_token': token,
@@ -675,9 +680,14 @@ $(document).ready(function(){
             'copia_afp': copia_afp,
             'copia_arl': copia_arl,
             'firmar': firmar,
-            'Id_cliente_firma': Id_cliente_firma
+            'Id_cliente_firma': Id_cliente_firma,
+            'nombre_entidad': nombre_entidad,
+            'direccion_entidad': direccion_entidad,
+            'telefono_entidad': telefono_entidad,
+            'ciudad_entidad': ciudad_entidad,
+            'departamento_entidad': departamento_entidad
         }
-
+        
         $.ajax({    
             type:'POST',
             url:'/DescargarProformaPronunciamiento',

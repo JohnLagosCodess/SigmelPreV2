@@ -1412,6 +1412,32 @@ $(document).ready(function(){
         }
     });
 
+    /* VALIDACIÓN Información laboral */
+    var tipo_laboral = $("input[name='t_laboral']").val();
+    console.log(tipo_laboral);
+    if (tipo_laboral == "Empleado actual") {
+        // Set the 'required' attribute to true for specific elements
+        document.getElementById('empresa').required = true;
+        document.getElementById('medio_notificacion_laboral').required = true;
+        document.getElementById('nit_cc').required = false;
+    
+        // Update the visibility of certain elements using the 'd-none' class
+        $(".no_nom_empresa").addClass('d-none');
+        $(".si_nom_empresa").removeClass('d-none');
+        $(".no_medio_noti").addClass('d-none');
+        $(".si_medio_noti").removeClass('d-none');
+    } else {
+        // Set the 'required' attribute to false for specific elements
+        document.getElementById('empresa').required = false;
+        document.getElementById('nit_cc').required = false;
+        document.getElementById('medio_notificacion_laboral').required = false;
+    
+        // Update the visibility of certain elements using the 'd-none' class
+        $(".si_nom_empresa").addClass('d-none');
+        $(".no_nom_empresa").removeClass('d-none');
+        $(".si_medio_noti").addClass('d-none');
+        $(".no_medio_noti").removeClass('d-none');
+    }
     /* VALIDACIÓN Afiliado / Beneficiario */
     var id_tipo_afiliado = $('#tipo_afiliado').val();
 
@@ -1847,7 +1873,12 @@ $(document).ready(function(){
             $(".columna_row4_laboral").slideDown('slow');
             $(".columna_row5_laboral").slideDown('slow');
             document.getElementById('empresa').required = true;
-            document.getElementById('nit_cc').required = true;
+            document.getElementById('medio_notificacion_laboral').required = true;
+            document.getElementById('nit_cc').required = false;
+            $(".no_nom_empresa").addClass('d-none');
+            $(".si_nom_empresa").removeClass('d-none');
+            $(".no_medio_noti").addClass('d-none');
+            $(".si_medio_noti").removeClass('d-none');
         }
     }); 
 
@@ -1859,8 +1890,13 @@ $(document).ready(function(){
             $(".columna_row3_laboral").slideDown('slow');
             $(".columna_row4_laboral").slideDown('slow');
             $(".columna_row5_laboral").slideDown('slow');
-            document.getElementById('empresa').required = true;
-            document.getElementById('nit_cc').required = true;
+            document.getElementById('empresa').required = false;
+            document.getElementById('nit_cc').required = false;
+            document.getElementById('medio_notificacion_laboral').required = false;
+            $(".si_nom_empresa").addClass('d-none');
+            $(".no_nom_empresa").removeClass('d-none');
+            $(".si_medio_noti").addClass('d-none');
+            $(".no_medio_noti").removeClass('d-none');
         }
     }); 
 
@@ -1874,6 +1910,7 @@ $(document).ready(function(){
             $(".columna_row5_laboral").slideUp('slow');
             document.getElementById('empresa').required = false;
             document.getElementById('nit_cc').required = false;
+            document.getElementById('medio_notificacion_laboral').required = false;
         }
     }); 
     /* VALIDACIÓN MOSTRAR CAMPOS LABORAL MODAL REGISTRAR */ 

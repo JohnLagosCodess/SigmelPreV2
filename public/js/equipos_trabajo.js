@@ -12,7 +12,7 @@ $(document).ready(function(){
     let token = $('input[name=_token]').val();
     let datos_listado_proceso = {
         '_token': token,
-        'parametro' : "listado_proceso"
+        'parametro' : "listado_proceso_equipo_trabajo"
     };
     $.ajax({
         type:'POST',

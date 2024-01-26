@@ -1682,7 +1682,12 @@ $(document).ready(function(){
             $(".columna_row4_laboral").slideDown('slow');
             $(".columna_row5_laboral").slideDown('slow');
             document.getElementById('empresa').required = true;
-            document.getElementById('nit_cc').required = true;
+            document.getElementById('medio_notificacion_laboral').required = true;
+            document.getElementById('nit_cc').required = false;
+            $(".no_nom_empresa").addClass('d-none');
+            $(".si_nom_empresa").removeClass('d-none');
+            $(".no_medio_noti").addClass('d-none');
+            $(".si_medio_noti").removeClass('d-none');
         }
     }); 
 
@@ -1694,8 +1699,13 @@ $(document).ready(function(){
             $(".columna_row3_laboral").slideDown('slow');
             $(".columna_row4_laboral").slideDown('slow');
             $(".columna_row5_laboral").slideDown('slow');
-            document.getElementById('empresa').required = true;
-            document.getElementById('nit_cc').required = true;
+            document.getElementById('empresa').required = false;
+            document.getElementById('nit_cc').required = false;
+            document.getElementById('medio_notificacion_laboral').required = false;
+            $(".si_nom_empresa").addClass('d-none');
+            $(".no_nom_empresa").removeClass('d-none');
+            $(".si_medio_noti").addClass('d-none');
+            $(".no_medio_noti").removeClass('d-none');
         }
     }); 
 
@@ -1709,6 +1719,7 @@ $(document).ready(function(){
             $(".columna_row5_laboral").slideUp('slow');
             document.getElementById('empresa').required = false;
             document.getElementById('nit_cc').required = false;
+            document.getElementById('medio_notificacion_laboral').required = false;
         }
     }); 
 

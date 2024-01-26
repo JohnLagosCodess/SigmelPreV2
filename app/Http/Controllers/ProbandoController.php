@@ -447,10 +447,11 @@ class ProbandoController extends Controller
             'asunto' => 'ACUERDO CALIFICACIÓN DE EPS',
             'identificacion' => '1030651087',
             'fecha_evento' => $date,
+            'nombre_usuario' => 'Maurin',
         ];
 
         $pdf = app('dompdf.wrapper');
-        $pdf->loadView('/Proformas/Proformas_Arl/Origen_Atel/acuerdo_calificacion', $data);
+        $pdf->loadView('/Proformas/Proformas_Arl/Juntas/recurso_reposicion_pcl', $data);
         $fileName = 'pdfsito.pdf';
         return $pdf->stream($fileName);
     }

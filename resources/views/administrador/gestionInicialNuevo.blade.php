@@ -308,8 +308,8 @@
                                                 </div>
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="afp" class="col-form label">AFP</label>
-                                                        <select class="afp custom-select" name="afp" id="afp"></select>
+                                                        <label for="afp" class="col-form label">AFP<span style="color:red;">(*)</span></label>
+                                                        <select class="afp custom-select" name="afp" id="afp" required></select>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm columna_otro_afp d-none">
@@ -320,8 +320,8 @@
                                                 </div>
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="arl_info_afiliado" class="col-form label">ARL</label>
-                                                        <select class="arl_info_afiliado custom-select" name="arl_info_afiliado" id="arl_info_afiliado"></select>
+                                                        <label for="arl_info_afiliado" class="col-form label">ARL<span style="color:red;">(*)</span></label>
+                                                        <select class="arl_info_afiliado custom-select" name="arl_info_afiliado" id="arl_info_afiliado" required></select>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm columna_otro_arl_info_afiliado d-none">
@@ -460,13 +460,14 @@
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="empresa" class="col-form-label">Empresa <span style="color:red;">(*)</span></label>
+                                                    <label for="empresa" class="col-form-label si_nom_empresa">Empresa <span style="color:red;">(*)</span></label>
+                                                    <label for="empresa" class="col-form-label no_nom_empresa d-none">Empresa</label>
                                                     <input type="text" class="empresa form-control" name="empresa" id="empresa">
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="nit_cc" class="col-form-label">NIT / CC <span style="color:red;">(*)</span></label>
+                                                    <label for="nit_cc" class="col-form-label">NIT / CC </label>
                                                     <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc">
                                                 </div>
                                             </div>
@@ -582,7 +583,8 @@
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="medio_notificacion_laboral" class="col-form-label">Medio de Notificación <span style="color:red;">(*)</span></label>
+                                                    <label for="medio_notificacion_laboral" class="col-form-label si_medio_noti">Medio de Notificación <span style="color:red;">(*)</span></label>
+                                                    <label for="medio_notificacion_laboral" class="col-form-label no_medio_noti">Medio de Notificación</label>
                                                     <select class="medio_notificacion_laboral custom-select" name="medio_notificacion_laboral" id="medio_notificacion_laboral"></select>
                                                 </div>
                                             </div>

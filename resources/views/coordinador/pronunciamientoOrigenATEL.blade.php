@@ -74,9 +74,10 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label for="primer_calificador">Primer Calificador<span style="color: red;">(*)</span></label>
+                                            <label for="primer_calificador">Primer Calificador <span style="color: red;">(*)</span></label>
                                             <select class="custom-select primer_calificador" name="primer_calificador" id="primer_calificador" required>
                                                 @if (!empty($info_pronuncia[0]->Id_primer_calificador))
+                                                    <option>Seleccione una opción</option>
                                                     <option value="{{$info_pronuncia[0]->Id_primer_calificador}}" selected>{{$info_pronuncia[0]->Tipo_Entidad}}</option>
                                                  @else
                                                     <option value="">Seleccione una opción</option>
@@ -86,7 +87,8 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label for="nombre_calificador">Nombre de entidad calificadora<span style="color: red;">(*)</span></label>
+                                            <label for="nombre_calificador">Nombre de entidad calificadora <span style="color: red;">(*)</span></label>
+                                            
                                             <select class="custom-select nombre_calificador" name="nombre_calificador" id="nombre_calificador" disabled required>
                                                 @if (!empty($info_pronuncia[0]->Id_nombre_calificador))
                                                     <option value="{{$info_pronuncia[0]->Id_nombre_calificador}}" selected>{{$info_pronuncia[0]->Nombre_entidad}}</option>
@@ -98,7 +100,7 @@
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label for="nit_calificador">NIT<span style="color: red;">(*)</span></label>
+                                            <label for="nit_calificador">NIT <span style="color: red;">(*)</span></label>
                                             @if (!empty($info_pronuncia[0]->Nit_calificador))
                                                 <input type="text" class="form-control" name="nit_calificador" id="nit_calificador" value="{{$info_pronuncia[0]->Nit_calificador}}" readonly>
                                             @else
@@ -108,7 +110,7 @@
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label for="dir_calificador">Dirección<span style="color: red;">(*)</span></label>
+                                            <label for="dir_calificador">Dirección <span style="color: red;">(*)</span></label>
                                             @if (!empty($info_pronuncia[0]->Dir_calificador))
                                                 <input type="text" class="form-control" name="dir_calificador" id="dir_calificador" value="{{$info_pronuncia[0]->Dir_calificador}}" readonly>
                                             @else
@@ -118,7 +120,7 @@
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label for="mail_calificador">E-mail<span style="color: red;">(*)</span></label>
+                                            <label for="mail_calificador">E-mail <span style="color: red;">(*)</span></label>
                                             @if (!empty($info_pronuncia[0]->Email_calificador))
                                                 <input type="text" class="form-control" name="mail_calificador" id="mail_calificador" value="{{$info_pronuncia[0]->Email_calificador}}" readonly>
                                             @else
@@ -128,7 +130,7 @@
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label for="telefono_calificador">Teléfonos<span style="color: red;">(*)</span></label>
+                                            <label for="telefono_calificador">Teléfonos <span style="color: red;">(*)</span></label>
                                             @if (!empty($info_pronuncia[0]->Telefono_calificador))
                                                 <input type="text" class="form-control" name="telefono_calificador" id="telefono_calificador" value="{{$info_pronuncia[0]->Telefono_calificador}}" readonly>
                                             @else
@@ -138,7 +140,7 @@
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label for="depar_calificador">Departamento<span style="color: red;">(*)</span></label>
+                                            <label for="depar_calificador">Departamento <span style="color: red;">(*)</span></label>
                                             @if (!empty($info_pronuncia[0]->Depar_calificador))
                                                 <input type="text" class="form-control" name="depar_calificador" id="depar_calificador" value="{{$info_pronuncia[0]->Depar_calificador}}" readonly>
                                             @else
@@ -149,7 +151,7 @@
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label for="ciudad_calificador">Ciudad<span style="color: red;">(*)</span></label>
+                                            <label for="ciudad_calificador">Ciudad <span style="color: red;">(*)</span></label>
                                             @if (!empty($info_pronuncia[0]->Ciudad_calificador))
                                                 <input type="text" class="form-control" name="ciudad_calificador" id="ciudad_calificador" value="{{$info_pronuncia[0]->Ciudad_calificador}}" readonly>
                                             @else
@@ -609,6 +611,8 @@
 
                                             <button class="btn btn-info" id="generar_proforma">PDF</button>
                                         @elseif (!empty($info_pronuncia[0]->Decision) && $info_pronuncia[0]->Decision=='Desacuerdo')
+                                            {{-- Nombre entidad calificadora --}}
+                                            <input type="hidden" id="nom_entidad" value="<?php if(!empty($info_pronuncia[0]->Nombre_entidad)){echo $info_pronuncia[0]->Nombre_entidad;}?>">
                                             {{-- tipo de proforma --}}
                                             <input type="hidden" id="bandera_tipo_proforma" value="proforma_desacuerdo">
                                             {{-- Tipo de documento --}}
