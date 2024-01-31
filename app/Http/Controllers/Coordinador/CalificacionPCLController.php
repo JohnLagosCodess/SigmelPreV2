@@ -1287,11 +1287,11 @@ class CalificacionPCLController extends Controller
             if(count($firmaclientecompleta) > 0){
                 $Firma_cliente = $firmaclientecompleta[0]->Firma;
             }else{
-                $Firma_cliente = '';
+                $Firma_cliente = 'No firma';
             }
             
         }else{
-            $Firma_cliente = '';
+            $Firma_cliente = 'No firma';
         }
         
         if($request->tipo_documento_descarga_califi_editar == "Documento_Origen"){
@@ -1466,6 +1466,26 @@ class CalificacionPCLController extends Controller
             
             $string_pruebas_solicitadas = "<b>".implode(", ", $pruebas_solicitadas)."</b>";
 
+            $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+            ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+            ->where('Id_cliente', $id_cliente)->get();
+    
+            if(count($datos_footer) > 0){
+                $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+                $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+                $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+                $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+                $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+    
+            }else{
+                $footer_dato_1 = "";
+                $footer_dato_2 = "";
+                $footer_dato_3 = "";
+                $footer_dato_4 = "";
+                $footer_dato_5 = "";
+            }
+    
+
             $data = [
                 'logo_header' => $logo_header,
                 'id_cliente' => $id_cliente,
@@ -1487,6 +1507,11 @@ class CalificacionPCLController extends Controller
                 'Firma_cliente' => $Firma_cliente,
                 'nombre_usuario' => $nombre_usuario,
                 'Agregar_copia' => $Agregar_copias,
+                'footer_dato_1' => $footer_dato_1,
+                'footer_dato_2' => $footer_dato_2,
+                'footer_dato_3' => $footer_dato_3,
+                'footer_dato_4' => $footer_dato_4,
+                'footer_dato_5' => $footer_dato_5,
             ];
 
             // Creación y guardado del pdf

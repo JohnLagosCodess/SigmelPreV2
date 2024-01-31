@@ -748,7 +748,7 @@ class DeterminacionOrigenATEL extends Controller
             "mensaje" => $mensaje
         ); 
 
-    return json_decode(json_encode($mensajes, true));
+        return json_decode(json_encode($mensajes, true));
     
 
     }

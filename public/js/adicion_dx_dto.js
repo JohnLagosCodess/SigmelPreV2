@@ -1418,7 +1418,7 @@ $(document).ready(function(){
         
         $.ajax({    
             type:'POST',
-            url:'/DescargaProformaNotiDML',
+            url:'/ADescargaProformaNotiDML',
             data: datos_generacion_pdf_noti_dml_origen,
             xhrFields: {
                 responseType: 'blob' // Indica que la respuesta es un blob
@@ -1492,7 +1492,7 @@ $(document).ready(function(){
         
         $.ajax({    
             type:'POST',
-            url:'/DescargaProformaDML',
+            url:'/ADescargaProformaDML',
             data: datos_generacion_pdf_dml_origen,
             xhrFields: {
                 responseType: 'blob' // Indica que la respuesta es un blob

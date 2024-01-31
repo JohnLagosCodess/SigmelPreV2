@@ -2549,7 +2549,7 @@ $(document).ready(function(){
         
         $.ajax({    
             type:'POST',
-            url:'/DescargarProformaRecursoReposicionPcl',
+            url:'/DescargarProformaRecursoReposicion',
             data: datos_generacion_proforma_recurso_reposicion_pcl,
             xhrFields: {
                 responseType: 'blob' // Indica que la respuesta es un blob

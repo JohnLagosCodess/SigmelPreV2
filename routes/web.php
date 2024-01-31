@@ -764,11 +764,13 @@ Route::post('/ActualizarParametrizacionJuntas', [ParametrizacionController::clas
 /* DESCARGA DE PROFORMAS */
 // Proforma Notificación DML ORIGEN ATEL (OFICIO REMISORIO)
 Route::post('/DescargaProformaNotiDML', [DeterminacionOrigenATEL::class, 'DescargaProformaNotiDML']);
+Route::post('/ADescargaProformaNotiDML', [AdicionDxDTO::class, 'ADescargaProformaNotiDML']);
 // Proforma DML ORIGEN (DICTAMEN)
 Route::post('/DescargaProformaDML', [DeterminacionOrigenATEL::class, 'DescargaProformaDML']);
+Route::post('/ADescargaProformaDML', [AdicionDxDTO::class, 'ADescargaProformaDML']);
 // Proforma Acuerdo Calificación de EPS
 Route::post('/DescargarProformaPronunciamiento', [PronunciamientoOrigenController::class, 'DescargarProformaPronunciamiento']);
-Route::post('/DescargarProformaRecursoReposicionPcl', [ControversiaJuntasController::class, 'DescargarProformaRecursoReposicionPcl']);
+Route::post('/DescargarProformaRecursoReposicion', [ControversiaJuntasController::class, 'DescargarProformaRecursoReposicion']);
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 

@@ -1265,7 +1265,7 @@ class ControversiaJuntasController extends Controller
 
     }
 
-    public function DescargarProformaRecursoReposicionPcl(Request $request){
+    public function DescargarProformaRecursoReposicion(Request $request){
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
@@ -1513,6 +1513,26 @@ class ControversiaJuntasController extends Controller
             $ruta_logo = "";
         }
 
+        /* Extraemos los datos del footer */
+        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        ->where('Id_cliente', $id_cliente)->get();
+
+        if(count($datos_footer) > 0){
+            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+
+        }else{
+            $footer_dato_1 = "";
+            $footer_dato_2 = "";
+            $footer_dato_3 = "";
+            $footer_dato_4 = "";
+            $footer_dato_5 = "";
+        }
+
         /* Construcción proforma en formato docx (word) */
         $phpWord = new PhpWord();
         // Configuramos la fuente y el tamaño de letra para todo el documento
@@ -1650,28 +1670,30 @@ class ControversiaJuntasController extends Controller
             }
         }
 
-
-
         $section->addTextBreak();
         Html::addHtml($section, $cuerpo, false, true);
         $section->addTextBreak();
         $section->addText('Cordialmente,');
         $section->addTextBreak();
 
-        // Agregar </img> en la imagen de la firma
-        $patronetiqueta = '/<img(.*?)>/';
-        $Firma_cliente = preg_replace($patronetiqueta, '<img$1></img>', $Firma_cliente);
+        if($Firma_cliente != "No firma"){
+            // Agregar </img> en la imagen de la firma
+            $patronetiqueta = '/<img(.*?)>/';
+            $Firma_cliente = preg_replace($patronetiqueta, '<img$1></img>', $Firma_cliente);
+            
+            // Quitamos el style y agregamos los atributos width y height
+            $patronstyle = '/<img[^>]+style="width:\s*([\d.]+)px;\s*height:\s*([\d.]+)px[^"]*"[^>]*>/';
+            preg_match($patronstyle, $Firma_cliente, $coincidencias);
+            $width = $coincidencias[1]; // Valor de width
+            $height = $coincidencias[2]; // Valor de height
         
-        // Quitamos el style y agregamos los atributos width y height
-        $patronstyle = '/<img[^>]+style="width:\s*([\d.]+)px;\s*height:\s*([\d.]+)px[^"]*"[^>]*>/';
-        preg_match($patronstyle, $Firma_cliente, $coincidencias);
-        $width = $coincidencias[1]; // Valor de width
-        $height = $coincidencias[2]; // Valor de height
-    
-        $nuevoStyle = 'width="'.$width.'" height="'.$height.'"';
-        $htmlModificado = reemplazarStyleImg($Firma_cliente, $nuevoStyle);
-        
-        Html::addHtml($section, $htmlModificado, false, true);
+            $nuevoStyle = 'width="'.$width.'" height="'.$height.'"';
+            $htmlModificado = reemplazarStyleImg($Firma_cliente, $nuevoStyle);
+            Html::addHtml($section, $htmlModificado, false, true);
+        }else{
+            $section->addText($Firma_cliente);
+        }
+
         $section->addTextBreak();
         $section->addText('HUGO IGNACIO GÓMEZ DAZA', array('bold' => true));
         $section->addTextBreak();
@@ -1736,16 +1758,21 @@ class ControversiaJuntasController extends Controller
         $table = $footer->addTable('myTable');
 
         $table->addRow();
-        $table->addCell(80000, ['gridSpan' => 2])->addText('Seguros Alfa S.A. y Seguros de Vida Alfa S.A.', array('size' => 10, 'color' => '#184F56', 'bold' => true));
+        // $table->addCell(80000, ['gridSpan' => 2])->addText('Seguros Alfa S.A. y Seguros de Vida Alfa S.A.', array('size' => 10, 'color' => '#184F56', 'bold' => true));
+        $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_1, array('size' => 10));
         $table->addRow();
-        $table->addCell()->addText('Líneas de atención al cliente', array('size' => 10, 'color' => '#184F56', 'bold' => true));
+        // $table->addCell()->addText('Líneas de atención al cliente', array('size' => 10, 'color' => '#184F56', 'bold' => true));
+        $table->addCell()->addText($footer_dato_2, array('size' => 10));
         $cell = $table->addCell();
         $textRun = $cell->addTextRun(['alignment' => 'right']);
-        $textRun->addText('www.segurosalfa.com.co', array('size' => 10, 'color' => '#184F56', 'bold' => true));
+        // $textRun->addText('www.segurosalfa.com.co', array('size' => 10));
+        $textRun->addText($footer_dato_3, array('size' => 10));
         $table->addRow();
-        $table->addCell(80000, ['gridSpan' => 2])->addText('Bogotá: 3077032, a nivel nacional: 018000122532', array('size' => 10));
+        // $table->addCell(80000, ['gridSpan' => 2])->addText('Bogotá: 3077032, a nivel nacional: 018000122532', array('size' => 10));
+        $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_4, array('size' => 10));
         $table->addRow();
-        $table->addCell(80000, ['gridSpan' => 2])->addText('Habilitadas en jornada continua de lunes a viernes de 8:00 a.m. a 6:00 p.m.', array('size' => 10));
+        // $table->addCell(80000, ['gridSpan' => 2])->addText('Habilitadas en jornada continua de lunes a viernes de 8:00 a.m. a 6:00 p.m.', array('size' => 10));
+        $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_5, array('size' => 10));
         $table->addRow();
         $cell1 = $table->addCell(80000, ['gridSpan' => 2]);
         $textRun = $cell1->addTextRun(['alignment' => 'center']);
