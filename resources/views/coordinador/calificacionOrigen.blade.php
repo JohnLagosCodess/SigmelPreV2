@@ -270,7 +270,7 @@
                                             <div class="form-group">
                                                 <label for="accion">Acción <span style="color: red;">(*)</span></label>
                                                 <input type="hidden" id="bd_id_accion" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Id_accion)){echo $array_datos_calificacionOrigen[0]->Id_accion;}?>">
-                                                <select class="custom-select accion" name="accion" id="accion" style="color: red;">
+                                                <select class="custom-select accion" name="accion" id="accion" style="color: red;" required>
                                                     {{-- <option value="NO ESTA DEFINIDO">NO ESTA DEFINIDO</option> --}}
                                                 </select>
                                             </div>

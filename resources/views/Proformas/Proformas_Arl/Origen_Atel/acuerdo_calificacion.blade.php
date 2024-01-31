@@ -19,7 +19,6 @@
             left: 0cm;
             width: 100%;
             text-align: right;
-            
         }
 
         .logo_header{
@@ -92,6 +91,7 @@
         }
 
         .content{
+            margin-top: -0.3cm;
             margin-left: 0.5cm;
             margin-right: 0.5cm;
         }
@@ -122,6 +122,24 @@
         <table class="tabla_footer">
             <tbody>
                 <tr>
+                    <td colspan="2" class="color_letras_alfa1">{{$footer_dato_1}}</td>
+                </tr>
+                <tr>
+                    <td class="color_letras_alfa1">{{$footer_dato_2}}</td>
+                    <td style="text-align: right;" class="color_letras_alfa1">{{$footer_dato_3}}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">{{$footer_dato_4}}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">{{$footer_dato_5}}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;" colspan="2"><p class="page">Página </p></td>
+                </tr>
+            </tbody>
+            {{-- <tbody>
+                <tr>
                     <td colspan="2" class="color_letras_alfa">Seguros Alfa S.A. y Seguros de Vida Alfa S.A.</td>
                 </tr>
                 <tr>
@@ -137,7 +155,7 @@
                 <tr>
                     <td style="text-align: center;" colspan="2"><p class="page">Página </p></td>
                 </tr>
-            </tbody>
+            </tbody> --}}
         </table>
     </div>
     <div id="footer2">
@@ -212,7 +230,7 @@
                 print_r($cuerpo);
             ?>
         </section>
-        <br>
+        {{-- <br> --}}
         <section class="fuente_todo_texto">
             Cordialmente,
             <br><br>

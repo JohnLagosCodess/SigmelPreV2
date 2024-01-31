@@ -454,6 +454,11 @@ class AdministradorController extends Controller
                 'Estado' => $request->Estado,
                 'Codigo_cliente' => $request->Codigo_cliente,
                 'Nombre_usuario' => $nombre_usuario,
+                'footer_dato_1' => $request->footer_dato_1,
+                'footer_dato_2' => $request->footer_dato_2,
+                'footer_dato_3' => $request->footer_dato_3,
+                'footer_dato_4' => $request->footer_dato_4,
+                'footer_dato_5' => $request->footer_dato_5,
                 'F_registro' => $request->Fecha_creacion,
                 'created_at' => $date_con_hora,
             );
@@ -772,6 +777,8 @@ class AdministradorController extends Controller
                         }
                     }
                 };
+
+                
             }
 
             $mensaje_mostrar = "Información de cliente guardada satisfactoriamente";
@@ -1382,6 +1389,11 @@ class AdministradorController extends Controller
                 'Estado' => $request->Estado,
                 'Codigo_cliente' => $request->Codigo_cliente,
                 'Logo_cliente' => $nombre_logo,
+                'footer_dato_1' => $request->footer_dato_1,
+                'footer_dato_2' => $request->footer_dato_2,
+                'footer_dato_3' => $request->footer_dato_3,
+                'footer_dato_4' => $request->footer_dato_4,
+                'footer_dato_5' => $request->footer_dato_5,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $request->Fecha_creacion,
                 'updated_at' => $date_con_hora,

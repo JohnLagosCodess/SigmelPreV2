@@ -24,6 +24,7 @@ use App\Models\sigmel_informacion_eventos;
 use App\Models\sigmel_clientes;
 use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_afiliado_eventos;
+use App\Models\sigmel_informacion_asignacion_eventos;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
 use PhpOffice\PhpWord\Shared\Html;
@@ -474,6 +475,16 @@ class PronunciamientoOrigenController extends Controller
                     sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')->insert($insertar_diagnostico);
                 } 
             }
+
+            // Actualizacion del profesional calificador
+            $datos_profesional_calificador = [
+                'Id_profesional' => Auth::user()->id,
+                'Nombre_profesional' => Auth::user()->name
+            ];
+        
+            sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            ->where('Id_Asignacion', $Id_Asignacion_Pronuncia)->update($datos_profesional_calificador);
+
             $mensajes = array(
                 "parametro" => 'agregar_pronunciamiento',
                 "parametro2" => 'guardo',
@@ -597,6 +608,15 @@ class PronunciamientoOrigenController extends Controller
                 "parametro2" => 'guardo',
                 "mensaje2" => 'Actualiza satisfactoriamente.'
             ); 
+
+            // Actualizacion del profesional calificador
+            $datos_profesional_calificador = [
+                'Id_profesional' => Auth::user()->id,
+                'Nombre_profesional' => Auth::user()->name
+            ];
+        
+            sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            ->where('Id_Asignacion', $Id_Asignacion_Pronuncia)->update($datos_profesional_calificador);
 
             return json_decode(json_encode($mensajes, true));
 
@@ -855,6 +875,26 @@ class PronunciamientoOrigenController extends Controller
             $logo_header = "Sin logo";
             $ruta_logo = "";
         }
+
+        /* Extraemos los datos del footer */
+        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        ->where('Id_cliente', $Id_cliente_firma)->get();
+
+        if(count($datos_footer) > 0){
+            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+
+        }else{
+            $footer_dato_1 = "";
+            $footer_dato_2 = "";
+            $footer_dato_3 = "";
+            $footer_dato_4 = "";
+            $footer_dato_5 = "";
+        }
         
         if ($bandera_tipo_proforma == "proforma_acuerdo") {
             $datos_finales_proforma = [
@@ -879,7 +919,12 @@ class PronunciamientoOrigenController extends Controller
                 'origen' => $origen,
                 'Firma_cliente' => $Firma_cliente,
                 'Agregar_copia' => $Agregar_copias,
-                'nombre_usuario' => Auth::user()->name
+                'nombre_usuario' => Auth::user()->name,
+                'footer_dato_1' => $footer_dato_1,
+                'footer_dato_2' => $footer_dato_2,
+                'footer_dato_3' => $footer_dato_3,
+                'footer_dato_4' => $footer_dato_4,
+                'footer_dato_5' => $footer_dato_5,
             ];
             
 
@@ -894,7 +939,8 @@ class PronunciamientoOrigenController extends Controller
             file_put_contents(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_pdf}"), $output);
     
             return $pdf->download($nombre_pdf); 
-        } else {
+        } 
+        else {
 
             $fecha_radicado_alfa = "N/A";
 
@@ -995,20 +1041,25 @@ class PronunciamientoOrigenController extends Controller
             $section->addText('Cordialmente,');
             $section->addTextBreak();
 
-            // Agregar </img> en la imagen de la firma
-            $patronetiqueta = '/<img(.*?)>/';
-            $Firma_cliente = preg_replace($patronetiqueta, '<img$1></img>', $Firma_cliente);
+            if ($Firma_cliente != "No firma") {
+                # code...
+                // Agregar </img> en la imagen de la firma
+                $patronetiqueta = '/<img(.*?)>/';
+                $Firma_cliente = preg_replace($patronetiqueta, '<img$1></img>', $Firma_cliente);
+                
+                // Quitamos el style y agregamos los atributos width y height
+                $patronstyle = '/<img[^>]+style="width:\s*([\d.]+)px;\s*height:\s*([\d.]+)px[^"]*"[^>]*>/';
+                preg_match($patronstyle, $Firma_cliente, $coincidencias);
+                $width = $coincidencias[1]; // Valor de width
+                $height = $coincidencias[2]; // Valor de height
             
-            // Quitamos el style y agregamos los atributos width y height
-            $patronstyle = '/<img[^>]+style="width:\s*([\d.]+)px;\s*height:\s*([\d.]+)px[^"]*"[^>]*>/';
-            preg_match($patronstyle, $Firma_cliente, $coincidencias);
-            $width = $coincidencias[1]; // Valor de width
-            $height = $coincidencias[2]; // Valor de height
-        
-            $nuevoStyle = 'width="'.$width.'" height="'.$height.'"';
-            $htmlModificado = reemplazarStyleImg($Firma_cliente, $nuevoStyle);
-            
-            Html::addHtml($section, $htmlModificado, false, true);
+                $nuevoStyle = 'width="'.$width.'" height="'.$height.'"';
+                $htmlModificado = reemplazarStyleImg($Firma_cliente, $nuevoStyle);
+                
+                Html::addHtml($section, $htmlModificado, false, true);
+            }else{
+                $section->addText($Firma_cliente);
+            }
             $section->addTextBreak();
             $section->addText('Dirección de Servicios Médicos de Seguridad Social', array('bold' => true));
             $section->addText('Convenio Codess - Seguros de Vida Alfa S.A', array('bold' => true));
@@ -1072,16 +1123,16 @@ class PronunciamientoOrigenController extends Controller
             $table = $footer->addTable('myTable');
 
             $table->addRow();
-            $table->addCell(80000, ['gridSpan' => 2])->addText('Seguros Alfa S.A. y Seguros de Vida Alfa S.A.', array('size' => 10, 'color' => '#184F56', 'bold' => true));
+            $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_1, array('size' => 10));
             $table->addRow();
-            $table->addCell()->addText('Líneas de atención al cliente', array('size' => 10, 'color' => '#184F56', 'bold' => true));
+            $table->addCell()->addText($footer_dato_2, array('size' => 10));
             $cell = $table->addCell();
             $textRun = $cell->addTextRun(['alignment' => 'right']);
-            $textRun->addText('www.segurosalfa.com.co', array('size' => 10, 'color' => '#184F56', 'bold' => true));
+            $textRun->addText($footer_dato_3, array('size' => 10));
             $table->addRow();
-            $table->addCell(80000, ['gridSpan' => 2])->addText('Bogotá: 3077032, a nivel nacional: 018000122532', array('size' => 10));
+            $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_4, array('size' => 10));
             $table->addRow();
-            $table->addCell(80000, ['gridSpan' => 2])->addText('Habilitadas en jornada continua de lunes a viernes de 8:00 a.m. a 6:00 p.m.', array('size' => 10));
+            $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_5, array('size' => 10));
             $table->addRow();
             $cell1 = $table->addCell(80000, ['gridSpan' => 2]);
             $textRun = $cell1->addTextRun(['alignment' => 'center']);

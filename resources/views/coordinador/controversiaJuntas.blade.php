@@ -40,8 +40,9 @@
                 <input hidden="hidden" type="text" class="form-control" name="newId_evento" id="newId_evento" value="{{$array_datos_controversiaJuntas[0]->ID_evento}}">
                 <input hidden="hidden" type="text" class="form-control" name="newId_asignacion" id="newId_asignacion" value="{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}">
                 <input hidden="hidden" type="text" class="form-control" name="Id_proceso" id="Id_proceso" value="{{$array_datos_controversiaJuntas[0]->Id_proceso}}">
-
-                campos creados para extraer algunos datos de la proforma 
+                
+                {{-- campos creados para extraer algunos datos de la proforma  --}}
+                <input type="hidden" class="form-control" id="id_servicio" value="{{$array_datos_controversiaJuntas[0]->Id_Servicio}}">
                 <input type="hidden" id="id_cliente" value="<?php if(!empty($array_datos_controversiaJuntas[0]->Id_cliente)){echo $array_datos_controversiaJuntas[0]->Id_cliente;}?>">
                 <input type="hidden" id="tipo_documento" value="<?php if(!empty($array_datos_controversiaJuntas[0]->Nombre_tipo_documento)){echo $array_datos_controversiaJuntas[0]->Nombre_tipo_documento;}?>">
                 <input type="hidden" id="id_Jrci_califi_invalidez" value="<?php if(!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez)){echo $arrayinfo_controvertido[0]->Jrci_califi_invalidez;}?>">
@@ -1559,9 +1560,16 @@
                                                 <br>
                                                 <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_afiliado">Nombre Afiliado</button>
                                                 <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_junta_regional">Nombre Junta Regional</button>
-                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_cie10_jrci">Nombre CIE-10 JRCI</button>
-                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_pcl_jrci">%Pcl JRCI</button>
-                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_f_estructuracion_jrci">Fecha Estructuracion JRCI</button>
+                                                {{-- Controversia PCL --}}
+                                                @if ($array_datos_controversiaJuntas[0]->Id_Servicio == 13)
+                                                    <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_cie10_jrci">Nombre CIE-10 JRCI</button>
+                                                    <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_pcl_jrci">%Pcl JRCI</button>
+                                                    <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_f_estructuracion_jrci">Fecha Estructuracion JRCI</button>
+                                                {{-- Controversia Origen --}}
+                                                @elseif ($array_datos_controversiaJuntas[0]->Id_Servicio == 12)
+                                                    <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_origen_dx_jrci">Origen Dx JRCI</button>
+                                                    <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_cie_nombre_jrci">CIE-10 - Nombre CIE-10 JRCI</button>
+                                                @endif
                                                 <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_sustentacion_jrci">Sustentación Concepto JRCI</button>
                                                 @if(!empty($array_comite_interdisciplinario[0]->Cuerpo_comunicado))
                                                     <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" required>{{$array_comite_interdisciplinario[0]->Cuerpo_comunicado}}</textarea>                                                                                                 

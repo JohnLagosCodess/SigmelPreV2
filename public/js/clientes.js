@@ -658,6 +658,13 @@ $(document).ready(function(){
                 }
             });
         });
+
+        /* Datos del Footer */
+        var footer_dato_1 = $("#footer_dato_1").val();
+        var footer_dato_2 = $("#footer_dato_2").val();
+        var footer_dato_3 = $("#footer_dato_3").val();
+        var footer_dato_4 = $("#footer_dato_4").val();
+        var footer_dato_5 = $("#footer_dato_5").val();
         
         // Recolección de la información para crear un cliente
         var enviar_info_nuevo_cliente = {
@@ -693,6 +700,11 @@ $(document).ready(function(){
             'Firmas_proveedor': datos_finales_firmas_proveedor,
             'Urls_proveedor': url_imagenes_proveedor,
             'Extensiones_firmas_proveedor': extension_imagenes_proveedor,
+            'footer_dato_1': footer_dato_1,
+            'footer_dato_2': footer_dato_2,
+            'footer_dato_3': footer_dato_3,
+            'footer_dato_4': footer_dato_4,
+            'footer_dato_5': footer_dato_5
         };
         
         $.ajax({

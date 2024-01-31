@@ -481,6 +481,44 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="footer_cliente" class="col-form-label">Pie de página</label>
+                                            <div class="alert alert-warning" role="alert">
+                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Escriba la información en los campos disponibles 
+                                                ya que el sistema mantendrá esta estructura (tabla) para la creación de los documentos.
+                                            </div>
+                                            <table style="width: 100%;font-family: sf-pro-display-black, sans-serif;font-size: 12px; border: 2px solid black; border-collapse: collapse;">
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="2"  style="border: 2px solid black; border-collapse: collapse; padding: 6px;">
+                                                            <input type="text" class="form-control" id="footer_dato_1" placeholder="Escriba texto aquí">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="border: 2px solid black; border-collapse: collapse; padding: 6px;">
+                                                            <input type="text" class="form-control" id="footer_dato_2" placeholder="Escriba texto aquí">
+                                                        </td>
+                                                        <td style="border: 2px solid black; border-collapse: collapse; padding: 6px;">
+                                                            <input type="text" class="form-control" id="footer_dato_3" placeholder="Escriba texto aquí">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2" style="border: 2px solid black; border-collapse: collapse; padding: 6px;">
+                                                            <input type="text" class="form-control" id="footer_dato_4" placeholder="Escriba texto aquí">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2" style="border: 2px solid black; border-collapse: collapse; padding: 6px;">
+                                                            <input type="text" class="form-control" id="footer_dato_5" placeholder="Escriba texto aquí">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         

@@ -24,6 +24,7 @@ use App\Models\sigmel_informacion_comunicado_eventos;
 use App\Models\sigmel_informacion_entidades;
 use App\Models\sigmel_lista_regional_juntas;
 use App\Models\sigmel_lista_solicitantes;
+use App\Models\sigmel_informacion_asignacion_eventos;
 
 class AdicionDxDTO extends Controller
 {
@@ -708,6 +709,15 @@ class AdicionDxDTO extends Controller
             ->where('Id_Adiciones_Dx', $Id_Adiciones_Dx)->update($datos_formulario);
             $mensaje = 'Información actualizada satisfactoriamente.';
         }
+
+        // Actualizacion del profesional calificador
+        $datos_profesional_calificador = [
+            'Id_profesional' => Auth::user()->id,
+            'Nombre_profesional' => $nombre_usuario
+        ];
+
+        sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        ->where('Id_Asignacion', $request->Id_Asignacion)->update($datos_profesional_calificador);
         
         $mensajes = array(
             "parametro" => 'agregar_dto_atel',

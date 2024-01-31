@@ -32,6 +32,11 @@ return new class extends Migration
             $table->enum('Estado', ['Activo', 'Inactivo'])->default('Activo');
             $table->text('Codigo_cliente');
             $table->text('Logo_cliente')->nullable();
+            $table->text('footer_dato_1')->nullable();
+            $table->text('footer_dato_2')->nullable();
+            $table->text('footer_dato_3')->nullable();
+            $table->text('footer_dato_4')->nullable();
+            $table->text('footer_dato_5')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
             $table->timestamps();

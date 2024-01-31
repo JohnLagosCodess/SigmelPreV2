@@ -259,6 +259,11 @@ $(document).ready(function(){
         $('#f_finalizacion_contrato').empty();
         $('#nro_consecutivo_dictamen').empty();
         $("#previewImage").val('');
+        $("#footer_dato_1").val('');
+        $("#footer_dato_2").val('');
+        $("#footer_dato_3").val('');
+        $("#footer_dato_4").val('');
+        $("#footer_dato_5").val('');
         
 
         $("#checkbox_servicio_dto").prop("checked", false);
@@ -425,6 +430,12 @@ $(document).ready(function(){
 
                 $("#codigo_cliente").val(data_cliente[0]["Codigo_cliente"]);
                 $("#fecha_creacion").val(data_cliente[0]["F_registro"]);
+
+                $("#footer_dato_1").val(data_cliente[0]["footer_dato_1"]);
+                $("#footer_dato_2").val(data_cliente[0]["footer_dato_2"]);
+                $("#footer_dato_3").val(data_cliente[0]["footer_dato_3"]);
+                $("#footer_dato_4").val(data_cliente[0]["footer_dato_4"]);
+                $("#footer_dato_5").val(data_cliente[0]["footer_dato_5"]);
                 
             }
         });
@@ -1981,7 +1992,14 @@ $(document).ready(function(){
             }
         });
 
-        // // Recolección de la información para crear un cliente
+        /* Datos del Footer */
+        var footer_dato_1 = $("#footer_dato_1").val();
+        var footer_dato_2 = $("#footer_dato_2").val();
+        var footer_dato_3 = $("#footer_dato_3").val();
+        var footer_dato_4 = $("#footer_dato_4").val();
+        var footer_dato_5 = $("#footer_dato_5").val();
+
+        // Recolección de la información para crear un cliente
         var enviar_info_actualizar_cliente = {
             '_token': token,
             'Id_cliente': $("#id_cliente_editar").val(),
@@ -2011,6 +2029,11 @@ $(document).ready(function(){
             'Nombre_logo_bd': $("#nombre_logo_bd").val(),
             'Logo': $("#img_codificada").val(),
             'Extension_logo': $("#nombre_ext_imagen").val(),
+            'footer_dato_1': footer_dato_1,
+            'footer_dato_2': footer_dato_2,
+            'footer_dato_3': footer_dato_3,
+            'footer_dato_4': footer_dato_4,
+            'footer_dato_5': footer_dato_5
         };
 
         $.ajax({

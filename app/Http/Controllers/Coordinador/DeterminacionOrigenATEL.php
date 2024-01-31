@@ -25,6 +25,7 @@ use App\Models\sigmel_lista_regional_juntas;
 use App\Models\sigmel_clientes;
 use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_lista_solicitantes;
+use App\Models\sigmel_informacion_asignacion_eventos;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use Dompdf\Dompdf;
@@ -732,13 +733,23 @@ class DeterminacionOrigenATEL extends Controller
             $mensaje = 'Información actualizada satisfactoriamente.';
         }
         
+        // Actualizacion del profesional calificador
+        $datos_profesional_calificador = [
+            'Id_profesional' => Auth::user()->id,
+            'Nombre_profesional' => $nombre_usuario
+        ];
 
+        sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        ->where('Id_Asignacion', $request->Id_Asignacion)->update($datos_profesional_calificador);
+
+        
         $mensajes = array(
             "parametro" => 'agregar_dto_atel',
             "mensaje" => $mensaje
         ); 
 
-        return json_decode(json_encode($mensajes, true));
+    return json_decode(json_encode($mensajes, true));
+    
 
     }
 
@@ -956,7 +967,8 @@ class DeterminacionOrigenATEL extends Controller
         $reviso = $request->reviso;
         $firmar = $request->firmar;
         $ciudad = $request->ciudad;
-        $f_correspondencia = $request->f_correspondencia;
+        // $f_correspondencia = $request->f_correspondencia;
+        $f_correspondencia = $date;
         $radicado = $request->radicado;
         $bandera_correspondecia_guardar_actualizar = $request->bandera_correspondecia_guardar_actualizar;
 
@@ -1313,6 +1325,26 @@ class DeterminacionOrigenATEL extends Controller
         } else {
             $logo_header = "Sin logo";
         }
+
+        /* Extraemos los datos del footer */
+        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        ->where('Id_cliente',  $request->Id_cliente_firma)->get();
+
+        if(count($datos_footer) > 0){
+            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+
+        }else{
+            $footer_dato_1 = "";
+            $footer_dato_2 = "";
+            $footer_dato_3 = "";
+            $footer_dato_4 = "";
+            $footer_dato_5 = "";
+        }
         
         /* Armado de datos para reemplazarlos en la plantilla */
         $datos_finales_noti_dml_origen = [
@@ -1336,7 +1368,12 @@ class DeterminacionOrigenATEL extends Controller
             'diagnosticos_cie10' => $diagnosticos_cie10,
             'Firma_cliente' => $Firma_cliente,
             'Agregar_copia' => $Agregar_copias,
-            'nombre_usuario' => Auth::user()->name
+            'nombre_usuario' => Auth::user()->name,
+            'footer_dato_1' => $footer_dato_1,
+            'footer_dato_2' => $footer_dato_2,
+            'footer_dato_3' => $footer_dato_3,
+            'footer_dato_4' => $footer_dato_4,
+            'footer_dato_5' => $footer_dato_5,
         ];
 
         /* Creación del pdf */

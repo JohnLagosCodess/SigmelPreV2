@@ -460,7 +460,7 @@
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="empresa" class="col-form-label si_nom_empresa">Empresa <span style="color:red;">(*)</span></label>
+                                                    <label for="empresa" class="col-form-label si_nom_empresa">Empresa</label>
                                                     <label for="empresa" class="col-form-label no_nom_empresa d-none">Empresa</label>
                                                     <input type="text" class="empresa form-control" name="empresa" id="empresa">
                                                 </div>
@@ -583,7 +583,7 @@
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="medio_notificacion_laboral" class="col-form-label si_medio_noti">Medio de Notificación <span style="color:red;">(*)</span></label>
+                                                    <label for="medio_notificacion_laboral" class="col-form-label si_medio_noti">Medio de Notificación</label>
                                                     <label for="medio_notificacion_laboral" class="col-form-label no_medio_noti">Medio de Notificación</label>
                                                     <select class="medio_notificacion_laboral custom-select" name="medio_notificacion_laboral" id="medio_notificacion_laboral"></select>
                                                 </div>

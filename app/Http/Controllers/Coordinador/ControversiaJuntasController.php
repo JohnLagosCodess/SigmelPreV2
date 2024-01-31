@@ -1127,7 +1127,8 @@ class ControversiaJuntasController extends Controller
         $reviso = $request->reviso;
         $firmar = $request->firmar;
         $ciudad = $request->ciudad;
-        $f_correspondencia = $request->f_correspondencia;
+        // $f_correspondencia = $request->f_correspondencia;
+        $f_correspondencia = $date;
         $radicado = $request->radicado;
         $bandera_correspondecia_guardar_actualizar = $request->bandera_correspondecia_guardar_actualizar;
 
@@ -1274,6 +1275,7 @@ class ControversiaJuntasController extends Controller
         $id_evento = $request->id_evento;
         $id_asignacion = $request->id_asignacion;
         $id_proceso = $request->id_proceso;
+        $id_servicio = $request->id_servicio;
         $tipo_identificacion = $request->tipo_identificacion;
         $num_identificacion = $request->num_identificacion;
         $id_Jrci_califi_invalidez = $request->id_Jrci_califi_invalidez;
@@ -1291,6 +1293,7 @@ class ControversiaJuntasController extends Controller
         $cuerpo = $request->cuerpo;
         $firmar = $request->firmar;
         $nro_radicado = $request->nro_radicado;
+        $origen_jrci_emitido = $request->origen_jrci_emitido;
 
         /* Creación de las variables faltantes que no están en el ajax */
 
@@ -1311,7 +1314,7 @@ class ControversiaJuntasController extends Controller
         }
         
         // Traer datos CIE10 (Diagnóstico motivo de calificación) jrci
-        $diagnosticos_cie10_jrci = array();
+        
         $datos_diagnostico_motcalifi_emitido_jrci=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
@@ -1326,32 +1329,48 @@ class ControversiaJuntasController extends Controller
 
         $array_datos_diagnostico_motcalifi_emitido_jrci = json_decode(json_encode($datos_diagnostico_motcalifi_emitido_jrci), true);
 
-        for ($i=0; $i < count($array_datos_diagnostico_motcalifi_emitido_jrci); $i++) { 
-            array_push($diagnosticos_cie10_jrci, $array_datos_diagnostico_motcalifi_emitido_jrci[$i]["Nombre_CIE10"]);
-        }
+        if (count($array_datos_diagnostico_motcalifi_emitido_jrci) > 0) {
+            $diagnosticos_cie10_jrci = array();
 
-        // Contar la cantidad de elementos en el array
-        $totalElementos = count($diagnosticos_cie10_jrci);
-
-        // Inicializar la cadena de resultado
-        $string_diagnosticos_cie10_jrci = '';
- 
-        // Recorrer el array
-        foreach ($diagnosticos_cie10_jrci as $indice => $elemento) {
-            // Verificar si es el último elemento
-            if ($indice == $totalElementos - 1) {
-                // Si es el último, añadir solo el elemento sin coma
-                $string_diagnosticos_cie10_jrci .= $elemento;
-            } elseif ($indice == $totalElementos - 2) {
-                // Si es el antepenúltimo, añadir "y" en lugar de ","
-                $string_diagnosticos_cie10_jrci .= $elemento . " y ";
-            } else {
-                // Para cualquier otro elemento, añadir ","
-                $string_diagnosticos_cie10_jrci .= $elemento . ", ";
+            // Controversia pcl
+            if($id_servicio == 13){
+                for ($i=0; $i < count($array_datos_diagnostico_motcalifi_emitido_jrci); $i++) { 
+                    array_push($diagnosticos_cie10_jrci, $array_datos_diagnostico_motcalifi_emitido_jrci[$i]["Nombre_CIE10"]);
+                }
+            }else if($id_servicio == 12){ // Controversia origen
+                for ($i=0; $i < count($array_datos_diagnostico_motcalifi_emitido_jrci); $i++) { 
+                    $dx_concatenados = $array_datos_diagnostico_motcalifi_emitido_jrci[$i]["Codigo"]. " - ".$array_datos_diagnostico_motcalifi_emitido_jrci[$i]["Nombre_CIE10"];
+                    array_push($diagnosticos_cie10_jrci, $dx_concatenados);
+                }
             }
-        };
- 
-        $string_diagnosticos_cie10_jrci = "<b>".$string_diagnosticos_cie10_jrci."</b>";
+            
+    
+            // Contar la cantidad de elementos en el array
+            $totalElementos = count($diagnosticos_cie10_jrci);
+    
+            // Inicializar la cadena de resultado
+            $string_diagnosticos_cie10_jrci = '';
+     
+            // Recorrer el array
+            foreach ($diagnosticos_cie10_jrci as $indice => $elemento) {
+                // Verificar si es el último elemento
+                if ($indice == $totalElementos - 1) {
+                    // Si es el último, añadir solo el elemento sin coma
+                    $string_diagnosticos_cie10_jrci .= $elemento;
+                } elseif ($indice == $totalElementos - 2) {
+                    // Si es el antepenúltimo, añadir "y" en lugar de ","
+                    $string_diagnosticos_cie10_jrci .= $elemento . " y ";
+                } else {
+                    // Para cualquier otro elemento, añadir ","
+                    $string_diagnosticos_cie10_jrci .= $elemento . ", ";
+                }
+            };
+            $string_diagnosticos_cie10_jrci = "<b>".$string_diagnosticos_cie10_jrci."</b>";
+            
+        } else {
+            $string_diagnosticos_cie10_jrci = "";
+        }
+        
         
         /* Copias Interesadas */
         // Validamos si los checkbox esta marcados
@@ -1577,31 +1596,61 @@ class ControversiaJuntasController extends Controller
         $patron4 = '/\{\{\$pcl_jrci\}\}/';
         $patron5 = '/\{\{\$f_estructuracion_jrci\}\}/';
         $patron6 = '/\{\{\$sustentacion_jrci\}\}/';
+        $patron7 = '/\{\{\$origen_dx_jrci\}\}/';
+        $patron8 = '/\{\{\$cie10_nombre_cie10_jrci\}\}/';
         
-        if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) && preg_match($patron3, $cuerpo)
-        && preg_match($patron4, $cuerpo) && preg_match($patron5, $cuerpo) && preg_match($patron6, $cuerpo)) {
-
-            $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.$nombre_afiliado.'</b>', $cuerpo);
-            $cuerpo_modificado = str_replace('{{$junta_regional}}', '<b>'.$nombre_junta_regional.'</b>', $cuerpo_modificado);
-            $cuerpo_modificado = str_replace('{{$cie10_jrci}}', $string_diagnosticos_cie10_jrci, $cuerpo_modificado);
-            $cuerpo_modificado = str_replace('{{$pcl_jrci}}', '<b>'.$porcentaje_pcl_jrci_emitido.'%</b>', $cuerpo_modificado);
-            $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', $f_estructuracion_contro_jrci_emitido, $cuerpo_modificado);
-            $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
-
-
-            $cuerpo_modificado = str_replace('HUGO IGNACIO GÓMEZ DAZA', '<b>HUGO IGNACIO GÓMEZ DAZA</b>', $cuerpo_modificado);
-            $cuerpo_modificado = str_replace('SEGUROS DE VIDA ALFA S.A.', '<b>SEGUROS DE VIDA ALFA S.A.</b>', $cuerpo_modificado);
-            $cuerpo_modificado = str_replace('RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN', '<b>RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN</b>', $cuerpo_modificado);
-            $cuerpo_modificado = str_replace('PCL', '<b>PCL</b>', $cuerpo_modificado);
-            $cuerpo_modificado = str_replace('calificación de PCL', '<b>calificación de PCL</b>', $cuerpo_modificado);
-            $cuerpo_modificado = str_replace('ANEXO:', '<b>ANEXO:</b>', $cuerpo_modificado);
-            $cuerpo_modificado = str_replace('NOTIFICACIONES:', '<b>NOTIFICACIONES:</b>', $cuerpo_modificado);
-            $cuerpo_modificado = str_replace('</p>', '</p><br></br>', $cuerpo_modificado);
-            $cuerpo = $cuerpo_modificado;
-
-        }else{
-            $cuerpo = "";
+        // Controversia pcl
+        if($id_servicio == 13){
+            if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) && preg_match($patron3, $cuerpo) && preg_match($patron4, $cuerpo) && preg_match($patron5, $cuerpo) && preg_match($patron6, $cuerpo)) {
+    
+                $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.$nombre_afiliado.'</b>', $cuerpo);
+                $cuerpo_modificado = str_replace('{{$junta_regional}}', '<b>'.$nombre_junta_regional.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$cie10_jrci}}', $string_diagnosticos_cie10_jrci, $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$pcl_jrci}}', '<b>'.$porcentaje_pcl_jrci_emitido.'%</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', $f_estructuracion_contro_jrci_emitido, $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+    
+    
+                $cuerpo_modificado = str_replace('HUGO IGNACIO GÓMEZ DAZA', '<b>HUGO IGNACIO GÓMEZ DAZA</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('SEGUROS DE VIDA ALFA S.A.', '<b>SEGUROS DE VIDA ALFA S.A.</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN', '<b>RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('PCL', '<b>PCL</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('calificación de PCL', '<b>calificación de PCL</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('ANEXO:', '<b>ANEXO:</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('NOTIFICACIONES:', '<b>NOTIFICACIONES:</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('</p>', '</p><br></br>', $cuerpo_modificado);
+                $cuerpo = $cuerpo_modificado;
+    
+            }else{
+                $cuerpo = "";
+            }
+           
+        }else if($id_servicio == 12){ // Controversia origen
+            if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) &&  preg_match($patron6, $cuerpo) &&  preg_match($patron7, $cuerpo) &&  preg_match($patron8, $cuerpo)) {
+    
+        
+                $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.$nombre_afiliado.'</b>', $cuerpo);
+                $cuerpo_modificado = str_replace('{{$junta_regional}}', '<b>'.$nombre_junta_regional.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$origen_dx_jrci}}', '<b>'.$origen_jrci_emitido.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$cie10_nombre_cie10_jrci}}', $string_diagnosticos_cie10_jrci, $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+    
+    
+                $cuerpo_modificado = str_replace('HUGO IGNACIO GÓMEZ DAZA', '<b>HUGO IGNACIO GÓMEZ DAZA</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('SEGUROS DE VIDA ALFA S.A.', '<b>SEGUROS DE VIDA ALFA S.A.</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN', '<b>RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('ORIGEN', '<b>ORIGEN</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('ANEXO:', '<b>ANEXO:</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('NOTIFICACIONES:', '<b>NOTIFICACIONES:</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('</p>', '</p><br></br>', $cuerpo_modificado);
+                $cuerpo = $cuerpo_modificado;
+    
+            }else{
+                $cuerpo = "";
+            }
         }
+
+
 
         $section->addTextBreak();
         Html::addHtml($section, $cuerpo, false, true);
@@ -1702,6 +1751,8 @@ class ControversiaJuntasController extends Controller
         $textRun = $cell1->addTextRun(['alignment' => 'center']);
         $textRun->addText('Página ');
         $textRun->addField('PAGE');
+
+        
 
         // Generamos el documento y luego se guarda
         $writer = new Word2007($phpWord);
