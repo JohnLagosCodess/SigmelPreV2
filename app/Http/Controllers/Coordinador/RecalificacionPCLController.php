@@ -5935,6 +5935,25 @@ class RecalificacionPCLController extends Controller
             $copiaCiudad_departamento_empresa_noti = '';
         }
 
+        /* Extraemos los datos del footer */
+        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        ->where('Id_cliente',  $Cliente)->get();
+
+        if(count($datos_footer) > 0){
+            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+
+        }else{
+            $footer_dato_1 = "";
+            $footer_dato_2 = "";
+            $footer_dato_3 = "";
+            $footer_dato_4 = "";
+            $footer_dato_5 = "";
+        }
         //Obtener los datos del formulario
         
         $data = [
@@ -5988,6 +6007,11 @@ class RecalificacionPCLController extends Controller
             'Direccion_arl' => $Direccion_arl,
             'Telefono_arl' => $Telefono_arl,
             'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
+            'footer_dato_1' => $footer_dato_1,
+            'footer_dato_2' => $footer_dato_2,
+            'footer_dato_3' => $footer_dato_3,
+            'footer_dato_4' => $footer_dato_4,
+            'footer_dato_5' => $footer_dato_5,
         ];
 
         // Crear una instancia de Dompdf
@@ -6734,6 +6758,26 @@ class RecalificacionPCLController extends Controller
             $copiaCiudad_departamento_empresa_noti = '';
         }
 
+        /* Extraemos los datos del footer */
+        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        ->where('Id_cliente',  $Cliente)->get();
+
+        if(count($datos_footer) > 0){
+            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+
+        }else{
+            $footer_dato_1 = "";
+            $footer_dato_2 = "";
+            $footer_dato_3 = "";
+            $footer_dato_4 = "";
+            $footer_dato_5 = "";
+        }
+
         //Obtener los datos del formulario
         
         $data = [
@@ -6784,6 +6828,11 @@ class RecalificacionPCLController extends Controller
             'Direccion_arl' => $Direccion_arl,
             'Telefono_arl' => $Telefono_arl,
             'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
+            'footer_dato_1' => $footer_dato_1,
+            'footer_dato_2' => $footer_dato_2,
+            'footer_dato_3' => $footer_dato_3,
+            'footer_dato_4' => $footer_dato_4,
+            'footer_dato_5' => $footer_dato_5,
         ];
 
         // Crear una instancia de Dompdf
