@@ -1,5 +1,8 @@
 @extends('adminlte::page')
 @section('title', 'Calificación PCL')
+@section('css')
+    <link rel="stylesheet" type="text/css" href="/plugins/summernote/summernote.min.css">
+@stop
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
@@ -194,19 +197,27 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fecha_calificacion">Fecha de calificación</label>
-                                                <input type="text" class="form-control" name="fecha_calificacion" id="fecha_calificacion" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                                <input type="text" class="form-control" name="fecha_calificacion" id="fecha_calificacion" value="{{$array_datos_calificacionPcl[0]->F_calificacion}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="profesional_comite">Profesional Comité</label>
-                                                <input type="text" class="form-control" name="profesional_comite" id="profesional_comite" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                                @if ($array_datos_calificacionPcl[0]->Id_Servicio == 9)
+                                                    <input type="text" class="form-control" name="profesional_comite" id="profesional_comite" value="{{$array_datos_calificacionPcl[0]->Nombre_profesional}}" disabled>                                                                                                        
+                                                @else
+                                                    <input type="text" class="form-control" name="profesional_comite" id="profesional_comite" value="<?php if(!empty($info_comite_inter[0]->Profesional_comite)){echo $info_comite_inter[0]->Profesional_comite;}else{echo 'Sin Visado';}?>" disabled>                                                    
+                                                @endif                                               
                                             </div>
                                         </div>
                                         <div class="col-4">
-                                            <div class="form-group">
+                                            <div class="form-group">                                                
                                                 <label for="fecha_visado_comite">Fecha de visado comité</label>
-                                                <input type="text" class="form-control" name="fecha_visado_comite" id="fecha_visado_comite" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                                @if ($array_datos_calificacionPcl[0]->Id_Servicio == 9)
+                                                    <input type="text" class="form-control" name="fecha_visado_comite" id="fecha_visado_comite" value="{{$array_datos_calificacionPcl[0]->F_calificacion}}" disabled>                                                                                                        
+                                                @else
+                                                    <input type="text" class="form-control" name="fecha_visado_comite" id="fecha_visado_comite" value="<?php if(!empty($info_comite_inter[0]->F_visado_comite)){echo $info_comite_inter[0]->F_visado_comite;}else{ echo 'Sin Visado';}?>" disabled>                                                    
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -635,6 +646,24 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <div class="form-check custom-control custom-radio">
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="documentos_pcl" value="Documento_PCL" required>
+                                                    <label class="form-check-label custom-control-label" for="documentos_pcl"><strong>Solicitud Documentos PCL</strong></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-group">
+                                                <div class="form-check custom-control custom-radio">
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="otro_documento_pcl" value="Otro_Documento" required>
+                                                    <label class="form-check-label custom-control-label" for="otro_documento_pcl"><strong>Otro Documento</strong></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="row text-center">
                                         <label for="destinatario_principal" style="margin-left: 7px;">Destinatario Principal: <span style="color: red;">(*)</span></label>                                        
                                         <div class="col-3">
@@ -706,8 +735,9 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <label for="cuerpo_comunicado">Cuerpo del comunicado <span style="color: red;">(*)</span></label>
-                                                <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" cols="30" rows="5" style="resize:none;" required></textarea>
+                                                <label for="cuerpo_comunicado">Cuerpo del comunicado <span style="color: red;">(*)</span></label><br>
+                                                {{-- <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_pruebas">Pruebas Solicitadas</button> --}}
+                                                <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" style="resize:none;" required></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -915,7 +945,25 @@
                                     <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
                                         <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de cambiar el destinatario
                                         (Afiliado y Empresa) debe seleccionar nuevamente la Forma de envio y Revisó y en (Otro) todos.
-                                    </div>                              
+                                    </div>            
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <div class="form-check custom-control custom-radio">
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="documentos_pcl_editar" value="Documento_PCL" required>
+                                                    <label class="form-check-label custom-control-label" for="documentos_pcl_editar"><strong>Solicitud Documentos PCL</strong></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-group">
+                                                <div class="form-check custom-control custom-radio">
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="otro_documento_pcl_editar" value="Otro_Documento" required>
+                                                    <label class="form-check-label custom-control-label" for="otro_documento_pcl_editar"><strong>Otro Documento</strong></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>               
                                     <div class="row text-center">                                  
                                         <label for="destinatario_principal_act" style="margin-left: 7px;">Destinatario Principal: <span style="color: red;">(*)</span></label>                                        
                                         <div class="col-3">
@@ -995,8 +1043,9 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <label for="cuerpo_comunicado_act">Cuerpo del comunicado <span style="color: red;">(*)</span></label>
-                                                <textarea class="form-control" name="cuerpo_comunicado_act" id="cuerpo_comunicado_editar" cols="30" rows="5" style="resize:none;" required></textarea>
+                                                <label for="cuerpo_comunicado_act">Cuerpo del comunicado <span style="color: red;">(*)</span></label><br>
+                                                {{-- <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_pruebas_editar">Pruebas Solicitadas</button> --}}
+                                                <textarea class="form-control" name="cuerpo_comunicado_act" id="cuerpo_comunicado_editar" style="resize:none;" required></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -1256,4 +1305,5 @@
     
     <script type="text/javascript" src="/js/calificacionpcl.js"></script>
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script src="/plugins/summernote/summernote.min.js"></script>
 @stop

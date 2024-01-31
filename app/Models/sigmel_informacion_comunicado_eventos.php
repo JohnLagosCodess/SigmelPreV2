@@ -39,6 +39,8 @@ class sigmel_informacion_comunicado_eventos extends Model
     'Elaboro',
     'Reviso',
     'Agregar_copia',
+    'Firmar_Comunicado',
+    'Tipo_descarga',
     'Nombre_usuario',
     'F_registro'
     ];
