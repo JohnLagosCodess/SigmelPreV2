@@ -23,6 +23,7 @@ use App\Models\sigmel_informacion_pronunciamiento_eventos;
 use App\Models\sigmel_informacion_diagnosticos_eventos;
 use App\Models\sigmel_informacion_comunicado_eventos;
 use App\Models\sigmel_auditorias_pronunciamiento_eventos;
+use App\Models\sigmel_informacion_asignacion_eventos;
 
 class PronunciamientoPCLController extends Controller
 {
@@ -483,6 +484,17 @@ class PronunciamientoPCLController extends Controller
                 'acccion_realizada' => $accion_realizada,
                 'fecha_registro_accion' => $datetime
             ];
+
+            // Actualizacion del profesional calificador
+            $datos_profesional_calificador = [
+                'Id_profesional' => Auth::user()->id,
+                'Nombre_profesional' => Auth::user()->name,
+                'F_calificacion' => $date
+            ];
+        
+            sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            ->where('Id_Asignacion', $Id_Asignacion_Pronuncia)->update($datos_profesional_calificador);
+            
             sigmel_auditorias_pronunciamiento_eventos::on('sigmel_auditorias')->insert($registro_actividad);
             if(!empty($array_diagnosticos_motivo_calificacion)){
                 // Inserción de la información
@@ -604,6 +616,16 @@ class PronunciamientoPCLController extends Controller
                 'acccion_realizada' => $accion_realizada,
                 'fecha_registro_accion' => $datetime
             ];
+            // Actualizacion del profesional calificador
+            $datos_profesional_calificador = [
+                'Id_profesional' => Auth::user()->id,
+                'Nombre_profesional' => Auth::user()->name,
+                'F_calificacion' => $date
+            ];
+        
+            sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            ->where('Id_Asignacion', $Id_Asignacion_Pronuncia)->update($datos_profesional_calificador);
+            
             sigmel_auditorias_pronunciamiento_eventos::on('sigmel_auditorias')->insert($registro_actividad);
             if(!empty($array_diagnosticos_motivo_calificacion)){
                 // Inserción de la información

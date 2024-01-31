@@ -1,5 +1,5 @@
 $(document).ready(function(){
-
+    //localStorage.removeItem("#Generar_comunicados");
     // Inicializacion del select2 de listados  Módulo Calificacion PCL
 
     $(".modalidad_calificacion").select2({
@@ -429,7 +429,8 @@ $(document).ready(function(){
                     data-forma_envio_comunicado="'+data[i]["Forma_envio"]+'" data-nombre_envio_comunicado="'+data[i]["Nombre_forma_envio"]+'"\
                     data-elaboro_comunicado="'+data[i]["Elaboro"]+'"\
                     data-reviso_comunicado="'+data[i]["Reviso"]+'" data-revisonombre_comunicado="'+data[i]["Nombre_lider"]+'"\
-                    data-firma_cliente="'+data[i]["Firmar_Comunicado"]+'" data-agregar_copia="'+data[i]["Agregar_copia"]+'">\
+                    data-firma_cliente="'+data[i]["Firmar_Comunicado"]+'" data-agregar_copia="'+data[i]["Agregar_copia"]+'"\
+                    data-tipo_descarga="'+data[i]["Tipo_descarga"]+'">\
                     <i class="fas fa-file-pdf text-info"></i> Editar</a>';
                     
                     data[i]['Editarcomunicado'] = comunicadoNradico;
@@ -555,6 +556,7 @@ $(document).ready(function(){
         var revisonombre_comunicado =  $(this).data("revisonombre_comunicado");  
         var firma_cliente = $(this).data("firma_cliente");
         var agregar_copia =  $(this).data("agregar_copia");
+        var tipo_descarga = $(this).data("tipo_descarga");
         document.getElementById('ciudad_comunicado_editar').value=ciudad_comunicado;
         document.getElementById('Id_comunicado_act').value=id_comunicado;
         document.getElementById('Id_evento_act').value=id_evento;
@@ -630,7 +632,16 @@ $(document).ready(function(){
                 }
             }
 
-        });    
+        });   
+        
+        if (tipo_descarga == "Documento_PCL") {
+            $("#documentos_pcl_editar").prop("checked", true);
+            $("#otro_documento_pcl_editar").prop("checked", false);
+        } else {
+            $("#documentos_pcl_editar").prop("checked", false);
+            $("#otro_documento_pcl_editar").prop("checked", true);
+        }
+
         document.getElementById('nombre_destinatario_editar').value=nombre_destinatario;        
         document.getElementById('nombre_destinatario_editar2').value=nombre_destinatario;  
         document.getElementById('nic_cc_editar').value=niccc_comunicado;        
@@ -652,7 +663,8 @@ $(document).ready(function(){
         var ciudad_destinatario = $('#ciudad_destinatario_editar').val();
         $("#ciudad_pdf").val(ciudad_destinatario);
         document.getElementById('asunto_editar').value=asunto_comunicado;
-        document.getElementById('cuerpo_comunicado_editar').value=cuerpo_comunicado;
+        // document.getElementById('cuerpo_comunicado_editar').value=cuerpo_comunicado;
+        $("#cuerpo_comunicado_editar").summernote('code', cuerpo_comunicado);
         document.getElementById('anexos_editar').value=anexos_comunicados;
         var forma_envio_editar = $('#forma_envio_editar');
         forma_envio_editar.empty();
@@ -952,7 +964,46 @@ $(document).ready(function(){
             
         });
 
-    });    
+    });   
+    
+    /* Funcionalidad para insertar la etiqueta de pruebas solicitadas (edición) */
+    $("#cuerpo_comunicado_editar").summernote({
+        height: 'auto',
+        toolbar: false
+    });
+    $('.note-editing-area').css("background", "white");
+    $('.note-editor').css("border", "1px solid black");
+
+    $("#btn_insertar_pruebas_editar").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_pruebas = "{{$pruebas_solicitadas}}";
+        $('#cuerpo_comunicado_editar').summernote('editor.insertText', etiqueta_pruebas);
+    });
+
+    /* Funcionalidad radio buttons Solicitud documentos Origen y Otro documento (edición) */
+    $("[name='tipo_documento_descarga_califi_editar']").on("change", function(){
+        var opc_seleccionada = $(this).val();
+        
+        if (opc_seleccionada == "Documento_PCL") {
+            $("#asunto_editar").val("SOLICITUD DE DOCUMENTOS PARA CALIFICACIÓN DE PÉRDIDA DE LA CAPACIDAD LABORAL");
+            var texto_insertar = "<p>En Seguros de Vida Alfa S.A. siempre buscamos la protección y satisfacción de nuestros clientes. "+
+            "Le informamos que se está llevando a cabo su proceso de Calificaicón de Pérdida de la Capacidad Laboral (PCL) por parte de ARL ALFA S.A., "+
+            "Su historial médico ha sido revisado por el grupo interdisciplinario de calificación de Seguros de Vida Alfa S.A.</p>"+
+            "<p>No obstante, a que la información suministrada es relevante, se hace necesario que sean aportados documentos adicionales "+
+            "con el fin de poder realizar la calificación de pérdida de capacidad laboral requerida, que a continuación relacionamos:</p>"+
+            "<p>1. </p>"+
+            "<p>Esta documentación debe sumistrarla a los siguientes correos electrónicos: en un término de tres (3) meses contados a partir "+
+            "del recibido de la presente comunicación, y a partir de ese momento se inicia nuevamente el estudio de tu solicitud. "+
+            "En el evento de no recibir la documentación medica actualizada, se considerará desistimiento de tu solicitud por parte de esta "+
+            "aseguradora.</p>"+
+            "<p>Cualquier información adicional con gusto será atendida por el Auditor Técnico en el teléfono 7435333 Ext. 14626 en Bogotá.</p>";
+            $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
+        }else{
+            $("#asunto_editar").val("");
+            $('#cuerpo_comunicado_editar').summernote('code', '');
+        }
+    });
 
     // Captura de data para el fomulario de actualizar el comunicado
 
@@ -1363,6 +1414,45 @@ $(document).ready(function(){
         }
     });    
 
+    /* Funcionalidad para insertar la etiqueta de pruebas solicitadas */
+    $("#cuerpo_comunicado").summernote({
+        height: 'auto',
+        toolbar: false
+    });
+    $('.note-editing-area').css("background", "white");
+    $('.note-editor').css("border", "1px solid black");
+
+    $("#btn_insertar_pruebas").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_pruebas = "{{$pruebas_solicitadas}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_pruebas);
+    });
+
+    /* Funcionalidad radio buttons Solicitud documentos Origen y Otro documento */
+    $("[name='tipo_documento_descarga_califi']").on("change", function(){
+        var opc_seleccionada = $(this).val();
+        
+        if (opc_seleccionada == "Documento_PCL") {
+            $("#asunto").val("SOLICITUD DE DOCUMENTOS PARA CALIFICACIÓN DE PÉRDIDA DE LA CAPACIDAD LABORAL");
+            var texto_insertar = "<p>En Seguros de Vida Alfa S.A. siempre buscamos la protección y satisfacción de nuestros clientes. "+
+            "Le informamos que se está llevando a cabo su proceso de Calificaicón de Pérdida de la Capacidad Laboral (PCL) por parte de ARL ALFA S.A., "+
+            "Su historial médico ha sido revisado por el grupo interdisciplinario de calificación de Seguros de Vida Alfa S.A.</p>"+
+            "<p>No obstante, a que la información suministrada es relevante, se hace necesario que sean aportados documentos adicionales "+
+            "con el fin de poder realizar la calificación de pérdida de capacidad laboral requerida, que a continuación relacionamos:</p>"+
+            "<p>1. </p>"+
+            "<p>Esta documentación debe sumistrarla a los siguientes correos electrónicos: en un término de tres (3) meses contados a partir "+
+            "del recibido de la presente comunicación, y a partir de ese momento se inicia nuevamente el estudio de tu solicitud. "+
+            "En el evento de no recibir la documentación medica actualizada, se considerará desistimiento de tu solicitud por parte de esta "+
+            "aseguradora.</p>"+
+            "<p>Cualquier información adicional con gusto será atendida por el Auditor Técnico en el teléfono 7435333 Ext. 14626 en Bogotá.</p>";
+            $('#cuerpo_comunicado').summernote('code', texto_insertar);
+        }else{
+            $("#asunto").val("");
+            $('#cuerpo_comunicado').summernote('code', '');
+        }
+    });
+
     // llenado del formulario para la captura de la modal de Generar Comunicado
     
     $('#form_generarComunicadoPcl').submit(function (e) {
@@ -1446,6 +1536,8 @@ $(document).ready(function(){
                 }
             }
         });
+        var tipo_descarga = $("[name='tipo_documento_descarga_califi']").filter(":checked").val();
+        
         let token = $('input[name=_token]').val();        
         var datos_generarComunicado = {
             '_token': token,
@@ -1454,7 +1546,7 @@ $(document).ready(function(){
             'Id_asignacion':Id_asignacion,
             'Id_procesos':Id_procesos,
             'fecha_comunicado2':fecha_comunicado2,
-            'radicado2':radicado2,
+            'radicado2':radicado2,            
             'cliente_comunicado2':cliente_comunicado2,
             'nombre_afiliado_comunicado2':nombre_afiliado_comunicado2,
             'tipo_documento_comunicado2':tipo_documento_comunicado2,
@@ -1477,6 +1569,7 @@ $(document).ready(function(){
             'reviso':reviso,
             'firmarcomunicado':firmarcomunicadoPcl,
             'agregar_copia':copiaComunicadosPcl,
+            'tipo_descarga':tipo_descarga,
         }
         
         document.querySelector("#Generar_comunicados").disabled = true;   

@@ -7410,10 +7410,10 @@
                                     <div class="col-5">
                                         <div class="form-group">
                                             <label for="elaboro">Elaboró</label>
-                                            @if(!empty($array_comite_interdisciplinario[0]->Elaboro))
+                                            @if(!empty($array_comite_interdisciplinario[0]->Elaboro) && $array_comite_interdisciplinario[0]->Elaboro == $user->name)
                                                 <input type="text" class="form-control" name="elaboro" id="elaboro" value="{{$array_comite_interdisciplinario[0]->Elaboro}}" disabled>                                                
                                             @else
-                                                <input type="text" class="form-control" name="elaboro" id="elaboro" value="{{$user->name}}" disabled>                                                
+                                                <input type="text" class="form-control" name="elaboro" id="elaboro" value="{{$user->name}}" disabled>                                         
                                             @endif
                                         </div>
                                     </div>
