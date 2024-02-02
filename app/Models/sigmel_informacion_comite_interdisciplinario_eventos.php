@@ -20,6 +20,7 @@ class sigmel_informacion_comite_interdisciplinario_eventos extends Model
         'Visar',
         'Profesional_comite',
         'F_visado_comite',
+        'Oficio_Origen',
         'Oficio_pcl',
         'Oficio_incapacidad',
         'Destinatario_principal',

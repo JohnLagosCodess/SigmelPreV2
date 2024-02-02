@@ -771,7 +771,15 @@ Route::post('/ADescargaProformaDML', [AdicionDxDTO::class, 'ADescargaProformaDML
 // Proforma Acuerdo Calificación de EPS
 Route::post('/DescargarProformaPronunciamiento', [PronunciamientoOrigenController::class, 'DescargarProformaPronunciamiento']);
 Route::post('/DescargarProformaRecursoReposicion', [ControversiaJuntasController::class, 'DescargarProformaRecursoReposicion']);
+
+
+/* DESCARGAR PROFORMAS PREVISIONAL */
+
+
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
+Route::post('/DescargaProformaNotiDMLPrev', [DeterminacionOrigenATEL::class, 'DescargaProformaNotiDMLPrev']);
+
+
 
 
 Route::get('/Sigmel/pruebas', [ProbandoController::class, 'index']);

@@ -931,7 +931,12 @@
             <!--  Correspondia -->
             <div class="card-info d-none" id="div_correspondecia">
                 <div class="card-header text-center" style="border: 1.5px solid black;">
-                    <h5>Correspondecia</h5>
+                    <h5>Correspondencia</h5>
+                </div>
+                <br>
+                <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para mostrar todo el cuerpo del comunicado (dentro del pdf) que usted escriba, 
+                    debe incluir la etiqueta de los Diagnósticos CIE-10 dentro de la sección Cuerpo del Comunicado.
                 </div>
                 <form id="form_correspondencia" action="POST">                            
                     <div class="card-body">
@@ -939,16 +944,16 @@
                             <div class="col-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
-                                        @if (!empty($array_comite_interdisciplinario[0]->Oficio_pcl) && $array_comite_interdisciplinario[0]->Oficio_pcl == 'Si')
-                                            <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si" checked>
+                                        @if (!empty($array_comite_interdisciplinario[0]->Oficio_Origen) && $array_comite_interdisciplinario[0]->Oficio_Origen == 'Si')
+                                            <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficio_origen" name="oficio_origen" value="Si" checked>
                                         @else
-                                            <input class="custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si">                                                    
+                                            <input class="custom-control-input" type="checkbox" id="oficio_origen" name="oficio_origen" value="Si">                                                    
                                         @endif
-                                        <label for="oficiopcl" class="custom-control-label">Oficio PCL</label>
+                                        <label for="oficio_origen" class="custom-control-label">Oficio Origen</label>
                                     </div>
                                 </div>
                             </div> 
-                            <div class="col-3">
+                            {{-- <div class="col-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
                                         @if (!empty($array_comite_interdisciplinario[0]->Oficio_incapacidad) && $array_comite_interdisciplinario[0]->Oficio_incapacidad == 'Si')
@@ -959,7 +964,7 @@
                                         <label for="oficioinca" class="custom-control-label">Oficio Incapacidad</label>
                                     </div>
                                 </div>
-                            </div> 
+                            </div> --}} 
                         </div>
                         <div class="row">
                             <div class="col-3">
@@ -1098,6 +1103,8 @@
                                     <label for="cuerpo_comunicado">Cuerpo del comunicado <span style="color: red;">(*)</label>
                                     <br>
                                     <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_cie10">Diagnósticos CIE10</button>
+                                    <button class="btn btn-sm btn-warning mb-2" id="btn_insertar_nombre_afiliado">Nombre Afiliado</button>
+                                    <button class="btn btn-sm btn-warning mb-2" id="btn_insertar_origen_evento">Origen Evento</button>
                                     @if(!empty($array_comite_interdisciplinario[0]->Cuerpo_comunicado))
                                         <textarea class="form-control " name="cuerpo_comunicado" id="cuerpo_comunicado" required>{{$array_comite_interdisciplinario[0]->Cuerpo_comunicado}}</textarea>
                                     @else
@@ -1410,6 +1417,36 @@
                                                                     <i class="far fa-eye text-info"></i>
                                                                 </button>
                                                             </form>
+                                                            {{-- Inicio formulario Notificación del DML PREVISIONAL maurin --}}
+                                                            <form id="Form_noti_dml_previsional_{{$comunicados->Id_Comunicado}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
+                                                                {{-- tupla tabla comunicados para extraer el nro radicado--}}
+                                                                <input type="text" name="id_tupla_comunicado_{{$comunicados->Id_Comunicado}}" id="id_tupla_comunicado_{{$comunicados->Id_Comunicado}}" value="<?php echo $comunicados->Id_Comunicado;?>">
+                                                                {{-- Ciudad --}}
+                                                                <input type="text" name="ciudad_{{$comunicados->Id_Comunicado}}" id="ciudad_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_comite_interdisciplinario[0]->Ciudad)){echo $array_comite_interdisciplinario[0]->Ciudad;}else{echo "Bogotá D.C.";}?>">       
+                                                                {{-- Fecha --}}
+                                                                <input type="date" name="fecha_{{$comunicados->Id_Comunicado}}" id="fecha_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_comite_interdisciplinario[0]->F_correspondecia)){echo $array_comite_interdisciplinario[0]->F_correspondecia;}else{echo now()->format('Y-m-d');}?>">
+                                                                {{-- Asunto --}}
+                                                                <input type="text" name="asunto_proforma_dml_{{$comunicados->Id_Comunicado}}" id="asunto_proforma_dml_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_comite_interdisciplinario[0]->Asunto)){echo strtoupper($array_comite_interdisciplinario[0]->Asunto);}else{echo "Sin Asunto";}?>">                                                
+                                                                {{-- Tipo de documento --}}
+                                                                <input type="text" name="tipo_identificacion_{{$comunicados->Id_Comunicado}}" id="tipo_identificacion_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nombre_tipo_documento)){echo $array_datos_calificacion_origen[0]->Nombre_tipo_documento;}?>">
+                                                                {{-- Nro de documento --}}
+                                                                <input type="text" name="num_identificacion_{{$comunicados->Id_Comunicado}}" id="num_identificacion_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nro_identificacion)){echo $array_datos_calificacion_origen[0]->Nro_identificacion;}?>">
+                                                                {{-- Siniestro --}}
+                                                                <input type="text" name="nro_siniestro_{{$comunicados->Id_Comunicado}}" id="nro_siniestro_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->ID_evento)){echo $array_datos_calificacion_origen[0]->ID_evento;} ?>">
+                                                                {{-- Nombre afiliado --}}
+                                                                <input type="text" name="nombre_afiliado_{{$comunicados->Id_Comunicado}}" id="nombre_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nombre_afiliado)){echo $array_datos_calificacion_origen[0]->Nombre_afiliado;}?>">
+                                                                {{-- Id asignacion para consultar info de destinatario principal --}}
+                                                                <input type="text" name="Id_Asignacion_consulta_{{$comunicados->Id_Comunicado}}" id="Id_Asignacion_consulta_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_Asignacion)){echo $array_datos_calificacion_origen[0]->Id_Asignacion;}?>">
+                                                                {{-- Id proceso para consultar info de destinatario principal --}}
+                                                                <input type="text" name="Id_Proceso_consulta_{{$comunicados->Id_Comunicado}}" id="Id_Proceso_consulta_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_proceso)){echo $array_datos_calificacion_origen[0]->Id_proceso;}?>">
+                                                                {{-- Id del cliente para consultar el nombre del cliente --}}
+                                                                <input type="text" name="Id_cliente_firma_{{$comunicados->Id_Comunicado}}" id="Id_cliente_firma_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_cliente)){echo $array_datos_calificacion_origen[0]->Id_cliente;}?>">
+
+                                                                <button type="submit" id="enviar_form_noti_previsional_{{$comunicados->Id_Comunicado}}" style="border: none; background:transparent;">
+                                                                    <i class="far fa-eye text-warning"></i>
+                                                                </button>
+                                                            </form>
+                                                            {{-- Fin formulario Notificación del DML previsional --}}
                                                             <label for="editar_correspondencia"><i class="fa fa-pen text-info"></i></label>
                                                             <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia" type="button" style="font-weight: bold;">
                                                         </td>

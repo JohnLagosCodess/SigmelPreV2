@@ -915,14 +915,14 @@ class DeterminacionOrigenATEL extends Controller
         $Id_Evento_dto_atel = $request->Id_Evento_dto_atel;
         $Id_Proceso_dto_atel = $request->Id_Proceso_dto_atel;
         $Id_Asignacion_dto_atel = $request->Id_Asignacion_dto_atel;
-        $oficiopcl = $request->oficiopcl;
-        $oficioinca = $request->oficioinca;
-        if ($oficiopcl == '') {
-            $oficiopcl = 'No';
+        $oficio_origen = $request->oficio_origen;
+        if ($oficio_origen == '') {
+            $oficio_origen = 'No';
         }
-        if($oficioinca == ''){
-            $oficioinca = 'No';
-        }
+        // $oficioinca = $request->oficioinca;
+        // if($oficioinca == ''){
+        //     $oficioinca = 'No';
+        // }
         $destinatario_principal = $request->destinatario_principal;
         $otrodestinariop = $request->otrodestinariop;
         $tipo_destinatario_principal = $request->tipo_destinatario_principal;
@@ -975,8 +975,8 @@ class DeterminacionOrigenATEL extends Controller
 
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
-                'Oficio_pcl' => $oficiopcl,
-                'Oficio_incapacidad' => $oficioinca,
+                'Oficio_Origen' => $oficio_origen,
+                // 'Oficio_incapacidad' => $oficioinca,
                 'Destinatario_principal' => $destinatario_principal,
                 'Otro_destinatario' => $otrodestinariop,
                 'Tipo_destinatario' => $tipo_destinatario_principal,
@@ -1056,8 +1056,8 @@ class DeterminacionOrigenATEL extends Controller
         } 
         elseif($bandera_correspondecia_guardar_actualizar == 'Actualizar') {
             $datos_correspondencia = [
-                'Oficio_pcl' => $oficiopcl,
-                'Oficio_incapacidad' => $oficioinca,
+                'Oficio_Origen' => $oficio_origen,
+                // 'Oficio_incapacidad' => $oficioinca,
                 'Destinatario_principal' => $destinatario_principal,
                 'Otro_destinatario' => $otrodestinariop,
                 'Tipo_destinatario' => $tipo_destinatario_principal,
@@ -1691,6 +1691,20 @@ class DeterminacionOrigenATEL extends Controller
         // return $dompdf->stream($nombre_pdf);
         return $pdf->download($nombre_pdf); 
 
+    }
+
+    // Descarga proforma Notificación del DML previsional
+    public function DescargaProformaNotiDMLPrev(Request $request){
+
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        
+        $user= Auth::user();
+        $time = time();
+        $date = date("Y-m-d", $time);
+
+        $nombre_usuario = Auth::user()->name;
     }
 
 }

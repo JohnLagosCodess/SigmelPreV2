@@ -1637,10 +1637,10 @@ $(document).ready(function(){
 
     // Validar cual de los oficios esta marcado
 
-    var oficiopclcorres = $('#oficiopcl');
-    var oficioincacorres = $('#oficioinca');
+    // var oficio_origencorres = $('#oficio_origen');
+    // var oficioincacorres = $('#oficioinca');
     
-    oficiopclcorres.change(function(){
+    /* oficio_origencorres.change(function(){
         if ($(this).prop('checked')) {
             oficioincacorres.prop('disabled', true);            
         }else{
@@ -1650,18 +1650,34 @@ $(document).ready(function(){
 
     oficioincacorres.change(function(){
         if ($(this).prop('checked')) {
-            oficiopclcorres.prop('disabled', true);            
+            oficio_origencorres.prop('disabled', true);            
         }else{
-            oficiopclcorres.prop('disabled', false);            
+            oficio_origencorres.prop('disabled', false);            
         }
-    });
+    }); */
 
-    if (oficiopclcorres.prop('checked')) {
+    /* if (oficio_origencorres.prop('checked')) {
         oficioincacorres.prop('disabled', true);                    
     }
     if (oficioincacorres.prop('checked')) {
-        oficiopclcorres.prop('disabled', true);                    
-    }
+        oficio_origencorres.prop('disabled', true);                    
+    } */
+
+
+    // Funcionalidad para introducir el texto predeterminado para la proforma Notificación DML ORIGEN
+    $('#oficio_origen').change(function(){
+        if ($(this).prop('checked')) {
+         var asunto_insertar = "CALIFICACIÓN DE ORIGEN";
+         var texto_insertar = '<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A</p><p>De la manera más atenta queremos informar el resultado de la calificación realizada por el Grupo Interdisciplinario de Calificación de Origen y Pérdida de la Capacidad Laboral adscrito a la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A, según lo dispuesto en los Artículo 142 del Decreto 0019 de 2012, ha determinado el evento reportado ante esta Administradora, con las siguientes patologías:</p><p>{{$diagnosticos_cie10}}</p><p>El dictamen de calificación del que anexó copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, de acuerdo al Decreto 0019 de 2012 artículo 142, en la Carrera 10 Nº 18 - 36 piso 4°, Edificio José María Córdoba, Bogotá D.C. Favor informar en la carta el motivo de su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen.</p><p>Cualquier información adicional con gusto será atendida por el Auditor Técnico en el teléfono 7435333 Ext. 14626 en Bogotá.</p>';
+
+         $("#Asunto").val(asunto_insertar);
+         $("#cuerpo_comunicado").summernote('code', texto_insertar);
+        }else{
+            $("#Asunto").val('');
+            $("#cuerpo_comunicado").summernote('code', '');
+        }
+    });
+
     // validar si el otro destinatario principal esta marcado
 
     var otrodestinariop = $("#otrodestinariop");
@@ -1866,14 +1882,14 @@ $(document).ready(function(){
         var Id_Evento_dto_atel = $('#Id_Evento_dto_atel').val();
         var Id_Proceso_dto_atel = $('#Id_Proceso_dto_atel').val();
         var Id_Asignacion_dto_atel  = $('#Id_Asignacion_dto_atel').val();
-        var oficiopcl = $('input[name="oficiopcl"]:checked').val();
-        var oficioinca = $('input[name="oficioinca"]:checked').val();
-        if (oficiopcl == undefined) {
-            oficiopcl = '';
+        var oficio_origen = $('input[name="oficio_origen"]:checked').val();
+        // var oficioinca = $('input[name="oficioinca"]:checked').val();
+        if (oficio_origen == undefined) {
+            oficio_origen = '';
         }
-        if(oficioinca == undefined){
-            oficioinca = '';
-        }
+        // if(oficioinca == undefined){
+        //     oficioinca = '';
+        // }
         var destinatario_principal = $('#destinatario_principal').val();        
         var otrodestinariop = $('input[name="otrodestinariop"]:checked').val();
         if (otrodestinariop == undefined) {
@@ -1935,8 +1951,8 @@ $(document).ready(function(){
             'Id_Evento_dto_atel':Id_Evento_dto_atel,
             'Id_Proceso_dto_atel':Id_Proceso_dto_atel,
             'Id_Asignacion_dto_atel':Id_Asignacion_dto_atel,            
-            'oficiopcl':oficiopcl,
-            'oficioinca':oficioinca,
+            'oficio_origen':oficio_origen,
+            // 'oficioinca':oficioinca,
             'destinatario_principal':destinatario_principal,
             'otrodestinariop' : otrodestinariop,
             'tipo_destinatario_principal' : tipo_destinatario_principal,
@@ -2148,6 +2164,98 @@ $(document).ready(function(){
         
                 // Eliminar el enlace del documento
                 document.body.removeChild(link);
+            },
+            error: function (error) {
+                // Manejar casos de error
+                console.error('Error al descargar el PDF:', error);
+            }       
+        });
+    });
+
+
+    // Captura Formulario PDF Notificación del DML previsional 
+    $("#btn_insertar_nombre_afiliado").click(function(e){
+        e.preventDefault();
+
+        var etiqueta = "{{$nombre_afiliado}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta);
+    });
+
+    $("#btn_insertar_origen_evento").click(function(e){
+        e.preventDefault();
+
+        var etiqueta = "{{$origen_evento}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta);
+    });
+
+    $("form[id^='Form_noti_dml_previsional_']").submit(function (e){
+        e.preventDefault();              
+       
+        var tupla_comunicado = $(this).data("tupla_comunicado");
+
+        // Captura de variables del formulario
+        var id_tupla_comunicado = $("#id_tupla_comunicado_"+tupla_comunicado).val();
+        var ciudad = $("#ciudad_"+tupla_comunicado).val();
+        var fecha = $("#fecha_"+tupla_comunicado).val();
+        var asunto = $("#asunto_proforma_dml_"+tupla_comunicado).val();
+        var cuerpo = $("#cuerpo_comunicado").val();
+        var tipo_identificacion = $("#tipo_identificacion_"+tupla_comunicado).val();
+        var num_identificacion = $("#num_identificacion_"+tupla_comunicado).val();
+        var nro_siniestro = $("#nro_siniestro_"+tupla_comunicado).val();
+        var nombre_afiliado = $("#nombre_afiliado_"+tupla_comunicado).val();
+        var Id_Asignacion_consulta = $("#Id_Asignacion_consulta_"+tupla_comunicado).val();
+        var Id_Proceso_consulta = $("#Id_Proceso_consulta_"+tupla_comunicado).val();
+        var Id_cliente_firma = $('#Id_cliente_firma_'+tupla_comunicado).val();
+        //checkbox de Copias de partes interesadas
+        var copia_empleador = $('#empleador').filter(":checked").val();
+        var copia_eps = $('#eps').filter(":checked").val();
+        var copia_afp = $('#afp').filter(":checked").val();
+        var copia_arl = $('#arl').filter(":checked").val();
+        var firmar = $('#firmar').filter(":checked").val();
+
+        datos_pdf_noti_dml_previsional = {
+            '_token': token, 
+            'id_tupla_comunicado': id_tupla_comunicado,
+            'ciudad': ciudad,
+            'fecha': fecha,
+            'asunto': asunto,
+            'cuerpo': cuerpo,
+            'tipo_identificacion': tipo_identificacion,
+            'num_identificacion': num_identificacion,
+            'nro_siniestro': nro_siniestro,
+            'nombre_afiliado': nombre_afiliado,
+            'Id_Asignacion_consulta': Id_Asignacion_consulta,
+            'Id_Proceso_consulta': Id_Proceso_consulta,
+            'Id_cliente_firma': Id_cliente_firma,
+            'copia_empleador': copia_empleador,
+            'copia_eps': copia_eps,
+            'copia_afp': copia_afp,
+            'copia_arl': copia_arl,
+            'firmar': firmar
+        };
+        
+        $.ajax({    
+            type:'POST',
+            url:'/DescargaProformaNotiDMLPrev',
+            data: datos_pdf_noti_dml_previsional,
+            xhrFields: {
+                responseType: 'blob' // Indica que la respuesta es un blob
+            },
+            success: function (response, status, xhr) {
+                // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+        
+                // // Crear un enlace de descarga similar al ejemplo anterior
+                // var nombre_pdf = "ORI_DML_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".pdf";
+                // var link = document.createElement('a');
+                // link.href = window.URL.createObjectURL(blob);
+                // link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
+        
+                // // Adjuntar el enlace al documento y activar el evento de clic
+                // document.body.appendChild(link);
+                // link.click();
+        
+                // // Eliminar el enlace del documento
+                // document.body.removeChild(link);
             },
             error: function (error) {
                 // Manejar casos de error

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('Visar', 5);
             $table->text('Profesional_comite')->nullable();
             $table->date('F_visado_comite')->nullable();
+            $table->enum('Oficio_Origen', ['Si', 'No'])->nullable();
             $table->text('Oficio_pcl')->nullable();
             $table->text('Oficio_incapacidad')->nullable();
             $table->text('Destinatario_principal')->nullable();

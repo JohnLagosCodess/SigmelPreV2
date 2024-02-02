@@ -999,7 +999,7 @@ $(document).ready(function(){
 
     // Validar cual de los oficios esta marcado
 
-    var oficiopclcorres = $('#oficiopcl');
+    /* var oficiopclcorres = $('#oficiopcl');
     var oficioincacorres = $('#oficioinca');
     
     oficiopclcorres.change(function(){
@@ -1023,7 +1023,22 @@ $(document).ready(function(){
     }
     if (oficioincacorres.prop('checked')) {
         oficiopclcorres.prop('disabled', true);                    
+    } */
+
+    // Funcionalidad para introducir el texto predeterminado para la proforma Notificación DML ORIGEN
+    $('#oficio_origen').change(function(){
+    if ($(this).prop('checked')) {
+        var asunto_insertar = "CALIFICACIÓN DE ORIGEN";
+        var texto_insertar = '<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A</p><p>De la manera más atenta queremos informar el resultado de la calificación realizada por el Grupo Interdisciplinario de Calificación de Origen y Pérdida de la Capacidad Laboral adscrito a la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A, según lo dispuesto en los Artículo 142 del Decreto 0019 de 2012, ha determinado el evento reportado ante esta Administradora, con las siguientes patologías:</p><p>{{$diagnosticos_cie10}}</p><p>El dictamen de calificación del que anexó copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, de acuerdo al Decreto 0019 de 2012 artículo 142, en la Carrera 10 Nº 18 - 36 piso 4°, Edificio José María Córdoba, Bogotá D.C. Favor informar en la carta el motivo de su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen.</p><p>Cualquier información adicional con gusto será atendida por el Auditor Técnico en el teléfono 7435333 Ext. 14626 en Bogotá.</p>';
+
+        $("#Asunto").val(asunto_insertar);
+        $("#cuerpo_comunicado").summernote('code', texto_insertar);
+    }else{
+        $("#Asunto").val('');
+        $("#cuerpo_comunicado").summernote('code', '');
     }
+});
+
     // validar si el otro destinatario principal esta marcado
 
     var otrodestinariop = $("#otrodestinariop");
@@ -1230,14 +1245,14 @@ $(document).ready(function(){
         var Id_Evento = $('#Id_Evento').val();
         var Id_Proceso_adicion_dx = $('#Id_Proceso_adicion_dx').val();
         var Id_Asignacion_adicion_dx  = $('#Id_Asignacion_adicion_dx').val();
-        var oficiopcl = $('input[name="oficiopcl"]:checked').val();
-        var oficioinca = $('input[name="oficioinca"]:checked').val();
-        if (oficiopcl == undefined) {
-            oficiopcl = '';
+        var oficio_origen = $('input[name="oficio_origen"]:checked').val();
+        // var oficioinca = $('input[name="oficioinca"]:checked').val();
+        if (oficio_origen == undefined) {
+            oficio_origen = '';
         }
-        if(oficioinca == undefined){
-            oficioinca = '';
-        }
+        // if(oficioinca == undefined){
+        //     oficioinca = '';
+        // }
         var destinatario_principal = $('#destinatario_principal').val();        
         var otrodestinariop = $('input[name="otrodestinariop"]:checked').val();
         if (otrodestinariop == undefined) {
@@ -1299,8 +1314,8 @@ $(document).ready(function(){
             'Id_Evento':Id_Evento,
             'Id_Proceso_adicion_dx':Id_Proceso_adicion_dx,
             'Id_Asignacion_adicion_dx':Id_Asignacion_adicion_dx,            
-            'oficiopcl':oficiopcl,
-            'oficioinca':oficioinca,
+            'oficio_origen':oficio_origen,
+            // 'oficioinca':oficioinca,
             'destinatario_principal':destinatario_principal,
             'otrodestinariop' : otrodestinariop,
             'tipo_destinatario_principal' : tipo_destinatario_principal,

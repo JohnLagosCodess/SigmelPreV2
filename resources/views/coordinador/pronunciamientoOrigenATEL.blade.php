@@ -288,6 +288,9 @@
                                 <h5>Pronunciamiento ante la calificación </h5>
                             </div>
                             <div class="card-body">
+                                <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para mostrar todo el 
+                                </div>
                                 <div class="row">
                                     <div class="col-1">
                                         <div class="form-group">
@@ -360,7 +363,7 @@
                         </div>
                         <div class="card-info row_correspondencia" @if (!empty($info_pronuncia[0]->Decision) && $info_pronuncia[0]->Decision <>'Silencio') style="display:block" @else style="display:none" @endif>
                             <div class="card-header text-center" style="border: 1.5px solid black;">
-                                <h5>Correspondecia</h5>
+                                <h5>Correspondencia</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row">

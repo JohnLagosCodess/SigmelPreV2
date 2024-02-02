@@ -780,14 +780,14 @@ class AdicionDxDTO extends Controller
         $Id_Evento = $request->Id_Evento;
         $Id_Proceso_adicion_dx = $request->Id_Proceso_adicion_dx;
         $Id_Asignacion_adicion_dx = $request->Id_Asignacion_adicion_dx;
-        $oficiopcl = $request->oficiopcl;
-        $oficioinca = $request->oficioinca;
-        if ($oficiopcl == '') {
-            $oficiopcl = 'No';
+        $oficio_origen = $request->oficio_origen;
+        if ($oficio_origen == '') {
+            $oficio_origen = 'No';
         }
-        if($oficioinca == ''){
-            $oficioinca = 'No';
-        }
+        // $oficioinca = $request->oficioinca;
+        // if($oficioinca == ''){
+        //     $oficioinca = 'No';
+        // }
         $destinatario_principal = $request->destinatario_principal;
         $otrodestinariop = $request->otrodestinariop;
         $tipo_destinatario_principal = $request->tipo_destinatario_principal;
@@ -838,8 +838,8 @@ class AdicionDxDTO extends Controller
 
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
-                'Oficio_pcl' => $oficiopcl,
-                'Oficio_incapacidad' => $oficioinca,
+                'Oficio_Origen' => $oficio_origen,
+                // 'Oficio_incapacidad' => $oficioinca,
                 'Destinatario_principal' => $destinatario_principal,
                 'Otro_destinatario' => $otrodestinariop,
                 'Tipo_destinatario' => $tipo_destinatario_principal,
@@ -919,8 +919,8 @@ class AdicionDxDTO extends Controller
         } 
         elseif($bandera_correspondecia_guardar_actualizar == 'Actualizar') {
             $datos_correspondencia = [
-                'Oficio_pcl' => $oficiopcl,
-                'Oficio_incapacidad' => $oficioinca,
+                'Oficio_Origen' => $oficio_origen,
+                // 'Oficio_incapacidad' => $oficioinca,
                 'Destinatario_principal' => $destinatario_principal,
                 'Otro_destinatario' => $otrodestinariop,
                 'Tipo_destinatario' => $tipo_destinatario_principal,

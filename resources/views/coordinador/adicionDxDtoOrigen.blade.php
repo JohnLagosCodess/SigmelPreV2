@@ -897,7 +897,12 @@
             <!--  Correspondia -->
             <div class="card-info d-none" id="div_correspondecia">
                 <div class="card-header text-center" style="border: 1.5px solid black;">
-                    <h5>Correspondecia</h5>
+                    <h5>Correspondencia</h5>
+                </div>
+                <br>
+                <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para mostrar todo el cuerpo del comunicado (dentro del pdf) que usted escriba, 
+                    debe incluir la etiqueta de los Diagnósticos CIE-10 dentro de la sección Cuerpo del Comunicado.
                 </div>
                 <form id="form_correspondencia" action="POST">                            
                     <div class="card-body">
@@ -905,16 +910,16 @@
                             <div class="col-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
-                                        @if (!empty($array_comite_interdisciplinario[0]->Oficio_pcl) && $array_comite_interdisciplinario[0]->Oficio_pcl == 'Si')
-                                            <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si" checked>
+                                        @if (!empty($array_comite_interdisciplinario[0]->Oficio_Origen) && $array_comite_interdisciplinario[0]->Oficio_Origen == 'Si')
+                                            <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficio_origen" name="oficio_origen" value="Si" checked>
                                         @else
-                                            <input class="custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si">                                                    
+                                            <input class="custom-control-input" type="checkbox" id="oficio_origen" name="oficio_origen" value="Si">                                                    
                                         @endif
-                                        <label for="oficiopcl" class="custom-control-label">Oficio PCL</label>
+                                        <label for="oficio_origen" class="custom-control-label">Oficio Origen</label>
                                     </div>
                                 </div>
                             </div> 
-                            <div class="col-3">
+                            {{-- <div class="col-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
                                         @if (!empty($array_comite_interdisciplinario[0]->Oficio_incapacidad) && $array_comite_interdisciplinario[0]->Oficio_incapacidad == 'Si')
@@ -925,7 +930,7 @@
                                         <label for="oficioinca" class="custom-control-label">Oficio Incapacidad</label>
                                     </div>
                                 </div>
-                            </div> 
+                            </div> --}} 
                         </div>
                         <div class="row">
                             <div class="col-3">
