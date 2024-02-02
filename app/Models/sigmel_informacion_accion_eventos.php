@@ -17,6 +17,7 @@ class sigmel_informacion_accion_eventos extends Model
     'ID_evento',
     'Id_Asignacion',
     'Modalidad_calificacion',
+    'Fuente_informacion',
     'F_accion',
     'Accion',
     'F_Alerta',

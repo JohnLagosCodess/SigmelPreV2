@@ -222,14 +222,31 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="modalidad_calificacion">Modalidad Calificación <span style="color: red;">(*)</span></label>
-                                                <select class="custom-select" name="modalidad_calificacion" id="modalidad_calificacion" required>
-                                                    @if ($array_datos_calificacionPcl[0]->Modalidad_calificacion > 0)
-                                                        <option value="{{$array_datos_calificacionPcl[0]->Modalidad_calificacion}}" selected>{{$array_datos_calificacionPcl[0]->Nombre_Modalidad_calificacion}}</option>
-                                                    @else
-                                                        <option value="">Seleccione una opción</option>
+                                                @if ($array_datos_calificacionPcl[0]->Id_Servicio == 9)
+                                                    <label for="modalidad_calificacion">Modalidad Calificación</label>
+                                                    @if ($array_datos_calificacionPcl[0]->Modalidad_calificacion == 'N/A')
+                                                        <select class="modalidad_calificacion custom-select" name="modalidad_calificacion" id="modalidad_calificacion">                                                           
+                                                            <option value="">Seleccione una opción</option>                                                            
+                                                        </select>                                                        
+                                                    @else                                                    
+                                                        <select class="modalidad_calificacion custom-select" name="modalidad_calificacion" id="modalidad_calificacion">
+                                                            @if ($array_datos_calificacionPcl[0]->Modalidad_calificacion > 0)
+                                                                <option value="{{$array_datos_calificacionPcl[0]->Modalidad_calificacion}}" selected>{{$array_datos_calificacionPcl[0]->Nombre_Modalidad_calificacion}}</option>
+                                                            @else
+                                                                <option value="">Seleccione una opción</option>
+                                                            @endif
+                                                        </select>                                                                                                            
                                                     @endif
-                                                </select>
+                                                @else
+                                                    <label for="modalidad_calificacion">Modalidad Calificación <span style="color: red;">(*)</span></label>                                                    
+                                                    <select class="modalidad_calificacion custom-select" name="modalidad_calificacion" id="modalidad_calificacion" required>
+                                                        @if ($array_datos_calificacionPcl[0]->Modalidad_calificacion > 0)
+                                                            <option value="{{$array_datos_calificacionPcl[0]->Modalidad_calificacion}}" selected>{{$array_datos_calificacionPcl[0]->Nombre_Modalidad_calificacion}}</option>
+                                                        @else
+                                                            <option value="">Seleccione una opción</option>
+                                                        @endif
+                                                    </select>  
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -248,6 +265,18 @@
                                             <div class="form-group">
                                                 <label for="tiempo_gestion">Tiempo de gestión</label>
                                                 <input type="text" class="form-control" name="tiempo_gestion" id="tiempo_gestion" value="{{$array_datos_calificacionPcl[0]->Tiempo_de_gestion}}" disabled>
+                                            </div>
+                                        </div>  
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="fuente_informacion">Fuente de información</label>
+                                                <select class="fuente_informacion custom-select" name="fuente_informacion" id="fuente_informacion">
+                                                    @if ($array_datos_calificacionPcl[0]->Fuente_informacion > 0)
+                                                        <option value="{{$array_datos_calificacionPcl[0]->Fuente_informacion}}" selected>{{$array_datos_calificacionPcl[0]->Nombre_Fuente_informacion}}</option>
+                                                    @else
+                                                        <option value="">Seleccione una opción</option>
+                                                    @endif
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -357,7 +386,7 @@
                 </div>
                 <div class="grupo_botones">
                     <input type="reset" id="Borrar" class="btn btn-info" value="Restablecer">
-                    @if (empty($array_datos_calificacionPcl[0]->Nombre_Modalidad_calificacion))
+                    @if (empty($array_datos_calificacionPcl[0]->Modalidad_calificacion))
                         <input type="submit" id="Edicion" class="btn btn-info" value="Guardar">
                         <div class="col-12">
                             <div class="alerta_calificacion alert alert-success mt-2 mr-auto d-none" role="alert"></div>

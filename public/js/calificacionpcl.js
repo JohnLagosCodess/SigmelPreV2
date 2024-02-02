@@ -7,6 +7,11 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    $(".fuente_informacion").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
     // Inicializacion del select2 modal agregar seguimiento
     $(".causal_seguimiento").select2({
         placeholder:"Seleccione una opción",
@@ -91,6 +96,29 @@ $(document).ready(function(){
             for (let i = 0; i < modalidadCalificacionPcl.length; i++) {
                 if (data[modalidadCalificacionPcl[i]]['Id_Parametro'] != NombremodalidadCalificacionPcl) {                    
                     $('#modalidad_calificacion').append('<option value="'+data[modalidadCalificacionPcl[i]]['Id_Parametro']+'">'+data[modalidadCalificacionPcl[i]]['Nombre_parametro']+'</option>');
+                }
+            }
+        }
+    });
+
+    //Listado de fuente de informacion calificacion PCL
+
+    let datos_lista_fuente_informacion = {
+        '_token': token,
+        'parametro':"lista_fuente_informacion"
+    };
+    
+    $.ajax({
+        type:'POST',
+        url:'/selectoresModuloCalificacionPCL',
+        data: datos_lista_fuente_informacion,
+        success:function(data){
+            //console.log(data);
+            let fuenteInformacionCalificacionPcl = $('select[name=fuente_informacion]').val();
+            let fuenteInfoCalificacionPcl = Object.keys(data);
+            for (let i = 0; i < fuenteInfoCalificacionPcl.length; i++) {
+                if (data[fuenteInfoCalificacionPcl[i]]['Id_Parametro'] != fuenteInformacionCalificacionPcl) {                    
+                    $('#fuente_informacion').append('<option value="'+data[fuenteInfoCalificacionPcl[i]]['Id_Parametro']+'">'+data[fuenteInfoCalificacionPcl[i]]['Nombre_parametro']+'</option>');
                 }
             }
         }
@@ -290,7 +318,8 @@ $(document).ready(function(){
         var newId_asignacion = $('#newId_asignacion').val();
         var Id_proceso = $('#Id_proceso').val();
         var Id_servicio = $("#Id_servicio").val();
-        var modalidad_calificacion = $('#modalidad_calificacion').val();        
+        var modalidad_calificacion = $('#modalidad_calificacion').val();   
+        var fuente_informacion = $('#fuente_informacion').val();        
         var accion = $('#accion').val();
         var fecha_alerta = $('#fecha_alerta').val();
         var enviar = $('#enviar').val();
@@ -307,6 +336,7 @@ $(document).ready(function(){
             'Id_proceso':Id_proceso,
             'Id_servicio': Id_servicio,
             'modalidad_calificacion':modalidad_calificacion,
+            'fuente_informacion':fuente_informacion,
             'accion':accion,
             'fecha_alerta':fecha_alerta,
             'enviar':enviar,
