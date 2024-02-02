@@ -2861,6 +2861,7 @@ $(document).ready(function(){
     if (oficioincacorres.prop('checked')) {
         oficiopclcorres.prop('disabled', true);                    
     }
+
     // validar si el otro destinatario principal esta marcado
 
     var otrodestinariop = $("#otrodestinariop");
@@ -3052,14 +3053,14 @@ $(document).ready(function(){
         var Id_EventoDecreto = $('#Id_Evento_decreto').val();
         var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
         var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
-        var oficiopcl = $('input[name="oficiopcl"]:checked').val();
-        var oficioinca = $('input[name="oficioinca"]:checked').val();
-        if (oficiopcl == undefined) {
-            oficiopcl = '';
-        }
-        if(oficioinca == undefined){
-            oficioinca = '';
-        }
+        // var oficiopcl = $('input[name="oficiopcl"]:checked').val();
+        // var oficioinca = $('input[name="oficioinca"]:checked').val();
+        // if (oficiopcl == undefined) {
+        //     oficiopcl = '';
+        // }
+        // if(oficioinca == undefined){
+        //     oficioinca = '';
+        // }
         var destinatario_principal = $('#destinatario_principal').val();        
         var otrodestinariop = $('input[name="otrodestinariop"]:checked').val();
         if (otrodestinariop == undefined) {
@@ -3128,8 +3129,8 @@ $(document).ready(function(){
             'Id_EventoDecreto':Id_EventoDecreto,
             'Id_ProcesoDecreto':Id_ProcesoDecreto,
             'Id_Asignacion_Dcreto':Id_Asignacion_Dcreto,     
-            'oficiopcl':oficiopcl,
-            'oficioinca':oficioinca,
+            // 'oficiopcl':oficiopcl,
+            // 'oficioinca':oficioinca,
             'destinatario_principal':destinatario_principal,
             'otrodestinariop' : otrodestinariop,
             'tipo_destinatario_principal' : tipo_destinatario_principal,
@@ -3334,6 +3335,36 @@ $(document).ready(function(){
         $('#cuerpo_comunicado').summernote('code', texto_insertar);
 
     }
+
+    // Retornar el texto por defecto en el asunto y cuerpo del comunicado
+
+    var notificacionpcl = $('#notificacionpcl');
+
+    notificacionpcl.change(function(){
+        if ($(this).prop('checked')) {
+            $("#Asunto").val("CALIFICACIÓN DE PÉRDIDA DE CAPACIDAD LABORAL");
+            var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.</p>"+
+           "<p>De la manera más atenta queremos informar el resultado de la calificación realizada por el Equipo Interdisciplinario de Calificación "+ 
+           "de Origen, Invalidez y Pérdida de la Capacidad Laboral adscrito a la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A., "+
+           "el cual dio un porcentaje de {{$PorcentajePcl_dp}}, con fecha de estructuración del {{$F_estructuracionPcl_dp}},  que corresponde a Incapacidad "+
+           "Permanente Parcial según lo dispuesto en los Artículos 6 y 7 de la ley 776 de 2002, por  la patología {{$CIE10Nombres}}. "+
+           "Teniendo en cuenta la tabla adoptada por el Decreto 2644 de 1994, le corresponde {{$Monto_indemnizacionPcl}} meses de Ingreso Base "+
+           "de Liquidación como reconocimiento de la prestación económica.</p>"+
+           "<p>El dictamen de calificación del que anexó copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, "+
+           "de acuerdo al Decreto 0019  de 2012 artículo 142, en la Carrera 10 #18-36 piso 4°, Edificio José María Córdoba, Bogotá. Favor informar en la carta el motivo de "+
+           "su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen</p>"+
+           "<p>Si pasados los 10 días hábiles no han radicado apelación alguna, usted podrá tramitar la solicitud de pago de indemnización por incapacidad permanente parcial "+
+           "(IPP) en nuestras oficinas, paro lo cual debe anexar la siguiente documentación: 1. Certificación bancaria Original a su nombre. 2. Fotocopia de documento de "+
+           "identidad vigente. 3. Carta de autorización firmada en donde autorice a Seguros de Vida Alfa S.A. a realizar la transferencia electrónica a su cuenta acreditada.</p>"+
+           "<p>Cualquier información adicional con gusto será atendida por Auditoría Técnica de nuestra sucursal más cercana a su residencia.</p>";
+            $('#cuerpo_comunicado').summernote('code', texto_insertar);
+        }
+        setTimeout(function() {
+            notificacionpcl.prop("checked", false);
+        }, 3000);
+    });
+    
+
     $("#btn_insertar_porPcl").click(function(e){
         e.preventDefault();
 
@@ -3390,6 +3421,30 @@ $(document).ready(function(){
         $('#cuerpo_comunicado_cero').summernote('code', texto_insertar);        
     }
 
+    // Retornar el texto por defecto en el asunto y cuerpo del comunicado
+
+    var notificacionpclcero = $('#notificacionpclcero');
+
+    notificacionpclcero.change(function(){
+        if ($(this).prop('checked')) {
+            $("#Asunto").val("CALIFICACIÓN DE PÉRDIDA DE CAPACIDAD LABORAL");
+            var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A</p>"+
+           "<p>De la manera más atenta queremos informar el resultado de la calificación realizada por el Grupo Interdisciplinario de Calificación "+ 
+           "de Origen y Pérdida de la Capacidad Laboral de la Administradora de Riesgos Laborales de "+
+           "Seguros de Vida Alfa S.A. El cual dio un porcentaje de {{$PorcentajePcl_cero}}; por el diagnostico {{$CIE10Nombres_cero}} "+
+           "por lo tanto NO procede el pago de indemnización por Incapacidad Permanente Parcial, ya que de acuerdo con el Artículo 5 Ley 776 de 2002 "+
+           "<strong>“Se considera como incapacitado permanente parcial, al afiliado que, como consecuencia de un accidente de trabajo o una enfermedad profesional, "+
+           "presenta una disminución definitiva, igual o superior al 5% pero inferior al 50% de su capacidad laboral, para la cual ha sido contratado o capacitado”</strong>.</p>"+
+           "<p>El dictamen de calificación del que anexo copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, "+
+           " de acuerdo al Decreto 0019 de 2012 artículo 142, en la Carrera 10 #18-36 piso 4°, Edificio José María Córdoba, Bogotá.</p>"+
+           "<p>Favor informar en la carta el motivo de su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen "+
+           "Cualquier información adicional con gusto será atendida por Auditoría Técnica de nuestra sucursal más cercana a su residencia.</p>";
+            $('#cuerpo_comunicado_cero').summernote('code', texto_insertar);  
+        }
+        setTimeout(function() {
+            notificacionpclcero.prop("checked", false);
+        }, 3000);
+    });
 
     $("#btn_insertar_porPcl_cero").click(function(e){
         e.preventDefault();

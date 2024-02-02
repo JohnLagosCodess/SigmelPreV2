@@ -184,6 +184,22 @@ class CalificacionPCLController extends Controller
 
         }
 
+        // Listado Modalidad calificacion PCL
+
+        if($parametro == 'lista_fuente_informacion'){
+            $listado_fuente_info_calificacion = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro', 'Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Fuente informacion'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_fuente_info_calificacion = json_decode(json_encode($listado_fuente_info_calificacion, true));
+            return response()->json($info_listado_fuente_info_calificacion);
+
+        }
+
         //  listado Causal seguimiento en la modal Agregar Seguimiento
         if ($parametro == 'lista_causal_seguimiento_pcl'){
             $listado_causal_seguimiento = sigmel_lista_causal_seguimiento::on('sigmel_gestiones')
@@ -344,26 +360,47 @@ class CalificacionPCLController extends Controller
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
         $Id_servicio = $request->Id_servicio;
-
+        
         // validacion de bandera para guardar o actualizar
         if ($request->bandera_accion_guardar_actualizar == 'Guardar') {
                
             // insercion de datos a la tabla de sigmel_informacion_accion_eventos
+
+            if ($request->modalidad_calificacion == '') {
+                $datos_info__registrarCalifcacionPcl= [
+                    'ID_evento' => $request->newId_evento,
+                    'Id_Asignacion' => $request->newId_asignacion,
+                    'Id_proceso' => $request->Id_proceso,
+                    'Modalidad_calificacion' => 'N/A',
+                    'fuente_informacion' => $request->fuente_informacion,
+                    'F_accion' => $datetime,
+                    'Accion' => $request->accion,
+                    'F_Alerta' => $request->fecha_alerta,
+                    'Enviar' => $request->enviar,
+                    'Causal_devolucion_comite' => $request->causal_devolucion_comite,
+                    'Descripcion_accion' => $request->descripcion_accion,
+                    'Nombre_usuario' => $nombre_usuario,
+                    'F_registro' => $date,
+                ];
+            } else {                
+                $datos_info__registrarCalifcacionPcl= [
+                    'ID_evento' => $request->newId_evento,
+                    'Id_Asignacion' => $request->newId_asignacion,
+                    'Id_proceso' => $request->Id_proceso,
+                    'Modalidad_calificacion' => $request->modalidad_calificacion,
+                    'fuente_informacion' => $request->fuente_informacion,
+                    'F_accion' => $datetime,
+                    'Accion' => $request->accion,
+                    'F_Alerta' => $request->fecha_alerta,
+                    'Enviar' => $request->enviar,
+                    'Causal_devolucion_comite' => $request->causal_devolucion_comite,
+                    'Descripcion_accion' => $request->descripcion_accion,
+                    'Nombre_usuario' => $nombre_usuario,
+                    'F_registro' => $date,
+                ];
+            }
+            
     
-            $datos_info__registrarCalifcacionPcl= [
-                'ID_evento' => $request->newId_evento,
-                'Id_Asignacion' => $request->newId_asignacion,
-                'Id_proceso' => $request->Id_proceso,
-                'Modalidad_calificacion' => $request->modalidad_calificacion,
-                'F_accion' => $datetime,
-                'Accion' => $request->accion,
-                'F_Alerta' => $request->fecha_alerta,
-                'Enviar' => $request->enviar,
-                'Causal_devolucion_comite' => $request->causal_devolucion_comite,
-                'Descripcion_accion' => $request->descripcion_accion,
-                'Nombre_usuario' => $nombre_usuario,
-                'F_registro' => $date,
-            ];
 
             // Extraemos el id estado de la tabla de parametrizaciones dependiendo del
             // id del cliente, id proceso, id servicio, id accion. Este id irá como estado inicial
@@ -451,20 +488,41 @@ class CalificacionPCLController extends Controller
             
             // actualizacion de datos a la tabla de sigmel_informacion_accion_eventos
 
-            $datos_info_actualizarCalifcacionPcl= [
-                'ID_evento' => $request->newId_evento,
-                'Id_Asignacion' => $request->newId_asignacion,
-                'Id_proceso' => $request->Id_proceso,
-                'Modalidad_calificacion' => $request->modalidad_calificacion,
-                'F_accion' => $datetime,
-                'Accion' => $request->accion,
-                'F_Alerta' => $request->fecha_alerta,
-                'Enviar' => $request->enviar,
-                'Causal_devolucion_comite' => $request->causal_devolucion_comite,
-                'Descripcion_accion' => $request->descripcion_accion,
-                'Nombre_usuario' => $nombre_usuario,
-                'F_registro' => $date,
-            ];
+            if ($request->modalidad_calificacion == '') {                
+                $datos_info_actualizarCalifcacionPcl= [
+                    'ID_evento' => $request->newId_evento,
+                    'Id_Asignacion' => $request->newId_asignacion,
+                    'Id_proceso' => $request->Id_proceso,
+                    'Modalidad_calificacion' => 'N/A',
+                    'fuente_informacion' => $request->fuente_informacion,
+                    'F_accion' => $datetime,
+                    'Accion' => $request->accion,
+                    'F_Alerta' => $request->fecha_alerta,
+                    'Enviar' => $request->enviar,
+                    'Causal_devolucion_comite' => $request->causal_devolucion_comite,
+                    'Descripcion_accion' => $request->descripcion_accion,
+                    'Nombre_usuario' => $nombre_usuario,
+                    'F_registro' => $date,
+                ];
+            } else {
+                $datos_info_actualizarCalifcacionPcl= [
+                    'ID_evento' => $request->newId_evento,
+                    'Id_Asignacion' => $request->newId_asignacion,
+                    'Id_proceso' => $request->Id_proceso,
+                    'Modalidad_calificacion' => $request->modalidad_calificacion,
+                    'fuente_informacion' => $request->fuente_informacion,
+                    'F_accion' => $datetime,
+                    'Accion' => $request->accion,
+                    'F_Alerta' => $request->fecha_alerta,
+                    'Enviar' => $request->enviar,
+                    'Causal_devolucion_comite' => $request->causal_devolucion_comite,
+                    'Descripcion_accion' => $request->descripcion_accion,
+                    'Nombre_usuario' => $nombre_usuario,
+                    'F_registro' => $date,
+                ];
+            }
+            
+
 
             // Extraemos el id estado de la tabla de parametrizaciones dependiendo del
             // id del cliente, id proceso, id servicio, id accion. Este id irá como estado inicial
@@ -4263,14 +4321,14 @@ class CalificacionPCLController extends Controller
         $Id_EventoDecreto = $request->Id_EventoDecreto;
         $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
         $Id_Asignacion_Dcreto = $request->Id_Asignacion_Dcreto;
-        $oficiopcl = $request->oficiopcl;
-        $oficioinca = $request->oficioinca;
-        if ($oficiopcl == '') {
-            $oficiopcl = 'No';
-        }
-        if($oficioinca == ''){
-            $oficioinca = 'No';
-        }
+        // $oficiopcl = $request->oficiopcl;
+        // $oficioinca = $request->oficioinca;
+        // if ($oficiopcl == '') {
+        //     $oficiopcl = 'No';
+        // }
+        // if($oficioinca == ''){
+        //     $oficioinca = 'No';
+        // }
         $destinatario_principal = $request->destinatario_principal;
         $otrodestinariop = $request->otrodestinariop;
         $tipo_destinatario_principal = $request->tipo_destinatario_principal;
@@ -4321,8 +4379,8 @@ class CalificacionPCLController extends Controller
 
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
-                'Oficio_pcl' => $oficiopcl,
-                'Oficio_incapacidad' => $oficioinca,
+                // 'Oficio_pcl' => $oficiopcl,
+                // 'Oficio_incapacidad' => $oficioinca,
                 'Destinatario_principal' => $destinatario_principal,
                 'Otro_destinatario' => $otrodestinariop,
                 'Tipo_destinatario' => $tipo_destinatario_principal,
@@ -4402,8 +4460,8 @@ class CalificacionPCLController extends Controller
         } 
         elseif($bandera_correspondecia_guardar_actualizar == 'Actualizar') {
             $datos_correspondencia = [
-                'Oficio_pcl' => $oficiopcl,
-                'Oficio_incapacidad' => $oficioinca,
+                // 'Oficio_pcl' => $oficiopcl,
+                // 'Oficio_incapacidad' => $oficioinca,
                 'Destinatario_principal' => $destinatario_principal,
                 'Otro_destinatario' => $otrodestinariop,
                 'Tipo_destinatario' => $tipo_destinatario_principal,

@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('ID_evento',10);
             $table->integer('Id_Asignacion');
             $table->integer('Id_proceso');
-            $table->string('Modalidad_calificacion',25);
+            $table->string('Modalidad_calificacion',25)->nullable();
+            $table->string('Fuente_informacion',25)->nullable();            
             $table->datetime('F_accion');
             $table->string('Accion',40);
             $table->date('F_Alerta')->nullable();

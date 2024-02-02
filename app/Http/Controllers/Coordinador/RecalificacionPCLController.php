@@ -4369,14 +4369,14 @@ class RecalificacionPCLController extends Controller
         $Id_EventoDecreto = $request->Id_EventoDecreto;
         $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
         $Id_Asignacion_Dcreto = $request->Id_Asignacion_Dcreto;
-        $oficiopcl = $request->oficiopcl;
-        $oficioinca = $request->oficioinca;
-        if ($oficiopcl == '') {
-            $oficiopcl = 'No';
-        }
-        if($oficioinca == ''){
-            $oficioinca = 'No';
-        }
+        // $oficiopcl = $request->oficiopcl;
+        // $oficioinca = $request->oficioinca;
+        // if ($oficiopcl == '') {
+        //     $oficiopcl = 'No';
+        // }
+        // if($oficioinca == ''){
+        //     $oficioinca = 'No';
+        // }
         $destinatario_principal = $request->destinatario_principal;
         $otrodestinariop = $request->otrodestinariop;
         $tipo_destinatario_principal = $request->tipo_destinatario_principal;
@@ -4427,8 +4427,8 @@ class RecalificacionPCLController extends Controller
 
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
-                'Oficio_pcl' => $oficiopcl,
-                'Oficio_incapacidad' => $oficioinca,
+                // 'Oficio_pcl' => $oficiopcl,
+                // 'Oficio_incapacidad' => $oficioinca,
                 'Destinatario_principal' => $destinatario_principal,
                 'Otro_destinatario' => $otrodestinariop,
                 'Tipo_destinatario' => $tipo_destinatario_principal,
@@ -4508,8 +4508,8 @@ class RecalificacionPCLController extends Controller
         } 
         elseif($bandera_correspondecia_guardar_actualizar == 'Actualizar') {
             $datos_correspondencia = [
-                'Oficio_pcl' => $oficiopcl,
-                'Oficio_incapacidad' => $oficioinca,
+                // 'Oficio_pcl' => $oficiopcl,
+                // 'Oficio_incapacidad' => $oficioinca,
                 'Destinatario_principal' => $destinatario_principal,
                 'Otro_destinatario' => $otrodestinariop,
                 'Tipo_destinatario' => $tipo_destinatario_principal,
