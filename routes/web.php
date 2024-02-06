@@ -345,6 +345,8 @@ Route::post('/eliminarExamenesInterconsultas', [CalificacionPCLController::class
 Route::post('/guardarDiagnosticosMotivoCalificacion', [CalificacionPCLController::class, 'guardarDiagnosticoMotivoCalificacion']);
 // Acción: Eliminar registros Diagnosticos motivo de calificacion visualmente e inactiva en la DB
 Route::post('/eliminarDiagnosticosMotivoCalificacion', [CalificacionPCLController::class, 'eliminarDiagnosticoMotivoCalificacion']);
+// Acción: Actualizar Dx Principal de Diagnosticos CIE10
+Route::post('/actualizarDxPrincipalDiagnosticos', [CalificacionPCLController::class, 'actualizarDxPrincipalDiagnostico']);
 // Acción: Guardar Deficiencia Agudeza Auditiva
 Route::post('/guardarDeficienciaAgudezaAuditiva', [CalificacionPCLController::class, 'guardarDeficienciasAgudezaAuditivas']);
 // Acción: Eliminar registros Agudeza Auditiva visualmente  e inactiva en la DB
@@ -425,6 +427,8 @@ Route::post('/eliminarExamenesInterconsultasRe', [RecalificacionPCLController::c
 Route::post('/guardarDiagnosticosMotivoCalificacionRe', [RecalificacionPCLController::class, 'guardarDiagnosticoMotivoCalificacionRe']);
 // Acción: Eliminar registros Diagnosticos motivo de calificacion visualmente e inactiva en la DB
 Route::post('/eliminarDiagnosticosMotivoCalificacionRe', [RecalificacionPCLController::class, 'eliminarDiagnosticoMotivoCalificacionRe']);
+// Acción: Actualizar Dx Principal de Diagnosticos CIE10
+Route::post('/actualizarDxPrincipalDiagnosticosRe', [RecalificacionPCLController::class, 'actualizarDxPrincipalDiagnosticoRe']);
 // Acción: Traer listado de selectores para el calculo de DEFICIENCIA POR ALTERACIONES DE LOS SISTEMAS GENERALES
 Route::post('/ListadoSelectoresDefiAlteracionesRe', [RecalificacionPCLController::class, 'ListadoSelectoresDefiAlteracionesRe']);
 // Acción: Consultar Deficiencia acorde al clase final y la tabla

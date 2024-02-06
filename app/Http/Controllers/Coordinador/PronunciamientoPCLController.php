@@ -620,7 +620,7 @@ class PronunciamientoPCLController extends Controller
             $datos_profesional_calificador = [
                 'Id_profesional' => Auth::user()->id,
                 'Nombre_profesional' => Auth::user()->name,
-                'F_calificacion' => $date
+                'F_ajuste_calificacion' => $date
             ];
         
             sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')

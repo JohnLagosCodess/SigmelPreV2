@@ -43,7 +43,7 @@ $(document).ready(function(){
               '<div id="FU_fila_alteraciones_'+contador_alteraciones+'"></div>',
               '<div id="CAT_fila_alteraciones_'+contador_alteraciones+'"></div>',
               '<div id="ClaseFinal_fila_alteraciones_'+contador_alteraciones+'"></div>',
-              '<input type="checkbox" id="checkbox_dx_principal_DefiAlteraciones_'+contador_alteraciones+'" class="checkbox_dx_principal_DefiAlteraciones_'+contador_alteraciones+'" data-id_fila_checkbox_dx_principal_DefiAlteraciones="'+contador_alteraciones+'" style="transform: scale(1.2);">',
+              //   '<input type="checkbox" id="checkbox_dx_principal_DefiAlteraciones_'+contador_alteraciones+'" class="checkbox_dx_principal_DefiAlteraciones_'+contador_alteraciones+'" data-id_fila_checkbox_dx_principal_DefiAlteraciones="'+contador_alteraciones+'" style="transform: scale(1.2);">',
               '<div id="MSD_fila_alteraciones_'+contador_alteraciones+'"></div>',
               '<div id="Deficiencia_fila_alteraciones_'+contador_alteraciones+'"></div>',
               '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_quitar_fila_alteraciones" class="text-info" data-fila="fila_alteraciones_'+contador_alteraciones+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
@@ -3244,19 +3244,27 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
 
             // Calculo clase final
             var literal_tabla_8_11;
-            
-            if (ajuste_tabla_8_11 <= -2) {
+
+            if (ajuste_tabla_8_11 <= -1) {
                 literal_tabla_8_11 = "A";
-            }else if (ajuste_tabla_8_11 == -1) {
-                literal_tabla_8_11 = "B";
             }else if (ajuste_tabla_8_11 == 0) {
+                literal_tabla_8_11 = "B";
+            }else if (ajuste_tabla_8_11 >= 1) {
                 literal_tabla_8_11 = "C";
-            }else if(ajuste_tabla_8_11 == 1){
-                literal_tabla_8_11 = "D";
             }
-            else if(ajuste_tabla_8_11 >= 2){
-                literal_tabla_8_11 = "E";
-            }
+            
+            // if (ajuste_tabla_8_11 <= -2) {
+            //     literal_tabla_8_11 = "A";
+            // }else if (ajuste_tabla_8_11 == -1) {
+            //     literal_tabla_8_11 = "B";
+            // }else if (ajuste_tabla_8_11 == 0) {
+            //     literal_tabla_8_11 = "C";
+            // }else if(ajuste_tabla_8_11 == 1){
+            //     literal_tabla_8_11 = "D";
+            // }
+            // else if(ajuste_tabla_8_11 >= 2){
+            //     literal_tabla_8_11 = "E";
+            // }
 
             // Calculo de la Clase Final
             var clase_final_tabla_8_11 = valor_FP_tabla_8_11+literal_tabla_8_11;
@@ -5300,7 +5308,7 @@ $(document).ready(function(){
                     
                 }
 
-                if((index2+1) % 11 === 0){
+                if((index2+1) % 10 === 0){
                     guardar_datos_alteraciones.splice(1,1);
                     datos_finales_deficiencias_alteraciones.push(guardar_datos_alteraciones);
                     guardar_datos_alteraciones = [];
@@ -5377,7 +5385,7 @@ $(document).ready(function(){
 
     });
 });
-
+// DX principal deficiencias
 $(document).ready(function(){
     $(document).on('click', "input[id^='dx_principal_deficiencia_alteraciones_']", function(){        
         var fila = $(this).data("id_fila_dx_principal");

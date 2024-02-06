@@ -197,7 +197,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fecha_calificacion">Fecha de calificación</label>
-                                                <input type="text" class="form-control" name="fecha_calificacion" id="fecha_calificacion" value="{{$array_datos_calificacionPcl[0]->F_calificacion}}" disabled>
+                                                <input type="text" class="form-control" name="fecha_calificacion" id="fecha_calificacion" value="<?php if(!empty($array_datos_calificacionPcl[0]->F_calificacion)){echo $array_datos_calificacionPcl[0]->F_calificacion;}else{ echo 'Sin Calificación';}?>" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -277,6 +277,12 @@
                                                         <option value="">Seleccione una opción</option>
                                                     @endif
                                                 </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="fecha_ajuste_califi">Fecha de ajuste calificación</label>
+                                                <input type="text" class="form-control" name="fecha_ajuste_califi" id="fecha_ajuste_califi" value="<?php if(!empty($array_datos_calificacionPcl[0]->F_ajuste_calificacion)){echo $array_datos_calificacionPcl[0]->F_ajuste_calificacion;}else{ echo 'Sin ajuste Calificación';}?>" disabled>
                                             </div>
                                         </div>
                                     </div>

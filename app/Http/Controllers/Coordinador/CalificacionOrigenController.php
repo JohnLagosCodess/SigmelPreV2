@@ -740,13 +740,14 @@ class CalificacionOrigenController extends Controller
         $date = date("Y-m-d", $time);
         $nombreusuario = Auth::user()->name; 
         $destinatarioPrincipal = $request->destinatarioPrincipal;
+        $identificacion_comunicado_afiliado = $request->identificacion_comunicado_afiliado;
         $newIdAsignacion = $request->newId_asignacion;
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso; 
 
         switch (true) {
             case ($destinatarioPrincipal == 'Afiliado'):                
-                $array_datos_destinatarios = DB::select('CALL psrcomunicados(?)', array($newIdEvento)); 
+                $array_datos_destinatarios = DB::select('CALL psrcomunicados(?,?)', array($newIdEvento,$identificacion_comunicado_afiliado)); 
                 $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
@@ -760,7 +761,7 @@ class CalificacionOrigenController extends Controller
                 ]);
             break;
             case ($destinatarioPrincipal == 'Empresa'):                
-                $array_datos_destinatarios = DB::select('CALL psrcomunicados(?)', array($newIdEvento)); 
+                $array_datos_destinatarios = DB::select('CALL psrcomunicados(?,?)', array($newIdEvento,$identificacion_comunicado_afiliado)); 
                 $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')

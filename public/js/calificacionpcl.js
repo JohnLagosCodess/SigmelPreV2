@@ -1,5 +1,6 @@
 $(document).ready(function(){
     //localStorage.removeItem("#Generar_comunicados");
+    //console.log(Generar_comunicadossesion);
     // Inicializacion del select2 de listados  Módulo Calificacion PCL
 
     $(".modalidad_calificacion").select2({
@@ -751,10 +752,12 @@ $(document).ready(function(){
             }
         });
         $('input[type="radio"]').change(function(){
-            var destinarioPrincipal = $(this).val();            
+            var destinarioPrincipal = $(this).val();  
+            var identificacion_comunicado_afiliado = $('#identificacion_comunicado_editar').val();
             var datos_destinarioPrincipal ={
                 '_token':token,
                 'destinatarioPrincipal': destinarioPrincipal,
+                'identificacion_comunicado_afiliado':identificacion_comunicado_afiliado,
                 'newId_evento': id_evento,
                 'newId_asignacion': id_asignacion,
                 'Id_proceso': id_proceso,
@@ -1266,12 +1269,14 @@ $(document).ready(function(){
     // En la modal de generar comunicado
     $('input[type="radio"]').change(function(){
         var destinarioPrincipal = $(this).val();
+        var identificacion_comunicado_afiliado = $('#identificacion_comunicado').val();
         var newId_evento = $('#newId_evento').val();
         var newId_asignacion = $('#newId_asignacion').val();
         var Id_proceso = $('#Id_proceso').val();
         var datos_destinarioPrincipal ={
-            '_token':token,
+            '_token':token,            
             'destinatarioPrincipal': destinarioPrincipal,
+            'identificacion_comunicado_afiliado':identificacion_comunicado_afiliado,
             'newId_evento': newId_evento,
             'newId_asignacion': newId_asignacion,
             'Id_proceso': Id_proceso,
@@ -1284,7 +1289,7 @@ $(document).ready(function(){
                 /* $('#destinatarioPrincipal').text(data.destinatarioPrincipal);
                 $('#datos').text(JSON.stringify(data.data)); */
                 if (data.destinatarioPrincipal == 'Afiliado') {
-                    //console.log(data.array_datos_destinatarios);
+                    // console.log(data.array_datos_destinatarios);
                     var Nombre_afiliado = $('#nombre_destinatario');
                     Nombre_afiliado.val(data.array_datos_destinatarios[0].Nombre_afiliado);                    
                     document.querySelector("#nombre_destinatario").disabled = true;

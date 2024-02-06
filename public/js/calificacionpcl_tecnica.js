@@ -2825,6 +2825,7 @@ $(document).ready(function(){
         });    
         
         // checkboxes
+        $("input[id^='dx_principal_diganostico_']").prop('disabled', true);            
         $("input[id^='dx_principal_deficiencia_alteraciones_']").prop('disabled', true);            
         $("input[id^='dx_principal_deficiencia_auditiva_']").prop('disabled', true);                        
         $("input[id^='dx_principal_deficiencia_visual_']").prop('disabled', true);
@@ -3462,7 +3463,7 @@ $(document).ready(function(){
 
 
 });
-
+// guardar examenes de interconsulta
 $(document).ready(function(){
     $("#guardar_datos_examenes").click(function(){       
             
@@ -3520,7 +3521,7 @@ $(document).ready(function(){
                
     });     
 });
-
+// remover filas de examenes de interconsulta
 $(document).ready(function(){
     $(document).on('click', "a[id^='btn_remover_examen_fila_examenes_']", function(){
 
@@ -3633,7 +3634,7 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
         });
     });
 }
-
+// guardar disgnosticos cie10
 $(document).ready(function(){
     $("#guardar_datos_cie10").click(function(){       
             
@@ -3643,21 +3644,60 @@ $(document).ready(function(){
         var array_id_filas = [];
         // RECORREMOS LOS TD DE LA TABLA PARA EXTRAER LOS DATOS E INSERTARLOS EN UN ARREGLO (LA INSERCIÓN LA HACE POR CADA FILA, POR ENDE, ES UN ARRAY MULTIDIMENSIONAL)
         $('#listado_diagnostico_cie10 tbody tr').each(function (index) {
-            array_id_filas.push($(this).attr('id'));
-            if ($(this).attr('id') !== "datos_diagnostico") {
+            // array_id_filas.push($(this).attr('id'));
+            // if ($(this).attr('id') !== "datos_diagnostico") {
                 $(this).children("td").each(function (index2) {
                     var nombres_ids = $(this).find('*').attr("id");
-                    if (nombres_ids != undefined) {
-                        guardar_datos.push($('#'+nombres_ids).val());                        
+                    // if (nombres_ids != undefined) {
+                    //     guardar_datos.push($('#'+nombres_ids).val());                                                
+                    // }
+
+                    // if((index2+1) % 5 === 0){
+                    //     datos_finales_diagnosticos_moticalifi.push(guardar_datos);
+                    //     guardar_datos = [];
+                    // }
+                    if (nombres_ids != undefined) {                                              
+                        // Se extrae la info si se eligió o no el selector CIE10
+                        if (nombres_ids.startsWith("lista_Cie10_fila_")) {
+                            valor_select_cie10 = $("#"+nombres_ids).val();                              
+                            guardar_datos.push(valor_select_cie10);                                                     
+                        }
+                        // Se extrae la info del input 
+                        if (nombres_ids.startsWith("nombre_cie10_fila_")) {
+                            valor_input = $("#"+nombres_ids).val();                              
+                            guardar_datos.push(valor_input);                                                     
+                        }
+                        // Se extrae la info si se eligió o no el selector Origen
+                        if (nombres_ids.startsWith("lista_origenCie10_fila_")) {
+                            valor_select_origen = $("#"+nombres_ids).val();                              
+                            guardar_datos.push(valor_select_origen);                                                     
+                        }
+                        // Se extrae la info si se eligió o no el checkbox DX PRINCIPAL
+                        if (nombres_ids.startsWith("checkbox_dx_principal_cie10_")) {
+                            if($("#"+nombres_ids).is(':checked')){
+                                // console.log("si dx");
+                                guardar_datos.push("Si");
+                            }else{
+                                // console.log("no dx");
+                                guardar_datos.push("No");
+                            }
+                        }
+                        // Se extrae la info del textarea
+                        if (nombres_ids.startsWith("descripcion_cie10_fila_")) {
+                            valor_textarea = $("#"+nombres_ids).val();                              
+                            guardar_datos.push(valor_textarea);                                                     
+                        }
                     }
-                    if((index2+1) % 4 === 0){
+                    // console.log(guardar_datos);
+                    if((index2+1) % 5 === 0){
                         datos_finales_diagnosticos_moticalifi.push(guardar_datos);
                         guardar_datos = [];
                     }
                 });
-            }
+            // }
         });
-        
+        // console.log(datos_finales_diagnosticos_moticalifi);
+
         // ENVÍO POR AJAX LA INFORMACIÓN FINAL DE LA TABLA, JUNTO CON EL ID EVENTO, ID ASIGNACION, ID PROCESO
                   
         var envio_datos_diagnosticos = {
@@ -3691,7 +3731,7 @@ $(document).ready(function(){
                
     });     
 });
-
+// remover diagnosticos
 $(document).ready(function(){
     $(document).on('click', "a[id^='btn_remover_diagnosticos_moticalifi']", function(){
 
@@ -3718,6 +3758,7 @@ $(document).ready(function(){
                         $('#resultado_insercion_cie10').addClass('d-none');
                         $('#resultado_insercion_cie10').removeClass('alert-success');
                         $('#resultado_insercion_cie10').empty();
+                        location.reload();
                     }, 3000);
                 }
                 if (response.total_registros == 0) {
@@ -3728,7 +3769,179 @@ $(document).ready(function(){
 
     });
 });
+// Dx principal diganosticos cie10
+$(document).ready(function(){
+    $(document).on('click', "input[id^='dx_principal_diganostico_']", function(){        
+        var fila = $(this).data("id_fila_dx_principal_diagnostico");
+        var checkboxDxPrincipal = document.getElementById('dx_principal_diganostico_'+fila);        
+        let token = $("input[name='_token']").val();      
+        var banderaDxPrincipalDA = $('#banderaDxPrincipalDA').val();   
+        
+        if (checkboxDxPrincipal.checked) {
+            var datos_actualizar_dxPrincial_deficiencias_alteraciones = {
+                '_token': token,
+                'fila':fila,
+                'banderaDxPrincipalDA': banderaDxPrincipalDA,
+                'Id_evento': $('#Id_Evento_decreto').val()
 
+            };       
+            $.ajax({
+                type:'POST',
+                url:'/actualizarDxPrincipalDiagnosticos',
+                data: datos_actualizar_dxPrincial_deficiencias_alteraciones,
+                success:function(response){
+                    // console.log(response);
+                    if (response.parametro == "fila_dxPrincipalDiagnostico_agregado") {
+                        $('#resultado_insercion_cie10').empty();
+                        $('#resultado_insercion_cie10').removeClass('d-none');
+                        $('#resultado_insercion_cie10').addClass('alert-success');
+                        $('#resultado_insercion_cie10').append('<strong>'+response.mensaje+'</strong>');
+                        
+                        setTimeout(() => {
+                            $('#resultado_insercion_cie10').addClass('d-none');
+                            $('#resultado_insercion_cie10').removeClass('alert-success');
+                            $('#resultado_insercion_cie10').empty();
+                            $('#banderaDxPrincipalDA').val("");
+                            location.reload();
+                        }, 3000);
+                    }                
+                }
+            });
+        }else {     
+            banderaDxPrincipalDA = 'NoDxPrincipal_diagnostico';            
+            var datos_actualizar_dxPrincial_deficiencias_alteraciones = {
+                '_token': token,
+                'fila':fila,
+                'banderaDxPrincipalDA': banderaDxPrincipalDA,
+                'Id_evento': $('#Id_Evento_decreto').val()
+            };      
+            
+            $.ajax({
+                type:'POST',
+                url:'/actualizarDxPrincipalDiagnosticos',
+                data: datos_actualizar_dxPrincial_deficiencias_alteraciones,
+                success:function(response){
+                    // console.log(response);
+                    if (response.parametro == "fila_dxPrincipalDiagnostico_eliminado") {
+                        $('#resultado_insercion_cie10').empty();
+                        $('#resultado_insercion_cie10').removeClass('d-none');
+                        $('#resultado_insercion_cie10').addClass('alert-success');
+                        $('#resultado_insercion_cie10').append('<strong>'+response.mensaje+'</strong>');
+                        
+                        setTimeout(() => {
+                            $('#resultado_insercion_cie10').addClass('d-none');
+                            $('#resultado_insercion_cie10').removeClass('alert-success');
+                            $('#resultado_insercion_cie10').empty();
+                            $('#banderaDxPrincipalDA').val("");
+                            location.reload();
+                        }, 3000);
+                    }                
+                }
+            }); 
+        }
+
+    });
+});
+// Dx Principal inactivar y activar checkbox Diagnosticos
+$(document).ready(function(){      
+    function desavalidarCheckboxes2(checkbox2Id) {
+        
+        var numeroCheckbox2Seleccionado = checkbox2Id.split('_').pop();
+        var checkboxes2 = document.querySelectorAll('[id^="checkbox_dx_principal_cie10_"]');
+        checkboxes2.forEach(function(checkboxnew) {
+            var numeroCheckbox = checkboxnew.id.split('_').pop();
+            if (numeroCheckbox !== numeroCheckbox2Seleccionado) {
+                checkboxnew.disabled = true;
+            }
+        });       
+
+        $("[id^='dx_principal_diganostico_']").prop('disabled', true);
+    }     
+
+    function habivalidarCheckboxes2(checkbox2Id) {
+        var numeroCheckbox2Seleccionado = checkbox2Id.split('_').pop();
+    
+        var checkboxes2 = document.querySelectorAll('[id^="checkbox_dx_principal_cie10_"]');
+        checkboxes2.forEach(function(checkboxnew) {
+            var numeroCheckbox = checkboxnew.id.split('_').pop();
+            if (numeroCheckbox !== numeroCheckbox2Seleccionado) {
+                checkboxnew.disabled = false;
+            }
+        });     
+        $("[id^='dx_principal_diganostico_']").prop('disabled', false);
+
+        localStorage.removeItem('filas');
+        localStorage.removeItem('checkboxDxPrincipalNew');
+
+        $('a[data-fila^="fila_"]').removeAttr('style');
+    } 
+
+    $(document).on('click', "input[id^='checkbox_dx_principal_cie10_']", function(){
+        var filas = $(this).data("id_fila_checkbox_dx_principal_cie10_");
+        localStorage.setItem("filas", filas);
+        localStorage.setItem('checkboxDxPrincipalNew', $(this).prop('checked'));
+        if ($(this).prop('checked')) {
+            desavalidarCheckboxes2('checkbox_dx_principal_cie10_'+filas);
+        }else{
+            habivalidarCheckboxes2('checkbox_dx_principal_cie10_'+filas);
+        }
+    });
+   
+    var idCompleto = '';
+    function capturarIdCheckbox() {
+        $("[id^='checkbox_dx_principal_cie10_']").each(function() {
+          if ($(this).is(':checked')) {
+            idCompleto = $(this).attr('id');
+            return false;
+          }
+        });    
+        return idCompleto;
+    }
+    setInterval(() => {
+        var filasnews = localStorage.getItem("filas")
+        if (localStorage.getItem('checkboxDxPrincipalNew') === 'true') {
+            desavalidarCheckboxes2('checkbox_dx_principal_cie10_'+filasnews);
+            capturarIdCheckbox();    
+            // console.log(idCompleto);                 
+            // var matchResult = idCompleto.match(/\d+/);
+            var matchResult = idCompleto.substr(idCompleto.lastIndexOf('_') + 1);      
+            // console.log(matchResult);                 
+            if (matchResult && matchResult.length > 0) {
+                var newfilas = parseInt(matchResult[0]);  
+                // console.log(newfilas);
+                if(newfilas > 0){
+                    $('a[data-fila="fila_'+newfilas+'"]').css({
+                        "cursor": "not-allowed",
+                        "pointer-events": "none"
+                    }).attr('disabled', true); 
+                }
+            }
+              
+        }
+    }, 500);
+    
+    setInterval(() => {
+             
+        var checkboxes = $('[id^="dx_principal_diganostico_"]');
+        checkboxes.each(function() {
+            var id_checkbox_dx_principal_deficiencia = $(this).attr('id');
+            if ($("#" + id_checkbox_dx_principal_deficiencia).is(':checked')) {
+                //console.log("Este checkbox " + id_checkbox_dx_principal_deficiencia + " está chequeado");                          
+                var numeroCheckboxSeleccionado = id_checkbox_dx_principal_deficiencia.split('_').pop();
+                var checkboxes = document.querySelectorAll('[id^="dx_principal_diganostico"]');
+                checkboxes.forEach(function(checkbox) {
+                    var numeroCheckbox = checkbox.id.split('_').pop();
+                    if (numeroCheckbox !== numeroCheckboxSeleccionado) {
+                        checkbox.disabled = true;
+                    }
+                });          
+                $("input[id^='checkbox_dx_principal_cie10_']").prop("disabled", true);
+            }            
+        });
+
+    }, 500);
+});
+/* Función para añadir los controles de cada elemento de cada fila en la tabla deficiencias decreto cero*/
 function funciones_elementos_fila_deficienciasDecretocero(num_decretoceroconse) {
     // Inicializacion de select 2
     $("#lista_tabla_"+num_decretoceroconse).select2({
@@ -3777,7 +3990,7 @@ function funciones_elementos_fila_deficienciasDecretocero(num_decretoceroconse) 
         });
     });
 }
-
+// guardar deficiencicias decreto cero
 $(document).ready(function(){
     $("#guardar_deficiencias_DecretoCero").click(function(){       
             
@@ -3877,7 +4090,7 @@ $(document).ready(function(){
                
     });     
 });
-
+// remover deficiencias decreto cero
 $(document).ready(function(){
     $(document).on('click', "a[id^='btn_remover_deficiencias_decretocero_']", function(){
 
@@ -3916,7 +4129,7 @@ $(document).ready(function(){
 
     });
 });
-
+// remover filas agudeza auditiva
 $(document).ready(function(){
     $(document).on('click', "a[id^='btn_remover_examen_fila_agudeza']", function(){
 
@@ -3954,7 +4167,7 @@ $(document).ready(function(){
 
     });
 });
-
+// Dx Principal agudeza auditiva
 $(document).ready(function(){
     $(document).on('click', "input[id^='dx_principal_deficiencia_auditiva_']", function(){
 
@@ -4026,7 +4239,7 @@ $(document).ready(function(){
 
     });
 });
-
+// DX Principal agudeza visual
 $(document).ready(function(){
     $(document).on('click', "input[id^='dx_principal_deficiencia_visual_']", function(){
 
@@ -4098,7 +4311,7 @@ $(document).ready(function(){
 
     });
 });
-// Dx Principal
+// Dx Principal inactivar y activar (disabled) checkbox agudeza audiva, visual y deficiencias por alteraciones
 $(document).ready(function(){      
     function desavalidarCheckboxes2(checkbox2Id) {
         
@@ -4217,7 +4430,7 @@ $(document).ready(function(){
 
     }, 500);
 });
-
+// Guardar deficiencias decreto 3
 $(document).ready(function(){
     $("#guardar_deficiencias_Decreto3").click(function(){       
             
@@ -4388,7 +4601,7 @@ $(document).ready(function(){
                
     });     
 });
-
+// remover filas deficiencias decreto 3
 $(document).ready(function(){
     $(document).on('click', "a[id^='btn_remover_deficiencias_decreto3_']", function(){
 

@@ -957,12 +957,14 @@ $(document).ready(function(){
     // En la modal de generar comunicado
     $('input[type="radio"]').change(function(){
         var destinarioPrincipal = $(this).val();
+        var identificacion_comunicado_afiliado = $('#identificacion_comunicado').val();
         var newId_evento = $('#newId_evento').val();
         var newId_asignacion = $('#newId_asignacion').val();
         var Id_proceso = $('#Id_proceso').val();
         var datos_destinarioPrincipal ={
             '_token':token,
             'destinatarioPrincipal': destinarioPrincipal,
+            'identificacion_comunicado_afiliado':identificacion_comunicado_afiliado,
             'newId_evento': newId_evento,
             'newId_asignacion': newId_asignacion,
             'Id_proceso': Id_proceso,
@@ -1549,10 +1551,12 @@ $(document).ready(function(){
         document.getElementById('elaboro2_editar').value=elaboro_comunicado;
 
         $('input[type="radio"]').change(function(){
-            var destinarioPrincipal = $(this).val();            
+            var destinarioPrincipal = $(this).val();    
+            var identificacion_comunicado_afiliado = $('#identificacion_comunicado_editar').val();
             var datos_destinarioPrincipal ={
                 '_token':token,
                 'destinatarioPrincipal': destinarioPrincipal,
+                'identificacion_comunicado_afiliado':identificacion_comunicado_afiliado,
                 'newId_evento': id_evento,
                 'newId_asignacion': id_asignacion,
                 'Id_proceso': id_proceso,
@@ -1560,7 +1564,7 @@ $(document).ready(function(){
     
             $.ajax({
                 type:'POST',
-                url:'/captuarDestinatario',
+                url:'/captuarDestinatarioJuntas',
                 data: datos_destinarioPrincipal,
                 success: function(data){
                     /* $('#destinatarioPrincipal').text(data.destinatarioPrincipal);
