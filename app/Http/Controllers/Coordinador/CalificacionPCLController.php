@@ -58,6 +58,7 @@ use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
 use App\Models\sigmel_informacion_agudeza_visualre_eventos;
 use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
+use App\Models\sigmel_lista_causal_devoluciones;
 use Psy\Readline\Hoa\Console;
 use Svg\Tag\Rect;
 use App\Models\sigmel_lista_procesos_servicios;
@@ -83,7 +84,8 @@ class CalificacionPCLController extends Controller
         }
 
         $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newIdAsignacion));
-        $array_datos_destinatarios = DB::select('CALL psrcomunicados(?)', array($newIdEvento));
+        $Nro_ident_afiliado = $array_datos_calificacionPcl[0]->Nro_identificacion;
+        $array_datos_destinatarios = DB::select('CALL psrcomunicados(?,?)', array($newIdEvento,$Nro_ident_afiliado));
         
         //Consulta Vista a mostrar
         $TraeVista= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_lista_procesos_servicios as p')
@@ -184,7 +186,7 @@ class CalificacionPCLController extends Controller
 
         }
 
-        // Listado Modalidad calificacion PCL
+        // Listado Fuente de informacion PCL
 
         if($parametro == 'lista_fuente_informacion'){
             $listado_fuente_info_calificacion = sigmel_lista_parametros::on('sigmel_gestiones')
@@ -252,6 +254,22 @@ class CalificacionPCLController extends Controller
             $info_listado_modalidad_calificacion = json_decode(json_encode($listado_modalidad_calificacion, true));
             return response()->json($info_listado_modalidad_calificacion);
 
+        }
+
+        // Listado Causal de devolucion comite PCL
+        if($parametro == 'lista_causal_devo_comite'){            
+
+            $listado_causal_devo_comite = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_causal_devoluciones as slcd')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_asignacion_eventos as siae', 'siae.Id_proceso', '=', 'slcd.Id_proceso')
+            ->select('slcd.Id_causal_devo', 'slcd.Causal_devolucion')
+            ->where([
+                ['siae.Id_Asignacion',$request->Id_asignacion_pro], 
+                ['slcd.Id_proceso',$request->Id_proceso_actual], 
+                ['slcd.Estado','activo']
+            ])->get();            
+
+            $info_listado_causal_devo_comite = json_decode(json_encode($listado_causal_devo_comite, true));
+            return response()->json($info_listado_causal_devo_comite);
         }
 
         if($parametro = "listado_accion"){
@@ -344,7 +362,7 @@ class CalificacionPCLController extends Controller
                     return response()->json(($info_listado_acciones_nuevo_servicio));
                 }
             }
-        }
+        }        
     }
 
     public function guardarCalificacionPCL(Request $request){
@@ -360,6 +378,16 @@ class CalificacionPCLController extends Controller
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
         $Id_servicio = $request->Id_servicio;
+
+        $Accion_realizar = $request->accion;
+
+        if ($Accion_realizar == 52 || $Accion_realizar == 98 || $Accion_realizar == 99) {
+            $Fecha_devolucion_comite = $date;
+            $Causal_devolucion_comite =$request->causal_devolucion_comite;
+        }else{
+            $Fecha_devolucion_comite = $request->fecha_devolucion;
+            $Causal_devolucion_comite =$request->causal_devolucion_comite;
+        }
         
         // validacion de bandera para guardar o actualizar
         if ($request->bandera_accion_guardar_actualizar == 'Guardar') {
@@ -377,7 +405,8 @@ class CalificacionPCLController extends Controller
                     'Accion' => $request->accion,
                     'F_Alerta' => $request->fecha_alerta,
                     'Enviar' => $request->enviar,
-                    'Causal_devolucion_comite' => $request->causal_devolucion_comite,
+                    'Causal_devolucion_comite' => $Causal_devolucion_comite,
+                    'F_devolucion_comite' => $Fecha_devolucion_comite,
                     'Descripcion_accion' => $request->descripcion_accion,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
@@ -393,14 +422,13 @@ class CalificacionPCLController extends Controller
                     'Accion' => $request->accion,
                     'F_Alerta' => $request->fecha_alerta,
                     'Enviar' => $request->enviar,
-                    'Causal_devolucion_comite' => $request->causal_devolucion_comite,
+                    'Causal_devolucion_comite' => $Causal_devolucion_comite,                    
+                    'F_devolucion_comite' => $Fecha_devolucion_comite,
                     'Descripcion_accion' => $request->descripcion_accion,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
             }
-            
-    
 
             // Extraemos el id estado de la tabla de parametrizaciones dependiendo del
             // id del cliente, id proceso, id servicio, id accion. Este id irá como estado inicial
@@ -499,7 +527,8 @@ class CalificacionPCLController extends Controller
                     'Accion' => $request->accion,
                     'F_Alerta' => $request->fecha_alerta,
                     'Enviar' => $request->enviar,
-                    'Causal_devolucion_comite' => $request->causal_devolucion_comite,
+                    'Causal_devolucion_comite' => $Causal_devolucion_comite,
+                    'F_devolucion_comite' => $Fecha_devolucion_comite,
                     'Descripcion_accion' => $request->descripcion_accion,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
@@ -515,7 +544,8 @@ class CalificacionPCLController extends Controller
                     'Accion' => $request->accion,
                     'F_Alerta' => $request->fecha_alerta,
                     'Enviar' => $request->enviar,
-                    'Causal_devolucion_comite' => $request->causal_devolucion_comite,
+                    'Causal_devolucion_comite' => $Causal_devolucion_comite,
+                    'F_devolucion_comite' => $Fecha_devolucion_comite,
                     'Descripcion_accion' => $request->descripcion_accion,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
@@ -897,13 +927,14 @@ class CalificacionPCLController extends Controller
         $date = date("Y-m-d", $time);
         $nombreusuario = Auth::user()->name; 
         $destinatarioPrincipal = $request->destinatarioPrincipal;
+        $identificacion_comunicado_afiliado = $request->identificacion_comunicado_afiliado;
         $newIdAsignacion = $request->newId_asignacion;
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso; 
 
         switch (true) {
             case ($destinatarioPrincipal == 'Afiliado'):                
-                $array_datos_destinatarios = DB::select('CALL psrcomunicados(?)', array($newIdEvento)); 
+                $array_datos_destinatarios = DB::select('CALL psrcomunicados(?,?)', array($newIdEvento,$identificacion_comunicado_afiliado)); 
                 $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
@@ -917,7 +948,7 @@ class CalificacionPCLController extends Controller
                 ]);
             break;
             case ($destinatarioPrincipal == 'Empresa'):                
-                $array_datos_destinatarios = DB::select('CALL psrcomunicados(?)', array($newIdEvento)); 
+                $array_datos_destinatarios = DB::select('CALL psrcomunicados(?,?)', array($newIdEvento,$identificacion_comunicado_afiliado)); 
                 $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
@@ -1954,7 +1985,7 @@ class CalificacionPCLController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
         ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
-        'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones')
+        'slp.Nombre_parametro', 'side.Principal', 'side.Deficiencia_motivo_califi_condiciones')
         ->where([['side.ID_evento',$Id_evento_calitec], ['side.Id_Asignacion',$Id_asignacion_calitec], ['side.Estado', '=', 'Activo']])->get(); 
         
         $array_datos_deficiencias_alteraciones =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
@@ -2809,7 +2840,7 @@ class CalificacionPCLController extends Controller
         }
 
     }
-
+    // Examenes Interconsultas
     public function guardarExamenesInterconsulta(Request $request){
         if (!Auth::check()) {
             return redirect('/');
@@ -2889,7 +2920,7 @@ class CalificacionPCLController extends Controller
         return json_decode(json_encode($mensajes, true));
 
     }
-
+    // Diagnosticos CIE10
     public function guardarDiagnosticoMotivoCalificacion(Request $request){
         if (!Auth::check()) {
             return redirect('/');
@@ -2926,8 +2957,8 @@ class CalificacionPCLController extends Controller
 
         // Creación de array con los campos de la tabla: sigmel_informacion_diagnosticos_eventos
         $array_tabla_diagnosticos_motivo_calificacion = ['ID_evento','Id_Asignacion','Id_proceso',
-        'CIE10','Nombre_CIE10','Origen_CIE10','Deficiencia_motivo_califi_condiciones', 'Estado_Recalificacion',
-        'Nombre_usuario','F_registro'];
+        'CIE10','Nombre_CIE10','Origen_CIE10', 'Principal', 'Deficiencia_motivo_califi_condiciones', 'Estado_Recalificacion',
+        'Nombre_usuario','F_registro']; 
 
         // Combinación de los campos de la tabla con los datos
         $array_datos_con_keys = [];
@@ -2971,6 +3002,53 @@ class CalificacionPCLController extends Controller
         return json_decode(json_encode($mensajes, true));
 
     }    
+
+    public function actualizarDxPrincipalDiagnostico(Request $request){
+        
+        $fila = $request->fila;
+        $banderaDxPrincipalDA = $request->banderaDxPrincipalDA;
+        $Id_evento = $request->Id_evento;            
+
+        if ($banderaDxPrincipalDA == 'SiDxPrincipal_diagnostico') {
+            $fila_actulizar = [
+                'Principal' => 'Si'
+            ];
+    
+            sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
+            ->where([
+                ['Id_Diagnosticos_motcali', $fila],
+                ['ID_evento', $Id_evento],
+                ['Estado', 'Activo']
+            ])->update($fila_actulizar);
+    
+            $mensajes = array(
+                "parametro" => 'fila_dxPrincipalDiagnostico_agregado',
+                "mensaje" => 'Dx Principal Diagnósticos motivo de calificación agreagado satisfactoriamente.'
+            );
+    
+            return json_decode(json_encode($mensajes, true));  
+
+        }elseif($banderaDxPrincipalDA == 'NoDxPrincipal_diagnostico'){           
+
+            $fila_actulizar = [
+                'Principal' => 'No'
+            ];
+    
+            sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
+            ->where([
+                ['Id_Diagnosticos_motcali', $fila],
+                ['ID_evento', $Id_evento],
+                ['Estado', 'Activo']
+            ])->update($fila_actulizar);
+    
+            $mensajes = array(
+                "parametro" => 'fila_dxPrincipalDiagnostico_eliminado',
+                "mensaje" => 'Dx Principal Diagnósticos motivo de calificación eliminado satisfactoriamente.'
+            );
+    
+            return json_decode(json_encode($mensajes, true));            
+        }
+    }
 
     // Agudeza Auditiva
 
@@ -3477,7 +3555,7 @@ class CalificacionPCLController extends Controller
         // Creación de array con los campos de la tabla: sigmel_informacion_deficiencias_alteraciones_eventos
         
         $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Id_tabla', 'FP', 'CFM1', 'CFM2', 'FU',	'CAT', 'Clase_Final', 
-        'Dx_Principal', 'MSD', 'Deficiencia', 'Estado_Recalificacion', 'Nombre_usuario','F_registro'];
+        'MSD', 'Deficiencia', 'Estado_Recalificacion', 'Nombre_usuario','F_registro'];
         
         // Combinación de los campos de la tabla con los datos
         $array_datos_con_keys = [];
@@ -4729,7 +4807,7 @@ class CalificacionPCLController extends Controller
                 $datos_profesional_calificador = [
                     'Id_profesional' => Auth::user()->id,
                     'Nombre_profesional' => Auth::user()->name,
-                    'F_calificacion' => $date
+                    'F_ajuste_calificacion' => $date
                 ];
 
                 sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
@@ -4768,7 +4846,7 @@ class CalificacionPCLController extends Controller
                 $datos_profesional_calificador = [
                     'Id_profesional' => Auth::user()->id,
                     'Nombre_profesional' => Auth::user()->name,
-                    'F_calificacion' => $date
+                    'F_ajuste_calificacion' => $date
                 ];
 
                 sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')

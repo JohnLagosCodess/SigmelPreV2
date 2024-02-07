@@ -438,6 +438,7 @@
                                                         <th style="width: 340px !important;">CIE10</th>
                                                         <th style="width: 340px !important;">Nombre CIE10</th>
                                                         <th style="width: 140px !important;">Origen CIE10</th>
+                                                        <th>Dx principal</th>
                                                         <th>Deficiencia(s) motivo de la calificación/<br>Condiciones de salud</th>
                                                         <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_cie10_fila"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                     </tr>
@@ -448,6 +449,15 @@
                                                         <td>{{$diagnostico->Codigo}}</td>
                                                         <td>{{$diagnostico->Nombre_CIE10}}</td>
                                                         <td>{{$diagnostico->Nombre_parametro}}</td>
+                                                        <td>
+                                                            @if ($diagnostico->Principal == 'Si')
+                                                                <input class="scalesR" type="checkbox" name="dx_principal_diganostico" id="dx_principal_diganostico_{{$diagnostico->Id_Diagnosticos_motcali}}" data-id_fila_dx_principal_diagnostico="{{$diagnostico->Id_Diagnosticos_motcali}}" checked>
+                                                                <input hidden="hidden" type="text" name="banderaDxPrincipalDA" id="banderaDxPrincipalDA" value="NoDxPrincipal_diagnostico">
+                                                            @else
+                                                                <input class="scalesR" type="checkbox" name="dx_principal_diganostico" id="dx_principal_diganostico_{{$diagnostico->Id_Diagnosticos_motcali}}" data-id_fila_dx_principal_diagnostico="{{$diagnostico->Id_Diagnosticos_motcali}}">
+                                                                <input hidden="hidden" type="text" name="banderaDxPrincipalDA" id="banderaDxPrincipalDA" value="SiDxPrincipal_diagnostico">
+                                                            @endif
+                                                        </td>
                                                         <td>{{$diagnostico->Deficiencia_motivo_califi_condiciones}}</td>
                                                         <td>
                                                             <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_diagnosticos_moticalifi{{$diagnostico->Id_Diagnosticos_motcali}}" data-id_fila_quitar="{{$diagnostico->Id_Diagnosticos_motcali}}" data-clase_fila="fila_diagnosticos_{{$diagnostico->Id_Diagnosticos_motcali}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
@@ -467,7 +477,11 @@
                     <!-- Deficiencia-->
                     <div class="card-info columna_row1_deficiencia" @if ($decreto_1507=='1') style="display:block" @else style="display:none" @endif>
                         <div class="card-header text-center" style="border: 1.5px solid black;">
-                            <h5>Titulo I Calificación / Valoración de las Deficiencias (50%)</h5>
+                            @if (!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion <> 3)
+                                <h5>Titulo I Calificación / Valoración de las Deficiencias (50%)</h5>                                
+                            @else
+                                <h5>Libro I Calificación / Valoración de las Deficiencias (50%)</h5>                                                                
+                            @endif
                         </div>
                         <br>
                         <div class="card-header text-center" style="border: 1.5px solid black;">
@@ -591,7 +605,7 @@
                                                             <th style="width: 140px !important;">FU</th>
                                                             <th style="width: 140px !important;">CAT</th>
                                                             <th style="width: 140px !important;">Clase final</th>
-                                                            <th style="width: 140px !important;">DX principal</th>
+                                                            {{-- <th style="width: 140px !important;">DX principal</th> --}}
                                                             <th style="width: 140px !important;">MSD</th>
                                                             <th style="width: 140px !important;">Deficiencia</th>
                                                             <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_deficiencia_porfactor"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
@@ -608,7 +622,7 @@
                                                                 <td>{{$deficiencias_ateraciones->FU}}</td>
                                                                 <td>{{$deficiencias_ateraciones->CAT}}</td>
                                                                 <td>{{$deficiencias_ateraciones->Clase_Final}}</td>
-                                                                <td>
+                                                                {{-- <td>
                                                                     @if ($deficiencias_ateraciones->Dx_Principal == 'Si')
                                                                         <input class="scalesR" type="checkbox" name="dx_principal_deficiencia_alteraciones" id="dx_principal_deficiencia_alteraciones_{{$deficiencias_ateraciones->Id_Deficiencia}}" data-id_fila_dx_principal="{{$deficiencias_ateraciones->Id_Deficiencia}}" checked>
                                                                         <input hidden="hidden" type="text" name="banderaDxPrincipalDA" id="banderaDxPrincipalDA" value="NoDxPrincipal_deficiencia_alteraciones">
@@ -616,7 +630,7 @@
                                                                         <input class="scalesR" type="checkbox" name="dx_principal_deficiencia_alteraciones" id="dx_principal_deficiencia_alteraciones_{{$deficiencias_ateraciones->Id_Deficiencia}}" data-id_fila_dx_principal="{{$deficiencias_ateraciones->Id_Deficiencia}}">
                                                                         <input hidden="hidden" type="text" name="banderaDxPrincipalDA" id="banderaDxPrincipalDA" value="SiDxPrincipal_deficiencia_alteraciones">
                                                                     @endif
-                                                                </td>
+                                                                </td> --}}
                                                                 <td>{{$deficiencias_ateraciones->MSD}}</td>
                                                                 <td>{{$deficiencias_ateraciones->Deficiencia}}</td>
                                                                 <td>
@@ -656,7 +670,7 @@
                                                             <th style="width: 140px !important;">FU</th>
                                                             <th style="width: 140px !important;">CAT</th>
                                                             <th style="width: 140px !important;">Clase final</th>
-                                                            <th style="width: 140px !important;">DX principal</th>
+                                                            {{-- <th style="width: 140px !important;">DX principal</th> --}}
                                                             <th style="width: 140px !important;">MSD</th>
                                                             <th style="width: 140px !important;">Deficiencia</th>
                                                             <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_deficiencia_porfactor"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
@@ -673,7 +687,7 @@
                                                                 <td>{{$deficiencias_ateraciones->FU}}</td>
                                                                 <td>{{$deficiencias_ateraciones->CAT}}</td>
                                                                 <td>{{$deficiencias_ateraciones->Clase_Final}}</td>
-                                                                <td>
+                                                                {{-- <td>
                                                                     @if ($deficiencias_ateraciones->Dx_Principal == 'Si')
                                                                         <input class="scalesR" type="checkbox" name="dx_principal_deficiencia_alteraciones" id="dx_principal_deficiencia_alteraciones_{{$deficiencias_ateraciones->Id_Deficiencia}}" data-id_fila_dx_principal="{{$deficiencias_ateraciones->Id_Deficiencia}}" checked>
                                                                         <input hidden="hidden" type="text" name="banderaDxPrincipalDA" id="banderaDxPrincipalDA" value="NoDxPrincipal_deficiencia_alteraciones">
@@ -681,7 +695,7 @@
                                                                         <input class="scalesR" type="checkbox" name="dx_principal_deficiencia_alteraciones" id="dx_principal_deficiencia_alteraciones_{{$deficiencias_ateraciones->Id_Deficiencia}}" data-id_fila_dx_principal="{{$deficiencias_ateraciones->Id_Deficiencia}}">
                                                                         <input hidden="hidden" type="text" name="banderaDxPrincipalDA" id="banderaDxPrincipalDA" value="SiDxPrincipal_deficiencia_alteraciones">
                                                                     @endif
-                                                                </td>
+                                                                </td> --}}
                                                                 <td>{{$deficiencias_ateraciones->MSD}}</td>
                                                                 <td>{{$deficiencias_ateraciones->Deficiencia}}</td>
                                                                 <td>
@@ -723,7 +737,7 @@
                                                 <th>Deficiencia Monoaural Derecha</th>
                                                 <th>Deficiencia Binaural</th>
                                                 <th>Adicion por Tinnitus</th>
-                                                <th>Dx principal</th>
+                                                {{-- <th>Dx principal</th> --}}
                                                 <th>Deficiencia</th>
                                                 <th>Eliminar</th>
                                             </tr>
@@ -735,7 +749,7 @@
                                                     <td>{{$agudeza_auditiva->Deficiencia_monoaural_derecha}}</td>
                                                     <td>{{$agudeza_auditiva->Deficiencia_binaural}}</td>
                                                     <td>{{$agudeza_auditiva->Adicion_tinnitus}}</td>
-                                                    <td>
+                                                    {{-- <td>
                                                         @if ($agudeza_auditiva->Dx_Principal == 'Si') 
                                                             <input class="scalesR" type="checkbox" name="dx_principal_deficiencia_auditiva" id="dx_principal_deficiencia_auditiva_{{$agudeza_auditiva->Id_Agudeza_auditiva}}" data-id_fila_dx_auditiva="{{$agudeza_auditiva->Id_Agudeza_auditiva}}" checked>
                                                             <input hidden="hidden" type="text" name="banderaDxPrincipal" id="banderaDxPrincipal" value="NoDxPrincipal">
@@ -743,7 +757,7 @@
                                                             <input class="scalesR" type="checkbox" name="dx_principal_deficiencia_auditiva" id="dx_principal_deficiencia_auditiva_{{$agudeza_auditiva->Id_Agudeza_auditiva}}" data-id_fila_dx_auditiva="{{$agudeza_auditiva->Id_Agudeza_auditiva}}">
                                                             <input hidden="hidden" type="text" name="banderaDxPrincipal" id="banderaDxPrincipal" value="SiDxPrincipal">
                                                         @endif
-                                                    </td>
+                                                    </td> --}}
                                                     <td>{{$agudeza_auditiva->Deficiencia}}</td>
                                                     <td>
                                                         <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_examen_fila_agudeza{{$agudeza_auditiva->Id_Agudeza_auditiva}}" data-id_fila_quitar="{{$agudeza_auditiva->Id_Agudeza_auditiva}}" data-clase_fila="fila_agudeza_{{$agudeza_auditiva->Id_Agudeza_auditiva}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
@@ -785,7 +799,7 @@
                                                 <th>Puntaje Campo Visual Funcional (CVF)</th>
                                                 <th>Deficiencia por Campo Visual (DCV)</th>
                                                 <th>Deficiencia Global del Sistema Visual (DSV)</th>
-                                                <th>Dx Principal</th>
+                                                {{-- <th>Dx Principal</th> --}}
                                                 <th>Deficiencia</th>
                                                 <th>Opciones</th>
                                             </tr>
@@ -804,7 +818,7 @@
                                                     <td>{{$info_agudeza->CVF}}</td>
                                                     <td>{{$info_agudeza->DCV}}</td>
                                                     <td>{{$info_agudeza->DSV}}</td>
-                                                    <td>
+                                                    {{-- <td>
                                                         @if ($info_agudeza->Dx_Principal == 'Si')
                                                             <input class="scalesR" type="checkbox" name="dx_principal_deficiencia_visual" id="dx_principal_deficiencia_visual_{{$info_agudeza->Id_agudeza}}" data-id_fila_dx_visual="{{$info_agudeza->Id_agudeza}}" checked>
                                                             <input hidden="hidden" type="text" name="banderaDxPrincipal_visual" id="banderaDxPrincipal_visual" value="NoDxPrincipal">
@@ -812,7 +826,7 @@
                                                             <input class="scalesR" type="checkbox" name="dx_principal_deficiencia_visual" id="dx_principal_deficiencia_visual_{{$info_agudeza->Id_agudeza}}" data-id_fila_dx_visual="{{$info_agudeza->Id_agudeza}}">
                                                             <input hidden="hidden" type="text" name="banderaDxPrincipal_visual" id="banderaDxPrincipal_visual" value="SiDxPrincipal">
                                                         @endif
-                                                    </td>
+                                                    </td> --}}
                                                     <td>{{$info_agudeza->Deficiencia}}</td>
                                                     <td>
                                                         <div style="text-align:center;">
@@ -7821,6 +7835,7 @@
                 '<select id="lista_Cie10_fila_'+contador_cie10+'" class="form-comtrol custom-select lista_Cie10_fila_'+contador_cie10+'" name="lista_Cie10"><option></option></select>',
                 '<input type="text" class="form-control" id="nombre_cie10_fila_'+contador_cie10+'" name="nombre_cie10"/>',
                 '<select id="lista_origenCie10_fila_'+contador_cie10+'" class="custom-select lista_origenCie10_fila_'+contador_cie10+'" name="lista_origenCie10"><option></option></select>',
+                '<input type="checkbox" id="checkbox_dx_principal_cie10_'+contador_cie10+'" class="checkbox_dx_principal_cie10_'+contador_cie10+'" data-id_fila_checkbox_dx_principal_cie10_="'+contador_cie10+'" style="transform: scale(1.2);">',
                 '<textarea id="descripcion_cie10_fila_'+contador_cie10+'" class="form-control" name="descripcion_cie10" cols="90" rows="4"></textarea>',
                 '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_cie10_fila" class="text-info" data-fila="fila_'+contador_cie10+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
                 'fila_'+contador_cie10
