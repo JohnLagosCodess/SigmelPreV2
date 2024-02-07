@@ -52,6 +52,12 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    $(".causal_devolucion_comite").select2({      
+        width: '100%',
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
     // llenado de selectores
 
     let token = $('input[name=_token]').val();
@@ -102,11 +108,10 @@ $(document).ready(function(){
         }
     });
 
-    //Listado de fuente de informacion calificacion PCL
-
+    //Listado de fuente de informacion calificacion PCL    
     let datos_lista_fuente_informacion = {
         '_token': token,
-        'parametro':"lista_fuente_informacion"
+        'parametro':"lista_fuente_informacion",        
     };
     
     $.ajax({
@@ -166,6 +171,32 @@ $(document).ready(function(){
             for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
                 if (data[formaenviogenerarcomunicado[i]]['Id_Parametro'] != NobreFormaEnvio) {
                     $('#forma_envio').append('<option value="'+data[formaenviogenerarcomunicado[i]]['Id_Parametro']+'">'+data[formaenviogenerarcomunicado[i]]['Nombre_parametro']+'</option>');
+                }                
+            }
+        }
+    });
+
+    //Listado de causal de devolucion comite calificacion PCL    
+    var Id_asignacion_pro = $('#newId_asignacion').val();
+    var Id_proceso_actual = $('#Id_proceso').val();
+    let datos_lista_causal_devolucion_comite = {
+        '_token': token,
+        'parametro':"lista_causal_devo_comite",
+        'Id_asignacion_pro':Id_asignacion_pro,
+        'Id_proceso_actual':Id_proceso_actual
+    };
+    
+    $.ajax({
+        type:'POST',
+        url:'/selectoresModuloCalificacionPCL',
+        data:datos_lista_causal_devolucion_comite,
+        success:function(data){
+            //console.log(data);
+            let idcausal_devolucion_comite= $('select[name=causal_devolucion_comite]').val();
+            let causal_devolucion_comitepcl = Object.keys(data);
+            for (let i = 0; i < causal_devolucion_comitepcl.length; i++) {
+                if (data[causal_devolucion_comitepcl[i]]['Id_causal_devo'] != idcausal_devolucion_comite) {
+                    $('#causal_devolucion_comite').append('<option value="'+data[causal_devolucion_comitepcl[i]]['Id_causal_devo']+'">'+data[causal_devolucion_comitepcl[i]]['Causal_devolucion']+'</option>');
                 }                
             }
         }
@@ -306,8 +337,24 @@ $(document).ready(function(){
 
     // llenado del formulario para la captura de datos del modulo de calificacion Pcl
 
+    var accion_realizarinput = $('#bd_id_accion').val();
+
+    if (accion_realizarinput == 52 || accion_realizarinput == 98 || accion_realizarinput == 99) {
+        $('#div_causal_devolucion_comite').removeClass('d-none');        
+    }
+
+    var accion_realizarselect = $('#accion');
+    accion_realizarselect.change(function() {
+        var valoraccion_realizarselect = $(this).val();
+        if (valoraccion_realizarselect == 52 || valoraccion_realizarselect == 98 || valoraccion_realizarselect == 99) {
+            $('#div_causal_devolucion_comite').removeClass('d-none');
+        } else {
+            $('#div_causal_devolucion_comite').addClass('d-none');            
+        }  
+    });
+
     var newId_evento = $('#newId_evento').val();
-    var newId_asignacion = $('#newId_asignacion').val();
+    var newId_asignacion = $('#newId_asignacion').val();    
     //console.log(newId_evento);
     $('#form_calificacionPcl').submit(function (e) {
         e.preventDefault();  
@@ -320,6 +367,7 @@ $(document).ready(function(){
         var Id_proceso = $('#Id_proceso').val();
         var Id_servicio = $("#Id_servicio").val();
         var modalidad_calificacion = $('#modalidad_calificacion').val();   
+        var fecha_devolucion = $('#fecha_devolucion').val();   
         var fuente_informacion = $('#fuente_informacion').val();        
         var accion = $('#accion').val();
         var fecha_alerta = $('#fecha_alerta').val();
@@ -327,7 +375,7 @@ $(document).ready(function(){
         var causal_devolucion_comite = $('#causal_devolucion_comite').val();
         var descripcion_accion = $('#descripcion_accion').val();
         var banderaguardar =$('#bandera_accion_guardar_actualizar').val();
-
+        
         let token = $('input[name=_token]').val();
         
         var datos_agregarCalificacionPcl = {
@@ -337,6 +385,7 @@ $(document).ready(function(){
             'Id_proceso':Id_proceso,
             'Id_servicio': Id_servicio,
             'modalidad_calificacion':modalidad_calificacion,
+            'fecha_devolucion':fecha_devolucion,
             'fuente_informacion':fuente_informacion,
             'accion':accion,
             'fecha_alerta':fecha_alerta,

@@ -58,6 +58,7 @@ use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
 use App\Models\sigmel_informacion_agudeza_visualre_eventos;
 use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
+use App\Models\sigmel_lista_causal_devoluciones;
 use Psy\Readline\Hoa\Console;
 use Svg\Tag\Rect;
 use App\Models\sigmel_lista_procesos_servicios;
@@ -185,7 +186,7 @@ class CalificacionPCLController extends Controller
 
         }
 
-        // Listado Modalidad calificacion PCL
+        // Listado Fuente de informacion PCL
 
         if($parametro == 'lista_fuente_informacion'){
             $listado_fuente_info_calificacion = sigmel_lista_parametros::on('sigmel_gestiones')
@@ -253,6 +254,22 @@ class CalificacionPCLController extends Controller
             $info_listado_modalidad_calificacion = json_decode(json_encode($listado_modalidad_calificacion, true));
             return response()->json($info_listado_modalidad_calificacion);
 
+        }
+
+        // Listado Causal de devolucion comite PCL
+        if($parametro == 'lista_causal_devo_comite'){            
+
+            $listado_causal_devo_comite = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_causal_devoluciones as slcd')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_asignacion_eventos as siae', 'siae.Id_proceso', '=', 'slcd.Id_proceso')
+            ->select('slcd.Id_causal_devo', 'slcd.Causal_devolucion')
+            ->where([
+                ['siae.Id_Asignacion',$request->Id_asignacion_pro], 
+                ['slcd.Id_proceso',$request->Id_proceso_actual], 
+                ['slcd.Estado','activo']
+            ])->get();            
+
+            $info_listado_causal_devo_comite = json_decode(json_encode($listado_causal_devo_comite, true));
+            return response()->json($info_listado_causal_devo_comite);
         }
 
         if($parametro = "listado_accion"){
@@ -345,7 +362,7 @@ class CalificacionPCLController extends Controller
                     return response()->json(($info_listado_acciones_nuevo_servicio));
                 }
             }
-        }
+        }        
     }
 
     public function guardarCalificacionPCL(Request $request){
@@ -361,6 +378,16 @@ class CalificacionPCLController extends Controller
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
         $Id_servicio = $request->Id_servicio;
+
+        $Accion_realizar = $request->accion;
+
+        if ($Accion_realizar == 52 || $Accion_realizar == 98 || $Accion_realizar == 99) {
+            $Fecha_devolucion_comite = $date;
+            $Causal_devolucion_comite =$request->causal_devolucion_comite;
+        }else{
+            $Fecha_devolucion_comite = $request->fecha_devolucion;
+            $Causal_devolucion_comite =$request->causal_devolucion_comite;
+        }
         
         // validacion de bandera para guardar o actualizar
         if ($request->bandera_accion_guardar_actualizar == 'Guardar') {
@@ -378,7 +405,8 @@ class CalificacionPCLController extends Controller
                     'Accion' => $request->accion,
                     'F_Alerta' => $request->fecha_alerta,
                     'Enviar' => $request->enviar,
-                    'Causal_devolucion_comite' => $request->causal_devolucion_comite,
+                    'Causal_devolucion_comite' => $Causal_devolucion_comite,
+                    'F_devolucion_comite' => $Fecha_devolucion_comite,
                     'Descripcion_accion' => $request->descripcion_accion,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
@@ -394,14 +422,13 @@ class CalificacionPCLController extends Controller
                     'Accion' => $request->accion,
                     'F_Alerta' => $request->fecha_alerta,
                     'Enviar' => $request->enviar,
-                    'Causal_devolucion_comite' => $request->causal_devolucion_comite,
+                    'Causal_devolucion_comite' => $Causal_devolucion_comite,                    
+                    'F_devolucion_comite' => $Fecha_devolucion_comite,
                     'Descripcion_accion' => $request->descripcion_accion,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
             }
-            
-    
 
             // Extraemos el id estado de la tabla de parametrizaciones dependiendo del
             // id del cliente, id proceso, id servicio, id accion. Este id irá como estado inicial
@@ -500,7 +527,8 @@ class CalificacionPCLController extends Controller
                     'Accion' => $request->accion,
                     'F_Alerta' => $request->fecha_alerta,
                     'Enviar' => $request->enviar,
-                    'Causal_devolucion_comite' => $request->causal_devolucion_comite,
+                    'Causal_devolucion_comite' => $Causal_devolucion_comite,
+                    'F_devolucion_comite' => $Fecha_devolucion_comite,
                     'Descripcion_accion' => $request->descripcion_accion,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
@@ -516,7 +544,8 @@ class CalificacionPCLController extends Controller
                     'Accion' => $request->accion,
                     'F_Alerta' => $request->fecha_alerta,
                     'Enviar' => $request->enviar,
-                    'Causal_devolucion_comite' => $request->causal_devolucion_comite,
+                    'Causal_devolucion_comite' => $Causal_devolucion_comite,
+                    'F_devolucion_comite' => $Fecha_devolucion_comite,
                     'Descripcion_accion' => $request->descripcion_accion,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
