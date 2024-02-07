@@ -21,6 +21,12 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    $(".causal_devolucion_comite").select2({      
+        width: '100%',
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
     /* FUNCIONALIDAD DESCARGA DOCUMENTO */
     $("a[id^='btn_generar_descarga_']").click(function(){
         var id_documento = $(this).data('id_documento_descargar');
@@ -183,6 +189,32 @@ $(document).ready(function(){
         });
     });
 
+    //Listado de causal de devolucion comite calificacion PCL    
+    var Id_asignacion_pro = $('#newId_asignacion').val();
+    var Id_proceso_actual = $('#Id_proceso').val();
+    let datos_lista_causal_devolucion_comite = {
+        '_token': token,
+        'parametro':"lista_causal_devo_comite",
+        'Id_asignacion_pro':Id_asignacion_pro,
+        'Id_proceso_actual':Id_proceso_actual
+    };
+    
+    $.ajax({
+        type:'POST',
+        url:'/selectoresOrigenAtel',
+        data:datos_lista_causal_devolucion_comite,
+        success:function(data){
+            //console.log(data);
+            let idcausal_devolucion_comite= $('select[name=causal_devolucion_comite]').val();
+            let causal_devolucion_comitepcl = Object.keys(data);
+            for (let i = 0; i < causal_devolucion_comitepcl.length; i++) {
+                if (data[causal_devolucion_comitepcl[i]]['Id_causal_devo'] != idcausal_devolucion_comite) {
+                    $('#causal_devolucion_comite').append('<option value="'+data[causal_devolucion_comitepcl[i]]['Id_causal_devo']+'">'+data[causal_devolucion_comitepcl[i]]['Causal_devolucion']+'</option>');
+                }                
+            }
+        }
+    });
+
     // LISTADO DE ACCIONES 
     var datos_listado_accion = {
         '_token': token,
@@ -313,6 +345,22 @@ $(document).ready(function(){
             }         
         });
     }); 
+
+    var accion_realizarinput = $('#bd_id_accion').val();
+
+    if (accion_realizarinput == 7) {
+        $('#div_causal_devolucion_comite').removeClass('d-none');        
+    }
+
+    var accion_realizarselect = $('#accion');
+    accion_realizarselect.change(function() {
+        var valoraccion_realizarselect = $(this).val();
+        if (valoraccion_realizarselect == 7) {
+            $('#div_causal_devolucion_comite').removeClass('d-none');
+        } else {
+            $('#div_causal_devolucion_comite').addClass('d-none');            
+        }  
+    });
     
     // llenado del formulario para la captura de datos del modulo de calificacion Origen ATEL
     $('#form_calificacionOrigen').submit(function (e) {
@@ -325,6 +373,7 @@ $(document).ready(function(){
         var newId_asignacion = $('#newId_asignacion').val();
         var Id_proceso = $('#Id_proceso').val();
         var Id_servicio = $("#Id_servicio").val();
+        var fecha_devolucion = $('#fecha_devolucion').val();   
         var f_accion = $('#f_accion').val();
         var accion = $('#accion').val();
         var fecha_alerta = $('#fecha_alerta').val();
@@ -341,6 +390,7 @@ $(document).ready(function(){
             'newId_asignacion':newId_asignacion,
             'Id_proceso':Id_proceso,
             'Id_servicio': Id_servicio,
+            'fecha_devolucion': fecha_devolucion,
             'f_accion':f_accion,
             'accion':accion,
             'fecha_alerta':fecha_alerta,
@@ -687,12 +737,14 @@ $(document).ready(function(){
     // En la modal de generar comunicado
     $('input[type="radio"]').change(function(){
         var destinarioPrincipal = $(this).val();
+        var identificacion_comunicado_afiliado = $('#identificacion_comunicado').val();
         var newId_evento = $('#newId_evento').val();
         var newId_asignacion = $('#newId_asignacion').val();
         var Id_proceso = $('#Id_proceso').val();
         var datos_destinarioPrincipal ={
             '_token':token,
             'destinatarioPrincipal': destinarioPrincipal,
+            'identificacion_comunicado_afiliado':identificacion_comunicado_afiliado,
             'newId_evento': newId_evento,
             'newId_asignacion': newId_asignacion,
             'Id_proceso': Id_proceso,
@@ -1345,10 +1397,12 @@ $(document).ready(function(){
         document.getElementById('elaboro2_editar').value=elaboro_comunicado;
 
         $('input[type="radio"]').change(function(){
-            var destinarioPrincipal = $(this).val();            
+            var destinarioPrincipal = $(this).val();   
+            var identificacion_comunicado_afiliado = $('#identificacion_comunicado_editar').val();
             var datos_destinarioPrincipal ={
                 '_token':token,
                 'destinatarioPrincipal': destinarioPrincipal,
+                'identificacion_comunicado_afiliado':identificacion_comunicado_afiliado,
                 'newId_evento': id_evento,
                 'newId_asignacion': id_asignacion,
                 'Id_proceso': id_proceso,
@@ -1356,7 +1410,7 @@ $(document).ready(function(){
     
             $.ajax({
                 type:'POST',
-                url:'/captuarDestinatario',
+                url:'/captuarDestinatarioOrigen',
                 data: datos_destinarioPrincipal,
                 success: function(data){
                     /* $('#destinatarioPrincipal').text(data.destinatarioPrincipal);

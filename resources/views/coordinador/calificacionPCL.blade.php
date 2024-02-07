@@ -197,7 +197,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fecha_calificacion">Fecha de calificación</label>
-                                                <input type="text" class="form-control" name="fecha_calificacion" id="fecha_calificacion" value="{{$array_datos_calificacionPcl[0]->F_calificacion}}" disabled>
+                                                <input type="text" class="form-control" name="fecha_calificacion" id="fecha_calificacion" value="<?php if(!empty($array_datos_calificacionPcl[0]->F_calificacion)){echo $array_datos_calificacionPcl[0]->F_calificacion;}else{ echo 'Sin Calificación';}?>" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -258,8 +258,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fecha_devolucion">Fecha devolución comité</label>
-                                                <input type="text" class="form-control" name="fecha_devolucion" id="fecha_devolucion" style="color: red;" value="NO ESTA DEFINIDO" disabled>
-                                            </div>
+                                                <input type="text" class="form-control" name="fecha_devolucion" id="fecha_devolucion" value="<?php if(!empty($array_datos_calificacionPcl[0]->Fecha_devolucion_comite) && $array_datos_calificacionPcl[0]->Fecha_devolucion_comite != '0000-00-00'){echo $array_datos_calificacionPcl[0]->Fecha_devolucion_comite;}else{ echo 'Sin Fecha Devolución';}?>" disabled>
+                                            </div>                                                                                                                  
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
@@ -271,12 +271,18 @@
                                             <div class="form-group">
                                                 <label for="fuente_informacion">Fuente de información</label>
                                                 <select class="fuente_informacion custom-select" name="fuente_informacion" id="fuente_informacion">
-                                                    @if ($array_datos_calificacionPcl[0]->Fuente_informacion > 0)
+                                                    @if (!empty($array_datos_calificacionPcl[0]->Fuente_informacion))
                                                         <option value="{{$array_datos_calificacionPcl[0]->Fuente_informacion}}" selected>{{$array_datos_calificacionPcl[0]->Nombre_Fuente_informacion}}</option>
                                                     @else
                                                         <option value="">Seleccione una opción</option>
                                                     @endif
                                                 </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="fecha_ajuste_califi">Fecha de ajuste calificación</label>
+                                                <input type="text" class="form-control" name="fecha_ajuste_califi" id="fecha_ajuste_califi" value="<?php if(!empty($array_datos_calificacionPcl[0]->F_ajuste_calificacion)){echo $array_datos_calificacionPcl[0]->F_ajuste_calificacion;}else{ echo 'Sin ajuste Calificación';}?>" disabled>
                                             </div>
                                         </div>
                                     </div>
@@ -312,8 +318,7 @@
                                                 <div class="form-group">
                                                     <label for="accion">Acción <span style="color: red;">(*)</span></label>
                                                     <input type="hidden" id="bd_id_accion" value="<?php if(!empty($array_datos_calificacionPcl[0]->Id_accion)){echo $array_datos_calificacionPcl[0]->Id_accion;}?>">
-                                                    <select class="custom-select accion" name="accion" id="accion" style="color: red;">
-                                                        {{-- <option value="NO ESTA DEFINIDO">NO ESTA DEFINIDO</option> --}}
+                                                    <select class="custom-select accion" name="accion" id="accion" required>                                          
                                                     </select>
                                                 </div>
                                             </div>
@@ -331,11 +336,15 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-4 d-none" id="div_causal_devolucion_comite">
                                                 <div class="form-group">
                                                     <label for="causal_devolucion_comite">Causal de devolución comité</label>
-                                                    <select class="custom-select" name="causal_devolucion_comite" id="causal_devolucion_comite" style="color: red;">
-                                                        <option value="NO ESTA DEFINIDO">NO ESTA DEFINIDO</option>
+                                                    <select class="causal_devolucion_comite custom-select" name="causal_devolucion_comite" id="causal_devolucion_comite">
+                                                        @if (!empty($array_datos_calificacionPcl[0]->Nombre_Causal_devolucion_comite))
+                                                            <option value="{{$array_datos_calificacionPcl[0]->Causal_devolucion_comite}}" selected>{{$array_datos_calificacionPcl[0]->Nombre_Causal_devolucion_comite}}</option>
+                                                        @else
+                                                            <option value="">Seleccione una opción</option>
+                                                        @endif
                                                     </select>
                                                 </div>
                                             </div>
