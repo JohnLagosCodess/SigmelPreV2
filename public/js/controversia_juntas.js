@@ -879,12 +879,48 @@ $(document).ready(function(){
         }, 500);
     }
 
+    // Insertar textos predeterminados en la sección de correspondencia pero por defecto al momento de entrar al submodulo
+    var predeterminado_concepto_jrci = $('input[name=decision_dictamen_jrci]').filter(":checked").val();
+    if (predeterminado_concepto_jrci == "Desacuerdo") {
+        $("#Asunto").val("RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN AL DICTAMEN DEL {{$f_dictamen_jrci}}");
+
+        var id_servicio = $("#id_servicio").val();
+        // Controversia PCL
+        if (id_servicio == 13) {
+            var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de PCL dictaminada al (la) afiliado(a) {{$nombre_afiliado}} por la {{$junta_regional}}, por los diagnósticos {{$cie10_jrci}} otorga un porcentaje de {{$pcl_jrci}}, y fecha de estructuración {{$f_estructuracion_jrci}}.</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de la calificación de PCL de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes,de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
+        }else if(id_servicio == 12){ // Controversia Origen
+            var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de {{$origen_dx_jrci}} dictaminada al (la) afiliado(a) {{$nombre_afiliado}} por la {{$junta_regional}} por los diagnósticos {{$cie10_nombre_cie10_jrci}}.</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de ORIGEN de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes,de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>"
+        }
+        $("#cuerpo_comunicado").summernote('code', texto_insertar);
+    }else{
+        $("#Asunto").val("");
+        $("#cuerpo_comunicado").summernote('code', '');
+    }
+    
+
     // Mostrar Modulo y Selector de acuerdo al pronunciamiento DICTAMEN
     var opt_concepto_jrci;
     $("[name='decision_dictamen_jrci']").on("change", function(){
         opt_concepto_jrci = $(this).val();
-         $(this).val(opt_concepto_jrci);
-         iniciarIntervalo_concepto_jrci();
+        $(this).val(opt_concepto_jrci);
+        iniciarIntervalo_concepto_jrci();
+
+        // Insertar textos predeterminados en la sección de correspondencia
+        if (opt_concepto_jrci == "Desacuerdo") {
+            $("#Asunto").val("RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN AL DICTAMEN DEL {{$f_dictamen_jrci}}");
+
+            var id_servicio = $("#id_servicio").val();
+            // Controversia PCL
+            if (id_servicio == 13) {
+                var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de PCL dictaminada al (la) afiliado(a) {{$nombre_afiliado}} por la {{$junta_regional}}, por los diagnósticos {{$cie10_jrci}} otorga un porcentaje de {{$pcl_jrci}}, y fecha de estructuración {{$f_estructuracion_jrci}}.</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de la calificación de PCL de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes,de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
+            }else if(id_servicio == 12){ // Controversia Origen
+                var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de {{$origen_dx_jrci}} dictaminada al (la) afiliado(a) {{$nombre_afiliado}} por la {{$junta_regional}} por los diagnósticos {{$cie10_nombre_cie10_jrci}}.</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de ORIGEN de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes,de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>"
+            }
+            $("#cuerpo_comunicado").summernote('code', texto_insertar);
+        }else{
+            $("#Asunto").val("");
+            $("#cuerpo_comunicado").summernote('code', '');
+        }
     });
     // Función para validar items a mostrar
     const tiempoDeslizamiento_concepto = 'slow';
@@ -1022,24 +1058,8 @@ $(document).ready(function(){
         opt_concepto_repo_jrci = $(this).val();
         $(this).val(opt_concepto_repo_jrci);
         iniciarIntervalo_concepto_repo_jrci();
-
-        // Insertar textos predeterminados en la sección de correspondencia
-        if (opt_concepto_repo_jrci == "Desacuerdo") {
-            $("#Asunto").val("RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN AL DICTAMEN DEL {{$f_dictamen_jrci}}");
-
-            var id_servicio = $("#id_servicio").val();
-            // Controversia PCL
-            if (id_servicio == 13) {
-                var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de PCL dictaminada al (la) afiliado(a) {{$nombre_afiliado}} por la {{$junta_regional}}, por los diagnósticos {{$cie10_jrci}} otorga un porcentaje de {{$pcl_jrci}}, y fecha de estructuración {{$f_estructuracion_jrci}}.</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de la calificación de PCL de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes,de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
-            }else if(id_servicio == 12){ // Controversia Origen
-                var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de {{$origen_dx_jrci}} dictaminada al (la) afiliado(a) {{$nombre_afiliado}} por la {{$junta_regional}} por los diagnósticos {{$cie10_nombre_cie10_jrci}}.</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de ORIGEN de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes,de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>"
-            }
-            $("#cuerpo_comunicado").summernote('code', texto_insertar);
-        }else{
-            $("#Asunto").val("");
-            $("#cuerpo_comunicado").summernote('code', '');
-        }
     });
+
     // Función para validar items a mostrar
     const tiempoDeslizamiento_concepto_repo = 'slow';
     function iniciarIntervalo_concepto_repo_jrci() {
@@ -2119,6 +2139,10 @@ $(document).ready(function(){
 
     // validar si el otro destinatario principal esta marcado
 
+
+    /* VALIDACIONES CORRESPONDENCIA */
+
+    /* Checkbox Otro Destinatario Principal */
     var otrodestinariop = $("#otrodestinariop");
     otrodestinariop.change(function(){
         if ($(this).prop('checked')) {     
@@ -2149,7 +2173,6 @@ $(document).ready(function(){
                         }
                     }
                 }
-                
             });
 
             if($('select[name=nombre_destinatariopri]').val() !== ''){
@@ -2179,17 +2202,23 @@ $(document).ready(function(){
                 });
             }                      
             
+            // Comparacion del id del tipo de destinatario para mostrar los campos del formulario
             var destinatario_principal_select = $('#db_tipo_destinatario_principal').val();
+            // opcion 8: otro
             if (destinatario_principal_select == 8) {
                 $('#div_tipo_destinatario_principal').slideDown('slow');            
                 $('#div_datos_otro_destinatario').slideDown('slow');
                 $('#div_nombre_destinatariopri').slideUp('up');                
-            }else if(destinatario_principal_select == 4) {
+            }
+            // opcion 4: afiliado
+            else if(destinatario_principal_select == 4) {
                 $('#div_tipo_destinatario_principal').slideDown('slow');            
                 $('#div_datos_otro_destinatario').slideUp('up');
                 $('#div_nombre_destinatariopri').slideUp('up');
                 $('#div_nombre_destinatariopri_afi_').slideDown('slow');
-            }else if(destinatario_principal_select == 5) {
+            }
+            // opcion 5: empleador
+            else if(destinatario_principal_select == 5) {
                 $('#div_tipo_destinatario_principal').slideDown('slow');            
                 $('#div_datos_otro_destinatario').slideUp('up');
                 $('#div_nombre_destinatariopri').slideUp('up');
@@ -2214,26 +2243,29 @@ $(document).ready(function(){
         }
     });
 
-    
-    // validar si tipo de destinatario es igual a otro
-
+    // Validaciones para el selector de tipo de destinatario principal
     var select_destinatario_principal = $('#tipo_destinatario_principal');
     var select_destinatario_principal2 = $('#db_tipo_destinatario_principal').val();
     
     select_destinatario_principal.change(function() {
+        // opcion 8: otro
        if ($(this).val() == 8) {
             $('#nombre_destinatariopri').prop('required', false); 
             $('#div_nombre_destinatariopri').slideUp('up');
             $('#div_datos_otro_destinatario').slideDown('slow');
             $('#div_nombre_destinatariopri_afi_').slideUp('up');
             $('#div_nombre_destinatariopri_empl').slideUp('up');
-       }else if ($(this).val() == 4) {
+       }
+        //  opción 4: afiliado
+       else if ($(this).val() == 4) {
             $('#nombre_destinatariopri').prop('required', false); 
             $('#div_nombre_destinatariopri').slideUp('up');
             $('#div_datos_otro_destinatario').slideUp('up');
             $('#div_nombre_destinatariopri_afi_').slideDown('slow');
             $('#div_nombre_destinatariopri_empl').slideUp('up');
-        }else if ($(this).val() == 5) {
+        }
+        // opcion 5: empleador
+        else if ($(this).val() == 5) {
             $('#nombre_destinatariopri').prop('required', false); 
             $('#div_nombre_destinatariopri').slideUp('up');
             $('#div_datos_otro_destinatario').slideUp('up');
@@ -2248,16 +2280,22 @@ $(document).ready(function(){
         } 
     });
 
+    // Validación del Checkbox Otro Destinatario Principal pero desde cuaando carga la pagina por primera vez
     if(otrodestinariop.prop('checked')){           
         $('#div_tipo_destinatario_principal').slideDown('slow');
+        // opcion 8: otro
         if (select_destinatario_principal2 == 8) {
             $('#div_datos_otro_destinatario').slideDown('slow');
             $('#div_nombre_destinatariopri').slideUp('up');
-        }else if(select_destinatario_principal2 == 4) {
+        }
+        // opcion 4: afiliado
+        else if(select_destinatario_principal2 == 4) {
             $('#div_datos_otro_destinatario').slideUp('up');
             $('#div_nombre_destinatariopri').slideUp('up');
             $('#div_nombre_destinatariopri_afi_').slideDown('slow');
-        }else if(select_destinatario_principal2 == 5) {
+        }
+        // opcion 5: empleador
+        else if(select_destinatario_principal2 == 5) {
             $('#div_datos_otro_destinatario').slideUp('up');
             $('#div_nombre_destinatariopri').slideUp('up');
             $('#div_nombre_destinatariopri_empl').slideDown('slow');
@@ -2344,9 +2382,17 @@ $(document).ready(function(){
         $("#cuerpo_comunicado").summernote('editor.insertText', etiqueta_f_estructuracion_jrci);
     });
 
+    // Sustentación Concepto JRCI (Revisión ante concepto de la Junta Regional)
     $("#btn_insertar_sustentacion_jrci").click(function(e){
         e.preventDefault();
         var etiqueta_sustentacion_jrci = "{{$sustentacion_jrci}}";
+        $("#cuerpo_comunicado").summernote('editor.insertText', etiqueta_sustentacion_jrci);
+    });
+
+    // Sustentación Concepto JRCI (Revisión ante recurso de reposición de la Junta Regional)
+    $("#btn_insertar_sustentacion_jrci1").click(function(e){
+        e.preventDefault();
+        var etiqueta_sustentacion_jrci = "{{$sustentacion_jrci1}}";
         $("#cuerpo_comunicado").summernote('editor.insertText', etiqueta_sustentacion_jrci);
     });
 
@@ -2362,6 +2408,365 @@ $(document).ready(function(){
         $("#cuerpo_comunicado").summernote('editor.insertText', etiqueta_cie_nombre_jrci);
     });
 
+    var tabla_comunicados_juntas = $('#tabla_comunicados_juntas').DataTable({
+        "responsive": true,
+        "info": false,
+        "searching": false,
+        "ordering": false,
+        "scrollCollapse": true,
+        "scrollY": "20vh",
+        "paging": false,
+        "language":{
+            "emptyTable": "No se encontró información"
+        }
+    });
+    autoAdjustColumns(tabla_comunicados_juntas);
+
+    // Funcionalidad botón editar correspondencia (lapiz)
+    if($("#hay_datos_form_corres").val() == 0){
+        $("#div_correspondencia").removeClass('d-none');
+    }
+
+    // Evento click: para mostrar el formulario de la correspondencia.
+    $("a[id^='editar_correspondencia_']").click(function(){
+        $("#div_correspondencia").addClass('d-none');
+        
+        setTimeout(() => {
+            $("#div_correspondencia").removeClass('d-none');
+        }, 2000);
+
+    });
+
+    // Evento hover: Para realizar el cargue de los datos segun corresponda
+    $("a[id^='editar_correspondencia_']").hover(function(){
+        var id_comite_inter = $(this).data("id_comite_inter");
+        // var tupla_comunicado = $(this).data("tupla_comunicado");
+        var id_evento = $(this).data("id_evento");
+        var id_asignacion = $(this).data("id_asignacion");
+
+        let token = $("input[name='_token']").val();
+
+        /* cargue de datos controvertido */
+        let datos_controvertido = {
+            '_token': token,
+            // 'tupla_comunicado' :tupla_comunicado,
+            'id_evento' :id_evento,
+            'id_asignacion' :id_asignacion,
+            'parametro': "controvertido"
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueInformacionCorrespondencia',
+            data: datos_controvertido,
+            success:function(data){
+                $("#destinatario_principal").val('');
+                $("#destinatario_principal").val(data["destinatario_principal"]);
+            }
+        });
+
+        /* cargue Datos correspondencia */
+        let datos_correspondencia = {
+            '_token': token,
+            // 'tupla_comunicado': tupla_comunicado,
+            'id_evento': id_evento,
+            'id_asignacion': id_asignacion,
+            'id_comite_inter': id_comite_inter,
+            'parametro': "correspondencia"
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueInformacionCorrespondencia',
+            data: datos_correspondencia,
+            success:function(data_correspondencia){
+
+                // Validación del Checkbox Otro Destinatario Principal para mostrar u ocultar los campos relacionados a el
+                if(data_correspondencia["checkeado_otro_destinatario"] == "Si"){
+                    $("#otrodestinariop").prop("checked", true);
+                    $('#div_tipo_destinatario_principal').slideDown('slow');
+
+                    $("#tipo_destinatario_principal").prop('required', true);
+                    
+                    // opcion 4: afiliado
+                    if(data_correspondencia["db_tipo_destinatario_principal"] == 4) {
+                        $('#div_datos_otro_destinatario').slideUp('up');
+                        $('#div_nombre_destinatariopri').slideUp('up');
+                        $('#div_nombre_destinatariopri_afi_').slideDown('slow');
+                        $('#div_nombre_destinatariopri_empl').slideUp('up');
+                        $("#nombre_destinatario_afi").prop('required', true);
+                        $("#nombre_destinatario_emp").prop('required', false);
+                        $("#nombre_destinatariopri").prop('required', false);
+                    }
+                    // opcion 5: empleador
+                    else if(data_correspondencia["db_tipo_destinatario_principal"] == 5) {
+                        $('#div_datos_otro_destinatario').slideUp('up');
+                        $('#div_nombre_destinatariopri').slideUp('up');
+                        $('#div_nombre_destinatariopri_empl').slideDown('slow');
+                        $('#div_nombre_destinatariopri_afi_').slideUp('up');
+                        $("#nombre_destinatario_emp").prop('required', true);
+                        $("#nombre_destinatario_afi").prop('required', false);
+                        $("#nombre_destinatariopri").prop('required', false);
+                    }
+                    // opcion 8: otro
+                    else if (data_correspondencia["db_tipo_destinatario_principal"] == 8) {
+                        $('#div_datos_otro_destinatario').slideDown('slow');
+                        $('#div_nombre_destinatariopri').slideUp('up');
+                        $('#div_nombre_destinatariopri_afi_').slideUp('up');
+                        $('#div_nombre_destinatariopri_empl').slideUp('slow');
+                        $("#nombre_destinatario_afi").prop('required', false);
+                        $("#nombre_destinatario_emp").prop('required', false);
+                        $("#nombre_destinatariopri").prop('required', false);
+                    }
+
+                    else {  
+                        $('#div_nombre_destinatariopri').slideDown('slow');
+                        $('#div_datos_otro_destinatario').slideUp('up');
+                        $("#nombre_destinatariopri").prop('required', true);
+                    } 
+                }else{
+                    $("#otrodestinariop").prop("checked", false);
+                    $('#div_tipo_destinatario_principal').slideUp('slow');
+                    $('#div_nombre_destinatariopri').slideUp('up'); 
+                    $('#div_datos_otro_destinatario').slideUp('up');
+                    $('#div_nombre_destinatariopri_afi_').slideUp('up');
+                    $('#div_nombre_destinatariopri_empl').slideUp('up');
+
+                    $("#tipo_destinatario_principal").prop('required', false);
+                    $('#tipo_destinatario_principal').empty();
+                    $("#nombre_destinatariopri").prop('required', false);
+                    $("#nombre_destinatario_afi").prop('required', false);
+                    $("#nombre_destinatario_emp").prop('required', false);
+                }
+
+                /* Carga de los datos del selector de tipo de destinatario y el id */
+                $("#db_tipo_destinatario_principal").val(data_correspondencia["db_tipo_destinatario_principal"]);
+                $('#tipo_destinatario_principal').empty();
+                let datos_lista_tipo_destinatario = {
+                    '_token': token,
+                    'parametro' : "listado_destinatarios"
+                };
+                $.ajax({
+                    type:'POST',
+                    url:'/selectoresJuntasControversia',
+                    data: datos_lista_tipo_destinatario,
+                    success:function(data) {
+                        $('#tipo_destinatario_principal').append('<option value="" selected>Seleccione</option>');
+                        let destini_pricipal = Object.keys(data);
+                        for (let i = 0; i < destini_pricipal.length; i++) {
+                            if (data[destini_pricipal[i]]['Id_solicitante'] == data_correspondencia["db_tipo_destinatario_principal"]) {  
+                                $('#tipo_destinatario_principal').append('<option value="'+data[destini_pricipal[i]]["Id_solicitante"]+'" selected>'+data[destini_pricipal[i]]["Solicitante"]+'</option>');
+                            }else{                    
+                                $('#tipo_destinatario_principal').append('<option value="'+data[destini_pricipal[i]]["Id_solicitante"]+'">'+data[destini_pricipal[i]]["Solicitante"]+'</option>');
+                            }
+                        }
+                    }
+                });
+
+                /* Carga de los datos del selector del Nombre del destinatario */
+                $("#db_nombre_destinatariopri").val(data_correspondencia["db_nombre_destinatariopri"]);
+                $('#nombre_destinatariopri').empty();
+                if($('select[name=nombre_destinatariopri]').val() !== ''){
+                    $('#nombre_destinatariopri').prop('disabled', false);
+                    let id_solicitante = $('#db_tipo_destinatario_principal').val();
+                    let datos_listado_nombre_solicitante = {
+                        '_token': token,
+                        'parametro' : "nombre_destinatariopri",
+                        'id_solicitante': id_solicitante
+                    };
+                    
+                    $.ajax({
+                        type:'POST',
+                        url:'/selectoresJuntasControversia',
+                        data: datos_listado_nombre_solicitante,
+                        success:function(data) {
+                            let claves = Object.keys(data);
+                            for (let i = 0; i < claves.length; i++) {
+                                if (data[claves[i]]['Id_Nombre_solicitante'] == $('#db_nombre_destinatariopri').val()) {  
+                                    $('#nombre_destinatariopri').append('<option value="'+data[claves[i]]["Id_Nombre_solicitante"]+'" selected>'+data[claves[i]]["Nombre_solicitante"]+'</option>');
+                                }else{                    
+                                    $('#nombre_destinatariopri').append('<option value="'+data[claves[i]]["Id_Nombre_solicitante"]+'">'+data[claves[i]]["Nombre_solicitante"]+'</option>');
+                                }
+                            }
+                        }
+                    });
+                }
+
+                /* Carga Datos de la opcion otro del tipo de destinatario principal */
+                $("#nombre_destinatario").empty();
+                $("#nitcc_destinatario").empty();
+                $("#direccion_destinatario").empty();
+                $("#telefono_destinatario").empty();
+                $("#email_destinatario").empty();
+                $("#departamento_destinatario").empty();
+                $("#ciudad_destinatario").empty();
+
+                $("#nombre_destinatario").val(data_correspondencia["nombre_destinatario"]);
+                $("#nitcc_destinatario").val(data_correspondencia["nitcc_destinatario"]);
+                $("#direccion_destinatario").val(data_correspondencia["direccion_destinatario"]);
+                $("#telefono_destinatario").val(data_correspondencia["telefono_destinatario"]);
+                $("#email_destinatario").val(data_correspondencia["email_destinatario"]);
+                $("#departamento_destinatario").val(data_correspondencia["departamento_destinatario"]);
+                $("#ciudad_destinatario").val(data_correspondencia["ciudad_destinatario"]);
+
+                /* Carga del Asunto */
+                $("#Asunto").val();
+                $("#Asunto").val(data_correspondencia["Asunto"]);
+
+                /* Cuerpo del Comunicado */
+                $("#cuerpo_comunicado").summernote('code', '');
+                $("#cuerpo_comunicado").summernote('code', data_correspondencia["cuerpo_comunicado"]);
+
+                /* Copias partes interesadas */
+                if (data_correspondencia["checkeado_empleador"] == "Si") {
+                    $("#empleador").prop("checked", true);
+                }else{
+                    $("#empleador").prop("checked", false);
+                }
+
+                if (data_correspondencia["checkeado_eps"] == "Si") {
+                    $("#eps").prop("checked", true);
+                }else{
+                    $("#eps").prop("checked", false);
+                }
+
+                if (data_correspondencia["checkeado_afp"] == "Si") {
+                    $("#afp").prop("checked", true);
+                }else{
+                    $("#afp").prop("checked", false);
+                }
+
+                if (data_correspondencia["checkeado_arl"] == "Si") {
+                    $("#arl").prop("checked", true);
+                }else{
+                    $("#arl").prop("checked", false);
+                }
+
+                if (data_correspondencia["checkeado_copia_jr"] == "Si") {
+                    $("#jrci").prop("checked", true);
+                    $('#div_cual').slideDown('slow');
+                    $('#cual').prop('required', true);
+                    $("#bd_cual_jr").val(data_correspondencia["bd_cual_jr"]);
+                }else{
+                    $("#jrci").prop("checked", false);
+                    $('#div_cual').slideUp('up');  
+                    $('#cual').prop('required', false);
+                }
+
+                //Listado juntas regional Correspondencia
+                $('#cual').empty();
+                let datos_lista_regional_junta = {
+                    '_token': token,
+                    'parametro':"lista_regional_junta"
+                };
+                $.ajax({
+                    type:'POST',
+                    url:'/selectoresCalificacionTecnicaPCL',
+                    data: datos_lista_regional_junta,
+                    success:function(data) {
+                        $('#cual').append('<option value="">Seleccione una opción</option>');
+                        let primercali = Object.keys(data);
+                        for (let i = 0; i < primercali.length; i++) {
+                            if (data[primercali[i]]['Ciudad_Junta'] == data_correspondencia["bd_cual_jr"]) {  
+                                $('#cual').append('<option value="'+data[primercali[i]]["Ciudad_Junta"]+'" selected>'+data[primercali[i]]["Ciudad_Junta"]+'</option>');
+                            }else{
+                                $('#cual').append('<option value="'+data[primercali[i]]["Ciudad_Junta"]+'">'+data[primercali[i]]["Ciudad_Junta"]+'</option>');
+                            }
+                        }
+                    }
+                });
+
+                if (data_correspondencia["checkeado_copia_jn"] == "Si") {
+                    $("#jnci").prop("checked", true);
+                }else{
+                    $("#jnci").prop("checked", false);
+                }
+
+                // anexos
+                $("#anexos").empty();
+                $("#anexos").val(data_correspondencia["anexos"]);
+
+                // Elaboró
+                $("#elaboro").empty();
+                $("#elaboro").val(data_correspondencia["elaboro"]);
+
+                // Reviso
+                $('#reviso').empty();
+                let datos_lista_reviso = {
+                    '_token': token,
+                    'parametro':"lista_reviso",
+                    'idProcesoLider':idProcesoLider
+                };
+            
+                $.ajax({
+                    type:'POST',
+                    url:'/selectoresCalificacionTecnicaPCL',
+                    data: datos_lista_reviso,
+                    success:function(data){
+                        $('#reviso').append('<option value="">Seleccione una opción</option>');
+                        let nombreRevisoPcl = Object.keys(data);
+                        for (let i = 0; i < nombreRevisoPcl.length; i++) {
+                            if (data[nombreRevisoPcl[i]]['name'] == data_correspondencia["bd_reviso"]) {                    
+                                $('#reviso').append('<option value="'+data[nombreRevisoPcl[i]]['name']+'" selected>'+data[nombreRevisoPcl[i]]['name']+'</option>');
+                            }else{
+                                $('#reviso').append('<option value="'+data[nombreRevisoPcl[i]]['name']+'">'+data[nombreRevisoPcl[i]]['name']+'</option>');
+                            }
+                        }
+                    }
+                });
+
+                // Checkbox Firmar
+                if (data_correspondencia["firmar"] == "Si") {
+                    $("#firmar").prop("checked", true);
+                }else{
+                    $("#firmar").prop("checked", false);
+                }
+
+                // Ciudad
+                $("#ciudad").empty();
+                $("#ciudad").val(data_correspondencia["ciudad"]);
+
+                // Fecha Correspondencia
+                $("#f_correspondencia").empty();
+                $("#f_correspondencia").val(data_correspondencia["f_correspondencia"])
+
+            }
+        });
+
+        /* cargue Datos Controversia Juntas */
+        let datos_controversia_juntas = {
+            '_token': token,
+            // 'tupla_comunicado' :tupla_comunicado,
+            'id_evento' :id_evento,
+            'id_asignacion' :id_asignacion,
+            'parametro': "controversia_juntas"
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueInformacionCorrespondencia',
+            data: datos_controversia_juntas,
+            success:function(data_contro_juntas){
+
+                /* Nombre destinatario opcion afiliado */
+                $("#nombre_destinatario_afi").val(data_contro_juntas["nombre_destinatario_afi"]);
+                /* Nombre destinatario opcion empleador */
+                $("#nombre_destinatario_emp").val(data_contro_juntas["nombre_destinatario_emp"]);
+
+                /* id servicio ya sea controversia pcl o controversia origen */
+                /* $("#llenar_completo").html('');
+                // controversia pcl
+                if(data_contro_juntas["id_servicio"] == 13){
+                    $("#llenar_completo").html(' Nombre CIE-10 JRCI, %Pcl JRCI, Fecha Estructuración JRCI, ');
+                }
+                // controversia origen
+                else if(data_contro_juntas["id_servicio"] == 12){
+                    $("#llenar_completo").html(' Origen Dx JRCI, CIE-10 - Nombre CIE-10 JRCI, ');
+                } */
+
+            }
+        });
+
+    });
+
+
     //Captura Formulario Correspondencia
     $('#form_correspondencia').submit(function (e){
         e.preventDefault();              
@@ -2370,7 +2775,9 @@ $(document).ready(function(){
         var Id_proceso = $('#Id_proceso').val();
         var newId_asignacion  = $('#newId_asignacion').val();
         var destinatario_principal = $('#destinatario_principal').val();
+
         var otrodestinariop = $('input[name="otrodestinariop"]:checked').val();
+
         if (otrodestinariop == undefined) {
             var tipo_destinatario_principal = '';
             var nombre_destinatariopri = '';            
@@ -2378,13 +2785,16 @@ $(document).ready(function(){
             var tipo_destinatario_principal = $('#tipo_destinatario_principal').val();            
             var nombre_destinatariopri = $('#nombre_destinatariopri').val();
         }
+
         var nombre_destinatario_afi = $('#nombre_destinatario_afi').val();
         var nombre_destinatario_emp = $('#nombre_destinatario_emp').val();
+
         if (tipo_destinatario_principal == 4) {
             var nombre_destinatario_afi_emp = nombre_destinatario_afi;
         } else if(tipo_destinatario_principal == 5) {
             var nombre_destinatario_afi_emp = nombre_destinatario_emp;            
         }
+
         if(tipo_destinatario_principal == 8){
             var nombre_destinatario = $('#nombre_destinatario').val();
             var nitcc_destinatario = $('#nitcc_destinatario').val();
@@ -2401,7 +2811,8 @@ $(document).ready(function(){
             var email_destinatario = '';
             var departamento_destinatario = '';
             var ciudad_destinatario = '';
-        }        
+        }      
+
         var Asunto = $('#Asunto').val();
         var cuerpo_comunicado = $('#cuerpo_comunicado').val();
         var empleador = $('input[name="empleador"]:checked').val();;        
@@ -2414,7 +2825,8 @@ $(document).ready(function(){
             var cual = '';                        
         } else {
             var cual = $('#cual').val();            
-        }       
+        }
+
         var jnci = $('input[name="jnci"]:checked').val();
         var anexos = $('#anexos').val();
         var elaboro = $('#elaboro').val();
@@ -2487,12 +2899,343 @@ $(document).ready(function(){
                 }
 
             }          
-        })
+        });
     });
 
-    $("#generar_proforma_recurso_reposicion_pcl").click(function(event){
-        event.preventDefault();
+    /* Generacion de Proforma en Word */
+    // llenado de datos con el hover para el ojito
+    $("a[id^='generar_proforma_recurso_reposicion_']").hover(function(){
+        var id_comite_inter = $(this).data("id_comite_inter");
+        // var tupla_comunicado = $(this).data("tupla_comunicado");
+        var id_evento = $(this).data("id_evento");
+        var id_asignacion = $(this).data("id_asignacion");
 
+        let token = $("input[name='_token']").val();
+
+        /* cargue de datos controvertido */
+        let datos_controvertido = {
+            '_token': token,
+            // 'tupla_comunicado' :tupla_comunicado,
+            'id_evento' :id_evento,
+            'id_asignacion' :id_asignacion,
+            'parametro': "controvertido"
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueInformacionCorrespondencia',
+            data: datos_controvertido,
+            success:function(data){
+                $("#destinatario_principal").val('');
+                $("#destinatario_principal").val(data["destinatario_principal"]);
+            }
+        });
+
+        /* cargue Datos correspondencia */
+        let datos_correspondencia = {
+            '_token': token,
+            // 'tupla_comunicado': tupla_comunicado,
+            'id_evento': id_evento,
+            'id_asignacion': id_asignacion,
+            'id_comite_inter': id_comite_inter,
+            'parametro': "correspondencia"
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueInformacionCorrespondencia',
+            data: datos_correspondencia,
+            success:function(data_correspondencia){
+
+                // Validación del Checkbox Otro Destinatario Principal para mostrar u ocultar los campos relacionados a el
+                if(data_correspondencia["checkeado_otro_destinatario"] == "Si"){
+                    $("#otrodestinariop").prop("checked", true);
+                    $('#div_tipo_destinatario_principal').slideDown('slow');
+
+                    $("#tipo_destinatario_principal").prop('required', true);
+                    
+                    // opcion 4: afiliado
+                    if(data_correspondencia["db_tipo_destinatario_principal"] == 4) {
+                        $('#div_datos_otro_destinatario').slideUp('up');
+                        $('#div_nombre_destinatariopri').slideUp('up');
+                        $('#div_nombre_destinatariopri_afi_').slideDown('slow');
+                        $('#div_nombre_destinatariopri_empl').slideUp('up');
+                        $("#nombre_destinatario_afi").prop('required', true);
+                        $("#nombre_destinatario_emp").prop('required', false);
+                        $("#nombre_destinatariopri").prop('required', false);
+                    }
+                    // opcion 5: empleador
+                    else if(data_correspondencia["db_tipo_destinatario_principal"] == 5) {
+                        $('#div_datos_otro_destinatario').slideUp('up');
+                        $('#div_nombre_destinatariopri').slideUp('up');
+                        $('#div_nombre_destinatariopri_empl').slideDown('slow');
+                        $('#div_nombre_destinatariopri_afi_').slideUp('up');
+                        $("#nombre_destinatario_emp").prop('required', true);
+                        $("#nombre_destinatario_afi").prop('required', false);
+                        $("#nombre_destinatariopri").prop('required', false);
+                    }
+                    // opcion 8: otro
+                    else if (data_correspondencia["db_tipo_destinatario_principal"] == 8) {
+                        $('#div_datos_otro_destinatario').slideDown('slow');
+                        $('#div_nombre_destinatariopri').slideUp('up');
+                        $('#div_nombre_destinatariopri_afi_').slideUp('up');
+                        $('#div_nombre_destinatariopri_empl').slideUp('slow');
+                        $("#nombre_destinatario_afi").prop('required', false);
+                        $("#nombre_destinatario_emp").prop('required', false);
+                        $("#nombre_destinatariopri").prop('required', false);
+                    }
+
+                    else {  
+                        $('#div_nombre_destinatariopri').slideDown('slow');
+                        $('#div_datos_otro_destinatario').slideUp('up');
+                        $("#nombre_destinatariopri").prop('required', true);
+                    } 
+                }else{
+                    $("#otrodestinariop").prop("checked", false);
+                    $('#div_tipo_destinatario_principal').slideUp('slow');
+                    $('#div_nombre_destinatariopri').slideUp('up'); 
+                    $('#div_datos_otro_destinatario').slideUp('up');
+                    $('#div_nombre_destinatariopri_afi_').slideUp('up');
+                    $('#div_nombre_destinatariopri_empl').slideUp('up');
+
+                    $("#tipo_destinatario_principal").prop('required', false);
+                    $('#tipo_destinatario_principal').empty();
+                    $("#nombre_destinatariopri").prop('required', false);
+                    $("#nombre_destinatario_afi").prop('required', false);
+                    $("#nombre_destinatario_emp").prop('required', false);
+                }
+
+                /* Carga de los datos del selector de tipo de destinatario y el id */
+                $("#db_tipo_destinatario_principal").val(data_correspondencia["db_tipo_destinatario_principal"]);
+                $('#tipo_destinatario_principal').empty();
+                let datos_lista_tipo_destinatario = {
+                    '_token': token,
+                    'parametro' : "listado_destinatarios"
+                };
+                $.ajax({
+                    type:'POST',
+                    url:'/selectoresJuntasControversia',
+                    data: datos_lista_tipo_destinatario,
+                    success:function(data) {
+                        $('#tipo_destinatario_principal').append('<option value="" selected>Seleccione</option>');
+                        let destini_pricipal = Object.keys(data);
+                        for (let i = 0; i < destini_pricipal.length; i++) {
+                            if (data[destini_pricipal[i]]['Id_solicitante'] == data_correspondencia["db_tipo_destinatario_principal"]) {  
+                                $('#tipo_destinatario_principal').append('<option value="'+data[destini_pricipal[i]]["Id_solicitante"]+'" selected>'+data[destini_pricipal[i]]["Solicitante"]+'</option>');
+                            }else{                    
+                                $('#tipo_destinatario_principal').append('<option value="'+data[destini_pricipal[i]]["Id_solicitante"]+'">'+data[destini_pricipal[i]]["Solicitante"]+'</option>');
+                            }
+                        }
+                    }
+                });
+
+                /* Carga de los datos del selector del Nombre del destinatario */
+                $("#db_nombre_destinatariopri").val(data_correspondencia["db_nombre_destinatariopri"]);
+                $('#nombre_destinatariopri').empty();
+                if($('select[name=nombre_destinatariopri]').val() !== ''){
+                    $('#nombre_destinatariopri').prop('disabled', false);
+                    let id_solicitante = $('#db_tipo_destinatario_principal').val();
+                    let datos_listado_nombre_solicitante = {
+                        '_token': token,
+                        'parametro' : "nombre_destinatariopri",
+                        'id_solicitante': id_solicitante
+                    };
+                    
+                    $.ajax({
+                        type:'POST',
+                        url:'/selectoresJuntasControversia',
+                        data: datos_listado_nombre_solicitante,
+                        success:function(data) {
+                            let claves = Object.keys(data);
+                            for (let i = 0; i < claves.length; i++) {
+                                if (data[claves[i]]['Id_Nombre_solicitante'] == $('#db_nombre_destinatariopri').val()) {  
+                                    $('#nombre_destinatariopri').append('<option value="'+data[claves[i]]["Id_Nombre_solicitante"]+'" selected>'+data[claves[i]]["Nombre_solicitante"]+'</option>');
+                                }else{                    
+                                    $('#nombre_destinatariopri').append('<option value="'+data[claves[i]]["Id_Nombre_solicitante"]+'">'+data[claves[i]]["Nombre_solicitante"]+'</option>');
+                                }
+                            }
+                        }
+                    });
+                }
+
+                /* Carga Datos de la opcion otro del tipo de destinatario principal */
+                $("#nombre_destinatario").empty();
+                $("#nitcc_destinatario").empty();
+                $("#direccion_destinatario").empty();
+                $("#telefono_destinatario").empty();
+                $("#email_destinatario").empty();
+                $("#departamento_destinatario").empty();
+                $("#ciudad_destinatario").empty();
+                nombre_destinatario_emp
+                $("#nombre_destinatario").val(data_correspondencia["nombre_destinatario"]);
+                $("#nitcc_destinatario").val(data_correspondencia["nitcc_destinatario"]);
+                $("#direccion_destinatario").val(data_correspondencia["direccion_destinatario"]);
+                $("#telefono_destinatario").val(data_correspondencia["telefono_destinatario"]);
+                $("#email_destinatario").val(data_correspondencia["email_destinatario"]);
+                $("#departamento_destinatario").val(data_correspondencia["departamento_destinatario"]);
+                $("#ciudad_destinatario").val(data_correspondencia["ciudad_destinatario"]);
+
+                /* Carga del Asunto */
+                $("#Asunto").val();
+                $("#Asunto").val(data_correspondencia["Asunto"]);
+
+                /* Cuerpo del Comunicado */
+                $("#cuerpo_comunicado").summernote('code', '');
+                $("#cuerpo_comunicado").summernote('code', data_correspondencia["cuerpo_comunicado"]);
+
+                /* Copias partes interesadas */
+                if (data_correspondencia["checkeado_empleador"] == "Si") {
+                    $("#empleador").prop("checked", true);
+                }else{
+                    $("#empleador").prop("checked", false);
+                }
+
+                if (data_correspondencia["checkeado_eps"] == "Si") {
+                    $("#eps").prop("checked", true);
+                }else{
+                    $("#eps").prop("checked", false);
+                }
+
+                if (data_correspondencia["checkeado_afp"] == "Si") {
+                    $("#afp").prop("checked", true);
+                }else{
+                    $("#afp").prop("checked", false);
+                }
+
+                if (data_correspondencia["checkeado_arl"] == "Si") {
+                    $("#arl").prop("checked", true);
+                }else{
+                    $("#arl").prop("checked", false);
+                }
+
+                if (data_correspondencia["checkeado_copia_jr"] == "Si") {
+                    $("#jrci").prop("checked", true);
+                    $('#div_cual').slideDown('slow');
+                    $('#cual').prop('required', true);
+                    $("#bd_cual_jr").val(data_correspondencia["bd_cual_jr"]);
+                }else{
+                    $("#jrci").prop("checked", false);
+                    $('#div_cual').slideUp('up');  
+                    $('#cual').prop('required', false);
+                }
+
+                //Listado juntas regional Correspondencia
+                $('#cual').empty();
+                let datos_lista_regional_junta = {
+                    '_token': token,
+                    'parametro':"lista_regional_junta"
+                };
+                $.ajax({
+                    type:'POST',
+                    url:'/selectoresCalificacionTecnicaPCL',
+                    data: datos_lista_regional_junta,
+                    success:function(data) {
+                        $('#cual').append('<option value="">Seleccione una opción</option>');
+                        let primercali = Object.keys(data);
+                        for (let i = 0; i < primercali.length; i++) {
+                            if (data[primercali[i]]['Ciudad_Junta'] == data_correspondencia["bd_cual_jr"]) {  
+                                $('#cual').append('<option value="'+data[primercali[i]]["Ciudad_Junta"]+'" selected>'+data[primercali[i]]["Ciudad_Junta"]+'</option>');
+                            }else{
+                                $('#cual').append('<option value="'+data[primercali[i]]["Ciudad_Junta"]+'">'+data[primercali[i]]["Ciudad_Junta"]+'</option>');
+                            }
+                        }
+                    }
+                });
+
+                if (data_correspondencia["checkeado_copia_jn"] == "Si") {
+                    $("#jnci").prop("checked", true);
+                }else{
+                    $("#jnci").prop("checked", false);
+                }
+
+                // anexos
+                $("#anexos").empty();
+                $("#anexos").val(data_correspondencia["anexos"]);
+
+                // Elaboró
+                $("#elaboro").empty();
+                $("#elaboro").val(data_correspondencia["elaboro"]);
+
+                // Reviso
+                $('#reviso').empty();
+                let datos_lista_reviso = {
+                    '_token': token,
+                    'parametro':"lista_reviso",
+                    'idProcesoLider':idProcesoLider
+                };
+            
+                $.ajax({
+                    type:'POST',
+                    url:'/selectoresCalificacionTecnicaPCL',
+                    data: datos_lista_reviso,
+                    success:function(data){
+                        $('#reviso').append('<option value="">Seleccione una opción</option>');
+                        let nombreRevisoPcl = Object.keys(data);
+                        for (let i = 0; i < nombreRevisoPcl.length; i++) {
+                            if (data[nombreRevisoPcl[i]]['name'] == data_correspondencia["bd_reviso"]) {                    
+                                $('#reviso').append('<option value="'+data[nombreRevisoPcl[i]]['name']+'" selected>'+data[nombreRevisoPcl[i]]['name']+'</option>');
+                            }else{
+                                $('#reviso').append('<option value="'+data[nombreRevisoPcl[i]]['name']+'">'+data[nombreRevisoPcl[i]]['name']+'</option>');
+                            }
+                        }
+                    }
+                });
+
+                // Checkbox Firmar
+                if (data_correspondencia["firmar"] == "Si") {
+                    $("#firmar").prop("checked", true);
+                }else{
+                    $("#firmar").prop("checked", false);
+                }
+
+                // Ciudad
+                $("#ciudad").empty();
+                $("#ciudad").val(data_correspondencia["ciudad"]);
+
+                // Fecha Correspondencia
+                $("#f_correspondencia").empty();
+                $("#f_correspondencia").val(data_correspondencia["f_correspondencia"])
+
+            }
+        });
+
+        /* cargue Datos Controversia Juntas */
+        let datos_controversia_juntas = {
+            '_token': token,
+            // 'tupla_comunicado' :tupla_comunicado,
+            'id_evento' :id_evento,
+            'id_asignacion' :id_asignacion,
+            'parametro': "controversia_juntas"
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueInformacionCorrespondencia',
+            data: datos_controversia_juntas,
+            success:function(data_contro_juntas){
+
+                /* Nombre destinatario opcion afiliado */
+                $("#nombre_destinatario_afi").val(data_contro_juntas["nombre_destinatario_afi"]);
+                /* Nombre destinatario opcion empleador */
+                $("#nombre_destinatario_emp").val(data_contro_juntas["nombre_destinatario_emp"]);
+
+                /* id servicio ya sea controversia pcl o controversia origen */
+                /* $("#llenar_completo").html('');
+                // controversia pcl
+                if(data_contro_juntas["id_servicio"] == 13){
+                    $("#llenar_completo").html(' Nombre CIE-10 JRCI, %Pcl JRCI, Fecha Estructuración JRCI, ');
+                }
+                // controversia origen
+                else if(data_contro_juntas["id_servicio"] == 12){
+                    $("#llenar_completo").html(' Origen Dx JRCI, CIE-10 - Nombre CIE-10 JRCI, ');
+                } */
+
+            }
+        });
+
+    });
+
+    // Ejecución para descarga de proforma con el ojito
+    $("a[id^='generar_proforma_recurso_reposicion_']").click(function(event){
+        event.preventDefault();
+        
         var token = $('input[name=_token]').val();
         // Recopilación de datos
         var id_cliente = $("#id_cliente").val();
@@ -2509,6 +3252,7 @@ $(document).ready(function(){
         var porcentaje_pcl_jrci_emitido = $("#porcentaje_pcl_jrci_emitido").val();
         var f_estructuracion_contro_jrci_emitido = $("#f_estructuracion_contro_jrci_emitido").val();
         var sustentacion_concepto_jrci = $("#sustentacion_concepto_jrci").val();
+        var sustentacion_concepto_jrci1 = $("#sustentacion_concepto_repo_jrci").val();
         var copia_empleador = $('#empleador').filter(":checked").val();
         var copia_eps = $('#eps').filter(":checked").val();
         var copia_afp = $('#afp').filter(":checked").val();
@@ -2516,10 +3260,10 @@ $(document).ready(function(){
         var asunto = $("#Asunto").val();
         var cuerpo = $("#cuerpo_comunicado").summernote('code');
         var firmar = $('#firmar').filter(":checked").val();
-        var nro_radicado = $("#radicado").val();
+        var nro_radicado = $(this).data("tupla_nro_radicado");
         var origen_jrci_emitido = $("#origen_jrci_emitido option:selected").text();
         
-
+    
         var datos_generacion_proforma_recurso_reposicion_pcl = {
             '_token': token,
             'id_cliente': id_cliente,
@@ -2536,6 +3280,7 @@ $(document).ready(function(){
             'porcentaje_pcl_jrci_emitido': porcentaje_pcl_jrci_emitido,
             'f_estructuracion_contro_jrci_emitido': f_estructuracion_contro_jrci_emitido,
             'sustentacion_concepto_jrci': sustentacion_concepto_jrci,
+            'sustentacion_concepto_jrci1': sustentacion_concepto_jrci1,
             'copia_empleador': copia_empleador,
             'copia_eps': copia_eps,
             'copia_afp': copia_afp,
@@ -2547,37 +3292,38 @@ $(document).ready(function(){
             'origen_jrci_emitido': origen_jrci_emitido
         }
         
-        $.ajax({    
-            type:'POST',
-            url:'/DescargarProformaRecursoReposicion',
-            data: datos_generacion_proforma_recurso_reposicion_pcl,
-            xhrFields: {
-                responseType: 'blob' // Indica que la respuesta es un blob
-            },
-            success: function (response, status, xhr) {
-                var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+        setTimeout(() => {
+            $.ajax({    
+                type:'POST',
+                url:'/DescargarProformaRecursoReposicion',
+                data: datos_generacion_proforma_recurso_reposicion_pcl,
+                xhrFields: {
+                    responseType: 'blob' // Indica que la respuesta es un blob
+                },
+                success: function (response, status, xhr) {
+                    var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+            
+                    // Crear un enlace de descarga similar al ejemplo anterior
+                    
+                    var nombre_documento = "JUN_DESACUERDO_"+id_asignacion+"_"+num_identificacion+"_"+nro_radicado+".docx";                    
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
+            
+                    // Adjuntar el enlace al documento y activar el evento de clic
+                    document.body.appendChild(link);
+                    link.click();
+            
+                    // Eliminar el enlace del documento
+                    document.body.removeChild(link);
+                },
+                error: function (error) {
+                    // Manejar casos de error
+                    console.error('Error al descargar el word:', error);
+                }       
+            });
+        }, 2000);
         
-                // Crear un enlace de descarga similar al ejemplo anterior
-                
-                var nombre_documento = "JUN_DESACUERDO_"+id_asignacion+"_"+num_identificacion+".docx";                    
-                var link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
-        
-                // Adjuntar el enlace al documento y activar el evento de clic
-                document.body.appendChild(link);
-                link.click();
-        
-                // Eliminar el enlace del documento
-                document.body.removeChild(link);
-            },
-            error: function (error) {
-                // Manejar casos de error
-                console.error('Error al descargar el word:', error);
-            }       
-        });
-
-
     });
 
 });

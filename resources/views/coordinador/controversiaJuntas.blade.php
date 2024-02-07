@@ -35,11 +35,11 @@
         <div class="card-info" style="border: 1px solid black;">
             <div class="card-header text-center">
                 <h4>Juntas Controversia - Evento: {{$array_datos_controversiaJuntas[0]->ID_evento}}</h4>
-                <h5 style="font-style: italic;">Controversia</h5>
+                <h5 style="font-style: italic;"><?php echo $array_datos_controversiaJuntas[0]->Nombre_servicio;?></h5>
                 <input type="hidden" name="NombreUsuario" id="NombreUsuario" value="{{$user->name}}">
-                <input hidden="hidden" type="text" class="form-control" name="newId_evento" id="newId_evento" value="{{$array_datos_controversiaJuntas[0]->ID_evento}}">
-                <input hidden="hidden" type="text" class="form-control" name="newId_asignacion" id="newId_asignacion" value="{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}">
-                <input hidden="hidden" type="text" class="form-control" name="Id_proceso" id="Id_proceso" value="{{$array_datos_controversiaJuntas[0]->Id_proceso}}">
+                <input type="hidden" class="form-control" name="newId_evento" id="newId_evento" value="{{$array_datos_controversiaJuntas[0]->ID_evento}}">
+                <input type="hidden" class="form-control" name="newId_asignacion" id="newId_asignacion" value="{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}">
+                <input type="hidden" class="form-control" name="Id_proceso" id="Id_proceso" value="{{$array_datos_controversiaJuntas[0]->Id_proceso}}">
                 
                 {{-- campos creados para extraer algunos datos de la proforma  --}}
                 <input type="hidden" class="form-control" id="id_servicio" value="{{$array_datos_controversiaJuntas[0]->Id_Servicio}}">
@@ -1413,12 +1413,14 @@
                                 </div>
                             </form>
                         </div>   --}}
-                        <!--  Correspondia -->
-                        <div class="card-info" id="div_correspondecia">
+
+                        <!--  Correspondencia -->
+                        <div class="card-info d-none" id="div_correspondencia">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Correspondencia</h5>
+                                <input type="hidden" id="hay_datos_form_corres" value="<?php echo count($array_comunicados_correspondencia);?>">
                             </div>
-                            <form id="form_correspondencia" action="POST">                            
+                            <form id="form_correspondencia" action="POST">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-3">
@@ -1427,14 +1429,12 @@
                                                 <input type="text" class="form-control" name="destinatario_principal" id="destinatario_principal" value="<?php if(!empty($arrayinfo_controvertido[0]->JrciNombre)) { echo $arrayinfo_controvertido[0]->JrciNombre;} ?>" disabled>
                                             </div>
                                         </div>
+
                                         <div class="col-3">
                                             <div class="form-group text-center">
                                                 <div class="custom-control custom-checkbox">
-                                                    @if (!empty($array_comite_interdisciplinario[0]->Otro_destinatario))
-                                                        <input class="dependencia_justificacion custom-control-input" type="checkbox" id="otrodestinariop" name="otrodestinariop" value="Si" checked>
-                                                    @else
-                                                        <input class="custom-control-input" type="checkbox" id="otrodestinariop" name="otrodestinariop" value="Si">                                                    
-                                                    @endif
+                                                    {{-- <input class="dependencia_justificacion custom-control-input" type="checkbox" id="otrodestinariop" name="otrodestinariop" value="Si" checked> --}}
+                                                    <input class="custom-control-input" type="checkbox" id="otrodestinariop" name="otrodestinariop" value="Si">                                                    
                                                     <label for="otrodestinariop" class="custom-control-label">Otro Destinatario Principal</label>
                                                 </div>
                                             </div>
@@ -1442,7 +1442,7 @@
                                         <div class="col-3" id=div_tipo_destinatario_principal>
                                             <div class="form-group">
                                                 <label for="tipo_destinatario_principal">Tipo Destinatario Principal <span style="color: red;">(*)</span></label>
-                                                <input type="hidden" id="db_tipo_destinatario_principal" value="<?php if(!empty($array_comite_interdisciplinario[0]->Tipo_destinatario)){ echo $array_comite_interdisciplinario[0]->Tipo_destinatario;}?>">                                                
+                                                <input type="hidden" id="db_tipo_destinatario_principal"> 
                                                 <select class="tipo_destinatario_principal custom-select" name="tipo_destinatario_principal" id="tipo_destinatario_principal" style="width: 100%">                                                    
                                                 </select>                                                
                                             </div>
@@ -1450,7 +1450,7 @@
                                         <div class="col-3" id="div_nombre_destinatariopri">
                                             <div class="form-group">
                                                 <label for="nombre_destinatariopri">Nombre del destinatario principal <span style="color: red;">(*)</span></label>
-                                                <input type="hidden" id="db_nombre_destinatariopri" value="<?php if(!empty($array_comite_interdisciplinario[0]->Nombre_dest_principal)){ echo $array_comite_interdisciplinario[0]->Nombre_dest_principal;}?>">                                                                                                
+                                                <input type="hidden" id="db_nombre_destinatariopri" value="">
                                                 <select class="nombre_destinatariopri custom-select" name="nombre_destinatariopri" id="nombre_destinatariopri" style="width: 100%">                                                    
                                                 </select>                                                
                                             </div>      
@@ -1458,139 +1458,118 @@
                                         <div class="col-3" id="div_nombre_destinatariopri_afi_">
                                             <div class="form-group">
                                                 <label for="nombre_destinatario_afi">Nombre del destinatario principal <span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="nombre_destinatario_afi" id="nombre_destinatario_afi" value="{{$array_datos_controversiaJuntas[0]->Nombre_afiliado}}" disabled>
+                                                <input type="text" class="form-control" name="nombre_destinatario_afi" id="nombre_destinatario_afi" disabled>
                                             </div>      
                                         </div>
                                         <div class="col-3" id="div_nombre_destinatariopri_empl">
                                             <div class="form-group">
                                                 <label for="nombre_destinatario_emp">Nombre del destinatario principal <span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="nombre_destinatario_emp" id="nombre_destinatario_emp" value="{{$array_datos_controversiaJuntas[0]->Empleador_afi}}" disabled>
+                                                <input type="text" class="form-control" name="nombre_destinatario_emp" id="nombre_destinatario_emp" disabled>
                                             </div>      
                                         </div>
                                     </div>
+
                                     <div class="row" id="div_datos_otro_destinatario">
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <label for="nombre_destinatario">Nombre destinatario</label>
-                                                @if(!empty($array_comite_interdisciplinario[0]->Nombre_destinatario))
-                                                    <input type="text" class="form-control" name="nombre_destinatario" id="nombre_destinatario" value="{{$array_comite_interdisciplinario[0]->Nombre_destinatario}}" >                                                
-                                                @else
-                                                    <input type="text" class="form-control" name="nombre_destinatario" id="nombre_destinatario" >                                                
-                                                @endif
+                                                <input type="text" class="form-control" name="nombre_destinatario" id="nombre_destinatario" >                                                
                                             </div>      
                                         </div>
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <label for="nitcc_destinatario">NIT / CC</label>
-                                                @if(!empty($array_comite_interdisciplinario[0]->Nit_cc))
-                                                    <input type="text" class="form-control" name="nitcc_destinatario" id="nitcc_destinatario" value="{{$array_comite_interdisciplinario[0]->Nit_cc}}" >                                                
-                                                @else
-                                                    <input type="text" class="form-control" name="nitcc_destinatario" id="nitcc_destinatario" >                                                
-                                                @endif
+                                                <input type="text" class="form-control" name="nitcc_destinatario" id="nitcc_destinatario" >                                                
                                             </div>      
                                         </div>
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <label for="direccion_destinatario">Dirección destinatario</label>
-                                                @if(!empty($array_comite_interdisciplinario[0]->Direccion_destinatario))
-                                                    <input type="text" class="form-control" name="direccion_destinatario" id="direccion_destinatario" value="{{$array_comite_interdisciplinario[0]->Direccion_destinatario}}" >                                                
-                                                @else
-                                                    <input type="text" class="form-control" name="direccion_destinatario" id="direccion_destinatario" >                                                
-                                                @endif
+                                                <input type="text" class="form-control" name="direccion_destinatario" id="direccion_destinatario" >                                                
                                             </div>      
                                         </div>                                    
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <label for="telefono_destinatario">Teléfono destinatario</label>
-                                                @if(!empty($array_comite_interdisciplinario[0]->Telefono_destinatario))
-                                                    <input type="text" class="form-control" name="telefono_destinatario" id="telefono_destinatario" value="{{$array_comite_interdisciplinario[0]->Telefono_destinatario}}" >                                                
-                                                @else
-                                                    <input type="text" class="form-control" name="telefono_destinatario" id="telefono_destinatario" >                                                
-                                                @endif
+                                                <input type="text" class="form-control" name="telefono_destinatario" id="telefono_destinatario" >                                                
                                             </div>      
                                         </div>
                                     
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <label for="email_destinatario">E-mail destinatario</label>
-                                                @if(!empty($array_comite_interdisciplinario[0]->Email_destinatario))                                                    
-                                                    <input type="email" class="form-control" name="email_destinatario" id="email_destinatario" value="{{$array_comite_interdisciplinario[0]->Email_destinatario}}" >                                                
-                                                @else
-                                                    <input type="email" class="form-control" name="email_destinatario" id="email_destinatario" >                                                
-                                                @endif
+                                                <input type="email" class="form-control" name="email_destinatario" id="email_destinatario" >                                                
                                             </div>      
                                         </div>
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <label for="departamento_destinatario">Departamento</label>
-                                                @if(!empty($array_comite_interdisciplinario[0]->Departamento_destinatario))
-                                                    <input type="text" class="form-control" name="departamento_destinatario" id="departamento_destinatario" value="{{$array_comite_interdisciplinario[0]->Departamento_destinatario}}" >                                                
-                                                @else
-                                                    <input type="text" class="form-control" name="departamento_destinatario" id="departamento_destinatario" >                                                
-                                                @endif
+                                                <input type="text" class="form-control" name="departamento_destinatario" id="departamento_destinatario" >                                                
                                             </div>      
                                         </div>                                        
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <label for="ciudad_destinatario">Ciudad</label>
-                                                @if(!empty($array_comite_interdisciplinario[0]->Ciudad_destinatario))
-                                                    <input type="text" class="form-control" name="ciudad_destinatario" id="ciudad_destinatario" value="{{$array_comite_interdisciplinario[0]->Ciudad_destinatario}}" >                                                
-                                                @else
-                                                    <input type="text" class="form-control" name="ciudad_destinatario" id="ciudad_destinatario" >                                                
-                                                @endif
+                                                <input type="text" class="form-control" name="ciudad_destinatario" id="ciudad_destinatario" >                                                
                                             </div>      
                                         </div>
                                     </div>
-                                    <div class="row"> 
+
+                                    <div class="row">
                                         <div class="col-12">
+                                            <div class="alert alert-warning" role="alert">
+                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para mostrar todo el asunto (dentro del word) que usted escriba, 
+                                                debe incluir la etiqueta de la Fecha de Dictamen JRCI dentro del campo Asunto.
+                                            </div>
                                             <div class="form-group">
                                                 <label for="Asunto">Asunto <span style="color: red;">(*)</label>
                                                 <br>
                                                 <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_f_dictamen_jrci">Fecha Dictamen JRCI</button>
-                                                @if(!empty($array_comite_interdisciplinario[0]->Asunto))
-                                                    <input type="text" class="form-control" name="Asunto" id="Asunto" value="{{$array_comite_interdisciplinario[0]->Asunto}}" required>                                                
-                                                @else
-                                                    <input type="text" class="form-control" name="Asunto" id="Asunto" required>                                                
-                                                @endif
-                                            </div>      
+                                                <input type="text" class="form-control" name="Asunto" id="Asunto" required>                                           
+                                            </div>
                                         </div>
                                         <div class="col-12">
+                                            <div class="alert alert-warning" role="alert">
+                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para mostrar todo el cuerpo del comunicado (dentro del word) que usted escriba, 
+                                                debe incluir las etiquetas de Nombre Afiliado, Nombre Junta Regional, 
+                                                @if ($array_datos_controversiaJuntas[0]->Id_Servicio == 13)
+                                                Nombre CIE-10 JRCI, %Pcl JRCI, Fecha Estructuracion JRCI, 
+                                                @elseif ($array_datos_controversiaJuntas[0]->Id_Servicio == 12)
+                                                Origen Dx JRCI, CIE-10 - Nombre CIE-10 JRCI, 
+                                                @endif
+                                                Sustentación Concepto JRCI (Revisión ante concepto de la Junta Regional) dentro de la sección Cuerpo del Comunicado.
+                                            </div>
                                             <div class="form-group">
                                                 <label for="cuerpo_comunicado">Cuerpo del comunicado <span style="color: red;">(*)</label>
                                                 <br>
                                                 <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_afiliado">Nombre Afiliado</button>
                                                 <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_junta_regional">Nombre Junta Regional</button>
-                                                {{-- Controversia PCL --}}
                                                 @if ($array_datos_controversiaJuntas[0]->Id_Servicio == 13)
                                                     <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_cie10_jrci">Nombre CIE-10 JRCI</button>
                                                     <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_pcl_jrci">%Pcl JRCI</button>
                                                     <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_f_estructuracion_jrci">Fecha Estructuracion JRCI</button>
-                                                {{-- Controversia Origen --}}
                                                 @elseif ($array_datos_controversiaJuntas[0]->Id_Servicio == 12)
                                                     <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_origen_dx_jrci">Origen Dx JRCI</button>
                                                     <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_cie_nombre_jrci">CIE-10 - Nombre CIE-10 JRCI</button>
                                                 @endif
-                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_sustentacion_jrci">Sustentación Concepto JRCI</button>
-                                                @if(!empty($array_comite_interdisciplinario[0]->Cuerpo_comunicado))
-                                                    <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" required>{{$array_comite_interdisciplinario[0]->Cuerpo_comunicado}}</textarea>                                                                                                 
-                                                @else
-                                                    <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" required></textarea>                                                                                              
-                                                @endif
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_sustentacion_jrci">Sustentación Concepto JRCI (Revisión ante concepto de la Junta Regional)</button>
+                                                <?php if(count($array_comunicados_correspondencia) > 0): ?>
+                                                    <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_sustentacion_jrci1">Sustentación Concepto JRCI (Revisión ante recurso de reposición de la Junta Regional)</button>
+                                                <?php endif ?>
+
+                                                <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" required></textarea>                                                                                         
                                             </div>
-                                        </div> 
+                                        </div>
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="tipo_clasificacion">Copia a partes interesadas</label>
                                             </div>
-                                        </div>  
+                                        </div>
+
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    @if (!empty($array_comite_interdisciplinario[0]->Copia_empleador))
-                                                        <input class="dependencia_justificacion custom-control-input" type="checkbox" id="empleador" name="empleador" value="Empleador" checked>
-                                                    @else
-                                                        <input class="custom-control-input" type="checkbox" id="empleador" name="empleador" value="Empleador">                                                    
-                                                    @endif
+                                                    <input class="custom-control-input" type="checkbox" id="empleador" name="empleador" value="Empleador">                                                    
                                                     <label for="empleador" class="custom-control-label">Empleador</label>
                                                 </div>
                                             </div>
@@ -1598,11 +1577,7 @@
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    @if (!empty($array_comite_interdisciplinario[0]->Copia_eps))
-                                                        <input class="dependencia_justificacion custom-control-input" type="checkbox" id="eps" name="eps" value="EPS" checked>
-                                                    @else
-                                                        <input class="custom-control-input" type="checkbox" id="eps" name="eps" value="EPS">                                                    
-                                                    @endif
+                                                    <input class="custom-control-input" type="checkbox" id="eps" name="eps" value="EPS">                                                    
                                                     <label for="eps" class="custom-control-label">EPS</label>
                                                 </div>
                                             </div>
@@ -1610,83 +1585,60 @@
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    @if (!empty($array_comite_interdisciplinario[0]->Copia_afp))
-                                                        <input class="dependencia_justificacion custom-control-input" type="checkbox" id="afp" name="afp" value="AFP" checked>
-                                                    @else
-                                                        <input class="custom-control-input" type="checkbox" id="afp" name="afp" value="AFP">                                                    
-                                                    @endif
+                                                    <input class="custom-control-input" type="checkbox" id="afp" name="afp" value="AFP">                                                    
                                                     <label for="afp" class="custom-control-label">AFP</label>
                                                 </div>
                                             </div>
-                                        </div>   
+                                        </div>
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    @if (!empty($array_comite_interdisciplinario[0]->Copia_arl))
-                                                        <input class="dependencia_justificacion custom-control-input" type="checkbox" id="arl" name="arl" value="ARL" checked>
-                                                    @else
-                                                        <input class="custom-control-input" type="checkbox" id="arl" name="arl" value="ARL">                                                    
-                                                    @endif
+                                                    <input class="custom-control-input" type="checkbox" id="arl" name="arl" value="ARL">                                                    
                                                     <label for="arl" class="custom-control-label">ARL</label>
                                                 </div>
                                             </div>
-                                        </div>    
+                                        </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    @if (!empty($array_comite_interdisciplinario[0]->Copia_jr))
-                                                        <input class="dependencia_justificacion custom-control-input" type="checkbox" id="jrci" name="jrci" value="jrci" checked>
-                                                    @else
-                                                        <input class="custom-control-input" type="checkbox" id="jrci" name="jrci" value="jrci">                                                    
-                                                    @endif
+                                                    <input class="custom-control-input" type="checkbox" id="jrci" name="jrci" value="jrci">                                                    
                                                     <label for="jrci" class="custom-control-label">Junta Regional de Calificación de Invalidez</label>
                                                 </div>
                                             </div>
-                                        </div>  
+                                        </div>
                                         <div class="col-4" id="div_cual">
                                             <div class="form-group">
                                                 <label for="cual">¿Cuál?<span style="color: red;">(*)</span></label>
-                                                @if (!empty($array_comite_interdisciplinario[0]->Cual_jr))
-                                                    <select class="cual custom-select" name="cual" id="cual" style="width: 100%">
-                                                        <option value="{{$array_comite_interdisciplinario[0]->Cual_jr}}">{{$array_comite_interdisciplinario[0]->Cual_jr}}</option>
-                                                        <option value="">Seleccione una opción</option>
-                                                    </select>
-                                                @else
-                                                    <select class="cual custom-select" name="cual" id="cual" style="width: 100%" >
-                                                        <option value="">Seleccione una opción</option>
-                                                    </select>                                                
-                                                @endif
+                                                <input type="hidden" id="bd_cual_jr">
+                                                <select class="cual custom-select" name="cual" id="cual" style="width: 100%">
+                                                    <option value="">Seleccione una opción</option>
+                                                </select>
+                                                                                              
                                             </div>
-                                        </div> 
+                                        </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    @if (!empty($array_comite_interdisciplinario[0]->Copia_jn))
-                                                        <input class="dependencia_justificacion custom-control-input" type="checkbox" id="jnci" name="jnci" value="jnci" checked>
-                                                    @else
-                                                        <input class="custom-control-input" type="checkbox" id="jnci" name="jnci" value="jnci">                                                    
-                                                    @endif
+                                                    <input class="custom-control-input" type="checkbox" id="jnci" name="jnci" value="jnci">                                                    
                                                     <label for="jnci" class="custom-control-label">Junta Nacional de Calificación de Invalidez</label>
                                                 </div>
                                             </div>
-                                        </div> 
-                                    </div>   
-                                    <div class="row">  
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
                                         <div class="col-1">
                                             <div class="form-group">
                                                 <label for="anexos">No. Anexos</label>
-                                                @if(!empty($array_comite_interdisciplinario[0]->Anexos))
-                                                    <input type="number" class="form-control" name="anexos" id="anexos" value="{{$array_comite_interdisciplinario[0]->Anexos}}">                                                
-                                                @else
-                                                    <input type="number" class="form-control" name="anexos" id="anexos">                                                
-                                                @endif
+                                                <input type="number" class="form-control" name="anexos" id="anexos">                                                
                                             </div>
-                                        </div>    
+                                        </div>
                                         <div class="col-5">
                                             <div class="form-group">
                                                 <label for="elaboro">Elaboró</label>
+                                                {{-- <input type="text" class="form-control" name="elaboro" id="elaboro" disabled> --}}
                                                 @if(!empty($array_comite_interdisciplinario[0]->Elaboro))
-                                                    <input type="text" class="form-control" name="elaboro" id="elaboro" value="{{$array_comite_interdisciplinario[0]->Elaboro}}" disabled>                                                
+                                                <input type="text" class="form-control" name="elaboro" id="elaboro" value="{{$array_comite_interdisciplinario[0]->Elaboro}}" disabled>                                                
                                                 @else
                                                     <input type="text" class="form-control" name="elaboro" id="elaboro" value="{{$user->name}}" disabled>                                                
                                                 @endif
@@ -1695,74 +1647,57 @@
                                         <div class="col-5">
                                             <div class="form-group">
                                                 <label for="reviso">Revisó<span style="color: red;">(*)</span></label>
-                                                @if (!empty($array_comite_interdisciplinario[0]->Reviso))
-                                                    <select class="reviso custom-select" name="reviso" id="reviso" style="width: 100%" required>
-                                                        <option value="{{$array_comite_interdisciplinario[0]->Reviso}}">{{$array_comite_interdisciplinario[0]->Reviso}}</option>
-                                                        <option value="">Seleccione una opción</option>
-                                                    </select>
-                                                @else
-                                                    <select class="reviso custom-select" name="reviso" id="reviso" style="width: 100%" required>
-                                                        <option value="">Seleccione una opción</option>
-                                                    </select>                                                
-                                                @endif                                            
+                                                <select class="reviso custom-select" name="reviso" id="reviso" style="width: 100%" required>
+                                                    <option value="">Seleccione una opción</option>
+                                                </select>                                                
                                             </div>
-                                        </div>  
+                                        </div>
                                         <div class="col-1">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    @if (!empty($array_comite_interdisciplinario[0]->Firmar))
-                                                        <input class="dependencia_justificacion custom-control-input" type="checkbox" id="firmar" name="firmar" value="Firmar" checked>
-                                                    @else
-                                                        <input class="custom-control-input" type="checkbox" id="firmar" name="firmar" value="Firmar">                                                    
-                                                    @endif
+                                                    <input class="custom-control-input" type="checkbox" id="firmar" name="firmar" value="Firmar">                                                    
                                                     <label for="firmar" class="custom-control-label">Firmar</label>
                                                 </div>
                                             </div>
-                                        </div>  
+                                        </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="ciudad">Ciudad</label>
+                                                {{-- <input type="text" class="form-control" name="ciudad" id="ciudad">  --}}
                                                 @if(!empty($array_comite_interdisciplinario[0]->Ciudad))
                                                     <input type="text" class="form-control" name="ciudad" id="ciudad" value="{{$array_comite_interdisciplinario[0]->Ciudad}}">                                                
                                                 @else
                                                     <input type="text" class="form-control" name="ciudad" id="ciudad" value="Bogotá D.C">                                                
                                                 @endif
                                             </div>
-                                        </div>   
+                                        </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="f_correspondencia">Fecha</label>
+                                                {{-- <input type="date" class="form-control" name="f_correspondencia" id="f_correspondencia" disabled> --}}
                                                 @if(!empty($array_comite_interdisciplinario[0]->F_correspondecia))
                                                     <input type="date" class="form-control" name="f_correspondencia" id="f_correspondencia" value="{{$array_comite_interdisciplinario[0]->F_correspondecia}}" disabled>
                                                 @else
                                                     <input type="date" class="form-control" name="f_correspondencia" id="f_correspondencia" value="{{now()->format('Y-m-d')}}" disabled>
                                                 @endif
                                             </div>
-                                        </div>  
+                                        </div>
                                         <div class="col-4"> 
                                             <div class="form-group">
                                                 <label for="radicado">N° Radicado</span></label>
-                                                @if(!empty($array_comite_interdisciplinario[0]->N_radicado))
-                                                    <input type="text" class="form-control" name="radicado" id="radicado" value="{{$array_comite_interdisciplinario[0]->N_radicado}}" disabled>                                                
-                                                @else
-                                                    <input type="text" class="form-control" name="radicado" id="radicado" value="{{$consecutivo}}" disabled> 
-                                                @endif
+                                                <input type="text" class="form-control" name="radicado" id="radicado" value="{{$consecutivo}}" disabled> 
                                             </div>
-                                        </div>                                                                                      
-                                    </div>                                
+                                        </div> 
+                                    </div>
+
                                     <div class="row">
                                         <div class="col-12">
-                                            <div class="form-group">    
-                                                @if (empty($array_comite_interdisciplinario[0]->N_radicado))                                                
-                                                    <input type="submit" id="GuardarCorrespondencia" name="GuardarCorrespondencia" class="btn btn-info" value="Guardar">                                                
-                                                    <input hidden="hidden" type="text" id="bandera_correspondecia_guardar_actualizar" value="Guardar">  
-                                                @else
-                                                    <input type="submit" id="ActualizarCorrespondencia" name="ActualizarCorrespondencia" class="btn btn-info" value="Actualizar">
-                                                    <input hidden="hidden" type="text" id="bandera_correspondecia_guardar_actualizar" value="Actualizar">
-                                                @endif                                         
-                                                @if (!empty($arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci) && $arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci=='Desacuerdo')
-                                                    <button class="btn btn-info" id="generar_proforma_recurso_reposicion_pcl">Word</button>
-                                                @endif
+                                            <div class="form-group">
+                                                <input type="submit" id="GuardarCorrespondencia" name="GuardarCorrespondencia" class="btn btn-info" value="Guardar">                                                
+                                                <input hidden="hidden" type="text" id="bandera_correspondecia_guardar_actualizar" value="Guardar">
+                                                {{-- @if (count($array_comunicados_correspondencia) > 0) --}}
+                                                    {{-- <button class="btn btn-info" id="generar_proforma_recurso_reposicion_pcl">Word</button> --}}
+                                                {{-- @endif --}}
                                             </div>
                                         </div>
                                         <div id="div_alerta_Correspondencia" class="col-12 d-none">
@@ -1770,10 +1705,77 @@
                                                 <div class="alerta_Correspondencia alert alert-success mt-2 mr-auto" role="alert"></div>
                                             </div>
                                         </div>
-                                    </div> 
+                                    </div>
+
                                 </div>
                             </form>
-                        </div>  
+                        </div>
+                        {{-- Comunicados --}}
+                        <?php if(count($array_comunicados_correspondencia) > 0):?>
+                            <div class="card-info">
+                                <div class="card-header text-center" style="border: 1.5px solid black;">
+                                    <h5>Comunicados</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="alert alert-warning mensaje_confirmacion_emitido_jnci" role="alert">
+                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de ver la información de una correspondencia, 
+                                                tenga en cuenta que al modifcarla y hacer clic en el botón Guardar, el sistema generará un nuevo registro más no una actualización de la información.
+                                                Si necesita generar la proforma debe editar la información del formulario y luego hacer clic en el botón correspondiente.
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-bordered" id="tabla_comunicados_juntas" width="100%">
+                                                    <thead>
+                                                        <tr class="bg-info">
+                                                            <th>N° de Radicado</th>
+                                                            <th>Elaboró</th>
+                                                            <th>Fecha de comunicado</th>
+                                                            <th>Acción</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        
+                                                        @foreach ($array_comunicados_correspondencia as $key => $comunicados)
+                                                            <tr>
+                                                                <td>{{$comunicados->N_radicado}}</td>
+                                                                <td>{{$comunicados->Elaboro}}</td>
+                                                                <td>{{$comunicados->F_comunicado}}</td>  
+                                                                <td>
+                                                                    {{-- <label for="editar_correspondencia_{{$comunicados->Id_Comunicado}}"><i class="fa fa-pen text-info"></i></label>
+                                                                    <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia_{{$comunicados->Id_Comunicado}}" 
+                                                                    data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
+                                                                    data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
+                                                                    data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
+                                                                    type="button" style="font-weight: bold;"> --}}
+                                                                    <a href="javascript:void(0);" id="editar_correspondencia_{{$comunicados->Id_Comunicado}}"
+                                                                        data-id_comite_inter="<?php if(count($array_comite_interdisciplinario) > 0){echo $array_comite_interdisciplinario[$key]->Id_com_inter;}?>"
+                                                                        data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
+                                                                        data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
+                                                                        data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
+                                                                    ><i class="fa fa-pen text-info"></i></a>
+                                                                    &nbsp;&nbsp;
+                                                                    <a href="javascript:void(0);" id="generar_proforma_recurso_reposicion_{{$comunicados->Id_Comunicado}}"
+                                                                        data-tupla_nro_radicado="{{$comunicados->N_radicado}}"
+                                                                        data-id_comite_inter="<?php if(count($array_comite_interdisciplinario) > 0){echo $array_comite_interdisciplinario[$key]->Id_com_inter;}?>"
+                                                                        data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
+                                                                        data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
+                                                                        data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
+                                                                    ><i class="far fa-eye text-info"></i>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif ?>
                     </div>
                 </div>
             </div>

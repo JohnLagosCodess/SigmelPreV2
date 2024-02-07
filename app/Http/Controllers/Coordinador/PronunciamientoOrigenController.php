@@ -1026,10 +1026,12 @@ class PronunciamientoOrigenController extends Controller
             $section->addText('Radicado en Alfa:  '.$fecha_radicado_alfa, array('bold' => true));
 
             // Configuramos el reemplazo de la variable de los cie 10
+            $sustentacion = str_replace(['<br>', '<br/>', '<br />', '</br>'], '', $sustentacion);
             $patron1 = '/\{\{\$diagnosticos_cie10\}\}/';
             if (preg_match($patron1, $sustentacion)) {
                 $texto_modificado = str_replace('{{$diagnosticos_cie10}}', $string_diagnosticos_cie10, $sustentacion);
                 $texto_modificado = str_replace('</p>', '</p><br></br>', $texto_modificado);
+                $texto_modificado = str_replace('<p><br>', ' ', $texto_modificado);
                 $cuerpo = $texto_modificado;
             } else {
                 $cuerpo = "";

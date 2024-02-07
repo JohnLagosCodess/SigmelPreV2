@@ -133,7 +133,7 @@ class ControversiaJuntasController extends Controller
         
         $array_comite_interdisciplinario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comite_interdisciplinario_eventos as sicie')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sicie.Nombre_dest_principal')
-        ->select('sicie.ID_evento', 'sicie.Id_proceso', 'sicie.Id_Asignacion', 'sicie.Visar', 'sicie.Profesional_comite', 'sicie.F_visado_comite',
+        ->select('sicie.Id_com_inter', 'sicie.ID_evento', 'sicie.Id_proceso', 'sicie.Id_Asignacion', 'sicie.Visar', 'sicie.Profesional_comite', 'sicie.F_visado_comite',
         'sicie.Destinatario_principal', 'sicie.Otro_destinatario', 'sicie.Tipo_destinatario', 'sicie.Nombre_dest_principal', 'sie.Nombre_entidad',
         'sicie.Nombre_destinatario','sicie.Nit_cc', 'sicie.Direccion_destinatario', 'sicie.Telefono_destinatario', 'sicie.Email_destinatario',
         'sicie.Departamento_destinatario', 'sicie.Ciudad_destinatario', 'sicie.Asunto', 'sicie.Cuerpo_comunicado', 'sicie.Copia_empleador',
@@ -152,7 +152,7 @@ class ControversiaJuntasController extends Controller
         ->where([
             ['ID_evento',$Id_evento_juntas],
             ['F_comunicado',$date],
-            ['Id_proceso','2']
+            ['Id_proceso','3']
         ])
         ->orderBy('N_radicado', 'desc')
         ->limit(1)
@@ -188,7 +188,15 @@ class ControversiaJuntasController extends Controller
             $consecutivo = "SAL-JUN" . $fechaActual . $nuevoConsecutivoFormatted;
         }
 
-        return view('coordinador.controversiaJuntas', compact('user','array_datos_controversiaJuntas','arrayinfo_controvertido','array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci','array_datos_diagnostico_reposi_dictamen_jrci','array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 'array_comite_interdisciplinario', 'consecutivo'));
+        // traemos los comunicados
+        $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$Id_evento_juntas], ['Id_Asignacion',$Id_asignacion_juntas], ['T_documento','N/A']])->get();
+
+        return view('coordinador.controversiaJuntas', compact('user','array_datos_controversiaJuntas','arrayinfo_controvertido',
+        'array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci',
+        'array_datos_diagnostico_reposi_dictamen_jrci',
+        'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 
+        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia'));
     }
 
     //Cargar Selectores pronunciamiento
@@ -1088,6 +1096,7 @@ class ControversiaJuntasController extends Controller
         $tipo_destinatario_principal = $request->tipo_destinatario_principal;
         $nombre_destinatariopri = $request->nombre_destinatariopri;
         $Nombre_dest_principal_afi_empl = $request->Nombre_dest_principal_afi_empl;
+        
         if ($tipo_destinatario_principal == '') {
             $tipo_destinatario_principal = null;
             $nombre_destinatariopri = null;
@@ -1265,6 +1274,307 @@ class ControversiaJuntasController extends Controller
 
     }
 
+    public function CargueInformacionCorrespondencia(Request $request){
+
+        // $tupla_comunicado = $request->tupla_comunicado;
+        $id_evento = $request->id_evento;
+        $id_asignacion = $request->id_asignacion;
+        $parametro = $request->parametro;
+        
+        if($parametro == "controvertido"){
+            $arrayinfo_controvertido= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_controversia_juntas_eventos as j')
+            ->select('j.ID_evento','j.Enfermedad_heredada','j.F_transferencia_enfermedad','j.Primer_calificador','pa.Nombre_parametro as Calificador'
+            ,'j.Nom_entidad','j.N_dictamen_controvertido','j.F_notifi_afiliado','j.Parte_controvierte_califi','pa2.Nombre_parametro as ParteCalificador','j.Nombre_controvierte_califi',
+            'j.N_radicado_entrada_contro','j.Contro_origen','j.Contro_pcl','j.Contro_diagnostico','j.Contro_f_estructura','j.Contro_m_califi',
+            'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','sie.Nombre_entidad as JrciNombre',
+            'j.Origen_controversia','pa4.Nombre_parametro as OrigenContro','j.Manual_de_califi','d.Nombre_decreto','j.Total_deficiencia','j.Total_rol_ocupacional','j.Total_discapacidad',
+            'j.Total_minusvalia','j.Porcentaje_pcl','j.Rango_pcl','j.F_estructuracion_contro','j.N_pago_jnci_contro','j.F_pago_jnci_contro','j.F_radica_pago_jnci_contro','j.N_dictamen_jrci_emitido'
+            ,'j.F_dictamen_jrci_emitido','j.Origen_jrci_emitido','pa5.Nombre_parametro as OrigenEmitidoJrci','j.Manual_de_califi_jrci_emitido','d1.Nombre_decreto as Nombre_decretoJrci','j.Total_deficiencia_jrci_emitido',
+            'j.Total_rol_ocupacional_jrci_emitido','j.Total_discapacidad_jrci_emitido','j.Total_minusvalia_jrci_emitido','j.Porcentaje_pcl_jrci_emitido','j.Rango_pcl_jrci_emitido',
+            'j.F_estructuracion_contro_jrci_emitido','j.Resumen_dictamen_jrci','j.F_noti_dictamen_jrci','j.F_radica_dictamen_jrci','j.F_maxima_recurso_jrci','j.Decision_dictamen_jrci',
+            'j.Sustentacion_concepto_jrci','j.F_sustenta_jrci','j.F_notificacion_recurso_jrci','j.N_radicado_recurso_jrci','j.Termino_contro_propia_jrci','j.Causal_decision_jrci','pa6.Nombre_parametro as NombreCausal',
+            'j.Firmeza_intere_contro_jrci','j.Firmeza_reposicion_jrci','j.Firmeza_acta_ejecutoria_jrci','j.Firmeza_apelacion_jnci_jrci','j.Parte_contro_ante_jrci','pa7.Nombre_parametro as NomPresentaJrci',
+            'j.Nombre_presen_contro_jrci','j.F_contro_otra_jrci','j.Contro_origen_jrci','j.Contro_pcl_jrci','j.Contro_diagnostico_jrci','j.Contro_f_estructura_jrci','j.Contro_m_califi_jrci','j.Reposicion_dictamen_jrci',
+            'j.N_dictamen_reposicion_jrci','j.F_dictamen_reposicion_jrci','j.Origen_reposicion_jrci','pa8.Nombre_parametro as Nombre_origenRepoJrci','j.Manual_reposicion_jrci','d2.Nombre_decreto as Nombre_decretoRepoJrci',
+            'j.Total_deficiencia_reposicion_jrci','j.Total_reposicion_jrci','j.Total_discapacidad_reposicion_jrci','j.Total_minusvalia_reposicion_jrci','j.Porcentaje_pcl_reposicion_jrci','j.Rango_pcl_reposicion_jrci'
+            ,'j.F_estructuracion_contro_reposicion_jrci','j.Resumen_dictamen_reposicion_jrci','j.F_noti_dictamen_reposicion_jrci','j.F_radica_dictamen_reposicion_jrci','j.F_maxima_apelacion_jrci','j.Decision_dictamen_repo_jrci'
+            ,'j.Decision_dictamen_repo_jrci','j.Causal_decision_repo_jrci','pa9.Nombre_parametro as NombreCausalRepo','j.Sustentacion_concepto_repo_jrci','j.F_sustenta_reposicion_jrci','j.F_noti_apela_recurso_jrci'
+            ,'j.N_radicado_apela_recurso_jrci','j.T_propia_apela_recurso_jrci','j.Correspon_pago_jnci','j.N_orden_pago_jnci','j.F_orden_pago_jnci','j.F_radi_pago_jnci','j.N_acta_ejecutario_emitida_jrci'
+            ,'j.F_acta_ejecutoria_emitida_jrci','j.F_firmeza_dictamen_jrci','j.Dictamen_firme_jrci','j.N_dictamen_jnci_emitido','j.F_dictamen_jnci_emitido','j.Origen_jnci_emitido','pa10.Nombre_parametro as NombreOrigen'
+            ,'j.Manual_de_califi_jnci_emitido','pa11.Nombre_parametro as Nombre_decretoJnci','j.Total_deficiencia_jnci_emitido','j.Total_rol_ocupacional_jnci_emitido','j.Total_discapacidad_jnci_emitido'
+            ,'j.Total_minusvalia_jnci_emitido','j.Porcentaje_pcl_jnci_emitido','j.Rango_pcl_jnci_emitido','j.F_estructuracion_contro_jnci_emitido','j.Resumen_dictamen_jnci','j.Sustentacion_dictamen_jnci'
+            ,'j.F_sustenta_ante_jnci','j.F_noti_ante_jnci','j.F_radica_dictamen_jnci')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa', 'j.Primer_calificador', '=', 'pa.Id_Parametro','j.')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa2', 'j.Parte_controvierte_califi', '=', 'pa2.Id_Parametro')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'j.Jrci_califi_invalidez', '=', 'sie.Id_Entidad')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa4', 'j.Origen_controversia', '=', 'pa4.Id_Parametro')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa5', 'j.Origen_jrci_emitido', '=', 'pa5.Id_Parametro')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa6', 'j.Causal_decision_jrci', '=', 'pa6.Id_Parametro')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa7', 'j.Parte_contro_ante_jrci', '=', 'pa7.Id_Parametro')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa8', 'j.Origen_reposicion_jrci', '=', 'pa8.Id_Parametro')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa9', 'j.Causal_decision_repo_jrci', '=', 'pa9.Id_Parametro')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa10', 'j.Origen_jnci_emitido', '=', 'pa10.Id_Parametro')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa11', 'j.Manual_de_califi_jnci_emitido', '=', 'pa11.Id_Parametro')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d', 'j.Manual_de_califi', '=', 'd.Id_Decreto')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d1', 'j.Manual_de_califi_jrci_emitido', '=', 'd1.Id_Decreto')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d2', 'j.Manual_reposicion_jrci', '=', 'd2.Id_Decreto')
+            ->where('j.ID_evento',  '=', $id_evento)
+            ->get();
+
+            if(!empty($arrayinfo_controvertido[0]->JrciNombre)) 
+            { 
+                $destinatario_principal =  $arrayinfo_controvertido[0]->JrciNombre;
+            }else{
+                $destinatario_principal =  "";
+            }
+
+            $datos =['destinatario_principal' => $destinatario_principal];
+
+            return response()->json($datos);
+        }
+
+        if($parametro == "correspondencia"){
+            $array_comite_interdisciplinario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comite_interdisciplinario_eventos as sicie')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sicie.Nombre_dest_principal')
+            ->select('sicie.ID_evento', 'sicie.Id_proceso', 'sicie.Id_Asignacion', 'sicie.Visar', 'sicie.Profesional_comite', 'sicie.F_visado_comite',
+            'sicie.Destinatario_principal', 'sicie.Otro_destinatario', 'sicie.Tipo_destinatario', 'sicie.Nombre_dest_principal', 'sie.Nombre_entidad',
+            'sicie.Nombre_destinatario','sicie.Nit_cc', 'sicie.Direccion_destinatario', 'sicie.Telefono_destinatario', 'sicie.Email_destinatario',
+            'sicie.Departamento_destinatario', 'sicie.Ciudad_destinatario', 'sicie.Asunto', 'sicie.Cuerpo_comunicado', 'sicie.Copia_empleador',
+            'sicie.Copia_eps', 'sicie.Copia_afp', 'sicie.Copia_arl', 'sicie.Copia_jr', 'sicie.Cual_jr', 'sicie.Copia_jn', 'sicie.Anexos',
+            'sicie.Elaboro', 'sicie.Reviso', 'sicie.Firmar', 'sicie.Ciudad', 'sicie.F_correspondecia', 'sicie.N_radicado', 'sicie.Nombre_usuario',
+            'sicie.F_registro')        
+            ->where([
+                ['Id_com_inter',$request->id_comite_inter],
+                ['ID_evento',$id_evento],
+                ['Id_Asignacion',$id_asignacion]
+            ])
+            ->get();
+
+            // checkbox otro destinatario principal
+            if(!empty($array_comite_interdisciplinario[0]->Otro_destinatario)) 
+            { 
+                $checkeado_otro_destinatario =  "Si";
+            }else{
+                $checkeado_otro_destinatario =  "No";
+            }
+
+            // tipo de destinatario principal opcion: afp, arl, eps
+            if(!empty($array_comite_interdisciplinario[0]->Tipo_destinatario))
+            { 
+                $db_tipo_destinatario_principal = $array_comite_interdisciplinario[0]->Tipo_destinatario;
+            }else{
+                $db_tipo_destinatario_principal = "";
+            }
+
+            // nombre del destinatario principal opcion: afp, arl, eps
+            if(!empty($array_comite_interdisciplinario[0]->Nombre_dest_principal))
+            { 
+                $db_nombre_destinatariopri = $array_comite_interdisciplinario[0]->Nombre_dest_principal;
+            }else{
+                $db_nombre_destinatariopri= "";
+            }
+
+            // Datos de la opcion otro del tipo de destinatario principal
+            if (!empty($array_comite_interdisciplinario[0]->Nombre_destinatario)) {
+                $nombre_destinatario = $array_comite_interdisciplinario[0]->Nombre_destinatario;
+            }else{
+                $nombre_destinatario = "";
+            }
+
+            if (!empty($array_comite_interdisciplinario[0]->Nit_cc)) {
+                $nitcc_destinatario = $array_comite_interdisciplinario[0]->Nit_cc;
+            }else{
+                $nitcc_destinatario = "";
+            }
+
+            if (!empty($array_comite_interdisciplinario[0]->Direccion_destinatario)) {
+                $direccion_destinatario = $array_comite_interdisciplinario[0]->Direccion_destinatario;
+            } else {
+                $direccion_destinatario = "";
+            }
+
+            if (!empty($array_comite_interdisciplinario[0]->Telefono_destinatario)) {
+                $telefono_destinatario = $array_comite_interdisciplinario[0]->Telefono_destinatario;
+            } else {
+                $telefono_destinatario = "";
+            }
+
+            if (!empty($array_comite_interdisciplinario[0]->Email_destinatario)) {
+                $email_destinatario = $array_comite_interdisciplinario[0]->Email_destinatario;
+            } else {
+                $email_destinatario = "";
+            }
+            
+            if (!empty($array_comite_interdisciplinario[0]->Departamento_destinatario)) {
+                $departamento_destinatario = $array_comite_interdisciplinario[0]->Departamento_destinatario;
+            } else {
+                $departamento_destinatario = "";
+            }
+            
+            if (!empty($array_comite_interdisciplinario[0]->Ciudad_destinatario)) {
+                $ciudad_destinatario = $array_comite_interdisciplinario[0]->Ciudad_destinatario;
+            } else {
+                $ciudad_destinatario = "";
+            }
+
+            // Asunto
+            if (!empty($array_comite_interdisciplinario[0]->Asunto)) {
+                $Asunto = $array_comite_interdisciplinario[0]->Asunto;
+            } else {
+                $Asunto = "";
+            }
+            
+            // Cuerpo del Comunicado
+            if (!empty($array_comite_interdisciplinario[0]->Cuerpo_comunicado)) {
+               $cuerpo_comunicado = $array_comite_interdisciplinario[0]->Cuerpo_comunicado;
+            } else {
+                $cuerpo_comunicado = "";
+            }
+            
+            // Copias a partes interesadas
+            if (!empty($array_comite_interdisciplinario[0]->Copia_empleador)) {
+                $checkeado_empleador = "Si";
+            } else {
+                $checkeado_empleador = "No";
+            }
+
+            if (!empty($array_comite_interdisciplinario[0]->Copia_eps)) {
+                $checkeado_eps = "Si";
+            } else {
+                $checkeado_eps = "No";
+            }
+
+            if (!empty($array_comite_interdisciplinario[0]->Copia_afp)) {
+                $checkeado_afp = "Si";
+            } else {
+                $checkeado_afp = "No";
+            }
+
+            if (!empty($array_comite_interdisciplinario[0]->Copia_arl)) {
+                $checkeado_arl = "Si";
+            } else {
+                $checkeado_arl = "No";
+            }
+            
+            if (!empty($array_comite_interdisciplinario[0]->Copia_jr)) {
+                $checkeado_copia_jr = "Si";
+            } else {
+                $checkeado_copia_jr = "No";
+            }
+            
+            if (!empty($array_comite_interdisciplinario[0]->Cual_jr)) {
+                $bd_cual_jr = $array_comite_interdisciplinario[0]->Cual_jr;
+            } else {
+                $bd_cual_jr = "";
+            }
+            
+            if (!empty($array_comite_interdisciplinario[0]->Copia_jn)) {
+                $checkeado_copia_jn = "Si";
+            } else {
+                $checkeado_copia_jn = "No";
+            }
+            
+            /* Anexos */
+            if (!empty($array_comite_interdisciplinario[0]->Anexos)) {
+                $anexos = $array_comite_interdisciplinario[0]->Anexos;
+            } else {
+                $anexos = "";
+            }
+            
+            /* Elaboró */
+            if (!empty($array_comite_interdisciplinario[0]->Elaboro)) {
+                $elaboro = $array_comite_interdisciplinario[0]->Elaboro;
+            } else {
+                $elaboro = Auth::user()->name;
+            }
+            
+            /* Reviso */
+            if (!empty($array_comite_interdisciplinario[0]->Reviso)) {
+                $bd_reviso = $array_comite_interdisciplinario[0]->Reviso;
+            } else {
+                $bd_reviso = "";
+            }
+            
+            /* Checkbox Firmar */
+            if (!empty($array_comite_interdisciplinario[0]->Firmar)) {
+                $firmar = "Si";
+            } else {
+                $firmar = "No";
+            }
+            
+            /* Ciudad */
+            if (!empty($array_comite_interdisciplinario[0]->Ciudad)) {
+                $ciudad = $array_comite_interdisciplinario[0]->Ciudad;
+            } else {
+                $ciudad = "Bogotá D.C";
+            }
+            
+            // Fecha Correspondencia
+            if (!empty($array_comite_interdisciplinario[0]->F_correspondecia)) {
+                $f_correspondencia = $array_comite_interdisciplinario[0]->F_correspondecia;
+            } else {
+                $f_correspondencia = now()->format('Y-m-d');
+            }
+            
+
+            $datos_correspondencia = [
+                'checkeado_otro_destinatario' => $checkeado_otro_destinatario,
+                'db_tipo_destinatario_principal' => $db_tipo_destinatario_principal,
+                'db_nombre_destinatariopri' => $db_nombre_destinatariopri,
+                'nombre_destinatario' => $nombre_destinatario,
+                'nitcc_destinatario' => $nitcc_destinatario,
+                'direccion_destinatario' => $direccion_destinatario,
+                'telefono_destinatario' => $telefono_destinatario,
+                'email_destinatario' => $email_destinatario,
+                'departamento_destinatario' => $departamento_destinatario,
+                'ciudad_destinatario' => $ciudad_destinatario,
+                'Asunto' => $Asunto,
+                'cuerpo_comunicado' => $cuerpo_comunicado,
+                'checkeado_empleador' => $checkeado_empleador,
+                'checkeado_eps' => $checkeado_eps,
+                'checkeado_afp' => $checkeado_afp,
+                'checkeado_arl' => $checkeado_arl,
+                'checkeado_copia_jr' => $checkeado_copia_jr,
+                'bd_cual_jr' => $bd_cual_jr,
+                'checkeado_copia_jn' => $checkeado_copia_jn,
+                'anexos' => $anexos,
+                'elaboro' => $elaboro,
+                'bd_reviso' => $bd_reviso,
+                'firmar' => $firmar,
+                'ciudad' => $ciudad,
+                'f_correspondencia' => $f_correspondencia
+            ];
+
+            return response()->json($datos_correspondencia);
+
+        }
+
+        if ($parametro == "controversia_juntas") {
+
+            $array_datos_controversiaJuntas = DB::select('CALL psrcalificacionJuntas(?)', array($id_asignacion));
+
+            /* Nombre destinatario opcion afiliado */
+            $nombre_destinatario_afi = $array_datos_controversiaJuntas[0]->Nombre_afiliado;
+            /* Nombre destinatario opcion empleador */
+            $nombre_destinatario_emp = $array_datos_controversiaJuntas[0]->Empleador_afi;
+
+            /* id servicio ya sea controversia pcl o controversia origen */
+            // $id_servicio = $array_datos_controversiaJuntas[0]->Id_Servicio ;
+
+            $datos_controversiaJuntas = [
+                'nombre_destinatario_afi' => $nombre_destinatario_afi,
+                'nombre_destinatario_emp' => $nombre_destinatario_emp,
+                // 'id_servicio' => $id_servicio
+            ];
+
+            return response()->json($datos_controversiaJuntas);
+        }
+
+
+
+    }
+
+
     public function DescargarProformaRecursoReposicion(Request $request){
         $time = time();
         $date = date("Y-m-d", $time);
@@ -1285,6 +1595,7 @@ class ControversiaJuntasController extends Controller
         $porcentaje_pcl_jrci_emitido = $request->porcentaje_pcl_jrci_emitido;
         $f_estructuracion_contro_jrci_emitido = $request->f_estructuracion_contro_jrci_emitido;
         $sustentacion_concepto_jrci = $request->sustentacion_concepto_jrci;
+        $sustentacion_concepto_jrci1 = $request->sustentacion_concepto_jrci1;
         $copia_empleador = $request->copia_empleador;
         $copia_eps = $request->copia_eps;
         $copia_afp = $request->copia_afp;
@@ -1314,7 +1625,6 @@ class ControversiaJuntasController extends Controller
         }
         
         // Traer datos CIE10 (Diagnóstico motivo de calificación) jrci
-        
         $datos_diagnostico_motcalifi_emitido_jrci=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
@@ -1615,20 +1925,23 @@ class ControversiaJuntasController extends Controller
         $patron3 = '/\{\{\$cie10_jrci\}\}/';
         $patron4 = '/\{\{\$pcl_jrci\}\}/';
         $patron5 = '/\{\{\$f_estructuracion_jrci\}\}/';
-        $patron6 = '/\{\{\$sustentacion_jrci\}\}/';
+        $patron6 = '/\{\{\$sustentacion_jrci\}\}/'; // Sustentación Concepto JRCI (Revisión ante concepto de la Junta Regional)
+        $patron9 = '/\{\{\$sustentacion_jrci1\}\}/'; // Sustentación Concepto JRCI (Revisión ante recurso de reposición de la Junta Regional)
         $patron7 = '/\{\{\$origen_dx_jrci\}\}/';
         $patron8 = '/\{\{\$cie10_nombre_cie10_jrci\}\}/';
         
+        $cuerpo = str_replace(['<br>', '<br/>', '<br />', '</br>'], '', $cuerpo);
         // Controversia pcl
         if($id_servicio == 13){
-            if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) && preg_match($patron3, $cuerpo) && preg_match($patron4, $cuerpo) && preg_match($patron5, $cuerpo) && preg_match($patron6, $cuerpo)) {
+            // && preg_match($patron6, $cuerpo)
+            if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) && preg_match($patron3, $cuerpo) && preg_match($patron4, $cuerpo) && preg_match($patron5, $cuerpo)) {
     
                 $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.$nombre_afiliado.'</b>', $cuerpo);
                 $cuerpo_modificado = str_replace('{{$junta_regional}}', '<b>'.$nombre_junta_regional.'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$cie10_jrci}}', $string_diagnosticos_cie10_jrci, $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$pcl_jrci}}', '<b>'.$porcentaje_pcl_jrci_emitido.'%</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', $f_estructuracion_contro_jrci_emitido, $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+                // $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
     
     
                 $cuerpo_modificado = str_replace('HUGO IGNACIO GÓMEZ DAZA', '<b>HUGO IGNACIO GÓMEZ DAZA</b>', $cuerpo_modificado);
@@ -1639,21 +1952,51 @@ class ControversiaJuntasController extends Controller
                 $cuerpo_modificado = str_replace('ANEXO:', '<b>ANEXO:</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('NOTIFICACIONES:', '<b>NOTIFICACIONES:</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('</p>', '</p><br></br>', $cuerpo_modificado);
-                $cuerpo = $cuerpo_modificado;
+                $cuerpo_modificado = str_replace('<p><br>', ' ', $cuerpo_modificado);
+                
+
+                if (preg_match($patron6, $cuerpo_modificado) && preg_match($patron9, $cuerpo_modificado)) {
+                    // Ambos patrones encontrados
+                    $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+                    $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
+
+                    $cuerpo = $cuerpo_modificado;
+                
+                } elseif (preg_match($patron6, $cuerpo_modificado)) {
+                    // Solo patrón6 encontrado
+                    $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+
+                    $cuerpo = $cuerpo_modificado;
+                
+                } elseif (preg_match($patron9, $cuerpo_modificado)) {
+                    // Solo patrón9 encontrado
+                    $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
+                    
+                    $cuerpo = $cuerpo_modificado;
+                } else {
+                    // Ninguno de los patrones encontrados
+                    // $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', "", $cuerpo_modificado);
+                    // $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', "", $cuerpo_modificado);
+                    $cuerpo = "";
+                }
+
+                // $cuerpo = $cuerpo_modificado;
     
             }else{
                 $cuerpo = "";
             }
            
-        }else if($id_servicio == 12){ // Controversia origen
-            if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) &&  preg_match($patron6, $cuerpo) &&  preg_match($patron7, $cuerpo) &&  preg_match($patron8, $cuerpo)) {
+        }
+        // && preg_match($patron6, $cuerpo)
+        else if($id_servicio == 12){ // Controversia origen
+            if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) && preg_match($patron7, $cuerpo) && preg_match($patron8, $cuerpo)) {
     
         
                 $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.$nombre_afiliado.'</b>', $cuerpo);
                 $cuerpo_modificado = str_replace('{{$junta_regional}}', '<b>'.$nombre_junta_regional.'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$origen_dx_jrci}}', '<b>'.$origen_jrci_emitido.'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$cie10_nombre_cie10_jrci}}', $string_diagnosticos_cie10_jrci, $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+                // $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
     
     
                 $cuerpo_modificado = str_replace('HUGO IGNACIO GÓMEZ DAZA', '<b>HUGO IGNACIO GÓMEZ DAZA</b>', $cuerpo_modificado);
@@ -1663,15 +2006,43 @@ class ControversiaJuntasController extends Controller
                 $cuerpo_modificado = str_replace('ANEXO:', '<b>ANEXO:</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('NOTIFICACIONES:', '<b>NOTIFICACIONES:</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('</p>', '</p><br></br>', $cuerpo_modificado);
-                $cuerpo = $cuerpo_modificado;
+                $cuerpo_modificado = str_replace('<p><br>', ' ', $cuerpo_modificado);
+
+                if (preg_match($patron6, $cuerpo_modificado) && preg_match($patron9, $cuerpo_modificado)) {
+                    // Ambos patrones encontrados
+                    $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+                    $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
+
+                    $cuerpo = $cuerpo_modificado;
+                
+                } elseif (preg_match($patron6, $cuerpo_modificado)) {
+                    // Solo patrón6 encontrado
+                    $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+
+                    $cuerpo = $cuerpo_modificado;
+                
+                } elseif (preg_match($patron9, $cuerpo_modificado)) {
+                    // Solo patrón9 encontrado
+                    $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
+                    
+                    $cuerpo = $cuerpo_modificado;
+                } else {
+                    // Ninguno de los patrones encontrados
+                    // $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', "", $cuerpo_modificado);
+                    // $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', "", $cuerpo_modificado);
+                    $cuerpo = "";
+                }
+
+                // $cuerpo = $cuerpo_modificado;
     
             }else{
                 $cuerpo = "";
             }
         }
 
+
         $section->addTextBreak();
-        Html::addHtml($section, $cuerpo, false, true);
+        Html::addHtml($section, $cuerpo, false, false);
         $section->addTextBreak();
         $section->addText('Cordialmente,');
         $section->addTextBreak();
@@ -1783,7 +2154,7 @@ class ControversiaJuntasController extends Controller
 
         // Generamos el documento y luego se guarda
         $writer = new Word2007($phpWord);
-        $nombre_docx = "JUN_DESACUERDO_{$id_asignacion}_{$num_identificacion}.docx";
+        $nombre_docx = "JUN_DESACUERDO_{$id_asignacion}_{$num_identificacion}_{$nro_radicado}.docx";
         $writer->save(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
         return response()->download(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
 

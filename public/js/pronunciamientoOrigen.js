@@ -380,11 +380,16 @@ $(document).ready(function(){
         $(this).val(opt_correspondencia);
         iniciarIntervalo_correspon();
         
+        $("#insertar_mensaje_importante").html("");
         if (opt_correspondencia == "Acuerdo") {
+            $("#insertar_mensaje_importante").html("Para mostrar toda la sustentación (dentro del pdf) que usted escriba, debe incluir las etiquetas de los Diagnósticos CIE-10 y de Origen dentro de la sección Sustentación.");
+            $("#btn_insertar_origen").prop('disabled', false);
             $("#asunto_cali").val("ACUERDO CALIFICACIÓN DE EPS");
             var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.</p><p>De manera atenta, informamos que la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A. se encuentra de acuerdo con el dictamen emitido por la EPS, respecto a las patologías&nbsp;{{$diagnosticos_cie10}} de Origen {{$origen}}.</p><p>Cualquier información adicional con gusto será atendida por el Auditor Técnico en el teléfono 7435333 Ext. 14626 en Bogotá.</p>";
             $('#sustenta_cali').summernote('code', texto_insertar);
         } else if(opt_correspondencia == "Desacuerdo") {
+            $("#insertar_mensaje_importante").html("Para mostrar toda la sustentación (dentro del word) que usted escriba, debe incluir la etiqueta de los Diagnósticos CIE-10 dentro de la sección Sustentación.");
+            $("#btn_insertar_origen").prop('disabled', true);
             $("#asunto_cali").val("CONTROVERSIA CALIFICACIÓN DE ORIGEN DE EPS");
             var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A. De manera atenta informamos que la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A. manifiesta su inconformidad con el dictamen emitido por la EPS, respecto de las patologías&nbsp;{{$diagnosticos_cie10}} y tal como lo establece el Artículo 142 del Decreto 0019 de 2012, solicitamos que la EPS remita el caso a la Junta Regional de Calificación de Invalidez para dirimir la controversia.</p><p>En los próximos días le enviaremos copia del pago de honorarios realizada a la Junta Regional correspondiente junto con las guías de notificación a las partes interesadas, para la remisión del expediente por la EPS.</p><p>Cualquier inquietud con gusto será atendida en la Carrera 10 #18-36 piso 4°, Edificio José María Córdova, Bogotá.</p>";
             $('#sustenta_cali').summernote('code', texto_insertar);

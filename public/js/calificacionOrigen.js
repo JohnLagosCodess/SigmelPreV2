@@ -893,10 +893,14 @@ $(document).ready(function(){
         var opc_seleccionada = $(this).val();
         
         if (opc_seleccionada == "Documento_Origen") {
+            $("#insertar_mensaje_importante").removeClass('d-none');
+            $("#btn_insertar_pruebas").prop('disabled', false);
             $("#asunto").val("SOLICITUD DE PRUEBAS");
             var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.</p><p>Con el fin de establecer la determinación de origen del accidente reportado, está entidad solicita se anexen los siguientes documentos</p><p>{{$pruebas_solicitadas}}</p><p>Lo anterior con fundamento en lo establecido en la Decreto 1072 de 2015 art. 2.2.5.1.29, 2.2.5.1.28 (integración jurídica y análoga.)</p><p>El aporte documental deberá realizarse en un tiempo menor de 30 días hábiles siguientes al recibido de ésta comunicación escrita;&nbsp; La información solicitada es en cumplimiento de lo establecido en la Resolución 1401 de 2007 por la cual se reglamenta la investigación de incidentes y accidentes de trabajo. Lo anterior con fundamento en lo establecido en el Dec.2463 de 2001, parágrafo 1, Res.0156 de 2005 art.3, y Dec.1295 de 1994, art.12: “Toda enfermedad o patología, accidente o muerte, que no hayan sido clasificados o calificados como de origen profesional, se consideran de origen Común”.</p><p>La omisión del aporte documental y de requisitos mínimos para la calificación tendría como consecuencia la generación de concepto desfavorable o de origen común refiriendo el fundamento de dicha decisión.</p>";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
         }else{
+            $("#insertar_mensaje_importante").addClass('d-none');
+            $("#btn_insertar_pruebas").prop('disabled', true);
             $("#asunto").val("");
             $('#cuerpo_comunicado').summernote('code', '');
         }
@@ -1269,9 +1273,11 @@ $(document).ready(function(){
         if (tipo_descarga == "Documento_Origen") {
             $("#documentos_origen_editar").prop("checked", true);
             $("#otro_documento_origen_editar").prop("checked", false);
+            $("#insertar_mensaje_importante_editar").removeClass('d-none');
         } else {
             $("#documentos_origen_editar").prop("checked", false);
             $("#otro_documento_origen_editar").prop("checked", true);
+            $("#insertar_mensaje_importante_editar").addClass('d-none');
         }
 
         document.getElementById('nombre_destinatario_editar').value=nombre_destinatario;        
@@ -1604,10 +1610,14 @@ $(document).ready(function(){
         var opc_seleccionada = $(this).val();
         
         if (opc_seleccionada == "Documento_Origen") {
+            $("#insertar_mensaje_importante_editar").removeClass('d-none');
+            $("#btn_insertar_pruebas_editar").prop('disabled', false);
             $("#asunto_editar").val("SOLICITUD DE PRUEBAS");
             var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.</p><p>Con el fin de establecer la determinación de origen del accidente reportado, está entidad solicita se anexen los siguientes documentos</p><p>{{$pruebas_solicitadas}}</p><p>Lo anterior con fundamento en lo establecido en la Decreto 1072 de 2015 art. 2.2.5.1.29, 2.2.5.1.28 (integración jurídica y análoga.)</p><p>El aporte documental deberá realizarse en un tiempo menor de 30 días hábiles siguientes al recibido de ésta comunicación escrita;&nbsp; La información solicitada es en cumplimiento de lo establecido en la Resolución 1401 de 2007 por la cual se reglamenta la investigación de incidentes y accidentes de trabajo. Lo anterior con fundamento en lo establecido en el Dec.2463 de 2001, parágrafo 1, Res.0156 de 2005 art.3, y Dec.1295 de 1994, art.12: “Toda enfermedad o patología, accidente o muerte, que no hayan sido clasificados o calificados como de origen profesional, se consideran de origen Común”.</p><p>La omisión del aporte documental y de requisitos mínimos para la calificación tendría como consecuencia la generación de concepto desfavorable o de origen común refiriendo el fundamento de dicha decisión.</p>";
             $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
         }else{
+            $("#insertar_mensaje_importante_editar").addClass('d-none');
+            $("#btn_insertar_pruebas_editar").prop('disabled', true);
             $("#asunto_editar").val("");
             $('#cuerpo_comunicado_editar').summernote('code', '');
         }

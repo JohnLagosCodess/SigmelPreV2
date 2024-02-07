@@ -771,6 +771,7 @@ Route::post('/ADescargaProformaDML', [AdicionDxDTO::class, 'ADescargaProformaDML
 // Proforma Acuerdo Calificación de EPS
 Route::post('/DescargarProformaPronunciamiento', [PronunciamientoOrigenController::class, 'DescargarProformaPronunciamiento']);
 Route::post('/DescargarProformaRecursoReposicion', [ControversiaJuntasController::class, 'DescargarProformaRecursoReposicion']);
+Route::post('/CargueInformacionCorrespondencia', [ControversiaJuntasController::class, 'CargueInformacionCorrespondencia']);
 
 
 /* DESCARGAR PROFORMAS PREVISIONAL */

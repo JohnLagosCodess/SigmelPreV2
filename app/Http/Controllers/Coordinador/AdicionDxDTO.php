@@ -678,36 +678,7 @@ class AdicionDxDTO extends Controller
 
         if ($Id_Adiciones_Dx == "") {
             sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')->insert($datos_formulario);
-            $datos_info_comunicado_eventos = [
-                'ID_Evento' => $request->ID_Evento,
-                'Id_proceso' => $request->Id_proceso,
-                'Id_Asignacion' => $request->Id_Asignacion,
-                'Ciudad' => 'N/A',
-                'F_comunicado' => $date,
-                'N_radicado' => $request->radicado_dictamen,
-                'Cliente' => 'N/A',
-                'Nombre_afiliado' => 'N/A',
-                'T_documento' => 'N/A',
-                'N_identificacion' => 'N/A',
-                'Destinatario' => 'N/A',
-                'Nombre_destinatario' => 'N/A',
-                'Nit_cc' => 'N/A',
-                'Direccion_destinatario' => 'N/A',
-                'Telefono_destinatario' => '001',
-                'Email_destinatario' => 'N/A',
-                'Id_departamento' => '001',
-                'Id_municipio' => '001',
-                'Asunto'=> 'N/A',
-                'Cuerpo_comunicado' => 'N/A',
-                'Forma_envio' => '0',
-                'Elaboro' => $nombre_usuario,
-                'Reviso' => 'N/A',
-                'Anexos' => 'N/A',
-                'Nombre_usuario' => $nombre_usuario,
-                'F_registro' => $date,
-            ];
-    
-            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+            
             $mensaje = 'Información guardada satisfactoriamente.';
         } else {
             sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')
@@ -723,6 +694,37 @@ class AdicionDxDTO extends Controller
 
         sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
         ->where('Id_Asignacion', $request->Id_Asignacion)->update($datos_profesional_calificador);
+
+        $datos_info_comunicado_eventos = [
+            'ID_Evento' => $request->ID_Evento,
+            'Id_proceso' => $request->Id_proceso,
+            'Id_Asignacion' => $request->Id_Asignacion,
+            'Ciudad' => 'N/A',
+            'F_comunicado' => $date,
+            'N_radicado' => $request->radicado_dictamen,
+            'Cliente' => 'N/A',
+            'Nombre_afiliado' => 'N/A',
+            'T_documento' => 'N/A',
+            'N_identificacion' => 'N/A',
+            'Destinatario' => 'N/A',
+            'Nombre_destinatario' => 'N/A',
+            'Nit_cc' => 'N/A',
+            'Direccion_destinatario' => 'N/A',
+            'Telefono_destinatario' => '001',
+            'Email_destinatario' => 'N/A',
+            'Id_departamento' => '001',
+            'Id_municipio' => '001',
+            'Asunto'=> 'N/A',
+            'Cuerpo_comunicado' => 'N/A',
+            'Forma_envio' => '0',
+            'Elaboro' => $nombre_usuario,
+            'Reviso' => 'N/A',
+            'Anexos' => 'N/A',
+            'Nombre_usuario' => $nombre_usuario,
+            'F_registro' => $date,
+        ];
+
+        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
         
         $mensajes = array(
             "parametro" => 'agregar_dto_atel',

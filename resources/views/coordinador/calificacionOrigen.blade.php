@@ -680,7 +680,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                
                                 <div class="row text-center">
                                     <label for="destinatario_principal" style="margin-left: 7px;">Destinatario Principal: <span style="color: red;">(*)</span></label>                                        
                                     <div class="col-3">
@@ -750,6 +749,10 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
+                                        <div class="alert alert-warning d-none" id="insertar_mensaje_importante" role="alert">
+                                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong>
+                                            Para mostrar todo el cuerpo del comunicado (dentro del pdf) que usted escriba, debe incluir la etiqueta de las Pruebas Solicitadas dentro de la sección Cuerpo del Comunicado.
+                                        </div>
                                         <div class="form-group">
                                             <label for="cuerpo_comunicado">Cuerpo del comunicado <span style="color: red;">(*)</span></label>
                                             <br>
@@ -1059,6 +1062,10 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
+                                        <div class="alert alert-warning d-none" id="insertar_mensaje_importante_editar" role="alert">
+                                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong>
+                                            Para mostrar todo el cuerpo del comunicado (dentro del pdf) que usted escriba, debe incluir la etiqueta de las Pruebas Solicitadas dentro de la sección Cuerpo del Comunicado.
+                                        </div>
                                         <div class="form-group">
                                             <label for="cuerpo_comunicado_act">Cuerpo del comunicado <span style="color: red;">(*)</span></label>
                                             <br>
