@@ -879,12 +879,48 @@ $(document).ready(function(){
         }, 500);
     }
 
+    // Insertar textos predeterminados en la sección de correspondencia pero por defecto al momento de entrar al submodulo
+    var predeterminado_concepto_jrci = $('input[name=decision_dictamen_jrci]').filter(":checked").val();
+    if (predeterminado_concepto_jrci == "Desacuerdo") {
+        $("#Asunto").val("RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN AL DICTAMEN DEL {{$f_dictamen_jrci}}");
+
+        var id_servicio = $("#id_servicio").val();
+        // Controversia PCL
+        if (id_servicio == 13) {
+            var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de PCL dictaminada al (la) afiliado(a) {{$nombre_afiliado}} por la {{$junta_regional}}, por los diagnósticos {{$cie10_jrci}} otorga un porcentaje de {{$pcl_jrci}}, y fecha de estructuración {{$f_estructuracion_jrci}}.</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de la calificación de PCL de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes,de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
+        }else if(id_servicio == 12){ // Controversia Origen
+            var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de {{$origen_dx_jrci}} dictaminada al (la) afiliado(a) {{$nombre_afiliado}} por la {{$junta_regional}} por los diagnósticos {{$cie10_nombre_cie10_jrci}}.</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de ORIGEN de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes,de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>"
+        }
+        $("#cuerpo_comunicado").summernote('code', texto_insertar);
+    }else{
+        $("#Asunto").val("");
+        $("#cuerpo_comunicado").summernote('code', '');
+    }
+    
+
     // Mostrar Modulo y Selector de acuerdo al pronunciamiento DICTAMEN
     var opt_concepto_jrci;
     $("[name='decision_dictamen_jrci']").on("change", function(){
         opt_concepto_jrci = $(this).val();
-         $(this).val(opt_concepto_jrci);
-         iniciarIntervalo_concepto_jrci();
+        $(this).val(opt_concepto_jrci);
+        iniciarIntervalo_concepto_jrci();
+
+        // Insertar textos predeterminados en la sección de correspondencia
+        if (opt_concepto_jrci == "Desacuerdo") {
+            $("#Asunto").val("RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN AL DICTAMEN DEL {{$f_dictamen_jrci}}");
+
+            var id_servicio = $("#id_servicio").val();
+            // Controversia PCL
+            if (id_servicio == 13) {
+                var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de PCL dictaminada al (la) afiliado(a) {{$nombre_afiliado}} por la {{$junta_regional}}, por los diagnósticos {{$cie10_jrci}} otorga un porcentaje de {{$pcl_jrci}}, y fecha de estructuración {{$f_estructuracion_jrci}}.</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de la calificación de PCL de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes,de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
+            }else if(id_servicio == 12){ // Controversia Origen
+                var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de {{$origen_dx_jrci}} dictaminada al (la) afiliado(a) {{$nombre_afiliado}} por la {{$junta_regional}} por los diagnósticos {{$cie10_nombre_cie10_jrci}}.</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de ORIGEN de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes,de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>"
+            }
+            $("#cuerpo_comunicado").summernote('code', texto_insertar);
+        }else{
+            $("#Asunto").val("");
+            $("#cuerpo_comunicado").summernote('code', '');
+        }
     });
     // Función para validar items a mostrar
     const tiempoDeslizamiento_concepto = 'slow';
@@ -1022,24 +1058,8 @@ $(document).ready(function(){
         opt_concepto_repo_jrci = $(this).val();
         $(this).val(opt_concepto_repo_jrci);
         iniciarIntervalo_concepto_repo_jrci();
-
-        // Insertar textos predeterminados en la sección de correspondencia
-        if (opt_concepto_repo_jrci == "Desacuerdo") {
-            $("#Asunto").val("RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN AL DICTAMEN DEL {{$f_dictamen_jrci}}");
-
-            var id_servicio = $("#id_servicio").val();
-            // Controversia PCL
-            if (id_servicio == 13) {
-                var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de PCL dictaminada al (la) afiliado(a) {{$nombre_afiliado}} por la {{$junta_regional}}, por los diagnósticos {{$cie10_jrci}} otorga un porcentaje de {{$pcl_jrci}}, y fecha de estructuración {{$f_estructuracion_jrci}}.</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de la calificación de PCL de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes,de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
-            }else if(id_servicio == 12){ // Controversia Origen
-                var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de {{$origen_dx_jrci}} dictaminada al (la) afiliado(a) {{$nombre_afiliado}} por la {{$junta_regional}} por los diagnósticos {{$cie10_nombre_cie10_jrci}}.</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de ORIGEN de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes,de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>"
-            }
-            $("#cuerpo_comunicado").summernote('code', texto_insertar);
-        }else{
-            $("#Asunto").val("");
-            $("#cuerpo_comunicado").summernote('code', '');
-        }
     });
+
     // Función para validar items a mostrar
     const tiempoDeslizamiento_concepto_repo = 'slow';
     function iniciarIntervalo_concepto_repo_jrci() {
@@ -2119,6 +2139,7 @@ $(document).ready(function(){
 
     // validar si el otro destinatario principal esta marcado
 
+    /* VALIDACIONES CORRESPONDENCIA */
     var otrodestinariop = $("#otrodestinariop");
     otrodestinariop.change(function(){
         if ($(this).prop('checked')) {     
@@ -2214,9 +2235,7 @@ $(document).ready(function(){
         }
     });
 
-    
     // validar si tipo de destinatario es igual a otro
-
     var select_destinatario_principal = $('#tipo_destinatario_principal');
     var select_destinatario_principal2 = $('#db_tipo_destinatario_principal').val();
     
@@ -2370,7 +2389,9 @@ $(document).ready(function(){
         var Id_proceso = $('#Id_proceso').val();
         var newId_asignacion  = $('#newId_asignacion').val();
         var destinatario_principal = $('#destinatario_principal').val();
+
         var otrodestinariop = $('input[name="otrodestinariop"]:checked').val();
+
         if (otrodestinariop == undefined) {
             var tipo_destinatario_principal = '';
             var nombre_destinatariopri = '';            
@@ -2378,13 +2399,16 @@ $(document).ready(function(){
             var tipo_destinatario_principal = $('#tipo_destinatario_principal').val();            
             var nombre_destinatariopri = $('#nombre_destinatariopri').val();
         }
+
         var nombre_destinatario_afi = $('#nombre_destinatario_afi').val();
         var nombre_destinatario_emp = $('#nombre_destinatario_emp').val();
+
         if (tipo_destinatario_principal == 4) {
             var nombre_destinatario_afi_emp = nombre_destinatario_afi;
         } else if(tipo_destinatario_principal == 5) {
             var nombre_destinatario_afi_emp = nombre_destinatario_emp;            
         }
+
         if(tipo_destinatario_principal == 8){
             var nombre_destinatario = $('#nombre_destinatario').val();
             var nitcc_destinatario = $('#nitcc_destinatario').val();
@@ -2401,7 +2425,8 @@ $(document).ready(function(){
             var email_destinatario = '';
             var departamento_destinatario = '';
             var ciudad_destinatario = '';
-        }        
+        }      
+
         var Asunto = $('#Asunto').val();
         var cuerpo_comunicado = $('#cuerpo_comunicado').val();
         var empleador = $('input[name="empleador"]:checked').val();;        
@@ -2414,7 +2439,8 @@ $(document).ready(function(){
             var cual = '';                        
         } else {
             var cual = $('#cual').val();            
-        }       
+        }
+
         var jnci = $('input[name="jnci"]:checked').val();
         var anexos = $('#anexos').val();
         var elaboro = $('#elaboro').val();
@@ -2487,9 +2513,10 @@ $(document).ready(function(){
                 }
 
             }          
-        })
+        });
     });
 
+    /* Generacion de Proforma en Word */
     $("#generar_proforma_recurso_reposicion_pcl").click(function(event){
         event.preventDefault();
 

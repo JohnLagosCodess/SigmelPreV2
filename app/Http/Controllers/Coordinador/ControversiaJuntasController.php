@@ -152,7 +152,7 @@ class ControversiaJuntasController extends Controller
         ->where([
             ['ID_evento',$Id_evento_juntas],
             ['F_comunicado',$date],
-            ['Id_proceso','2']
+            ['Id_proceso','3']
         ])
         ->orderBy('N_radicado', 'desc')
         ->limit(1)
@@ -188,7 +188,15 @@ class ControversiaJuntasController extends Controller
             $consecutivo = "SAL-JUN" . $fechaActual . $nuevoConsecutivoFormatted;
         }
 
-        return view('coordinador.controversiaJuntas', compact('user','array_datos_controversiaJuntas','arrayinfo_controvertido','array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci','array_datos_diagnostico_reposi_dictamen_jrci','array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 'array_comite_interdisciplinario', 'consecutivo'));
+        // traemos los comunicados
+        $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$Id_evento_juntas], ['Id_Asignacion',$Id_asignacion_juntas], ['T_documento','N/A']])->get();
+
+        return view('coordinador.controversiaJuntas', compact('user','array_datos_controversiaJuntas','arrayinfo_controvertido',
+        'array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci',
+        'array_datos_diagnostico_reposi_dictamen_jrci',
+        'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 
+        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia'));
     }
 
     //Cargar Selectores pronunciamiento
@@ -1088,6 +1096,7 @@ class ControversiaJuntasController extends Controller
         $tipo_destinatario_principal = $request->tipo_destinatario_principal;
         $nombre_destinatariopri = $request->nombre_destinatariopri;
         $Nombre_dest_principal_afi_empl = $request->Nombre_dest_principal_afi_empl;
+        
         if ($tipo_destinatario_principal == '') {
             $tipo_destinatario_principal = null;
             $nombre_destinatariopri = null;

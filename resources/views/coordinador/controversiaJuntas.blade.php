@@ -35,11 +35,11 @@
         <div class="card-info" style="border: 1px solid black;">
             <div class="card-header text-center">
                 <h4>Juntas Controversia - Evento: {{$array_datos_controversiaJuntas[0]->ID_evento}}</h4>
-                <h5 style="font-style: italic;">Controversia</h5>
+                <h5 style="font-style: italic;"><?php echo $array_datos_controversiaJuntas[0]->Nombre_servicio;?></h5>
                 <input type="hidden" name="NombreUsuario" id="NombreUsuario" value="{{$user->name}}">
-                <input hidden="hidden" type="text" class="form-control" name="newId_evento" id="newId_evento" value="{{$array_datos_controversiaJuntas[0]->ID_evento}}">
-                <input hidden="hidden" type="text" class="form-control" name="newId_asignacion" id="newId_asignacion" value="{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}">
-                <input hidden="hidden" type="text" class="form-control" name="Id_proceso" id="Id_proceso" value="{{$array_datos_controversiaJuntas[0]->Id_proceso}}">
+                <input type="hidden" class="form-control" name="newId_evento" id="newId_evento" value="{{$array_datos_controversiaJuntas[0]->ID_evento}}">
+                <input type="hidden" class="form-control" name="newId_asignacion" id="newId_asignacion" value="{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}">
+                <input type="hidden" class="form-control" name="Id_proceso" id="Id_proceso" value="{{$array_datos_controversiaJuntas[0]->Id_proceso}}">
                 
                 {{-- campos creados para extraer algunos datos de la proforma  --}}
                 <input type="hidden" class="form-control" id="id_servicio" value="{{$array_datos_controversiaJuntas[0]->Id_Servicio}}">
@@ -1413,7 +1413,8 @@
                                 </div>
                             </form>
                         </div>   --}}
-                        <!--  Correspondia -->
+
+                        <!--  Correspondencia -->
                         <div class="card-info" id="div_correspondecia">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Correspondencia</h5>
@@ -1543,6 +1544,10 @@
                                     </div>
                                     <div class="row"> 
                                         <div class="col-12">
+                                            <div class="alert alert-warning" role="alert">
+                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para mostrar todo el asunto (dentro del word) que usted escriba, 
+                                                debe incluir la etiqueta de la Fecha de Dictamen JRCI dentro del campo Asunto.
+                                            </div>
                                             <div class="form-group">
                                                 <label for="Asunto">Asunto <span style="color: red;">(*)</label>
                                                 <br>
@@ -1555,22 +1560,30 @@
                                             </div>      
                                         </div>
                                         <div class="col-12">
+                                            <div class="alert alert-warning" role="alert">
+                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para mostrar todo el cuerpo del comunicado (dentro del word) que usted escriba, 
+                                                debe incluir las etiquetas de Nombre Afiliado, Nombre Junta Regional, 
+                                                @if ($array_datos_controversiaJuntas[0]->Id_Servicio == 13)
+                                                Nombre CIE-10 JRCI, %Pcl JRCI, Fecha Estructuracion JRCI, 
+                                                @elseif ($array_datos_controversiaJuntas[0]->Id_Servicio == 12)
+                                                Origen Dx JRCI, CIE-10 - Nombre CIE-10 JRCI, 
+                                                @endif
+                                                Sustentación Concepto JRCI (Revisión ante concepto de la Junta Regional) dentro de la sección Cuerpo del Comunicado.
+                                            </div>
                                             <div class="form-group">
                                                 <label for="cuerpo_comunicado">Cuerpo del comunicado <span style="color: red;">(*)</label>
                                                 <br>
                                                 <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_afiliado">Nombre Afiliado</button>
                                                 <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_junta_regional">Nombre Junta Regional</button>
-                                                {{-- Controversia PCL --}}
                                                 @if ($array_datos_controversiaJuntas[0]->Id_Servicio == 13)
                                                     <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_cie10_jrci">Nombre CIE-10 JRCI</button>
                                                     <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_pcl_jrci">%Pcl JRCI</button>
                                                     <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_f_estructuracion_jrci">Fecha Estructuracion JRCI</button>
-                                                {{-- Controversia Origen --}}
                                                 @elseif ($array_datos_controversiaJuntas[0]->Id_Servicio == 12)
                                                     <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_origen_dx_jrci">Origen Dx JRCI</button>
                                                     <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_cie_nombre_jrci">CIE-10 - Nombre CIE-10 JRCI</button>
                                                 @endif
-                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_sustentacion_jrci">Sustentación Concepto JRCI</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_sustentacion_jrci">Sustentación Concepto JRCI (Revisión ante concepto de la Junta Regional)</button>
                                                 @if(!empty($array_comite_interdisciplinario[0]->Cuerpo_comunicado))
                                                     <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" required>{{$array_comite_interdisciplinario[0]->Cuerpo_comunicado}}</textarea>                                                                                                 
                                                 @else
@@ -1742,11 +1755,7 @@
                                         <div class="col-4"> 
                                             <div class="form-group">
                                                 <label for="radicado">N° Radicado</span></label>
-                                                @if(!empty($array_comite_interdisciplinario[0]->N_radicado))
-                                                    <input type="text" class="form-control" name="radicado" id="radicado" value="{{$array_comite_interdisciplinario[0]->N_radicado}}" disabled>                                                
-                                                @else
-                                                    <input type="text" class="form-control" name="radicado" id="radicado" value="{{$consecutivo}}" disabled> 
-                                                @endif
+                                                <input type="text" class="form-control" name="radicado" id="radicado" value="{{$consecutivo}}" disabled> 
                                             </div>
                                         </div>                                                                                      
                                     </div>                                
@@ -1773,7 +1782,51 @@
                                     </div> 
                                 </div>
                             </form>
-                        </div>  
+                        </div>
+
+                        {{-- Comunicados --}}
+                        <?php if(count($array_comunicados_correspondencia) > 0):?>
+                            <div class="card-info">
+                                <div class="card-header text-center" style="border: 1.5px solid black;">
+                                    <h5>Comunicados Mauro</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-bordered" width="100%">
+                                                    <thead>
+                                                        <tr class="bg-info">
+                                                            <th>N° de Radicado</th>
+                                                            <th>Elaboró</th>
+                                                            <th>Fecha de comunicado</th>
+                                                            <th>Acción</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($array_comunicados_correspondencia as $comunicados)
+                                                            <tr>
+                                                                <td>{{$comunicados->N_radicado}}</td>
+                                                                <td>{{$comunicados->Elaboro}}</td>
+                                                                <td>{{$comunicados->F_comunicado}}</td>  
+                                                                <td>
+                                                                    <label for="editar_correspondencia_{{$comunicados->Id_Comunicado}}"><i class="fa fa-pen text-info"></i></label>
+                                                                    <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia_{{$comunicados->Id_Comunicado}}" 
+                                                                    data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
+                                                                    data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
+                                                                    data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
+                                                                    type="button" style="font-weight: bold;">
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif ?>
                     </div>
                 </div>
             </div>

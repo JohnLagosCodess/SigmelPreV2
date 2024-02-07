@@ -288,9 +288,6 @@
                                 <h5>Pronunciamiento ante la calificación </h5>
                             </div>
                             <div class="card-body">
-                                <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
-                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para mostrar todo el 
-                                </div>
                                 <div class="row">
                                     <div class="col-1">
                                         <div class="form-group">
@@ -346,6 +343,15 @@
                                         </div>
                                     </div>
                                     <div class="col-12">
+                                        <div class="alert alert-warning" role="alert">
+                                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong> <span id="insertar_mensaje_importante">
+                                                <?php if(!empty($info_pronuncia[0]->Decision) && $info_pronuncia[0]->Decision=='Acuerdo'):?>
+                                                    Para mostrar toda la sustentación (dentro del pdf) que usted escriba, debe incluir las etiquetas de los Diagnósticos CIE-10 y de Origen dentro de la sección Sustentación.
+                                                <?php elseif(!empty($info_pronuncia[0]->Decision) && $info_pronuncia[0]->Decision=='Desacuerdo'):?>
+                                                    Para mostrar toda la sustentación (dentro del word) que usted escriba, debe incluir la etiqueta de los Diagnósticos CIE-10 dentro de la sección Sustentación.
+                                                <?php endif?>
+                                            </span>
+                                        </div>
                                         <div class="form-group">
                                             <label for="sustenta_cali">Sustentación<span style="color: red;">(*)</span></label>
                                             <br>
