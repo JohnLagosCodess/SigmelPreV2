@@ -2013,7 +2013,7 @@ $(document).ready(function(){
         })
     });
 
-    // Captura Formulario PDF Notificación DML ORIGEN
+    // Captura Formulario PDF Notificación DML ORIGEN (OFICIO)
     $("form[id^='Form_noti_dml_origen_pdf_']").submit(function (e){
         e.preventDefault();              
        
@@ -2079,7 +2079,7 @@ $(document).ready(function(){
                 var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
         
                 // Crear un enlace de descarga similar al ejemplo anterior
-                var nombre_pdf = "ORI_DML_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".pdf";
+                var nombre_pdf = "ORI_OFICIO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".pdf";
                 var link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
                 link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
@@ -2098,7 +2098,7 @@ $(document).ready(function(){
         });
     });
     
-    // Captura Formulario PDF DML ORIGEN ATEL
+    // Captura Formulario PDF DML ORIGEN ATEL (DICTAMEN)
     $("form[id^='Form_dml_origen_pdf_']").submit(function (e){
         e.preventDefault();              
        
@@ -2153,7 +2153,7 @@ $(document).ready(function(){
                 var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
         
                 // Crear un enlace de descarga similar al ejemplo anterior
-                var nombre_pdf = "ORI_OFICIO_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
                 var link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
                 link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
@@ -2164,98 +2164,6 @@ $(document).ready(function(){
         
                 // Eliminar el enlace del documento
                 document.body.removeChild(link);
-            },
-            error: function (error) {
-                // Manejar casos de error
-                console.error('Error al descargar el PDF:', error);
-            }       
-        });
-    });
-
-
-    // Captura Formulario PDF Notificación del DML previsional 
-    $("#btn_insertar_nombre_afiliado").click(function(e){
-        e.preventDefault();
-
-        var etiqueta = "{{$nombre_afiliado}}";
-        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta);
-    });
-
-    $("#btn_insertar_origen_evento").click(function(e){
-        e.preventDefault();
-
-        var etiqueta = "{{$origen_evento}}";
-        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta);
-    });
-
-    $("form[id^='Form_noti_dml_previsional_']").submit(function (e){
-        e.preventDefault();              
-       
-        var tupla_comunicado = $(this).data("tupla_comunicado");
-
-        // Captura de variables del formulario
-        var id_tupla_comunicado = $("#id_tupla_comunicado_"+tupla_comunicado).val();
-        var ciudad = $("#ciudad_"+tupla_comunicado).val();
-        var fecha = $("#fecha_"+tupla_comunicado).val();
-        var asunto = $("#asunto_proforma_dml_"+tupla_comunicado).val();
-        var cuerpo = $("#cuerpo_comunicado").val();
-        var tipo_identificacion = $("#tipo_identificacion_"+tupla_comunicado).val();
-        var num_identificacion = $("#num_identificacion_"+tupla_comunicado).val();
-        var nro_siniestro = $("#nro_siniestro_"+tupla_comunicado).val();
-        var nombre_afiliado = $("#nombre_afiliado_"+tupla_comunicado).val();
-        var Id_Asignacion_consulta = $("#Id_Asignacion_consulta_"+tupla_comunicado).val();
-        var Id_Proceso_consulta = $("#Id_Proceso_consulta_"+tupla_comunicado).val();
-        var Id_cliente_firma = $('#Id_cliente_firma_'+tupla_comunicado).val();
-        //checkbox de Copias de partes interesadas
-        var copia_empleador = $('#empleador').filter(":checked").val();
-        var copia_eps = $('#eps').filter(":checked").val();
-        var copia_afp = $('#afp').filter(":checked").val();
-        var copia_arl = $('#arl').filter(":checked").val();
-        var firmar = $('#firmar').filter(":checked").val();
-
-        datos_pdf_noti_dml_previsional = {
-            '_token': token, 
-            'id_tupla_comunicado': id_tupla_comunicado,
-            'ciudad': ciudad,
-            'fecha': fecha,
-            'asunto': asunto,
-            'cuerpo': cuerpo,
-            'tipo_identificacion': tipo_identificacion,
-            'num_identificacion': num_identificacion,
-            'nro_siniestro': nro_siniestro,
-            'nombre_afiliado': nombre_afiliado,
-            'Id_Asignacion_consulta': Id_Asignacion_consulta,
-            'Id_Proceso_consulta': Id_Proceso_consulta,
-            'Id_cliente_firma': Id_cliente_firma,
-            'copia_empleador': copia_empleador,
-            'copia_eps': copia_eps,
-            'copia_afp': copia_afp,
-            'copia_arl': copia_arl,
-            'firmar': firmar
-        };
-        
-        $.ajax({    
-            type:'POST',
-            url:'/DescargaProformaNotiDMLPrev',
-            data: datos_pdf_noti_dml_previsional,
-            xhrFields: {
-                responseType: 'blob' // Indica que la respuesta es un blob
-            },
-            success: function (response, status, xhr) {
-                // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-        
-                // // Crear un enlace de descarga similar al ejemplo anterior
-                // var nombre_pdf = "ORI_DML_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".pdf";
-                // var link = document.createElement('a');
-                // link.href = window.URL.createObjectURL(blob);
-                // link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
-        
-                // // Adjuntar el enlace al documento y activar el evento de clic
-                // document.body.appendChild(link);
-                // link.click();
-        
-                // // Eliminar el enlace del documento
-                // document.body.removeChild(link);
             },
             error: function (error) {
                 // Manejar casos de error

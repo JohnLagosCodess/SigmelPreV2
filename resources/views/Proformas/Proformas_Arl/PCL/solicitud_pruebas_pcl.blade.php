@@ -73,13 +73,12 @@
 
         .tabla1{
             width: 100%;
-            /* text-align: justify;
-            margin-left: auto;
-            margin-right: auto; */
+            margin-left: -3.5px;
         }
         
         .tabla2{
             width: 100%;
+            margin-left: -3.5px;
         }
 
         section{
@@ -92,6 +91,7 @@
         }
 
         .content{
+            margin-top: -0.5cm;
             margin-left: 0.5cm;
             margin-right: 0.5cm;
         }
@@ -115,17 +115,17 @@
         <table class="tabla_footer">
             <tbody>
                 <tr>
-                    <td colspan="2" class="color_letras_alfa">Seguros Alfa S.A. y Seguros de Vida Alfa S.A.</td>
+                    <td colspan="2" class="color_letras_alfa1">{{$footer_dato_1}}</td>
                 </tr>
                 <tr>
-                    <td class="color_letras_alfa">Líneas de atención al cliente</td>
-                    <td style="text-align: right;" class="color_letras_alfa">www.segurosalfa.com.co</td>
+                    <td class="color_letras_alfa1">{{$footer_dato_2}}</td>
+                    <td style="text-align: right;" class="color_letras_alfa1">{{$footer_dato_3}}</td>
                 </tr>
                 <tr>
-                    <td colspan="2">Bogotá: 3077032, a nivel nacional: 018000122532</td>
+                    <td colspan="2">{{$footer_dato_4}}</td>
                 </tr>
                 <tr>
-                    <td colspan="2">habilitadas en jornada continua de lunes a viernes de 8:00 a.m. a 6:00 p.m.</td>
+                    <td colspan="2">{{$footer_dato_5}}</td>
                 </tr>
                 <tr>
                     <td style="text-align: center;" colspan="2"><p class="page">Página </p></td>
@@ -142,33 +142,21 @@
         <img src="data:image/png;base64,{{ $imagenBase64_footer }}" class="logo_footer">
     </div>
     <div class="content">
-        <table class="tabla2">
+        <p class="fuente_todo_texto">{{$ciudad}}, {{$fecha}}</p>
+        <table class="tabla2">            
             <tbody>
                 <tr>
                     <td>
-                        <p class="fuente_todo_texto">{{$ciudad}}, {{$fecha}}</p>
-                        <p class="fuente_todo_texto" style="margin-top: 50px;"><span class="negrita">Señor (a):</span>
-                            <br>
-                            {{$nombre}}
-                        </p>
-                        <p class="fuente_todo_texto"><span class="negrita">Dirección:</span>
-                            <br>
-                            {{$direccion}}
-                        </p>
-                        <p class="fuente_todo_texto"><span class="negrita">Teléfono:</span>
-                            <br>
-                            {{$telefono}}
-                        </p>
-                        <p class="fuente_todo_texto"><span class="negrita">Ciudad:</span>
-                            <br>
-                            {{$municipio}} - {{$departamento}}
-                        </p>
+                        <span class="fuente_todo_texto"><span class="negrita">Señor(a): </span>{{$nombre}}</span><br>
+                        <span class="fuente_todo_texto"><span class="negrita">Dirección: </span>{{$direccion}}</span><br>
+                        <span class="fuente_todo_texto"><span class="negrita">Teléfono: </span>{{$telefono}}</span><br>
+                        <span class="fuente_todo_texto"><span class="negrita">Ciudad: </span>{{$municipio}} - {{$departamento}}</span>
                     </td>
                     <td>
                         <div class="cuadro">
-                            <p class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$nro_radicado}}</span></p>
-                            <p class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></p>
-                            <p class="fuente_todo_texto"><span class="negrita">Siniestro: {{$nro_siniestro}}</span></p>
+                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$nro_radicado}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$nro_siniestro}}</span></span><br>
                         </div>
                     </td>
                 </tr>
@@ -177,11 +165,10 @@
         <table class="tabla1">
             <tbody>
                 <tr>
-                    <td>
-                        <p class="fuente_todo_texto"><span class="negrita">Asunto: {{$asunto}}</span>
-                        </p>
-                        <p class="fuente_todo_texto"><span class="negrita">Identificación: </span>{{$num_identificacion}}</p>
-                        <p class="fuente_todo_texto"><span class="negrita">Fecha del Siniestro: </span>{{$fecha_evento}}</p>
+                    <td class="fuente_todo_texto">
+                        <span class="negrita">Asunto: {{$asunto}}</span><br>                        
+                        <span class="negrita">Identificación: </span>{{$num_identificacion}}<br>
+                        <span class="negrita">Fecha del Siniestro: </span>{{$fecha_evento}}<br>
                     </td>
                 </tr>
             </tbody>
@@ -198,10 +185,8 @@
                 print_r($cuerpo);
             ?>
         </section>
-        <br>
         <section class="fuente_todo_texto">
             Cordialmente,
-            <br><br>
             <div class="firma">
                 <?=$Firma_cliente?>
             </div>
@@ -214,8 +199,7 @@
         <br>
         <section class="fuente_todo_texto">
             <span class="negrita">Elboró:</span> {{$nombre_usuario}}
-            <br><br>
-            <table style="text-align: justify; width:100%;">
+            <table class="tabla1" style="text-align: justify; width:100%;">
                 @if (count($Agregar_copia) == 0)
                     <tr>
                         <td><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
@@ -284,13 +268,12 @@
                 @endif
             </table>
         </section>
-        <section class="fuente_todo_texto" style="color: #828282;">
-            <br>
+        <p class="fuente_todo_texto" style="color: #828282;">
             “Finalmente, reiteramos que en nuestra Compañía contamos con la mejor disposición para atender sus quejas y
             reclamos a través del defensor consumidor financiero, en la Av. Calle 26 No 59-15, local 6 y 7. Conmutador:
             7435333 Extensión: 14454, Fax Ext. 14456 o Correo Electrónico:
             defensor del consumidor financiero@segurosdevidaalfa.com.co”.
-        </section>
+        </p>
     </div>
 </body>
 </html>

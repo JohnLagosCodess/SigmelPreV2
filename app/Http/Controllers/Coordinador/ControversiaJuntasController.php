@@ -1873,25 +1873,12 @@ class ControversiaJuntasController extends Controller
         $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
             <tr>
                 <td>
-                    <p><b>Señores:</b>
-                        <br>'.
-                        $nombre_junta_regional.'</br>
-                    </p>
-                    <p><b>Dirección:</b>
-                        <br>'.
-                        $direccion_junta.'</br>
-                    </p>
-                    <p><b>Teléfono:</b>
-                        <br>'.
-                        $telefono_junta.'</br>
-                    </p>
-                    <p><b>Ciudad:</b>
-                        <br>'.
-                        $ciudad_junta.' - '.$departamento_junta.'</br>
-                    </p>
+                    <p><b>Señores: </b>'.$nombre_junta_regional.'</p>
+                    <p><b>Dirección: </b>'.$direccion_junta.'</p>
+                    <p><b>Teléfono: </b>'.$telefono_junta.'</p>
+                    <p><b>Ciudad: </b>'.$ciudad_junta.' - '.$departamento_junta.'</p>
                 </td>
                 <td>
-                    <br></br>
                     <table style="width: 60%; border: 3px black solid;">
                         <tr>
                             <td>
