@@ -1693,18 +1693,4 @@ class DeterminacionOrigenATEL extends Controller
 
     }
 
-    // Descarga proforma Notificación del DML previsional
-    public function DescargaProformaNotiDMLPrev(Request $request){
-
-        if(!Auth::check()){
-            return redirect('/');
-        }
-        
-        $user= Auth::user();
-        $time = time();
-        $date = date("Y-m-d", $time);
-
-        $nombre_usuario = Auth::user()->name;
-    }
-
 }
