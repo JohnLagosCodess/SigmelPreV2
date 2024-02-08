@@ -28,7 +28,7 @@
             font-weight: bold;
             left: 15px; 
             max-width: 540px; 
-            font-size: 15px;            
+            font-size: 13px;            
             color: black;
             text-align: center !important;
         }
@@ -206,6 +206,12 @@
     </style>    
 </head>
 <body>
+    <?php
+        $Fecha_dictamenF = date("d-m-Y", strtotime($Fecha_dictamen));
+        $F_nacimiento_per_calF = date("d-m-Y", strtotime($F_nacimiento_per_cal));
+        $F_estructuracion_dpF = date("d-m-Y", strtotime($F_estructuracion_dp));
+        $F_evento_dpF = date("d-m-Y", strtotime($F_evento_dp));
+    ?>
     <div id="header">
         <table class="tabla_header">
             <tbody>
@@ -258,7 +264,7 @@
             </tr>
             <tr>
                 <td colspan="4" class="titulo_labels">Fecha dictamen:</td>  
-                <td colspan="5" class="dato_dinamico">{{$Fecha_dictamen}}</td>
+                <td colspan="5" class="dato_dinamico">{{$Fecha_dictamenF}}</td>
                 <td colspan="3" class="titulo_labels">Dictamen No</td>
                 <td colspan="5" class="dato_dinamico">{{$DictamenNo}}</td>
             </tr>
@@ -326,7 +332,7 @@
             </tr>
             <tr>                
                 <td colspan="4" class="titulo_labels">Fecha nacimiento:</td>
-                <td colspan="5" class="dato_dinamico">{{$F_nacimiento_per_cal}}</td>
+                <td colspan="5" class="dato_dinamico">{{$F_nacimiento_per_calF}}</td>
                 <td colspan="3" class="titulo_labels">Edad:</td>
                 <td colspan="5" class="dato_dinamico">{{$Edad_per_cal}}</td>
             </tr>
@@ -460,7 +466,7 @@
             @if (count($array_datos_relacion_examentes) > 0)
                 @foreach ($array_datos_relacion_examentes as $examenes_interconsultas)
                     <tr>
-                        <td colspan="2" class="dato_dinamico"><?php echo $examenes_interconsultas->F_examen_interconsulta?></td>
+                        <td colspan="2" class="dato_dinamico"><?php echo date('d/m/Y', strtotime($examenes_interconsultas->F_examen_interconsulta))?></td>
                         <td colspan="4" class="dato_dinamico"><?php echo $examenes_interconsultas->Nombre_examen_interconsulta?></td>
                         <td colspan="11" class="dato_dinamico"><?php echo $examenes_interconsultas->Descripcion_resultado?></td>
                     </tr>                
@@ -556,7 +562,7 @@
             @else
                 <tr>
                     <td colspan="1" class="centrar_dato_dinamico"></td>
-                    <td colspan="4" class="dato_dinamico"></td>
+                    <td colspan="3" class="dato_dinamico"></td>
                     <td colspan="1" class="centrar_dato_dinamico"></td>
                     <td colspan="1" class="centrar_dato_dinamico"></td>
                     <td colspan="1" class="centrar_dato_dinamico"></td>
@@ -566,7 +572,7 @@
                     <td colspan="2" class="centrar_dato_dinamico"></td>
                     <td colspan="1" class="centrar_dato_dinamico"></td>
                     <td colspan="1" class="centrar_dato_dinamico"></td>
-                    <td colspan="2" class="centrar_dato_dinamico"></td>
+                    <td colspan="1" class="centrar_dato_dinamico"></td>
                     <td colspan="2" class="centrar_dato_dinamico"></td>
                 </tr>
          
@@ -618,14 +624,14 @@
             </tr>
             <tr>
                 <td colspan="5" class="titulo_labels">FECHA DE ESTRUCTURACIÓN</td>
-                <td colspan="4" class="dato_dinamico"> {{$F_estructuracion_dp}}</td>
+                <td colspan="4" class="dato_dinamico"> {{$F_estructuracion_dpF}}</td>
                 <td colspan="3" class="titulo_labels">TIPO DE EVENTO</td>
                 <td colspan="5" class="dato_dinamico"> {{$Tipo_evento_dp}}</td>
             </tr>
             <tr>
                 <td colspan="9" class="titulo_labels">Sustentación de la Fecha de estructuración:</td>
                 <td colspan="3" class="titulo_labels">FECHA ACCIDENTE / ENFERMEDAD</td>
-                <td colspan="5" class="dato_dinamico"> {{$F_evento_dp}}</td>
+                <td colspan="5" class="dato_dinamico"> {{$F_evento_dpF}}</td>
             </tr>
             <tr>
                 <td colspan="9" class="dato_dinamico">{{$Sustentacion_F_estructuracion_dp}}</td>

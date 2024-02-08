@@ -107,6 +107,12 @@
     </style>
 </head>
 <body>
+    <?php 
+        $fecha_dictamenF = date("d-m-Y", strtotime($fecha_dictamen));
+        $f_nacimiento_calificadoF = date("d-m-Y", strtotime($f_nacimiento_calificado));
+        $fecha_eventoF = date("d-m-Y", strtotime($fecha_evento));
+        $fecha_fallecimientoF = date("d-m-Y", strtotime($fecha_fallecimiento));    
+    ?>
     <div id="header">
         <img src="data:image/png;base64,{{ base64_encode($codigoQR) }}" class="codigo_qr" alt="Código QR">
         <?php if($logo_header == "Sin logo"): ?>
@@ -144,7 +150,7 @@
                 </tr>
                 <tr>
                     <td colspan="2" class="titulo_labels">Fecha dictamen:</td>
-                    <td colspan="2" class="dato_dinamico">{{$fecha_dictamen}}</td>
+                    <td colspan="2" class="dato_dinamico">{{$fecha_dictamenF}}</td>
                     <td colspan="2" class="titulo_labels">Dictamen No</td>
                     <td colspan="2" class="dato_dinamico">{{$nro_dictamen}}</td>
                 </tr>
@@ -208,7 +214,7 @@
                     <td colspan="1" class="titulo_labels">No. Identificación:</td>
                     <td colspan="1" class="dato_dinamico">{{$nro_ident_calificado}}</td>
                     <td colspan="1" class="titulo_labels">Fecha nacimiento:</td>
-                    <td colspan="1" class="dato_dinamico">{{$f_nacimiento_calificado}}</td>
+                    <td colspan="1" class="dato_dinamico">{{$f_nacimiento_calificadoF}}</td>
                     <td colspan="1" class="titulo_labels">Edad:</td>
                     <td colspan="1" class="dato_dinamico">{{$edad_calificado}}</td>
                 </tr>
@@ -259,7 +265,7 @@
                 </tr>
                 <tr>
                     <td colspan="2" class="titulo_labels">Fecha del evento:</td>
-                    <td colspan="2" class="dato_dinamico">{{$fecha_evento}}</td>
+                    <td colspan="2" class="dato_dinamico">{{$fecha_eventoF}}</td>
                     <td colspan="2" class="titulo_labels">Hora del evento (24hh:mm):</td>
                     <td colspan="2" class="dato_dinamico">{{$hora_evento}}</td>
                 </tr>
@@ -277,7 +283,7 @@
                 </tr>
                 @foreach ($documentos_relacionados as $documento)
                     <tr>
-                        <td colspan="2" class="dato_dinamico">{{$documento['fecha']}}</td>
+                        <td colspan="2" class="dato_dinamico">{{date('d/m/Y', strtotime($documento['fecha']))}}</td>
                         <td colspan="2" class="dato_dinamico">{{$documento['nombre']}}</td>
                         <td colspan="4" class="dato_dinamico">{{$documento['descripcion']}}</td>
                     </tr>
@@ -310,7 +316,7 @@
                     <td colspan="1" class="titulo_labels">Mortal:</td>
                     <td colspan="1" class="dato_dinamico">{{$mortal}}</td>
                     <td colspan="1" class="titulo_labels">Fecha de fallecimiento:</td>
-                    <td colspan="2" class="dato_dinamico">{{$fecha_fallecimiento}}</td>
+                    <td colspan="2" class="dato_dinamico">{{$fecha_fallecimientoF}}</td>
                 </tr>
                 <tr>
                     <td colspan="1" class="titulo_labels">Origen:</td>
