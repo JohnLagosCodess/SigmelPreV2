@@ -2013,7 +2013,7 @@ $(document).ready(function(){
         })
     });
 
-    // Captura Formulario PDF Notificación DML ORIGEN
+    // Captura Formulario PDF Notificación DML ORIGEN (OFICIO)
     $("form[id^='Form_noti_dml_origen_pdf_']").submit(function (e){
         e.preventDefault();              
        
@@ -2079,7 +2079,7 @@ $(document).ready(function(){
                 var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
         
                 // Crear un enlace de descarga similar al ejemplo anterior
-                var nombre_pdf = "ORI_DML_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".pdf";
+                var nombre_pdf = "ORI_OFICIO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".pdf";
                 var link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
                 link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
@@ -2098,7 +2098,7 @@ $(document).ready(function(){
         });
     });
     
-    // Captura Formulario PDF DML ORIGEN ATEL
+    // Captura Formulario PDF DML ORIGEN ATEL (DICTAMEN)
     $("form[id^='Form_dml_origen_pdf_']").submit(function (e){
         e.preventDefault();              
        
@@ -2153,7 +2153,7 @@ $(document).ready(function(){
                 var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
         
                 // Crear un enlace de descarga similar al ejemplo anterior
-                var nombre_pdf = "ORI_OFICIO_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
                 var link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
                 link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF

@@ -72,13 +72,12 @@
 
         .tabla1{
             width: 80%;
-            /* text-align: justify;
-            margin-left: auto;
-            margin-right: auto; */
+            margin-left: -3.5px;
         }
         
         .tabla2{
             width: 100%;
+            margin-left: -3.5px;
         }
 
         section{
@@ -91,7 +90,7 @@
         }
 
         .content{
-            margin-top: -0.3cm;
+            margin-top: -0.5cm;
             margin-left: 0.5cm;
             margin-right: 0.5cm;
         }
@@ -170,33 +169,21 @@
         {{-- @for ($i=0; $i<50; $i++)
             <div class="hijo">{{$i}}</div>
         @endfor --}}
+        <p class="fuente_todo_texto">{{$ciudad}}, {{$fecha}}</p>
         <table class="tabla2">
             <tbody>
                 <tr>
                     <td>
-                        <p class="fuente_todo_texto">{{$ciudad}}, {{$fecha}}</p>
-                        <p class="fuente_todo_texto" style="margin-top: 50px;"><span class="negrita">Señor (a):</span>
-                            <br>
-                            {{$nombre_afiliado}}
-                        </p>
-                        <p class="fuente_todo_texto"><span class="negrita">Dirección:</span>
-                            <br>
-                            {{$direccion_afiliado}}
-                        </p>
-                        <p class="fuente_todo_texto"><span class="negrita">Teléfono:</span>
-                            <br>
-                            {{$telefonos_afiliado}}
-                        </p>
-                        <p class="fuente_todo_texto"><span class="negrita">Ciudad:</span>
-                            <br>
-                            {{$municipio_afiliado}} - {{$departamento_afiliado}}
-                        </p>
+                        <span class="fuente_todo_texto"><span class="negrita">Señor(a): </span>{{$nombre_afiliado}}</span><br>
+                        <span class="fuente_todo_texto"><span class="negrita">Dirección: </span>{{$direccion_afiliado}}</span><br>
+                        <span class="fuente_todo_texto"><span class="negrita">Teléfono: </span>{{$telefonos_afiliado}}</span><br>
+                        <span class="fuente_todo_texto"><span class="negrita">Ciudad: </span>{{$municipio_afiliado}} - {{$departamento_afiliado}}</span>
                     </td>
                     <td>
                         <div class="cuadro">
-                            <p class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$nro_radicado}}</span></p>
-                            <p class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></p>
-                            <p class="fuente_todo_texto"><span class="negrita">Siniestro: {{$nro_siniestro}}</span></p>
+                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$nro_radicado}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$nro_siniestro}}</span></span><br>
                         </div>
                     </td>
                 </tr>
@@ -206,10 +193,9 @@
             <tbody>
                 <tr>
                     <td>
-                        <p class="fuente_todo_texto"><span class="negrita">Asunto: {{$asunto}}</span>
-                        </p>
-                        <p class="fuente_todo_texto"><span class="negrita">Identificación: </span>{{$identificacion}}</p>
-                        <p class="fuente_todo_texto"><span class="negrita">Fecha del Siniestro: </span>{{$fecha_evento}}</p>
+                        <span class="fuente_todo_texto"><span class="negrita">Asunto: </span>{{$asunto}}</span><br>
+                        <span class="fuente_todo_texto"><span class="negrita">Identificación: </span>{{$identificacion}}</span><br>
+                        <span class="fuente_todo_texto"><span class="negrita">Fecha del Siniestro: </span>{{$fecha_evento}}</span><br>
                     </td>
                 </tr>
             </tbody>
@@ -230,10 +216,8 @@
                 print_r($cuerpo);
             ?>
         </section>
-        {{-- <br> --}}
         <section class="fuente_todo_texto">
             Cordialmente,
-            <br><br>
             <div class="firma">
                 <?=$Firma_cliente?>
             </div>
@@ -246,8 +230,7 @@
         <br>
         <section class="fuente_todo_texto">
             <span class="negrita">Elboró:</span> {{$nombre_usuario}}
-            <br><br>
-            <table style="text-align: justify; width:100%;">
+            <table style="text-align: justify; width:100%; margin-left: -3px;">
                 @if (count($Agregar_copia) == 0)
                     <tr>
                         <td><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
@@ -317,7 +300,6 @@
             </table>
         </section>
         <section class="fuente_todo_texto" style="color: #828282;">
-            <br>
             “Finalmente, reiteramos que en nuestra Compañía contamos con la mejor disposición para atender sus quejas y
             reclamos a través del defensor consumidor financiero, en la Av. Calle 26 No 59-15, local 6 y 7. Conmutador:
             7435333 Extensión: 14454, Fax Ext. 14456 o Correo Electrónico:

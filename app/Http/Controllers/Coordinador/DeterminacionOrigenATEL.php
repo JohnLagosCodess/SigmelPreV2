@@ -1107,7 +1107,7 @@ class DeterminacionOrigenATEL extends Controller
 
     }
     
-    // Descarga proforma NOTIFICACION DML ORIGEN ATEL
+    // Descarga proforma NOTIFICACION DML ORIGEN ATEL (OFICIO)
     public function DescargaProformaNotiDML(Request $request){
         if(!Auth::check()){
             return redirect('/');
@@ -1380,7 +1380,7 @@ class DeterminacionOrigenATEL extends Controller
         $pdf = app('dompdf.wrapper');
         $pdf->loadView('/Proformas/Proformas_Arl/Origen_Atel/notificacion_dml_origen', $datos_finales_noti_dml_origen);
         
-        $nombre_pdf = "ORI_DML_{$Id_Asignacion_consulta_dx}_{$num_identificacion}.pdf";
+        $nombre_pdf = "ORI_OFICIO_{$Id_Asignacion_consulta_dx}_{$num_identificacion}.pdf";
 
         //Obtener el contenido del PDF
         $output = $pdf->output();
@@ -1681,7 +1681,7 @@ class DeterminacionOrigenATEL extends Controller
         $pdf = app('dompdf.wrapper');
         $pdf->loadView('/Proformas/Proformas_Arl/Origen_Atel/dml_origen_atel', $datos_finales_dml_origen);
 
-        $nombre_pdf = "ORI_OFICIO_{$Id_Asignacion}_{$nro_ident_calificado}.pdf";
+        $nombre_pdf = "ORI_DML_{$Id_Asignacion}_{$nro_ident_calificado}.pdf";
 
         //Obtener el contenido del PDF
         $output = $pdf->output();

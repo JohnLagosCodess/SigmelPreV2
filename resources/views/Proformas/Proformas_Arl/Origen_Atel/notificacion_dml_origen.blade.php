@@ -66,18 +66,17 @@
         }
         .tabla1{
             width: 80%;
-            /* text-align: justify;
-            margin-left: auto;
-            margin-right: auto; */
+            margin-left: -3.5px;
         }
         .tabla2{
             width: 100%;
+            margin-left: -3.5px;
         }
         section{
             text-align: justify;
         }
         .container{
-            margin-top: -0.3cm;
+            margin-top: -0.5cm;
             margin-left: 1.5cm;
             margin-right: 1.5cm;
         }
@@ -165,90 +164,43 @@
         {{-- @for ($i=0; $i<40; $i++)
             <div class="hijo">{{$i}}</div>
         @endfor --}}
+        <p class="fuente_todo_texto">{{$ciudad}}, {{$fecha}}</p>
         <table class="tabla2">
             <tbody>
                 <tr>
                     <td>
-                        <p class="fuente_todo_texto">{{$ciudad}}, {{$fecha}}</p>
-                        <p class="fuente_todo_texto" style="margin-top: 50px;"><span class="negrita">Señor (a):</span>
-                            <br>
-                            {{$nombre_afiliado}}
-                        </p>
-                        {{-- <p class="fuente_todo_texto"><span class="negrita">Correo:</span>
-                            <br>
-                            {{$correo_afiliado}}
-                        </p> --}}
-                        <p class="fuente_todo_texto"><span class="negrita">Dirección:</span>
-                            <br>
-                            {{$direccion_afiliado}}
-                        </p>
-                        <p class="fuente_todo_texto"><span class="negrita">Teléfono:</span>
-                            <br>
-                            {{$telefonos_afiliado}}
-                        </p>
-                        <p class="fuente_todo_texto"><span class="negrita">Ciudad:</span>
-                            <br>
-                            {{$municipio_afiliado}} - {{$departamento_afiliado}}
-                        </p>
+                        <span class="fuente_todo_texto"><span class="negrita">Señor(a): </span>{{$nombre_afiliado}}</span><br>
+                        <span class="fuente_todo_texto"><span class="negrita">Dirección: </span>{{$direccion_afiliado}}</span><br>
+                        <span class="fuente_todo_texto"><span class="negrita">Teléfono: </span>{{$telefonos_afiliado}}</span><br>
+                        <span class="fuente_todo_texto"><span class="negrita">Ciudad: </span>{{$municipio_afiliado}} - {{$departamento_afiliado}}</span>
                     </td>
                     <td>
                         <div class="cuadro">
-                            <p class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$nro_radicado}}</span></p>
-                            <p class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></p>
-                            <p class="fuente_todo_texto"><span class="negrita">Siniestro: {{$nro_siniestro}}</span></p>
+                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$nro_radicado}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$nro_siniestro}}</span></span><br>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
-        {{-- <br> --}}
-        {{-- <table class="tabla1">
-            <tbody >
-                <tr>
-                    <td class="fuente_todo_texto"><span class="negrita">Asunto:</span></td>
-                    <td class="fuente_todo_texto"><span class="negrita">{{$asunto}}</span></td>
-                </tr>
-                <tr>
-                    <td class="fuente_todo_texto"><span class="negrita">Identificación:</span></td>
-                    <td class="fuente_todo_texto">{{$identificacion}}</td>
-                </tr>
-                <tr>
-                    <td class="fuente_todo_texto"><span class="negrita">Fecha del Siniestro:</span></td>
-                    <td class="fuente_todo_texto">{{$fecha_evento}}</td>
-                </tr>
-            </tbody>
-        </table> --}}
         <table class="tabla1">
             <tbody>
                 <tr>
                     <td>
-                        <p class="fuente_todo_texto"><span class="negrita">Asunto: {{$asunto}}</span>
-                        </p>
-                        <p class="fuente_todo_texto"><span class="negrita">Identificación: </span>{{$identificacion}}</p>
-                        <p class="fuente_todo_texto"><span class="negrita">Fecha del Siniestro: </span>{{$fecha_evento}}</p>
+                        <span class="fuente_todo_texto"><span class="negrita">Asunto: </span>{{$asunto}}</span><br>
+                        <span class="fuente_todo_texto"><span class="negrita">Identificación: </span>{{$identificacion}}</span><br>
+                        <span class="fuente_todo_texto"><span class="negrita">Fecha del Siniestro: </span>{{$fecha_evento}}</span><br>
                     </td>
                 </tr>
             </tbody>
         </table>
-        {{-- <br> --}}
         <section class="fuente_todo_texto">
-            {{-- Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.
-            <br><br>
-            De la manera más atenta queremos informar el resultado de la calificación realizada por el Grupo Interdisciplinario de Calificación de Origen y
-            Pérdida de la Capacidad Laboral adscrito a la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A, 
-            según lo dispuesto en los Artículo 142 del Decreto 0019 de 2012, ha determinado que el evento reportado ante esta Administradora, con las patologías. --}}
-            {{-- {{$cuerpo}} --}}
-            {{-- <br> --}}
-            {{-- <ul>
-                @foreach($diagnosticos_cie10 as $diagnostico)
-                    <li>{{ $diagnostico }}</li>
-                @endforeach
-            </ul> --}}
             <?php 
                 $patron = '/\{\{\$diagnosticos_cie10\}\}/'; 
                 if (preg_match($patron, $cuerpo)) {
 
-                    $lista_diagnosticos = '<ul>'.PHP_EOL;
+                    $lista_diagnosticos = '<ul style="margin-top: -10px;">'.PHP_EOL;
                     foreach ($diagnosticos_cie10 as $diagnostico) {
                         $lista_diagnosticos .= '<li>'.$diagnostico.'</li>'.PHP_EOL;
                     }
@@ -262,18 +214,8 @@
                 print_r($cuerpo);
             ?>
         </section>
-        {{-- <section class="fuente_todo_texto">
-            El dictamen de calificación del que anexó copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, de acuerdo al Decreto 0019 de 2012 artículo 142, en la Carrera 10 Nº 18 - 36 piso 4°, 
-            Edificio José María Córdoba, Bogotá D.C. Favor informar en la carta el motivo de su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen.
-            <br><br>
-        </section>
-        <section class="fuente_todo_texto">
-            Cualquier información adicional con gusto será atendida por el Auditor Técnico en el teléfono 7435333 Ext. 14626 en Bogotá.
-        </section> --}}
-        {{-- <br> --}}
         <section class="fuente_todo_texto">
             Cordialmente,
-            <br><br>
             <div class="firma">
                 <?=$Firma_cliente?>
             </div>
@@ -286,8 +228,7 @@
         <br>
         <section class="fuente_todo_texto">
             <span class="negrita">Elboró:</span> {{$nombre_usuario}}
-            <br><br>
-            <table style="text-align: justify; width:100%;">
+            <table style="text-align: justify; width:100%; margin-left: -3px;">
                 @if (count($Agregar_copia) == 0)
                     <tr>
                         <td><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
@@ -347,7 +288,6 @@
             </table>
         </section>
         <section class="fuente_todo_texto" style="color: #828282;">
-            <br>
             “Finalmente, reiteramos que en nuestra Compañía contamos con la mejor disposición para atender sus quejas y
             reclamos a través del defensor consumidor financiero, en la Av. Calle 26 No 59-15, local 6 y 7. Conmutador:
             7435333 Extensión: 14454, Fax Ext. 14456 o Correo Electrónico:

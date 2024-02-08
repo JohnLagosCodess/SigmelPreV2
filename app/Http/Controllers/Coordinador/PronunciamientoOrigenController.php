@@ -987,25 +987,12 @@ class PronunciamientoOrigenController extends Controller
             $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
                 <tr>
                     <td>
-                        <p><b>Señores:</b>
-                            <br>'.
-                            $nombre_entidad.'</br>
-                        </p>
-                        <p><b>Dirección:</b>
-                            <br>'.
-                            $direccion_entidad.'</br>
-                        </p>
-                        <p><b>Teléfono:</b>
-                            <br>'.
-                            $telefono_entidad.'</br>
-                        </p>
-                        <p><b>Ciudad:</b>
-                            <br>'.
-                            $ciudad_entidad.' - '.$departamento_entidad.'</br>
-                        </p>
+                        <p><b>Señores: </b>'.$nombre_entidad.'</p>
+                        <p style="margin-top: 1px;"><b>Dirección: </b>'.$direccion_entidad.'</p>
+                        <p><b>Teléfono: </b>'.$telefono_entidad.'</p>
+                        <p><b>Ciudad: </b>'.$ciudad_entidad.' - '.$departamento_entidad.'</p>
                     </td>
                     <td>
-                        <br></br>
                         <table style="width: 60%; border: 3px black solid;">
                             <tr>
                                 <td>
