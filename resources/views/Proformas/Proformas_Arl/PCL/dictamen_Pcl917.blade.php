@@ -27,7 +27,7 @@
             font-weight: bold;
             left: 15px; 
             max-width: 540px; 
-            font-size: 15px;            
+            font-size: 13px;            
             color: black;
             text-align: center !important;
         }
@@ -191,6 +191,12 @@
     </style>    
 </head>
 <body>
+    <?php 
+        $Fecha_dictamenF = date("d-m-Y", strtotime($Fecha_dictamen));
+        $F_nacimiento_per_calF = date("d-m-Y", strtotime($F_nacimiento_per_cal));
+        $F_estructuracion_dpF = date("d-m-Y", strtotime($F_estructuracion_dp));
+        $F_evento_dpF = date("d-m-Y", strtotime($F_evento_dp));
+    ?>
     <div id="header">
         <table class="tabla_header">
             <tbody>
@@ -243,7 +249,7 @@
             </tr>
             <tr>
                 <td colspan="4" class="titulo_labels">Fecha dictamen:</td>  
-                <td colspan="5" class="dato_dinamico">{{$Fecha_dictamen}}</td>
+                <td colspan="5" class="dato_dinamico">{{$Fecha_dictamenF}}</td>
                 <td colspan="3" class="titulo_labels">Dictamen No</td>
                 <td colspan="5" class="dato_dinamico">{{$DictamenNo}}</td>
             </tr>
@@ -295,7 +301,7 @@
             </tr>
             <tr>                
                 <td colspan="4" class="titulo_labels">Fecha nacimiento:</td>
-                <td colspan="5" class="dato_dinamico">{{$F_nacimiento_per_cal}}</td>
+                <td colspan="5" class="dato_dinamico">{{$F_nacimiento_per_calF}}</td>
                 <td colspan="3" class="titulo_labels">Edad:</td>
                 <td colspan="5" class="dato_dinamico">{{$Edad_per_cal}}</td>
             </tr>
@@ -374,7 +380,7 @@
             @if (count($array_datos_relacion_examentes) > 0)
                 @foreach ($array_datos_relacion_examentes as $examenes_interconsultas)
                     <tr>
-                        <td colspan="2" class="dato_dinamico"><?php echo $examenes_interconsultas->F_examen_interconsulta?></td>
+                        <td colspan="2" class="dato_dinamico"><?php echo date('d/m/Y', strtotime($examenes_interconsultas->F_examen_interconsulta))?></td>
                         <td colspan="4" class="dato_dinamico"><?php echo $examenes_interconsultas->Nombre_examen_interconsulta?></td>
                         <td colspan="11" class="dato_dinamico"><?php echo $examenes_interconsultas->Descripcion_resultado?></td>
                     </tr>                
@@ -387,7 +393,7 @@
                 </tr> 
             @endif
             <tr>
-                <td colspan="17" class="titulo_tablas">6. FUNDAMENTOS PARA LA CALIFICACIÓN DE LA PERDIDA DE LA CAPACIDAD LABORAL Y OCUPACIONAL - TITULOS I Y II</td>
+                <td colspan="17" class="titulo_tablas">6. FUNDAMENTOS PARA LA CALIFICACIÓN DE LA PERDIDA DE LA CAPACIDAD LABORAL Y OCUPACIONAL - LIBROS I, II Y III</td>
             </tr>
             <tr>
                 <td colspan="5" class="titulo_labels">Descripción de la enfermedad Actual:</td>
@@ -428,7 +434,7 @@
                 </tr> 
             @endif
             <tr>
-                <td colspan="17" class="titulo_tablas">Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores</td>
+                <td colspan="17"></td>
             </tr>            
             <tr>
                 <td colspan="1" class="centrar_titulo_labels">No.</td>
@@ -460,23 +466,23 @@
                 </tr>
          
             @endif                                                       
-            <tr>
+            {{-- <tr>
                 <td colspan="6" class="explicacionFB sinborder"><b>CFP:</b> Clase Factor principal</td>
                 <td colspan="6" class="explicacionFB sinborder"><b>CFM:</b> Clase Factor Modulador</td>
                 <td colspan="5" class="explicacionFB sinborder"><b>CFU:</b> Clase Factor único</td>
             </tr>
             <tr>
                 <td colspan="17" class="explicacionFB sinborder"><b>Formula Ajuste Total de Deficiencias por tabla:</b> (CFM1-CFP) + (CFM2-CFP) + (CFM3-CFP)</td>
-            </tr>
+            </tr> --}}
             <tr>
                 <td colspan="8" rowspan="1" class="explicacionFB sinborder"><b>Fórmula de Balthazar:</b> Obtiene el valor final de las deficiencias sin ponderar</td>
                 <td colspan="5" class="explicacionFB sinborder"><b>A +  (100 -  A) * B</b><br><hr style="border: 0.1px solid black;"><b>100</b></td>
                 <td colspan="4" class="explicacionFB sinborder">A: Deficiencia de mayor valor<br>B: Deficiencia de menor valor</td>
             </tr>          
             <tr>
-                <td colspan="7" class="right_dato_dinamico"><b>% Total Deficiencia (F. Balthazar, sin ponderar)</b></td>
-                <td colspan="1" class="centrar_dato_dinamico">{{$Suma_combinada_fc}}</td>
-                <td colspan="8" class="right_dato_dinamico"><b>CÁLCULO FINAL DE LA DEFICIENCIA PONDERADA (% Deficiencia sin ponderar X 0,5)</b>=</td>
+                {{-- <td colspan="7" class="right_dato_dinamico"><b>% Total Deficiencia (F. Balthazar, sin ponderar)</b></td>
+                <td colspan="1" class="centrar_dato_dinamico">{{$Suma_combinada_fc}}</td> --}}
+                <td colspan="16" class="right_dato_dinamico"><b>CÁLCULO FINAL DE DEFICIENCIA (50%)</b></td>
                 <td colspan="1" class="centrar_dato_dinamico">{{$Total_deficiencia50_fc}}</td>
             </tr>
             <tr>
@@ -1063,7 +1069,7 @@
                 <td colspan="17" class="titulo_tablas">7. CONCEPTO FINAL DEL DICTAMEN PERICIAL</td>
             </tr>
             <tr>
-                <td colspan="13" class="left_titulo_labels"><b>Pérdida de Capacidad Laboral =  LIBRO I -Deficiencias-Valor Final Ponderado  +   LIBRO II -Discapacidades-Valor Final + LIBRO III -Minusvalías-Valor Final</b></td>
+                <td colspan="13" class="left_titulo_labels"><b>Pérdida de Capacidad Laboral =  LIBRO I -Deficiencias-Valor Final + LIBRO II -Discapacidades-Valor Final + LIBRO III -Minusvalías-Valor Final</b></td>
                 <td colspan="4" class="centrar_dato_dinamico"><b>{{$Total_deficiencia50_fc}}% + <?php if (!empty($array_datos_libros23[0]->Total_discapacidad)) {echo $array_datos_libros23[0]->Total_discapacidad;}else{ echo '0.0';}?>% + <?php if (!empty($array_datos_libros23[0]->Total_minusvalia)) {echo $array_datos_libros23[0]->Total_minusvalia;}else{ echo '0.0';}?>%</b></td>
             </tr>
             <tr>
@@ -1075,14 +1081,14 @@
             </tr>
             <tr>
                 <td colspan="5" class="titulo_labels">FECHA DE ESTRUCTURACIÓN</td>
-                <td colspan="4" class="dato_dinamico"> {{$F_estructuracion_dp}}</td>
+                <td colspan="4" class="dato_dinamico"> {{$F_estructuracion_dpF}}</td>
                 <td colspan="3" class="titulo_labels">TIPO DE EVENTO</td>
                 <td colspan="5" class="dato_dinamico"> {{$Tipo_evento_dp}}</td>
             </tr>
             <tr>
                 <td colspan="9" class="titulo_labels">Sustentación de la Fecha de estructuración:</td>
                 <td colspan="3" class="titulo_labels">FECHA ACCIDENTE / ENFERMEDAD</td>
-                <td colspan="5" class="dato_dinamico"> {{$F_evento_dp}}</td>
+                <td colspan="5" class="dato_dinamico"> {{$F_evento_dpF}}</td>
             </tr>
             <tr>
                 <td colspan="9" class="dato_dinamico">{{$Sustentacion_F_estructuracion_dp}}</td>

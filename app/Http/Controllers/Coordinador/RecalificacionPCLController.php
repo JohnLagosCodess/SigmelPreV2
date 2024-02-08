@@ -5950,11 +5950,11 @@ class RecalificacionPCLController extends Controller
             if(count($firmaclientecompleta) > 0){
                 $Firma_cliente = $firmaclientecompleta[0]->Firma;
             }else{
-                $Firma_cliente = '';
+                $Firma_cliente = 'No firma';
             }
             
         }else{
-            $Firma_cliente = '';
+            $Firma_cliente = 'No firma';
         }
 
         // Captura de datos de informacion laboral
@@ -6773,11 +6773,11 @@ class RecalificacionPCLController extends Controller
             if(count($firmaclientecompleta) > 0){
                 $Firma_cliente = $firmaclientecompleta[0]->Firma;
             }else{
-                $Firma_cliente = '';
+                $Firma_cliente = 'No firma';
             }
             
         }else{
-            $Firma_cliente = '';
+            $Firma_cliente = 'No firma';
         }
 
         // Captura de datos de informacion laboral

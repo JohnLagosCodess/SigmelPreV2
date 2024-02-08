@@ -60,16 +60,18 @@
             font-size: 15px;
         }
         .tabla1{
-            width: 100%;            
+            width: 100%;  
+            margin-left: -3.5px;
         }
         .tabla2{
             width: 100%;
+            margin-left: -3.5px;
         }
         section{
             text-align: justify;
         }
         .container{
-            margin-top: -0.3cm;
+            margin-top: -0.5cm;
             margin-left: 1.5cm;
             margin-right: 1.5cm;
         }
@@ -94,22 +96,7 @@
         <?php endif ?>
     </div>
     <div id="footer">
-        <table class="tabla_footer">
-            {{-- <tbody>
-                <tr>
-                    <td colspan="2" class="color_letras_alfa">Seguros Alfa S.A. y Seguros de Vida Alfa S.A.</td>
-                </tr>
-                <tr>
-                    <td class="color_letras_alfa">Líneas de atención al cliente</td>
-                    <td style="text-align: right;" class="color_letras_alfa">www.segurosalfa.com.co</td>
-                </tr>
-                <tr>
-                    <td colspan="2">Bogotá: 3077032, a nivel nacional: 018000122532</td>
-                </tr>
-                <tr>
-                    <td colspan="2">habilitadas en jornada continua de lunes a viernes de 8:00 a.m. a 6:00 p.m.</td>
-                </tr>
-            </tbody> --}}
+        <table class="tabla_footer">            
             <tbody>
                 <tr>
                     <td colspan="2" class="color_letras_alfa1">{{$footer_dato_1}}</td>
@@ -139,52 +126,37 @@
         <img src="data:image/png;base64,{{ $imagenBase64_footer }}" class="logo_footer">
     </div>
     <div class="container">
-        <table class="tabla2">
+        <p class="fuente_todo_texto">{{$Ciudad_correspondencia}}, {{$F_correspondecia}}</p>
+        <table class="tabla2">            
             <tbody>
                 <tr>
                     <td>
-                        <p class="fuente_todo_texto">{{$Ciudad_correspondencia}}, {{$F_correspondecia}}</p>
-                        <p class="fuente_todo_texto" style="margin-top: 50px;"><span class="negrita">Señor (a):</span>
-                            <br>
-                            {{$Nombre_afiliado_noti}}
-                        </p>
-                        <p class="fuente_todo_texto"><span class="negrita">Dirección:</span>
-                            <br>
-                            {{$Direccion_afiliado_noti}}
-                        </p>
-                        <p class="fuente_todo_texto"><span class="negrita">Teléfono:</span>
-                            <br>
-                            {{$Telefono_afiliado_noti}}
-                        </p>
-                        <p class="fuente_todo_texto"><span class="negrita">Ciudad:</span>
-                            <br>
-                            {{$Ciudad_afiliado_noti}} - {{$Departamento_afiliado_noti}}
-                        </p>
+                        <span class="fuente_todo_texto"><span class="negrita">Señor(a): </span>{{$Nombre_afiliado_noti}}</span><br>
+                        <span class="fuente_todo_texto"><span class="negrita">Dirección: </span>{{$Direccion_afiliado_noti}}</span><br>
+                        <span class="fuente_todo_texto"><span class="negrita">Teléfono: </span>{{$Telefono_afiliado_noti}}</span><br>
+                        <span class="fuente_todo_texto"><span class="negrita">Ciudad: </span>{{$Ciudad_afiliado_noti}} - {{$Departamento_afiliado_noti}}</span>
                     </td>
                     <td>
                         <div class="cuadro">
-                            <p class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$Radicado_comuni}}</span></p>
-                            <p class="fuente_todo_texto"><span class="negrita">{{$T_documento_noti}} {{$NroIden_afiliado_noti}}</span></p>
-                            <p class="fuente_todo_texto"><span class="negrita">Siniestro: {{$ID_evento}}</span></p>
+                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$Radicado_comuni}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">{{$T_documento_noti}} {{$NroIden_afiliado_noti}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$ID_evento}}</span></span><br>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <br>
-        <table class="tabla1">
+        <table class="tabla1">            
             <tbody>
                 <tr>
-                    <td>
-                        <p class="fuente_todo_texto"><span class="negrita">Asunto: {{$Asunto_correspondencia}}</span>
-                        </p>
-                        <p class="fuente_todo_texto"><span class="negrita">Caso: </span>{{$ID_evento}}</p>
-                        <p class="fuente_todo_texto"><span class="negrita">Identificación: </span>{{$NroIden_afiliado_noti}}</p>
+                    <td class="fuente_todo_texto">
+                        <span class="negrita">Asunto: {{$Asunto_correspondencia}}</span><br>                        
+                        <span class="negrita">Caso: </span>{{$ID_evento}}<br>
+                        <span class="negrita">Identificación: </span>{{$NroIden_afiliado_noti}}
                     </td>
                 </tr>
             </tbody>
         </table>
-        <br>
         <section class="fuente_todo_texto">            
             <?php
                 $patron1 = '/\{\{\$PorcentajePcl_cero\}\}/';
@@ -201,7 +173,6 @@
         </section>
         <section class="fuente_todo_texto">
             Cordialmente,
-            <br><br>
             <div class="firma">
                 <?=$Firma_cliente?>
             </div>
@@ -215,9 +186,8 @@
                 <br>
                 <b>Elaboró:</b> {{$Elaboro_correspondecia}}
             </div>
-        </section>        
-        <br>
-        <section class="fuente_todo_texto">
+        </section>
+        <section class="fuente_todo_texto">            
             <table class="tabla1" style="text-align: justify;">    
                 {{$Copia_eps_correspondecia}}            
                 @if (empty($Copia_empleador_correspondecia) && empty($Copia_eps_correspondecia) && empty($Copia_afp_correspondecia) && empty($Copia_arl_correspondecia))
@@ -271,13 +241,12 @@
                 @endif
             </table>
         </section>
-        <section class="fuente_todo_texto" style="color: #828282;">
-            <br>
+        <p class="fuente_todo_texto" style="color: #828282;">
             “Finalmente, reiteramos que en nuestra Compañía contamos con la mejor disposición para atender sus quejas y
             reclamos a través del defensor consumidor financiero, en la Av. Calle 26 No 59-15, local 6 y 7. Conmutador:
             7435333 Extensión: 14454, Fax Ext. 14456 o Correo Electrónico:
             defensor del consumidor financiero@segurosdevidaalfa.com.co”.
-        </section>
+        </p>
     </div>
 </body>
 </html>
