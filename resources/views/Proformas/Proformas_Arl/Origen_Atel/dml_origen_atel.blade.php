@@ -62,7 +62,7 @@
             font-family: sans-serif;
             text-align: justify;
             width: 100%; /* Ancho total de la tabla */
-            table-layout: fixed; Fija el ancho de la tabla
+            table-layout: fixed;
             border-collapse: collapse; /* Borde de celda colapsado para evitar espacios adicionales */
         }
 

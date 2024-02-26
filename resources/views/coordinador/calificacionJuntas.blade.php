@@ -1,5 +1,8 @@
 @extends('adminlte::page')
 @section('title', 'Juntas')
+@section('css')
+    <link rel="stylesheet" type="text/css" href="/plugins/summernote/summernote.min.css">
+@stop
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
@@ -29,7 +32,8 @@
     <div class="card-info" style="border: 1px solid black;">
         <div class="card-header text-center">
             <h4>Módulo Juntas - Evento: {{$array_datos_calificacionJuntas[0]->ID_evento}}</h4>
-            <input type="hidden" id="action_actualizar_comunicado" value="{{ route('descargarPdf') }}">
+            <input type="hidden" id="action_actualizar_comunicado" value="{{ route('DescargarProformasJuntas') }}">
+            <input type="hidden" id="action_actualizar_comunicado_otro" value="{{ route('descargarPdf') }}">
         </div>
         <form id="form_calificacionJuntas" method="POST">
             @csrf
@@ -154,19 +158,19 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="dias_trascurrido">Dias transcurridos desde el evento</label>
+                                                <label for="dias_trascurrido">Dias transcurridos desde el evento<br><br></label>
                                                 <input type="text" class="form-control" name="dias_trascurrido" id="dias_trascurrido" value="{{$array_datos_calificacionJuntas[0]->Dias_transcurridos_desde_el_evento}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="asignado_por">Asignado por</label>
+                                                <label for="asignado_por">Asignado por<br><br></label>
                                                 <input type="text" class="form-control" name="asignado_por" id="asignado_por" value="{{$array_datos_calificacionJuntas[0]->Asignado_por}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="fecha_asignacion_juntas">Fecha de asignación para Juntas </label>
+                                                <label for="fecha_asignacion_juntas">Fecha de asignación para pronunciamiento de Juntas</label>
                                                 <input type="text" class="form-control" name="fecha_asignacion_juntas" id="fecha_asignacion_juntas" value="{{$array_datos_calificacionJuntas[0]->Fecha_asignacion_calif}}" disabled>
                                             </div>
                                         </div>
@@ -932,6 +936,61 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de cambiar el destinatario
+                                        (Afiliado y Empresa) debe seleccionar nuevamente la Forma de envio y Revisó y en (Otro) todos.
+                                    </div>
+                                    {{-- radiobutton para las 5 preformas de juntas arl previsional --}}
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <div class="form-check custom-control custom-radio">
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="oficio_afiliado" value="Oficio_Afiliado" required>
+                                                    <label class="form-check-label custom-control-label" for="oficio_afiliado"><strong>Oficio Juntas afiliado</strong></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <div class="form-check custom-control custom-radio">
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="oficio_juntas_jrci" value="Oficio_Juntas_JRCI" required>
+                                                    <label class="form-check-label custom-control-label" for="oficio_juntas_jrci"><strong>Oficio Juntas JRCI</strong></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <div class="form-check custom-control custom-radio">
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="remision_expediente_jrci" value="Remision_Expediente_JRCI" required>
+                                                    <label class="form-check-label custom-control-label" for="remision_expediente_jrci"><strong>Expediente JRCI</strong></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <div class="form-check custom-control custom-radio">
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="devol_expediente_jrci" value="Devolucion_Expediente_JRCI" required>
+                                                    <label class="form-check-label custom-control-label" for="devol_expediente_jrci"><strong>Devol. Expediente JRCI</strong></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <div class="form-check custom-control custom-radio">
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="solicitud_dictamen_jrci" value="Solicitud_Dictamen_JRCI" required>
+                                                    <label class="form-check-label custom-control-label" for="solicitud_dictamen_jrci"><strong>Solicitud Dictámen JRCI</strong></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <div class="form-check custom-control custom-radio">
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="otro_documento" value="Otro_Documento" required>
+                                                    <label class="form-check-label custom-control-label" for="otro_documento"><strong>Otro Documento</strong></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="row text-center">
                                         <label for="destinatario_principal" style="margin-left: 7px;">Destinatario Principal: <span style="color: red;">(*)</span></label>                                        
                                         <div class="col-3">
@@ -992,9 +1051,16 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-8">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
                                             <div class="form-group">
                                                 <label for="asunto">Asunto <span style="color: red;">(*)</span></label>
+                                                <div class="alert alert-warning d-none" id="mensaje_asunto" role="alert">
+                                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> <span id="rellenar_asunto"></span>
+                                                </div>
+                                                <br>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_junta_regional_asunto">Nombre Junta Regional</button>
                                                 <input class="form-control" type="text" name="asunto" id="asunto" required>
                                             </div>
                                         </div>
@@ -1003,7 +1069,31 @@
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="cuerpo_comunicado">Cuerpo del comunicado <span style="color: red;">(*)</span></label>
-                                                <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" cols="30" rows="5" style="resize:none;" required></textarea>
+                                                <div class="alert alert-warning d-none" id="mensaje_cuerpo" role="alert">
+                                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> <span id="rellenar_cuerpo"></span>
+                                                </div>
+                                                <br>
+                                                {{-- botón para proforma ADJUNTAR OFICIO AL AFILIADO	 --}}
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_junta_regional">Nombre Junta Regional</button>
+                                                {{-- botones para proforma REMISIÓN DE EXPEDIENTE PARA TRÁMITE DE CONTROVERSIA --}}
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nro_orden_pago">N° Orden pago</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_fecha_notifi_afiliado">Fecha Notificación al Afiliado</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_fecha_radi_contro_pri_cali">Fecha Radicación Controversia Primera Calificación</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_tipo_doc_afiliado">Tipo Documento Afiliado</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_documento_afiliado">Documento Afiliado</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_afiliado">Nombre Afiliado</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_fecha_estructuracion">Fecha Estructuración</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_tipo_evento">Tipo de Evento</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombres_cie10">Nombres CIE-10</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_tipo_controversia_pri_cali">Tipo Controversia Primera Calificación</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_direccion_afiliado">Dirección Afiliado</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_telefono_afiliado">Teléfono Afiliado</button>
+                                                {{-- botón para proforma RESPUESTA A DEVOLUCIÓN DE EXPEDIENTE --}}
+                                                {{-- <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_documento">Nombre del Documento</button> --}}
+                                                {{-- botón preforma: ACLARACIÓN E INFORMACIÓN SOBRE RECURSO DE REPOSICIÓN EN SUBSIDIO DE APELACIÓN --}}
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_correo_solicitud_info">Correo Solicitud Información</button>
+
+                                                <textarea name="cuerpo_comunicado" id="cuerpo_comunicado" required></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -1214,7 +1304,58 @@
                                     <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
                                         <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de cambiar el destinatario
                                         (Afiliado y Empresa) debe seleccionar nuevamente la Forma de envio y Revisó y en (Otro) todos.
-                                    </div>                              
+                                    </div>
+                                    {{-- radiobutton para las 5 preformas de juntas arl previsional edición --}}
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <div class="form-check custom-control custom-radio">
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="oficio_afiliado_editar" value="Oficio_Afiliado" required>
+                                                    <label class="form-check-label custom-control-label" for="oficio_afiliado_editar"><strong>Oficio Juntas afiliado</strong></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <div class="form-check custom-control custom-radio">
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="oficio_juntas_jrci_editar" value="Oficio_Juntas_JRCI" required>
+                                                    <label class="form-check-label custom-control-label" for="oficio_juntas_jrci_editar"><strong>Oficio Juntas JRCI</strong></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <div class="form-check custom-control custom-radio">
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="remision_expediente_jrci_editar" value="Remision_Expediente_JRCI" required>
+                                                    <label class="form-check-label custom-control-label" for="remision_expediente_jrci_editar"><strong>Expediente JRCI</strong></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <div class="form-check custom-control custom-radio">
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="devol_expediente_jrci_editar" value="Devolucion_Expediente_JRCI" required>
+                                                    <label class="form-check-label custom-control-label" for="devol_expediente_jrci_editar"><strong>Devol. Expediente JRCI</strong></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <div class="form-check custom-control custom-radio">
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="solicitud_dictamen_jrci_editar" value="Solicitud_Dictamen_JRCI" required>
+                                                    <label class="form-check-label custom-control-label" for="solicitud_dictamen_jrci_editar"><strong>Solicitud Dictámen JRCI</strong></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <div class="form-check custom-control custom-radio">
+                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="otro_documento_editar" value="Otro_Documento" required>
+                                                    <label class="form-check-label custom-control-label" for="otro_documento_editar"><strong>Otro Documento</strong></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>                         
                                     <div class="row text-center">                                  
                                         <label for="destinatario_principal_act" style="margin-left: 7px;">Destinatario Principal: <span style="color: red;">(*)</span></label>                                        
                                         <div class="col-3">
@@ -1273,7 +1414,7 @@
                                                 <label for="departamento_destinatario_act">Departamento <span style="color: red;">(*)</span></label><br>
                                                 <select class="departamento_destinatario custom-select" name="departamento_destinatario_act" id="departamento_destinatario_editar" style="width: 100%;" required>                                                        
                                                 </select>
-                                                <input hidden="hidden" type="text" name="departamento_pdf" id="departamento_pdf">
+                                                <input type="hidden" name="departamento_pdf" id="departamento_pdf">
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -1281,12 +1422,19 @@
                                                 <label for="ciudad_destinatario_act">Ciudad <span style="color: red;">(*)</span></label><br>
                                                 <select class="ciudad_destinatario custom-select" name="ciudad_destinatario_act" id="ciudad_destinatario_editar" style="width: 100%;" required>
                                                 </select>
-                                                <input hidden="hidden" type="text" name="ciudad_pdf" id="ciudad_pdf">
+                                                <input type="hidden" name="ciudad_pdf" id="ciudad_pdf">
                                             </div>
                                         </div>                                        
-                                        <div class="col-8">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
                                             <div class="form-group">
                                                 <label for="asunto_act">Asunto <span style="color: red;">(*)</span></label>
+                                                <div class="alert alert-warning d-none" id="mensaje_asunto_editar" role="alert">
+                                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> <span id="rellenar_asunto_editar"></span>
+                                                </div>
+                                                <br>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_junta_regional_asunto_editar">Nombre Junta Regional</button>
                                                 <input class="form-control" type="text" name="asunto_act" id="asunto_editar" required>
                                             </div>
                                         </div>
@@ -1295,7 +1443,31 @@
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="cuerpo_comunicado_act">Cuerpo del comunicado <span style="color: red;">(*)</span></label>
-                                                <textarea class="form-control" name="cuerpo_comunicado_act" id="cuerpo_comunicado_editar" cols="30" rows="5" style="resize:none;" required></textarea>
+                                                <div class="alert alert-warning d-none" id="mensaje_cuerpo_editar" role="alert">
+                                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> <span id="rellenar_cuerpo_editar"></span>
+                                                </div>
+                                                <br>
+                                                {{-- botón para proforma ADJUNTAR OFICIO AL AFILIADO	 --}}
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_junta_regional_editar">Nombre Junta Regional</button>
+                                                {{-- botones para proforma REMISIÓN DE EXPEDIENTE PARA TRÁMITE DE CONTROVERSIA --}}
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nro_orden_pago_editar">N° Orden pago</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_fecha_notifi_afiliado_editar">Fecha Notificación al Afiliado</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_fecha_radi_contro_pri_cali_editar">Fecha Radicación Controversia Primera Calificación</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_tipo_doc_afiliado_editar">Tipo Documento Afiliado</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_documento_afiliado_editar">Documento Afiliado</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_afiliado_editar">Nombre Afiliado</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_fecha_estructuracion_editar">Fecha Estructuración</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_tipo_evento_editar">Tipo de Evento</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombres_cie10_editar">Nombres CIE-10</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_tipo_controversia_pri_cali_editar">Tipo Controversia Primera Calificación</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_direccion_afiliado_editar">Dirección Afiliado</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_telefono_afiliado_editar">Teléfono Afiliado</button>
+                                                {{-- botón para proforma RESPUESTA A DEVOLUCIÓN DE EXPEDIENTE --}}
+                                                {{-- <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_documento_editar">Nombre del Documento</button> --}}
+                                                {{-- botón preforma: ACLARACIÓN E INFORMACIÓN SOBRE RECURSO DE REPOSICIÓN EN SUBSIDIO DE APELACIÓN --}}
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_correo_solicitud_info_editar">Correo Solicitud Información</button>
+
+                                                <textarea name="cuerpo_comunicado_act" id="cuerpo_comunicado_editar" required></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -1408,10 +1580,18 @@
                                             <div class="form-group">
                                                 <label for="ciudad_comunicado_act">Ciudad <span style="color: red;">(*)</span></label>
                                                 <input class="form-control" type="text" name="ciudad_comunicado_act" id="ciudad_comunicado_editar" required>
-                                                <input hidden="hidden" type="text" class="form-control" name="Id_comunicado_act" id="Id_comunicado_act">
-                                                <input hidden="hidden" type="text" class="form-control" name="Id_evento_act" id="Id_evento_act">
-                                                <input hidden="hidden" type="text" class="form-control" name="Id_asignacion_act" id="Id_asignacion_act">
-                                                <input hidden="hidden" type="text" class="form-control" name="Id_procesos_act" id="Id_procesos_act">
+                                                <input type="hidden" class="form-control" name="Id_comunicado_act" id="Id_comunicado_act">
+                                                <input type="hidden" class="form-control" name="Id_evento_act" id="Id_evento_act">
+                                                <input type="hidden" class="form-control" name="Id_asignacion_act" id="Id_asignacion_act">
+                                                <input type="hidden" class="form-control" name="Id_procesos_act" id="Id_procesos_act">
+                                                <input type="hidden" class="form-control" name="Nombre_junta_act" value="<?php if(!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez)){echo $arrayinfo_controvertido[0]->JrciNombre;}?>">
+                                                <input type="hidden" class="form-control" name="Id_junta_act" value="<?php if(!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez)){echo $arrayinfo_controvertido[0]->Jrci_califi_invalidez;}?>">
+                                                {{-- mauro --}}
+                                                <input type="hidden" class="form-control" name="F_notifi_afiliado_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado)) { echo $arrayinfo_controvertido[0]->F_notifi_afiliado;} ?>">
+                                                <input type="hidden" class="form-control" name="F_radicacion_contro_pri_cali_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_radi_califi)) { echo $arrayinfo_controvertido[0]->F_contro_radi_califi;} ?>">
+                                                <input type="hidden" class="form-control" name="F_estructuracion_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_estructuracion_contro)) { echo $arrayinfo_controvertido[0]->F_estructuracion_contro;} ?>">
+                                                {{-- revisar fecha --}}
+                                                <input type="hidden" class="form-control" name="F_dictamen_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_dictamen_jrci_emitido)) { echo $arrayinfo_controvertido[0]->F_dictamen_jrci_emitido;} ?>">
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -1439,6 +1619,14 @@
                                             <div class="form-group">
                                                 <input type="button" id="Editar_comunicados" class="btn btn-info" value="Actualizar">
                                                 <input type="submit" id="Pdf" class="btn btn-info" value="Pdf">                            
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-center">                                
+                                                <button class="btn btn-info d-none" type="button" id="mostrar_barra_descarga_pdf" disabled>
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                    Descargando <span id="formato_descarga"></span> por favor espere...
+                                                </button>
                                             </div>
                                         </div>
                                         <div class="col-12">
@@ -1480,9 +1668,10 @@
                                         <div class="col-6">
                                             <div class="form-group">
                                                 <label for="causal_seguimiento">Causal de seguimiento <span style="color: red;">(*)</span></label><br>
-                                                <select class="causal_seguimiento custom-select" name="causal_seguimiento" id="causal_seguimiento" style="width: 100%;" required>
+                                               {{--  <select class="causal_seguimiento custom-select" name="causal_seguimiento" id="causal_seguimiento" style="width: 100%;" required>
                                                     <option value="">Seleccione una opción</option>
-                                                </select>
+                                                </select> --}}
+                                                <input class="form-control" type="text" name="causal_seguimiento" id="causal_seguimiento" value="" required>
                                             </div>
                                         </div>
                                         <div class="col-12">
@@ -1625,4 +1814,5 @@
 
         });
     </script>
+    <script src="/plugins/summernote/summernote.min.js"></script>
 @stop

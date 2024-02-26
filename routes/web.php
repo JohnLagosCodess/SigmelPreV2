@@ -768,23 +768,30 @@ Route::post('/ActualizarParametrizacionJuntas', [ParametrizacionController::clas
 
 
 /* DESCARGA DE PROFORMAS */
-// Proforma Notificación DML ORIGEN ATEL (OFICIO REMISORIO)
-Route::post('/DescargaProformaNotiDML', [DeterminacionOrigenATEL::class, 'DescargaProformaNotiDML']);
-Route::post('/ADescargaProformaNotiDML', [AdicionDxDTO::class, 'ADescargaProformaNotiDML']);
-// Proforma DML ORIGEN (DICTAMEN)
-Route::post('/DescargaProformaDML', [DeterminacionOrigenATEL::class, 'DescargaProformaDML']);
-Route::post('/ADescargaProformaDML', [AdicionDxDTO::class, 'ADescargaProformaDML']);
+
 // Proforma Acuerdo Calificación de EPS
 Route::post('/DescargarProformaPronunciamiento', [PronunciamientoOrigenController::class, 'DescargarProformaPronunciamiento']);
-Route::post('/DescargarProformaRecursoReposicion', [ControversiaJuntasController::class, 'DescargarProformaRecursoReposicion']);
-Route::post('/CargueInformacionCorrespondencia', [ControversiaJuntasController::class, 'CargueInformacionCorrespondencia']);
+
+
 
 
 /* DESCARGAR PROFORMAS PREVISIONAL */
+// Proformas DML ORIGEN (DICTAMEN) PARA DTO ATEL Y ADICIÓN DX
+Route::post('/DescargaProformaDMLPrev', [DeterminacionOrigenATEL::class, 'DescargaProformaDMLPrev']);
+Route::post('/ADescargaProformaDMLPrev', [DeterminacionOrigenATEL::class, 'ADescargaProformaDMLPrev']);
+// Proformas Notificación DML (OFICIO REMISORIO) PARA DTO ATEL Y ADICIÓN DX
+Route::post('/DescargaProformaNotiDMLPrev', [DeterminacionOrigenATEL::class, 'DescargaProformaNotiDMLPrev']);
+Route::post('/ADescargaProformaNotiDMLPrev', [AdicionDxDTO::class, 'ADescargaProformaNotiDMLPrev']);
+// Proforma PRONUNCIAMIENTO FRENTE A DICTAMEN (JUNTAS DECISIÓN ACUERDO en sección Revisión ante concepto de la Junta Regional)
+Route::post('/CargueInformacionCorrespondencia', [ControversiaJuntasController::class, 'CargueInformacionCorrespondencia']);
+Route::post('/DescargarProformaPronunDictaAcuerdo', [ControversiaJuntasController::class, 'DescargarProformaPronunDictaAcuerdo']);
+// Proforma RECURSO DE REPOSICION Y EN SUBSIDIO DE APELACION AL DML JRCI (JUNTAS DECISIÓN DESACUERDO en sección Revisión ante concepto de la Junta Regional)
+Route::post('/DescargarProformaRecursoReposicion', [ControversiaJuntasController::class, 'DescargarProformaRecursoReposicion']);
+// Proforma: ADJUNTAR OFICIO AL AFILIADO (JUNTAS)
+Route::post('/DescargarProformasJuntas', [CalificacionJuntasController::class, 'DescargarProformasJuntas'])->name('DescargarProformasJuntas');
 
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
-Route::post('/DescargaProformaNotiDMLPrev', [DeterminacionOrigenATEL::class, 'DescargaProformaNotiDMLPrev']);
 
 
 

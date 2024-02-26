@@ -1574,26 +1574,24 @@ class ControversiaJuntasController extends Controller
 
     }
 
-
     public function DescargarProformaRecursoReposicion(Request $request){
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
 
         /* Captura de variables que vienen del ajax */
+        $id_comite_inter = $request->id_comite_inter;
         $id_cliente = $request->id_cliente;
-        $id_evento = $request->id_evento;
         $id_asignacion = $request->id_asignacion;
         $id_proceso = $request->id_proceso;
         $id_servicio = $request->id_servicio;
+        $nro_radicado = $request->nro_radicado;
+        $nombre_afiliado = $request->nombre_afiliado;
         $tipo_identificacion = $request->tipo_identificacion;
         $num_identificacion = $request->num_identificacion;
+        $id_evento = $request->id_evento;
         $id_Jrci_califi_invalidez = $request->id_Jrci_califi_invalidez;
-        $nombre_junta_regional = $request->nombre_junta_regional;
         $f_dictamen_jrci_emitido = $request->f_dictamen_jrci_emitido;
-        $nombre_afiliado = $request->nombre_afiliado;
-        $porcentaje_pcl_jrci_emitido = $request->porcentaje_pcl_jrci_emitido;
-        $f_estructuracion_contro_jrci_emitido = $request->f_estructuracion_contro_jrci_emitido;
         $sustentacion_concepto_jrci = $request->sustentacion_concepto_jrci;
         $sustentacion_concepto_jrci1 = $request->sustentacion_concepto_jrci1;
         $copia_empleador = $request->copia_empleador;
@@ -1603,85 +1601,165 @@ class ControversiaJuntasController extends Controller
         $asunto = strtoupper($request->asunto);
         $cuerpo = $request->cuerpo;
         $firmar = $request->firmar;
-        $nro_radicado = $request->nro_radicado;
-        $origen_jrci_emitido = $request->origen_jrci_emitido;
 
         /* Creación de las variables faltantes que no están en el ajax */
 
-        // Datos Junta regional
-        $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-        ->select('sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
-        ->where([['sie.Id_Entidad', $id_Jrci_califi_invalidez]])->get();
+        // Validación información Destinatario Principal
+        $datos_para_destinatario_principal = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        ->where([['Id_com_inter', $id_comite_inter]])->get();
 
-        $array_datos_junta_regional = json_decode(json_encode($datos_junta_regional), true);
+        $array_datos_para_destinatario_principal = json_decode(json_encode($datos_para_destinatario_principal), true);
+        $checkbox_otro_destinatario = $array_datos_para_destinatario_principal[0]["Otro_destinatario"];
 
-        if(count($array_datos_junta_regional)>0){
-            $direccion_junta = $array_datos_junta_regional[0]["Direccion"];
-            $telefono_junta = $array_datos_junta_regional[0]["Telefonos"];
-            $departamento_junta = $array_datos_junta_regional[0]["Nombre_departamento"];
-            $ciudad_junta = $array_datos_junta_regional[0]["Nombre_ciudad"];
-        }
+        //  Si el checkbox fue marcado entonces se entra a mirar las demás validaciones
+        if ($checkbox_otro_destinatario == "Si") {
+            // 1: ARL; 2: AFP; 3: EPS; 4: AFILIADO; 5:EMPLEADOR; 8: OTRO
+            $tipo_destinatario = $array_datos_para_destinatario_principal[0]["Tipo_destinatario"];
+            switch (true) {
+                // Si escoge alguna opcion de estas: ARL, AFP, EPS se sacan los datos del destinatario principal de la entidad
+                case ($tipo_destinatario == 1 || $tipo_destinatario == 2 || $tipo_destinatario == 3):
+                    $id_entidad = $array_datos_para_destinatario_principal[0]["Nombre_dest_principal"];
+
+                    $datos_entidad = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Departamento', '=', 'sldm2.Id_departamento')
+                    ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm2.Nombre_departamento')
+                    ->where([
+                        ['sie.Id_Entidad', $id_entidad],
+                        ['sie.IdTipo_entidad', $tipo_destinatario]
+                    ])->get();
+
+                    $nombre_junta = $datos_entidad[0]->Nombre_entidad;
+                    $direccion_junta = $datos_entidad[0]->Direccion;
+                    $telefono_junta = $datos_entidad[0]->Telefonos;
+                    $ciudad_junta = $datos_entidad[0]->Nombre_ciudad;
+                    $departamento_junta = $datos_entidad[0]->Nombre_departamento;
+
+                break;
+                
+                // Si escoge la opción Afiliado: Se sacan los datos del destinatario principal pero del afiliado
+                case ($tipo_destinatario == 4):
+                    $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                    ->select('siae.Nombre_afiliado','siae.Direccion','siae.Telefono_contacto','sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
+                    ->where([['siae.ID_evento','=', $id_evento]])
+                    ->get();
         
-        // Traer datos CIE10 (Diagnóstico motivo de calificación) jrci
-        $datos_diagnostico_motcalifi_emitido_jrci=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
-        ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
-        'slp.Nombre_parametro as Nombre_parametro_origen', 'side.Deficiencia_motivo_califi_condiciones', 'side.Lateralidad_CIE10', 'slp2.Nombre_parametro as Nombre_parametro_lateralidad', 'side.Principal')
-        ->where([['side.ID_evento',$id_evento],
-            ['side.Id_proceso',$id_proceso],
-            ['side.Item_servicio', '=', 'Emitido JRCI'],
-            ['side.Estado', '=', 'Activo']
-        ])->get(); 
+                    $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
+        
+                    $nombre_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_afiliado"];;
+                    $direccion_junta = $array_datos_municipio_ciudad_afiliado[0]["Direccion"];
+                    $telefono_junta = $array_datos_municipio_ciudad_afiliado[0]["Telefono_contacto"];
+                    $ciudad_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
+                    $departamento_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
 
-        $array_datos_diagnostico_motcalifi_emitido_jrci = json_decode(json_encode($datos_diagnostico_motcalifi_emitido_jrci), true);
+                break;
 
-        if (count($array_datos_diagnostico_motcalifi_emitido_jrci) > 0) {
-            $diagnosticos_cie10_jrci = array();
+                // Si escoge la opción Empleador: Se sacan los datos del destinatario principal pero del Empleador
+                case ($tipo_destinatario == 5):
+                    $datos_entidad_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_municipio', '=', 'sldm.Id_municipios')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_departamento', '=', 'sldm2.Id_departamento')
+                    ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm2.Nombre_departamento')
+                    ->where([['sile.ID_evento', $id_evento]])->get();
 
-            // Controversia pcl
-            if($id_servicio == 13){
-                for ($i=0; $i < count($array_datos_diagnostico_motcalifi_emitido_jrci); $i++) { 
-                    array_push($diagnosticos_cie10_jrci, $array_datos_diagnostico_motcalifi_emitido_jrci[$i]["Nombre_CIE10"]);
-                }
-            }else if($id_servicio == 12){ // Controversia origen
-                for ($i=0; $i < count($array_datos_diagnostico_motcalifi_emitido_jrci); $i++) { 
-                    $dx_concatenados = $array_datos_diagnostico_motcalifi_emitido_jrci[$i]["Codigo"]. " - ".$array_datos_diagnostico_motcalifi_emitido_jrci[$i]["Nombre_CIE10"];
-                    array_push($diagnosticos_cie10_jrci, $dx_concatenados);
-                }
+                    $nombre_junta = $datos_entidad_empleador[0]->Empresa;
+                    $direccion_junta = $datos_entidad_empleador[0]->Direccion;
+                    $telefono_junta = $datos_entidad_empleador[0]->Telefono_empresa;
+                    $ciudad_junta = $datos_entidad_empleador[0]->Nombre_ciudad;
+                    $departamento_junta = $datos_entidad_empleador[0]->Nombre_departamento;
+
+                break;
+                
+                // Si escoge la opción Otro: se sacan los datos del destinatario de la tabla sigmel_informacion_comite_interdisciplinario_eventos
+                case ($tipo_destinatario == 8):
+                    // aqui validamos si los datos no vienen vacios, debido a que si  vienen vacios, toca marcar ''
+                    if (!empty($array_datos_para_destinatario_principal[0]["Nombre_destinatario"])) {
+                        $nombre_junta = $array_datos_para_destinatario_principal[0]["Nombre_destinatario"];
+                    } else {
+                        $nombre_junta = "";
+                    };
+
+                    if (!empty($array_datos_para_destinatario_principal[0]["Direccion_destinatario"])) {
+                        $direccion_junta = $array_datos_para_destinatario_principal[0]["Direccion_destinatario"];
+                    } else {
+                        $direccion_junta = "";
+                    };
+
+                    if (!empty($array_datos_para_destinatario_principal[0]["Telefono_destinatario"])) {
+                        $telefono_junta = $array_datos_para_destinatario_principal[0]["Telefono_destinatario"];
+                    } else {
+                        $telefono_junta = "";
+                    };
+
+                    if (!empty($array_datos_para_destinatario_principal[0]["Ciudad_destinatario"])) {
+                        $ciudad_junta = $array_datos_para_destinatario_principal[0]["Ciudad_destinatario"];
+                    } else {
+                        $ciudad_junta = "";
+                    };
+
+                    if (!empty($array_datos_para_destinatario_principal[0]["Departamento_destinatario"])) {
+                        $departamento_junta = $array_datos_para_destinatario_principal[0]["Departamento_destinatario"];
+                    } else {
+                        $departamento_junta = "";
+                    };
+
+                break;
+
+                default:
+                    # code...
+                break;
+            }
+        }else{
+            // Datos Junta regional
+            // $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
+            // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+            // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+            // ->select('sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+            // ->where([['sie.Id_Entidad', $id_Jrci_califi_invalidez]])->get();
+
+            // $array_datos_junta_regional = json_decode(json_encode($datos_junta_regional), true);
+
+            // if(count($array_datos_junta_regional)>0){
+            //     $nombre_junta = $request->nombre_junta_regional;
+            //     $direccion_junta = $array_datos_junta_regional[0]["Direccion"];
+            //     $telefono_junta = $array_datos_junta_regional[0]["Telefonos"];
+            //     $departamento_junta = $array_datos_junta_regional[0]["Nombre_departamento"];
+            //     $ciudad_junta = $array_datos_junta_regional[0]["Nombre_ciudad"];
+            // }else{
+            //     $nombre_junta = "";
+            //     $direccion_junta = "";
+            //     $telefono_junta = "";
+            //     $departamento_junta = "";
+            //     $ciudad_junta = "";
+            // }
+
+            $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->select('siae.Nombre_afiliado','siae.Direccion','siae.Telefono_contacto','sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
+            ->where([['siae.ID_evento','=', $id_evento]])
+            ->get();
+
+            $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
+
+            if (count($array_datos_municipio_ciudad_afiliado) > 0) {
+                $nombre_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_afiliado"];;
+                $direccion_junta = $array_datos_municipio_ciudad_afiliado[0]["Direccion"];
+                $telefono_junta = $array_datos_municipio_ciudad_afiliado[0]["Telefono_contacto"];
+                $ciudad_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
+                $departamento_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
+            } else {
+                $nombre_junta = "";
+                $direccion_junta = "";
+                $telefono_junta = "";
+                $departamento_junta = "";
+                $ciudad_junta = "";
             }
             
-    
-            // Contar la cantidad de elementos en el array
-            $totalElementos = count($diagnosticos_cie10_jrci);
-    
-            // Inicializar la cadena de resultado
-            $string_diagnosticos_cie10_jrci = '';
-     
-            // Recorrer el array
-            foreach ($diagnosticos_cie10_jrci as $indice => $elemento) {
-                // Verificar si es el último elemento
-                if ($indice == $totalElementos - 1) {
-                    // Si es el último, añadir solo el elemento sin coma
-                    $string_diagnosticos_cie10_jrci .= $elemento;
-                } elseif ($indice == $totalElementos - 2) {
-                    // Si es el antepenúltimo, añadir "y" en lugar de ","
-                    $string_diagnosticos_cie10_jrci .= $elemento . " y ";
-                } else {
-                    // Para cualquier otro elemento, añadir ","
-                    $string_diagnosticos_cie10_jrci .= $elemento . ", ";
-                }
-            };
-            $string_diagnosticos_cie10_jrci = "<b>".$string_diagnosticos_cie10_jrci."</b>";
-            
-        } else {
-            $string_diagnosticos_cie10_jrci = "";
         }
-        
-        
+
         /* Copias Interesadas */
         // Validamos si los checkbox esta marcados
         $final_copia_empleador = isset($copia_empleador) ? 'Empleador' : '';
@@ -1783,7 +1861,7 @@ class ControversiaJuntasController extends Controller
             } else {
                 $telefonos_arl = $datos_arl[0]->Telefonos;
             }
-            
+
             $ciudad_arl = $datos_arl[0]->Nombre_ciudad;
             $minucipio_arl = $datos_arl[0]->Nombre_municipio;
 
@@ -1796,7 +1874,7 @@ class ControversiaJuntasController extends Controller
         if ($validarFirma == "Firmar") {
             $idcliente = sigmel_clientes::on('sigmel_gestiones')->select('Id_cliente')
             ->where('Id_cliente', $id_cliente)->limit(1)->get();
-    
+
             $firmaclientecompleta = sigmel_informacion_firmas_clientes::on('sigmel_gestiones')->select('Firma')
             ->where('Id_cliente', $idcliente[0]->Id_cliente)->limit(1)->get();
 
@@ -1873,7 +1951,7 @@ class ControversiaJuntasController extends Controller
         $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
             <tr>
                 <td>
-                    <p><b>Señores: </b>'.$nombre_junta_regional.'</p>
+                    <p><b>Señores: </b>'.$nombre_junta.'</p>
                     <p><b>Dirección: </b>'.$direccion_junta.'</p>
                     <p><b>Teléfono: </b>'.$telefono_junta.'</p>
                     <p><b>Ciudad: </b>'.$ciudad_junta.' - '.$departamento_junta.'</p>
@@ -1891,12 +1969,12 @@ class ControversiaJuntasController extends Controller
                 </td>
             </tr>
         </table>';
-    
+
         Html::addHtml($section, $htmltabla1, false, true);
-        
-        $patron_asunto = '/\{\{\$F_DICTAMEN_JRCI\}\}/'; 
+
+        $patron_asunto = '/\{\{\$F_DICTAMEN_JRCI_ASUNTO\}\}/'; 
         if (preg_match($patron_asunto, $asunto)) {
-            $asunto_modificado = str_replace('{{$F_DICTAMEN_JRCI}}', $f_dictamen_jrci_emitido, $asunto);
+            $asunto_modificado = str_replace('{{$F_DICTAMEN_JRCI_ASUNTO}}', $f_dictamen_jrci_emitido, $asunto);
             $asunto = $asunto_modificado;
         }else{
             $asunto = "";
@@ -1907,126 +1985,43 @@ class ControversiaJuntasController extends Controller
         $section->addText('Afiliado: '.$nombre_afiliado." ".$tipo_identificacion." ".$num_identificacion, array('bold' => true));
 
         // Configuramos el reemplazo de las etiquetas del cuerpo del comunicado
-        $patron1 = '/\{\{\$nombre_afiliado\}\}/';
-        $patron2 = '/\{\{\$junta_regional\}\}/';
-        $patron3 = '/\{\{\$cie10_jrci\}\}/';
-        $patron4 = '/\{\{\$pcl_jrci\}\}/';
-        $patron5 = '/\{\{\$f_estructuracion_jrci\}\}/';
-        $patron6 = '/\{\{\$sustentacion_jrci\}\}/'; // Sustentación Concepto JRCI (Revisión ante concepto de la Junta Regional)
-        $patron9 = '/\{\{\$sustentacion_jrci1\}\}/'; // Sustentación Concepto JRCI (Revisión ante recurso de reposición de la Junta Regional)
-        $patron7 = '/\{\{\$origen_dx_jrci\}\}/';
-        $patron8 = '/\{\{\$cie10_nombre_cie10_jrci\}\}/';
-        
+        $patron1 = '/\{\{\$sustentacion_jrci\}\}/'; // Sustentación Concepto JRCI (Revisión ante concepto de la Junta Regional)
+        $patron2 = '/\{\{\$sustentacion_jrci1\}\}/'; // Sustentación Concepto JRCI (Revisión ante recurso de reposición de la Junta Regional)
+
         $cuerpo = str_replace(['<br>', '<br/>', '<br />', '</br>'], '', $cuerpo);
-        // Controversia pcl
-        if($id_servicio == 13){
-            // && preg_match($patron6, $cuerpo)
-            if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) && preg_match($patron3, $cuerpo) && preg_match($patron4, $cuerpo) && preg_match($patron5, $cuerpo)) {
-    
-                $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.$nombre_afiliado.'</b>', $cuerpo);
-                $cuerpo_modificado = str_replace('{{$junta_regional}}', '<b>'.$nombre_junta_regional.'</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('{{$cie10_jrci}}', $string_diagnosticos_cie10_jrci, $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('{{$pcl_jrci}}', '<b>'.$porcentaje_pcl_jrci_emitido.'%</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', $f_estructuracion_contro_jrci_emitido, $cuerpo_modificado);
-                // $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
-    
-    
-                $cuerpo_modificado = str_replace('HUGO IGNACIO GÓMEZ DAZA', '<b>HUGO IGNACIO GÓMEZ DAZA</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('SEGUROS DE VIDA ALFA S.A.', '<b>SEGUROS DE VIDA ALFA S.A.</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN', '<b>RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('PCL', '<b>PCL</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('calificación de PCL', '<b>calificación de PCL</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('ANEXO:', '<b>ANEXO:</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('NOTIFICACIONES:', '<b>NOTIFICACIONES:</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('</p>', '</p><br></br>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('<p><br>', ' ', $cuerpo_modificado);
-                
 
-                if (preg_match($patron6, $cuerpo_modificado) && preg_match($patron9, $cuerpo_modificado)) {
-                    // Ambos patrones encontrados
-                    $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
-                    $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
+        $cuerpo_modificado = str_replace('HUGO IGNACIO GÓMEZ DAZA', '<b>HUGO IGNACIO GÓMEZ DAZA</b>', $cuerpo);
+        $cuerpo_modificado = str_replace('SEGUROS DE VIDA ALFA S.A.', '<b>SEGUROS DE VIDA ALFA S.A.</b>', $cuerpo_modificado);
+        $cuerpo_modificado = str_replace('RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN', '<b>RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN</b>', $cuerpo_modificado);
+        $cuerpo_modificado = str_replace('ANEXO:', '<b>ANEXO:</b>', $cuerpo_modificado);
+        $cuerpo_modificado = str_replace('NOTIFICACIONES:', '<b>NOTIFICACIONES:</b>', $cuerpo_modificado);
+        $cuerpo_modificado = str_replace('</p>', '</p><br></br>', $cuerpo_modificado);
+        $cuerpo_modificado = str_replace('<p><br>', ' ', $cuerpo_modificado);
 
-                    $cuerpo = $cuerpo_modificado;
-                
-                } elseif (preg_match($patron6, $cuerpo_modificado)) {
-                    // Solo patrón6 encontrado
-                    $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+        if (preg_match($patron1, $cuerpo_modificado) && preg_match($patron2, $cuerpo_modificado)) {
+            // Ambos patrones encontrados
+            $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+            $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
 
-                    $cuerpo = $cuerpo_modificado;
-                
-                } elseif (preg_match($patron9, $cuerpo_modificado)) {
-                    // Solo patrón9 encontrado
-                    $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
-                    
-                    $cuerpo = $cuerpo_modificado;
-                } else {
-                    // Ninguno de los patrones encontrados
-                    // $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', "", $cuerpo_modificado);
-                    // $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', "", $cuerpo_modificado);
-                    $cuerpo = "";
-                }
-
-                // $cuerpo = $cuerpo_modificado;
-    
-            }else{
-                $cuerpo = "";
-            }
-           
-        }
-        // && preg_match($patron6, $cuerpo)
-        else if($id_servicio == 12){ // Controversia origen
-            if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) && preg_match($patron7, $cuerpo) && preg_match($patron8, $cuerpo)) {
-    
+            $cuerpo = $cuerpo_modificado;
         
-                $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.$nombre_afiliado.'</b>', $cuerpo);
-                $cuerpo_modificado = str_replace('{{$junta_regional}}', '<b>'.$nombre_junta_regional.'</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('{{$origen_dx_jrci}}', '<b>'.$origen_jrci_emitido.'</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('{{$cie10_nombre_cie10_jrci}}', $string_diagnosticos_cie10_jrci, $cuerpo_modificado);
-                // $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
-    
-    
-                $cuerpo_modificado = str_replace('HUGO IGNACIO GÓMEZ DAZA', '<b>HUGO IGNACIO GÓMEZ DAZA</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('SEGUROS DE VIDA ALFA S.A.', '<b>SEGUROS DE VIDA ALFA S.A.</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN', '<b>RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('ORIGEN', '<b>ORIGEN</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('ANEXO:', '<b>ANEXO:</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('NOTIFICACIONES:', '<b>NOTIFICACIONES:</b>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('</p>', '</p><br></br>', $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('<p><br>', ' ', $cuerpo_modificado);
+        } elseif (preg_match($patron1, $cuerpo_modificado)) {
+            // Solo patrón6 encontrado
+            $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
 
-                if (preg_match($patron6, $cuerpo_modificado) && preg_match($patron9, $cuerpo_modificado)) {
-                    // Ambos patrones encontrados
-                    $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
-                    $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
-
-                    $cuerpo = $cuerpo_modificado;
-                
-                } elseif (preg_match($patron6, $cuerpo_modificado)) {
-                    // Solo patrón6 encontrado
-                    $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
-
-                    $cuerpo = $cuerpo_modificado;
-                
-                } elseif (preg_match($patron9, $cuerpo_modificado)) {
-                    // Solo patrón9 encontrado
-                    $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
-                    
-                    $cuerpo = $cuerpo_modificado;
-                } else {
-                    // Ninguno de los patrones encontrados
-                    // $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', "", $cuerpo_modificado);
-                    // $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', "", $cuerpo_modificado);
-                    $cuerpo = "";
-                }
-
-                // $cuerpo = $cuerpo_modificado;
-    
-            }else{
-                $cuerpo = "";
-            }
+            $cuerpo = $cuerpo_modificado;
+        
+        } elseif (preg_match($patron2, $cuerpo_modificado)) {
+            // Solo patrón9 encontrado
+            $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
+            
+            $cuerpo = $cuerpo_modificado;
+        } else {
+            // Ninguno de los patrones encontrados
+            // $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', "", $cuerpo_modificado);
+            // $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', "", $cuerpo_modificado);
+            $cuerpo = "";
         }
-
 
         $section->addTextBreak();
         Html::addHtml($section, $cuerpo, false, false);
@@ -2061,7 +2056,7 @@ class ControversiaJuntasController extends Controller
         $section->addTextBreak();
         $section->addText('Elaboró: '.$nombre_usuario, array('bold' => true));
         $section->addTextBreak();
-        
+
         // Configuramos la tabla de copias a partes interesadas
         $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
         if (count($Agregar_copias) == 0) {
@@ -2105,9 +2100,10 @@ class ControversiaJuntasController extends Controller
         $htmltabla2 .= '</table>';
         Html::addHtml($section, $htmltabla2, false, true);
         $section->addTextBreak();
-        $section->addText($nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$id_evento, array('bold' => true));
+        // $section->addText($nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$id_evento, array('bold' => true));
 
         // Configuramos el footer
+        $info = $nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$id_evento;
         $footer = $section->addFooter();
         $tableStyle = array(
             'cellMargin'  => 50,
@@ -2115,6 +2111,8 @@ class ControversiaJuntasController extends Controller
         $phpWord->addTableStyle('myTable', $tableStyle);
         $table = $footer->addTable('myTable');
 
+        $table->addRow();
+        $table->addCell(80000, ['gridSpan' => 2])->addText($info, array('size' => 10, 'bold' => true));
         $table->addRow();
         // $table->addCell(80000, ['gridSpan' => 2])->addText('Seguros Alfa S.A. y Seguros de Vida Alfa S.A.', array('size' => 10, 'color' => '#184F56', 'bold' => true));
         $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_1, array('size' => 10));
@@ -2137,15 +2135,464 @@ class ControversiaJuntasController extends Controller
         $textRun->addText('Página ');
         $textRun->addField('PAGE');
 
-        
-
         // Generamos el documento y luego se guarda
         $writer = new Word2007($phpWord);
         $nombre_docx = "JUN_DESACUERDO_{$id_asignacion}_{$num_identificacion}_{$nro_radicado}.docx";
         $writer->save(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
         return response()->download(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
+    }
+
+    public function DescargarProformaPronunDictaAcuerdo(Request $request){
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+
+        /* Captura de variables que vienen del ajax */
+        $id_comite_inter = $request->id_comite_inter;
+        $id_cliente = $request->id_cliente;
+        $id_asignacion = $request->id_asignacion;
+        $id_proceso = $request->id_proceso;
+        $id_servicio = $request->id_servicio;
+        $nro_radicado = $request->nro_radicado;
+        $tipo_identificacion = $request->tipo_identificacion;
+        $num_identificacion = $request->num_identificacion;
+        $id_evento = $request->id_evento;
+        $id_Jrci_califi_invalidez = $request->id_Jrci_califi_invalidez;
+        $nro_dictamen = $request->nro_dictamen;
+        $nombre_afiliado = $request->nombre_afiliado;
+        $f_dictamen_jrci_emitido = $request->f_dictamen_jrci_emitido;
+        $porcentaje_pcl_jrci_emitido = $request->porcentaje_pcl_jrci_emitido;
+        $origen_jrci_emitido = $request->origen_jrci_emitido;
+        $f_estructuracion_contro_jrci_emitido = $request->f_estructuracion_contro_jrci_emitido;
+        $manual_de_califi_jrci_emitido = $request->manual_de_califi_jrci_emitido;
+        $sustentacion_concepto_jrci = "<b>".$request->sustentacion_concepto_jrci."</b>";
+        $sustentacion_concepto_jrci1 = "<b>".$request->sustentacion_concepto_jrci1."</b>";
+        $copia_empleador = $request->copia_empleador;
+        $copia_eps = $request->copia_eps;
+        $copia_afp = $request->copia_afp;
+        $copia_arl = $request->copia_arl;
+        $asunto = strtoupper($request->asunto);
+        $cuerpo = $request->cuerpo;
+        $firmar = $request->firmar;
+
+        /* Creación de las variables faltantes que no están en el ajax */
+
+        // Validación información Destinatario Principal
+        $datos_para_destinatario_principal = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        ->where([['Id_com_inter', $id_comite_inter]])->get();
+
+        $array_datos_para_destinatario_principal = json_decode(json_encode($datos_para_destinatario_principal), true);
+        $checkbox_otro_destinatario = $array_datos_para_destinatario_principal[0]["Otro_destinatario"];
+
+        //  Si el checkbox fue marcado entonces se entra a mirar las demás validaciones
+        if ($checkbox_otro_destinatario == "Si") {
+            // 1: ARL; 2: AFP; 3: EPS; 4: AFILIADO; 5:EMPLEADOR; 8: OTRO
+            $tipo_destinatario = $array_datos_para_destinatario_principal[0]["Tipo_destinatario"];
+            switch (true) {
+                // Si escoge alguna opcion de estas: ARL, AFP, EPS se sacan los datos del destinatario principal de la entidad
+                case ($tipo_destinatario == 1 || $tipo_destinatario == 2 || $tipo_destinatario == 3):
+                    $id_entidad = $array_datos_para_destinatario_principal[0]["Nombre_dest_principal"];
+
+                    $datos_entidad = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Departamento', '=', 'sldm2.Id_departamento')
+                    ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm2.Nombre_departamento')
+                    ->where([
+                        ['sie.Id_Entidad', $id_entidad],
+                        ['sie.IdTipo_entidad', $tipo_destinatario]
+                    ])->get();
+
+                    $nombre_junta = $datos_entidad[0]->Nombre_entidad;
+                    $direccion_junta = $datos_entidad[0]->Direccion;
+                    $telefono_junta = $datos_entidad[0]->Telefonos;
+                    $ciudad_junta = $datos_entidad[0]->Nombre_ciudad;
+                    $departamento_junta = $datos_entidad[0]->Nombre_ciudad;
+
+                break;
+                
+                // Si escoge la opción Afiliado: Se sacan los datos del destinatario principal pero del afiliado
+                case ($tipo_destinatario == 4):
+                    $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                    ->select('siae.Nombre_afiliado','siae.Direccion','siae.Telefono_contacto','sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
+                    ->where([['siae.ID_evento','=', $id_evento]])
+                    ->get();
+        
+                    $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
+        
+                    $nombre_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_afiliado"];;
+                    $direccion_junta = $array_datos_municipio_ciudad_afiliado[0]["Direccion"];
+                    $telefono_junta = $array_datos_municipio_ciudad_afiliado[0]["Telefono_contacto"];
+                    $ciudad_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
+                    $departamento_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
+
+                break;
+
+                // Si escoge la opción Empleador: Se sacan los datos del destinatario principal pero del Empleador
+                case ($tipo_destinatario == 5):
+                    $datos_entidad_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_municipio', '=', 'sldm.Id_municipios')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_departamento', '=', 'sldm2.Id_departamento')
+                    ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm2.Nombre_departamento')
+                    ->where([['sile.ID_evento', $id_evento]])->get();
+
+                    $nombre_junta = $datos_entidad_empleador[0]->Empresa;
+                    $direccion_junta = $datos_entidad_empleador[0]->Direccion;
+                    $telefono_junta = $datos_entidad_empleador[0]->Telefono_empresa;
+                    $ciudad_junta = $datos_entidad_empleador[0]->Nombre_ciudad;
+                    $departamento_junta = $datos_entidad_empleador[0]->Nombre_departamento;
+
+                break;
+                
+                // Si escoge la opción Otro: se sacan los datos del destinatario de la tabla sigmel_informacion_comite_interdisciplinario_eventos
+                case ($tipo_destinatario == 8):
+                    // aqui validamos si los datos no vienen vacios, debido a que si  vienen vacios, toca marcar ''
+                    if (!empty($array_datos_para_destinatario_principal[0]["Nombre_destinatario"])) {
+                        $nombre_junta = $array_datos_para_destinatario_principal[0]["Nombre_destinatario"];
+                    } else {
+                        $nombre_junta = "";
+                    };
+
+                    if (!empty($array_datos_para_destinatario_principal[0]["Direccion_destinatario"])) {
+                        $direccion_junta = $array_datos_para_destinatario_principal[0]["Direccion_destinatario"];
+                    } else {
+                        $direccion_junta = "";
+                    };
+
+                    if (!empty($array_datos_para_destinatario_principal[0]["Telefono_destinatario"])) {
+                        $telefono_junta = $array_datos_para_destinatario_principal[0]["Telefono_destinatario"];
+                    } else {
+                        $telefono_junta = "";
+                    };
+
+                    if (!empty($array_datos_para_destinatario_principal[0]["Ciudad_destinatario"])) {
+                        $ciudad_junta = $array_datos_para_destinatario_principal[0]["Ciudad_destinatario"];
+                    } else {
+                        $ciudad_junta = "";
+                    };
+
+                    if (!empty($array_datos_para_destinatario_principal[0]["Departamento_destinatario"])) {
+                        $departamento_junta = $array_datos_para_destinatario_principal[0]["Departamento_destinatario"];
+                    } else {
+                        $departamento_junta = "";
+                    };
+
+                break;
+
+                default:
+                    # code...
+                break;
+            }
+        }else{
+            // Datos Junta regional
+            // $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
+            // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+            // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+            // ->select('sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+            // ->where([['sie.Id_Entidad', $id_Jrci_califi_invalidez]])->get();
+
+            // $array_datos_junta_regional = json_decode(json_encode($datos_junta_regional), true);
+
+            // if(count($array_datos_junta_regional)>0){
+            //     $nombre_junta = $request->nombre_junta_regional;
+            //     $direccion_junta = $array_datos_junta_regional[0]["Direccion"];
+            //     $telefono_junta = $array_datos_junta_regional[0]["Telefonos"];
+            //     $departamento_junta = $array_datos_junta_regional[0]["Nombre_departamento"];
+            //     $ciudad_junta = $array_datos_junta_regional[0]["Nombre_ciudad"];
+            // }
+
+            $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                    ->select('siae.Nombre_afiliado','siae.Direccion','siae.Telefono_contacto','sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
+                    ->where([['siae.ID_evento','=', $id_evento]])
+                    ->get();
+        
+            $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
+
+            if (count($array_datos_municipio_ciudad_afiliado) > 0) {
+                $nombre_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_afiliado"];;
+                $direccion_junta = $array_datos_municipio_ciudad_afiliado[0]["Direccion"];
+                $telefono_junta = $array_datos_municipio_ciudad_afiliado[0]["Telefono_contacto"];
+                $ciudad_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
+                $departamento_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
+            } else {
+                $nombre_junta = "";
+                $direccion_junta = "";
+                $telefono_junta = "";
+                $ciudad_junta = "";
+                $departamento_junta = "";
+            }
+            
+        }
+
+        // Traer datos CIE10 (Diagnóstico motivo de calificación) jrci
+        $datos_diagnostico_motcalifi_emitido_jrci=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
+        ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
+        'slp.Nombre_parametro as Nombre_parametro_origen', 'side.Deficiencia_motivo_califi_condiciones', 'side.Lateralidad_CIE10', 'slp2.Nombre_parametro as Nombre_parametro_lateralidad', 'side.Principal')
+        ->where([['side.ID_evento',$id_evento],
+            ['side.Id_proceso',$id_proceso],
+            ['side.Item_servicio', '=', 'Emitido JRCI'],
+            ['side.Estado', '=', 'Activo']
+        ])->get(); 
+
+        $array_datos_diagnostico_motcalifi_emitido_jrci = json_decode(json_encode($datos_diagnostico_motcalifi_emitido_jrci), true);
+
+        if (count($array_datos_diagnostico_motcalifi_emitido_jrci) > 0) {
+
+            $diagnosticos_cie10_jrci = array();
+    
+            for ($i=0; $i < count($array_datos_diagnostico_motcalifi_emitido_jrci); $i++) { 
+                $dx_concatenados = $array_datos_diagnostico_motcalifi_emitido_jrci[$i]["Codigo"]. " - ".$array_datos_diagnostico_motcalifi_emitido_jrci[$i]["Nombre_CIE10"];
+                array_push($diagnosticos_cie10_jrci, $dx_concatenados);
+            }
+    
+            // Contar la cantidad de elementos en el array
+            $totalElementos = count($diagnosticos_cie10_jrci);
+    
+            // Inicializar la cadena de resultado
+            $string_diagnosticos_cie10_jrci = '';
+     
+            // Recorrer el array
+            foreach ($diagnosticos_cie10_jrci as $indice => $elemento) {
+                // Verificar si es el último elemento
+                if ($indice == $totalElementos - 1) {
+                    // Si es el último, añadir solo el elemento sin coma
+                    $string_diagnosticos_cie10_jrci .= $elemento;
+                } elseif ($indice == $totalElementos - 2) {
+                    // Si es el antepenúltimo, añadir "y" en lugar de ","
+                    $string_diagnosticos_cie10_jrci .= $elemento . " y ";
+                } else {
+                    // Para cualquier otro elemento, añadir ","
+                    $string_diagnosticos_cie10_jrci .= $elemento . ", ";
+                }
+            };
+            $string_diagnosticos_cie10_jrci = "<b>".$string_diagnosticos_cie10_jrci."</b>";
+            
+        } else {
+            $string_diagnosticos_cie10_jrci = "";
+        }
+
+        /* Copias Interesadas */
+        // Validamos si los checkbox esta marcados
+        $final_copia_empleador = isset($copia_empleador) ? 'Empleador' : '';
+        $final_copia_eps = isset($copia_eps) ? 'EPS' : '';
+        $final_copia_afp = isset($copia_afp) ? 'AFP' : '';
+        $final_copia_arl = isset($copia_arl) ? 'ARL' : '';
+
+        $total_copias = array_filter(array(
+            'copia_empleador' => $final_copia_empleador,
+            'copia_eps' => $final_copia_eps,
+            'copia_afp' => $final_copia_afp,
+            'copia_arl' => $final_copia_arl,
+        )); 
+
+        sleep(2);
+        
+        // Conversión de las key en variables con sus respectivos datos
+        extract($total_copias);
+        
+        $Agregar_copias = [];
+        if(isset($copia_empleador)){
+
+            $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+            ->where([['sile.Nro_identificacion', $num_identificacion],['sile.ID_evento', $id_evento]])
+            ->get();
+
+            $nombre_empleador = $datos_empleador[0]->Empresa;
+            $direccion_empleador = $datos_empleador[0]->Direccion;
+            $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
+            $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
+            $municipio_empleador = $datos_empleador[0]->Nombre_municipio;
+
+            $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$telefono_empleador."; ".$ciudad_empleador."; ".$municipio_empleador.".";   
+        }
+
+        if (isset($copia_eps)) {
+            $datos_eps = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 
+            'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
+            ->get();
+
+            $nombre_eps = $datos_eps[0]->Nombre_eps;
+            $direccion_eps = $datos_eps[0]->Direccion;
+            if ($datos_eps[0]->Otros_Telefonos != "") {
+                $telefonos_eps = $datos_eps[0]->Telefonos.",".$datos_eps[0]->Otros_Telefonos;
+            } else {
+                $telefonos_eps = $datos_eps[0]->Telefonos;
+            }
+            $ciudad_eps = $datos_eps[0]->Nombre_ciudad;
+            $minucipio_eps = $datos_eps[0]->Nombre_municipio;
+
+            $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$telefonos_eps."; ".$ciudad_eps."; ".$minucipio_eps;
+        }
+
+        if (isset($copia_afp)) {
+            $datos_afp = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+            'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
+            ->get();
+
+            $nombre_afp = $datos_afp[0]->Nombre_afp;
+            $direccion_afp = $datos_afp[0]->Direccion;
+            if ($datos_afp[0]->Otros_Telefonos != "") {
+                $telefonos_afp = $datos_afp[0]->Telefonos.",".$datos_afp[0]->Otros_Telefonos;
+            } else {
+                $telefonos_afp = $datos_afp[0]->Telefonos;
+            }
+            $ciudad_afp = $datos_afp[0]->Nombre_ciudad;
+            $minucipio_afp = $datos_afp[0]->Nombre_municipio;
+
+            $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$telefonos_afp."; ".$ciudad_afp."; ".$minucipio_afp;
+        }
+
+        if(isset($copia_arl)){
+            $datos_arl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+            'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
+            ->get();
+
+            $nombre_arl = $datos_arl[0]->Nombre_arl;
+            $direccion_arl = $datos_arl[0]->Direccion;
+            if ($datos_arl[0]->Otros_Telefonos != "") {
+                $telefonos_arl = $datos_arl[0]->Telefonos.",".$datos_arl[0]->Otros_Telefonos;
+            } else {
+                $telefonos_arl = $datos_arl[0]->Telefonos;
+            }
+
+            $ciudad_arl = $datos_arl[0]->Nombre_ciudad;
+            $minucipio_arl = $datos_arl[0]->Nombre_municipio;
+
+            $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+        }
+
+        /* Validación Firma Cliente */
+        $validarFirma = isset($firmar) ? 'Firmar' : 'Sin Firma';
+        
+        if ($validarFirma == "Firmar") {
+            $idcliente = sigmel_clientes::on('sigmel_gestiones')->select('Id_cliente')
+            ->where('Id_cliente', $id_cliente)->limit(1)->get();
+
+            $firmaclientecompleta = sigmel_informacion_firmas_clientes::on('sigmel_gestiones')->select('Firma')
+            ->where('Id_cliente', $idcliente[0]->Id_cliente)->limit(1)->get();
+
+            if(count($firmaclientecompleta) > 0){
+                $Firma_cliente = $firmaclientecompleta[0]->Firma;
+            }else{
+                $Firma_cliente = 'No firma';
+            }
+        } else {
+            $Firma_cliente = 'No firma';
+        }
+
+        /* datos del logo que va en el header */
+        $dato_logo_header = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Logo_cliente')
+        ->where([['Id_cliente', $id_cliente]])
+        ->limit(1)->get();
+
+        if (count($dato_logo_header) > 0) {
+            $logo_header = $dato_logo_header[0]->Logo_cliente;
+            $ruta_logo = "/logos_clientes/{$id_cliente}/{$logo_header}";
+        } else {
+            $logo_header = "Sin logo";
+            $ruta_logo = "";
+        }
+
+        /* Extraemos los datos del footer */
+        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        ->where('Id_cliente', $id_cliente)->get();
+
+        if(count($datos_footer) > 0){
+            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+
+        }else{
+            $footer_dato_1 = "";
+            $footer_dato_2 = "";
+            $footer_dato_3 = "";
+            $footer_dato_4 = "";
+            $footer_dato_5 = "";
+        }
+
+        /* Armado de datos para reemplazarlos en la plantilla */
+
+        $datos_finales_proforma_acuerdo = [
+            'id_cliente' => $id_cliente,
+            'logo_header' => $logo_header,
+            'fecha' => $date,
+            'nombre_junta' => $nombre_junta,
+            'direccion_junta' => $direccion_junta,
+            'telefono_junta' => $telefono_junta,
+            'ciudad_junta' => $ciudad_junta,
+            'departamento_junta' => $departamento_junta,
+            'nro_radicado'=> $nro_radicado,
+            'tipo_identificacion'=> $tipo_identificacion,
+            'num_identificacion'=> $num_identificacion,
+            'id_evento'=> $id_evento,
+            'asunto' => $asunto,
+            'cuerpo' => $cuerpo,
+            'nro_dictamen' => $nro_dictamen,
+            'nombre_afiliado' => $nombre_afiliado,
+            'f_dictamen_jrci_emitido' => $f_dictamen_jrci_emitido,
+            'porcentaje_pcl_jrci_emitido' => $porcentaje_pcl_jrci_emitido,
+            'origen_jrci_emitido' => $origen_jrci_emitido,
+            'f_estructuracion_contro_jrci_emitido' => $f_estructuracion_contro_jrci_emitido,
+            'manual_de_califi_jrci_emitido' => $manual_de_califi_jrci_emitido,
+            'sustentacion_concepto_jrci' => $sustentacion_concepto_jrci,
+            'sustentacion_concepto_jrci1' => $sustentacion_concepto_jrci1,
+            'Agregar_copia' => $Agregar_copias,
+            'string_diagnosticos_cie10_jrci' => $string_diagnosticos_cie10_jrci,
+            'Firma_cliente' => $Firma_cliente,
+            'nombre_usuario' => $nombre_usuario,
+            'footer_dato_1' => $footer_dato_1,
+            'footer_dato_2' => $footer_dato_2,
+            'footer_dato_3' => $footer_dato_3,
+            'footer_dato_4' => $footer_dato_4,
+            'footer_dato_5' => $footer_dato_5,
+        ];
+
+        // print_r($datos_finales_proforma_acuerdo);
+
+        /* Creación del pdf */
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('/Proformas/Proformas_Prev/Juntas/pronunciamiento_frente_dictamen', $datos_finales_proforma_acuerdo);
+        
+        $nombre_pdf = "JUN_ACUERDO_{$id_asignacion}_{$num_identificacion}_{$nro_radicado}.pdf";
+
+        //Obtener el contenido del PDF
+        $output = $pdf->output();
+        //Guardar el PDF en un archivo
+        file_put_contents(public_path("Documentos_Eventos/{$id_evento}/{$nombre_pdf}"), $output);
+
+        // return $dompdf->stream($nombre_pdf);
+        return $pdf->download($nombre_pdf);
 
     }
+
 }
 
 function reemplazarStyleImg($html, $nuevoStyle)

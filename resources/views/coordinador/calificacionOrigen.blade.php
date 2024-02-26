@@ -174,7 +174,7 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="fecha_asignacion_calificacion">Fecha de asignación para DTO</label>
-                                            <input type="text" class="form-control" name="fecha_asignacion_dto" id="fecha_asignacion_dto" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                            <input type="text" class="form-control" name="fecha_asignacion_dto" id="fecha_asignacion_dto"  value="{{$array_datos_calificacionOrigen[0]->Fecha_asignacion_dto}}" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -192,19 +192,19 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="fecha_calificacion">Fecha de calificación</label>
-                                            <input type="text" class="form-control" name="fecha_calificacion" id="fecha_calificacion" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                            <input type="text" class="form-control" name="fecha_calificacion" id="fecha_calificacion" value="{{$array_datos_calificacionOrigen[0]->F_calificacion_servicio}}" disabled> 
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="profesional_comite">Profesional Comité</label>
-                                            <input type="text" class="form-control" name="profesional_comite" id="profesional_comite" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                            <input type="text" class="form-control" name="profesional_comite" id="profesional_comite" value="{{-- {{$cali_profe_comite[0]->Profesional_comite}} --}}" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="fecha_visado_comite">Fecha de visado comité</label>
-                                            <input type="text" class="form-control" name="fecha_visado_comite" id="fecha_visado_comite" style="color: red;" value="NO ESTA DEFINIDO" disabled>
+                                            <input type="text" class="form-control" name="fecha_visado_comite" id="fecha_visado_comite" value="{{-- {{$cali_profe_comite[0]->F_visado_comite}} --}}" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -541,6 +541,21 @@
                             <div class="alert d-none" id="resultado_insercion_seguimiento" role="alert">
                             </div>
                             <div class="table-responsive">
+                                <!-- Validamos el primer documento solicitado -->
+                                <?php 
+                                    $date_actual = date("Y-m-d");
+                                    if(!empty($listado_documentos_solicitados[0]->F_solicitud_documento)){
+                                        $f_primer_documento=$listado_documentos_solicitados[0]->F_solicitud_documento;
+                                    }else{
+                                        $f_primer_documento=$date_actual;
+                                    }
+                                    // Calculamos primer seguimiento
+                                    $fecha_estipula_segui= date('Y-m-d', strtotime($f_primer_documento . ' +7 days'));
+                                    // Calculamos segundo seguimiento
+                                    $fecha_estipula_segui2= date('Y-m-d', strtotime($f_primer_documento . ' +21 days'));
+                                    // Calculamos tercer seguimiento
+                                    $fecha_estipula_segui3= date('Y-m-d', strtotime($f_primer_documento . ' +27 days'));
+                                ?>
                                 <table id="listado_histori_seguimiento" class="table table-striped table-bordered" style="width: 100%">
                                     <thead>
                                         <tr class="bg-info">
@@ -556,7 +571,7 @@
                                         @if (empty(($primer_seguimiento[0]->Causal_seguimiento)))
                                             <tr id="primer_seguimiento">
                                                 <td><input type="text" id="primer_causal" name="primer_causal" value="Primer seguimiento" readonly></td>
-                                                <td><input type="date" id="f_estipulada1" name="f_estipulada1" disabled></td>
+                                                <td><input type="date" id="f_estipulada1" name="f_estipulada1" value="{{$fecha_estipula_segui}}" disabled></td>
                                                 <td><input type="date" id="f_seguimiento1" name="f_seguimiento1" disabled></td>
                                                 <td><textarea id="descrip_seguimiento1" class="form-control" name="descrip_seguimiento1" cols="90" rows="2"></textarea></td>
                                                 <td><input type="text" class="form-control" name="realizado_por1" id="realizado_por1" value="" disabled></td>
@@ -566,7 +581,7 @@
                                         @if (empty(($segundo_seguimiento[0]->Causal_seguimiento)))
                                             <tr id="segundo_seguimiento">
                                                 <td><input type="text" id="segundo_causal" name="segundo_causal" value="Segundo seguimiento" readonly></td>
-                                                <td><input type="date" id="f_estipulada2" name="f_estipulada2" disabled></td>
+                                                <td><input type="date" id="f_estipulada2" name="f_estipulada2" value="{{$fecha_estipula_segui2}}" disabled></td>
                                                 <td><input type="date" id="f_seguimiento2" name="f_seguimiento2"  disabled></td>
                                                 <td><textarea id="descrip_seguimiento2" class="form-control" name="descrip_seguimiento2" cols="90" rows="2"></textarea></td>
                                                 <td><input type="text" class="form-control" name="realizado_por2" id="realizado_por2" value="" disabled></td>
@@ -576,7 +591,7 @@
                                         @if (empty(($tercer_seguimiento[0]->Causal_seguimiento)))
                                             <tr id="tercer_seguimiento">
                                                 <td><input type="text" id="tercer_causal" name="tercer_causal" value="Tercer seguimiento" readonly></td>
-                                                <td><input type="date" id="f_estipulada3" name="f_estipulada3" disabled></td>
+                                                <td><input type="date" id="f_estipulada3" name="f_estipulada3" value="{{$fecha_estipula_segui3}}" disabled></td>
                                                 <td><input type="date" id="f_seguimiento3" name="f_seguimiento3" disabled></td>
                                                 <td><textarea id="descrip_seguimiento3" class="form-control" name="descrip_seguimiento3" cols="90" rows="2"></textarea></td>
                                                 <td><input type="text" class="form-control" name="realizado_por3" id="realizado_por3" value="" disabled></td>
