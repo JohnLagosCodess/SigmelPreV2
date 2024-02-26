@@ -54,14 +54,15 @@ class RecalificacionPCLController extends Controller
         // validar si las variables Evento y Asignacion vienen desde el modulo princinpal o desde el modulo gestion inicial edicion
         if (!empty($request->Id_asignacion_pcl)) {
             $Id_evento_recali=$request->Id_evento_pcl;
-            $Id_asignacion_recali = $request->Id_asignacion_pcl;           
+            $Id_asignacion_recali = $request->Id_asignacion_pcl;      
+            $Id_servicioRecalifi = $request->Idservicio;
         }else{
             $Id_evento_recali=$request->Id_evento_recali;
             $Id_asignacion_recali = $request->Id_asignacion_recali; 
+            $Id_servicioRecalifi = $request->Idservicio;
         }
         $Id_proceso_recali = 2;
         $Id_servicioCalifi= 6;
-        $Id_servicioRecalifi = 7;
 
         // validar id evento de la calificacion tecnica
         $validar_evento_CalifiTecnica = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
@@ -4416,14 +4417,31 @@ class RecalificacionPCLController extends Controller
         $Id_EventoDecreto = $request->Id_EventoDecreto;
         $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
         $Id_Asignacion_Dcreto = $request->Id_Asignacion_Dcreto;
-        // $oficiopcl = $request->oficiopcl;
-        // $oficioinca = $request->oficioinca;
-        // if ($oficiopcl == '') {
-        //     $oficiopcl = 'No';
-        // }
-        // if($oficioinca == ''){
-        //     $oficioinca = 'No';
-        // }
+        $oficiopcl = $request->oficiopcl;
+        $oficioinca = $request->oficioinca;
+        $formatob = $request->formatob;
+        $formatoc = $request->formatoc;
+        $formatod = $request->formatod;
+        $formatoe = $request->formatoe;
+
+        if ($oficiopcl == '') {
+            $oficiopcl = 'No';
+        }
+        if($oficioinca == ''){
+            $oficioinca = 'No';
+        }
+        if($formatob == '') {
+            $formatob = 'No';
+        }
+        if($formatoc == '') {
+            $formatoc = 'No';
+        }
+        if($formatod == '') {
+            $formatod = 'No';
+        }
+        if($formatoe == '') {
+            $formatoe = 'No';
+        }
         $destinatario_principal = $request->destinatario_principal;
         $otrodestinariop = $request->otrodestinariop;
         $tipo_destinatario_principal = $request->tipo_destinatario_principal;
@@ -4474,8 +4492,12 @@ class RecalificacionPCLController extends Controller
 
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
-                // 'Oficio_pcl' => $oficiopcl,
-                // 'Oficio_incapacidad' => $oficioinca,
+                'Oficio_pcl' => $oficiopcl,
+                'Oficio_incapacidad' => $oficioinca,
+                'Formatob' => $formatob,
+                'Formatoc' => $formatoc,
+                'Formatod' => $formatod,
+                'Formatoe' => $formatoe,
                 'Destinatario_principal' => $destinatario_principal,
                 'Otro_destinatario' => $otrodestinariop,
                 'Tipo_destinatario' => $tipo_destinatario_principal,
@@ -4555,8 +4577,12 @@ class RecalificacionPCLController extends Controller
         } 
         elseif($bandera_correspondecia_guardar_actualizar == 'Actualizar') {
             $datos_correspondencia = [
-                // 'Oficio_pcl' => $oficiopcl,
-                // 'Oficio_incapacidad' => $oficioinca,
+                'Oficio_pcl' => $oficiopcl,
+                'Oficio_incapacidad' => $oficioinca,
+                'Formatob' => $formatob,
+                'Formatoc' => $formatoc,
+                'Formatod' => $formatod,
+                'Formatoe' => $formatoe,
                 'Destinatario_principal' => $destinatario_principal,
                 'Otro_destinatario' => $otrodestinariop,
                 'Tipo_destinatario' => $tipo_destinatario_principal,
@@ -4958,6 +4984,7 @@ class RecalificacionPCLController extends Controller
         ->where([['ID_Evento',$ID_Evento_comuni]])->get();        
 
         $Tipo_afiliado = $array_datos_info_afiliado[0]->Tipo_afiliado;
+        $Ocupacion_afiliado = $array_datos_info_afiliado[0]->Ocupacion;
 
         if ($Tipo_afiliado !== 27 ) {
             $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado;
@@ -5337,6 +5364,7 @@ class RecalificacionPCLController extends Controller
             'Independiente_laboral' => $Independiente_laboral,
             'Dedependiente_laboral' => $Dedependiente_laboral,
             'Nombre_cargo_laboral' => $Nombre_cargo_laboral,
+            'Ocupacion_afiliado' => $Ocupacion_afiliado,
             'Codigo_ciuo_laboral' => $Codigo_ciuo_laboral,
             'Funciones_cargo_laboral' => $Funciones_cargo_laboral,
             'Empresa_laboral' => $Empresa_laboral,
@@ -5374,7 +5402,7 @@ class RecalificacionPCLController extends Controller
 
         // Crear una instancia de Dompdf
         $pdf = app('dompdf.wrapper');
-        $pdf->loadView('/Proformas/Proformas_Arl/PCL/dictamen_Pcl1507', $data);        
+        $pdf->loadView('/Proformas/Proformas_Prev/PCL/dictamen_Pcl1507prev', $data);        
         $nombre_pdf = 'PCL_DML_'.$Id_Asignacion_comuni.'_'.$Numero_documento_afiliado.'.pdf';    
         //Obtener el contenido del PDF
         $output = $pdf->output();
@@ -5461,6 +5489,7 @@ class RecalificacionPCLController extends Controller
         ->where([['ID_Evento',$ID_Evento_comuni]])->get();        
 
         $Tipo_afiliado = $array_datos_info_afiliado[0]->Tipo_afiliado;
+        $Ocupacion_afiliado = $array_datos_info_afiliado[0]->Ocupacion;
 
         if ($Tipo_afiliado !== 27 ) {
             $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado;            
@@ -5664,6 +5693,7 @@ class RecalificacionPCLController extends Controller
             'Independiente_laboral' => $Independiente_laboral,
             'Dedependiente_laboral' => $Dedependiente_laboral,
             'Nombre_cargo_laboral' => $Nombre_cargo_laboral,
+            'Ocupacion_afiliado' => $Ocupacion_afiliado,
             'Codigo_ciuo_laboral' => $Codigo_ciuo_laboral,
             'Empresa_laboral' => $Empresa_laboral,
             'Nit_laboral' => $Nit_laboral,
@@ -5697,7 +5727,7 @@ class RecalificacionPCLController extends Controller
         // Crear una instancia de Dompdf
 
         $pdf = app('dompdf.wrapper');
-        $pdf->loadView('/Proformas/Proformas_Arl/PCL/dictamen_Pcl917', $data);        
+        $pdf->loadView('/Proformas/Proformas_Prev/PCL/dictamen_Pcl917prev', $data);        
         $nombre_pdf = 'PCL_DML_'.$Id_Asignacion_comuni.'_'.$Numero_documento_afiliado.'.pdf';    
         //Obtener el contenido del PDF
         $output = $pdf->output();
@@ -5707,7 +5737,7 @@ class RecalificacionPCLController extends Controller
     }
     // Generar PDF de Notificacion numerica para el decreto 1507 y 917
 
-    public function generarPdfNotificacionPclRe(Request $request){
+    public function generarOficio_PclRe(Request $request){
         if (!Auth::check()) {
             return redirect('/');
         }
@@ -5721,6 +5751,10 @@ class RecalificacionPCLController extends Controller
         $Id_Proceso_comuni_comite = $request->Id_Proceso_comuni_comite;
         $Radicado_comuni_comite = $request->Radicado_comuni_comite;
         $Firma_comuni_comite = $request->Firma_comuni_comite;
+
+        $datos = $ID_Evento_comuni_comite;
+        // Codigo QR y Logo del Header
+        $codigoQR = QrCode::size(110)->margin(0.5)->generate($datos);   
 
         // Captura de datos para logo del cliente y informacion de las entidades
 
@@ -5757,7 +5791,12 @@ class RecalificacionPCLController extends Controller
         $Copia_eps_correspondecia = $array_datos_comite_inter[0]->Copia_eps;
         $Copia_afp_correspondecia = $array_datos_comite_inter[0]->Copia_afp;
         $Copia_arl_correspondecia = $array_datos_comite_inter[0]->Copia_arl;
-
+        $Oficio_pcl = $array_datos_comite_inter[0]->Oficio_pcl;
+        $Oficio_incapacidad = $array_datos_comite_inter[0]->Oficio_incapacidad;
+        $Formatob = $array_datos_comite_inter[0]->Formatob;
+        $Formatoc = $array_datos_comite_inter[0]->Formatoc;
+        $Formatod = $array_datos_comite_inter[0]->Formatod;
+        $Formatoe = $array_datos_comite_inter[0]->Formatoe;
 
         //Captura de datos del afiliado 
 
@@ -5793,7 +5832,7 @@ class RecalificacionPCLController extends Controller
         'sient.Direccion as Direccion_arl', 'sient.Telefonos as Telefono_arl', 'sient.Id_Departamento', 
         'sldepart.Nombre_departamento as Nombre_departamento_arl', 'sient.Id_Ciudad',
         'sldmunic.Nombre_municipio as Nombre_municipio_arl',
-        'siae.Activo', 
+        'siae.Activo',
         'siae.Medio_notificacion', 'siae.Nombre_afiliado_benefi', 'siae.Tipo_documento_benefi', 'slpara.Nombre_parametro as Tipo_documento_benfi',         
         'siae.Nro_identificacion_benefi', 'siae.Direccion_benefi', 'siae.Id_departamento_benefi', 
         'sldep.Nombre_departamento as Nombre_departamento_benefi', 'siae.Id_municipio_benefi', 
@@ -5802,25 +5841,28 @@ class RecalificacionPCLController extends Controller
 
         $Tipo_afiliado = $array_datos_info_afiliado[0]->Tipo_afiliado;
 
-        if ($Tipo_afiliado !== 27 ) {
-            $Nombre_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_afiliado;
-            $Direccion_afiliado_noti = $array_datos_info_afiliado[0]->Direccion;
-            $Telefono_afiliado_noti = $array_datos_info_afiliado[0]->Telefono_contacto;
-            $Departamento_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_departamento;            
-            $Ciudad_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_municipio;
-            $T_documento_noti = $array_datos_info_afiliado[0]->T_documento;            
-            $NroIden_afiliado_noti = $array_datos_info_afiliado[0]->Nro_identificacion;
-            $Email_afiliado_noti = $array_datos_info_afiliado[0]->Email;
-        }else{
-            $Nombre_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
-            $Direccion_afiliado_noti = $array_datos_info_afiliado[0]->Direccion_benefi;
-            $Telefono_afiliado_noti = '';
-            $Departamento_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_departamento_benefi;            
-            $Ciudad_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
-            $T_documento_noti = $array_datos_info_afiliado[0]->Tipo_documento_benfi;            
-            $NroIden_afiliado_noti = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
-            $Email_afiliado_noti = '';
-        }
+        // if ($Tipo_afiliado !== 27 ) {
+        $Nombre_afiliado_pie = $array_datos_info_afiliado[0]->Nombre_afiliado;
+        $Edad_afiliado = $array_datos_info_afiliado[0]->Edad;
+        $Nombre_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_afiliado;
+        $Direccion_afiliado_noti = $array_datos_info_afiliado[0]->Direccion;
+        $Telefono_afiliado_noti = $array_datos_info_afiliado[0]->Telefono_contacto;
+        $Departamento_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_departamento;            
+        $Ciudad_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_municipio;
+        $T_documento_noti = $array_datos_info_afiliado[0]->T_documento;            
+        $NroIden_afiliado_noti = $array_datos_info_afiliado[0]->Nro_identificacion;
+        $Email_afiliado_noti = $array_datos_info_afiliado[0]->Email;
+        // }else{
+        //     $Nombre_afiliado_pie = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
+        //     $Nombre_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
+        //     $Direccion_afiliado_noti = $array_datos_info_afiliado[0]->Direccion_benefi;
+        //     $Telefono_afiliado_noti = '';
+        //     $Departamento_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_departamento_benefi;            
+        //     $Ciudad_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
+        //     $T_documento_noti = $array_datos_info_afiliado[0]->Tipo_documento_benfi;            
+        //     $NroIden_afiliado_noti = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
+        //     $Email_afiliado_noti = '';
+        // }
 
         if(!empty($Copia_eps_correspondecia) && $Copia_eps_correspondecia == 'EPS'){
             $Nombre_eps = $array_datos_info_afiliado[0]->Entidad_eps;
@@ -5852,19 +5894,19 @@ class RecalificacionPCLController extends Controller
             $Telefono_arl = $array_datos_info_afiliado[0]->Telefono_arl;
             $Ciudad_departamento_arl = $array_datos_info_afiliado[0]->Nombre_municipio_arl.'-'.$array_datos_info_afiliado[0]->Nombre_departamento_arl;
         }else{
-            $Nombre_arl = '';
+            $Nombre_arl = '';   
             $Direccion_arl = '';
             $Telefono_arl = '';
             $Ciudad_departamento_arl = '';
         }
-
         
         // Captura de datos del dictamen pericial
         $array_datos_info_dictamen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as slcd', 'slcd.Id_Decreto', '=', 'side.Decreto_calificacion')        
         ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as sltp', 'sltp.Id_Evento', '=', 'side.Tipo_evento')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpa', 'slpa.Id_Parametro', '=', 'side.Tipo_enfermedad')
-        ->select('side.ID_Evento', 'side.Id_proceso', 'side.Id_Asignacion', 'side.Origen_firme', 'side.Cobertura', 'side.Decreto_calificacion', 
+        ->select('side.ID_Evento', 'side.Id_proceso', 'side.Id_Asignacion', 'side.Origen_firme', 'side.Cobertura', 'side.Decreto_calificacion', 'slcd.Nombre_decreto', 
         'side.Numero_dictamen', 'side.PCL_anterior', 'side.Descripcion_nueva_calificacion', 'side.Relacion_documentos', 'side.Otros_relacion_doc', 
         'side.Descripcion_enfermedad_actual', 'side.Suma_combinada', 'side.Total_Deficiencia50', 'side.Porcentaje_pcl', 'side.Rango_pcl', 
         'side.Monto_indemnizacion', 'side.Tipo_evento', 'sltp.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro as Nombre_origen', 'side.F_evento', 
@@ -5876,68 +5918,40 @@ class RecalificacionPCLController extends Controller
         
         $PorcentajePcl_dp = $array_datos_info_dictamen[0]->Porcentaje_pcl;
         $F_estructuracionPcl_dp = $array_datos_info_dictamen[0]->F_estructuracion;
+        $OrigenPcl_dp = $array_datos_info_dictamen[0]->Nombre_origen;  
+        $Detalle_calificacion_Fbdp = $array_datos_info_dictamen[0]->Detalle_calificacion;   
+        $Nombre_decreto_dp = $array_datos_info_dictamen[0]->Nombre_decreto;
+        $Suma_combinada_dp = $array_datos_info_dictamen[0]->Suma_combinada;
+        $Total_Deficiencia50_dp = $array_datos_info_dictamen[0]->Total_Deficiencia50;
 
-        // Captura monto indemnizacion
-
-        $Monto_indemnizacionPcl = $array_datos_info_dictamen[0]->Monto_indemnizacion;      
-
-        $parte_entera = floor($Monto_indemnizacionPcl);
-        $parte_decimal = round(($Monto_indemnizacionPcl - $parte_entera) * 100);
-        $parte_decimal_entera = (int)$parte_decimal;
-
-        function numeroALetras($numero) {
-            $unidades = array('', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve');
-            $decenas = array('', 'diez', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa');
-            $decenas_especiales = array('diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve');
-            $centenas = array('', 'cien', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos');
-        
-            $resultado = '';
-        
-            if ($numero == 0) {
-                $resultado = 'cero';
-            } elseif ($numero < 10) {
-                $resultado = $unidades[$numero];
-            } elseif ($numero < 20) {
-                $resultado = $decenas_especiales[$numero - 10];
-            } elseif ($numero < 100) {
-                $decena = floor($numero / 10);
-                $unidad = $numero % 10;
-                $resultado = $decenas[$decena];
-                if ($unidad > 0) {
-                    $resultado .= ' y ' . $unidades[$unidad];
-                }
-            } elseif ($numero < 1000) {
-                $centena = floor($numero / 100);
-                $resto = $numero % 100;
-                if ($resto == 0) {
-                    $resultado = $centenas[$centena];
-                } else {
-                    $resultado = $centenas[$centena] . ' ' . numeroALetras($resto);
-                }
-            } else {
-                $resultado = 'Número fuera de rango';
-            }
-        
-            return $resultado;
-        }
-
-        $parte_enteraletras = numeroALetras($parte_entera);                        
-        $parte_decimal_enteraletras = numeroALetras($parte_decimal_entera);        
-        $Valor_letras = '('.$parte_enteraletras.' punto '.$parte_decimal_enteraletras.')';
-
-        $Monto_indeCompleto = $Monto_indemnizacionPcl.' '.$Valor_letras;
 
         // Captura de los nombres CIE10
 
         $array_diagnosticosPcl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
         ->select('side.CIE10', 'slcd.CIE10 as Codigo_cie10', 'side.Nombre_CIE10')
-        ->where([['ID_Evento',$ID_Evento_comuni_comite], ['Id_Asignacion',$Id_Asignacion_comuni_comite], ['Estado_Recalificacion', 'Activo']])->get(); 
+        ->where([['ID_Evento',$ID_Evento_comuni_comite], ['Id_Asignacion',$Id_Asignacion_comuni_comite], ['side.Estado', 'Activo']])->get(); 
         
-        $NombresCIE10 = $array_diagnosticosPcl->pluck('Nombre_CIE10')->toArray();
-        $CIE10Nombres = implode(', ', $NombresCIE10);        
-        $CIE10Nombres = preg_replace('/,(?=[^,]*$)/', ' y', $CIE10Nombres);
+        if(count($array_diagnosticosPcl) > 0){
+            // Obtener el array de nombres CIE10
+            $NombresCIE10 = $array_diagnosticosPcl->pluck('Nombre_CIE10')->toArray();            
+            // Obtener el número de elementos en el array
+            $num_elementos = count($NombresCIE10);
+            // Si hay más de un elemento en el array
+            if ($num_elementos > 1) {
+                // Separar el último elemento del resto
+                $ultimo_elemento = array_pop($NombresCIE10);
+                $resto_elementos = implode(', ', $NombresCIE10);
 
+                // Concatenar los elementos con "y"
+                $CIE10Nombres = $resto_elementos . ' y ' . $ultimo_elemento;
+            } else {
+                // Si solo hay un elemento, no es necesario cambiar nada
+                $CIE10Nombres = reset($NombresCIE10);
+            }
+        }else{
+            $CIE10Nombres = '';
+        }
         
         // validamos la firma esta marcado para la Captura de la firma del cliente           
         if ($Firma_comuni_comite == 'Firma') {            
@@ -5982,6 +5996,100 @@ class RecalificacionPCLController extends Controller
             $copiaCiudad_departamento_empresa_noti = '';
         }
 
+        // Validación información Destinatario Principal
+        $checkbox_otro_destinatario = $array_datos_comite_inter[0]->Otro_destinatario;
+
+        //  Si el checkbox fue marcado entonces se entra a mirar las demás validaciones
+        if ($checkbox_otro_destinatario == "Si") {
+            // 1: ARL; 2: AFP; 3: EPS; 4: AFILIADO; 5:EMPLEADOR; 8: OTRO
+            
+            $tipo_destinatario = $array_datos_comite_inter[0]->Tipo_destinatario;
+            switch (true) {
+                // Si escoge alguna opcion de estas: ARL, AFP, EPS se sacan los datos del destinatario principal de la entidad
+                case ($tipo_destinatario == 1 || $tipo_destinatario == 2 || $tipo_destinatario == 3):
+                    $id_entidad = $array_datos_comite_inter[0]->Nombre_dest_principal;
+
+                    $datos_entidad = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sie.Id_Ciudad')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as slde', 'slde.Id_departamento', '=', 'sie.Id_Departamento')
+                    ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento as Nombre_departamento',
+                    'sldm.Nombre_municipio as Nombre_municipio')
+                    ->where([
+                        ['sie.Id_Entidad', $id_entidad],
+                        ['sie.IdTipo_entidad', $tipo_destinatario]
+                    ])->get();                   
+
+                    $nombre_destinatario_principal = $datos_entidad[0]->Nombre_entidad;
+                    $direccion_destinatario_principal = $datos_entidad[0]->Direccion;
+                    $telefono_destinatario_principal = $datos_entidad[0]->Telefonos;
+                    $ciudad_destinatario_principal = $datos_entidad[0]->Nombre_municipio.'-'.$datos_entidad[0]->Nombre_departamento;
+                break;
+                
+                // Si escoge la opción Afiliado: Se sacan los datos del destinatario principal pero del afiliado
+                case ($tipo_destinatario == 4):                            
+                    $nombre_destinatario_principal = $Nombre_afiliado_noti;
+                    $direccion_destinatario_principal = $Direccion_afiliado_noti;
+                    $telefono_destinatario_principal = $Telefono_afiliado_noti;
+                    $ciudad_destinatario_principal = $Ciudad_afiliado_noti.'-'.$Departamento_afiliado_noti;
+                break;
+
+                // Si escoge la opción Empleador: Se sacan los datos del destinatario principal pero del Empleador
+                case ($tipo_destinatario == 5):                   
+
+                    $nombre_destinatario_principal = $Nombre_empresa_noti;
+                    $direccion_destinatario_principal = $Direccion_empresa_noti;
+                    $telefono_destinatario_principal = $Telefono_empresa_noti;
+                    $ciudad_destinatario_principal = $Ciudad_departamento_empresa_noti;
+                break;
+                
+                // Si escoge la opción Otro: se sacan los datos del destinatario de la tabla sigmel_informacion_comite_interdisciplinario_eventos
+                case ($tipo_destinatario == 8):
+                    // aqui validamos si los datos no vienen vacios, debido a que si  vienen vacios, toca marcar ''
+                    if (!empty($array_datos_comite_inter[0]->Nombre_destinatario)) {
+                        $nombre_destinatario_principal = $array_datos_comite_inter[0]->Nombre_destinatario;
+                    } else {
+                        $nombre_destinatario_principal = "";
+                    };
+
+                    if (!empty($array_datos_comite_inter[0]["Direccion_destinatario"])) {
+                        $direccion_destinatario_principal = $array_datos_comite_inter[0]["Direccion_destinatario"];
+                    } else {
+                        $direccion_destinatario_principal = "";
+                    };
+
+                    if (!empty($array_datos_comite_inter[0]->Telefono_destinatario)) {
+                        $telefono_destinatario_principal = $array_datos_comite_inter[0]->Telefono_destinatario;
+                    } else {
+                        $telefono_destinatario_principal = "";
+                    };
+
+                    if (!empty($array_datos_comite_inter[0]->Ciudad_destinatario)) {
+                        $ciud_destinatario_principal = $array_datos_comite_inter[0]->Ciudad_destinatario;
+                    } else {
+                        $ciud_destinatario_principal = "";
+                    };
+
+                    if (!empty($array_datos_comite_inter[0]->Departamento_destinatario)) {
+                        $depart_destinatario_principal = $array_datos_comite_inter[0]->Departamento_destinatario;
+                    } else {
+                        $depart_destinatario_principal = "";
+                    };
+
+                    $ciudad_destinatario_principal = $ciud_destinatario_principal.'-'.$depart_destinatario_principal;
+                break;
+
+                default:
+                    # code...
+                break;
+            }
+        }// En caso de que no: la info del destinatario principal se saca del afiliado
+        else {            
+            $nombre_destinatario_principal = $Nombre_afiliado_noti;
+            $direccion_destinatario_principal = $Direccion_afiliado_noti;
+            $telefono_destinatario_principal = $Telefono_afiliado_noti;
+            $ciudad_destinatario_principal = $Ciudad_afiliado_noti.'-'.$Departamento_afiliado_noti;
+        }
+
         /* Extraemos los datos del footer */
         $datos_footer = sigmel_clientes::on('sigmel_gestiones')
         ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
@@ -6001,77 +6109,494 @@ class RecalificacionPCLController extends Controller
             $footer_dato_4 = "";
             $footer_dato_5 = "";
         }
-        //Obtener los datos del formulario
+        // captura de datos de los tabla de deficiencicias alteraciones por factor
+        $deficiencias_calculadas_factores = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
+        ->select('sidae.Id_tabla', 'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.Clase_Final', 'sidae.Deficiencia')
+        ->where([['sidae.ID_evento',$ID_Evento_comuni_comite],['sidae.Id_Asignacion',$Id_Asignacion_comuni_comite]])->get();
+        // captura de datos de la tabla rol ocupacional para el total del rol ocupacionl
+        $infototal_rol_ocupacional50 = sigmel_informacion_rol_ocupacional_eventos::on('sigmel_gestiones')
+        ->select('Poblacion_calificar', 'Total_criterios_desarrollo', 'Total_rol_estudio_clase', 'Total_rol_adultos_ayores')
+        ->where([['ID_evento',$ID_Evento_comuni_comite],['Id_Asignacion',$Id_Asignacion_comuni_comite]])->get();
+        if (count($infototal_rol_ocupacional50) > 0) {
+            $Poblacion_calificar = $infototal_rol_ocupacional50[0]->Poblacion_calificar;
+            // validamos cual tabla fue selecionada 75(tabla 12), 76(tabla 13), 77(tabla 14) para capturar su total
+            if ($Poblacion_calificar == 75) {
+                $total_rol_ocupacional50 = $infototal_rol_ocupacional50[0]->Total_criterios_desarrollo;
+            } elseif($Poblacion_calificar == 76){
+                $total_rol_ocupacional50 = $infototal_rol_ocupacional50[0]->Total_rol_estudio_clase;                
+            } elseif($Poblacion_calificar == 77){
+                $total_rol_ocupacional50 = $infototal_rol_ocupacional50[0]->Total_rol_adultos_ayores;                
+            }            
+        } else {
+            $total_rol_ocupacional50 = '';
+        }  
+        // captura de datos de la rol laboralmente activos para la totalidad del rol laboral y otras areas y eda cronologica
+        $info_laboralmenteactivo = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
+        ->select('Edad_cronologica_menor', 'Edad_cronologica', 'Total_rol_laboral', 'Total_otras_areas', 'Total_laboral_otras_areas')
+        ->where([['ID_evento',$ID_Evento_comuni_comite],['Id_Asignacion',$Id_Asignacion_comuni_comite]])->get();
         
-        $data = [
-            'logo_header' => $logo_header,
-            'Id_cliente_ent' => $Cliente,
-            'ID_evento' => $ID_Evento_comuni_comite,
-            'Id_Asignacion' => $Id_Asignacion_comuni_comite,
-            'Id_proceso' => $Id_Proceso_comuni_comite,
-            'Radicado_comuni' => $Radicado_comuni_comite,
-            'Asunto_correspondencia' => $Asunto_correspondencia,
-            'Cuerpo_comunicado_correspondencia' => $Cuerpo_comunicado_correspondencia,
-            'F_correspondecia' => $F_correspondecia,
-            'Ciudad_correspondencia' => $Ciudad_correspondencia,
-            'Nombre_afiliado_noti' => $Nombre_afiliado_noti,
-            'Direccion_afiliado_noti' => $Direccion_afiliado_noti,
-            'Telefono_afiliado_noti' => $Telefono_afiliado_noti,
-            'Departamento_afiliado_noti' => $Departamento_afiliado_noti,
-            'Ciudad_afiliado_noti' => $Ciudad_afiliado_noti,
-            'T_documento_noti' => $T_documento_noti,
-            'NroIden_afiliado_noti' => $NroIden_afiliado_noti,
-            'Email_afiliado_noti' => $Email_afiliado_noti, 
-            'PorcentajePcl_dp' => $PorcentajePcl_dp,
-            'F_estructuracionPcl_dp' => $F_estructuracionPcl_dp,
-            'CIE10Nombres' => $CIE10Nombres,
-            'Monto_indemnizacionPcl' => $Monto_indeCompleto,
-            'Valor_letras' => $Valor_letras,
-            'Firma_cliente' => $Firma_cliente,
-            'Anexos_correspondecia' => $Anexos_correspondecia,
-            'Elaboro_correspondecia' => $Elaboro_correspondecia,
-            'Nombre_empresa_noti' => $Nombre_empresa_noti,
-            'Direccion_empresa_noti' => $Direccion_empresa_noti,
-            'Telefono_empresa_noti' => $Telefono_empresa_noti,
-            'Ciudad_departamento_empresa_noti' => $Ciudad_departamento_empresa_noti,
-            'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
-            'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
-            'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
-            'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
-            'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
-            'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
-            'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
-            'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
-            'Nombre_eps' => $Nombre_eps,
-            'Direccion_eps' => $Direccion_eps,
-            'Telefono_eps' => $Telefono_eps,
-            'Ciudad_departamento_eps' => $Ciudad_departamento_eps,
-            'Nombre_afp' => $Nombre_afp,
-            'Direccion_afp' => $Direccion_afp,
-            'Telefono_afp' => $Telefono_afp,
-            'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
-            'Nombre_arl' => $Nombre_arl,
-            'Direccion_arl' => $Direccion_arl,
-            'Telefono_arl' => $Telefono_arl,
-            'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
-            'footer_dato_1' => $footer_dato_1,
-            'footer_dato_2' => $footer_dato_2,
-            'footer_dato_3' => $footer_dato_3,
-            'footer_dato_4' => $footer_dato_4,
-            'footer_dato_5' => $footer_dato_5,
-        ];
-
-        // Crear una instancia de Dompdf
-
-        $pdf = app('dompdf.wrapper');
-        $pdf->loadView('/Proformas/Proformas_Arl/PCL/notificacion_pcl_numerica', $data);        
-        $nombre_pdf = 'PCL_OFICIO_'.$Id_Asignacion_comuni_comite.'_'.$NroIden_afiliado_noti.'.pdf';    
-        //Obtener el contenido del PDF
-        $output = $pdf->output();
-        //Guardar el PDF en un archivo
-        file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni_comite}/{$nombre_pdf}"), $output);
-        return $pdf->download($nombre_pdf);
+        if (count($info_laboralmenteactivo) > 0) {
+            if (!empty($info_laboralmenteactivo[0]->Edad_cronologica_menor)) {
+                $total_edad_cronologica = $info_laboralmenteactivo[0]->Edad_cronologica_menor;
+            } elseif(!empty($info_laboralmenteactivo[0]->Edad_cronologica)) {
+                $total_edad_cronologica = $info_laboralmenteactivo[0]->Edad_cronologica;                
+            }else {
+                $total_edad_cronologica = '';                
+            }
+            if (!empty($info_laboralmenteactivo[0]->Total_rol_laboral)) {
+                $Total_rol_laboral = $info_laboralmenteactivo[0]->Total_rol_laboral;
+            }else {
+                $Total_rol_laboral = '0';                
+            }
+            if (!empty($info_laboralmenteactivo[0]->Total_otras_areas)) {
+                $Total_otras_areas = $info_laboralmenteactivo[0]->Total_otras_areas;
+            }else {
+                $Total_otras_areas = '0';                
+            }
+            if (!empty($info_laboralmenteactivo[0]->Total_laboral_otras_areas)) {
+                $Total_laboral_otras_areas = $info_laboralmenteactivo[0]->Total_laboral_otras_areas;
+            }else {
+                $Total_laboral_otras_areas = '0';                
+            }
+        } else {
+            $total_edad_cronologica = '';
+            $Total_rol_laboral = '0';                
+            $Total_otras_areas = '0';
+            $Total_laboral_otras_areas = '0';                
+        }
         
+        
+        //Obtener los datos del formulario IF para el Oficio PCL y else para Oficio Incapacidad
+
+        if ($Oficio_pcl ==  'Si') {            
+            $data = [
+                'codigoQR' => $codigoQR,
+                'logo_header' => $logo_header,
+                'Id_cliente_ent' => $Cliente,
+                'ID_evento' => $ID_Evento_comuni_comite,
+                'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                'Id_proceso' => $Id_Proceso_comuni_comite,
+                'Radicado_comuni' => $Radicado_comuni_comite,
+                'Asunto_correspondencia' => $Asunto_correspondencia,
+                'Cuerpo_comunicado_correspondencia' => $Cuerpo_comunicado_correspondencia,
+                'F_correspondecia' => $F_correspondecia,
+                'Ciudad_correspondencia' => $Ciudad_correspondencia,
+                'Nombre_afiliado_pie' => $Nombre_afiliado_pie,
+                'Nombre_afiliado' => $nombre_destinatario_principal,
+                'direccion_destinatario_principal' => $direccion_destinatario_principal,
+                'telefono_destinatario_principal' => $telefono_destinatario_principal,
+                'ciudad_destinatario_principal' => $ciudad_destinatario_principal,
+                'T_documento_noti' => $T_documento_noti,
+                'NroIden_afiliado_noti' => $NroIden_afiliado_noti,
+                'Email_afiliado_noti' => $Email_afiliado_noti, 
+                'PorcentajePcl_dp' => $PorcentajePcl_dp,
+                'F_estructuracionPcl_dp' => $F_estructuracionPcl_dp,
+                'OrigenPcl_dp' => $OrigenPcl_dp,
+                'CIE10Nombres' => $CIE10Nombres,
+                'Firma_cliente' => $Firma_cliente,
+                'Anexos_correspondecia' => $Anexos_correspondecia,
+                'Elaboro_correspondecia' => $Elaboro_correspondecia,
+                'Nombre_empresa_noti' => $Nombre_empresa_noti,
+                'Direccion_empresa_noti' => $Direccion_empresa_noti,
+                'Telefono_empresa_noti' => $Telefono_empresa_noti,
+                'Ciudad_departamento_empresa_noti' => $Ciudad_departamento_empresa_noti,
+                'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
+                'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
+                'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
+                'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
+                'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
+                'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
+                'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
+                'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
+                'Nombre_eps' => $Nombre_eps,
+                'Direccion_eps' => $Direccion_eps,
+                'Telefono_eps' => $Telefono_eps,
+                'Ciudad_departamento_eps' => $Ciudad_departamento_eps,
+                'Nombre_afp' => $Nombre_afp,
+                'Direccion_afp' => $Direccion_afp,
+                'Telefono_afp' => $Telefono_afp,
+                'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
+                'Nombre_arl' => $Nombre_arl,
+                'Direccion_arl' => $Direccion_arl,
+                'Telefono_arl' => $Telefono_arl,
+                'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
+                'footer_dato_1' => $footer_dato_1,
+                'footer_dato_2' => $footer_dato_2,
+                'footer_dato_3' => $footer_dato_3,
+                'footer_dato_4' => $footer_dato_4,
+                'footer_dato_5' => $footer_dato_5,
+            ];
+            // Crear una instancia de Dompdf
+            $pdf = app('dompdf.wrapper');
+            $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_remisorio_pcl', $data);            
+            $nombre_pdf = 'PCL_OFICIO_'.$Id_Asignacion_comuni_comite.'_'.$NroIden_afiliado_noti.'.pdf';    
+            //Obtener el contenido del PDF
+            $output = $pdf->output();
+            //Guardar el PDF en un archivo
+            file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni_comite}/{$nombre_pdf}"), $output);
+            return $pdf->download($nombre_pdf);
+        } elseif($Oficio_incapacidad == 'Si') {
+            $data = [
+                'codigoQR' => $codigoQR,
+                'logo_header' => $logo_header,
+                'Id_cliente_ent' => $Cliente,
+                'ID_evento' => $ID_Evento_comuni_comite,
+                'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                'Id_proceso' => $Id_Proceso_comuni_comite,
+                'Radicado_comuni' => $Radicado_comuni_comite,
+                'Asunto_correspondencia' => $Asunto_correspondencia,
+                'Cuerpo_comunicado_correspondencia' => $Cuerpo_comunicado_correspondencia,
+                'F_correspondecia' => $F_correspondecia,
+                'Ciudad_correspondencia' => $Ciudad_correspondencia,
+                'Nombre_afiliado_pie' => $Nombre_afiliado_pie,
+                'Nombre_afiliado' => $nombre_destinatario_principal,
+                'direccion_destinatario_principal' => $direccion_destinatario_principal,
+                'telefono_destinatario_principal' => $telefono_destinatario_principal,
+                'ciudad_destinatario_principal' => $ciudad_destinatario_principal,
+                'T_documento_noti' => $T_documento_noti,
+                'NroIden_afiliado_noti' => $NroIden_afiliado_noti,
+                'Email_afiliado_noti' => $Email_afiliado_noti, 
+                'PorcentajePcl_dp' => $PorcentajePcl_dp,
+                'F_estructuracionPcl_dp' => $F_estructuracionPcl_dp,
+                'OrigenPcl_dp' => $OrigenPcl_dp,
+                'CIE10Nombres' => $CIE10Nombres,
+                'Firma_cliente' => $Firma_cliente,
+                'Anexos_correspondecia' => $Anexos_correspondecia,
+                'Elaboro_correspondecia' => $Elaboro_correspondecia,
+                'Nombre_empresa_noti' => $Nombre_empresa_noti,
+                'Direccion_empresa_noti' => $Direccion_empresa_noti,
+                'Telefono_empresa_noti' => $Telefono_empresa_noti,
+                'Ciudad_departamento_empresa_noti' => $Ciudad_departamento_empresa_noti,
+                'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
+                'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
+                'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
+                'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
+                'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
+                'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
+                'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
+                'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
+                'Nombre_eps' => $Nombre_eps,
+                'Direccion_eps' => $Direccion_eps,
+                'Telefono_eps' => $Telefono_eps,
+                'Ciudad_departamento_eps' => $Ciudad_departamento_eps,
+                'Nombre_afp' => $Nombre_afp,
+                'Direccion_afp' => $Direccion_afp,
+                'Telefono_afp' => $Telefono_afp,
+                'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
+                'Nombre_arl' => $Nombre_arl,
+                'Direccion_arl' => $Direccion_arl,
+                'Telefono_arl' => $Telefono_arl,
+                'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
+                'footer_dato_1' => $footer_dato_1,
+                'footer_dato_2' => $footer_dato_2,
+                'footer_dato_3' => $footer_dato_3,
+                'footer_dato_4' => $footer_dato_4,
+                'footer_dato_5' => $footer_dato_5,
+            ];
+            // Crear una instancia de Dompdf
+            $pdf = app('dompdf.wrapper');
+            $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_remisorio_pcl_incapacidad', $data);            
+            $nombre_pdf = 'PCL_OFICIO_'.$Id_Asignacion_comuni_comite.'_'.$NroIden_afiliado_noti.'.pdf';    
+            //Obtener el contenido del PDF
+            $output = $pdf->output();
+            //Guardar el PDF en un archivo
+            file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni_comite}/{$nombre_pdf}"), $output);
+            return $pdf->download($nombre_pdf);
+        } elseif($Formatob == 'Si') {
+            $data = [
+                'codigoQR' => $codigoQR,
+                'logo_header' => $logo_header,
+                'Id_cliente_ent' => $Cliente,
+                'ID_evento' => $ID_Evento_comuni_comite,
+                'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                'Id_proceso' => $Id_Proceso_comuni_comite,
+                'Radicado_comuni' => $Radicado_comuni_comite,
+                'Asunto_correspondencia' => $Asunto_correspondencia,
+                'Cuerpo_comunicado_correspondencia' => $Cuerpo_comunicado_correspondencia,
+                'F_correspondecia' => $F_correspondecia,
+                'Ciudad_correspondencia' => $Ciudad_correspondencia,
+                'Nombre_afiliado_pie' => $Nombre_afiliado_pie,
+                'Nombre_afiliado' => $nombre_destinatario_principal,
+                'direccion_destinatario_principal' => $direccion_destinatario_principal,
+                'telefono_destinatario_principal' => $telefono_destinatario_principal,
+                'ciudad_destinatario_principal' => $ciudad_destinatario_principal,
+                'T_documento_noti' => $T_documento_noti,
+                'NroIden_afiliado_noti' => $NroIden_afiliado_noti,
+                'Email_afiliado_noti' => $Email_afiliado_noti, 
+                'PorcentajePcl_dp' => $PorcentajePcl_dp,
+                'F_estructuracionPcl_dp' => $F_estructuracionPcl_dp,
+                'OrigenPcl_dp' => $OrigenPcl_dp,
+                'CIE10Nombres' => $CIE10Nombres,
+                'Detalle_calificacion_Fbdp' => $Detalle_calificacion_Fbdp,
+                'Firma_cliente' => $Firma_cliente,
+                'Anexos_correspondecia' => $Anexos_correspondecia,
+                'Elaboro_correspondecia' => $Elaboro_correspondecia,
+                'Nombre_empresa_noti' => $Nombre_empresa_noti,
+                'Direccion_empresa_noti' => $Direccion_empresa_noti,
+                'Telefono_empresa_noti' => $Telefono_empresa_noti,
+                'Ciudad_departamento_empresa_noti' => $Ciudad_departamento_empresa_noti,
+                'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
+                'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
+                'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
+                'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
+                'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
+                'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
+                'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
+                'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
+                'Nombre_eps' => $Nombre_eps,
+                'Direccion_eps' => $Direccion_eps,
+                'Telefono_eps' => $Telefono_eps,
+                'Ciudad_departamento_eps' => $Ciudad_departamento_eps,
+                'Nombre_afp' => $Nombre_afp,
+                'Direccion_afp' => $Direccion_afp,
+                'Telefono_afp' => $Telefono_afp,
+                'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
+                'Nombre_arl' => $Nombre_arl,
+                'Direccion_arl' => $Direccion_arl,
+                'Telefono_arl' => $Telefono_arl,
+                'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
+                'footer_dato_1' => $footer_dato_1,
+                'footer_dato_2' => $footer_dato_2,
+                'footer_dato_3' => $footer_dato_3,
+                'footer_dato_4' => $footer_dato_4,
+                'footer_dato_5' => $footer_dato_5,
+            ];
+            // Crear una instancia de Dompdf
+            $pdf = app('dompdf.wrapper');
+            $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_formato_b_revisionPension', $data);            
+            $nombre_pdf = 'PCL_OFICIO_'.$Id_Asignacion_comuni_comite.'_'.$NroIden_afiliado_noti.'.pdf';    
+            //Obtener el contenido del PDF
+            $output = $pdf->output();   
+            //Guardar el PDF en un archivo
+            file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni_comite}/{$nombre_pdf}"), $output);
+            return $pdf->download($nombre_pdf);
+        } elseif($Formatoc == 'Si') {
+            $data = [
+                'codigoQR' => $codigoQR,
+                'logo_header' => $logo_header,
+                'Id_cliente_ent' => $Cliente,
+                'ID_evento' => $ID_Evento_comuni_comite,
+                'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                'Id_proceso' => $Id_Proceso_comuni_comite,
+                'Radicado_comuni' => $Radicado_comuni_comite,
+                'Asunto_correspondencia' => $Asunto_correspondencia,
+                'Cuerpo_comunicado_correspondencia' => $Cuerpo_comunicado_correspondencia,
+                'F_correspondecia' => $F_correspondecia,
+                'Ciudad_correspondencia' => $Ciudad_correspondencia,
+                'Nombre_afiliado_pie' => $Nombre_afiliado_pie,
+                'Edad_afiliado' => $Edad_afiliado,
+                'Nombre_afiliado' => $nombre_destinatario_principal,
+                'direccion_destinatario_principal' => $direccion_destinatario_principal,
+                'telefono_destinatario_principal' => $telefono_destinatario_principal,
+                'ciudad_destinatario_principal' => $ciudad_destinatario_principal,
+                'T_documento_noti' => $T_documento_noti,
+                'NroIden_afiliado_noti' => $NroIden_afiliado_noti,
+                'Email_afiliado_noti' => $Email_afiliado_noti, 
+                'PorcentajePcl_dp' => $PorcentajePcl_dp,
+                'F_estructuracionPcl_dp' => $F_estructuracionPcl_dp,
+                'OrigenPcl_dp' => $OrigenPcl_dp,
+                'CIE10Nombres' => $CIE10Nombres,
+                'Detalle_calificacion_Fbdp' => $Detalle_calificacion_Fbdp,
+                'Nombre_decreto_dp' => $Nombre_decreto_dp,
+                'deficiencias_calculadas_factores' => $deficiencias_calculadas_factores,
+                'Suma_combinada_dp' => $Suma_combinada_dp,
+                'Total_Deficiencia50_dp' => $Total_Deficiencia50_dp,
+                'total_rol_ocupacional50' => $total_rol_ocupacional50,
+                'total_edad_cronologica' => $total_edad_cronologica,
+                'Total_rol_laboral' => $Total_rol_laboral,
+                'Total_otras_areas' => $Total_otras_areas,
+                'Total_laboral_otras_areas' => $Total_laboral_otras_areas,
+                'Firma_cliente' => $Firma_cliente,
+                'Anexos_correspondecia' => $Anexos_correspondecia,
+                'Elaboro_correspondecia' => $Elaboro_correspondecia,
+                'Nombre_empresa_noti' => $Nombre_empresa_noti,
+                'Direccion_empresa_noti' => $Direccion_empresa_noti,
+                'Telefono_empresa_noti' => $Telefono_empresa_noti,
+                'Ciudad_departamento_empresa_noti' => $Ciudad_departamento_empresa_noti,
+                'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
+                'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
+                'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
+                'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
+                'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
+                'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
+                'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
+                'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
+                'Nombre_eps' => $Nombre_eps,
+                'Direccion_eps' => $Direccion_eps,
+                'Telefono_eps' => $Telefono_eps,
+                'Ciudad_departamento_eps' => $Ciudad_departamento_eps,
+                'Nombre_afp' => $Nombre_afp,
+                'Direccion_afp' => $Direccion_afp,
+                'Telefono_afp' => $Telefono_afp,
+                'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
+                'Nombre_arl' => $Nombre_arl,
+                'Direccion_arl' => $Direccion_arl,
+                'Telefono_arl' => $Telefono_arl,
+                'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
+                'footer_dato_1' => $footer_dato_1,
+                'footer_dato_2' => $footer_dato_2,
+                'footer_dato_3' => $footer_dato_3,
+                'footer_dato_4' => $footer_dato_4,
+                'footer_dato_5' => $footer_dato_5,
+            ];
+            // Crear una instancia de Dompdf
+            $pdf = app('dompdf.wrapper');
+            $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_formato_c_revisionPension', $data);            
+            $nombre_pdf = 'PCL_OFICIO_'.$Id_Asignacion_comuni_comite.'_'.$NroIden_afiliado_noti.'.pdf';    
+            //Obtener el contenido del PDF
+            $output = $pdf->output();   
+            //Guardar el PDF en un archivo
+            file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni_comite}/{$nombre_pdf}"), $output);
+            return $pdf->download($nombre_pdf);
+        } elseif($Formatod == 'Si') {
+            $data = [
+                'codigoQR' => $codigoQR,
+                'logo_header' => $logo_header,
+                'Id_cliente_ent' => $Cliente,
+                'ID_evento' => $ID_Evento_comuni_comite,
+                'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                'Id_proceso' => $Id_Proceso_comuni_comite,
+                'Radicado_comuni' => $Radicado_comuni_comite,
+                'Asunto_correspondencia' => $Asunto_correspondencia,
+                'Cuerpo_comunicado_correspondencia' => $Cuerpo_comunicado_correspondencia,
+                'F_correspondecia' => $F_correspondecia,
+                'Ciudad_correspondencia' => $Ciudad_correspondencia,
+                'Nombre_afiliado_pie' => $Nombre_afiliado_pie,
+                'Nombre_afiliado' => $nombre_destinatario_principal,
+                'direccion_destinatario_principal' => $direccion_destinatario_principal,
+                'telefono_destinatario_principal' => $telefono_destinatario_principal,
+                'ciudad_destinatario_principal' => $ciudad_destinatario_principal,
+                'T_documento_noti' => $T_documento_noti,
+                'NroIden_afiliado_noti' => $NroIden_afiliado_noti,
+                'Email_afiliado_noti' => $Email_afiliado_noti, 
+                'PorcentajePcl_dp' => $PorcentajePcl_dp,
+                'F_estructuracionPcl_dp' => $F_estructuracionPcl_dp,
+                'OrigenPcl_dp' => $OrigenPcl_dp,
+                'CIE10Nombres' => $CIE10Nombres,
+                'Detalle_calificacion_Fbdp' => $Detalle_calificacion_Fbdp,
+                'Nombre_decreto_dp' => $Nombre_decreto_dp,
+                'Firma_cliente' => $Firma_cliente,
+                'Anexos_correspondecia' => $Anexos_correspondecia,
+                'Elaboro_correspondecia' => $Elaboro_correspondecia,
+                'Nombre_empresa_noti' => $Nombre_empresa_noti,
+                'Direccion_empresa_noti' => $Direccion_empresa_noti,
+                'Telefono_empresa_noti' => $Telefono_empresa_noti,
+                'Ciudad_departamento_empresa_noti' => $Ciudad_departamento_empresa_noti,
+                'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
+                'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
+                'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
+                'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
+                'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
+                'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
+                'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
+                'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
+                'Nombre_eps' => $Nombre_eps,
+                'Direccion_eps' => $Direccion_eps,
+                'Telefono_eps' => $Telefono_eps,
+                'Ciudad_departamento_eps' => $Ciudad_departamento_eps,
+                'Nombre_afp' => $Nombre_afp,
+                'Direccion_afp' => $Direccion_afp,
+                'Telefono_afp' => $Telefono_afp,
+                'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
+                'Nombre_arl' => $Nombre_arl,
+                'Direccion_arl' => $Direccion_arl,
+                'Telefono_arl' => $Telefono_arl,
+                'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
+                'footer_dato_1' => $footer_dato_1,
+                'footer_dato_2' => $footer_dato_2,
+                'footer_dato_3' => $footer_dato_3,
+                'footer_dato_4' => $footer_dato_4,
+                'footer_dato_5' => $footer_dato_5,
+            ];
+            // Crear una instancia de Dompdf
+            $pdf = app('dompdf.wrapper');
+            $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_formato_d_revisionPension', $data);            
+            $nombre_pdf = 'PCL_OFICIO_'.$Id_Asignacion_comuni_comite.'_'.$NroIden_afiliado_noti.'.pdf';    
+            //Obtener el contenido del PDF
+            $output = $pdf->output();   
+            //Guardar el PDF en un archivo
+            file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni_comite}/{$nombre_pdf}"), $output);
+            return $pdf->download($nombre_pdf);
+        } elseif($Formatoe == 'Si') {
+            $data = [
+                'codigoQR' => $codigoQR,
+                'logo_header' => $logo_header,
+                'Id_cliente_ent' => $Cliente,
+                'ID_evento' => $ID_Evento_comuni_comite,
+                'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                'Id_proceso' => $Id_Proceso_comuni_comite,
+                'Radicado_comuni' => $Radicado_comuni_comite,
+                'Asunto_correspondencia' => $Asunto_correspondencia,
+                'Cuerpo_comunicado_correspondencia' => $Cuerpo_comunicado_correspondencia,
+                'F_correspondecia' => $F_correspondecia,
+                'Ciudad_correspondencia' => $Ciudad_correspondencia,
+                'Nombre_afiliado_pie' => $Nombre_afiliado_pie,
+                'Edad_afiliado' => $Edad_afiliado,
+                'Nombre_afiliado' => $nombre_destinatario_principal,
+                'direccion_destinatario_principal' => $direccion_destinatario_principal,
+                'telefono_destinatario_principal' => $telefono_destinatario_principal,
+                'ciudad_destinatario_principal' => $ciudad_destinatario_principal,
+                'T_documento_noti' => $T_documento_noti,
+                'NroIden_afiliado_noti' => $NroIden_afiliado_noti,
+                'Email_afiliado_noti' => $Email_afiliado_noti, 
+                'PorcentajePcl_dp' => $PorcentajePcl_dp,
+                'F_estructuracionPcl_dp' => $F_estructuracionPcl_dp,
+                'OrigenPcl_dp' => $OrigenPcl_dp,
+                'CIE10Nombres' => $CIE10Nombres,
+                'Detalle_calificacion_Fbdp' => $Detalle_calificacion_Fbdp,
+                'Nombre_decreto_dp' => $Nombre_decreto_dp,
+                'deficiencias_calculadas_factores' => $deficiencias_calculadas_factores,
+                'Suma_combinada_dp' => $Suma_combinada_dp,
+                'Total_Deficiencia50_dp' => $Total_Deficiencia50_dp,
+                'total_rol_ocupacional50' => $total_rol_ocupacional50,
+                'total_edad_cronologica' => $total_edad_cronologica,
+                'Total_rol_laboral' => $Total_rol_laboral,
+                'Total_otras_areas' => $Total_otras_areas,
+                'Total_laboral_otras_areas' => $Total_laboral_otras_areas,
+                'Firma_cliente' => $Firma_cliente,
+                'Anexos_correspondecia' => $Anexos_correspondecia,
+                'Elaboro_correspondecia' => $Elaboro_correspondecia,
+                'Nombre_empresa_noti' => $Nombre_empresa_noti,
+                'Direccion_empresa_noti' => $Direccion_empresa_noti,
+                'Telefono_empresa_noti' => $Telefono_empresa_noti,
+                'Ciudad_departamento_empresa_noti' => $Ciudad_departamento_empresa_noti,
+                'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
+                'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
+                'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
+                'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
+                'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
+                'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
+                'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
+                'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
+                'Nombre_eps' => $Nombre_eps,
+                'Direccion_eps' => $Direccion_eps,
+                'Telefono_eps' => $Telefono_eps,
+                'Ciudad_departamento_eps' => $Ciudad_departamento_eps,
+                'Nombre_afp' => $Nombre_afp,
+                'Direccion_afp' => $Direccion_afp,
+                'Telefono_afp' => $Telefono_afp,
+                'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
+                'Nombre_arl' => $Nombre_arl,
+                'Direccion_arl' => $Direccion_arl,
+                'Telefono_arl' => $Telefono_arl,
+                'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
+                'footer_dato_1' => $footer_dato_1,
+                'footer_dato_2' => $footer_dato_2,
+                'footer_dato_3' => $footer_dato_3,
+                'footer_dato_4' => $footer_dato_4,
+                'footer_dato_5' => $footer_dato_5,
+            ];
+            // Crear una instancia de Dompdf
+            $pdf = app('dompdf.wrapper');
+            $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_formato_e_revisionPension', $data);            
+            $nombre_pdf = 'PCL_OFICIO_'.$Id_Asignacion_comuni_comite.'_'.$NroIden_afiliado_noti.'.pdf';    
+            //Obtener el contenido del PDF
+            $output = $pdf->output();   
+            //Guardar el PDF en un archivo
+            file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni_comite}/{$nombre_pdf}"), $output);
+            return $pdf->download($nombre_pdf);
+        }        
     }
 
     // Generar PDF del Dictamen de PCL Cero
@@ -6571,7 +7096,7 @@ class RecalificacionPCLController extends Controller
         // Crear una instancia de Dompdf
 
         $pdf = app('dompdf.wrapper');
-        $pdf->loadView('/Proformas/Proformas_Arl/PCL/dictamen_Pcl_Cero', $data);        
+        $pdf->loadView('/Proformas/Proformas_Prev/PCL/dictamen_Pcl_Ceroprev', $data);        
         $nombre_pdf = 'PCL_DML_'.$Id_Asignacion_comuni.'_'.$Numero_documento_afiliado.'.pdf';    
         //Obtener el contenido del PDF
         $output = $pdf->output();
@@ -6757,10 +7282,26 @@ class RecalificacionPCLController extends Controller
         ->select('side.CIE10', 'slcd.CIE10 as Codigo_cie10', 'side.Nombre_CIE10')
         ->where([['ID_Evento',$ID_Evento_comuni_comite], ['Id_Asignacion',$Id_Asignacion_comuni_comite], ['Estado_Recalificacion', 'Activo']])->get(); 
         
-        $NombresCIE10 = $array_diagnosticosPcl->pluck('Nombre_CIE10')->toArray();
-        $CIE10Nombres_cero = implode(', ', $NombresCIE10);        
-        $CIE10Nombres_cero = preg_replace('/,(?=[^,]*$)/', ' y', $CIE10Nombres_cero);
+        if(count($array_diagnosticosPcl) > 0){
+            // Obtener el array de nombres CIE10
+            $NombresCIE10 = $array_diagnosticosPcl->pluck('Nombre_CIE10')->toArray();            
+            // Obtener el número de elementos en el array
+            $num_elementos = count($NombresCIE10);
+            // Si hay más de un elemento en el array
+            if ($num_elementos > 1) {
+                // Separar el último elemento del resto
+                $ultimo_elemento = array_pop($NombresCIE10);
+                $resto_elementos = implode(', ', $NombresCIE10);
 
+                // Concatenar los elementos con "y"
+                $CIE10Nombres_cero = $resto_elementos . ' y ' . $ultimo_elemento;
+            } else {
+                // Si solo hay un elemento, no es necesario cambiar nada
+                $CIE10Nombres_cero = reset($NombresCIE10);
+            }
+        }else{
+            $CIE10Nombres_cero = '';
+        }
         
         // validamos la firma esta marcado para la Captura de la firma del cliente           
         if ($Firma_comuni_comite == 'Firma') {            

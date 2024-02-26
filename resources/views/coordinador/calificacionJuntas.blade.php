@@ -1429,6 +1429,9 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Recuerde Actualizar siempre después de haber modificado uno o más campos, El botón Actualizar se bloquea cuando falte algún campo obligatorio por llenar, y el del PDF se habilitará después de realizar la actualización.
+                                    </div>
                                 </div>
                                 <div class="card-footer">
                                     <div class="row">

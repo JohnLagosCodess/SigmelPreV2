@@ -401,8 +401,8 @@ Route::post('/eliminarDeficieciasDecretosTres', [CalificacionPCLController::clas
 Route::post('/generarPdfDictamenesPcl', [CalificacionPCLController::class, 'generarPdfDictamenPcl'])->name('descargar_Dictamen_PCL');
 // Acción: Generar pdf Dictamen PCL 917
 Route::post('/generarPdfDictamenesPcl917', [CalificacionPCLController::class, 'generarPdfDictamenPcl917'])->name('descargar_Dictamen_PCL917');
-// Acción: Generar pdf Notificacion PCL numericas
-Route::post('/generarPdfNotificacionesPcl', [CalificacionPCLController::class, 'generarPdfNotificacionPcl'])->name('descargar_Notificacion_PCL');
+// Acción: Generar pdf Oficio PCL
+Route::post('/generarOficios_Pcl', [CalificacionPCLController::class, 'generarOficio_Pcl'])->name('generarOficio_Pcl');
 // Acción: Generar pdf Dictamen PCL Cero
 Route::post('/generarPdfDictamenesPclCero', [CalificacionPCLController::class, 'generarPdfDictamenPclCero'])->name('descargar_Dictamen_PCLCero');
 // Acción: Generar pdf Notificacion PCL Cero    
@@ -481,8 +481,8 @@ Route::post('/guardardictamenesPericialRe', [RecalificacionPCLController::class,
 Route::post('/generarPdfDictamenesPclRe', [RecalificacionPCLController::class, 'generarPdfDictamenPclRe'])->name('descargar_Dictamen_PCLRe');
 // Acción: Generar pdf Dictamen PCL 917
 Route::post('/generarPdfDictamenesPcl917Re', [RecalificacionPCLController::class, 'generarPdfDictamenPcl917Re'])->name('descargar_Dictamen_PCL917Re');
-// Acción: Generar pdf Notificacion PCL numericas
-Route::post('/generarPdfNotificacionesPclRe', [RecalificacionPCLController::class, 'generarPdfNotificacionPclRe'])->name('descargar_Notificacion_PCLRe');
+// Acción: Generar pdf Oficio PCL
+Route::post('/generarOficios_PclRe', [RecalificacionPCLController::class, 'generarOficio_PclRe'])->name('generarOficio_PclRe');
 // Acción: Generar pdf Dictamen PCL Cero
 Route::post('/generarPdfDictamenesPclCeroRe', [RecalificacionPCLController::class, 'generarPdfDictamenPclCeroRe'])->name('descargar_Dictamen_PCLCeroRe');
 // Acción: Generar pdf Notificacion PCL Cero    
@@ -531,6 +531,8 @@ Route::post('/guardarInfoServiPronuncia', [PronunciamientoPCLController::class, 
 // Ver documento Pronunciamiento
 //Route::get('/VerDocumentoPronuncia', [PronunciamientoPCLController::class, 'VerDocumentoPronuncia']);
 Route::get('/VerDocumentoPronuncia', [PronunciamientoPCLController::class, 'VerDocumentoPronuncia'])->name('VerDocumentoPronuncia');
+// Generar pdf pronunciamiento pcl acuerdo y desacuerdo
+Route::post('/generarPdfProformaspro', [PronunciamientoPCLController::class, 'generarPdfProformaPro']);
 
 //13/09/2023
 //Vista: Bandeja Origen Coordinador

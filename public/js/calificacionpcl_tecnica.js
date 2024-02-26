@@ -3054,14 +3054,14 @@ $(document).ready(function(){
         var Id_EventoDecreto = $('#Id_Evento_decreto').val();
         var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
         var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
-        // var oficiopcl = $('input[name="oficiopcl"]:checked').val();
-        // var oficioinca = $('input[name="oficioinca"]:checked').val();
-        // if (oficiopcl == undefined) {
-        //     oficiopcl = '';
-        // }
-        // if(oficioinca == undefined){
-        //     oficioinca = '';
-        // }
+        var oficiopcl = $('input[name="oficiopcl"]:checked').val();
+        var oficioinca = $('input[name="oficioinca"]:checked').val();
+        if (oficiopcl == undefined) {
+            oficiopcl = '';
+        }
+        if(oficioinca == undefined){
+            oficioinca = '';
+        }
         var destinatario_principal = $('#destinatario_principal').val();        
         var otrodestinariop = $('input[name="otrodestinariop"]:checked').val();
         if (otrodestinariop == undefined) {
@@ -3130,8 +3130,8 @@ $(document).ready(function(){
             'Id_EventoDecreto':Id_EventoDecreto,
             'Id_ProcesoDecreto':Id_ProcesoDecreto,
             'Id_Asignacion_Dcreto':Id_Asignacion_Dcreto,     
-            // 'oficiopcl':oficiopcl,
-            // 'oficioinca':oficioinca,
+            'oficiopcl':oficiopcl,
+            'oficioinca':oficioinca,
             'destinatario_principal':destinatario_principal,
             'otrodestinariop' : otrodestinariop,
             'tipo_destinatario_principal' : tipo_destinatario_principal,
@@ -3312,59 +3312,90 @@ $(document).ready(function(){
         toolbar: false
     });
     $('.note-editing-area').css("background", "white");
-    $('.note-editor').css("border", "1px solid black");
-
-    $("#Asunto").val("CALIFICACIÓN DE PÉRDIDA DE CAPACIDAD LABORAL");
-
-    var rellenar_textarea = $('#rellenar_textarea').val();
-    if( rellenar_textarea == 'Nollenar'){
-        
-        var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.</p>"+
-           "<p>De la manera más atenta queremos informar el resultado de la calificación realizada por el Equipo Interdisciplinario de Calificación "+ 
-           "de Origen, Invalidez y Pérdida de la Capacidad Laboral adscrito a la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A., "+
-           "el cual dio un porcentaje de {{$PorcentajePcl_dp}}, con fecha de estructuración del {{$F_estructuracionPcl_dp}},  que corresponde a Incapacidad "+
-           "Permanente Parcial según lo dispuesto en los Artículos 6 y 7 de la ley 776 de 2002, por  la patología {{$CIE10Nombres}}. "+
-           "Teniendo en cuenta la tabla adoptada por el Decreto 2644 de 1994, le corresponde {{$Monto_indemnizacionPcl}} meses de Ingreso Base "+
-           "de Liquidación como reconocimiento de la prestación económica.</p>"+
-           "<p>El dictamen de calificación del que anexó copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, "+
-           "de acuerdo al Decreto 0019  de 2012 artículo 142, en la Carrera 10 #18-36 piso 4°, Edificio José María Córdoba, Bogotá. Favor informar en la carta el motivo de "+
-           "su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen</p>"+
-           "<p>Si pasados los 10 días hábiles no han radicado apelación alguna, usted podrá tramitar la solicitud de pago de indemnización por incapacidad permanente parcial "+
-           "(IPP) en nuestras oficinas, paro lo cual debe anexar la siguiente documentación: 1. Certificación bancaria Original a su nombre. 2. Fotocopia de documento de "+
-           "identidad vigente. 3. Carta de autorización firmada en donde autorice a Seguros de Vida Alfa S.A. a realizar la transferencia electrónica a su cuenta acreditada.</p>"+
-           "<p>Cualquier información adicional con gusto será atendida por Auditoría Técnica de nuestra sucursal más cercana a su residencia.</p>";
-        $('#cuerpo_comunicado').summernote('code', texto_insertar);
-
-    }
+    $('.note-editor').css("border", "1px solid black");    
 
     // Retornar el texto por defecto en el asunto y cuerpo del comunicado
 
-    var notificacionpcl = $('#notificacionpcl');
-
-    notificacionpcl.change(function(){
+    var oficioremisoriopcl = $('#oficiopcl');
+    oficioremisoriopcl.change(function(){
         if ($(this).prop('checked')) {
-            $("#Asunto").val("CALIFICACIÓN DE PÉRDIDA DE CAPACIDAD LABORAL");
-            var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.</p>"+
-           "<p>De la manera más atenta queremos informar el resultado de la calificación realizada por el Equipo Interdisciplinario de Calificación "+ 
-           "de Origen, Invalidez y Pérdida de la Capacidad Laboral adscrito a la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A., "+
-           "el cual dio un porcentaje de {{$PorcentajePcl_dp}}, con fecha de estructuración del {{$F_estructuracionPcl_dp}},  que corresponde a Incapacidad "+
-           "Permanente Parcial según lo dispuesto en los Artículos 6 y 7 de la ley 776 de 2002, por  la patología {{$CIE10Nombres}}. "+
-           "Teniendo en cuenta la tabla adoptada por el Decreto 2644 de 1994, le corresponde {{$Monto_indemnizacionPcl}} meses de Ingreso Base "+
-           "de Liquidación como reconocimiento de la prestación económica.</p>"+
-           "<p>El dictamen de calificación del que anexó copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, "+
-           "de acuerdo al Decreto 0019  de 2012 artículo 142, en la Carrera 10 #18-36 piso 4°, Edificio José María Córdoba, Bogotá. Favor informar en la carta el motivo de "+
-           "su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen</p>"+
-           "<p>Si pasados los 10 días hábiles no han radicado apelación alguna, usted podrá tramitar la solicitud de pago de indemnización por incapacidad permanente parcial "+
-           "(IPP) en nuestras oficinas, paro lo cual debe anexar la siguiente documentación: 1. Certificación bancaria Original a su nombre. 2. Fotocopia de documento de "+
-           "identidad vigente. 3. Carta de autorización firmada en donde autorice a Seguros de Vida Alfa S.A. a realizar la transferencia electrónica a su cuenta acreditada.</p>"+
-           "<p>Cualquier información adicional con gusto será atendida por Auditoría Técnica de nuestra sucursal más cercana a su residencia.</p>";
+            $("#Asunto").val("Calificación de Pérdida de Capacidad Laboral al Fondo de Pensiones Porvenir S.A.");
+            var texto_insertar = "<p>Hola, {{$Nombre_afiliado}} </p>"+
+            "<p>En Seguros de Vida Alfa S.A. siempre buscamos la protección y satisfacción de nuestros clientes. De acuerdo con tu solicitud de  "+ 
+            "calificación de pérdida de capacidad laboral (PCL) en la AFP Porvenir S.A., te informamos que el historial médico ha sido revisado y "+
+            "calificado por el grupo interdisciplinario de calificación de Seguros de Vida Alfa S.A.(1).</p>"+
+            "<p>De acuerdo con los parámetros establecidos en el Manual Único para la Calificación de la Perdida de la Capacidad Laboral y "+
+            "Ocupacional (2) se ha determinado una (PCL) de {{$PorcentajePcl_dp}}  y fecha de estructuración {{$F_estructuracionPcl_dp}} Origen {{$OrigenPcl_dp}}.</p>"+
+            "<p>Si tu calificación es igual o superior al 50%, podrás iniciar los trámites ante la AFP Porvenir (3) para acceder a la prestación "+
+            "económica correspondiente, previo el cumplimiento de los requisitos legales para acceder a la pensión de invalidez (4). Si este es tu "+
+            "caso, podrás iniciar tu solicitud pensional a través de a página web www.porvenir.com.co o llamando a la línea de atención al cliente "+
+            "de Porvenir 018000510800, con el fin de solicitar una cita para la radicación de la documentación.</p>"+
+            "<p>En caso de que no te encuentres de acuerdo con la calificación emitida por Seguros de Vida Alfa S.A., cuentas con diez (10) días "+
+            "hábiles siguientes a partir de la fecha de recibida la notificación para manifestar tu inconformidad frente a resultado. Esta "
+            "manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de "+
+            "los siguientes aspectos te encuentras en desacuerdo: </p>"+
+            "<p>- Pérdida de capacidad laboral</p>"+
+            "<p>- Origen</p>"+
+            "<p>- Fecha de estructuración</p>"+
+            "<p>La carta debe ser remitida por medio de correo certificado a la dirección Carrera 10 # 18-36, piso 4 edificio José María Córdoba en "+
+            "Bogotá o a inconformidad@segurosalfa.com.co. Ten presente que el comunicado debe venir firmado por ti, relacionando los datos de "+
+            "localizaci ón. Posterior a la revisión de tu carta, procederemos a remitir tu expediente a la respectiva Junta Regional de "+
+            "Calificación de Invalidez para obtener una segunda calificación.</p>"+
+            "<p>Una vez realizada la solicitud, a más tardar en (15) quince días hábiles recibirás por parte de Seguros de Vida Alfa S.A. una "+
+            "comunicación donde te informaremos el estado del proceso.</p>";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
-        }
-        setTimeout(function() {
-            notificacionpcl.prop("checked", false);
-        }, 3000);
+        }else{
+            $("#Asunto").val("");
+            var texto_insertar = "";
+            $('#cuerpo_comunicado').summernote('code', texto_insertar);
+        }       
+    });
+
+    var oficioremisorioincapcl = $('#oficioinca');
+    oficioremisorioincapcl.change(function(){
+        if ($(this).prop('checked')) {
+            $("#Asunto").val("Calificación de Pérdida de Capacidad Laboral al Fondo de Pensiones Porvenir S.A.");
+            var texto_insertar = "<p>Hola, {{$Nombre_afiliado}} </p>"+
+            "<p>Teniendo en cuenta que usted ha cumplido los términos de incapacidad temporal prolongada establecidos por la ley, la AFP Porvenir "+ 
+            "S.A. en cumplimiento de la normatividad legal vigente procede a notificarle el dictamen de calificación con respecto a las patologías "+
+            "padecidas por usted y sustentadas en las Historias Clínicas aportadas que hacen parte integra de su expediente.</p>"+
+            "<p>Para el caso particular, es necesario resaltar el siguiente acápite legal: Literal a) del Artículo 29 del Decreto 1352 de 2013.</p>"+
+            "<p>Teniendo en cuenta lo anterior nos permitimos informarle que el grupo interdisciplinario de Seguros de Vida Alfa S.A, aseguradora que "+
+            "maneja el seguro previsional de los afiliados a la AFP Porvenir, emiti ó dictamen de calificación de origen y pérdida de la capacidad "+
+            "laboral (PCL), definiendo para su caso lo siguiente:</p>"+
+            "<table class='tabla_cuerpo'>" +
+            "<tr>" +
+            "<th>Porcentaje</th>" +
+            "<th>Origen</th>" +
+            "<th>Fecha de estructuración </th>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>{{$PorcentajePcl_dp}}</td>" +
+            "<td>{{$OrigenPcl_dp}}</td>" +
+            "<td>{{$F_estructuracionPcl_dp}}</td>" +
+            "</tr>" +
+            "</table>"+
+            "<p>Le informamos que de no encontrarse de acuerdo con la calificación emitida, usted tiene la posibilidad de manifestar a Seguros de "+
+            "Vida Alfa S.A. su inconformidad dentro de los diez (IO) días siguientes a partir de la fecha de recibida la notificación, evento en "+
+            "el cual procederemos a remitir su caso a la respectiva Junta Regional de Calificación de Invalidez para obtener una segunda calificación.</p>"+
+            "<p>Dicha manifestación debe realizarla por escrito dirigida a Seguros de Vida Alfa, en la que debe expresar sobre cuál de los aspectos "+
+            "apela: origen, pérdida de capacidad laboral y/o fecha de estructuración. Remitirla a la Cra 10 N° 18 - 36 Piso 4 Edificio José María "+
+            "Córdoba en Bogotá, al fax 7435333 ext.14440 0 al correo electrónico: inconformidad@segurosalfa.com.co.</p>";
+            $('#cuerpo_comunicado').summernote('code', texto_insertar);
+        }else{
+            $("#Asunto").val("");
+            var texto_insertar = "";
+            $('#cuerpo_comunicado').summernote('code', texto_insertar);
+        }        
     });
     
+    
+    $("#btn_insertar_Nombre_afiliado").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_Nombre_afiliado = "{{$Nombre_afiliado}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_Nombre_afiliado);
+    }); 
 
     $("#btn_insertar_porPcl").click(function(e){
         e.preventDefault();
@@ -3380,21 +3411,12 @@ $(document).ready(function(){
         $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_F_estructuracion);
     });
 
-    $("#btn_insertar_nombreCIE10").click(function(e){
+    $("#btn_insertar_Origen").click(function(e){
         e.preventDefault();
 
-        var etiqueta_nombreCIE10 = "{{$CIE10Nombres}}";
+        var etiqueta_nombreCIE10 = "{{$OrigenPcl_dp}}";
         $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_nombreCIE10);
     });
-
-    $("#btn_insertar_montoInde").click(function(e){
-        e.preventDefault();
-
-        var etiqueta_montoInde = "{{$Monto_indemnizacionPcl}}";
-        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_montoInde);
-    });
-
-
 
     // Funcionalidad para insertar las etiquetas de diagnosticos cie10 y origen Notificacion calificacion cero
 
@@ -3404,23 +3426,6 @@ $(document).ready(function(){
     });
     $('.note-editing-area').css("background", "white");
     $('.note-editor').css("border", "1px solid black");
-
-    var rellenar_textareacero = $('#rellenar_textareacero').val();
-    
-    if( rellenar_textareacero == 'Nollenarcero'){        
-        var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A</p>"+
-           "<p>De la manera más atenta queremos informar el resultado de la calificación realizada por el Grupo Interdisciplinario de Calificación "+ 
-           "de Origen y Pérdida de la Capacidad Laboral de la Administradora de Riesgos Laborales de "+
-           "Seguros de Vida Alfa S.A. El cual dio un porcentaje de {{$PorcentajePcl_cero}}; por el diagnostico {{$CIE10Nombres_cero}} "+
-           "por lo tanto NO procede el pago de indemnización por Incapacidad Permanente Parcial, ya que de acuerdo con el Artículo 5 Ley 776 de 2002 "+
-           "<strong>“Se considera como incapacitado permanente parcial, al afiliado que, como consecuencia de un accidente de trabajo o una enfermedad profesional, "+
-           "presenta una disminución definitiva, igual o superior al 5% pero inferior al 50% de su capacidad laboral, para la cual ha sido contratado o capacitado”</strong>.</p>"+
-           "<p>El dictamen de calificación del que anexo copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, "+
-           " de acuerdo al Decreto 0019 de 2012 artículo 142, en la Carrera 10 #18-36 piso 4°, Edificio José María Córdoba, Bogotá.</p>"+
-           "<p>Favor informar en la carta el motivo de su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen "+
-           "Cualquier información adicional con gusto será atendida por Auditoría Técnica de nuestra sucursal más cercana a su residencia.</p>";
-        $('#cuerpo_comunicado_cero').summernote('code', texto_insertar);        
-    }
 
     // Retornar el texto por defecto en el asunto y cuerpo del comunicado
 

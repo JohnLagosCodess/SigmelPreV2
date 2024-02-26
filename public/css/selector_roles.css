@@ -73,6 +73,25 @@
     scale: 2;
 }
 
+.tabla_cuerpo {
+    font-family: sans-serif;
+    text-align: center;
+    width: 100%;
+    table-layout: fixed; 
+    border-collapse: collapse;
+}
+
+.tabla_cuerpo, .tabla_cuerpo td, .tabla_cuerpo th {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.cuerpo_doc_revPen {
+    padding-left: 100px;
+    padding-right: 100px;
+    text-align: justify;
+}
+
 #div_cual {
     display: none;
 }

@@ -27,6 +27,30 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    $(".departamento_destinatario").select2({      
+        width: '100%',
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".ciudad_destinatario").select2({      
+        width: '100%',
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".forma_envio_act").select2({      
+        width: '100%',
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".reviso").select2({      
+        width: '100%',
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
     /* FUNCIONALIDAD DESCARGA DOCUMENTO */
     $("a[id^='btn_generar_descarga_']").click(function(){
         var id_documento = $(this).data('id_documento_descargar');
@@ -736,6 +760,7 @@ $(document).ready(function(){
     // Captura de datos segun la opcion seleccionada en destinatario principal
     // En la modal de generar comunicado
     $('input[type="radio"]').change(function(){
+        $('#Pdf').prop('disabled', true);
         var destinarioPrincipal = $(this).val();
         var identificacion_comunicado_afiliado = $('#identificacion_comunicado').val();
         var newId_evento = $('#newId_evento').val();
@@ -1677,9 +1702,42 @@ $(document).ready(function(){
         }
     });
 
+     // Función para verificar si todos los campos están llenos
+     function verificarCamposLlenos() {
+        var todosLlenos = true;
+        // Lista de IDs de los campos que quieres verificar
+        var camposIDs = ['#nombre_destinatario_editar', '#nic_cc_editar', '#direccion_destinatario_editar', '#telefono_destinatario_editar',
+        '#email_destinatario_editar', '#departamento_destinatario_editar', '#ciudad_destinatario_editar', '#asunto_editar', 
+        '#cuerpo_comunicado_editar', '#forma_envio_editar', '#reviso_editar'];
+        
+        // Verifica cada campo por su ID
+        camposIDs.forEach(function(id) {
+            var campo = $(id);
+            if (campo.is('input, select, textarea') && campo.val() === '') {
+                todosLlenos = false;
+                return false; // Sale del bucle si encuentra un campo vacío
+            }
+        });
+        return todosLlenos;
+    }
+    
+    // Temporizador que se ejecuta cada segundo
+    setInterval(function() {
+        if (verificarCamposLlenos()) {
+            // Si todos los campos están llenos, habilita el botón
+            $('#Editar_comunicados').prop('disabled', false); 
+            // $('#Pdf').prop('disabled', false);           
+        } else {
+            // Si hay campos vacíos, deshabilita el botón
+            $('#Editar_comunicados').prop('disabled', true); 
+            // $('#Pdf').prop('disabled', true);         
+        }
+    }, 1000); // 1000 milisegundos = 1 segundo
+
     // Actualiza comunicado de origen
     $('#Editar_comunicados').click(function (e) {
         e.preventDefault();  
+        $('#Pdf').prop('disabled', false);     
         var Id_comunicado = $('#Id_comunicado_act').val();
         var ciudad = $('#ciudad_comunicado_editar').val();
         var Id_evento = $('#Id_evento_act').val();

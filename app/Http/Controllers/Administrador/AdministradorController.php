@@ -2265,18 +2265,53 @@ class AdministradorController extends Controller
 
             for ($i=0; $i < count($listado_id_servicios_evento); $i++) { 
                 array_push($string_ids_servicios, $listado_id_servicios_evento[$i]->Id_servicio);
+                array_push($string_ids_servicios, 3); // Se agrega pronunciamiento Origen para no mostrar
+                array_push($string_ids_servicios, 9); // Se agrega pronunciamiento PCL para no mostrar
             }
             
-            /* MODIFICACIÓN PARA QUE SE PUEDA CREAR MUCHOS SERVICIOS DE RECALIFICACIÓN 25-08-2023 
-                EL SERVICIO DE Recalificación TIENE EL ID 7 en la tabla sigmel_lista_procesos_servicios
+            /* MODIFICACIÓN PARA QUE SE PUEDA CREAR MUCHOS SERVICIOS DE RECALIFICACIÓN y Adición DX 06-02-2024 
+                EL SERVICIO DE Recalificación TIENE EL ID 7 O EL 8 Revision Pension
+                o 2 DX  en la tabla sigmel_lista_procesos_servicios
             */
-            $tamanio = count($string_ids_servicios) + 1; 
+            /*$tamanio = count($string_ids_servicios) + 1; 
             for ($a=0; $a < $tamanio ; $a++) { 
                 if (in_array(7, $string_ids_servicios)) {
                     // Eliminar el valor 7 del array
                     $index = array_search(7, $string_ids_servicios);
                     unset($string_ids_servicios[$index]);
                 } 
+            }*/
+
+            $tamanio = count($string_ids_servicios);
+            for ($a = 0; $a < $tamanio; $a++) { 
+                if (in_array(7, $string_ids_servicios)) {
+                    // Eliminar el valor 7 del array
+                    $index = array_search(7, $string_ids_servicios);
+                    unset($string_ids_servicios[$index]);
+                    // Reindexar el array después de eliminar un elemento
+                    $string_ids_servicios = array_values($string_ids_servicios);
+                    // Actualizar el tamaño del array
+                    $tamanio = count($string_ids_servicios);
+                } else if (in_array(8, $string_ids_servicios)) {
+                    // Eliminar el valor 8 del array
+                    $index = array_search(8, $string_ids_servicios);
+                    unset($string_ids_servicios[$index]);
+                    // Reindexar el array después de eliminar un elemento
+                    $string_ids_servicios = array_values($string_ids_servicios);
+                    // Actualizar el tamaño del array
+                    $tamanio = count($string_ids_servicios);
+                } else if (in_array(2, $string_ids_servicios)) {
+                    // Eliminar el valor 2 del array
+                    $index = array_search(2, $string_ids_servicios);
+                    unset($string_ids_servicios[$index]);
+                    // Reindexar el array después de eliminar un elemento
+                    $string_ids_servicios = array_values($string_ids_servicios);
+                    // Actualizar el tamaño del array
+                    $tamanio = count($string_ids_servicios);
+                } else {
+                    // Si el valor 7,8,2 ya no está en el array, salimos del bucle
+                    break;
+                }
             }
             
             $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
@@ -2411,9 +2446,9 @@ class AdministradorController extends Controller
 
             $string_ids_procesos = array();
 
-            for ($i=0; $i < count($listado_id_procesos_evento); $i++) { 
+            /*for ($i=0; $i < count($listado_id_procesos_evento); $i++) { 
                 array_push($string_ids_procesos, $listado_id_procesos_evento[$i]->Id_proceso);
-            }
+            }*/
 
             $listado_procesos_nuevo_proceso = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
                 ->select('Id_proceso', 'Nombre_proceso')

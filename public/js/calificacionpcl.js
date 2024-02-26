@@ -505,7 +505,7 @@ $(document).ready(function(){
                     data-email_destinatario="'+data[i]["Email_destinatario"]+'" data-id_departamento="'+data[i]["Id_departamento"]+'"\
                     data-nombre_departamento="'+data[i]["Nombre_departamento"]+'" data-id_municipio="'+data[i]["Id_municipio"]+'"\
                     data-nombre_municipio="'+data[i]["Nombre_municipio"]+'" data-asunto_comunicado="'+data[i]["Asunto"]+'"\
-                    data-cuerpo_comunicado="'+data[i]["Cuerpo_comunicado"]+'" data-anexos_comunicados="'+data[i]["Anexos"]+'"\
+                    data-cuerpo_comunicado=\''+data[i]["Cuerpo_comunicado"]+'\' data-anexos_comunicados="'+data[i]["Anexos"]+'"\
                     data-forma_envio_comunicado="'+data[i]["Forma_envio"]+'" data-nombre_envio_comunicado="'+data[i]["Nombre_forma_envio"]+'"\
                     data-elaboro_comunicado="'+data[i]["Elaboro"]+'"\
                     data-reviso_comunicado="'+data[i]["Reviso"]+'" data-revisonombre_comunicado="'+data[i]["Nombre_lider"]+'"\
@@ -713,13 +713,41 @@ $(document).ready(function(){
             }
 
         });   
-        
+        // console.log(tipo_descarga);
         if (tipo_descarga == "Documento_PCL") {
             $("#documentos_pcl_editar").prop("checked", true);
             $("#otro_documento_pcl_editar").prop("checked", false);
-        } else {
+            $("#formatoB_revisionpension_editar").prop("checked", false);
+            $("#documento_revisionpension_editar").prop("checked", false);
+            $("#No_procede_recali_editar").prop("checked", false);
+        }else if (tipo_descarga == "Formato_B_Revision_pension") {
+            $("#documentos_pcl_editar").prop("checked", false);
+            $("#otro_documento_pcl_editar").prop("checked", false);
+            $("#formatoB_revisionpension_editar").prop("checked", true);
+            $("#documento_revisionpension_editar").prop("checked", false);
+            $("#No_procede_recali_editar").prop("checked", false);
+        }else if (tipo_descarga == "Documento_Revision_pension") {
+            $("#documentos_pcl_editar").prop("checked", false);
+            $("#otro_documento_pcl_editar").prop("checked", false);
+            $("#formatoB_revisionpension_editar").prop("checked", false);
+            $("#documento_revisionpension_editar").prop("checked", true);
+            $("#No_procede_recali_editar").prop("checked", false);
+        }else if (tipo_descarga == "Documento_No_Recalificacion") {
+            $("#documentos_pcl_editar").prop("checked", false);
+            $("#otro_documento_pcl_editar").prop("checked", false);
+            $("#formatoB_revisionpension_editar").prop("checked", false);
+            $("#documento_revisionpension_editar").prop("checked", false);
+            $("#No_procede_recali_editar").prop("checked", true);
+            $('#btn_insertar_Origen_editar').removeClass('d-none')
+            $('#btn_insertar_nombreCIE10_editar').removeClass('d-none')
+            $('#btn_insertar_porPcl_editar').removeClass('d-none')
+            $('#btn_insertar_F_estructuracion_editar').removeClass('d-none')
+        }else {
             $("#documentos_pcl_editar").prop("checked", false);
             $("#otro_documento_pcl_editar").prop("checked", true);
+            $("#formatoB_revisionpension_editar").prop("checked", false);
+            $("#documento_revisionpension_editar").prop("checked", false);
+            $("#No_procede_recali_editar").prop("checked", false);
         }
 
         document.getElementById('nombre_destinatario_editar').value=nombre_destinatario;        
@@ -749,6 +777,7 @@ $(document).ready(function(){
         var forma_envio_editar = $('#forma_envio_editar');
         forma_envio_editar.empty();
         forma_envio_editar.append('<option value="'+forma_envio_comunicado+'" selected>'+nombre_envio_comunicado+'</option>');
+        forma_envio_editar.prop('required', true);
         // Listado de forma de editar de generar comunicado
         let datos_lista_forma_envios = {
             '_token':token,        
@@ -801,6 +830,7 @@ $(document).ready(function(){
             }
         });
         $('input[type="radio"]').change(function(){
+            $('#Pdf').prop('disabled', true);
             var destinarioPrincipal = $(this).val();  
             var identificacion_comunicado_afiliado = $('#identificacion_comunicado_editar').val();
             var datos_destinarioPrincipal ={
@@ -845,10 +875,12 @@ $(document).ready(function(){
                         departamento_destinatario_editar.empty();
                         departamento_destinatario_editar.append('<option value="'+data.array_datos_destinatarios[0].Id_departamento_afiliado+'" selected>'+data.array_datos_destinatarios[0].Nombre_departamento_afiliado+'</option>');
                         document.querySelector("#departamento_destinatario_editar").disabled = true;
+                        $("#departamento_pdf").val(data.array_datos_destinatarios[0].Id_departamento_afiliado);
                         var ciudad_destinatario_editar =$('#ciudad_destinatario_editar');
                         ciudad_destinatario_editar.empty();
                         ciudad_destinatario_editar.append('<option value="'+data.array_datos_destinatarios[0].Id_municipio_afiliado+'">'+data.array_datos_destinatarios[0].Nombre_municipio_afiliado+'</option>')
                         document.querySelector("#ciudad_destinatario_editar").disabled = true;
+                        $("#ciudad_pdf").val(data.array_datos_destinatarios[0].Id_municipio_afiliado);
                         /* var forma_envio_editar = $('#forma_envio_editar');
                         forma_envio_editar.empty();
                         forma_envio_editar.append('<option value="'+data.hitorialAgregarComunicado[0].Forma_envio+'" selected>'+data.hitorialAgregarComunicado[0].Nombre_forma_envio+'</option>'); */
@@ -864,27 +896,32 @@ $(document).ready(function(){
                             success:function(data){
                                 //console.log(data);
                                 $('#forma_envio_editar').empty();
-                                forma_envio_editar.append('<option value="" selected>Seleccione una opción</option>');
+                                $('#forma_envio_editar').append('<option value="">Seleccione una opción</option>');
+                                // Agregar el atributo required
                                 let NobreFormaEnvio = $('select[name=forma_envio_act]').val();
                                 let formaenviogenerarcomunicado = Object.keys(data);
                                 for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
                                     if (data[formaenviogenerarcomunicado[i]]['Id_Parametro'] != NobreFormaEnvio) {
-                                        $('#forma_envio_editar').append('<option value="'+data[formaenviogenerarcomunicado[i]]['Id_Parametro']+'">'+data[formaenviogenerarcomunicado[i]]['Nombre_parametro']+'</option>');
-                                    }                
+                                        $('#forma_envio_editar').append('<option value="' + data[formaenviogenerarcomunicado[i]]['Id_Parametro'] + '">' + data[formaenviogenerarcomunicado[i]]['Nombre_parametro'] + '</option>');
+                                    }
                                 }
+                                // Desencadenar el evento change de Select2 para activar la actualización
+                                // $('#forma_envio_editar').trigger('change.select2');
                             }
                         });
+                        // $('#forma_envio_editar').prop('required', true);
                         var nombre_usuario = $('#elaboro_editar');
                         nombre_usuario.val(data.nombreusuario);
                         var nombre_usuario2 = $('#elaboro2_editar');
                         nombre_usuario2.val(data.nombreusuario);
                         var reviso = $('#reviso_editar');
                         reviso.empty();
-                        reviso.append('<option value="" selected>Seleccione una opción</option>');
+                        reviso.append('<option value="">Seleccione una opción</option>');                        
                         let revisolider = Object.keys(data.array_datos_lider);
                         for (let i = 0; i < revisolider.length; i++) {
                             reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                         }
+                        // reviso.prop('required', true);
                     }else if(data.destinatarioPrincipal == 'Empresa'){      
                         //console.log(data.array_datos_destinatarios);
                         var Nombre_afiliado = $('#nombre_destinatario_editar');
@@ -911,10 +948,12 @@ $(document).ready(function(){
                         departamentoafiliado.empty();
                         departamentoafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_departamento_empresa+'" selected>'+data.array_datos_destinatarios[0].Nombre_departamento_empresa+'</option>');
                         document.querySelector("#departamento_destinatario_editar").disabled = true;
+                        $("#departamento_pdf").val(data.array_datos_destinatarios[0].Id_departamento_empresa);
                         var ciudadafiliado =$('#ciudad_destinatario_editar');
                         ciudadafiliado.empty();
                         ciudadafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_municipio_empresa+'">'+data.array_datos_destinatarios[0].Nombre_municipio_empresa+'</option>')
                         document.querySelector("#ciudad_destinatario_editar").disabled = true;
+                        $("#ciudad_pdf").val(data.array_datos_destinatarios[0].Id_municipio_empresa);
                         // Listado de forma de editar de generar comunicado
                         let datos_lista_forma_envios = {
                             '_token':token,        
@@ -957,7 +996,9 @@ $(document).ready(function(){
                         document.querySelector("#email_destinatario_editar").disabled = false;
                         document.querySelector("#departamento_destinatario_editar").disabled = false;
                         document.querySelector("#ciudad_destinatario_editar").disabled = false;
-                        $('#nombre_destinatario_editar').val('');
+                        $("#departamento_pdf").val('');
+                        $("#ciudad_pdf").val('');                        
+                        $('#nombre_destinatario_editar').val('');                        
                         $('#nic_cc_editar').val('');
                         $('#direccion_destinatario_editar').val('');
                         $('#telefono_destinatario_editar').val('');
@@ -986,6 +1027,7 @@ $(document).ready(function(){
                         $('#departamento_destinatario_editar').change(function(){
                             $('#ciudad_destinatario_editar').prop('disabled', false);
                             let id_departamento_destinatario = $('#departamento_destinatario_editar').val();
+                            $("#departamento_pdf").val(id_departamento_destinatario);
                             let datos_lista_municipios_generar_comunicado = {
                                 '_token': token,
                                 'parametro' : "municipios_generar_comunicado",
@@ -1005,6 +1047,10 @@ $(document).ready(function(){
                                     }
                                 }
                             });
+                        });
+                        $("#ciudad_destinatario_editar").change(function(){
+                            let id_ciudad_destinatario = $('#ciudad_destinatario_editar').val();
+                            $("#ciudad_pdf").val(id_ciudad_destinatario);
                         });
                         // Listado de forma de editar de generar comunicado
                         let datos_lista_forma_envios = {
@@ -1068,29 +1114,168 @@ $(document).ready(function(){
         var opc_seleccionada = $(this).val();
         
         if (opc_seleccionada == "Documento_PCL") {
-            $("#asunto_editar").val("SOLICITUD DE DOCUMENTOS PARA CALIFICACIÓN DE PÉRDIDA DE LA CAPACIDAD LABORAL");
-            var texto_insertar = "<p>En Seguros de Vida Alfa S.A. siempre buscamos la protección y satisfacción de nuestros clientes. "+
-            "Le informamos que se está llevando a cabo su proceso de Calificaicón de Pérdida de la Capacidad Laboral (PCL) por parte de ARL ALFA S.A., "+
-            "Su historial médico ha sido revisado por el grupo interdisciplinario de calificación de Seguros de Vida Alfa S.A.</p>"+
-            "<p>No obstante, a que la información suministrada es relevante, se hace necesario que sean aportados documentos adicionales "+
-            "con el fin de poder realizar la calificación de pérdida de capacidad laboral requerida, que a continuación relacionamos:</p>"+
+            $("#asunto_editar").val("Solicitud de documentos Calificación de Pérdida de Capacidad laboral al Fondo de Pensiones Porvenir S.A.");
+            var texto_insertar = "<p>En Seguros de Vida Alfa S.A. siempre buscamos la protección y satisfacción de nuestros clientes. De acuerdo a tu solicitud de "+
+            "calificación de pérdida de capacidad laboral (PCL) radicada en la AFP Porvenir S.A., te informamos que el historial médico aportado "+
+            "ha sido revisado por el grupo interdisciplinario de calificación de Seguros de Vida Alfa S.A.</p>"+
+            "<p>No obstante, a que la información suministrada es relevante, se hace necesario que sean aportados documentos adicionales con el fin "+
+            "de poder realizar la calificación de pérdida de capacidad laboral requerida, que a continuación relacionamos:</p>"+
             "<p>1. </p>"+
-            "<p>Esta documentación debe sumistrarla a los siguientes correos electrónicos: en un término de tres (3) meses contados a partir "+
-            "del recibido de la presente comunicación, y a partir de ese momento se inicia nuevamente el estudio de tu solicitud. "+
-            "En el evento de no recibir la documentación medica actualizada, se considerará desistimiento de tu solicitud por parte de esta "+
-            "aseguradora.</p>"+
-            "<p>Cualquier información adicional con gusto será atendida por el Auditor Técnico en el teléfono 7435333 Ext. 14626 en Bogotá.</p>";
+            "<p>Esta documentación debe sumistrarla a los siguientes correos electrónicos: servicioalcliente@codess.org.co, "+
+            "servicioalcliente@segurosalfa.com.co en un término de tres (3) meses contados a partir del recibido de la presente comunicación, y a "+
+            "partir de ese momento se inicia nuevamente el estudio de tu solicitud. En el evento de no recibir la documentación medica "+
+            "actualizada, se considerará desistimiento de tu solicitud por parte de esta aseguradora.</p>"+
+            "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras l íneas de atención al cliente en Bogotá (601) 3 07 "+
+            "70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o "+
+            "escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
             $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
-        }else{
+        }else if (opc_seleccionada == "Formato_B_Revision_pension") {
+            $("#asunto_editar").val("NOTIFICACIÓN RESULTADO REVISIÓN PENSIONAL");
+            var texto_insertar = "<p>Reciba un cordial saludo, </p>"+
+            "<p>Agradecemos la respuesta que hemos recibido a nuestra solicitud de actualización de historia clínica con "+ 
+            "el fin de revisar sus condiciones de salud.</p>"+
+            "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida "+
+            "Alfa S.A., hemos definido que Usted actualmente mantiene las condiciones para continuar con el beneficio "+
+            "de pensión por invalidez sobre el cual esta compañía Aseguradora ha venido pagando la mesada pensional "+
+            "en virtud del contrato de Renta Vitalicia Inmediata suscrito por encargo de la Administradora de Fondos de "+
+            "Pensiones Porvenir S.A.</p>"+
+            "<p>En forma sucinta la revisión de invalidez, se fundamenta en: </p>"+
+            "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras l íneas de atención al "+
+            "cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes, de "+
+            "8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a "+
+            "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
+            $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
+        }else if (opc_seleccionada == "Documento_Revision_pension") {
+            $("#asunto_editar").val("Servicio del Proceso de PCL  Revision Pension");
+            var texto_insertar = '<p>Reciba un cordial saludo por parte de Seguros de Vida Alfa S.A.</p>'+
+            '<p>En cumplimiento de la normatividad vigente, Seguros de Vida Alfa S.A, se encuentra realizando la actualización de información de las '+ 
+            'condiciones de salud de los pensionados por invalidez, sustentada en el artículo 44 de la Ley 100 de 1993, que establece:</p>'+
+            '<p class="cuerpo_doc_revPen">“(...)<strong>ARTÍCULO 44. REVISIÓN DE LAS PENSIONES DE INVALIDEZ.</strong> El estado de invalidez podrá <br>'+
+            'revisarse: <br>'+
+            'a. Por solicitud de la entidad de previsión o seguridad social correspondiente cada tres (3) años, '+
+            'con el fin de ratificar, modificar o dejar sin efectos el dictamen que sirvió de base para la liquidación '+
+            'de la pensión que disfruta su beneficiario y proceder a la extinción, disminución o aumento de la '+
+            'misma, si a ello hubiera lugar.<br>'+
+            'Este nuevo dictamen se sujeta a las reglas de los artículos anteriores. <br>'+
+            'El pensionado tendrá un plazo de tres (3) meses contados a partir de la fecha de dicha solicitud, '+
+            'para someterse a la respectiva revisión del estado de invalidez. Salvo casos de fuerza mayor, si el '+
+            'pensionado no se presenta o impide dicha revisión dentro de dicho plazo, se suspenderá el pago de '+
+            'la pensión. Transcurridos doce (12) meses contados desde la misma fecha sin que el pensionado '+
+            'se presente o permita el examen, la respectiva pensión prescribirá. '+
+            'Para readquirir el derecho en forma posterior, el afiliado que alegue permanecer inválido deberá '+
+            'someterse a un nuevo dictamen. Los gastos de este nuevo dictamen ser án pagados por el afiliado <br>'+
+            '(...)”</p>'+
+            '<p>De acuerdo con lo anterior y una vez revisado el expediente previsional de referencia, se estableció que es necesario que allegue '+
+            'esta documentación a los siguientes correos electrónicos : alfa.previsional2@codess.org.co, servicioalcliente@segurosalfa.com.co en '+
+            'un término de tres (3) meses contados a partir del recibido de la presente comunicación, los siguientes documentos:</p>'+
+            '<p>1. </p>'+
+            '<p>Los documentos anteriormente mencionados deben ser solicitados en su EPS con su médico tratante; por otra parte aclaramos que los '+
+            'mismos se deben radicar en papelería física. No se aceptan medios magnéticos como CD o correos electrónicos.</p>'+
+            '<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 '+
+            '70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o '+
+            'escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>';
+            $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
+            // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+        }else if (opc_seleccionada == "Documento_No_Recalificacion") {
+            $("#asunto_editar").val("RESPUESTA A SOLICITUD DE RECALIFICACIÓN");
+            var texto_insertar = '<p>Reciba un cordial saludo, </p>'+
+            '<p>Con ocasión a la solicitud de calificación de pérdida de capacidad laboral radicado por usted en la Administradora de Fondo de '+ 
+            'Pensiones Porvenir, Seguros de Vida Alfa S.A. se permite dar respuesta en los términos que se describen a continuación. '+
+            'Una vez revisadas nuestras bases de datos y sistemas de información, se evidencia con respecto a su caso, que Seguros de Vida Alfa '+
+            'S.A. realizó calificación de la Pérdida de Capacidad Laboral (PCL), con los diagnósticos de origen {{$OrigenPcl_dp}}: {{$CIE10Nombres}}, '+
+            'con un porcentaje del {{$PorcentajePcl_dp}} % y fecha de estructuración {{$F_estructuracionPcl_dp}}, la cual le fue remitida y le fue notificada.</p>'+
+            '<p>Por tanto, en el momento no hay lugar a emitir nuevo dictamen de Calificación de Pérdida de Capacidad Laboral (PCL) por parte de '+
+            'Seguros Alfa; de acuerdo a lo establecido en el Decreto 1352 del 2013 Articulo 55:</p>'+
+            '<p class="cuerpo_doc_revPen">“...la revisión de la pérdida de incapacidad permanente parcial por parte de las '+
+            'Juntas será procedente cuando el porcentaje sea inferior al 50% de pérdida de '+
+            'capacidad laboral a solicitud de la Administradora de Riesgos Laborales, los '+
+            'trabajadores o personas interesadas, mínimo al año siguiente de la calificación y '+
+            'siguiendo los procedimientos y términos de tiempo establecidos en el presente '+
+            'decreto...”</p>'+
+            '<p>Esperamos de esta forma haber dado respuesta a su requerimiento y reiteramos nuestra voluntad de servicio. </p>';            
+            $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
+            $('#btn_insertar_Origen_editar').removeClass('d-none')
+            $('#btn_insertar_nombreCIE10_editar').removeClass('d-none')
+            $('#btn_insertar_porPcl_editar').removeClass('d-none')
+            $('#btn_insertar_F_estructuracion_editar').removeClass('d-none')
+            // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+        }
+        else{
             $("#asunto_editar").val("");
             $('#cuerpo_comunicado_editar').summernote('code', '');
+            $('#btn_insertar_Origen_editar').addClass('d-none')
+            $('#btn_insertar_nombreCIE10_editar').addClass('d-none')
+            $('#btn_insertar_porPcl_editar').addClass('d-none')
+            $('#btn_insertar_F_estructuracion_editar').addClass('d-none')
+
         }
+    });  
+    
+    $("#btn_insertar_Origen_editar").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_nombreCIE10 = "{{$OrigenPcl_dp}}";
+        $('#cuerpo_comunicado_editar').summernote('editor.insertText', etiqueta_nombreCIE10);
     });
+
+    $("#btn_insertar_nombreCIE10_editar").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_nombreCIE10 = "{{$CIE10Nombres}}";
+        $('#cuerpo_comunicado_editar').summernote('editor.insertText', etiqueta_nombreCIE10);
+    });
+
+    $("#btn_insertar_porPcl_editar").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_porPCL = "{{$PorcentajePcl_dp}}";
+        $('#cuerpo_comunicado_editar').summernote('editor.insertText', etiqueta_porPCL);
+    });  
+    
+    $("#btn_insertar_F_estructuracion_editar").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_F_estructuracion = "{{$F_estructuracionPcl_dp}}";
+        $('#cuerpo_comunicado_editar').summernote('editor.insertText', etiqueta_F_estructuracion);
+    }); 
+
+    // Función para verificar si todos los campos están llenos
+    function verificarCamposLlenos() {
+        var todosLlenos = true;
+        // Lista de IDs de los campos que quieres verificar
+        var camposIDs = ['#nombre_destinatario_editar', '#nic_cc_editar', '#direccion_destinatario_editar', '#telefono_destinatario_editar',
+        '#email_destinatario_editar', '#departamento_destinatario_editar', '#ciudad_destinatario_editar', '#asunto_editar', 
+        '#cuerpo_comunicado_editar', '#forma_envio_editar', '#reviso_editar'];
+        
+        // Verifica cada campo por su ID
+        camposIDs.forEach(function(id) {
+            var campo = $(id);
+            if (campo.is('input, select, textarea') && campo.val() === '') {
+                todosLlenos = false;
+                return false; // Sale del bucle si encuentra un campo vacío
+            }
+        });
+        return todosLlenos;
+    }
+    
+    // Temporizador que se ejecuta cada segundo
+    setInterval(function() {
+        if (verificarCamposLlenos()) {
+            // Si todos los campos están llenos, habilita el botón
+            $('#Editar_comunicados').prop('disabled', false); 
+            // $('#Pdf').prop('disabled', false);           
+        } else {
+            // Si hay campos vacíos, deshabilita el botón
+            $('#Editar_comunicados').prop('disabled', true); 
+            // $('#Pdf').prop('disabled', true);           
+        }
+    }, 1000); // 1000 milisegundos = 1 segundo
 
     // Captura de data para el fomulario de actualizar el comunicado
 
-    $('#Editar_comunicados').click(function (e) {
+    $('#Editar_comunicados').click(function (e) {    
         e.preventDefault();  
+        $('#Pdf').prop('disabled', false);     
         var Id_comunicado = $('#Id_comunicado_act').val();
         var ciudad = $('#ciudad_comunicado_editar').val();
         var Id_evento = $('#Id_evento_act').val();
@@ -1169,6 +1354,8 @@ $(document).ready(function(){
                 }
             }
        });       
+       var tipo_descarga = $("[name='tipo_documento_descarga_califi_editar']").filter(":checked").val();
+       
         let token = $('input[name=_token]').val();        
         var datos_actualizarComunicado = {
             '_token': token,
@@ -1182,7 +1369,8 @@ $(document).ready(function(){
             'cliente_comunicado2_editar':cliente_comunicado2,
             'nombre_afiliado_comunicado2_editar':nombre_afiliado_comunicado2,
             'tipo_documento_comunicado2_editar':tipo_documento_comunicado2,
-            'identificacion_comunicado2_editar':identificacion_comunicado2,            
+            'identificacion_comunicado2_editar':identificacion_comunicado2,  
+            'tipo_descarga':tipo_descarga,
             'radioafiliado_comunicado_editar':radioafiliado_comunicado,
             'radioempresa_comunicado_editar':radioempresa_comunicado,
             'radioOtro_editar':radioOtro,
@@ -1519,23 +1707,138 @@ $(document).ready(function(){
         
         if (opc_seleccionada == "Documento_PCL") {
             $("#asunto").val("SOLICITUD DE DOCUMENTOS PARA CALIFICACIÓN DE PÉRDIDA DE LA CAPACIDAD LABORAL");
-            var texto_insertar = "<p>En Seguros de Vida Alfa S.A. siempre buscamos la protección y satisfacción de nuestros clientes. "+
-            "Le informamos que se está llevando a cabo su proceso de Calificaicón de Pérdida de la Capacidad Laboral (PCL) por parte de ARL ALFA S.A., "+
-            "Su historial médico ha sido revisado por el grupo interdisciplinario de calificación de Seguros de Vida Alfa S.A.</p>"+
-            "<p>No obstante, a que la información suministrada es relevante, se hace necesario que sean aportados documentos adicionales "+
-            "con el fin de poder realizar la calificación de pérdida de capacidad laboral requerida, que a continuación relacionamos:</p>"+
+            var texto_insertar = "<p>En Seguros de Vida Alfa S.A. siempre buscamos la protección y satisfacción de nuestros clientes. De acuerdo a tu solicitud de "+
+            "calificación de pérdida de capacidad laboral (PCL) radicada en la AFP Porvenir S.A., te informamos que el historial médico aportado "+
+            "ha sido revisado por el grupo interdisciplinario de calificación de Seguros de Vida Alfa S.A.</p>"+
+            "<p>No obstante, a que la información suministrada es relevante, se hace necesario que sean aportados documentos adicionales con el fin "+
+            "de poder realizar la calificación de pérdida de capacidad laboral requerida, que a continuación relacionamos:</p>"+
             "<p>1. </p>"+
-            "<p>Esta documentación debe sumistrarla a los siguientes correos electrónicos: en un término de tres (3) meses contados a partir "+
-            "del recibido de la presente comunicación, y a partir de ese momento se inicia nuevamente el estudio de tu solicitud. "+
-            "En el evento de no recibir la documentación medica actualizada, se considerará desistimiento de tu solicitud por parte de esta "+
-            "aseguradora.</p>"+
-            "<p>Cualquier información adicional con gusto será atendida por el Auditor Técnico en el teléfono 7435333 Ext. 14626 en Bogotá.</p>";
+            "<p>Esta documentación debe sumistrarla a los siguientes correos electrónicos: servicioalcliente@codess.org.co, "+
+            "servicioalcliente@segurosalfa.com.co en un término de tres (3) meses contados a partir del recibido de la presente comunicación, y a "+
+            "partir de ese momento se inicia nuevamente el estudio de tu solicitud. En el evento de no recibir la documentación medica "+
+            "actualizada, se considerará desistimiento de tu solicitud por parte de esta aseguradora.</p>"+
+            "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras l íneas de atención al cliente en Bogotá (601) 3 07 "+
+            "70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o "+
+            "escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
-        }else{
+            // $('#btn_insertar_Detalle_calificacion').addClass('d-none');
+        }else if (opc_seleccionada == "Formato_B_Revision_pension") {
+            $("#asunto").val("NOTIFICACIÓN RESULTADO REVISIÓN PENSIONAL");
+            var texto_insertar = "<p>Reciba un cordial saludo, </p>"+
+            "<p>Agradecemos la respuesta que hemos recibido a nuestra solicitud de actualización de historia clínica con "+ 
+            "el fin de revisar sus condiciones de salud.</p>"+
+            "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida "+
+            "Alfa S.A., hemos definido que Usted actualmente mantiene las condiciones para continuar con el beneficio "+
+            "de pensión por invalidez sobre el cual esta compañía Aseguradora ha venido pagando la mesada pensional "+
+            "en virtud del contrato de Renta Vitalicia Inmediata suscrito por encargo de la Administradora de Fondos de "+
+            "Pensiones Porvenir S.A.</p>"+
+            "<p>En forma sucinta la revisión de invalidez, se fundamenta en: </p>"+
+            "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras l íneas de atención al "+
+            "cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes, de "+
+            "8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a "+
+            "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
+            $('#cuerpo_comunicado').summernote('code', texto_insertar);
+            // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+        }else if (opc_seleccionada == "Documento_Revision_pension") {
+            $("#asunto").val("Servicio del Proceso de PCL  Revision Pension");
+            var texto_insertar = '<p>Reciba un cordial saludo por parte de Seguros de Vida Alfa S.A.</p>'+
+            '<p>En cumplimiento de la normatividad vigente, Seguros de Vida Alfa S.A, se encuentra realizando la actualización de información de las '+ 
+            'condiciones de salud de los pensionados por invalidez, sustentada en el artículo 44 de la Ley 100 de 1993, que establece:</p>'+
+            '<p class="cuerpo_doc_revPen">“(...)<strong>ARTÍCULO 44. REVISIÓN DE LAS PENSIONES DE INVALIDEZ.</strong> El estado de invalidez podrá <br>'+
+            'revisarse: <br>'+
+            'a. Por solicitud de la entidad de previsión o seguridad social correspondiente cada tres (3) años, '+
+            'con el fin de ratificar, modificar o dejar sin efectos el dictamen que sirvió de base para la liquidación '+
+            'de la pensión que disfruta su beneficiario y proceder a la extinción, disminución o aumento de la '+
+            'misma, si a ello hubiera lugar.<br>'+
+            'Este nuevo dictamen se sujeta a las reglas de los artículos anteriores. <br>'+
+            'El pensionado tendrá un plazo de tres (3) meses contados a partir de la fecha de dicha solicitud, '+
+            'para someterse a la respectiva revisión del estado de invalidez. Salvo casos de fuerza mayor, si el '+
+            'pensionado no se presenta o impide dicha revisión dentro de dicho plazo, se suspenderá el pago de '+
+            'la pensión. Transcurridos doce (12) meses contados desde la misma fecha sin que el pensionado '+
+            'se presente o permita el examen, la respectiva pensión prescribirá. '+
+            'Para readquirir el derecho en forma posterior, el afiliado que alegue permanecer inválido deberá '+
+            'someterse a un nuevo dictamen. Los gastos de este nuevo dictamen ser án pagados por el afiliado <br>'+
+            '(...)”</p>'+
+            '<p>De acuerdo con lo anterior y una vez revisado el expediente previsional de referencia, se estableció que es necesario que allegue '+
+            'esta documentación a los siguientes correos electrónicos : alfa.previsional2@codess.org.co, servicioalcliente@segurosalfa.com.co en '+
+            'un término de tres (3) meses contados a partir del recibido de la presente comunicación, los siguientes documentos:</p>'+
+            '<p>1. </p>'+
+            '<p>Los documentos anteriormente mencionados deben ser solicitados en su EPS con su médico tratante; por otra parte aclaramos que los '+
+            'mismos se deben radicar en papelería física. No se aceptan medios magnéticos como CD o correos electrónicos.</p>'+
+            '<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 '+
+            '70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o '+
+            'escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>';
+            $('#cuerpo_comunicado').summernote('code', texto_insertar);
+            // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+        }else if (opc_seleccionada == "Documento_No_Recalificacion") {
+            $("#asunto").val("RESPUESTA A SOLICITUD DE RECALIFICACIÓN");
+            var texto_insertar = '<p>Reciba un cordial saludo, </p>'+
+            '<p>Con ocasión a la solicitud de calificación de pérdida de capacidad laboral radicado por usted en la Administradora de Fondo de '+ 
+            'Pensiones Porvenir, Seguros de Vida Alfa S.A. se permite dar respuesta en los términos que se describen a continuación. '+
+            'Una vez revisadas nuestras bases de datos y sistemas de información, se evidencia con respecto a su caso, que Seguros de Vida Alfa '+
+            'S.A. realizó calificación de la Pérdida de Capacidad Laboral (PCL), con los diagnósticos de origen {{$OrigenPcl_dp}}: {{$CIE10Nombres}}, '+
+            'con un porcentaje del {{$PorcentajePcl_dp}} % y fecha de estructuración {{$F_estructuracionPcl_dp}}, la cual le fue remitida y le fue notificada.</p>'+
+            '<p>Por tanto, en el momento no hay lugar a emitir nuevo dictamen de Calificación de Pérdida de Capacidad Laboral (PCL) por parte de '+
+            'Seguros Alfa; de acuerdo a lo establecido en el Decreto 1352 del 2013 Articulo 55:</p>'+
+            '<p class="cuerpo_doc_revPen">“...la revisión de la pérdida de incapacidad permanente parcial por parte de las '+
+            'Juntas será procedente cuando el porcentaje sea inferior al 50% de pérdida de '+
+            'capacidad laboral a solicitud de la Administradora de Riesgos Laborales, los '+
+            'trabajadores o personas interesadas, mínimo al año siguiente de la calificación y '+
+            'siguiendo los procedimientos y términos de tiempo establecidos en el presente '+
+            'decreto...”</p>'+
+            '<p>Esperamos de esta forma haber dado respuesta a su requerimiento y reiteramos nuestra voluntad de servicio. </p>';            
+            $('#cuerpo_comunicado').summernote('code', texto_insertar);
+            // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+            $('#btn_insertar_Origen').removeClass('d-none')
+            $('#btn_insertar_nombreCIE10').removeClass('d-none')
+            $('#btn_insertar_porPcl').removeClass('d-none')
+            $('#btn_insertar_F_estructuracion').removeClass('d-none')
+        }        
+        else{
             $("#asunto").val("");
             $('#cuerpo_comunicado').summernote('code', '');
+            // $('#btn_insertar_Detalle_calificacion').addClass('d-none');
+            $('#btn_insertar_Origen').addClass('d-none')
+            $('#btn_insertar_nombreCIE10').addClass('d-none')
+            $('#btn_insertar_porPcl').addClass('d-none')
+            $('#btn_insertar_F_estructuracion').addClass('d-none')
         }
     });
+
+    // $("#btn_insertar_Detalle_calificacion").click(function(e){
+    //     e.preventDefault(); 
+
+    //     var etiqueta_Detalle_calificacion = "{{$Detalle_calificacion_Fbdp}}";
+    //     $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_Detalle_calificacion);
+    // });    
+    
+    $("#btn_insertar_Origen").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_nombreCIE10 = "{{$OrigenPcl_dp}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_nombreCIE10);
+    });
+
+    $("#btn_insertar_nombreCIE10").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_nombreCIE10 = "{{$CIE10Nombres}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_nombreCIE10);
+    });
+
+    $("#btn_insertar_porPcl").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_porPCL = "{{$PorcentajePcl_dp}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_porPCL);
+    });  
+    
+    $("#btn_insertar_F_estructuracion").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_F_estructuracion = "{{$F_estructuracionPcl_dp}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_F_estructuracion);
+    });    
 
     // llenado del formulario para la captura de la modal de Generar Comunicado
     

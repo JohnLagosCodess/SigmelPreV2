@@ -87,7 +87,7 @@ $(document).ready(function(){
             }
         }
     });
-    // Listado Nombre Entidad
+    // Listado Nombre Entidad    
     $('#primer_calificador').change( function(){
         $('#nombre_calificador').prop('disabled', false);
         let id_primer_calificador = $('#primer_calificador').val();
@@ -491,6 +491,140 @@ $(document).ready(function(){
            $(this).val('');
         }
      });
+
+     // Validar cual desicion esta marcada
+
+     var di_acuerdo_pr = $('#di_acuerdo_pr');
+     var di_desacuerdo_pr = $('#di_desacuerdo_pr');
+     var di_silencio_pr = $('#di_silencio_pr');
+
+     if (di_acuerdo_pr.prop('checked')) {
+        $('#proformas_pro_pcl').removeClass('d-none');
+        $('#proformas_pro_pcl').val('PDF');
+        $('#btn_insertar_Nombre_afiliado').addClass('d-none')
+        $('#btn_insertar_nombreCIE10').addClass('d-none')
+        // $('#btn_insertar_Origen').addClass('d-none')
+        $('#btn_insertar_porPcl').addClass('d-none')
+        $('#btn_insertar_F_estructuracion').addClass('d-none')
+     }else if(di_desacuerdo_pr.prop('checked')){
+        $('#proformas_pro_pcl').removeClass('d-none');
+        $('#proformas_pro_pcl').val('WORD');
+        $('#btn_insertar_Nombre_afiliado').removeClass('d-none')
+        $('#btn_insertar_nombreCIE10').removeClass('d-none')
+        // $('#btn_insertar_Origen').removeClass('d-none')
+        $('#btn_insertar_porPcl').removeClass('d-none')
+        $('#btn_insertar_F_estructuracion').removeClass('d-none')
+     }else if(di_silencio_pr.prop('checked')){
+        $('#proformas_pro_pcl').addClass('d-none');
+        $('#btn_insertar_Nombre_afiliado').addClass('d-none')
+        $('#btn_insertar_nombreCIE10').addClass('d-none')
+        // $('#btn_insertar_Origen').addClass('d-none')
+        $('#btn_insertar_porPcl').addClass('d-none')
+        $('#btn_insertar_F_estructuracion').addClass('d-none')
+     }
+
+     // Funcionalidad para insertar las etiquetas en la sutentacion
+    $("#sustenta_cali").summernote({
+        height: 'auto',
+        toolbar: false
+    });
+    $('.note-editing-area').css("background", "white");
+    $('.note-editor').css("border", "1px solid black");  
+
+     // Funcionalidad para el llenado del asunto y habilitar boton PDF para descarga 
+
+    $("[name='decision_pr']").on("change", function(){
+    var opc_seleccionada = $(this).val();
+
+        if (opc_seleccionada == 'Acuerdo') {
+            $('#asunto_cali').val('CONCEPTO MÉDICO DE DICTAMEN PÉRDIDA DE CAPACIDAD LABORAL');
+            var texto_insertar = "";
+            $('#sustenta_cali').summernote('code', texto_insertar);
+            $('#proformas_pro_pcl').removeClass('d-none');
+            $('#proformas_pro_pcl').val('PDF');
+            $('#btn_insertar_Nombre_afiliado').addClass('d-none')
+            $('#btn_insertar_nombreCIE10').addClass('d-none')
+            // $('#btn_insertar_Origen').addClass('d-none')
+            $('#btn_insertar_porPcl').addClass('d-none')
+            $('#btn_insertar_F_estructuracion').addClass('d-none')
+        }else if (opc_seleccionada == 'Desacuerdo') {
+            $('#asunto_cali').val('RECURSO DE REPOSICIÓN EN SUBSIDIO DE APELACIÓN FRENTE A DICTAMEN N°');
+            var texto_insertar = "<p>Respetados Señores, </p>"+
+            "<p>Yo, HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA "+ 
+            "ALFA S.A. Aseguradora que expidió el seguro previsional a la AFP PORVENIR S.A., debidamente facultado para ello, en atención al "+
+            "dictamen de la referencia, estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE "+
+            "APELACIÓN ante la Junta, por los siguientes motivos: </p>"+
+            "<p>Nuestra inconformidad se dirige a la calificación de PERDIDA DE CAPACIDAD LABORAL dictaminada al afiliado {{$Nombre_afiliado}}, "+
+            "donde califican los diagnósticos: {{$CIE10_Nombres_Origen}}, y por los cuales les otorga una calificación de {{$PorcentajePcl}}% fecha de "+
+            "estructuración: {{$F_estructuracionPcl}}.</p>"+
+            "<p>1. </p>"+
+            "<p>Por lo anterior, presentamos el recurso de reposición y en subsidio el de apelación, contra la pérdida de capacidad laboral (PCL), "+
+            "con el fin que se dictamine el valor correspondiente a las patologías del paciente dando aplicación al Decreto  1507/2014 como "+
+            "normatividad vigente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación, e "+
+            "informarnos con el fin de consignar los honorarios respectivos.</p>"+
+            "<p>ANEXO:</p>"+
+            "<p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera. </p>"+
+            "<p>NOTIFICACIONES:</p>"+
+            "<p>Recibiré notificaciones en la Carrera 10 # 18 – 36 Edificio Córdoba Piso 4, en la ciudad de Bogotá, D.C. </p>"+
+            "<p>Cualquier Información adicional con gusto  le será suministrada,</p>";
+            $('#sustenta_cali').summernote('code', texto_insertar);
+            $('#proformas_pro_pcl').removeClass('d-none');
+            $('#proformas_pro_pcl').val('WORD');
+            $('#btn_insertar_Nombre_afiliado').removeClass('d-none')
+            $('#btn_insertar_nombreCIE10').removeClass('d-none')
+            // $('#btn_insertar_Origen').removeClass('d-none')
+            $('#btn_insertar_porPcl').removeClass('d-none')
+            $('#btn_insertar_F_estructuracion').removeClass('d-none')
+        }
+        else{
+            $('#asunto_cali').val('');
+            var texto_insertar = "";
+            $('#sustenta_cali').summernote('code', texto_insertar);
+            $('#proformas_pro_pcl').addClass('d-none');
+            $('#btn_insertar_Nombre_afiliado').addClass('d-none')
+            $('#btn_insertar_nombreCIE10').addClass('d-none')
+            // $('#btn_insertar_Origen').addClass('d-none')
+            $('#btn_insertar_porPcl').addClass('d-none')
+            $('#btn_insertar_F_estructuracion').addClass('d-none')
+        }
+    });
+
+     $("#btn_insertar_Nombre_afiliado").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_Nombre_afiliado = "{{$Nombre_afiliado}}";
+        $('#sustenta_cali').summernote('editor.insertText', etiqueta_Nombre_afiliado);
+    }); 
+
+    $("#btn_insertar_nombreCIE10").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_nombreCIE10 = "{{$CIE10_Nombres_Origen}}";
+        $('#sustenta_cali').summernote('editor.insertText', etiqueta_nombreCIE10);
+    });
+
+    // $("#btn_insertar_Origen").click(function(e){
+    //     e.preventDefault();
+
+    //     var etiqueta_nombreCIE10 = "{{$OrigenPcl}}";
+    //     $('#sustenta_cali').summernote('editor.insertText', etiqueta_nombreCIE10);
+    // });
+
+    $("#btn_insertar_porPcl").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_porPCL = "{{$PorcentajePcl}}";
+        $('#sustenta_cali').summernote('editor.insertText', etiqueta_porPCL);
+    });  
+    
+    $("#btn_insertar_F_estructuracion").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_F_estructuracion = "{{$F_estructuracionPcl}}";
+        $('#sustenta_cali').summernote('editor.insertText', etiqueta_F_estructuracion);
+    });
+    
+
     /*GUARDAR INFO PRONUNCIAMIENTO*/
     $('#form_CaliPronuncia').submit(function (e){
         e.preventDefault();
@@ -592,7 +726,82 @@ $(document).ready(function(){
                 }
             }
         })
-    })
+    });
+    // Captura de datos para la proformas de pronunciamiento PCL acuerdo y desacuerdo
+    $('#proformas_pro_pcl').click(function (e) {
+        e.preventDefault();
+        
+        var desicion_proforma_di_acuerdo_pr = $('#di_acuerdo_pr');
+        var desicion_proforma_di_desacuerdo_pr = $('#di_desacuerdo_pr');
+
+        if (desicion_proforma_di_acuerdo_pr.prop('checked')) {
+            var desicion_proforma = 'proforma_acuerdo';
+        }else if(desicion_proforma_di_acuerdo_pr.prop('checked')){
+            var desicion_proforma = 'proforma_desacuerdo';
+        }
+        var Id_Evento_pronuncia_corre = $('#Id_Evento_pronuncia').val();
+        var Id_Proceso_pronuncia_corre = $('#Id_Proceso_pronuncia').val();
+        var Asignacion_Pronuncia_corre = $('#Asignacion_Pronuncia').val();        
+        var Nombre_afiliado_corre = $('#nombre_afiliado').val();
+        var Iden_afiliado_corre = $('#identificacion').val();
+        var copia_afiliado = $('#copia_afiliado').filter(":checked").val();
+        var copia_empleador = $('#copia_empleador').filter(":checked").val();
+        var copia_eps = $('#copia_eps').filter(":checked").val();
+        var copia_afp = $('#copia_afp').filter(":checked").val();
+        var copia_arl = $('#copia_arl').filter(":checked").val();
+        var firmar = $('#firmar').filter(":checked").val();
+
+        let token = $("input[name='_token']").val();
+        var datos_proforma_pro = {
+            '_token': token,
+            'Id_Evento_pronuncia_corre': Id_Evento_pronuncia_corre,
+            'Id_Proceso_pronuncia_corre': Id_Proceso_pronuncia_corre,
+            'Asignacion_Pronuncia_corre': Asignacion_Pronuncia_corre,
+            'Nombre_afiliado_corre':Nombre_afiliado_corre,
+            'Iden_afiliado_corre':Iden_afiliado_corre,
+            'copia_afiliado':copia_afiliado,
+            'copia_empleador':copia_empleador,
+            'copia_eps':copia_eps,
+            'copia_afp':copia_afp,
+            'copia_arl':copia_arl,
+            'Firma_corre':firmar,
+            'desicion_proforma':desicion_proforma,
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/generarPdfProformaspro',
+            data:datos_proforma_pro,
+            xhrFields: {
+                responseType: 'blob' // Indica que la respuesta es un blob
+            },
+            success: function (response, status, xhr) {
+                var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+        
+                // Crear un enlace de descarga similar al ejemplo anterior
+                if (desicion_proforma == "proforma_acuerdo") {
+                    var nombre_documento = "PCL_ACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".pdf";
+                }else{
+                    var nombre_documento = "PCL_DESACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".docx";
+                }
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
+        
+                // Adjuntar el enlace al documento y activar el evento de clic
+                document.body.appendChild(link);
+                link.click();
+        
+                // Eliminar el enlace del documento
+                document.body.removeChild(link);
+            },
+            error: function (error) {
+                // Manejar casos de error
+                console.error('Error al descargar el PDF:', error);
+            } 
+        });
+
+    });
     //Remover CIE10
     $(document).on('click', "a[id^='btn_remover_diagnosticos_moticalifi']", function(){
 

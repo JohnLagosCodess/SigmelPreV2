@@ -7064,7 +7064,7 @@
                         <form id="form_comite_interdisciplinario" action="POST">                            
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">                                               
+                                    <div class="col-12 alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">                                               
                                         <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Despues de <b>Guardar</b> el <b>Comité Interdiciplinario</b> no podra hacer más actualizaciones en la Calificacion Técnica. <br>
                                     </div>
                                 </div>
@@ -7119,12 +7119,12 @@
                     <!--  Correspondia -->
                     <div class="card-info d-none" id="div_correspondecia">
                         <div class="card-header text-center" style="border: 1.5px solid black;">
-                            <h5>Correspondecia</h5>
+                            <h5>Correspondencia</h5>
                         </div>
                         <form id="form_correspondencia" action="POST">                            
                             <div class="card-body">
                                 <div class="row">
-                                    @if (!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion <> 2)
+                                    {{-- @if (!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion <> 2)
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">                                                
@@ -7142,31 +7142,31 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    @endif
-                                    {{-- <div class="col-3">
+                                    @endif --}}
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
                                                 @if (!empty($array_comite_interdisciplinario[0]->Oficio_pcl) && $array_comite_interdisciplinario[0]->Oficio_pcl == 'Si')
                                                     <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si" checked>
                                                 @else
-                                                    <input class="custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si">                                                    
+                                                    <input class="custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si" required>                                                    
                                                 @endif
                                                 <label for="oficiopcl" class="custom-control-label">Oficio PCL</label>
                                             </div>
                                         </div>
-                                    </div>  --}}
-                                    {{-- <div class="col-3">
+                                    </div> 
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
                                                 @if (!empty($array_comite_interdisciplinario[0]->Oficio_incapacidad) && $array_comite_interdisciplinario[0]->Oficio_incapacidad == 'Si')
                                                     <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" checked>
                                                 @else
-                                                    <input class="custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si">                                                    
+                                                    <input class="custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" required>                                                    
                                                 @endif
                                                 <label for="oficioinca" class="custom-control-label">Oficio Incapacidad</label>
                                             </div>
                                         </div>
-                                    </div>  --}}
+                                    </div> 
                                 </div>
                                 <div class="row">
                                     <div class="col-3">
@@ -7300,25 +7300,28 @@
                                             @endif
                                         </div>              
                                     </div>
-                                    @if (!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion <> 2)
-                                        <div class="col-12">
-                                            <div class="form-group">                                            
-                                                <label for="cuerpo_comunicado">Cuerpo del comunicado<span style="color: red;">(*)</label>
-                                                <br>
-                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_porPcl">% PCL</button>
-                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_F_estructuracion">Fecha de estructuracion</button>
-                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombreCIE10">Nombre CIE10</button>
-                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_montoInde">Monto de indemnización</button>
-                                                @if(!empty($array_comite_interdisciplinario[0]->Cuerpo_comunicado))
-                                                    <input type="hidden" id="rellenar_textarea" value="llenar">
-                                                    <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" required>{{$array_comite_interdisciplinario[0]->Cuerpo_comunicado}}</textarea>                                                                                                 
-                                                @else
-                                                    <input type="hidden" id="rellenar_textarea" value="Nollenar">
-                                                    <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" required></textarea>                                                                                              
-                                                @endif                                            
-                                            </div>
-                                        </div>                                         
-                                    @else
+                                    <div class="col-12 alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Recuerde si el oficio o formato seleccionado para la proforma tiene etiquetas o (botones) debe incluirlas obligatoriamente dentrol del cuerpo del comunicado, de lo contrario no se mostrará el cuerpo del comunicado en el PDF.
+                                    </div>
+                                    {{-- @if (!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion <> 2) --}}
+                                    <div class="col-12">
+                                        <div class="form-group">                                            
+                                            <label for="cuerpo_comunicado">Cuerpo del comunicado<span style="color: red;">(*)</label>
+                                            <br>
+                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_Nombre_afiliado">Nombre afiliado</button>
+                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_porPcl">% PCL</button>
+                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_F_estructuracion">Fecha de estructuracion</button>
+                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_Origen">Origen</button>
+                                            @if(!empty($array_comite_interdisciplinario[0]->Cuerpo_comunicado))
+                                                <input type="hidden" id="rellenar_textarea" value="llenar">
+                                                <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" required>{{$array_comite_interdisciplinario[0]->Cuerpo_comunicado}}</textarea>                                                                                                 
+                                            @else
+                                                <input type="hidden" id="rellenar_textarea" value="Nollenar">
+                                                <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" required></textarea>                                                                                              
+                                            @endif                                            
+                                        </div>
+                                    </div>                                         
+                                    {{-- @else
                                         <div class="col-12">
                                             <div class="form-group">                                            
                                                 <label for="cuerpo_comunicado_cero">Cuerpo del comunicado<span style="color: red;">(*)</label>
@@ -7335,7 +7338,7 @@
                                                 @endif                                            
                                             </div>
                                         </div>
-                                    @endif
+                                    @endif --}}
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label for="tipo_clasificacion">Copia a partes interesadas</label>
@@ -7575,7 +7578,7 @@
                                                         @endforeach
                                                         @if (!empty($array_comunicados_comite_inter[0]->Asunto))
                                                             @foreach ($array_comunicados_comite_inter as $comite_inter)
-                                                                <form name="ver_notificacionPcl" action="{{ route('descargar_Notificacion_PCL') }}" method="POST">
+                                                                <form name="ver_notificacionPcl" action="{{ route('generarOficio_Pcl') }}" method="POST">
                                                                     @csrf
                                                                     <input type="hidden" name="ID_Evento_comuni_comite" value="{{$comite_inter->ID_evento}}">
                                                                     <input type="hidden" name="Id_Asignacion_comuni_comite" value="{{$comite_inter->Id_Asignacion}}">
@@ -7619,7 +7622,7 @@
                                                         @endforeach
                                                         @if (!empty($array_comunicados_comite_inter[0]->Asunto))
                                                             @foreach ($array_comunicados_comite_inter as $comite_inter)
-                                                                <form name="ver_notificacionPcl" action="{{ route('descargar_Notificacion_PCLCero') }}" method="POST">
+                                                                <form name="ver_notificacionPcl" action="{{ route('generarOficio_Pcl') }}" method="POST">
                                                                     @csrf
                                                                     <input type="hidden"  name="ID_Evento_comuni_comite" value="{{$comite_inter->ID_evento}}">
                                                                     <input type="hidden"  name="Id_Asignacion_comuni_comite" value="{{$comite_inter->Id_Asignacion}}">
@@ -7663,7 +7666,7 @@
                                                         @endforeach
                                                         @if (!empty($array_comunicados_comite_inter[0]->Asunto))
                                                             @foreach ($array_comunicados_comite_inter as $comite_inter)
-                                                                <form name="ver_notificacionPcl" action="{{ route('descargar_Notificacion_PCL') }}" method="POST">
+                                                                <form name="ver_notificacionPcl" action="{{ route('generarOficio_Pcl') }}" method="POST">
                                                                     @csrf
                                                                     <input type="hidden"  name="ID_Evento_comuni_comite" value="{{$comite_inter->ID_evento}}">
                                                                     <input type="hidden"  name="Id_Asignacion_comuni_comite" value="{{$comite_inter->Id_Asignacion}}">
@@ -7686,7 +7689,7 @@
                                                     @endif
                                                 </tbody>
                                             </table>
-                                        </div>
+                                        </div>  
                                     </div>
                                 </div>                     
                             </div>                                                                

@@ -22,6 +22,10 @@ return new class extends Migration
             $table->enum('Oficio_Origen', ['Si', 'No'])->nullable();
             $table->text('Oficio_pcl')->nullable();
             $table->text('Oficio_incapacidad')->nullable();
+            $table->text('Formatob')->nullable();
+            $table->text('Formatoc')->nullable();
+            $table->text('Formatod')->nullable();
+            $table->text('Formatoe')->nullable();
             $table->text('Destinatario_principal')->nullable();
             $table->text('Otro_destinatario')->nullable();
             $table->text('Tipo_destinatario')->nullable();

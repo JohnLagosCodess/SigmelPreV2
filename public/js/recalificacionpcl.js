@@ -2645,6 +2645,13 @@ $(document).ready(function(){
                 var montoIndemnizacion = ((porcentajePcl / 2) - 0.5);
                 $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
             }
+            if (porcentajePcl >= 66) {
+                $('#div_formatoc').removeClass('d-none');   
+            }else if(porcentajePcl >= 50 && porcentajePcl <= 65.99){
+                $('#div_formatod').removeClass('d-none');   
+            }else if(porcentajePcl < 50){
+                $('#div_formatoe').removeClass('d-none');   
+            }
 
         } else if(definirDecreto_deficiencia == 3) {
             var total_deficiencia1999 = $('#Total_Deficiencia50');
@@ -2691,6 +2698,14 @@ $(document).ready(function(){
                         var montoIndemnizacion = ((porcentajePcl / 2) - 0.5);
                         $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
                     }
+
+                    if (porcentajePcl >= 66) {
+                        $('#div_formatoc').removeClass('d-none');
+                    }else if(porcentajePcl >= 50 && porcentajePcl <= 65.99){
+                        $('#div_formatod').removeClass('d-none');   
+                    }else if(porcentajePcl < 50){
+                        $('#div_formatoe').removeClass('d-none');   
+                    }
                 });
             });                 
             
@@ -2733,6 +2748,14 @@ $(document).ready(function(){
                 var montoIndemnizacion = ((porcentajePcl / 2) - 0.5);
                 $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
             }
+
+            if (porcentajePcl >= 66) {
+                $('#div_formatoc').removeClass('d-none');
+            }else if(porcentajePcl >= 50 && porcentajePcl <= 65.99){
+                $('#div_formatod').removeClass('d-none');   
+            }else if(porcentajePcl < 50){
+                $('#div_formatoe').removeClass('d-none');   
+            }
             
         }else if(definirDecreto_deficiencia == 2) {            
             porcentajePcl = 0;    
@@ -2758,6 +2781,14 @@ $(document).ready(function(){
                 var montoIndemnizacion = ((porcentajePcl / 2) - 0.5);
                 $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
             }
+
+            if (porcentajePcl >= 66) {
+                $('#div_formatoc').removeClass('d-none');
+            }else if(porcentajePcl >= 50 && porcentajePcl <= 65.99){
+                $('#div_formatod').removeClass('d-none');   
+            }else if(porcentajePcl < 50){
+                $('#div_formatoe').removeClass('d-none');   
+            }
         }else{            
             porcentajePcl = 0;  
             
@@ -2781,6 +2812,14 @@ $(document).ready(function(){
             } else {
                 var montoIndemnizacion = ((porcentajePcl / 2) - 0.5);
                 $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
+            }
+
+            if (porcentajePcl >= 66) {
+                $('#div_formatoc').removeClass('d-none');
+            }else if(porcentajePcl >= 50 && porcentajePcl <= 65.99){
+                $('#div_formatod').removeClass('d-none');   
+            }else if(porcentajePcl < 50){
+                $('#div_formatoe').removeClass('d-none');   
             }
         }  
 
@@ -3189,28 +3228,166 @@ $(document).ready(function(){
 
     var oficiopclcorres = $('#oficiopcl');
     var oficioincacorres = $('#oficioinca');
+    var formatobcorres = $('#formatob');
+    var formatoccorres = $('#formatoc');
+    var formatodcorres = $('#formatod');
+    var formatoecorres = $('#formatoe');
     
     oficiopclcorres.change(function(){
         if ($(this).prop('checked')) {
-            oficioincacorres.prop('disabled', true);            
+            oficioincacorres.prop('disabled', true);   
+            formatobcorres.prop('disabled', true);    
+            formatoccorres.prop('disabled', true);  
+            formatodcorres.prop('disabled', true);                        
+            formatoecorres.prop('disabled', true);                        
         }else{
-            oficioincacorres.prop('disabled', false);            
+            oficioincacorres.prop('disabled', false);  
+            formatobcorres.prop('disabled', false); 
+            formatoccorres.prop('disabled', false);            
+            formatodcorres.prop('disabled', false);            
+            formatoecorres.prop('disabled', false);                        
         }
     });
 
     oficioincacorres.change(function(){
         if ($(this).prop('checked')) {
-            oficiopclcorres.prop('disabled', true);            
+            oficiopclcorres.prop('disabled', true);
+            formatobcorres.prop('disabled', true);   
+            formatoccorres.prop('disabled', true); 
+            formatodcorres.prop('disabled', true);
+            formatoecorres.prop('disabled', true);                                            
         }else{
-            oficiopclcorres.prop('disabled', false);            
+            oficiopclcorres.prop('disabled', false); 
+            formatobcorres.prop('disabled', false);     
+            formatoccorres.prop('disabled', false);
+            formatodcorres.prop('disabled', false); 
+            formatoecorres.prop('disabled', false);                              
+        }
+    });
+
+    formatobcorres.change(function(){
+        if ($(this).prop('checked')) {
+            oficiopclcorres.prop('disabled', true);  
+            oficioincacorres.prop('disabled', true);
+            formatoccorres.prop('disabled', true);
+            formatodcorres.prop('disabled', true);
+            formatoecorres.prop('disabled', true);                                            
+        }else{
+            oficiopclcorres.prop('disabled', false); 
+            oficioincacorres.prop('disabled', false);
+            formatoccorres.prop('disabled', false);
+            formatodcorres.prop('disabled', false);
+            formatoecorres.prop('disabled', false);                                
+        }
+    });
+
+    formatoccorres.change(function(){
+        if ($(this).prop('checked')) {
+            oficiopclcorres.prop('disabled', true);  
+            oficioincacorres.prop('disabled', true);
+            formatobcorres.prop('disabled', true);
+            formatodcorres.prop('disabled', true);
+            formatoecorres.prop('disabled', true);                                              
+        }else{
+            oficiopclcorres.prop('disabled', false); 
+            oficioincacorres.prop('disabled', false);
+            formatobcorres.prop('disabled', false);
+            formatodcorres.prop('disabled', false);
+            formatoecorres.prop('disabled', false);                                  
+        }
+    });
+
+    formatodcorres.change(function(){
+        if ($(this).prop('checked')) {
+            oficiopclcorres.prop('disabled', true);  
+            oficioincacorres.prop('disabled', true);
+            formatobcorres.prop('disabled', true);
+            formatoccorres.prop('disabled', true);
+            formatoecorres.prop('disabled', true);                                              
+        }else{
+            oficiopclcorres.prop('disabled', false); 
+            oficioincacorres.prop('disabled', false);
+            formatobcorres.prop('disabled', false);
+            formatoccorres.prop('disabled', false);
+            formatoecorres.prop('disabled', false);                                  
+        }
+    });
+
+    formatoecorres.change(function(){
+        if ($(this).prop('checked')) {
+            oficiopclcorres.prop('disabled', true);  
+            oficioincacorres.prop('disabled', true);
+            formatobcorres.prop('disabled', true);
+            formatoccorres.prop('disabled', true);
+            formatodcorres.prop('disabled', true);                                              
+        }else{
+            oficiopclcorres.prop('disabled', false); 
+            oficioincacorres.prop('disabled', false);
+            formatobcorres.prop('disabled', false);
+            formatoccorres.prop('disabled', false);
+            formatodcorres.prop('disabled', false);                                  
         }
     });
 
     if (oficiopclcorres.prop('checked')) {
-        oficioincacorres.prop('disabled', true);                    
+        oficioincacorres.prop('disabled', true); 
+        formatobcorres.prop('disabled', true);       
+        formatoccorres.prop('disabled', true); 
+        formatodcorres.prop('disabled', true);
+        formatoecorres.prop('disabled', true);
+        $('#btn_insertar_Nombre_afiliado').removeClass('d-none')
+        $('#btn_insertar_porPcl').removeClass('d-none')
+        $('#btn_insertar_F_estructuracion').removeClass('d-none')
+        $('#btn_insertar_Origen').removeClass('d-none')                   
     }
     if (oficioincacorres.prop('checked')) {
+        oficiopclcorres.prop('disabled', true);  
+        formatobcorres.prop('disabled', true);  
+        formatoccorres.prop('disabled', true);
+        formatodcorres.prop('disabled', true);
+        formatoecorres.prop('disabled', true);
+        $('#btn_insertar_Nombre_afiliado').removeClass('d-none')
+        $('#btn_insertar_porPcl').removeClass('d-none')
+        $('#btn_insertar_F_estructuracion').removeClass('d-none')
+        $('#btn_insertar_Origen').removeClass('d-none')                    
+    }
+    if (formatobcorres.prop('checked')) {
         oficiopclcorres.prop('disabled', true);                    
+        oficioincacorres.prop('disabled', true); 
+        formatoccorres.prop('disabled', true);
+        formatodcorres.prop('disabled', true);
+        formatoecorres.prop('disabled', true);
+        $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+    }
+    if (formatoccorres.prop('checked')) {
+        oficiopclcorres.prop('disabled', true);                    
+        oficioincacorres.prop('disabled', true); 
+        formatobcorres.prop('disabled', true);
+        formatodcorres.prop('disabled', true);
+        formatoecorres.prop('disabled', true);
+        $('#btn_insertar_porPcl').removeClass('d-none')
+        $('#btn_insertar_F_estructuracion').removeClass('d-none')
+        $('#btn_insertar_Origen').removeClass('d-none') 
+        $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+    }
+    if (formatodcorres.prop('checked')) {
+        oficiopclcorres.prop('disabled', true);                    
+        oficioincacorres.prop('disabled', true); 
+        formatobcorres.prop('disabled', true);
+        formatoccorres.prop('disabled', true);
+        formatoecorres.prop('disabled', true);
+        $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+    }
+    if (formatoecorres.prop('checked')) {
+        oficiopclcorres.prop('disabled', true);                    
+        oficioincacorres.prop('disabled', true); 
+        formatobcorres.prop('disabled', true);
+        formatoccorres.prop('disabled', true);
+        formatodcorres.prop('disabled', true);
+        $('#btn_insertar_porPcl').removeClass('d-none')
+        $('#btn_insertar_F_estructuracion').removeClass('d-none')
+        $('#btn_insertar_Origen').removeClass('d-none') 
+        $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
     }
 
     // validar si el otro destinatario principal esta marcado
@@ -3404,14 +3581,30 @@ $(document).ready(function(){
         var Id_EventoDecreto = $('#Id_Evento_decreto').val();
         var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
         var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
-        // var oficiopcl = $('input[name="oficiopcl"]:checked').val();
-        // var oficioinca = $('input[name="oficioinca"]:checked').val();
-        // if (oficiopcl == undefined) {
-        //     oficiopcl = '';
-        // }
-        // if(oficioinca == undefined){
-        //     oficioinca = '';
-        // }
+        var oficiopcl = $('input[name="oficiopcl"]:checked').val();
+        var oficioinca = $('input[name="oficioinca"]:checked').val();
+        var formatob = $('input[name="formatob"]:checked').val();
+        var formatoc = $('input[name="formatoc"]:checked').val();
+        var formatod = $('input[name="formatod"]:checked').val();   
+        var formatoe = $('input[name="formatoe"]:checked').val();        
+        if (oficiopcl == undefined) {
+            oficiopcl = '';
+        }
+        if(oficioinca == undefined){
+            oficioinca = '';
+        }
+        if(formatob == undefined){
+            formatob = '';
+        }
+        if(formatoc == undefined){
+            formatoc = '';
+        }
+        if(formatod == undefined){
+            formatod = '';
+        }
+        if(formatoe == undefined){
+            formatoe = '';
+        }
         var destinatario_principal = $('#destinatario_principal').val();        
         var otrodestinariop = $('input[name="otrodestinariop"]:checked').val();
         if (otrodestinariop == undefined) {
@@ -3447,10 +3640,10 @@ $(document).ready(function(){
         }        
         var Asunto = $('#Asunto').val();
         var cuerpo_comunicado = $('#cuerpo_comunicado').val();
-        var cuerpo_comunicado_cero = $('#cuerpo_comunicado_cero').val();
+        var cuerpo_comunicado_formatos_pension = $('#cuerpo_comunicado_formatos_pension').val();
 
         if (cuerpo_comunicado == '' || cuerpo_comunicado == undefined) {
-            var cuerpo_comunicadoPcl = cuerpo_comunicado_cero;
+            var cuerpo_comunicadoPcl = cuerpo_comunicado_formatos_pension;
         } else {
             var cuerpo_comunicadoPcl = cuerpo_comunicado;
         }
@@ -3473,15 +3666,18 @@ $(document).ready(function(){
         var ciudad = $('#ciudad').val();
         var f_correspondencia = $('#f_correspondencia').val();
         var radicado = $('#radicado').val();
-        var bandera_correspondecia_guardar_actualizar = $('#bandera_correspondecia_guardar_actualizar').val();
-        
+        var bandera_correspondecia_guardar_actualizar = $('#bandera_correspondecia_guardar_actualizar').val();        
         var datos_correspondecia={
             '_token': token,            
             'Id_EventoDecreto':Id_EventoDecreto,
             'Id_ProcesoDecreto':Id_ProcesoDecreto,
             'Id_Asignacion_Dcreto':Id_Asignacion_Dcreto,     
-            // 'oficiopcl':oficiopcl,
-            // 'oficioinca':oficioinca,
+            'oficiopcl':oficiopcl,
+            'oficioinca':oficioinca,
+            'formatob':formatob,
+            'formatoc':formatoc,
+            'formatod':formatod,
+            'formatoe':formatoe,
             'destinatario_principal':destinatario_principal,
             'otrodestinariop' : otrodestinariop,
             'tipo_destinatario_principal' : tipo_destinatario_principal,
@@ -3656,56 +3852,88 @@ $(document).ready(function(){
     $('.note-editing-area').css("background", "white");
     $('.note-editor').css("border", "1px solid black");
 
-    $("#Asunto").val("CALIFICACIÓN DE PÉRDIDA DE CAPACIDAD LABORAL");
-
-    var rellenar_textarea = $('#rellenar_textarea').val();
-    
-    if( rellenar_textarea == 'Nollenar'){
-        
-        var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.</p>"+
-           "<p>De la manera más atenta queremos informar el resultado de la calificación realizada por el Equipo Interdisciplinario de Calificación "+ 
-           "de Origen, Invalidez y Pérdida de la Capacidad Laboral adscrito a la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A., "+
-           "el cual dio un porcentaje de {{$PorcentajePcl_dp}}, con fecha de estructuración del {{$F_estructuracionPcl_dp}},  que corresponde a Incapacidad "+
-           "Permanente Parcial según lo dispuesto en los Artículos 6 y 7 de la ley 776 de 2002, por  la patología {{$CIE10Nombres}}. "+
-           "Teniendo en cuenta la tabla adoptada por el Decreto 2644 de 1994, le corresponde {{$Monto_indemnizacionPcl}} meses de Ingreso Base "+
-           "de Liquidación como reconocimiento de la prestación económica.</p>"+
-           "<p>El dictamen de calificación del que anexó copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, "+
-           "de acuerdo al Decreto 0019  de 2012 artículo 142, en la Carrera 10 #18-36 piso 4°, Edificio José María Córdoba, Bogotá. Favor informar en la carta el motivo de "+
-           "su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen</p>"+
-           "<p>Si pasados los 10 días hábiles no han radicado apelación alguna, usted podrá tramitar la solicitud de pago de indemnización por incapacidad permanente parcial "+
-           "(IPP) en nuestras oficinas, paro lo cual debe anexar la siguiente documentación: 1. Certificación bancaria Original a su nombre. 2. Fotocopia de documento de "+
-           "identidad vigente. 3. Carta de autorización firmada en donde autorice a Seguros de Vida Alfa S.A. a realizar la transferencia electrónica a su cuenta acreditada.</p>"+
-           "<p>Cualquier información adicional con gusto será atendida por Auditoría Técnica de nuestra sucursal más cercana a su residencia.</p>";
-        $('#cuerpo_comunicado').summernote('code', texto_insertar);
-    }
-
     // Retornar el texto por defecto en el asunto y cuerpo del comunicado
 
-    var notificacionpcl = $('#notificacionpcl');
-
-    notificacionpcl.change(function(){
+    var oficioremisoriopcl = $('#oficiopcl');
+    oficioremisoriopcl.change(function(){
         if ($(this).prop('checked')) {
-            $("#Asunto").val("CALIFICACIÓN DE PÉRDIDA DE CAPACIDAD LABORAL");
-            var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.</p>"+
-           "<p>De la manera más atenta queremos informar el resultado de la calificación realizada por el Equipo Interdisciplinario de Calificación "+ 
-           "de Origen, Invalidez y Pérdida de la Capacidad Laboral adscrito a la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A., "+
-           "el cual dio un porcentaje de {{$PorcentajePcl_dp}}, con fecha de estructuración del {{$F_estructuracionPcl_dp}},  que corresponde a Incapacidad "+
-           "Permanente Parcial según lo dispuesto en los Artículos 6 y 7 de la ley 776 de 2002, por  la patología {{$CIE10Nombres}}. "+
-           "Teniendo en cuenta la tabla adoptada por el Decreto 2644 de 1994, le corresponde {{$Monto_indemnizacionPcl}} meses de Ingreso Base "+
-           "de Liquidación como reconocimiento de la prestación económica.</p>"+
-           "<p>El dictamen de calificación del que anexó copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, "+
-           "de acuerdo al Decreto 0019  de 2012 artículo 142, en la Carrera 10 #18-36 piso 4°, Edificio José María Córdoba, Bogotá. Favor informar en la carta el motivo de "+
-           "su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen</p>"+
-           "<p>Si pasados los 10 días hábiles no han radicado apelación alguna, usted podrá tramitar la solicitud de pago de indemnización por incapacidad permanente parcial "+
-           "(IPP) en nuestras oficinas, paro lo cual debe anexar la siguiente documentación: 1. Certificación bancaria Original a su nombre. 2. Fotocopia de documento de "+
-           "identidad vigente. 3. Carta de autorización firmada en donde autorice a Seguros de Vida Alfa S.A. a realizar la transferencia electrónica a su cuenta acreditada.</p>"+
-           "<p>Cualquier información adicional con gusto será atendida por Auditoría Técnica de nuestra sucursal más cercana a su residencia.</p>";
-        $('#cuerpo_comunicado').summernote('code', texto_insertar);
-        }
-        setTimeout(function() {
-            notificacionpcl.prop("checked", false);
-        }, 3000);
+            $("#Asunto").val("Calificación de Pérdida de Capacidad Laboral al Fondo de Pensiones Porvenir S.A.");
+            var texto_insertar = "<p>Hola, {{$Nombre_afiliado}} </p>"+
+            "<p>En Seguros de Vida Alfa S.A. siempre buscamos la protección y satisfacción de nuestros clientes. De acuerdo con tu solicitud de  "+ 
+            "calificación de pérdida de capacidad laboral (PCL) en la AFP Porvenir S.A., te informamos que el historial médico ha sido revisado y "+
+            "calificado por el grupo interdisciplinario de calificación de Seguros de Vida Alfa S.A.(1).</p>"+
+            "<p>De acuerdo con los parámetros establecidos en el Manual Único para la Calificación de la Perdida de la Capacidad Laboral y "+
+            "Ocupacional (2) se ha determinado una (PCL) de {{$PorcentajePcl_dp}}  y fecha de estructuración {{$F_estructuracionPcl_dp}} Origen {{$OrigenPcl_dp}}.</p>"+
+            "<p>Si tu calificación es igual o superior al 50%, podrás iniciar los trámites ante la AFP Porvenir (3) para acceder a la prestación "+
+            "económica correspondiente, previo el cumplimiento de los requisitos legales para acceder a la pensión de invalidez (4). Si este es tu "+
+            "caso, podrás iniciar tu solicitud pensional a través de a página web www.porvenir.com.co o llamando a la línea de atención al cliente "+
+            "de Porvenir 018000510800, con el fin de solicitar una cita para la radicación de la documentación.</p>"+
+            "<p>En caso de que no te encuentres de acuerdo con la calificación emitida por Seguros de Vida Alfa S.A., cuentas con diez (10) días "+
+            "hábiles siguientes a partir de la fecha de recibida la notificación para manifestar tu inconformidad frente a resultado. Esta "
+            "manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de "+
+            "los siguientes aspectos te encuentras en desacuerdo: </p>"+
+            "<p>- Pérdida de capacidad laboral</p>"+
+            "<p>- Origen</p>"+
+            "<p>- Fecha de estructuración</p>"+
+            "<p>La carta debe ser remitida por medio de correo certificado a la dirección Carrera 10 # 18-36, piso 4 edificio José María Córdoba en "+
+            "Bogotá o a inconformidad@segurosalfa.com.co. Ten presente que el comunicado debe venir firmado por ti, relacionando los datos de "+
+            "localizaci ón. Posterior a la revisión de tu carta, procederemos a remitir tu expediente a la respectiva Junta Regional de "+
+            "Calificación de Invalidez para obtener una segunda calificación.</p>"+
+            "<p>Una vez realizada la solicitud, a más tardar en (15) quince días hábiles recibirás por parte de Seguros de Vida Alfa S.A. una "+
+            "comunicación donde te informaremos el estado del proceso.</p>";
+            $('#cuerpo_comunicado').summernote('code', texto_insertar);
+        }else{
+            $("#Asunto").val("");
+            var texto_insertar = "";
+            $('#cuerpo_comunicado').summernote('code', texto_insertar);
+        }       
     });
+
+    var oficioremisorioincapcl = $('#oficioinca');
+    oficioremisorioincapcl.change(function(){
+        if ($(this).prop('checked')) {
+            $("#Asunto").val("Calificación de Pérdida de Capacidad Laboral al Fondo de Pensiones Porvenir S.A.");
+            var texto_insertar = "<p>Hola, {{$Nombre_afiliado}} </p>"+
+            "<p>Teniendo en cuenta que usted ha cumplido los términos de incapacidad temporal prolongada establecidos por la ley, la AFP Porvenir "+ 
+            "S.A. en cumplimiento de la normatividad legal vigente procede a notificarle el dictamen de calificación con respecto a las patologías "+
+            "padecidas por usted y sustentadas en las Historias Clínicas aportadas que hacen parte integra de su expediente.</p>"+
+            "<p>Para el caso particular, es necesario resaltar el siguiente acápite legal: Literal a) del Artículo 29 del Decreto 1352 de 2013.</p>"+
+            "<p>Teniendo en cuenta lo anterior nos permitimos informarle que el grupo interdisciplinario de Seguros de Vida Alfa S.A, aseguradora que "+
+            "maneja el seguro previsional de los afiliados a la AFP Porvenir, emiti ó dictamen de calificación de origen y pérdida de la capacidad "+
+            "laboral (PCL), definiendo para su caso lo siguiente:</p>"+
+            "<table class='tabla_cuerpo'>" +
+            "<tr>" +
+            "<th>Porcentaje</th>" +
+            "<th>Origen</th>" +
+            "<th>Fecha de estructuración </th>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>{{$PorcentajePcl_dp}}</td>" +
+            "<td>{{$OrigenPcl_dp}}</td>" +
+            "<td>{{$F_estructuracionPcl_dp}}</td>" +
+            "</tr>" +
+            "</table>"+
+            "<p>Le informamos que de no encontrarse de acuerdo con la calificación emitida, usted tiene la posibilidad de manifestar a Seguros de "+
+            "Vida Alfa S.A. su inconformidad dentro de los diez (IO) días siguientes a partir de la fecha de recibida la notificación, evento en "+
+            "el cual procederemos a remitir su caso a la respectiva Junta Regional de Calificación de Invalidez para obtener una segunda calificación.</p>"+
+            "<p>Dicha manifestación debe realizarla por escrito dirigida a Seguros de Vida Alfa, en la que debe expresar sobre cuál de los aspectos "+
+            "apela: origen, pérdida de capacidad laboral y/o fecha de estructuración. Remitirla a la Cra 10 N° 18 - 36 Piso 4 Edificio José María "+
+            "Córdoba en Bogotá, al fax 7435333 ext.14440 0 al correo electrónico: inconformidad@segurosalfa.com.co.</p>";
+            $('#cuerpo_comunicado').summernote('code', texto_insertar);
+        }else{
+            $("#Asunto").val("");
+            var texto_insertar = "";
+            $('#cuerpo_comunicado').summernote('code', texto_insertar);
+        }        
+    });
+    
+    
+    $("#btn_insertar_Nombre_afiliado").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_Nombre_afiliado = "{{$Nombre_afiliado}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_Nombre_afiliado);
+    }); 
 
     $("#btn_insertar_porPcl").click(function(e){
         e.preventDefault();
@@ -3713,7 +3941,7 @@ $(document).ready(function(){
         var etiqueta_porPCL = "{{$PorcentajePcl_dp}}";
         $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_porPCL);
     });  
-
+    
     $("#btn_insertar_F_estructuracion").click(function(e){
         e.preventDefault();
 
@@ -3721,84 +3949,267 @@ $(document).ready(function(){
         $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_F_estructuracion);
     });
 
-    $("#btn_insertar_nombreCIE10").click(function(e){
+    $("#btn_insertar_Origen").click(function(e){
         e.preventDefault();
 
-        var etiqueta_nombreCIE10 = "{{$CIE10Nombres}}";
+        var etiqueta_nombreCIE10 = "{{$OrigenPcl_dp}}";
         $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_nombreCIE10);
     });
 
-    $("#btn_insertar_montoInde").click(function(e){
-        e.preventDefault();
+    // Funcionalidad para insertar las etiquetas del cuerpo de comunicaddo formatos de revision pension
 
-        var etiqueta_montoInde = "{{$Monto_indemnizacionPcl}}";
-        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta_montoInde);
-    });
-
-    // Funcionalidad para insertar las etiquetas de diagnosticos cie10 y origen Notificacion calificacion cero
-
-    $("#cuerpo_comunicado_cero").summernote({
+    $("#cuerpo_comunicado_formatos_pension").summernote({
         height: 'auto',
         toolbar: false
     });
     $('.note-editing-area').css("background", "white");
     $('.note-editor').css("border", "1px solid black");
 
-    var rellenar_textareacero = $('#rellenar_textareacero').val();
-    
-    if( rellenar_textareacero == 'Nollenarcero'){        
-        var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A</p>"+
-           "<p>De la manera más atenta queremos informar el resultado de la calificación realizada por el Grupo Interdisciplinario de Calificación "+ 
-           "de Origen y Pérdida de la Capacidad Laboral de la Administradora de Riesgos Laborales de "+
-           "Seguros de Vida Alfa S.A. El cual dio un porcentaje de {{$PorcentajePcl_cero}}; por el diagnostico {{$CIE10Nombres_cero}} "+
-           "por lo tanto NO procede el pago de indemnización por Incapacidad Permanente Parcial, ya que de acuerdo con el Artículo 5 Ley 776 de 2002 "+
-           "<strong>“Se considera como incapacitado permanente parcial, al afiliado que, como consecuencia de un accidente de trabajo o una enfermedad profesional, "+
-           "presenta una disminución definitiva, igual o superior al 5% pero inferior al 50% de su capacidad laboral, para la cual ha sido contratado o capacitado”</strong>.</p>"+
-           "<p>El dictamen de calificación del que anexo copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, "+
-           " de acuerdo al Decreto 0019 de 2012 artículo 142, en la Carrera 10 #18-36 piso 4°, Edificio José María Córdoba, Bogotá.</p>"+
-           "<p>Favor informar en la carta el motivo de su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen "+
-           "Cualquier información adicional con gusto será atendida por Auditoría Técnica de nuestra sucursal más cercana a su residencia.</p>";
-        $('#cuerpo_comunicado_cero').summernote('code', texto_insertar);        
-    }
-
     // Retornar el texto por defecto en el asunto y cuerpo del comunicado
 
-    var notificacionpclcero = $('#notificacionpclcero');
-
-    notificacionpclcero.change(function(){
+    var oficioremisoriopcl = $('#oficiopcl');
+    oficioremisoriopcl.change(function(){
         if ($(this).prop('checked')) {
-            $("#Asunto").val("CALIFICACIÓN DE PÉRDIDA DE CAPACIDAD LABORAL");
-            var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A</p>"+
-           "<p>De la manera más atenta queremos informar el resultado de la calificación realizada por el Grupo Interdisciplinario de Calificación "+ 
-           "de Origen y Pérdida de la Capacidad Laboral de la Administradora de Riesgos Laborales de "+
-           "Seguros de Vida Alfa S.A. El cual dio un porcentaje de {{$PorcentajePcl_cero}}; por el diagnostico {{$CIE10Nombres_cero}} "+
-           "por lo tanto NO procede el pago de indemnización por Incapacidad Permanente Parcial, ya que de acuerdo con el Artículo 5 Ley 776 de 2002 "+
-           "<strong>“Se considera como incapacitado permanente parcial, al afiliado que, como consecuencia de un accidente de trabajo o una enfermedad profesional, "+
-           "presenta una disminución definitiva, igual o superior al 5% pero inferior al 50% de su capacidad laboral, para la cual ha sido contratado o capacitado”</strong>.</p>"+
-           "<p>El dictamen de calificación del que anexo copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, "+
-           " de acuerdo al Decreto 0019 de 2012 artículo 142, en la Carrera 10 #18-36 piso 4°, Edificio José María Córdoba, Bogotá.</p>"+
-           "<p>Favor informar en la carta el motivo de su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen "+
-           "Cualquier información adicional con gusto será atendida por Auditoría Técnica de nuestra sucursal más cercana a su residencia.</p>";
-            $('#cuerpo_comunicado_cero').summernote('code', texto_insertar);  
-        }
-        setTimeout(function() {
-            notificacionpclcero.prop("checked", false);
-        }, 3000);
+            $("#Asunto").val("Calificación de Pérdida de Capacidad Laboral al Fondo de Pensiones Porvenir S.A.");
+            var texto_insertar = "<p>Hola, {{$Nombre_afiliado}} </p>"+
+            "<p>En Seguros de Vida Alfa S.A. siempre buscamos la protección y satisfacción de nuestros clientes. De acuerdo con tu solicitud de  "+ 
+            "calificación de pérdida de capacidad laboral (PCL) en la AFP Porvenir S.A., te informamos que el historial médico ha sido revisado y "+
+            "calificado por el grupo interdisciplinario de calificación de Seguros de Vida Alfa S.A.(1).</p>"+
+            "<p>De acuerdo con los parámetros establecidos en el Manual Único para la Calificación de la Perdida de la Capacidad Laboral y "+
+            "Ocupacional (2) se ha determinado una (PCL) de {{$PorcentajePcl_dp}}  y fecha de estructuración {{$F_estructuracionPcl_dp}} Origen {{$OrigenPcl_dp}}.</p>"+
+            "<p>Si tu calificación es igual o superior al 50%, podrás iniciar los trámites ante la AFP Porvenir (3) para acceder a la prestación "+
+            "económica correspondiente, previo el cumplimiento de los requisitos legales para acceder a la pensión de invalidez (4). Si este es tu "+
+            "caso, podrás iniciar tu solicitud pensional a través de a página web www.porvenir.com.co o llamando a la línea de atención al cliente "+
+            "de Porvenir 018000510800, con el fin de solicitar una cita para la radicación de la documentación.</p>"+
+            "<p>En caso de que no te encuentres de acuerdo con la calificación emitida por Seguros de Vida Alfa S.A., cuentas con diez (10) días "+
+            "hábiles siguientes a partir de la fecha de recibida la notificación para manifestar tu inconformidad frente a resultado. Esta "
+            "manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de "+
+            "los siguientes aspectos te encuentras en desacuerdo: </p>"+
+            "<p>- Pérdida de capacidad laboral</p>"+
+            "<p>- Origen</p>"+
+            "<p>- Fecha de estructuración</p>"+
+            "<p>La carta debe ser remitida por medio de correo certificado a la dirección Carrera 10 # 18-36, piso 4 edificio José María Córdoba en "+
+            "Bogotá o a inconformidad@segurosalfa.com.co. Ten presente que el comunicado debe venir firmado por ti, relacionando los datos de "+
+            "localizaci ón. Posterior a la revisión de tu carta, procederemos a remitir tu expediente a la respectiva Junta Regional de "+
+            "Calificación de Invalidez para obtener una segunda calificación.</p>"+
+            "<p>Una vez realizada la solicitud, a más tardar en (15) quince días hábiles recibirás por parte de Seguros de Vida Alfa S.A. una "+
+            "comunicación donde te informaremos el estado del proceso.</p>";
+            $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
+            $('#btn_insertar_Nombre_afiliado').removeClass('d-none')
+            $('#btn_insertar_porPcl').removeClass('d-none')
+            $('#btn_insertar_F_estructuracion').removeClass('d-none')
+            $('#btn_insertar_Origen').removeClass('d-none')
+        }else{
+            $("#Asunto").val("");
+            var texto_insertar = "";
+            $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
+            $('#btn_insertar_Nombre_afiliado').addClass('d-none')
+            $('#btn_insertar_porPcl').addClass('d-none')
+            $('#btn_insertar_F_estructuracion').addClass('d-none')
+            $('#btn_insertar_Origen').addClass('d-none')
+        }       
     });
 
-    $("#btn_insertar_porPcl_cero").click(function(e){
-        e.preventDefault();
+    var oficioremisorioincapcl = $('#oficioinca');
+    oficioremisorioincapcl.change(function(){
+        if ($(this).prop('checked')) {
+            $("#Asunto").val("Calificación de Pérdida de Capacidad Laboral al Fondo de Pensiones Porvenir S.A.");
+            var texto_insertar = "<p>Hola, {{$Nombre_afiliado}} </p>"+
+            "<p>Teniendo en cuenta que usted ha cumplido los términos de incapacidad temporal prolongada establecidos por la ley, la AFP Porvenir "+ 
+            "S.A. en cumplimiento de la normatividad legal vigente procede a notificarle el dictamen de calificación con respecto a las patologías "+
+            "padecidas por usted y sustentadas en las Historias Clínicas aportadas que hacen parte integra de su expediente.</p>"+
+            "<p>Para el caso particular, es necesario resaltar el siguiente acápite legal: Literal a) del Artículo 29 del Decreto 1352 de 2013.</p>"+
+            "<p>Teniendo en cuenta lo anterior nos permitimos informarle que el grupo interdisciplinario de Seguros de Vida Alfa S.A, aseguradora que "+
+            "maneja el seguro previsional de los afiliados a la AFP Porvenir, emiti ó dictamen de calificación de origen y pérdida de la capacidad "+
+            "laboral (PCL), definiendo para su caso lo siguiente:</p>"+
+            "<table class='tabla_cuerpo'>" +
+            "<tr>" +
+            "<th>Porcentaje</th>" +
+            "<th>Origen</th>" +
+            "<th>Fecha de estructuración </th>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>{{$PorcentajePcl_dp}}</td>" +
+            "<td>{{$OrigenPcl_dp}}</td>" +
+            "<td>{{$F_estructuracionPcl_dp}}</td>" +
+            "</tr>" +
+            "</table>"+
+            "<p>Le informamos que de no encontrarse de acuerdo con la calificación emitida, usted tiene la posibilidad de manifestar a Seguros de "+
+            "Vida Alfa S.A. su inconformidad dentro de los diez (IO) días siguientes a partir de la fecha de recibida la notificación, evento en "+
+            "el cual procederemos a remitir su caso a la respectiva Junta Regional de Calificación de Invalidez para obtener una segunda calificación.</p>"+
+            "<p>Dicha manifestación debe realizarla por escrito dirigida a Seguros de Vida Alfa, en la que debe expresar sobre cuál de los aspectos "+
+            "apela: origen, pérdida de capacidad laboral y/o fecha de estructuración. Remitirla a la Cra 10 N° 18 - 36 Piso 4 Edificio José María "+
+            "Córdoba en Bogotá, al fax 7435333 ext.14440 0 al correo electrónico: inconformidad@segurosalfa.com.co.</p>";
+            $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
+            $('#btn_insertar_Nombre_afiliado').removeClass('d-none')
+            $('#btn_insertar_porPcl').removeClass('d-none')
+            $('#btn_insertar_F_estructuracion').removeClass('d-none')
+            $('#btn_insertar_Origen').removeClass('d-none')
+        }else{
+            $("#Asunto").val("");
+            var texto_insertar = "";
+            $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
+            $('#btn_insertar_Nombre_afiliado').addClass('d-none')
+            $('#btn_insertar_porPcl').addClass('d-none')
+            $('#btn_insertar_F_estructuracion').addClass('d-none')
+            $('#btn_insertar_Origen').addClass('d-none')
+        }        
+    });
 
-        var etiqueta_porPCL_cero = "{{$PorcentajePcl_cero}}";
-        $('#cuerpo_comunicado_cero').summernote('editor.insertText', etiqueta_porPCL_cero);
+    var oficioformatob = $('#formatob');
+    oficioformatob.change(function(){
+        if ($(this).prop('checked')) {
+            $("#Asunto").val("NOTIFICACIÓN RESULTADO REVISIÓN PENSIONAL");
+            var texto_insertar = "<p>Reciba un cordial saludo, </p>"+
+           "<p>Agradecemos la respuesta que hemos recibido a nuestra solicitud de actualización de historia clínica con "+ 
+           "el fin de revisar sus condiciones de salud.</p>"+
+           "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida "+
+           "Alfa S.A., hemos definido que Usted actualmente mantiene las condiciones para continuar con el beneficio "+
+           "de pensión por invalidez sobre el cual esta compañía Aseguradora ha venido pagando la mesada pensional "+
+           "en virtud del contrato de Renta Vitalicia Inmediata suscrito por encargo de la Administradora de Fondos de "+
+           "Pensiones Porvenir S.A.</p>"+
+           "<p>En forma sucinta la revisión de invalidez, se fundamenta en: {{$Detalle_calificacion_Fbdp}}</p>"+
+           "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras l íneas de atención al "+
+           "cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes, de"+
+           "8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a "+
+           "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
+            $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar); 
+            $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+        }else{
+            $("#Asunto").val("");
+            var texto_insertar = "";
+            $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
+            $('#btn_insertar_Detalle_calificacion').addClass('d-none');
+        }         
+    });
+
+    var oficioformatoc = $('#formatoc');
+    oficioformatoc.change(function(){
+        if ($(this).prop('checked')) {
+            $("#Asunto").val("NOTIFICACIÓN RESULTADO REVISIÓN PENSIONAL");
+            var texto_insertar = "<p>Reciba un cordial saludo, </p>"+
+           "<p>Agradecemos la respuesta que hemos recibido a nuestra solicitud de actualización de historia clínica "+ 
+           "el fin de revisar sus condiciones de salud.</p>"+
+           "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida Alfa S.A. se ha generado "+
+           "una nueva calificación de pérdida de capacidad laboral la cual estamos remitiendo como adjunto a esta comunicación y que corresponde "+
+           "a un porcentaje de {{$PorcentajePcl_dp}} %, fecha de estructuración {{$F_estructuracionPcl_dp}} de origen {{$OrigenPcl_dp}}.</p>"+
+           "<p>Una vez estudiados los documentos aportados para el proceso, se determinó que las condiciones que originaron la invalidez han "+
+           "cambiado, lo cual se encuentra debidamente sustentado en la historia clínica, de acuerdo con los parámetros establecidos en al Manual "+
+           "Único para la Calificación de la Pérdida de Capacidad Laboral.</p>"+
+           "<p>En forma sucinta el aumento de su porcentaje de invalidez, se fundamenta en:{{$Detalle_calificacion_Fbdp}}</p>";
+            $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
+            $('#btn_insertar_porPcl').removeClass('d-none')
+            $('#btn_insertar_F_estructuracion').removeClass('d-none')
+            $('#btn_insertar_Origen').removeClass('d-none') 
+            $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+        }else{
+            $("#Asunto").val("");
+            var texto_insertar = "";
+            $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
+            $('#btn_insertar_porPcl').addClass('d-none')
+            $('#btn_insertar_F_estructuracion').addClass('d-none')
+            $('#btn_insertar_Origen').addClass('d-none') 
+            $('#btn_insertar_Detalle_calificacion').addClass('d-none');
+        }         
+    });
+
+    var oficioformatod = $('#formatod');
+    oficioformatod.change(function(){
+        if ($(this).prop('checked')) {
+            $("#Asunto").val("NOTIFICACIÓN RESULTADO REVISIÓN PENSIONAL");
+            var texto_insertar = "<p>Reciba un cordial saludo, </p>"+
+           "<p>Agradecemos la respuesta que hemos recibido a nuestra solicitud de actualizaci ón de historia clínica con "+ 
+           "el fin de revisar sus condiciones de salud.</p>"+
+           "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida Alfa S.A., hemos definido "+
+           "que Usted actualmente mantiene las condiciones para continuar con el beneficio de pensión por invalidez sobre el cual esta compañía "+
+           "Aseguradora ha venido pagando la mesada pensional en virtud del contrato de Renta Vitalicia Inmediata suscrito por encargo de la "+
+           "Administradora de Fondos de Pensiones Porvenir S.A.</p>"+
+           "<p>En forma sucinta la revisión de invalidez, se fundamenta en: {{$Detalle_calificacion_Fbdp}} </p>"+
+           "<p>Como puede observarse, usted ahora se encuentra dentro del porcentaje establecido en el literal A del Articulo 40 de la Ley 100 de "+
+           "1993, por lo anterior, esta Aseguradora procederá a seguir efectuando el pago de su mesada pensional en los términos establecidos en "+ 
+           "la norma anteriormente mencionada.</p>"+
+           "<p>De la misma manera nos permitimos informar que de no encontrarse de acuerdo con la calificaci ón de su estado de invalidez, usted "+
+           "tiene la posibilidad de manifestar a Seguros de Vida Alfa S.A. su inconformidad dentro de los diez (10) días siguientes a partir de "+
+           "la fecha de recibida la notificación, evento en el cual procederemos a remitir su caso a la respectiva Junta Regional de Calificación "+
+           "de Invalidez para obtener una segunda calificación.</p>"+
+           "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras l íneas de atención al cliente en Bogotá (601) 3 07 "+
+           "70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o "+
+           "escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
+            $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
+            $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+        }else{
+            $("#Asunto").val("");
+            var texto_insertar = "";
+            $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
+            $('#btn_insertar_Detalle_calificacion').addClass('d-none');
+        }         
+    });
+
+    var oficioformatoe = $('#formatoe');
+    oficioformatoe.change(function(){
+        if ($(this).prop('checked')) {
+            $("#Asunto").val("NOTIFICACIÓN RESULTADO REVISIÓN PENSIONAL");
+            var texto_insertar = "<p>Reciba un cordial saludo, </p>"+
+           "<p>Agradecemos la respuesta que hemos recibido a nuestra solicitud de actualización de historia clínica "+ 
+           "el fin de revisar sus condiciones de salud.</p>"+
+           "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida Alfa S.A. se ha generado "+
+           "una nueva calificación de pérdida de capacidad laboral la cual estamos remitiendo como adjunto a esta comunicación y que corresponde "+
+           "a un porcentaje de {{$PorcentajePcl_dp}} %, fecha de estructuración {{$F_estructuracionPcl_dp}} de origen {{$OrigenPcl_dp}}.</p>"+
+           "<p>Una vez estudiados los documentos aportados para el proceso, se determinó que las condiciones que originaron la invalidez han "+
+           "cambiado, lo cual se encuentra debidamente sustentado en la historia cl ínica, de acuerdo con los parámetros establecidos en al "+
+           "Manual Único para la Calificación de la Pérdida de Capacidad Laboral.</p>"+
+           "<p>En forma sucinta la revisión de invalidez, se fundamenta en: {{$Detalle_calificacion_Fbdp}}</p>";
+            $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
+            $('#btn_insertar_porPcl').removeClass('d-none')
+            $('#btn_insertar_F_estructuracion').removeClass('d-none')
+            $('#btn_insertar_Origen').removeClass('d-none') 
+            $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+        }else{
+            $("#Asunto").val("");
+            var texto_insertar = "";
+            $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
+            $('#btn_insertar_porPcl').addClass('d-none')
+            $('#btn_insertar_F_estructuracion').addClass('d-none')
+            $('#btn_insertar_Origen').addClass('d-none') 
+            $('#btn_insertar_Detalle_calificacion').addClass('d-none');
+        }         
+    });
+
+    $("#btn_insertar_Detalle_calificacion").click(function(e){
+        e.preventDefault(); 
+
+        var etiqueta_Detalle_calificacion = "{{$Detalle_calificacion_Fbdp}}";
+        $('#cuerpo_comunicado_formatos_pension').summernote('editor.insertText', etiqueta_Detalle_calificacion);
     }); 
     
-    $("#btn_insertar_nombreCIE10_cero").click(function(e){
+    $("#btn_insertar_Nombre_afiliado").click(function(e){
         e.preventDefault();
 
-        var etiqueta_nombreCIE10_cero = "{{$CIE10Nombres_cero}}";
-        $('#cuerpo_comunicado_cero').summernote('editor.insertText', etiqueta_nombreCIE10_cero);
+        var etiqueta_Nombre_afiliado = "{{$Nombre_afiliado}}";
+        $('#cuerpo_comunicado_formatos_pension').summernote('editor.insertText', etiqueta_Nombre_afiliado);
+    }); 
+
+    $("#btn_insertar_porPcl").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_porPCL = "{{$PorcentajePcl_dp}}";
+        $('#cuerpo_comunicado_formatos_pension').summernote('editor.insertText', etiqueta_porPCL);
+    });  
+    
+    $("#btn_insertar_F_estructuracion").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_F_estructuracion = "{{$F_estructuracionPcl_dp}}";
+        $('#cuerpo_comunicado_formatos_pension').summernote('editor.insertText', etiqueta_F_estructuracion);
     });
+
+    $("#btn_insertar_Origen").click(function(e){
+        e.preventDefault();
+
+        var etiqueta_nombreCIE10 = "{{$OrigenPcl_dp}}";
+        $('#cuerpo_comunicado_formatos_pension').summernote('editor.insertText', etiqueta_nombreCIE10);
+    });
+    
 });
 // Examenes Interconsultas
 $(document).ready(function(){

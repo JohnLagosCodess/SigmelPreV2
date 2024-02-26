@@ -360,9 +360,13 @@
             <tr>
                 <td colspan="4" class="titulo_labels">Nombre del cargo:</td>
                 <td colspan="5" class="dato_dinamico">{{$Nombre_cargo_laboral}}</td>
+            </tr>            
+            <tr>
+                <td colspan="4" class="titulo_labels">Ocupación:</td>
+                <td colspan="5" class="dato_dinamico">{{$Ocupacion_afiliado}}</td>
                 <td colspan="2" class="titulo_labels">Código CIUO:</td>
                 <td colspan="6" class="dato_dinamico">{{$Codigo_ciuo_laboral}}</td>
-            </tr>            
+            </tr>
             <tr>
                 <td colspan="4" class="titulo_labels">Nombre de la empresa:</td>
                 <td colspan="9" class="dato_dinamico">{{$Empresa_laboral}}</td>

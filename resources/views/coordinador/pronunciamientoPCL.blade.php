@@ -1,5 +1,8 @@
 @extends('adminlte::page')
 @section('title', 'Pronunciamiento PCL')
+@section('css')
+    <link rel="stylesheet" type="text/css" href="/plugins/summernote/summernote.min.css">
+@stop
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
@@ -85,8 +88,8 @@
                                         <div class="form-group">
                                             <label for="nombre_calificador">Nombre de entidad calificadora<span style="color: red;">(*)</span></label>
                                             <select class="custom-select nombre_calificador" name="nombre_calificador" id="nombre_calificador" disabled required>
-                                                @if (!empty($info_pronuncia[0]->Id_nombre_calificador))
-                                                    <option value="{{$info_pronuncia[0]->Id_nombre_calificador}}" selected>{{$info_pronuncia[0]->Nombre_entidad}}</option>
+                                                @if (!empty($info_pronuncia[0]->Id_nombre_calificador))                                                    
+                                                    <option value="{{$info_pronuncia[0]->Id_nombre_calificador}}" selected>{{$info_pronuncia[0]->Nombre_calificador}}</option>
                                                  @else
                                                     <option value="">Seleccione una opción</option>
                                                  @endif
@@ -374,6 +377,12 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label for="sustenta_cali">Sustentación<span style="color: red;">(*)</span></label>
+                                            <br>
+                                            <button class="btn btn-sm btn-secondary mb-2 d-none" id="btn_insertar_Nombre_afiliado">Nombre afiliado</button>
+                                            <button class="btn btn-sm btn-secondary mb-2 d-none" id="btn_insertar_nombreCIE10">CIE10-Nombre-Origen</button>
+                                            {{-- <button class="btn btn-sm btn-secondary mb-2 d-none" id="btn_insertar_Origen">Origen</button> --}}
+                                            <button class="btn btn-sm btn-secondary mb-2 d-none" id="btn_insertar_porPcl">% PCL</button>
+                                            <button class="btn btn-sm btn-secondary mb-2 d-none" id="btn_insertar_F_estructuracion">Fecha de estructuracion</button>
                                             @if (!empty($info_pronuncia[0]->Sustenta_cali))
                                                 <textarea class="form-control" name="sustenta_cali" id="sustenta_cali" cols="30" rows="5" style="resize: none;">{{$info_pronuncia[0]->Sustenta_cali}}</textarea>
                                             @else
@@ -589,7 +598,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
-                                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para guardar la información es necesario dar clic en el botón guardar.
+                                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para guardar la información es necesario dar clic en el botón guardar/actualizar.
                                     </div>
                                 </div>
                                 <div class="col-6">
@@ -597,6 +606,7 @@
                                         @if (!empty($info_pronuncia[0]->ID_evento))
                                             <input type="submit" id="ActualizarPronuncia" name="ActualizarPronuncia" class="btn btn-info" value="Actualizar">
                                             <input hidden="hidden" type="text" id="bandera_pronuncia_guardar_actualizar" value="Actualizar">
+                                            <input type="button" id="proformas_pro_pcl" name="proformas_pro_pcl" class="btn btn-info d-none" value="PDF">
                                         @else
                                             <input type="submit" id="GuardarPronuncia" name="GuardarPronuncia" class="btn btn-info" value="Guardar">                                                
                                             <input hidden="hidden" type="text" id="bandera_pronuncia_guardar_actualizar" value="Guardar">
@@ -699,4 +709,5 @@
     </script>
     <script type="text/javascript" src="/js/pronunciamientopcl.js"></script>
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script src="/plugins/summernote/summernote.min.js"></script>
 @stop

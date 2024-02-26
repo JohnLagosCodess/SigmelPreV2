@@ -415,6 +415,7 @@
             @csrf
             <input hidden="hidden" type="text" name="Id_evento_pcl" id="Id_evento_pcl" value="{{$array_datos_calificacionPcl[0]->ID_evento}}">
             <input hidden="hidden" type="text" name="Id_asignacion_pcl" id="Id_asignacion_pcl" value="{{$array_datos_calificacionPcl[0]->Id_Asignacion}}">
+            <input hidden="hidden" type="text" name="Idservicio" id="Idservicio" value="<?php if(!empty($array_datos_calificacionPcl[0]->Id_Servicio)){ echo $array_datos_calificacionPcl[0]->Id_Servicio;}?>">
             <button type="submit" id="botonFormulario2" style="display: none; !important"></button>
         </form>
         <form action="{{route('gestionInicialEdicion')}}" id="formularioLlevarEdicionEvento" method="POST">
@@ -701,6 +702,34 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        @if (!empty($array_datos_calificacionPcl[0]->Id_Servicio) && $array_datos_calificacionPcl[0]->Id_Servicio == 8)
+                                            <div class="col-2">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="formatoB_revisionpension" value="Formato_B_Revision_pension" required>
+                                                        <label class="form-check-label custom-control-label" for="formatoB_revisionpension"><strong>Formato B</strong></label>
+                                                    </div>
+                                                </div>
+                                            </div>   
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="documento_revisionpension" value="Documento_Revision_pension" required>
+                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension"><strong>Solicitud Documentos Revisión Pensión</strong></label>
+                                                    </div>
+                                                </div>
+                                            </div>                                          
+                                        @endif
+                                        @if (!empty($array_datos_calificacionPcl[0]->Id_Servicio) && $array_datos_calificacionPcl[0]->Id_Servicio == 7)
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="No_procede_recali" value="Documento_No_Recalificacion" required>
+                                                        <label class="form-check-label custom-control-label" for="No_procede_recali"><strong>No Procede Recalificación</strong></label>
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                        @endif
                                     </div>
                                     <div class="row text-center">
                                         <label for="destinatario_principal" style="margin-left: 7px;">Destinatario Principal: <span style="color: red;">(*)</span></label>                                        
@@ -774,7 +803,12 @@
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="cuerpo_comunicado">Cuerpo del comunicado <span style="color: red;">(*)</span></label><br>
-                                                {{-- <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_pruebas">Pruebas Solicitadas</button> --}}
+                                                @if (!empty($array_datos_calificacionPcl[0]->Id_Servicio) && $array_datos_calificacionPcl[0]->Id_Servicio == 7)
+                                                    <button class="btn btn-sm btn-secondary mb-2 d-none" id="btn_insertar_Origen">Origen</button>                                                    
+                                                    <button class="btn btn-sm btn-secondary mb-2 d-none" id="btn_insertar_nombreCIE10">Nombre CIE10</button>
+                                                    <button class="btn btn-sm btn-secondary mb-2 d-none" id="btn_insertar_porPcl">% PCL</button>
+                                                    <button class="btn btn-sm btn-secondary mb-2 d-none" id="btn_insertar_F_estructuracion">Fecha de estructuracion</button>
+                                                @endif
                                                 <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" style="resize:none;" required></textarea>
                                             </div>
                                         </div>
@@ -1001,6 +1035,34 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        @if (!empty($array_datos_calificacionPcl[0]->Id_Servicio) && $array_datos_calificacionPcl[0]->Id_Servicio == 8)
+                                            <div class="col-2">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="formatoB_revisionpension_editar" value="Formato_B_Revision_pension" required>
+                                                        <label class="form-check-label custom-control-label" for="formatoB_revisionpension_editar"><strong>Formato B</strong></label>
+                                                    </div>
+                                                </div>
+                                            </div>   
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="documento_revisionpension_editar" value="Documento_Revision_pension" required>
+                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension_editar"><strong>Solicitud Documentos Revisión Pensión</strong></label>
+                                                    </div>
+                                                </div>
+                                            </div>                                          
+                                        @endif
+                                        @if (!empty($array_datos_calificacionPcl[0]->Id_Servicio) && $array_datos_calificacionPcl[0]->Id_Servicio == 7)
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="No_procede_recali_editar" value="Documento_No_Recalificacion" required>
+                                                        <label class="form-check-label custom-control-label" for="No_procede_recali_editar"><strong>No Procede Recalificación</strong></label>
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                        @endif
                                     </div>               
                                     <div class="row text-center">                                  
                                         <label for="destinatario_principal_act" style="margin-left: 7px;">Destinatario Principal: <span style="color: red;">(*)</span></label>                                        
@@ -1022,14 +1084,14 @@
                                             <div class="form-group">
                                                 <label for="nombre_destinatario_act"> Nombre destinatario <span style="color: red;">(*)</span></label>
                                                 <input class="form-control" type="text" name="nombre_destinatario_act" id="nombre_destinatario_editar" required>
-                                                <input hidden="hidden" class="form-control" type="text" name="nombre_destinatario_act2" id="nombre_destinatario_editar2" required>
+                                                <input type="hidden" class="form-control" type="text" name="nombre_destinatario_act2" id="nombre_destinatario_editar2" required>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="nic_cc_act">NIT / CC <span style="color: red;">(*)</span></label>
                                                 <input class="form-control" type="text" name="nic_cc_act" id="nic_cc_editar" required>
-                                                <input hidden="hidden" class="form-control" type="text" name="nic_cc_act2" id="nic_cc_editar2" required>
+                                                <input type="hidden" class="form-control" type="text" name="nic_cc_act2" id="nic_cc_editar2" required>
 
                                             </div>
                                         </div>
@@ -1037,21 +1099,21 @@
                                             <div class="form-group">
                                                 <label for="direccion_destinatario_act">Dirección destinatario <span style="color: red;">(*)</span></label>
                                                 <input class="form-control" type="text" name="direccion_destinatario_act" id="direccion_destinatario_editar" required>
-                                                <input hidden="hidden" class="form-control" type="text" name="direccion_destinatario_act2" id="direccion_destinatario_editar2" required>
+                                                <input type="hidden" class="form-control" type="text" name="direccion_destinatario_act2" id="direccion_destinatario_editar2" required>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="telefono_destinatario_act">Telefono destinatario <span style="color: red;">(*)</span></label>
                                                 <input class="form-control" type="number" min="999999" max="9999999999" name="telefono_destinatario_act" id="telefono_destinatario_editar" required>
-                                                <input hidden="hidden" class="form-control" type="number" min="999999" max="9999999999" name="telefono_destinatario_act2" id="telefono_destinatario_editar2" required>
+                                                <input type="hidden" class="form-control" type="number" min="999999" max="9999999999" name="telefono_destinatario_act2" id="telefono_destinatario_editar2" required>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="email_destinatario_act">E-mail destinatario <span style="color: red;">(*)</span></label>
                                                 <input class="form-control" type="email" name="email_destinatario_act" id="email_destinatario_editar" required>
-                                                <input hidden="hidden" class="form-control" type="email" name="email_destinatario_act2" id="email_destinatario_editar2" required>
+                                                <input type="hidden" class="form-control" type="email" name="email_destinatario_act2" id="email_destinatario_editar2" required>
 
                                             </div>
                                         </div>
@@ -1060,7 +1122,7 @@
                                                 <label for="departamento_destinatario_act">Departamento <span style="color: red;">(*)</span></label><br>
                                                 <select class="departamento_destinatario custom-select" name="departamento_destinatario_act" id="departamento_destinatario_editar" style="width: 100%;" required>                                                        
                                                 </select>
-                                                <input hidden="hidden" type="text" name="departamento_pdf" id="departamento_pdf">
+                                                <input type="hidden" name="departamento_pdf" id="departamento_pdf">
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -1068,7 +1130,7 @@
                                                 <label for="ciudad_destinatario_act">Ciudad <span style="color: red;">(*)</span></label><br>
                                                 <select class="ciudad_destinatario custom-select" name="ciudad_destinatario_act" id="ciudad_destinatario_editar" style="width: 100%;" required>
                                                 </select>
-                                                <input hidden="hidden" type="text" name="ciudad_pdf" id="ciudad_pdf">
+                                                <input type="hidden" name="ciudad_pdf" id="ciudad_pdf">
                                             </div>
                                         </div>                                        
                                         <div class="col-8">
@@ -1082,7 +1144,12 @@
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="cuerpo_comunicado_act">Cuerpo del comunicado <span style="color: red;">(*)</span></label><br>
-                                                {{-- <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_pruebas_editar">Pruebas Solicitadas</button> --}}
+                                                @if (!empty($array_datos_calificacionPcl[0]->Id_Servicio) && $array_datos_calificacionPcl[0]->Id_Servicio == 7)
+                                                    <button class="btn btn-sm btn-secondary mb-2 d-none" id="btn_insertar_Origen_editar">Origen</button>                                                    
+                                                    <button class="btn btn-sm btn-secondary mb-2 d-none" id="btn_insertar_nombreCIE10_editar">Nombre CIE10</button>
+                                                    <button class="btn btn-sm btn-secondary mb-2 d-none" id="btn_insertar_porPcl_editar">% PCL</button>
+                                                    <button class="btn btn-sm btn-secondary mb-2 d-none" id="btn_insertar_F_estructuracion_editar">Fecha de estructuracion</button>
+                                                @endif
                                                 <textarea class="form-control" name="cuerpo_comunicado_act" id="cuerpo_comunicado_editar" style="resize:none;" required></textarea>
                                             </div>
                                         </div>
@@ -1097,7 +1164,7 @@
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <label for="forma_envio_act">Forma de envío <span style="color: red;">(*)</span></label><br>
-                                                <select class="forma_envio_act custom-select" name="forma_envio_act" id="forma_envio_editar" style="width: 100%;" required>                                                    
+                                                <select class="forma_envio_act custom-select" name="forma_envio_act" id="forma_envio_editar" style="width: 100%;" required>
                                                     <option value="">Seleccione una opción</option>
                                                 </select>
                                             </div>
@@ -1113,7 +1180,7 @@
                                             <div class="form-group">
                                                 <label for="reviso_act">Revisó <span style="color: red;">(*)</span></label><br>
                                                 <select class="reviso custom-select" name="reviso_act" id="reviso_editar" style="width: 100%;" required>                                                    
-                                                    <option value="">Seleccione una opción</option>
+                                                    {{-- <option value="">Seleccione una opción</option> --}}
                                                 </select>
                                             </div>
                                         </div>
@@ -1188,12 +1255,15 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Recuerde Actualizar siempre después de haber modificado uno o más campos, El botón Actualizar se bloquea cuando falte algún campo obligatorio por llenar, y el del PDF se habilitará después de realizar la actualización.
+                                    </div>
                                 </div>
                                 <div class="card-footer">
                                     <div class="row">
                                         <div class="col-6">
                                             <div class="form-group">
-                                                <input type="button" id="Editar_comunicados" class="btn btn-info" value="Actualizar">
+                                                <input type="submit" id="Editar_comunicados" class="btn btn-info" value="Actualizar">
                                                 <input type="submit" id="Pdf" class="btn btn-info" value="Pdf">                            
                                             </div>                                            
                                         </div>
