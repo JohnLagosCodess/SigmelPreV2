@@ -88,7 +88,6 @@
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="nombre_calificador">Nombre de entidad calificadora <span style="color: red;">(*)</span></label>
-                                            
                                             <select class="custom-select nombre_calificador" name="nombre_calificador" id="nombre_calificador" disabled required>
                                                 @if (!empty($info_pronuncia[0]->Id_nombre_calificador))
                                                     <option value="{{$info_pronuncia[0]->Id_nombre_calificador}}" selected>{{$info_pronuncia[0]->Nombre_entidad}}</option>
@@ -333,8 +332,17 @@
                                         </div>
                                     </div>
                                     <div class="col-12">
+                                        <div class="alert alert-warning d-none" id="mostrar_mensaje_importante" role="alert">
+                                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong> <span>
+                                                Para mostrar todo el asunto (dentro del word) que usted escriba, debe incluir las etiquetas N° Dictamen Primer Calificador, Fecha Dictamen Primer Calificador 
+                                                dentro del campo Asunto.
+                                            </span>
+                                        </div>
                                         <div class="form-group">
                                             <label for="asunto_cali">Asunto<span style="color: red;">(*)</span></label>
+                                            <br>
+                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nro_dictamen_pri_cali">N° Dictamen Primer Calificador</button>
+                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_fecha_dictamen_pri_cali">Fecha Dictamen Primer Calificador</button>
                                             @if (!empty($info_pronuncia[0]->Asunto_cali))
                                                 <input type="text" class="form-control" name="asunto_cali" id="asunto_cali" value="{{$info_pronuncia[0]->Asunto_cali}}" required>
                                             @else
@@ -343,20 +351,20 @@
                                         </div>
                                     </div>
                                     <div class="col-12">
-                                        <div class="alert alert-warning" role="alert">
-                                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong> <span id="insertar_mensaje_importante">
-                                                <?php if(!empty($info_pronuncia[0]->Decision) && $info_pronuncia[0]->Decision=='Acuerdo'):?>
-                                                    Para mostrar toda la sustentación (dentro del pdf) que usted escriba, debe incluir las etiquetas de los Diagnósticos CIE-10 y de Origen dentro de la sección Sustentación.
-                                                <?php elseif(!empty($info_pronuncia[0]->Decision) && $info_pronuncia[0]->Decision=='Desacuerdo'):?>
-                                                    Para mostrar toda la sustentación (dentro del word) que usted escriba, debe incluir la etiqueta de los Diagnósticos CIE-10 dentro de la sección Sustentación.
-                                                <?php endif?>
+                                        <div class="alert alert-warning d-none" id="mostrar_mensaje_importante1" role="alert">
+                                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong> <span>
+                                                Para mostrar toda la sustentación (dentro del word) que usted escriba, debe incluir las etiquetas de Nombre Afiliado, Tipo Identificación, 
+                                                Número Identificación, CIE10 - Nombre CIE10 - Origen CIE10, dentro del campo Sustentación.
                                             </span>
                                         </div>
                                         <div class="form-group">
                                             <label for="sustenta_cali">Sustentación<span style="color: red;">(*)</span></label>
                                             <br>
-                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_cie10">Diagnósticos CIE10</button>
-                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_origen">Origen</button>
+                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_afiliado">Nombre Afiliado</button>
+                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_tipo_doc">Tipo Identificación</button>
+                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nro_identificacion">Número Identificación</button>
+                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_cie10_nombrecie10">CIE10 - Nombre CIE10 - Origen CIE10</button>
+
                                             @if (!empty($info_pronuncia[0]->Sustenta_cali))
                                                 <textarea class="form-control" name="sustenta_cali" id="sustenta_cali" >{{$info_pronuncia[0]->Sustenta_cali}}</textarea>
                                             @else
@@ -394,7 +402,7 @@
                                     <div class="col">
                                         <div class="columna_nombre_entidad form-group" style="display:none">
                                             <label for="" class="col-form-label">Nombre Entidad</label>
-                                            <input type="hidden" id="bd_nombre_entidad" value="<?php if(!empty($info_pronuncia[0]->Nombre_entidad)){ echo $info_pronuncia[0]->Nombre_entidad;} ?>">
+                                            <input type="hidden" id="bd_nombre_entidad" value="<?php if(!empty($info_pronuncia[0]->Nombre_entidad_correspon)){ echo $info_pronuncia[0]->Nombre_entidad_correspon;} ?>">
                                             <select class="custom-select nombre_entidad" name="nombre_entidad" id="nombre_entidad"></select>
                                         </div>
                                     </div>
@@ -583,7 +591,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
-                                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para guardar la información es necesario dar clic en el botón guardar.
+                                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para guardar la información es necesario dar clic en el botón guardar o actualizar (dependiendo del caso).
                                     </div>
                                 </div>
                                 <div class="col-6">
@@ -607,10 +615,8 @@
                                             <input type="hidden" id="nro_siniestro" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;} ?>">
                                             {{-- Nombre afiliado --}}
                                             <input type="hidden" id="nombre_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nombre_afiliado)){echo $array_datos_pronunciamientoOrigen[0]->Nombre_afiliado;}?>">
-                                            {{-- Dirección afliado --}}
-                                            <input type="hidden" id="direccion_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Direccion)){echo $array_datos_pronunciamientoOrigen[0]->Direccion;}?>">
-                                            {{-- Telefono afiliado --}}
-                                            <input type="hidden" id="telefono_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Telefono_contacto)){echo $array_datos_pronunciamientoOrigen[0]->Telefono_contacto;}?>">
+                                            {{-- Nombre entidad calificadora --}}
+                                            <input type="hidden" id="nom_entidad_califi" value="<?php if(!empty($info_pronuncia[0]->Nombre_entidad)){echo $info_pronuncia[0]->Nombre_entidad;}?>">
                                             {{-- Id asignacion para consultar los diagnosticos --}}
                                             <input type="hidden" id="Id_Asignacion_consulta_dx" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_Asignacion)){echo $array_datos_pronunciamientoOrigen[0]->Id_Asignacion;}?>">
                                             {{-- Id proceso para consultar los diagnosticos --}}
@@ -621,7 +627,7 @@
                                             <button class="btn btn-info" id="generar_proforma">PDF</button>
                                         @elseif (!empty($info_pronuncia[0]->Decision) && $info_pronuncia[0]->Decision=='Desacuerdo')
                                             {{-- Nombre entidad calificadora --}}
-                                            <input type="hidden" id="nom_entidad" value="<?php if(!empty($info_pronuncia[0]->Nombre_entidad)){echo $info_pronuncia[0]->Nombre_entidad;}?>">
+                                            <input type="hidden" id="nom_entidad_califi" value="<?php if(!empty($info_pronuncia[0]->Nombre_entidad)){echo $info_pronuncia[0]->Nombre_entidad;}?>">
                                             {{-- tipo de proforma --}}
                                             <input type="hidden" id="bandera_tipo_proforma" value="proforma_desacuerdo">
                                             {{-- Tipo de documento --}}
@@ -632,10 +638,6 @@
                                             <input type="hidden" id="nro_siniestro" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;} ?>">
                                             {{-- Nombre afiliado --}}
                                             <input type="hidden" id="nombre_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nombre_afiliado)){echo $array_datos_pronunciamientoOrigen[0]->Nombre_afiliado;}?>">
-                                            {{-- Dirección afliado --}}
-                                            <input type="hidden" id="direccion_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Direccion)){echo $array_datos_pronunciamientoOrigen[0]->Direccion;}?>">
-                                            {{-- Telefono afiliado --}}
-                                            <input type="hidden" id="telefono_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Telefono_contacto)){echo $array_datos_pronunciamientoOrigen[0]->Telefono_contacto;}?>">
                                             {{-- Id asignacion para consultar los diagnosticos --}}
                                             <input type="hidden" id="Id_Asignacion_consulta_dx" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_Asignacion)){echo $array_datos_pronunciamientoOrigen[0]->Id_Asignacion;}?>">
                                             {{-- Id proceso para consultar los diagnosticos --}}

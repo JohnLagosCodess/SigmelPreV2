@@ -290,7 +290,7 @@
             </tr>
             <tr>
                 <td colspan="4" class="titulo_labels">E-mail solicitante: </td>
-                <td colspan="5" class="dato_dinamico">{{$Emails_dic}}</td>
+                <td colspan="5" class="dato_dinamico">{{wordwrap($Emails_dic, 36, "\n", true);}}</td>
                 <td colspan="3" class="titulo_labels">Ciudad solicitante: </td>
                 <td colspan="5" class="dato_dinamico">{{$Nombre_municipio_dic}}</td>
             </tr>   

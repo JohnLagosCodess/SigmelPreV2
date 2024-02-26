@@ -443,7 +443,7 @@ class ProbandoController extends Controller
             'nro_radicado' => 'SALPRONU2024150100001',
             'tipo_identificacion' => 'CC',
             'num_identificacion' => '1030651087',
-            'nro_siniestro' => '987456321',
+            'ID_evento' => '987456321',
             'asunto' => 'ACUERDO CALIFICACIÓN DE EPS',
             'identificacion' => '1030651087',
             'fecha_evento' => $date,
@@ -451,7 +451,7 @@ class ProbandoController extends Controller
         ];
 
         $pdf = app('dompdf.wrapper');
-        $pdf->loadView('/Proformas/Proformas_Arl/Juntas/recurso_reposicion_pcl', $data);
+        $pdf->loadView('/Proformas/Proformas_Prev/Juntas/oficio_remisorio_jrci', $data);
         $fileName = 'pdfsito.pdf';
         return $pdf->stream($fileName);
     }

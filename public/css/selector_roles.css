@@ -150,3 +150,47 @@
 .bootstrap-duallistbox-container select {
     width: 100% !important;
 }
+
+.tabla_cuerpo_remision_expediente {
+    font-family: sans-serif;
+    text-align: justify;
+    width: 100%;
+    table-layout: fixed; 
+    border-collapse: collapse;
+}
+
+.tabla_cuerpo_remision_expediente, .tabla_cuerpo_remision_expediente td, .tabla_cuerpo_remision_expediente th {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 5px;
+}
+
+.tabla_devolucion_expediente {
+    font-family: sans-serif;
+    text-align: justify;
+    width: 100%;
+    table-layout: fixed; 
+    border-collapse: collapse;
+}
+
+.tabla_devolucion_expediente, .tabla_devolucion_expediente td, .tabla_devolucion_expediente th {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 5px;
+    text-align: center;
+}
+
+.tabla_acuerdo_origen{
+    font-family: sans-serif;
+    text-align: justify;
+    width: 100%;
+    table-layout: fixed; 
+    border-collapse: collapse;
+}
+
+.tabla_acuerdo_origen, .tabla_acuerdo_origen td, .tabla_acuerdo_origen th {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 5px;
+    text-align: justify;
+}

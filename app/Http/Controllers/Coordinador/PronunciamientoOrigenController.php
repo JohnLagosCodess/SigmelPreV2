@@ -25,6 +25,7 @@ use App\Models\sigmel_clientes;
 use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
+use App\Models\sigmel_informacion_accion_eventos;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
 use PhpOffice\PhpWord\Shared\Html;
@@ -50,7 +51,7 @@ class PronunciamientoOrigenController extends Controller
         ,'pr.Nit_calificador','pr.Dir_calificador','pr.Email_calificador','pr.Telefono_calificador','pr.Depar_calificador','pr.Ciudad_calificador'
         ,'pr.Id_tipo_pronunciamiento','p.Nombre_parametro as Tpronuncia','pr.Id_tipo_evento','ti.Nombre_evento','pr.Id_tipo_origen','or.Nombre_parametro as T_origen'
         ,'pr.Fecha_evento','pr.Dictamen_calificador','pr.Fecha_calificador','pr.Fecha_estruturacion','pr.Porcentaje_pcl','pr.Rango_pcl'
-        ,'pr.Decision','pr.Fecha_pronuncia','pr.Asunto_cali','pr.Sustenta_cali','pr.Destinatario_principal','pr.Tipo_entidad','pr.Copia_afiliado','pr.copia_empleador','pr.Copia_eps'
+        ,'pr.Decision','pr.Fecha_pronuncia','pr.Asunto_cali','pr.Sustenta_cali','pr.Destinatario_principal','pr.Tipo_entidad','pr.Nombre_entidad as Nombre_entidad_correspon','pr.Copia_afiliado','pr.copia_empleador','pr.Copia_eps'
         ,'pr.Copia_afp','pr.Copia_arl','pr.Copia_junta_regional','pr.Copia_junta_nacional','pr.Junta_regional_cual','j.Ciudad_Junta'
         ,'pr.N_anexos','pr.Elaboro_pronuncia','pr.Reviso_Pronuncia','pr.Ciudad_correspon','pr.N_radicado','pr.Firmar','pr.Fecha_correspondencia'
         ,'pr.Archivo_pronuncia')
@@ -264,7 +265,7 @@ class PronunciamientoOrigenController extends Controller
         if(!Auth::check()){
             return redirect('/');
         }
-        $datetime = date("Y-m-d h:i:s");
+        $datetime = date("Y-m-d H:i:s");
         $date=date("Y-m-d");
         $nombre_usuario = Auth::user()->name;
         $Id_EventoPronuncia = $request->Id_EventoPronuncia;
@@ -485,6 +486,14 @@ class PronunciamientoOrigenController extends Controller
             sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $Id_Asignacion_Pronuncia)->update($datos_profesional_calificador);
 
+            sleep(2);
+            $datos_info_accion_evento= [    
+                'F_calificacion_servicio' => $datetime
+            ];
+
+            sigmel_informacion_accion_eventos::on('sigmel_gestiones')
+            ->where('ID_evento', $Id_EventoPronuncia)->update($datos_info_accion_evento);
+
             $mensajes = array(
                 "parametro" => 'agregar_pronunciamiento',
                 "parametro2" => 'guardo',
@@ -618,6 +627,20 @@ class PronunciamientoOrigenController extends Controller
             sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $Id_Asignacion_Pronuncia)->update($datos_profesional_calificador);
 
+            sleep(2);
+            $datos_info_accion_evento= [    
+                'F_calificacion_servicio' => $datetime
+            ];
+
+            sigmel_informacion_accion_eventos::on('sigmel_gestiones')
+            ->where('ID_evento', $Id_EventoPronuncia)->update($datos_info_accion_evento);
+
+            $mensajes = array(
+                "parametro" => 'update_pronunciamiento',
+                "parametro2" => 'guardo',
+                "mensaje2" => 'Actualiza satisfactoriamente.'
+            ); 
+
             return json_decode(json_encode($mensajes, true));
 
         } 
@@ -632,59 +655,108 @@ class PronunciamientoOrigenController extends Controller
 
         /* Captura de variables que vienen del ajax */
         $bandera_tipo_proforma = $request->bandera_tipo_proforma;
+
         $ciudad = $request->ciudad;
         $fecha = $request->fecha;
+        $nro_siniestro = $request->nro_siniestro;
+        
         $nro_radicado = $request->nro_radicado;
+        $nombre_afiliado = $request->nombre_afiliado;
         $tipo_identificacion = $request->tipo_identificacion;
         $num_identificacion = $request->num_identificacion;
-        $nro_siniestro = $request->nro_siniestro;
-        $nombre_afiliado = $request->nombre_afiliado;
-        $direccion_afiliado = $request->direccion_afiliado;
-        $telefono_afiliado = $request->telefono_afiliado;
+        $fecha_dictamen = $request->fecha_dictamen;
+
         $origen = "<b>".$request->origen."</b>";
+
         $asunto = strtoupper($request->asunto);
         $sustentacion = $request->sustentacion;
+
         $Id_Asignacion_consulta_dx = $request->Id_Asignacion_consulta_dx;
         $Id_Proceso_consulta_dx = $request->Id_Proceso_consulta_dx;
+
+        $destinatario_principal = $request->destinatario_principal;
+        $tipo_entidad_correspon = $request->tipo_entidad_correspon;
+        $nombre_entidad_correspon = $request->nombre_entidad_correspon;
+
         $copia_afiliado = $request->copia_afiliado;
         $copia_empleador = $request->copia_empleador;
         $copia_eps = $request->copia_eps;
         $copia_afp = $request->copia_afp;
         $copia_arl = $request->copia_arl;
+
         $firmar = $request->firmar;
+
         $Id_cliente_firma = $request->Id_cliente_firma;
+        $nro_anexos = $request->nro_anexos;
+
         $nombre_entidad = $request->nombre_entidad;
         $direccion_entidad = $request->direccion_entidad;
         $telefono_entidad = $request->telefono_entidad;
         $ciudad_entidad = $request->ciudad_entidad;
         $departamento_entidad = $request->departamento_entidad;
+        $nro_dictamen_pri_cali = $request->nro_dictamen_pri_cali;
+        $fecha_dictamen_pri_cali = $request->fecha_dictamen_pri_cali;
 
         /* Creación de las variables faltantes que no están en el ajax */
-        $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-        ->select('sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
-        ->where([['siae.ID_evento','=', $nro_siniestro]])
-        ->get();
 
-        $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
+        // Información Destinatario Principal
+        if($destinatario_principal == "Si"){
+            // Si es Si, la informacion del destinatario principal se saca de la entidad
+            $datos_entidad = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Departamento', '=', 'sldm2.Id_departamento')
+            ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm2.Nombre_departamento')
+            ->where([
+                ['sie.Id_Entidad', $nombre_entidad_correspon],
+                ['sie.IdTipo_entidad', $tipo_entidad_correspon]
+            ])->get();
+            
+            if (count($datos_entidad) > 0) {
+                $nombre_destinatario = $datos_entidad[0]->Nombre_entidad;
+                $direccion_destinatario = $datos_entidad[0]->Direccion;
+                $telefono_destinatario = $datos_entidad[0]->Telefonos;
+                $ciudad_destinatario = $datos_entidad[0]->Nombre_ciudad;
+            } else {
+                $nombre_destinatario = "";
+                $direccion_destinatario = "";
+                $telefono_destinatario = "";
+                $ciudad_destinatario = "";
+            }
+        }else{
+            // Si es No, la informacion del destinatario principal se saca del afiliado
+            if ($bandera_tipo_proforma == "proforma_acuerdo") {
+                $datos = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                ->select('siae.Nombre_afiliado', 'siae.Direccion', 'siae.Telefono_contacto', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
+                ->where([['siae.ID_evento','=', $nro_siniestro]])
+                ->get();
 
-        $nombre_departamento_afiliado = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
-        $nombre_municipio_afiliado = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
+                $array_datos = json_decode(json_encode($datos), true);
+    
+                if (count($array_datos) > 0) {
+                    $nombre_destinatario = $array_datos[0]["Nombre_afiliado"];
+                    $direccion_destinatario = $array_datos[0]["Direccion"];
+                    $telefono_destinatario = $array_datos[0]["Telefono_contacto"];
+                    $ciudad_destinatario = $array_datos[0]["Nombre_municipio"];
+                } else {
+                    $nombre_destinatario = "";
+                    $direccion_destinatario = "";
+                    $telefono_destinatario = "";
+                    $ciudad_destinatario = "";
+                }
+            } else {
+                $nombre_destinatario = $nombre_entidad;
+                $direccion_destinatario = $direccion_entidad;
+                $telefono_destinatario = $telefono_entidad;
+                $ciudad_destinatario = $ciudad_entidad;
+            }
+        }
 
-        $dato_fecha_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
-        ->select('F_evento')
-        ->where([['ID_evento', $nro_siniestro]])
-        ->get();
-
-        $array_datos_fecha_evento = json_decode(json_encode($dato_fecha_evento), true);
-
-        $fecha_evento = $array_datos_fecha_evento[0]["F_evento"];
-
-        // TRAER DATOS CIE10 (Diagnóstico motivo de calificación)
+        // CIE10 NOMBRES CIE10 ORIGEN CIE10
         $diagnosticos_cie10 = array();
         $datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
-        ->select('side.Nombre_CIE10')
+        ->select('slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 'slp.Nombre_parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
         ->where([
@@ -692,37 +764,17 @@ class PronunciamientoOrigenController extends Controller
             ['side.ID_evento', '=', $nro_siniestro],
             ['side.Id_Asignacion', '=', $Id_Asignacion_consulta_dx]
         ])
-        ->get(); 
-        
+        ->get();
+
         $array_datos_diagnostico_motcalifi = json_decode(json_encode($datos_diagnostico_motcalifi), true);
 
         for ($i=0; $i < count($array_datos_diagnostico_motcalifi); $i++) { 
-            array_push($diagnosticos_cie10, $array_datos_diagnostico_motcalifi[$i]["Nombre_CIE10"]);
+            $dato_concatenado = "(".$array_datos_diagnostico_motcalifi[$i]['Codigo'].")(".$array_datos_diagnostico_motcalifi[$i]['Nombre_CIE10'].")(".$array_datos_diagnostico_motcalifi[$i]['Nombre_parametro'].")";
+            array_push($diagnosticos_cie10, $dato_concatenado);
         }
 
-        // Contar la cantidad de elementos en el array
-        $totalElementos = count($diagnosticos_cie10);
-
-        // Inicializar la cadena de resultado
-        $string_diagnosticos_cie10 = '';
-
-        // Recorrer el array
-        foreach ($diagnosticos_cie10 as $indice => $elemento) {
-            // Verificar si es el último elemento
-            if ($indice == $totalElementos - 1) {
-                // Si es el último, añadir solo el elemento sin coma
-                $string_diagnosticos_cie10 .= $elemento;
-            } elseif ($indice == $totalElementos - 2) {
-                // Si es el antepenúltimo, añadir "y" en lugar de ","
-                $string_diagnosticos_cie10 .= $elemento . " y ";
-            } else {
-                // Para cualquier otro elemento, añadir ","
-                $string_diagnosticos_cie10 .= $elemento . ", ";
-            }
-        };
-
-        $string_diagnosticos_cie10 = "<b>".$string_diagnosticos_cie10."</b>";
-
+        $string_diagnosticos_cie10 = implode(", ", $diagnosticos_cie10);
+        $string_diagnosticos_cie10 = $string_diagnosticos_cie10;
 
         /* Copias Interesadas */
         // Validamos si los checkbox esta marcados
@@ -849,7 +901,7 @@ class PronunciamientoOrigenController extends Controller
         if ($validarFirma == "firmar") {
             $idcliente = sigmel_clientes::on('sigmel_gestiones')->select('Id_cliente')
             ->where('Id_cliente', $Id_cliente_firma)->limit(1)->get();
-    
+
             $firmaclientecompleta = sigmel_informacion_firmas_clientes::on('sigmel_gestiones')->select('Firma')
             ->where('Id_cliente', $idcliente[0]->Id_cliente)->limit(1)->get();
 
@@ -895,28 +947,30 @@ class PronunciamientoOrigenController extends Controller
             $footer_dato_4 = "";
             $footer_dato_5 = "";
         }
-        
+
+        $ramo = "Previsionales";
+
         if ($bandera_tipo_proforma == "proforma_acuerdo") {
             $datos_finales_proforma = [
                 'logo_header' => $logo_header,
                 'id_cliente' => $Id_cliente_firma,
                 'ciudad' => $ciudad,
                 'fecha' => $fecha,
-                'nombre_afiliado' => $nombre_afiliado,
-                'direccion_afiliado' => $direccion_afiliado,
-                'telefonos_afiliado' => $telefono_afiliado,
-                'municipio_afiliado' => $nombre_municipio_afiliado,
-                'departamento_afiliado' => $nombre_departamento_afiliado,
-                'asunto' => $asunto,
-                'cuerpo' => $sustentacion,
+                'nro_siniestro' => $nro_siniestro,
                 'nro_radicado' => $nro_radicado,
+                'nombre_afiliado' => $nombre_afiliado,
                 'tipo_identificacion' => $tipo_identificacion,
                 'num_identificacion' => $num_identificacion,
-                'nro_siniestro' => $nro_siniestro,
-                'identificacion' => $num_identificacion,
-                'fecha_evento' => $fecha_evento,
-                'string_diagnosticos_cie10' => $string_diagnosticos_cie10,
-                'origen' => $origen,
+                'fecha_dictamen' => $fecha_dictamen,
+                'ramo' => $ramo,
+                'asunto' => $asunto,
+                'cuerpo' => $sustentacion,
+                'nro_anexos' => $nro_anexos,
+                'nombre_destinatario' => $nombre_destinatario,
+                'direccion_destinatario' => $direccion_destinatario,
+                'telefono_destinatario' => $telefono_destinatario,
+                'ciudad_destinatario' => $ciudad_destinatario,
+                'nombre_entidad_calificadora' => $nombre_entidad,
                 'Firma_cliente' => $Firma_cliente,
                 'Agregar_copia' => $Agregar_copias,
                 'nombre_usuario' => Auth::user()->name,
@@ -927,9 +981,9 @@ class PronunciamientoOrigenController extends Controller
                 'footer_dato_5' => $footer_dato_5,
             ];
             
-
+    
             $pdf = app('dompdf.wrapper');
-            $pdf->loadView('/Proformas/Proformas_Arl/Origen_Atel/acuerdo_calificacion', $datos_finales_proforma);
+            $pdf->loadView('/Proformas/Proformas_Prev/Origen_Atel/pronunciamiento_acuerdo', $datos_finales_proforma);
             
             $nombre_pdf = "ORI_ACUERDO_{$Id_Asignacion_consulta_dx}_{$num_identificacion}.pdf";
     
@@ -939,11 +993,9 @@ class PronunciamientoOrigenController extends Controller
             file_put_contents(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_pdf}"), $output);
     
             return $pdf->download($nombre_pdf); 
-        } 
-        else {
-
-            $fecha_radicado_alfa = "N/A";
-
+        }
+         else {
+            
             $phpWord = new PhpWord();
             // Configuramos la fuente y el tamaño de letra para todo el documento
             $phpWord->setDefaultFontName('Arial');
@@ -954,7 +1006,7 @@ class PronunciamientoOrigenController extends Controller
             );
             // Configurar el idioma del documento a español
             $phpWord->getSettings()->setThemeFontLang(new \PhpOffice\PhpWord\Style\Language('es-ES'));
-
+    
             // Configuramos las margenes del documento (estrechas)
             $section = $phpWord->addSection();
             $section->setMarginLeft(0.5 * 72);
@@ -962,35 +1014,23 @@ class PronunciamientoOrigenController extends Controller
             $section->setMarginTop(0.5 * 72);
             $section->setMarginBottom(0.5 * 72);
 
-            // $ruta_vigilado = "/images/logos_preformas/vigilado.png";
-            // $imagenPath_vigilado = public_path($ruta_vigilado);
-
-            // $imageStyle = array(
-            //     'height' => 150,
-            //     'positioning' => Image::POSITION_ABSOLUTE,
-            //     // 'marginLeft' => -50,  // Ajusta este valor según tus necesidades
-            //     'marginRight' => -500,
-            //     'marginTop' => 600,
-            //     // 'wrappingStyle' => 'behind', 
-            // );
-
-
             // Creación de Header
             $header = $section->addHeader();
             $imagenPath_header = public_path($ruta_logo);
             $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
-            // $header->addImage($imagenPath_vigilado, $imageStyle);
 
             // Creación de Contenido
-            $section->addText('Bogotá D.C, '.$fecha, array('bold' => true));
+            $section->addText($ciudad.', '.$fecha, array('bold' => true));
             $section->addTextBreak();
+
+           
             $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
                 <tr>
                     <td>
-                        <p><b>Señores: </b>'.$nombre_entidad.'</p>
-                        <p style="margin-top: 1px;"><b>Dirección: </b>'.$direccion_entidad.'</p>
-                        <p><b>Teléfono: </b>'.$telefono_entidad.'</p>
-                        <p><b>Ciudad: </b>'.$ciudad_entidad.' - '.$departamento_entidad.'</p>
+                        <p><b>Señores: </b>'.$nombre_destinatario.'</p>
+                        <p style="margin-top: 1px;"><b>Dirección: </b>'.$direccion_destinatario.'</p>
+                        <p><b>Teléfono: </b>'.$telefono_destinatario.'</p>
+                        <p><b>Ciudad: </b>'.$ciudad_destinatario.'</p>
                     </td>
                     <td>
                         <table style="width: 60%; border: 3px black solid;">
@@ -1005,21 +1045,55 @@ class PronunciamientoOrigenController extends Controller
                     </td>
                 </tr>
             </table>';
-        
+                
             Html::addHtml($section, $htmltabla1, false, true);
 
-            $section->addText('Asunto: '.$asunto, array('bold' => true));
-            $section->addText('Afiliado: '.$nombre_afiliado." ".$tipo_identificacion." ".$num_identificacion, array('bold' => true));
-            $section->addText('Radicado en Alfa:  '.$fecha_radicado_alfa, array('bold' => true));
+            // Configuramos el reemplazo de la etiqueta del asunto
+            $patron1_asunto = '/\{\{\$NRO_DICTAMEN_PRI_CALI\}\}/';
+            $patron2_asunto = '/\{\{\$FECHA_DICTAMEN_PRI_CALI\}\}/';
 
-            // Configuramos el reemplazo de la variable de los cie 10
+            if (preg_match($patron1_asunto, $asunto) && preg_match($patron2_asunto, $asunto)) {
+                $asunto_modificado = str_replace('{{$NRO_DICTAMEN_PRI_CALI}}', $nro_dictamen_pri_cali, $asunto);
+                $asunto_modificado = str_replace('{{$FECHA_DICTAMEN_PRI_CALI}}', $fecha_dictamen_pri_cali, $asunto_modificado);
+
+                $asunto = $asunto_modificado;
+            }else{
+                $asunto = "";
+            }
+
+            $section->addText('Asunto: '.$asunto, array('bold' => true));
+            $section->addText('PACIENTE: '.$nombre_afiliado.' '.$tipo_identificacion.' '.$num_identificacion, array('bold' => true));
+            $section->addText('Ramo: '.$ramo, array('bold' => true));
+            $section->addText('Siniestro: '.$nro_siniestro, array('bold' => true));
+
+            // Configuramos el reemplazo de las etiquetas en el cuerpo
             $sustentacion = str_replace(['<br>', '<br/>', '<br />', '</br>'], '', $sustentacion);
-            $patron1 = '/\{\{\$diagnosticos_cie10\}\}/';
-            if (preg_match($patron1, $sustentacion)) {
-                $texto_modificado = str_replace('{{$diagnosticos_cie10}}', $string_diagnosticos_cie10, $sustentacion);
-                $texto_modificado = str_replace('</p>', '</p><br></br>', $texto_modificado);
-                $texto_modificado = str_replace('<p><br>', ' ', $texto_modificado);
-                $cuerpo = $texto_modificado;
+            $patron1 = '/\{\{\$nombre_afiliado\}\}/';
+            $patron2 = '/\{\{\$tipo_documento\}\}/';
+            $patron3 = '/\{\{\$nro_identificacion\}\}/';
+            $patron4 = '/\{\{\$cie10_nombrecie10_origencie10\}\}/';
+
+            if (preg_match($patron1, $sustentacion) && preg_match($patron2, $sustentacion) &&
+                preg_match($patron3, $sustentacion) && preg_match($patron4, $sustentacion)) {
+                
+                    $texto_modificado = str_replace('{{$nombre_afiliado}}', $nombre_afiliado, $sustentacion);
+                    $texto_modificado = str_replace('{{$tipo_documento}}', $tipo_identificacion, $texto_modificado);
+                    $texto_modificado = str_replace('{{$nro_identificacion}}', $num_identificacion, $texto_modificado);
+                    $texto_modificado = str_replace('{{$cie10_nombrecie10_origencie10}}', $string_diagnosticos_cie10, $texto_modificado);
+
+                    $texto_modificado = str_replace('HUGO IGNACIO GÓMEZ DAZA', '<b>HUGO IGNACIO GÓMEZ DAZA</b>', $texto_modificado);
+                    $texto_modificado = str_replace('SEGUROS DE VIDA ALFA S.A.', '<b>SEGUROS DE VIDA ALFA S.A.</b>', $texto_modificado);
+                    $texto_modificado = str_replace('AFP', '<b>AFP</b>', $texto_modificado);
+                    $texto_modificado = str_replace('PORVENIR S.A.', '<b>PORVENIR S.A.</b>', $texto_modificado);
+                    $texto_modificado = str_replace('RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN', '<b>RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN</b>', $texto_modificado);
+                    $texto_modificado = str_replace('ORIGEN', '<b>ORIGEN</b>', $texto_modificado);
+                    $texto_modificado = str_replace('ANEXO:', '<b>ANEXO:</b>', $texto_modificado);
+                    $texto_modificado = str_replace('NOTIFICACIONES:', '<b>NOTIFICACIONES:</b>', $texto_modificado);
+                    
+
+                    $texto_modificado = str_replace('</p>', '</p><br></br>', $texto_modificado);
+                    $texto_modificado = str_replace('<p><br>', ' ', $texto_modificado);
+                    $cuerpo = $texto_modificado;
             } else {
                 $cuerpo = "";
             }
@@ -1027,7 +1101,7 @@ class PronunciamientoOrigenController extends Controller
             $section->addTextBreak();
             Html::addHtml($section, $cuerpo, false, true);
             $section->addTextBreak();
-            $section->addText('Cordialmente,');
+            $section->addText('Cordialmente,', array('bold' => true));
             $section->addTextBreak();
 
             if ($Firma_cliente != "No firma") {
@@ -1049,12 +1123,15 @@ class PronunciamientoOrigenController extends Controller
             }else{
                 $section->addText($Firma_cliente);
             }
+
             $section->addTextBreak();
-            $section->addText('Dirección de Servicios Médicos de Seguridad Social', array('bold' => true));
-            $section->addText('Convenio Codess - Seguros de Vida Alfa S.A', array('bold' => true));
+            $section->addText('HUGO IGNACIO GÓMEZ DAZA', array('bold' => true));
+            $section->addText('Representante Legal para Asuntos de Seguridad Social', array('bold' => true));
+            $section->addText('Convenio Codess - Seguros de Vida Alfa S.A.', array('bold' => true));
             $section->addTextBreak();
             $section->addText('Elaboró: '.Auth::user()->name, array('bold' => true));
             $section->addTextBreak();
+
             // Configuramos la tabla de copias a partes interesadas
             $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
             if (count($Agregar_copias) == 0) {
@@ -1098,12 +1175,8 @@ class PronunciamientoOrigenController extends Controller
             $htmltabla2 .= '</table>';
             Html::addHtml($section, $htmltabla2, false, true);
             $section->addTextBreak();
-            $texto_html_gris = '“Finalmente, reiteramos que en nuestra Compañía contamos con la mejor disposición para atender sus quejas y reclamos a través del defensor consumidor financiero, en la Av. Calle 26 No 59-15, local 6 y 7. Conmutador: 7435333 Extensión: 14454, Fax Ext. 14456 o Correo Electrónico: defensor del consumidor financiero@segurosdevidaalfa.com.co”.';
-            $color_hex = '#828282';
-            $final_gris = '<p style="color:' . $color_hex . ';">' . $texto_html_gris . '</p>';
-            Html::addHtml($section, $final_gris, false, true);
-
             // Configuramos el footer
+            $info = $nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$nro_siniestro;
             $footer = $section->addFooter();
             $tableStyle = array(
                 'cellMargin'  => 50,
@@ -1111,6 +1184,8 @@ class PronunciamientoOrigenController extends Controller
             $phpWord->addTableStyle('myTable', $tableStyle);
             $table = $footer->addTable('myTable');
 
+            $table->addRow();
+            $table->addCell(80000, ['gridSpan' => 2])->addText($info, array('size' => 10, 'bold' => true));
             $table->addRow();
             $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_1, array('size' => 10));
             $table->addRow();
@@ -1133,7 +1208,9 @@ class PronunciamientoOrigenController extends Controller
             $nombre_docx = "ORI_DESACUERDO_{$Id_Asignacion_consulta_dx}_{$num_identificacion}.docx";
             $writer->save(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));
             return response()->download(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));
+
         }
+        
     }
 }
 function reemplazarStyleImg($html, $nuevoStyle)

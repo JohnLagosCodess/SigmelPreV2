@@ -98,6 +98,7 @@ $(document).ready(function(){
             success:function(data) {
                 $("#nombre_calificador").empty();
                 let IdEntidad = $('select[name=nombre_calificador]').val();
+                console.log(IdEntidad);
                 $('#nit_calificador,#dir_calificador,#mail_calificador,#telefono_calificador,#depar_calificador,#ciudad_calificador').val(""); //Vaciar Campos
                 $('#nombre_calificador').append('<option value="" selected>Seleccione</option>');
                 let nombrecalifi = Object.keys(data);
@@ -350,7 +351,7 @@ $(document).ready(function(){
         $('#fecha_evento').prop('required', true);
     }
 
-    // Funcionalidad para insertar las etiquetas de diagnosticos cie10 y origen
+    // Funcionalidad para insertar las etiquetas
     $("#sustenta_cali").summernote({
         height: 'auto',
         toolbar: false
@@ -372,7 +373,84 @@ $(document).ready(function(){
         $('#sustenta_cali').summernote('editor.insertText', etiqueta_origen);
     });
 
+    /* Etiquetas para la proforma del Desacuerdo */
     
+    $("#btn_insertar_nro_dictamen_pri_cali").click(function(e){
+        e.preventDefault();
+        var cursorPos = $("#asunto_cali").prop('selectionStart');
+        var currentValue = $("#asunto_cali").val();
+        var newValue = currentValue.slice(0, cursorPos) + '{{$nro_dictamen_pri_cali}}' + currentValue.slice(cursorPos);
+        // Actualiza el valor del input
+        $("#asunto_cali").val(newValue);
+        // Coloca el cursor después de la etiqueta
+        $("#asunto_cali").prop('selectionStart', cursorPos + 27);
+        $("#asunto_cali").prop('selectionEnd', cursorPos + 27);
+        $("#asunto_cali").focus();
+    });
+
+    $("#btn_insertar_fecha_dictamen_pri_cali").click(function(e){
+        e.preventDefault();
+        var cursorPos = $("#asunto_cali").prop('selectionStart');
+        var currentValue = $("#asunto_cali").val();
+        var newValue = currentValue.slice(0, cursorPos) + '{{$fecha_dictamen_pri_cali}}' + currentValue.slice(cursorPos);
+        // Actualiza el valor del input
+        $("#asunto_cali").val(newValue);
+        // Coloca el cursor después de la etiqueta
+        $("#asunto_cali").prop('selectionStart', cursorPos + 29);
+        $("#asunto_cali").prop('selectionEnd', cursorPos + 29);
+        $("#asunto_cali").focus();
+    });
+
+    $("#btn_insertar_nombre_afiliado").click(function(e){
+        e.preventDefault();
+        var etiqueta_nombre_afiliado = "{{$nombre_afiliado}}";
+        $("#sustenta_cali").summernote('editor.insertText', etiqueta_nombre_afiliado);
+    });
+
+    $("#btn_insertar_tipo_doc").click(function(e){
+        e.preventDefault();
+        var etiqueta_tipo_doc = "{{$tipo_documento}}";
+        $("#sustenta_cali").summernote('editor.insertText', etiqueta_tipo_doc);
+    });
+    
+    $("#btn_insertar_nro_identificacion").click(function(e){
+        e.preventDefault();
+        var etiqueta_nro_identificacion = "{{$nro_identificacion}}";
+        $("#sustenta_cali").summernote('editor.insertText', etiqueta_nro_identificacion);
+    });
+
+    $("#btn_insertar_cie10_nombrecie10").click(function(e){
+        e.preventDefault();
+        var etiqueta_cie10_nombrecie10 = "{{$cie10_nombrecie10_origencie10}}";
+        $("#sustenta_cali").summernote('editor.insertText', etiqueta_cie10_nombrecie10);
+    });
+
+
+    /* Validación mostrar item correspondencia pero cuando carga inicialmente la página */
+    var opt_predeterminada = $("[name='decision_pr']").filter(":checked").val();
+
+    if(opt_predeterminada == "Acuerdo"){
+        $("#mostrar_mensaje_importante").addClass('d-none');
+        $("#mostrar_mensaje_importante1").addClass('d-none');
+
+        $("#btn_insertar_nro_dictamen_pri_cali").prop('disabled', true);
+        $("#btn_insertar_fecha_dictamen_pri_cali").prop('disabled', true);
+        $("#btn_insertar_nombre_afiliado").prop('disabled', true);
+        $("#btn_insertar_tipo_doc").prop('disabled', true);
+        $("#btn_insertar_nro_identificacion").prop('disabled', true);
+        $("#btn_insertar_cie10_nombrecie10").prop('disabled', true);
+    }else if(opt_predeterminada == "Desacuerdo") {
+        $("#mostrar_mensaje_importante").removeClass('d-none');
+        $("#mostrar_mensaje_importante1").removeClass('d-none');
+
+        $("#btn_insertar_nro_dictamen_pri_cali").prop('disabled', false);
+        $("#btn_insertar_fecha_dictamen_pri_cali").prop('disabled', false);
+        $("#btn_insertar_nombre_afiliado").prop('disabled', false);
+        $("#btn_insertar_tipo_doc").prop('disabled', false);
+        $("#btn_insertar_nro_identificacion").prop('disabled', false);
+        $("#btn_insertar_cie10_nombrecie10").prop('disabled', false);
+    }
+
     /* VALIDACIÓN MOSTRAR ITEM DE CORRESPONDECIA */
     var opt_correspondencia;
     $("[name='decision_pr']").on("change", function(){
@@ -382,17 +460,36 @@ $(document).ready(function(){
         
         $("#insertar_mensaje_importante").html("");
         if (opt_correspondencia == "Acuerdo") {
-            $("#insertar_mensaje_importante").html("Para mostrar toda la sustentación (dentro del pdf) que usted escriba, debe incluir las etiquetas de los Diagnósticos CIE-10 y de Origen dentro de la sección Sustentación.");
-            $("#btn_insertar_origen").prop('disabled', false);
-            $("#asunto_cali").val("ACUERDO CALIFICACIÓN DE EPS");
-            var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.</p><p>De manera atenta, informamos que la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A. se encuentra de acuerdo con el dictamen emitido por la EPS, respecto a las patologías&nbsp;{{$diagnosticos_cie10}} de Origen {{$origen}}.</p><p>Cualquier información adicional con gusto será atendida por el Auditor Técnico en el teléfono 7435333 Ext. 14626 en Bogotá.</p>";
-            $('#sustenta_cali').summernote('code', texto_insertar);
+
+            $("#mostrar_mensaje_importante").addClass('d-none');
+            $("#mostrar_mensaje_importante1").addClass('d-none');
+            
+            $("#btn_insertar_nro_dictamen_pri_cali").prop('disabled', true);
+            $("#btn_insertar_fecha_dictamen_pri_cali").prop('disabled', true);
+            $("#btn_insertar_nombre_afiliado").prop('disabled', true);
+            $("#btn_insertar_tipo_doc").prop('disabled', true);
+            $("#btn_insertar_nro_identificacion").prop('disabled', true);
+            $("#btn_insertar_cie10_nombrecie10").prop('disabled', true);
+            
+            $("#asunto_cali").val("CONCEPTO MÉDICO DE DICTAMEN PÉRDIDA DE CAPACIDAD LABORAL ");
+            $('#sustenta_cali').summernote('code', '');
+            
         } else if(opt_correspondencia == "Desacuerdo") {
-            $("#insertar_mensaje_importante").html("Para mostrar toda la sustentación (dentro del word) que usted escriba, debe incluir la etiqueta de los Diagnósticos CIE-10 dentro de la sección Sustentación.");
-            $("#btn_insertar_origen").prop('disabled', true);
-            $("#asunto_cali").val("CONTROVERSIA CALIFICACIÓN DE ORIGEN DE EPS");
-            var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A. De manera atenta informamos que la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A. manifiesta su inconformidad con el dictamen emitido por la EPS, respecto de las patologías&nbsp;{{$diagnosticos_cie10}} y tal como lo establece el Artículo 142 del Decreto 0019 de 2012, solicitamos que la EPS remita el caso a la Junta Regional de Calificación de Invalidez para dirimir la controversia.</p><p>En los próximos días le enviaremos copia del pago de honorarios realizada a la Junta Regional correspondiente junto con las guías de notificación a las partes interesadas, para la remisión del expediente por la EPS.</p><p>Cualquier inquietud con gusto será atendida en la Carrera 10 #18-36 piso 4°, Edificio José María Córdova, Bogotá.</p>";
+
+            $("#mostrar_mensaje_importante").removeClass('d-none');
+            $("#mostrar_mensaje_importante1").removeClass('d-none');
+            
+            $("#btn_insertar_nro_dictamen_pri_cali").prop('disabled', false);
+            $("#btn_insertar_fecha_dictamen_pri_cali").prop('disabled', false);
+            $("#btn_insertar_nombre_afiliado").prop('disabled', false);
+            $("#btn_insertar_tipo_doc").prop('disabled', false);
+            $("#btn_insertar_nro_identificacion").prop('disabled', false);
+            $("#btn_insertar_cie10_nombrecie10").prop('disabled', false);
+
+            $("#asunto_cali").val("RECURSO DE REPOSICIÓN EN SUBSIDIO DE APELACIÓN FRENTE A DICTAMEN N° {{$nro_dictamen_pri_cali}} DEL {{$fecha_dictamen_pri_cali}}");
+            var texto_insertar = "<p>Respetados Señores,</p><p>Yo, HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. Aseguradora que expidió el seguro previsional a la AFP PORVENIR S.A., debidamente facultado para ello, en atención al dictamen de la referencia, estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN ante la Junta, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de ORIGEN dictaminada al afiliado {{$nombre_afiliado}} {{$tipo_documento}} {{$nro_identificacion}}, donde califican los diagnósticos: {{$cie10_nombrecie10_origencie10}}.</p><p>1. (Descripción de recurso)</p><p>Por lo anterior, presentamos el recurso de reposición en subsidio de apelación, contra el origen de la patología de {{$cie10_nombrecie10_origencie10}}, con el fin que la Junta dictamine el origen de la patología del paciente dando aplicación a la Ley 1562 de 2012 y Decreto 1477 de 2014 como normatividad vigente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación, e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Recibiré notificaciones en la Carrera 10 # 18 – 36 Edificio Córdoba Piso 4, en la ciudad de Bogotá, D.C.</p><p>Cualquier Información adicional con gusto le será suministrada,</p>";
             $('#sustenta_cali').summernote('code', texto_insertar);
+
         }
     });
     
@@ -641,13 +738,22 @@ $(document).ready(function(){
         var num_identificacion = $("#num_identificacion").val();
         var nro_siniestro = $("#nro_siniestro").val();
         var nombre_afiliado = $("#nombre_afiliado").val();
-        var direccion_afiliado = $("#direccion_afiliado").val();
-        var telefono_afiliado = $("#telefono_afiliado").val();
+        var fecha_dictamen = $("#fecha_calificador").val();
         var origen = $("#tipo_origen option:selected").text();
         var asunto = $("#asunto_cali").val();
         var sustentacion = $("#sustenta_cali").val();
         var Id_Asignacion_consulta_dx = $("#Id_Asignacion_consulta_dx").val();
         var Id_Proceso_consulta_dx = $("#Id_Proceso_consulta_dx").val();
+        /* Informacion destinatario principal */
+        if($("#destinatario_principal").filter(":checked").val() != undefined){
+            var destinatario_principal = "Si";
+        }else{
+            var destinatario_principal = "No";
+        }
+
+        var tipo_entidad_correspon = $("#tipo_entidad").val();
+        var nombre_entidad_correspon = $("#nombre_entidad").val();
+        
         /* Checkbox de Copias a partes interesadas */
         var copia_afiliado = $('#copia_afiliado').filter(":checked").val();
         var copia_empleador = $('#copia_empleador').filter(":checked").val();
@@ -656,11 +762,15 @@ $(document).ready(function(){
         var copia_arl = $('#copia_arl').filter(":checked").val();
         var firmar = $('#firmar').filter(":checked").val();
         var Id_cliente_firma = $('#Id_cliente_firma').val();
-        var nombre_entidad = $("#nom_entidad").val();
+        var nro_anexos = $("#n_anexos").val();
+
+        var nombre_entidad = $("#nom_entidad_califi").val();
         var direccion_entidad = $("#dir_calificador").val();
         var telefono_entidad = $("#telefono_calificador").val();
         var ciudad_entidad = $("#ciudad_calificador").val();
         var departamento_entidad = $("#depar_calificador").val();
+        var nro_dictamen_pri_cali = $("#dictamen_calificador").val();
+        var fecha_dictamen_pri_cali = $("#fecha_calificador").val();
 
         var datos_generacion_proforma = {
             '_token': token,
@@ -672,13 +782,15 @@ $(document).ready(function(){
             'num_identificacion': num_identificacion,
             'nro_siniestro': nro_siniestro,
             'nombre_afiliado': nombre_afiliado,
-            'direccion_afiliado': direccion_afiliado,
-            'telefono_afiliado': telefono_afiliado,
+            'fecha_dictamen': fecha_dictamen,
             'origen': origen,
             'asunto': asunto,
             'sustentacion': sustentacion,
             'Id_Asignacion_consulta_dx': Id_Asignacion_consulta_dx,
             'Id_Proceso_consulta_dx': Id_Proceso_consulta_dx,
+            'destinatario_principal': destinatario_principal,
+            'tipo_entidad_correspon': tipo_entidad_correspon,
+            'nombre_entidad_correspon': nombre_entidad_correspon,
             'copia_afiliado': copia_afiliado,
             'copia_empleador': copia_empleador,
             'copia_eps': copia_eps,
@@ -686,12 +798,17 @@ $(document).ready(function(){
             'copia_arl': copia_arl,
             'firmar': firmar,
             'Id_cliente_firma': Id_cliente_firma,
+            'nro_anexos': nro_anexos,
             'nombre_entidad': nombre_entidad,
             'direccion_entidad': direccion_entidad,
             'telefono_entidad': telefono_entidad,
             'ciudad_entidad': ciudad_entidad,
-            'departamento_entidad': departamento_entidad
+            'departamento_entidad': departamento_entidad,
+            'nro_dictamen_pri_cali': nro_dictamen_pri_cali,
+            'fecha_dictamen_pri_cali': fecha_dictamen_pri_cali
         }
+        
+        
         
         $.ajax({    
             type:'POST',

@@ -327,8 +327,31 @@ $(document).ready(function(){
                 $("#edi_entidad_ciudad").empty();
                 $("#edi_entidad_ciudad").append('<option value="'+data[0]["Id_Ciudad"]+'">'+data[0]["Nombre_municipio"]+'</option>');
                 //Medio Noti
-                $("#edi_entidad_medio_noti").empty();
-                $("#edi_entidad_medio_noti").append('<option value="'+data[0]["Id_Medio_Noti"]+'">'+data[0]["Medio_Noti"]+'</option>');
+                // $("#edi_entidad_medio_noti").empty();
+                // $("#edi_entidad_medio_noti").append('<option value="'+data[0]["Id_Medio_Noti"]+'">'+data[0]["Medio_Noti"]+'</option>');
+                let datos_lista_medio_noti_editar = {
+                    '_token': token,
+                    'parametro':"lista_medio_noti"
+                };
+                $.ajax({
+                    type:'POST',
+                    url:'/selectoresEntidad',
+                    data: datos_lista_medio_noti_editar,
+                    success:function(data_medios_noti) {
+                        
+                        $('#edi_entidad_medio_noti').empty();
+                        $('#edi_entidad_medio_noti').append('<option value="">Seleccione</option>');
+                        let claves = Object.keys(data_medios_noti);
+                        for (let i = 0; i < claves.length; i++) {
+                            if (data_medios_noti[claves[i]]["Id_Parametro"] == data[0]["Id_Medio_Noti"]) {
+                                $('#edi_entidad_medio_noti').append('<option value="'+data_medios_noti[claves[i]]["Id_Parametro"]+'" selected>'+data_medios_noti[claves[i]]["Nombre_parametro"]+'</option>');
+                            } else {
+                                $('#edi_entidad_medio_noti').append('<option value="'+data_medios_noti[claves[i]]["Id_Parametro"]+'">'+data_medios_noti[claves[i]]["Nombre_parametro"]+'</option>');
+                            }
+                        }
+                    }
+                });
+                
                 // Sucursal
                 $("#entidad_sucursal ").empty();
                 $("#entidad_sucursal").val(data[0]["Sucursal"]);
@@ -408,7 +431,7 @@ $(document).ready(function(){
                 }
             });
             /* CARGAR LISTADO MEDIO NOTI */
-           var datos_moti_soli = {
+           /* var datos_moti_soli = {
                 'edi_medio_noti':$('#edi_entidad_medio_noti').val(),
                 '_token': $('input[name=_token]').val(),
                 'parametro':"lista_medio_noti_edit"
@@ -428,7 +451,7 @@ $(document).ready(function(){
                         }
                     }
                 }
-            });
+            }); */
         }, 1000);
     });
     /* Validación opción Otro/¿Cual? del selector Tipo Entidad edicion */

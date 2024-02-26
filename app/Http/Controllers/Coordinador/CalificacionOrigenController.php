@@ -16,8 +16,8 @@ use App\Models\sigmel_informacion_documentos_solicitados_eventos;
 use App\Models\sigmel_informacion_eventos;
 use App\Models\sigmel_informacion_comunicado_eventos;
 use App\Models\cndatos_info_comunicado_eventos;
+use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
 use App\Models\sigmel_informacion_seguimientos_eventos;
-
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
 
@@ -187,7 +187,16 @@ class CalificacionOrigenController extends Controller
         ])
        ->get();
 
-        return view('coordinador.calificacionOrigen', compact('user','nombre_usuario','array_datos_calificacionOrigen','arraylistado_documentos','arraycampa_documento_solicitado','SubModulo','Fnuevo','listado_documentos_solicitados','dato_validacion_no_aporta_docs','dato_ultimo_grupo_doc','dato_doc_sugeridos','dato_articulo_12','consecutivo','primer_seguimiento','segundo_seguimiento','tercer_seguimiento','listado_seguimiento_solicitados'));
+        //Consulta comite interdisciplinario del evento
+       $cali_profe_comite = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+       ->select('Profesional_comite','F_visado_comite')
+       ->where([
+           ['ID_evento',$newIdEvento],
+           ['Id_Asignacion',$newIdAsignacion],
+           ['Id_proceso','1']
+        ])
+       ->get();
+        return view('coordinador.calificacionOrigen', compact('user','nombre_usuario','array_datos_calificacionOrigen','arraylistado_documentos','arraycampa_documento_solicitado','SubModulo','Fnuevo','listado_documentos_solicitados','dato_validacion_no_aporta_docs','dato_ultimo_grupo_doc','dato_doc_sugeridos','dato_articulo_12','consecutivo','primer_seguimiento','segundo_seguimiento','tercer_seguimiento','listado_seguimiento_solicitados','cali_profe_comite'));
     }
 
     //Guardar informacion del modulo de Origen ATEL
@@ -197,6 +206,7 @@ class CalificacionOrigenController extends Controller
         }
         $time = time();
         $date = date("Y-m-d", $time);
+        $date_time = date("Y-m-d H:i:s");
         $user = Auth::user();
         $nombre_usuario = Auth::user()->name;
         $newIdAsignacion = $request->newId_asignacion;
@@ -212,6 +222,13 @@ class CalificacionOrigenController extends Controller
         }else{
             $Fecha_devolucion_comite = $request->fecha_devolucion;
             $Causal_devolucion_comite =$request->causal_devolucion_comite;
+        }
+
+        // Fecha de asignación para DTO 
+        if ($Accion_realizar == 2 || $Accion_realizar == 101) {
+            $Fecha_asignacion_dto = $date_time;
+        }else{
+            $Fecha_asignacion_dto = "0000-00-00 00:00:00";
         }
 
         // validacion de bandera para guardar o actualizar
@@ -232,6 +249,7 @@ class CalificacionOrigenController extends Controller
                 'F_devolucion_comite' => $Fecha_devolucion_comite,
                 'Descripcion_accion' => $request->descripcion_accion,
                 'Nombre_usuario' => $nombre_usuario,
+                'F_asignacion_dto' => $Fecha_asignacion_dto,
                 'F_registro' => $date,
             ];
 
@@ -334,6 +352,7 @@ class CalificacionOrigenController extends Controller
                 'F_devolucion_comite' => $Fecha_devolucion_comite,
                 'Descripcion_accion' => $request->descripcion_accion,
                 'Nombre_usuario' => $nombre_usuario,
+                'F_asignacion_dto' => $Fecha_asignacion_dto,
                 'F_registro' => $date,
             ];
 
@@ -1051,7 +1070,7 @@ class CalificacionOrigenController extends Controller
         //Valida el primer seguimiento
         if($descrip_seguimiento1<>''){
 
-            $fecha_estipula_segui= date('Y-m-d', strtotime($date . ' +7 days'));
+            $fecha_estipula_segui= $request->f_estipulada1;
             //Consulta si ya tiene registro de primer seguirmiento
             $conteo_p1 = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
             ->select('Causal_seguimiento as P1')
@@ -1082,7 +1101,7 @@ class CalificacionOrigenController extends Controller
         //Valida el segundo seguimiento
         if($descrip_seguimiento2<>''){
 
-            $fecha_estipula_segui2= date('Y-m-d', strtotime($date . ' +21 days'));
+            $fecha_estipula_segui2= $request->f_estipulada2;
             //Consulta si ya tiene registro de primer seguirmiento
             $conteo_p2 = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
             ->select('Causal_seguimiento as P2')
@@ -1113,7 +1132,7 @@ class CalificacionOrigenController extends Controller
         //Valida el tercer seguimiento
         if($descrip_seguimiento3<>''){
 
-            $fecha_estipula_segui3= date('Y-m-d', strtotime($date . ' +27 days'));
+            $fecha_estipula_segui3= $request->f_estipulada3;
             //Consulta si ya tiene registro de primer seguirmiento
             $conteo_p3 = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
             ->select('Causal_seguimiento as P3')

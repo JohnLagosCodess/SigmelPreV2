@@ -26,6 +26,9 @@ return new class extends Migration
             $table->date('F_devolucion_comite')->nullable();
             $table->text('Descripcion_accion')->nullable();
             $table->datetime('F_recepcion_doc_origen')->nullable();
+            $table->datetime('F_asignacion_dto')->nullable();
+            $table->datetime('F_calificacion_servicio')->nullable();
+            $table->datetime('F_asignacion_pronu_juntas')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

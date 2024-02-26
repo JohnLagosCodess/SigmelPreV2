@@ -39,7 +39,7 @@ return new class extends Migration
             $table->integer('Reviso');
             $table->text('Agregar_copia')->nullable();
             $table->string('Firmar_Comunicado', 20)->nullable();
-            $table->enum('Tipo_descarga', ['Documento_Origen', 'Otro_Documento', 'Documento_PCL'])->nullable();
+            $table->text('Tipo_descarga')->nullable();
             $table->string('Nombre_usuario', 100);
             $table->date('F_registro');
         });

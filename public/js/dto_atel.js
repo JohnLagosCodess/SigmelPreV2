@@ -1667,8 +1667,8 @@ $(document).ready(function(){
     // Funcionalidad para introducir el texto predeterminado para la proforma Notificación DML ORIGEN
     $('#oficio_origen').change(function(){
         if ($(this).prop('checked')) {
-         var asunto_insertar = "CALIFICACIÓN DE ORIGEN";
-         var texto_insertar = '<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A</p><p>De la manera más atenta queremos informar el resultado de la calificación realizada por el Grupo Interdisciplinario de Calificación de Origen y Pérdida de la Capacidad Laboral adscrito a la Administradora de Riesgos Laborales de Seguros de Vida Alfa S.A, según lo dispuesto en los Artículo 142 del Decreto 0019 de 2012, ha determinado el evento reportado ante esta Administradora, con las siguientes patologías:</p><p>{{$diagnosticos_cie10}}</p><p>El dictamen de calificación del que anexó copia, puede ser apelado ante esta Administradora, dentro de los (10) diez días siguientes a partir de su notificación, de acuerdo al Decreto 0019 de 2012 artículo 142, en la Carrera 10 Nº 18 - 36 piso 4°, Edificio José María Córdoba, Bogotá D.C. Favor informar en la carta el motivo de su desacuerdo y en el asunto manifestar que es una inconformidad al dictamen.</p><p>Cualquier información adicional con gusto será atendida por el Auditor Técnico en el teléfono 7435333 Ext. 14626 en Bogotá.</p>';
+         var asunto_insertar = "CONCEPTO SOBRE PRESUNTO ORIGEN EVENTO";
+         var texto_insertar = '<p>Respetados Señores</p><p>En atención a la solicitud de emisión de concepto sobre el presunto origen de la contingencia, le informamos que una vez estudiada la documentación del paciente por el comité intedisciplinario de calificación de pérdida de la capacidad laboral y origen de Seguros de Vida ALFA S.A., experto en la materia, se considera que el presunto origen de la muerte del Señor(a) {{$nombre_afiliado}}, es con ocasión de un {{$origen_evento}}.</p><p>Para los efectos, se adjuntó el concepto que sustenta lo manifestado.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestra líneas de atención, al cliente en Bogotá (601) 3077032 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co»; o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>';
 
          $("#Asunto").val(asunto_insertar);
          $("#cuerpo_comunicado").summernote('code', texto_insertar);
@@ -1860,7 +1860,7 @@ $(document).ready(function(){
         $("#div_correspondecia").removeClass('d-none');
     });
 
-    /* funcionalidad para insertar la etiqueta de los cie10 */
+    /* funcionalidad para insertar la etiqueta de nombre de afiliado y origen evento */
     $("#cuerpo_comunicado").summernote({
         height: 'auto',
         toolbar: false
@@ -1868,10 +1868,17 @@ $(document).ready(function(){
     $('.note-editing-area').css("background", "white");
     $('.note-editor').css("border", "1px solid black");
 
-    $("#btn_insertar_cie10").click(function(e){
+    $("#btn_insertar_nombre_afiliado").click(function(e){
         e.preventDefault();
 
-        var etiqueta = "{{$diagnosticos_cie10}}";
+        var etiqueta = "{{$nombre_afiliado}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta);
+    });
+
+    $("#btn_insertar_origen_evento").click(function(e){
+        e.preventDefault();
+
+        var etiqueta = "{{$origen_evento}}";
         $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta);
     });
 
@@ -2013,65 +2020,53 @@ $(document).ready(function(){
         })
     });
 
-    // Captura Formulario PDF Notificación DML ORIGEN (OFICIO)
-    $("form[id^='Form_noti_dml_origen_pdf_']").submit(function (e){
+    // Captura Formulario DML ORIGEN PREVISIONAL (DICTAMEN)
+    $("form[id^='Form_dml_origen_previsional_']").submit(function (e){
         e.preventDefault();              
-       
         var tupla_comunicado = $(this).data("tupla_comunicado");
 
-        // Captura de variables del formulario
-        var id_tupla_comunicado = $("#id_tupla_comunicado_"+tupla_comunicado).val();
-        var asunto = $("#asunto_proforma_dml_"+tupla_comunicado).val();
-        var cuerpo = $("#cuerpo_comunicado").val();
-        // var nro_radicado = $("#nro_radicado").val();
-        var tipo_identificacion = $("#tipo_identificacion_"+tupla_comunicado).val();
+        var id_cliente = $("#Id_cliente_"+tupla_comunicado).val();
         var num_identificacion = $("#num_identificacion_"+tupla_comunicado).val();
         var nro_siniestro = $("#nro_siniestro_"+tupla_comunicado).val();
-        var ciudad = $("#ciudad_"+tupla_comunicado).val();
-        var fecha = $("#fecha_"+tupla_comunicado).val();
-        var nombre_afiliado = $("#nombre_afiliado_"+tupla_comunicado).val();
-        var direccion_afiliado = $("#direccion_afiliado_"+tupla_comunicado).val();
-        var telefono_afiliado = $("#telefono_afiliado_"+tupla_comunicado).val();
-        var Id_Asignacion_consulta_dx = $("#Id_Asignacion_consulta_dx_"+tupla_comunicado).val();
-        var Id_Proceso_consulta_dx = $("#Id_Proceso_consulta_dx_"+tupla_comunicado).val();
+        var Id_Asignacion = $("#Id_Asignacion_"+tupla_comunicado).val();
+        var Id_Proceso = $("#Id_Proceso_"+tupla_comunicado).val();
+        var f_dictamen = $("#f_dictamen_"+tupla_comunicado).val();
+        var empresa_laboral = $("#empresa_laboral_"+tupla_comunicado).val();
+        var nit_cc_laboral = $("#nit_cc_laboral_"+tupla_comunicado).val();
+        var cargo_laboral = $("#cargo_laboral_"+tupla_comunicado).val();
+        var antiguedad_cargo_laboral = $("#antiguedad_cargo_laboral_"+tupla_comunicado).val();
+        var act_economica_laboral = $("#act_economica_laboral_"+tupla_comunicado).val();
+        var justificacion_revision_origen = $("#justificacion_revision_origen_"+tupla_comunicado).val();
         var nombre_evento = $("#nombre_evento_"+tupla_comunicado).val();
-        //checkbox de Copias de partes interesadas
-        var copia_empleador = $('#empleador').filter(":checked").val();
-        var copia_eps = $('#eps').filter(":checked").val();
-        var copia_afp = $('#afp').filter(":checked").val();
-        var copia_arl = $('#arl').filter(":checked").val();
-        var firmar = $('#firmar').filter(":checked").val();
-        var Id_cliente_firma = $('#Id_cliente_firma_'+tupla_comunicado).val();
+        var f_evento = $("#f_evento_"+tupla_comunicado).val();
+        var f_fallecimiento = $("#f_fallecimiento_"+tupla_comunicado).val();
+        var sustentacion_califi_origen = $("#sustentacion_califi_origen_"+tupla_comunicado).val();
+        var origen = $("#origen_dto_atel option:selected").text();
 
-        datos_generacion_pdf_noti_dml_origen = {
-            '_token': token, 
-            'id_tupla_comunicado': id_tupla_comunicado,
-            'asunto': asunto,
-            'cuerpo': cuerpo,
-            // 'nro_radicado': nro_radicado,
-            'tipo_identificacion': tipo_identificacion,
-            'num_identificacion': num_identificacion,
+        datos_generacion_proforma_dml_previsional = {
+            '_token': token,
+            'id_cliente': id_cliente,
             'nro_siniestro': nro_siniestro,
-            'ciudad': ciudad,
-            'fecha': fecha,
-            'nombre_afiliado': nombre_afiliado,
-            'direccion_afiliado': direccion_afiliado,
-            'telefono_afiliado': telefono_afiliado,
-            'Id_Asignacion_consulta_dx': Id_Asignacion_consulta_dx,
-            'Id_Proceso_consulta_dx': Id_Proceso_consulta_dx,
+            'Id_Asignacion': Id_Asignacion,
+            'Id_Proceso': Id_Proceso,
+            'f_dictamen': f_dictamen,
+            'empresa_laboral': empresa_laboral,
+            'nit_cc_laboral': nit_cc_laboral,
+            'cargo_laboral': cargo_laboral,
+            'antiguedad_cargo_laboral': antiguedad_cargo_laboral,
+            'act_economica_laboral': act_economica_laboral,
+            'justificacion_revision_origen': justificacion_revision_origen,
             'nombre_evento': nombre_evento,
-            'copia_empleador': copia_empleador,
-            'copia_eps': copia_eps,
-            'copia_afp': copia_afp,
-            'copia_arl': copia_arl,
-            'firmar': firmar,
-            'Id_cliente_firma': Id_cliente_firma
+            'f_evento': f_evento,
+            'f_fallecimiento': f_fallecimiento,
+            'sustentacion_califi_origen': sustentacion_califi_origen,
+            'origen': origen
         };
-        
+
         $.ajax({    
             type:'POST',
-            url:'/DescargaProformaNotiDML',
-            data: datos_generacion_pdf_noti_dml_origen,
+            url:'/DescargaProformaDMLPrev',
+            data: datos_generacion_proforma_dml_previsional,
             xhrFields: {
                 responseType: 'blob' // Indica que la respuesta es un blob
             },
@@ -2079,7 +2074,7 @@ $(document).ready(function(){
                 var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
         
                 // Crear un enlace de descarga similar al ejemplo anterior
-                var nombre_pdf = "ORI_OFICIO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".pdf";
+                var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
                 var link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
                 link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
@@ -2096,56 +2091,68 @@ $(document).ready(function(){
                 console.error('Error al descargar el PDF:', error);
             }       
         });
+
     });
     
-    // Captura Formulario PDF DML ORIGEN ATEL (DICTAMEN)
-    $("form[id^='Form_dml_origen_pdf_']").submit(function (e){
+    // Captura Formulario PDF Notificación del DML previsional (OFICIO)
+    $("form[id^='Form_noti_dml_previsional_']").submit(function (e){
         e.preventDefault();              
        
         var tupla_comunicado = $(this).data("tupla_comunicado");
 
+        // Captura de variables del formulario
+        var id_tupla_comunicado = $("#id_tupla_comunicado_"+tupla_comunicado).val();
+        var id_com_inter = $("#id_com_inter_"+tupla_comunicado).val();
+        var ciudad = $("#ciudad_"+tupla_comunicado).val();
+        var fecha = $("#fecha_"+tupla_comunicado).val();
+        var asunto = $("#asunto_proforma_dml_"+tupla_comunicado).val();
+        var cuerpo = $("#cuerpo_comunicado").val();
+        var tipo_identificacion = $("#tipo_identificacion_"+tupla_comunicado).val();
         var num_identificacion = $("#num_identificacion_"+tupla_comunicado).val();
-        var id_evento = $("#id_evento_"+tupla_comunicado).val();
-        var Id_Asignacion = $("#Id_Asignacion_"+tupla_comunicado).val();
-        var Id_Proceso = $("#Id_Proceso_"+tupla_comunicado).val();
-        var fecha_dictamen = $("#f_dictamen_"+tupla_comunicado).val();
-        var nro_dictamen = $("#nro_dictamen_"+tupla_comunicado).val();
-        var motivo_solicitud = $("#motivo_solicitud_"+tupla_comunicado).val();
-        var id_cliente = $("#Id_cliente_"+tupla_comunicado).val();
-        var justi_revision_origen = $("#justi_revision_origen_"+tupla_comunicado).val();
-        var nombre_evento = $("#nombre_evento_"+tupla_comunicado).val();
-        var mortal = $("#mortal_"+tupla_comunicado).val();
-        var f_fallecimiento = $("#f_fallecimiento_"+tupla_comunicado).val();
-        var f_evento = $("#f_evento_"+tupla_comunicado).val();
-        var hora_evento = $("#hora_evento_"+tupla_comunicado).val();
-        var furat = $("#descrip_FURAT_"+tupla_comunicado).val();
+        var nro_siniestro = $("#nro_siniestro_"+tupla_comunicado).val();
+        var nombre_afiliado = $("#nombre_afiliado_"+tupla_comunicado).val();
+        var direccion_afiliado = $("#direccion_afiliado_"+tupla_comunicado).val();
+        var telefono_afiliado = $("#telefono_afiliado_"+tupla_comunicado).val();
+        var Id_asignacion = $("#Id_Asignacion_consulta_"+tupla_comunicado).val();
+        var Id_cliente_firma = $('#Id_cliente_firma_'+tupla_comunicado).val();
         var origen = $("#origen_dto_atel option:selected").text();
-        var sustentacion = $("#sustentacion_califi_origen_"+tupla_comunicado).val();
+        //checkbox de Copias de partes interesadas
+        var copia_empleador = $('#empleador').filter(":checked").val();
+        var copia_eps = $('#eps').filter(":checked").val();
+        var copia_afp = $('#afp').filter(":checked").val();
+        var copia_arl = $('#arl').filter(":checked").val();
+        var firmar = $('#firmar').filter(":checked").val();
+        var anexos = $('#anexos').val();
 
-        datos_generacion_pdf_dml_origen = {
+        datos_pdf_noti_dml_previsional = {
             '_token': token, 
-            'id_evento': id_evento,
-            'Id_Asignacion': Id_Asignacion,
-            'Id_Proceso': Id_Proceso,
-            'fecha_dictamen': fecha_dictamen,
-            'nro_dictamen': nro_dictamen,
-            'motivo_solicitud': motivo_solicitud,
-            'id_cliente': id_cliente,
-            'justi_revision_origen': justi_revision_origen,
-            'nombre_evento': nombre_evento,
-            'mortal': mortal,
-            'f_fallecimiento': f_fallecimiento,
-            'f_evento': f_evento,
-            'hora_evento': hora_evento,
-            'furat': furat,
+            'id_tupla_comunicado': id_tupla_comunicado,
+            'id_com_inter': id_com_inter,
+            'ciudad': ciudad,
+            'fecha': fecha,
+            'asunto': asunto,
+            'cuerpo': cuerpo,
+            'tipo_identificacion': tipo_identificacion,
+            'num_identificacion': num_identificacion,
+            'nro_siniestro': nro_siniestro,
+            'nombre_afiliado': nombre_afiliado,
+            'direccion_afiliado': direccion_afiliado,
+            'telefono_afiliado': telefono_afiliado,
+            'Id_asignacion': Id_asignacion,
+            'Id_cliente_firma': Id_cliente_firma,
             'origen': origen,
-            'sustentacion': sustentacion
+            'copia_empleador': copia_empleador,
+            'copia_eps': copia_eps,
+            'copia_afp': copia_afp,
+            'copia_arl': copia_arl,
+            'firmar': firmar,
+            'anexos': anexos
         };
         
         $.ajax({    
             type:'POST',
-            url:'/DescargaProformaDML',
-            data: datos_generacion_pdf_dml_origen,
+            url:'/DescargaProformaNotiDMLPrev',
+            data: datos_pdf_noti_dml_previsional,
             xhrFields: {
                 responseType: 'blob' // Indica que la respuesta es un blob
             },
@@ -2153,7 +2160,7 @@ $(document).ready(function(){
                 var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
         
                 // Crear un enlace de descarga similar al ejemplo anterior
-                var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                var nombre_pdf = "ORI_OFICIO_"+Id_asignacion+"_"+num_identificacion+".pdf";
                 var link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
                 link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF

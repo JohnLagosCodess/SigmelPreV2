@@ -5123,6 +5123,7 @@ class CalificacionPCLController extends Controller
         ->where([['ID_Evento',$ID_Evento_comuni]])->get();        
 
         $Tipo_afiliado = $array_datos_info_afiliado[0]->Tipo_afiliado;
+        $Ocupacion_afiliado = $array_datos_info_afiliado[0]->Ocupacion;
 
         if ($Tipo_afiliado !== 27 ) {
             $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado;
@@ -6100,9 +6101,26 @@ class CalificacionPCLController extends Controller
         ->select('side.CIE10', 'slcd.CIE10 as Codigo_cie10', 'side.Nombre_CIE10')
         ->where([['ID_Evento',$ID_Evento_comuni_comite], ['Id_Asignacion',$Id_Asignacion_comuni_comite], ['side.Estado', 'Activo']])->get(); 
         
-        $NombresCIE10 = $array_diagnosticosPcl->pluck('Nombre_CIE10')->toArray();
-        $CIE10Nombres = implode(', ', $NombresCIE10);        
-        $CIE10Nombres = preg_replace('/,(?=[^,]*$)/', ' y', $CIE10Nombres);
+        if(count($array_diagnosticosPcl) > 0){
+            // Obtener el array de nombres CIE10
+            $NombresCIE10 = $array_diagnosticosPcl->pluck('Nombre_CIE10')->toArray();            
+            // Obtener el número de elementos en el array
+            $num_elementos = count($NombresCIE10);
+            // Si hay más de un elemento en el array
+            if ($num_elementos > 1) {
+                // Separar el último elemento del resto
+                $ultimo_elemento = array_pop($NombresCIE10);
+                $resto_elementos = implode(', ', $NombresCIE10);
+
+                // Concatenar los elementos con "y"
+                $CIE10Nombres = $resto_elementos . ' y ' . $ultimo_elemento;
+            } else {
+                // Si solo hay un elemento, no es necesario cambiar nada
+                $CIE10Nombres = reset($NombresCIE10);
+            }
+        }else{
+            $CIE10Nombres = '';
+        }
         
         // validamos la firma esta marcado para la Captura de la firma del cliente           
         if ($Firma_comuni_comite == 'Firma') {            
@@ -6923,9 +6941,26 @@ class CalificacionPCLController extends Controller
         ->select('side.CIE10', 'slcd.CIE10 as Codigo_cie10', 'side.Nombre_CIE10')
         ->where([['ID_Evento',$ID_Evento_comuni_comite], ['Id_Asignacion',$Id_Asignacion_comuni_comite], ['side.Estado', 'Activo']])->get(); 
         
-        $NombresCIE10 = $array_diagnosticosPcl->pluck('Nombre_CIE10')->toArray();
-        $CIE10Nombres_cero = implode(', ', $NombresCIE10);        
-        $CIE10Nombres_cero = preg_replace('/,(?=[^,]*$)/', ' y', $CIE10Nombres_cero);
+        if(count($array_diagnosticosPcl) > 0){
+            // Obtener el array de nombres CIE10
+            $NombresCIE10 = $array_diagnosticosPcl->pluck('Nombre_CIE10')->toArray();            
+            // Obtener el número de elementos en el array
+            $num_elementos = count($NombresCIE10);
+            // Si hay más de un elemento en el array
+            if ($num_elementos > 1) {
+                // Separar el último elemento del resto
+                $ultimo_elemento = array_pop($NombresCIE10);
+                $resto_elementos = implode(', ', $NombresCIE10);
+
+                // Concatenar los elementos con "y"
+                $CIE10Nombres_cero = $resto_elementos . ' y ' . $ultimo_elemento;
+            } else {
+                // Si solo hay un elemento, no es necesario cambiar nada
+                $CIE10Nombres_cero = reset($NombresCIE10);
+            }
+        }else{
+            $CIE10Nombres_cero = '';
+        }
 
         
         // validamos la firma esta marcado para la Captura de la firma del cliente           

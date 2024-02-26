@@ -7119,7 +7119,7 @@
                     <!--  Correspondia -->
                     <div class="card-info d-none" id="div_correspondecia">
                         <div class="card-header text-center" style="border: 1.5px solid black;">
-                            <h5>Correspondecia</h5>
+                            <h5>Correspondencia</h5>
                         </div>
                         <form id="form_correspondencia" action="POST">                            
                             <div class="card-body">

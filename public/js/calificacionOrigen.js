@@ -1441,10 +1441,12 @@ $(document).ready(function(){
                         departamento_destinatario_editar.empty();
                         departamento_destinatario_editar.append('<option value="'+data.array_datos_destinatarios[0].Id_departamento_afiliado+'" selected>'+data.array_datos_destinatarios[0].Nombre_departamento_afiliado+'</option>');
                         document.querySelector("#departamento_destinatario_editar").disabled = true;
+                        $("#departamento_pdf").val(data.array_datos_destinatarios[0].Id_departamento_afiliado);
                         var ciudad_destinatario_editar =$('#ciudad_destinatario_editar');
                         ciudad_destinatario_editar.empty();
                         ciudad_destinatario_editar.append('<option value="'+data.array_datos_destinatarios[0].Id_municipio_afiliado+'">'+data.array_datos_destinatarios[0].Nombre_municipio_afiliado+'</option>')
                         document.querySelector("#ciudad_destinatario_editar").disabled = true;
+                        $("#ciudad_pdf").val(data.array_datos_destinatarios[0].Id_municipio_afiliado);
                         /* var forma_envio_editar = $('#forma_envio_editar');
                         forma_envio_editar.empty();
                         forma_envio_editar.append('<option value="'+data.hitorialAgregarComunicado[0].Forma_envio+'" selected>'+data.hitorialAgregarComunicado[0].Nombre_forma_envio+'</option>'); */
@@ -1507,10 +1509,12 @@ $(document).ready(function(){
                         departamentoafiliado.empty();
                         departamentoafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_departamento_empresa+'" selected>'+data.array_datos_destinatarios[0].Nombre_departamento_empresa+'</option>');
                         document.querySelector("#departamento_destinatario_editar").disabled = true;
+                        $("#departamento_pdf").val(data.array_datos_destinatarios[0].Id_departamento_empresa);
                         var ciudadafiliado =$('#ciudad_destinatario_editar');
                         ciudadafiliado.empty();
                         ciudadafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_municipio_empresa+'">'+data.array_datos_destinatarios[0].Nombre_municipio_empresa+'</option>')
                         document.querySelector("#ciudad_destinatario_editar").disabled = true;
+                        $("#ciudad_pdf").val(data.array_datos_destinatarios[0].Id_municipio_empresa);
                         // Listado de forma de editar de generar comunicado
                         let datos_lista_forma_envios = {
                             '_token':token,        
@@ -1553,6 +1557,8 @@ $(document).ready(function(){
                         document.querySelector("#email_destinatario_editar").disabled = false;
                         document.querySelector("#departamento_destinatario_editar").disabled = false;
                         document.querySelector("#ciudad_destinatario_editar").disabled = false;
+                        $("#departamento_pdf").val('');
+                        $("#ciudad_pdf").val('');
                         $('#nombre_destinatario_editar').val('');
                         $('#nic_cc_editar').val('');
                         $('#direccion_destinatario_editar').val('');
@@ -1582,6 +1588,7 @@ $(document).ready(function(){
                         $('#departamento_destinatario_editar').change(function(){
                             $('#ciudad_destinatario_editar').prop('disabled', false);
                             let id_departamento_destinatario = $('#departamento_destinatario_editar').val();
+                            $("#departamento_pdf").val(id_departamento_destinatario);
                             let datos_lista_municipios_generar_comunicado = {
                                 '_token': token,
                                 'parametro' : "municipios_generar_comunicado",
@@ -1601,6 +1608,11 @@ $(document).ready(function(){
                                     }
                                 }
                             });
+                        });
+
+                        $("#ciudad_destinatario_editar").change(function(){
+                            let id_ciudad_destinatario = $('#ciudad_destinatario_editar').val();
+                            $("#ciudad_pdf").val(id_ciudad_destinatario);
                         });
                         // Listado de forma de editar de generar comunicado
                         let datos_lista_forma_envios = {
@@ -1818,10 +1830,13 @@ $(document).ready(function(){
             'Id_Asignacion': $('#newId_asignacion').val(),
             'Id_proceso': $('#Id_proceso').val(),
             'primer_causal': $('#primer_causal').val(),
+            'f_estipulada1': $('#f_estipulada1').val(),
             'descrip_seguimiento1': $('#descrip_seguimiento1').val(),
             'segundo_causal': $('#segundo_causal').val(),
+            'f_estipulada2': $('#f_estipulada2').val(),
             'descrip_seguimiento2': $('#descrip_seguimiento2').val(),
             'tercer_causal': $('#tercer_causal').val(),
+            'f_estipulada3': $('#f_estipulada3').val(),
             'descrip_seguimiento3': $('#descrip_seguimiento3').val(),
             'parametro': "datos_seguimientos_origen"
         };

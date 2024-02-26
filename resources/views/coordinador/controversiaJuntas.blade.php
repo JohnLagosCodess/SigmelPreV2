@@ -1413,8 +1413,9 @@
                                 </div>
                             </form>
                         </div>   --}}
-                        <!--  Correspondia -->
-                        <div class="card-info" id="div_correspondecia">
+
+                        <!--  Correspondencia -->
+                        <div class="card-info d-none" id="div_correspondencia">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Correspondencia</h5>
                                 <input type="hidden" id="hay_datos_form_corres" value="<?php echo count($array_comunicados_correspondencia);?>">
@@ -1517,18 +1518,25 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="alert alert-warning" role="alert">
-                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para mostrar todo el asunto (dentro del word) que usted escriba, 
-                                                debe incluir la etiqueta de la Fecha de Dictamen JRCI dentro del campo Asunto.
+                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para mostrar todo el asunto <span id="tipo_descarga"></span> que usted escriba,
+                                                debe incluir la etiqueta
+                                                @if (!empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci) && $arrayinfo_controvertido[0]->Decision_dictamen_jrci=='Acuerdo')
+                                                    <span id="etiqueta_asunto">Número de Dictamen JRCI </span>
+                                                @elseif(!empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci) && $arrayinfo_controvertido[0]->Decision_dictamen_jrci=='Desacuerdo')
+                                                    <span id="etiqueta_asunto">Fecha de Dictamen JRCI </span>
+                                                @endif
+                                                dentro del campo Asunto.
                                             </div>
                                             <div class="form-group">
                                                 <label for="Asunto">Asunto <span style="color: red;">(*)</label>
                                                 <br>
-                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_f_dictamen_jrci">Fecha Dictamen JRCI</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nro_dictamen_jrci_asunto">Número de Dictamen JRCI</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_fecha_dictamen_jrci_asunto">Fecha de Dictamen JRCI</button>
                                                 <input type="text" class="form-control" name="Asunto" id="Asunto" required>                                           
                                             </div>
                                         </div>
                                         <div class="col-12">
-                                            <div class="alert alert-warning" role="alert">
+                                            {{-- <div class="alert alert-warning" role="alert">
                                                 <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para mostrar todo el cuerpo del comunicado (dentro del word) que usted escriba, 
                                                 debe incluir las etiquetas de Nombre Afiliado, Nombre Junta Regional, 
                                                 @if ($array_datos_controversiaJuntas[0]->Id_Servicio == 13)
@@ -1551,12 +1559,45 @@
                                                     <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_origen_dx_jrci">Origen Dx JRCI</button>
                                                     <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_cie_nombre_jrci">CIE-10 - Nombre CIE-10 JRCI</button>
                                                 @endif
-                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_sustentacion_jrci">Sustentación Concepto JRCI</button>
-                                                @if(!empty($array_comite_interdisciplinario[0]->Cuerpo_comunicado))
-                                                    <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" required>{{$array_comite_interdisciplinario[0]->Cuerpo_comunicado}}</textarea>                                                                                                 
-                                                @else
-                                                    <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" required></textarea>                                                                                              
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_sustentacion_jrci">Sustentación Concepto JRCI (Revisión ante concepto de la Junta Regional)</button>
+                                                <?php if(count($array_comunicados_correspondencia) > 0): ?>
+                                                    <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_sustentacion_jrci1">Sustentación Concepto JRCI (Revisión ante recurso de reposición de la Junta Regional)</button>
+                                                <?php endif ?>
+
+                                                <textarea id="cuerpo_comunicado" required></textarea>                                                                                         
+                                            </div> --}}
+
+                                            {{-- PREVISIONAL --}}
+                                            <div class="alert alert-warning" role="alert">
+                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para mostrar todo el cuerpo del comunicado <span id="tipo_descarga_cuerpo"></span> que usted escriba,
+                                                debe incluir las etiquetas 
+                                                @if (!empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci) && $arrayinfo_controvertido[0]->Decision_dictamen_jrci=='Acuerdo')
+                                                    <span id="etiquetas_cuerpo">Número de Dictamen JRCI, Fecha de Dictamen JRCI, Nombre Afiliado, Tipo Documento Afiliado, Número Documento Afiliado, CIE-10 - Nombre CIE-10 JRCI, 
+                                                        %Pcl JRCI, Origen Dx JRCI, Fecha Estructuracion JRCI, Decreto Calificador JRCI, </span>
+                                                @elseif(!empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci) && $arrayinfo_controvertido[0]->Decision_dictamen_jrci=='Desacuerdo')
+                                                    <span id="etiquetas_cuerpo"></span>
                                                 @endif
+                                                Sustentación Concepto JRCI (Revisión ante concepto de la Junta Regional) dentro de la sección Cuerpo del Comunicado.
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="cuerpo_comunicado">Cuerpo del comunicado <span style="color: red;">(*)</label>
+                                                <br>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nro_dictamen_jrci">Número de Dictamen JRCI</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_fecha_dictamen_jrci">Fecha de Dictamen JRCI</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_afiliado">Nombre Afiliado</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_tipo_documento_afiliado">Tipo Documento Afiliado</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_documento_afiliado">Número Documento Afiliado</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_cie_nombre_jrci">CIE-10 - Nombre CIE-10 JRCI</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_pcl_jrci">%Pcl JRCI</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_origen_dx_jrci">Origen Dx JRCI</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_f_estructuracion_jrci">Fecha Estructuracion JRCI</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_decreto_calificador_jrci">Decreto Calificador JRCI</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_sustentacion_jrci">Sustentación Concepto JRCI (Revisión ante concepto de la Junta Regional)</button>
+                                                <?php if(count($array_comunicados_correspondencia) > 0): ?>
+                                                    <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_sustentacion_jrci1">Sustentación Concepto JRCI (Revisión ante recurso de reposición de la Junta Regional)</button>
+                                                <?php endif ?>
+
+                                                <textarea id="cuerpo_comunicado" required></textarea>   
                                             </div>
                                         </div>
                                         <div class="col-12">
@@ -1708,7 +1749,81 @@
 
                                 </div>
                             </form>
-                        </div>  
+                        </div>
+                        {{-- Comunicados --}}
+                        <?php if(count($array_comunicados_correspondencia) > 0):?>
+                            <div class="card-info">
+                                <div class="card-header text-center" style="border: 1.5px solid black;">
+                                    <h5>Comunicados</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="alert alert-warning mensaje_confirmacion_emitido_jnci" role="alert">
+                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de ver la información de una correspondencia, 
+                                                tenga en cuenta que al modifcarla y hacer clic en el botón Guardar, el sistema generará un nuevo registro más no una actualización de la información.
+                                                Si necesita generar la proforma debe editar la información del formulario y luego hacer clic en el botón correspondiente.
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-bordered" id="tabla_comunicados_juntas" width="100%">
+                                                    <thead>
+                                                        <tr class="bg-info">
+                                                            <th>N° de Radicado</th>
+                                                            <th>Elaboró</th>
+                                                            <th>Fecha de comunicado</th>
+                                                            <th>Acción</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        
+                                                        @foreach ($array_comunicados_correspondencia as $key => $comunicados)
+                                                            <tr>
+                                                                <td>{{$comunicados->N_radicado}}</td>
+                                                                <td>{{$comunicados->Elaboro}}</td>
+                                                                <td>{{$comunicados->F_comunicado}}</td>  
+                                                                <td>
+                                                                    {{-- <label for="editar_correspondencia_{{$comunicados->Id_Comunicado}}"><i class="fa fa-pen text-info"></i></label>
+                                                                    <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia_{{$comunicados->Id_Comunicado}}" 
+                                                                    data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
+                                                                    data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
+                                                                    data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
+                                                                    type="button" style="font-weight: bold;"> --}}
+                                                                    <a href="javascript:void(0);" id="editar_correspondencia_{{$comunicados->Id_Comunicado}}"
+                                                                        data-id_comite_inter="<?php if(count($array_comite_interdisciplinario) > 0){echo $array_comite_interdisciplinario[$key]->Id_com_inter;}?>"
+                                                                        data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
+                                                                        data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
+                                                                        data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
+                                                                    ><i class="fa fa-pen text-info"></i></a>
+                                                                    &nbsp;&nbsp;
+                                                                    <a href="javascript:void(0);" id="generar_proforma_acuerdo_{{$comunicados->Id_Comunicado}}"
+                                                                        data-tupla_nro_radicado="{{$comunicados->N_radicado}}"
+                                                                        data-id_comite_inter="<?php if(count($array_comite_interdisciplinario) > 0){echo $array_comite_interdisciplinario[$key]->Id_com_inter;}?>"
+                                                                        data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
+                                                                        data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
+                                                                        data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
+                                                                    ><i class="far fa-eye text-info"></i>
+                                                                    </a>
+                                                                    <a href="javascript:void(0);" id="generar_proforma_desacuerdo_{{$comunicados->Id_Comunicado}}"
+                                                                        data-tupla_nro_radicado="{{$comunicados->N_radicado}}"
+                                                                        data-id_comite_inter="<?php if(count($array_comite_interdisciplinario) > 0){echo $array_comite_interdisciplinario[$key]->Id_com_inter;}?>"
+                                                                        data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
+                                                                        data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
+                                                                        data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
+                                                                    ><i class="far fa-eye text-info"></i>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif ?>
                     </div>
                 </div>
             </div>

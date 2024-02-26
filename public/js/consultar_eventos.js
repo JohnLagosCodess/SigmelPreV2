@@ -156,15 +156,14 @@ $(document).ready(function () {
                             }
 
                             // Validación para crear el modal del formulario de nuevo proceso
-                            if(data[i]['Visible_Nuevo_Proceso'] == 'Si'){
+                            /*if(data[i]['Visible_Nuevo_Proceso'] == 'Si'){*/
                                 agregar_nuevo_proceso = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoProceso_'+data[i]["ID_evento"]+'" id="btn_nuevo_proceso_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Proceso"\
                                 data-id_evento_nuevo_proceso="'+data[i]["ID_evento"]+'" data-id_proceso_nuevo_proceso="'+data[i]["Id_proceso"]+'"\
                                 data-id_servicio_nuevo_proceso="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_proceso="'+data[i]["Id_Asignacion"]+'" data-id_cliente="'+data[i]["Id_cliente"]+'"><i class="far fa-clone text-info"></i></a>';
                                 data[i]['agregar_nuevo_proceso'] = agregar_nuevo_proceso; 
-                            }else{
-                                data[i]['agregar_nuevo_proceso'] = ""; 
-                            }
-                            
+                            /*}else{*/
+                                //data[i]['agregar_nuevo_proceso'] = ""; 
+                            /*}*/
                         }                        
 
                         $.each(data, function(index, value){
