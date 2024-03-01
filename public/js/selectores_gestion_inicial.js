@@ -1556,9 +1556,14 @@ $(document).ready(function(){
     });
 
     /* Obtener el ID del evento a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id evento */
+    /* Obtener el ID del servicio a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id servicio */
     $("input[id^='listadodocumento_']").click(function(){
         let idobtenido = $('#id_evento').val();
         $("input[id^='EventoID_']").val(idobtenido);
+
+        let idservicioobtenido = $("#servicio").val();
+        $("input[id^='Id_servicio_']").val(idservicioobtenido);
+        
     });
 
     /* Envío de Información del Documento a Cargar */

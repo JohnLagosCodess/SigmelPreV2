@@ -206,6 +206,7 @@ $(document).ready(function () {
                                 '<input class="btn btn-sm text-info" id="modulo_califi_Origen_'+data[i]["Id_Asignacion"]+'" value="Modulo Origen" type="submit" style="font-weight: bold; padding-left: inherit;">'+ 
                                 '<input type="hidden" name="newIdAsignacion" value="'+data[i]["Id_Asignacion"]+'">'+
                                 '<input type="hidden" name="newIdEvento" id="newIdEvento" value="'+data[i]["ID_evento"]+'">'+
+                                '<input type="hidden" name="Id_Servicio" id="Id_Servicio" value="'+data[i]["Id_Servicio"]+'">'+
                                 '</form>';
                     data[i]['moduloOrigen'] = modulocalificacionOrigen;
                     
@@ -322,6 +323,7 @@ $(document).ready(function () {
                                             '<input class="btn btn-sm text-info" id="modulo_califi_Origen_'+data[i]["Id_Asignacion"]+'" value="Modulo Origen" type="submit" style="font-weight: bold; padding-left: inherit;">'+ 
                                             '<input type="hidden" name="newIdAsignacion" value="'+data[i]["Id_Asignacion"]+'">'+
                                             '<input type="hidden" name="newIdEvento" id="newIdEvento" value="'+data[i]["ID_evento"]+'">'+
+                                            '<input type="hidden" name="Id_Servicio" id="Id_Servicio" value="'+data[i]["Id_Servicio"]+'">'+
                                             '</form>';
                                 data[i]['moduloOrigen'] = modulocalificacionOrigen;
                                 

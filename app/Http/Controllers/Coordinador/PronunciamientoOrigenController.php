@@ -612,11 +612,7 @@ class PronunciamientoOrigenController extends Controller
                     sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')->insert($insertar_diagnostico);
                 } 
             }
-            $mensajes = array(
-                "parametro" => 'update_pronunciamiento',
-                "parametro2" => 'guardo',
-                "mensaje2" => 'Actualiza satisfactoriamente.'
-            ); 
+            
 
             // Actualizacion del profesional calificador
             $datos_profesional_calificador = [

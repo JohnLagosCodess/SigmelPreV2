@@ -1834,6 +1834,7 @@
         @csrf
         <input hidden="hidden" type="text" name="newIdEvento" id="newIdEvento" value="{{$array_datos_controversiaJuntas[0]->ID_evento}}">
         <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}">
+        <input hidden="hidden" type="text" name="Id_Servicio" id="Id_Servicio" value="{{$array_datos_controversiaJuntas[0]->Id_Servicio}}">
         <button type="submit" id="botonEnvioVista" style="display:none !important;"></button>
     </form>
     <?php $aperturaModal = 'Edicion'; ?>

@@ -67,32 +67,32 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="nombre_afiliado">Nombre de afiliado</label>
-                                                <input type="text" class="form-control" name="nombre_afiliado" id="nombre_afiliado" value="{{$array_datos_calificacionOrigen[0]->Nombre_afiliado}}" disabled>
+                                                <input type="text" class="form-control" name="nombre_afiliado" id="nombre_afiliado" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Nombre_afiliado)){echo $array_datos_calificacionOrigen[0]->Nombre_afiliado;}?>" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="identificacion">N° Identificación</label>
-                                                <input type="text" class="form-control" name="identificacion" id="identificacion" value="{{$array_datos_calificacionOrigen[0]->Nro_identificacion}}" disabled>
+                                                <input type="text" class="form-control" name="identificacion" id="identificacion" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Nro_identificacion)){echo $array_datos_calificacionOrigen[0]->Nro_identificacion;}?>" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="empresa">Empresa actual</label>
-                                                <input type="text" class="form-control" name="empresa" id="empresa" value="{{$array_datos_calificacionOrigen[0]->Empresa}}" disabled>
+                                                <input type="text" class="form-control" name="empresa" id="empresa" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Empresa)){echo $array_datos_calificacionOrigen[0]->Empresa;}?>" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="tipo_evento">Tipo de evento</label>
-                                                <input type="text" class="form-control" name="tipo_evento" id="tipo_evento" value="{{$array_datos_calificacionOrigen[0]->Nombre_evento}}" disabled>
+                                                <input type="text" class="form-control" name="tipo_evento" id="tipo_evento" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Nombre_evento)){echo $array_datos_calificacionOrigen[0]->Nombre_evento;}?>" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="id_evento">ID evento</label>
                                                 <br>
-                                                <input hidden="hidden" type="text" class="form-control" name="id_evento" id="id_evento" value="{{$array_datos_calificacionOrigen[0]->ID_evento}}" disabled>
+                                                <input hidden="hidden" type="text" class="form-control" name="id_evento" id="id_evento" value="<?php if(!empty($array_datos_calificacionOrigen[0]->ID_evento)){echo $array_datos_calificacionOrigen[0]->ID_evento;}?>" disabled>
                                                 {{-- DATOS PARA VER EDICIÓN DE EVENTO --}}
                                                 <a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer; font-weight: bold;" class="btn text-info" type="button"><?php if(!empty($array_datos_calificacionOrigen[0]->ID_evento)){echo $array_datos_calificacionOrigen[0]->ID_evento;}?></a>                                            
                                             </div>
@@ -100,7 +100,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="tipo_evento">Tipo de afiliado</label>
-                                                <input type="text" class="form-control" name="tipo_afiliado" id="tipo_afiliado" value="{{$array_datos_calificacionOrigen[0]->Tipo_afiliado}}" disabled>
+                                                <input type="text" class="form-control" name="tipo_afiliado" id="tipo_afiliado" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Tipo_afiliado)){echo $array_datos_calificacionOrigen[0]->Tipo_afiliado;}?>" disabled>
                                             </div>
                                         </div>
                                     </div>
@@ -118,7 +118,7 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="proceso_actual">Proceso actual</label>
-                                            <input type="text" class="form-control" name="proceso_actual" id="proceso_actual" value="{{$array_datos_calificacionOrigen[0]->Nombre_proceso_actual}}" disabled>
+                                            <input type="text" class="form-control" name="proceso_actual" id="proceso_actual" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Nombre_proceso_actual)){echo $array_datos_calificacionOrigen[0]->Nombre_proceso_actual;}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -138,73 +138,74 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="proceso_envia">Proceso que envía</label>
-                                            <input type="text" class="form-control" name="proceso_envia" id="proceso_envia" value="{{$array_datos_calificacionOrigen[0]->Nombre_proceso_anterior}}" disabled>
+                                            <input type="text" class="form-control" name="proceso_envia" id="proceso_envia" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Nombre_proceso_anterior)){echo $array_datos_calificacionOrigen[0]->Nombre_proceso_anterior;}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="fecha_radicacion">Fecha de radicación</label>
-                                            <input type="date" class="form-control" name="fecha_radicacion" id="fecha_radicacion" value="{{$array_datos_calificacionOrigen[0]->F_radicacion}}" disabled>
+                                            <input type="date" class="form-control" name="fecha_radicacion" id="fecha_radicacion" value="<?php if(!empty($array_datos_calificacionOrigen[0]->F_radicacion)){echo $array_datos_calificacionOrigen[0]->F_radicacion;}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="fecha_asignacion">Fecha asignación al proceso</label>
-                                            <input type="date" class="form-control" name="fecha_asignacion" id="fecha_asignacion" value="{{$array_datos_calificacionOrigen[0]->F_registro_asignacion}}" disabled>
+                                            <input type="date" class="form-control" name="fecha_asignacion" id="fecha_asignacion" value="<?php if(!empty($array_datos_calificacionOrigen[0]->F_registro_asignacion)){echo $array_datos_calificacionOrigen[0]->F_registro_asignacion;}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="estado">Estado</label>
-                                            <input type="text" class="form-control" name="estado" id="estado" value="{{$array_datos_calificacionOrigen[0]->Nombre_estado}}" disabled>
+                                            <input type="text" class="form-control" name="estado" id="estado" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Nombre_estado)){echo $array_datos_calificacionOrigen[0]->Nombre_estado;}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="dias_trascurrido">Dias transcurridos desde el evento</label>
-                                            <input type="text" class="form-control" name="dias_trascurrido" id="dias_trascurrido" value="{{$array_datos_calificacionOrigen[0]->Dias_transcurridos_desde_el_evento}}" disabled>
+                                            <input type="text" class="form-control" name="dias_trascurrido" id="dias_trascurrido" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Dias_transcurridos_desde_el_evento)){echo $array_datos_calificacionOrigen[0]->Dias_transcurridos_desde_el_evento;}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="asignado_por">Asignado por</label>
-                                            <input type="text" class="form-control" name="asignado_por" id="asignado_por" value="{{$array_datos_calificacionOrigen[0]->Asignado_por}}" disabled>
+                                            <input type="text" class="form-control" name="asignado_por" id="asignado_por" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Asignado_por)){echo $array_datos_calificacionOrigen[0]->Asignado_por;}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="fecha_asignacion_calificacion">Fecha de asignación para DTO</label>
-                                            <input type="text" class="form-control" name="fecha_asignacion_dto" id="fecha_asignacion_dto"  value="{{$array_datos_calificacionOrigen[0]->Fecha_asignacion_dto}}" disabled>
+                                            <input type="text" class="form-control" name="fecha_asignacion_dto" id="fecha_asignacion_dto"  value="<?php if(!empty($array_datos_calificacionOrigen[0]->Fecha_asignacion_dto)){echo $array_datos_calificacionOrigen[0]->Fecha_asignacion_dto;}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="profesional_calificador">Profesional Calificador</label>
-                                            <input type="text" class="form-control" name="profesional_calificador" id="profesional_calificador" value="{{$array_datos_calificacionOrigen[0]->Nombre_profesional}}" disabled>
+                                            <input type="text" class="form-control" name="profesional_calificador" id="profesional_calificador" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Nombre_profesional)){echo $array_datos_calificacionOrigen[0]->Nombre_profesional;}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="tipo_profesional_calificador">Tipo Profesional calificador</label>
-                                            <input type="text" class="form-control" name="tipo_profesional_calificador" id="tipo_profesional_calificador" value="{{$array_datos_calificacionOrigen[0]->Tipo_Profesional_calificador}}" disabled>
+                                            <input type="text" class="form-control" name="tipo_profesional_calificador" id="tipo_profesional_calificador" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Tipo_Profesional_calificador)){echo $array_datos_calificacionOrigen[0]->Tipo_Profesional_calificador;}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="fecha_calificacion">Fecha de calificación</label>
-                                            <input type="text" class="form-control" name="fecha_calificacion" id="fecha_calificacion" value="{{$array_datos_calificacionOrigen[0]->F_calificacion_servicio}}" disabled> 
+                                            <input type="text" class="form-control" name="fecha_calificacion" id="fecha_calificacion" value="<?php if(!empty($array_datos_calificacionOrigen[0]->F_calificacion_servicio)){echo $array_datos_calificacionOrigen[0]->F_calificacion_servicio;}?>" disabled> 
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="profesional_comite">Profesional Comité</label>
-                                            <input type="text" class="form-control" name="profesional_comite" id="profesional_comite" value="{{-- {{$cali_profe_comite[0]->Profesional_comite}} --}}" disabled>
+                                            <input type="text" class="form-control" name="profesional_comite" id="profesional_comite" value="<?php if(!empty($cali_profe_comite[0]->Profesional_comite)){echo $cali_profe_comite[0]->Profesional_comite;}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="fecha_visado_comite">Fecha de visado comité</label>
-                                            <input type="text" class="form-control" name="fecha_visado_comite" id="fecha_visado_comite" value="{{-- {{$cali_profe_comite[0]->F_visado_comite}} --}}" disabled>
+                                            {{-- <input type="text" class="form-control" name="fecha_visado_comite" id="fecha_visado_comite" value="{{$cali_profe_comite[0]->F_visado_comite}}" disabled> --}}
+                                            <input type="text" class="form-control" name="fecha_visado_comite" id="fecha_visado_comite" value="<?php if(!empty($cali_profe_comite[0]->F_visado_comite)){echo $cali_profe_comite[0]->F_visado_comite;}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -228,7 +229,7 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="tiempo_gestion">Tiempo de gestión</label>
-                                            <input type="text" class="form-control" name="tiempo_gestion" id="tiempo_gestion" value="{{$array_datos_calificacionOrigen[0]->Tiempo_de_gestion}}" disabled>
+                                            <input type="text" class="form-control" name="tiempo_gestion" id="tiempo_gestion" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Tiempo_de_gestion)){echo $array_datos_calificacionOrigen[0]->Tiempo_de_gestion;}?>" disabled>
                                         </div>
                                     </div>
                                 </div>
@@ -277,7 +278,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fecha_alerta">Fecha de alerta</label>
-                                                <input type="date" class="form-control" name="fecha_alerta" id="fecha_alerta" min="{{now()->format('Y-m-d')}}" value="{{$array_datos_calificacionOrigen[0]->F_alerta}}">
+                                                <input type="date" class="form-control" name="fecha_alerta" id="fecha_alerta" min="{{now()->format('Y-m-d')}}" value="<?php if(!empty($array_datos_calificacionOrigen[0]->F_alerta)){echo $array_datos_calificacionOrigen[0]->F_alerta;}?>">
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -366,9 +367,10 @@
     </form>
     <form action="{{route($SubModulo)}}" id="formulario2" method="POST">            
         @csrf
-        <input hidden="hidden" type="text" name="Id_evento_calitec" id="Id_evento_calitec" value="{{$array_datos_calificacionOrigen[0]->ID_evento}}">
-        <input hidden="hidden" type="text" name="Id_asignacion_calitec" id="Id_asignacion_calitec" value="{{$array_datos_calificacionOrigen[0]->Id_Asignacion}}">
-        <input hidden="hidden" type="text" name="Id_proceso_calitec" id="Id_proceso_calitec" value="{{$array_datos_calificacionOrigen[0]->Id_proceso}}">
+        <input type="hidden" name="Id_evento_calitec" id="Id_evento_calitec" value="{{$array_datos_calificacionOrigen[0]->ID_evento}}">
+        <input type="hidden" name="Id_asignacion_calitec" id="Id_asignacion_calitec" value="{{$array_datos_calificacionOrigen[0]->Id_Asignacion}}">
+        <input type="hidden" name="Id_proceso_calitec" id="Id_proceso_calitec" value="{{$array_datos_calificacionOrigen[0]->Id_proceso}}">
+        <input type="hidden" name="Id_Servicio" id="Id_Servicio" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Id_Servicio)){ echo $array_datos_calificacionOrigen[0]->Id_Servicio;}?>">
         <button type="submit" id="botonFormulario2" style="display: none; !important"></button>
     </form>
     <!--Retonar al modulo Modulo Nuevo edicion -->

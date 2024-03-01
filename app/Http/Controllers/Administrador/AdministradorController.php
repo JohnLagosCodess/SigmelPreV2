@@ -3465,6 +3465,7 @@ class AdministradorController extends Controller
         $user = Auth::user();
         $newIdEvento = $request->newIdEvento;
         $parametro = $request->parametro;
+        $Id_servicio = $request->newIdservicio;
 
         $array_datos_info_evento =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_eventos as sie')
         ->leftJoin('sigmel_gestiones.sigmel_clientes as slc', 'sie.Cliente', '=', 'slc.Id_Cliente')
@@ -3548,10 +3549,10 @@ class AdministradorController extends Controller
         ->limit(1)
         ->get(); */          
 
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento)); 
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento, 0)); 
         
         return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
-        'array_datos_info_laboral', 'array_datos_info_pericial', 'arraylistado_documentos'));
+        'array_datos_info_laboral', 'array_datos_info_pericial', 'arraylistado_documentos', 'Id_servicio'));
 
     }
 
@@ -4184,7 +4185,7 @@ class AdministradorController extends Controller
         ->limit(1)
         ->get(); */          
 
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento)); 
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento, 0)); 
         
         // return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
         // 'array_datos_info_laboral', 'array_datos_info_pericial', 'arraylistado_documentos'))->with('evento_actualizado', 'Evento actualizado Sactifactoriamente');
@@ -4418,6 +4419,21 @@ class AdministradorController extends Controller
             return json_decode(json_encode($mensajes, true));
         }
 
+        /* Validación N° 5: EL ID DEL SERVICIO DEBE ESTAR ESCRITO */
+        if($request->Id_servicio == ""){
+            $mensajes = array(
+                "parametro" => 'fallo',
+                "mensaje" => 'Debe seleccionar un servicio para poder cargar este documento.'
+            );
+
+            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
+            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
+                $mensajes["otro"] = $request->bandera_otro_documento;
+            }
+
+            return json_decode(json_encode($mensajes, true));
+        }
+
         /* Si las validaciones son exitosas, Se procede a subir el documento */
 
         // Captura de variables del formulario.
@@ -4433,6 +4449,7 @@ class AdministradorController extends Controller
         }
         
         $idEvento = $request->EventoID;
+        $Id_servicio = $request->Id_servicio;
 
         // Creación de carpeta con el ID EVENTO para insertar los documentos
         $path = public_path('Documentos_Eventos/'.$idEvento);
@@ -4443,7 +4460,11 @@ class AdministradorController extends Controller
 
             chmod($path, octdec($mode));
 
-            $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento.".".$file->extension();
+            if(!empty($request->bandera_nombre_otro_doc)){
+                $nombre_final_documento_en_carpeta = $request->bandera_nombre_otro_doc.".".$file->extension();
+            }else{
+                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
+            }
             Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
 
         }else {
@@ -4451,7 +4472,7 @@ class AdministradorController extends Controller
             if(!empty($request->bandera_nombre_otro_doc)){
                 $nombre_final_documento_en_carpeta = $request->bandera_nombre_otro_doc.".".$file->extension();
             }else{
-                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento.".".$file->extension();
+                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
             }
 
             Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
@@ -4461,7 +4482,7 @@ class AdministradorController extends Controller
         if(!empty($request->bandera_nombre_otro_doc)){
             $nombrecompletodocumento = $request->bandera_nombre_otro_doc;
         }else{
-            $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento;
+            $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio;
         }
 
         $nuevoDocumento = [
@@ -4469,6 +4490,7 @@ class AdministradorController extends Controller
             'ID_evento' => $idEvento,
             'Nombre_documento' => $nombrecompletodocumento,
             'Formato_documento' => $file->extension(),
+            'Id_servicio' => $Id_servicio,
             'Estado' => 'activo',
             'F_cargue_documento' => $date,
             'Descripcion' => $request->descripcion_documento,
@@ -4605,9 +4627,7 @@ class AdministradorController extends Controller
 
         $id_evento = $request->id_evento;
 
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($id_evento)); 
-        // $aperturaModal = 'Edicion_Busqueda';
-        // return view('administrador.modalcarguedocumentos', compact('arraylistado_documentos', 'aperturaModal'));
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($id_evento, 0));         
         return response()->json($arraylistado_documentos);
     }
 

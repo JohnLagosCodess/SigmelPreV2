@@ -36,6 +36,7 @@ class ControversiaJuntasController extends Controller
         $Id_evento_juntas=$request->Id_evento_juntas;
         $Id_asignacion_juntas = $request->Id_asignacion_juntas;
         $array_datos_controversiaJuntas = DB::select('CALL psrcalificacionJuntas(?)', array($Id_asignacion_juntas));
+        $Id_servicio = $request->Id_Servicio;
 
         // Trae informacion de controversia_juntas
         $arrayinfo_controvertido= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_controversia_juntas_eventos as j')
@@ -129,7 +130,7 @@ class ControversiaJuntasController extends Controller
         ])->get(); 
 
         //Trae Documetos Generales del evento
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($Id_evento_juntas,0));
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($Id_evento_juntas, $Id_servicio));
         
         $array_comite_interdisciplinario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comite_interdisciplinario_eventos as sicie')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sicie.Nombre_dest_principal')
@@ -196,7 +197,7 @@ class ControversiaJuntasController extends Controller
         'array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci',
         'array_datos_diagnostico_reposi_dictamen_jrci',
         'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 
-        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia'));
+        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio'));
     }
 
     //Cargar Selectores pronunciamiento

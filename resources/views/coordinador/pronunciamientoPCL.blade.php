@@ -627,9 +627,10 @@
     </div>
     <!--Retonar al modulo PCL -->
    <form action="{{route('calificacionPCL')}}" id="formularioEnvio" method="POST">            
-         @csrf
-        <input hidden="hidden" type="text" name="newIdEvento" id="newIdEvento" value="{{$array_datos_pronunciamientoPcl[0]->ID_evento}}">
-        <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="{{$array_datos_pronunciamientoPcl[0]->Id_Asignacion}}">
+        @csrf
+        <input type="hidden" name="newIdEvento" id="newIdEvento" value="{{$array_datos_pronunciamientoPcl[0]->ID_evento}}">
+        <input type="hidden" name="newIdAsignacion" id="newIdAsignacion" value="{{$array_datos_pronunciamientoPcl[0]->Id_Asignacion}}">
+        <input type="hidden" name="Id_Servicio" id="Id_Servicio" value="<?php if(!empty($array_datos_pronunciamientoPcl[0]->Id_Servicio)){ echo $array_datos_pronunciamientoPcl[0]->Id_Servicio;}?>">
         <button type="submit" id="botonEnvioVista" style="display:none !important;"></button>
     </form> 
     <!--Retonar al modulo Modulo Nuevo edicion -->

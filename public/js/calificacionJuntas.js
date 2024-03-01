@@ -72,7 +72,14 @@ $(document).ready(function(){
         var id_documento = $(this).data('id_documento_descargar');
         var nombre_documento = $("#nombre_documento_descarga_"+id_documento).val();
         var extension_documento = $("#extension_documento_descarga_"+id_documento).val();
-        var id_evento = nombre_documento.match(/\d+/g).join('');
+        var regex = /IdEvento_(.*?)_IdServicio/;
+        var resultado = nombre_documento.match(regex);
+
+        if (resultado) {
+            var id_evento = resultado[1];
+        } else {
+            var id_evento = "";
+        }
     
         // Crear un enlace temporal para la descarga
         var enlaceDescarga = document.createElement('a');

@@ -87,7 +87,8 @@
                     <input hidden="hidden" type="text" name="newIdEvento" id="newIdEvento" value="<?php echo $_POST['newIdEvento'];?>">
                     <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="<?php echo $_POST['newIdAsignacion'];?>">
                     <input hidden="hidden" type="text" name="Id_proceso_pcl" id="Id_proceso_pcl" value="<?php echo $_POST['newIdproceso'];?>">
-                    <input hidden="hidden" type="text" name="Id_servicio_pcl" id="Id_servicio_pcl" value="<?php echo $_POST['newIdservicio'];?>">
+                    {{-- <input hidden="hidden" type="text" name="Id_servicio_pcl" id="Id_servicio_pcl" value="<?php echo $_POST['newIdservicio'];?>"> --}}
+                    <input hidden="hidden" type="text" name="Id_Servicio" id="Id_Servicio" value="<?php echo $_POST['newIdservicio'];?>">
                     <button type="submit" id="btn_regreso_calori" style="display: none; !important"></button>
                 </form> 
             <?php elseif (isset($_POST['bandera_buscador_juntas']) &&  $_POST['bandera_buscador_juntas'] == 'desdejuntas' ): ?>
@@ -97,7 +98,7 @@
                     <input hidden="hidden" type="text" name="newIdEvento" id="newIdEvento" value="<?php echo $_POST['newIdEvento'];?>">
                     <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="<?php echo $_POST['newIdAsignacion'];?>">
                     <input hidden="hidden" type="text" name="Id_proceso_pcl" id="Id_proceso_pcl" value="<?php echo $_POST['newIdproceso'];?>">
-                    <input hidden="hidden" type="text" name="Id_servicio_pcl" id="Id_servicio_pcl" value="<?php echo $_POST['newIdservicio'];?>">
+                    <input hidden="hidden" type="text" name="Id_Servicio" id="Id_Servicio" value="<?php echo $_POST['newIdservicio'];?>">
                     <button type="submit" id="btn_regreso_juntas" style="display: none; !important"></button>
                 </form>
             <?php elseif(isset($_POST['bandera_mod_nuevo']) && $_POST['bandera_mod_nuevo'] == "retornar_mod_nuevo"): ?>
@@ -938,11 +939,11 @@
                                             </div>
                                         </div>
                                         {{-- OPCIONES PARA HABILITAR EL MODAL DE DOCUMENTOS --}}
-                                        <div class="row">
+                                        {{-- <div class="row">
                                             <div class="col-6">
                                                 <a href="javascript:void(0);" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </div>
                             </div>
