@@ -59,7 +59,7 @@ class RecalificacionPCLController extends Controller
         }else{
             $Id_evento_recali=$request->Id_evento_recali;
             $Id_asignacion_recali = $request->Id_asignacion_recali; 
-            $Id_servicioRecalifi = $request->Idservicio;
+            $Id_servicioRecalifi = $request->Id_servicio_recali;
         }
         $Id_proceso_recali = 2;
         $Id_servicioCalifi= 6;

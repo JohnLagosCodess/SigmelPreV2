@@ -22,7 +22,7 @@
             </div>
         </div>
     </div>
-    @if (empty($arrayinfo_controvertido[0]->ID_evento))
+    {{-- @if (empty($arrayinfo_controvertido[0]->ID_evento))
         <div class="row">
             <div class="col-12">
                 <div class="alert alert-info" role="alert">
@@ -30,8 +30,8 @@
                     Gestión de controversia - Seguimiento en el módulo principal de Juntas
                 </div>
             </div>
-        </div>
-    @else
+        </div> --}}
+    {{-- @else --}}
         <div class="card-info" style="border: 1px solid black;">
             <div class="card-header text-center">
                 <h4>Juntas Controversia - Evento: {{$array_datos_controversiaJuntas[0]->ID_evento}}</h4>
@@ -555,7 +555,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-2" <?php if(!empty($arrayinfo_controvertido[0]->Contro_pcl)){ ?> class="col-2" <?php }else{ ?> class="col-2 d-none" <?php } ?> >
+                                        <div <?php if(!empty($arrayinfo_controvertido[0]->Contro_pcl)){ ?> class="col-2" <?php }else{ ?> class="col-2 d-none" <?php } ?> >
                                             <div class="form-group">
                                                 <div class="form-check custom-control custom-radio">
                                                     <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="decision_dictamen_jrci" id="informativo_revision_jrci" value="Informativo" <?php if(!empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci) && $arrayinfo_controvertido[0]->Decision_dictamen_jrci=='Informativo'){ ?> checked <?php } ?>>
@@ -563,7 +563,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-12 row_causal_decision" <?php if(!empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci)&& $arrayinfo_controvertido[0]->Decision_dictamen_jrci=='Acuerdo' || $arrayinfo_controvertido[0]->Decision_dictamen_jrci=='Desacuerdo'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
+                                        <div class="col-12 row_causal_decision" <?php if(!empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci)&& $arrayinfo_controvertido[0]->Decision_dictamen_jrci=='Acuerdo' || !empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci) && $arrayinfo_controvertido[0]->Decision_dictamen_jrci=='Desacuerdo'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
                                             <div class="form-group">
                                                 <br>
                                                 <label for="causal_decision">Causal de decisión <span style="color: red;">(*)</span></label>
@@ -645,7 +645,7 @@
                             </div>
                         </div>
                         <!---  Firmeza o controversia por otra parte interesada del Dictamen de Calificación de Invalidez (JRCI) -->
-                        <div class="card-info">
+                        <div class="card-info d-none" id="div_Firmeza_controversiaJRCI">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5> Firmeza o controversia por otra parte interesada del Dictamen Junta Regional de Calificación de Invalidez (JRCI)</h5>
                             </div>
@@ -1005,7 +1005,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-2" <?php if(!empty($arrayinfo_controvertido[0]->Contro_pcl)){ ?> class="col-2" <?php }else{ ?> class="col-2 d-none" <?php } ?> >
+                                        <div <?php if(!empty($arrayinfo_controvertido[0]->Contro_pcl)){ ?> class="col-2" <?php }else{ ?> class="col-2 d-none" <?php } ?> >
                                             <div class="form-group">
                                                 <div class="form-check custom-control custom-radio">
                                                     <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="decision_dictamen_repo_jrci" id="informativo_revision_repo_jrci" value="Informativo" <?php if(!empty($arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci) && $arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci=='Informativo'){ ?> checked <?php } ?>>
@@ -1013,7 +1013,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-12 row_causal_decision_repo" <?php if(!empty($arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci)&& $arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci=='Acuerdo' || $arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci=='Desacuerdo'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
+                                        <div class="col-12 row_causal_decision_repo" <?php if(!empty($arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci)&& $arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci=='Acuerdo' || !empty($arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci) && $arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci=='Desacuerdo'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
                                             <div class="form-group">
                                                 <br>
                                                 <label for="causal_decision_repo">Causal de decisión (Reposición JRCI) <span style="color: red;">(*)</span></label>
@@ -1828,7 +1828,7 @@
                 </div>
             </div>
         </div>
-    @endif
+    {{-- @endif --}}
     <!--Retonar al modulo Origen -->
    <form action="{{route('calificacionJuntas')}}" id="formularioEnvio" method="POST">            
         @csrf

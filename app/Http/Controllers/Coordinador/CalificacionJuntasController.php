@@ -83,7 +83,8 @@ class CalificacionJuntasController extends Controller
         'Descripcion', 'Nombre_solicitante', 'F_recepcion_documento')
         ->where([
             ['Estado', 'Activo'], ['Id_proceso',$array_datos_calificacionJuntas[0]->Id_proceso],
-            ['ID_evento', $newIdEvento]
+            ['ID_evento', $newIdEvento],
+            ['Id_Asignacion', $newIdAsignacion]
         ])
         ->get();
 
@@ -150,6 +151,7 @@ class CalificacionJuntasController extends Controller
             ->select('ID_evento','F_seguimiento','Causal_seguimiento','Descripcion_seguimiento','Nombre_usuario')
             ->where([
                 ['ID_evento', $newIdEvento],
+                ['Id_Asignacion', $newIdAsignacion],
                 ['Estado','Activo'],
                 ['Id_proceso','3']
             ])
@@ -1064,6 +1066,7 @@ class CalificacionJuntasController extends Controller
             $hitorialAgregarComunicado = cndatos_info_comunicado_eventos::on('sigmel_gestiones')
             ->where([
                 ['ID_evento', $newId_evento],
+                ['Id_Asignacion', $newId_asignacion],
                 ['Id_proceso', '3']
             ])
             ->get();

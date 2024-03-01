@@ -759,7 +759,7 @@ class BuscarEventoController extends Controller
                             }                            
                         } 
                     }                       
-                    // Resultado Adicion DX Origen
+                    // // Resultado Adicion DX Origen                    
                     $posicionOrigenAdx = [];
                     foreach ($resultArrayEventos as $element) {
                         if ($element['Id_proceso'] == $proceso_origen && $element['Id_Servicio'] == $servicio_OrigenAdx && $element['ID_evento'] == $consultar_id_evento) {
@@ -770,7 +770,8 @@ class BuscarEventoController extends Controller
                                 'Id_Asignacion' => $element['Id_Asignacion'],
                             ];
                         }
-                    }                 
+                    }    
+                                
                     if (count($posicionOrigenAdx) > 0) {
                         $ID_eventoAdx = $posicionOrigenAdx[0]['ID_evento'];
                         $Id_procesoAdx = $posicionOrigenAdx[0]['Id_proceso'];
@@ -783,6 +784,7 @@ class BuscarEventoController extends Controller
                         ->where([['side.Id_Asignacion',$Id_AsignacionAdx], ['side.Id_proceso',$Id_procesoAdx], ['side.ID_evento',$ID_eventoAdx]])
                         ->whereNotNull('F_adicion_CIE10')
                         ->get(); 
+                        
                         if (count($resultadoAdxOrigen) > 0) {
                             foreach ($resultadoAdxOrigen as $item) {
                                 $idEvento = $item->ID_evento;
@@ -805,10 +807,19 @@ class BuscarEventoController extends Controller
                                     }
                                 }
                                 
-                            }                                        
+                            }   
+                            
+                            // Filtrar los elementos que contienen [OrigenDtoResultado]
+                            $posicionOrigenAdxFiltrado = array_filter($posicionOrigenAdx, function ($item) {
+                                return isset($item['OrigenCieResultado']);
+                            });
+                            
+                            // Reorganizar los índices del array filtrado
+                            $posicionOrigenAdxFiltrado = array_values($posicionOrigenAdxFiltrado);                                                                                   
+                            
                             //Combinar el array object con el array posicionOrigenAdx
                             foreach ($array_informacion_eventos as $key2 => $item2) {
-                                foreach ($posicionOrigenAdx as $item1) {
+                                foreach ($posicionOrigenAdxFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
                                     if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                         // Agregar el elemento a la posición correspondiente
@@ -819,8 +830,7 @@ class BuscarEventoController extends Controller
                             }                            
                         }
                         
-                    }  
-                    // Resultado Pronunciamiento Origen
+                    }                      
                     $posicionOrigenPron = [];
                     foreach ($resultArrayEventos as $element) {
                         if ($element['Id_proceso'] == $proceso_origen && $element['Id_Servicio'] == $servicio_OrigenPron && $element['ID_evento'] == $consultar_id_evento) {
@@ -1406,10 +1416,16 @@ class BuscarEventoController extends Controller
                                     }
                                 }
                                 
-                            }                                        
+                            }
+                            // Filtrar los elementos que contienen [OrigenDtoResultado]
+                            $posicionOrigenAdxFiltrado = array_filter($posicionOrigenAdx, function ($item) {
+                                return isset($item['OrigenCieResultado']);
+                            });
+                            // Reorganizar los índices del array filtrado
+                            $posicionOrigenAdxFiltrado = array_values($posicionOrigenAdxFiltrado);                                                                           
                             //Combinar el array object con el array posicionOrigenAdx
                             foreach ($array_informacion_eventos as $key2 => $item2) {
-                                foreach ($posicionOrigenAdx as $item1) {
+                                foreach ($posicionOrigenAdxFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
                                     if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                         // Agregar el elemento a la posición correspondiente

@@ -57,6 +57,7 @@ class CalificacionOrigenController extends Controller
         'Descripcion', 'Nombre_solicitante', 'F_recepcion_documento')
         ->where([
             ['ID_evento',$newIdEvento],
+            ['Id_Asignacion', $newIdAsignacion],
             ['Estado','Activo'],
             ['Id_proceso','1']
          ])
@@ -154,7 +155,8 @@ class CalificacionOrigenController extends Controller
            ['Causal_seguimiento', '=', 'Primer seguimiento'],
            ['Estado', '=', 'Activo'],
            ['Id_proceso', '=', '1'],
-           ['ID_evento', '=', $newIdEvento]
+           ['ID_evento', '=', $newIdEvento],
+           ['Id_Asignacion', $newIdAsignacion]
        ])
        ->get();
        //Consulta Segundo Seguimiento
@@ -164,7 +166,9 @@ class CalificacionOrigenController extends Controller
            ['Causal_seguimiento', '=', 'Segundo seguimiento'],
            ['Estado', '=', 'Activo'],
            ['Id_proceso', '=', '1'],
-           ['ID_evento', '=', $newIdEvento]
+           ['ID_evento', '=', $newIdEvento],
+           ['Id_Asignacion', $newIdAsignacion]
+
        ])
        ->get();
        //Consulta tercer Seguimiento
@@ -174,7 +178,9 @@ class CalificacionOrigenController extends Controller
            ['Causal_seguimiento', '=', 'Tercer seguimiento'],
            ['Estado', '=', 'Activo'],
            ['Id_proceso', '=', '1'],
-           ['ID_evento', '=', $newIdEvento]
+           ['ID_evento', '=', $newIdEvento],
+           ['Id_Asignacion', $newIdAsignacion]
+
        ])
        ->get();
        //Consulta Listado Historial de seguimientos
@@ -182,6 +188,7 @@ class CalificacionOrigenController extends Controller
        ->select('*')
        ->where([
            ['ID_evento',$newIdEvento],
+           ['Id_Asignacion', $newIdAsignacion],
            ['Estado','Activo'],
            ['Id_proceso','1']
         ])
@@ -932,6 +939,7 @@ class CalificacionOrigenController extends Controller
             $hitorialAgregarComunicado = cndatos_info_comunicado_eventos::on('sigmel_gestiones')
             ->where([
                 ['ID_evento', $newId_evento],
+                ['Id_Asignacion', $newId_asignacion],
                 ['Id_proceso', '1']
             ])
             ->get();

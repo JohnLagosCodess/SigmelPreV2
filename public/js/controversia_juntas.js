@@ -1117,6 +1117,34 @@ $(document).ready(function(){
                     $('#causal_decision').prop('required', true);
                     $('#sustentacion_concepto_jrci').prop('required', true);
                  break;
+                 case "Informativo":
+                    elementosDeslizar_concepto.forEach(elemento => {
+                         $(elemento).slideUp(tiempoDeslizamiento_concepto);
+                    }); 
+                    elementosDeslizar_concepto2.forEach(elemento => {
+                        $(elemento).slideDown(tiempoDeslizamiento_concepto);
+                    }); 
+                    elementosDeslizar_concepto3.forEach(elemento => {
+                        $(elemento).slideUp(tiempoDeslizamiento_concepto);
+                    });
+                    $("#causal_decision").empty();
+                    $('#causal_decision').prop('required', false);
+                    $('#sustentacion_concepto_jrci').prop('required', true);
+                 break;
+                 case "Silencio":
+                    elementosDeslizar_concepto.forEach(elemento => {
+                         $(elemento).slideUp(tiempoDeslizamiento_concepto);
+                    }); 
+                    elementosDeslizar_concepto2.forEach(elemento => {
+                        $(elemento).slideDown(tiempoDeslizamiento_concepto);
+                    }); 
+                    elementosDeslizar_concepto3.forEach(elemento => {
+                        $(elemento).slideUp(tiempoDeslizamiento_concepto);
+                    }); 
+                    $("#causal_decision").empty();
+                    $('#causal_decision').prop('required', false);
+                    $('#sustentacion_concepto_jrci').prop('required', true);
+                 break;
                  default:
                     // Deslizar hacia arriba (ocultar) los elementos
                     elementosDeslizar_concepto.forEach(elemento => {
@@ -1242,6 +1270,28 @@ $(document).ready(function(){
                     $('#causal_decision_repo').prop('required', true);
                     $('#sustentacion_concepto_repo_jrci').prop('required', true);
                  break;
+                 case "Informativo":
+                    elementosDeslizar_repo_concepto.forEach(elemento => {
+                         $(elemento).slideUp(tiempoDeslizamiento_concepto_repo);
+                    }); 
+                    elementosDeslizar_repo_concepto2.forEach(elemento => {
+                        $(elemento).slideDown(tiempoDeslizamiento_concepto_repo);
+                    }); 
+                    $("#causal_decision_repo").empty();
+                    $('#causal_decision_repo').prop('required', false);
+                    $('#sustentacion_concepto_repo_jrci').prop('required', true);
+                 break;
+                 case "Silencio":
+                    elementosDeslizar_repo_concepto.forEach(elemento => {
+                         $(elemento).slideUp(tiempoDeslizamiento_concepto_repo);
+                    }); 
+                    elementosDeslizar_repo_concepto2.forEach(elemento => {
+                        $(elemento).slideDown(tiempoDeslizamiento_concepto_repo);
+                    }); 
+                    $("#causal_decision_repo").empty();
+                    $('#causal_decision_repo').prop('required', false);
+                    $('#sustentacion_concepto_repo_jrci').prop('required', true);
+                 break;
                  default:
                     // Deslizar hacia arriba (ocultar) los elementos
                     elementosDeslizar_repo_concepto.forEach(elemento => {
@@ -1278,6 +1328,57 @@ $(document).ready(function(){
             $("#f_radi_pago_jnci").val("");
         }
     });
+
+    // Dehabilitar los requiered si el checked de pcl no esta esta checked
+    var checkboxcontro_pcl = $('#contro_pcl');
+
+    if (!checkboxcontro_pcl.prop('checked')) {
+        $('#manual_de_califi').prop('required', false);
+        $('#total_deficiencia').prop('required', false);
+        $('#f_estructuracion_contro').prop('required', false);        
+    }   
+
+    //Mostrar o Ocultar la seccion de Firmeza o controversia por otra parte interesada del Dictamen Junta Regional de Calificación de Invalidez (JRCI) 
+    // si los Pronunciamiento ante Dictamen de JRCI estan checked
+
+    var radioacuerdo_revision_jrci = $('#acuerdo_revision_jrci');
+    var radiodesacuerdo_revision_jrci = $('#desacuerdo_revision_jrci');
+    var radiosilecion_revision_jrci = $('#silecion_revision_jrci');
+    var radioinformativo_revision_jrci = $('#informativo_revision_jrci');
+
+
+    radioacuerdo_revision_jrci.change(function () {
+        $('#div_Firmeza_controversiaJRCI').removeClass('d-none');
+    })
+
+    radiodesacuerdo_revision_jrci.change(function () {
+        $('#div_Firmeza_controversiaJRCI').removeClass('d-none');
+    })
+
+    radiosilecion_revision_jrci.change(function () {
+        $('#div_Firmeza_controversiaJRCI').removeClass('d-none');
+    })
+
+    radioinformativo_revision_jrci.change(function () {
+        $('#div_Firmeza_controversiaJRCI').removeClass('d-none');
+    })
+
+
+    if (radioacuerdo_revision_jrci.prop('checked')) {
+        $('#div_Firmeza_controversiaJRCI').removeClass('d-none');        
+    }
+
+    if (radiodesacuerdo_revision_jrci.prop('checked')) {
+        $('#div_Firmeza_controversiaJRCI').removeClass('d-none');        
+    }
+
+    if (radiosilecion_revision_jrci.prop('checked')) {
+        $('#div_Firmeza_controversiaJRCI').removeClass('d-none');        
+    }
+
+    if (radioinformativo_revision_jrci.prop('checked')) {
+        $('#div_Firmeza_controversiaJRCI').removeClass('d-none');        
+    }
 
     // Guardar Datos Dictamen Controvertido
     $('#form_guardarControvertido').submit(function (e) {
