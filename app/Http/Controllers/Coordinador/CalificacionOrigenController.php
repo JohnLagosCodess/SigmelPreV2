@@ -33,10 +33,11 @@ class CalificacionOrigenController extends Controller
         $date = date("Y-m-d", $time);
         $newIdAsignacion=$request->newIdAsignacion;
         $newIdEvento = $request->newIdEvento;
+        $Id_servicio = $request->Id_Servicio;
 
         $array_datos_calificacionOrigen = DB::select('CALL psrcalificacionOrigen(?)', array($newIdAsignacion));
         //Trae Documetos Generales del evento
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento));
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento,$Id_servicio));
         //Consulta Vista a mostrar
         $TraeVista= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_lista_procesos_servicios as p')
         ->select('v.nombre_renderizar')
@@ -196,7 +197,9 @@ class CalificacionOrigenController extends Controller
            ['Id_proceso','1']
         ])
        ->get();
-        return view('coordinador.calificacionOrigen', compact('user','nombre_usuario','array_datos_calificacionOrigen','arraylistado_documentos','arraycampa_documento_solicitado','SubModulo','Fnuevo','listado_documentos_solicitados','dato_validacion_no_aporta_docs','dato_ultimo_grupo_doc','dato_doc_sugeridos','dato_articulo_12','consecutivo','primer_seguimiento','segundo_seguimiento','tercer_seguimiento','listado_seguimiento_solicitados','cali_profe_comite'));
+        return view('coordinador.calificacionOrigen', compact('user','nombre_usuario','array_datos_calificacionOrigen','arraylistado_documentos',
+        'arraycampa_documento_solicitado','SubModulo','Fnuevo','listado_documentos_solicitados','dato_validacion_no_aporta_docs','dato_ultimo_grupo_doc',
+        'dato_doc_sugeridos','dato_articulo_12','consecutivo','primer_seguimiento','segundo_seguimiento','tercer_seguimiento','listado_seguimiento_solicitados','cali_profe_comite', 'Id_servicio'));
     }
 
     //Guardar informacion del modulo de Origen ATEL

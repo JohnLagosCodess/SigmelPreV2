@@ -66,7 +66,8 @@
                                                 <div class="d-none">
                                                     <input type="text" name="Id_Documento" value="{{$documento->Id_Documento}}">
                                                     <input type="text" name="Nombre_documento" value="{{$documento->Nombre_documento}}">                                                
-                                                    <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">                                                
+                                                    <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">
+                                                    <input type="text" name="Id_servicio" id="Id_servicio_{{$documento->Id_Documento}}" value="{{$Id_servicio}}">                                               
                                                 </div>
                                                 <div class="row">
                                                     <p><?php if($documento->nombre_Documento <> ""){echo "{$documento->nombre_Documento}.{$documento->formato_documento}";}?></p>
@@ -166,6 +167,11 @@
     <div class="row">
         <x-adminlte-modal id="modalListaDocumentos" title="Listado de Documentos" theme="info" icon="fas fa-plus" size='xl' scrollable="yes" disable-animations>
             <div class="col-12">
+                <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
+                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para que el documento se guarde debe haber escrito un número de ID evento y haber seleccionado un Servicio.
+                </div>
+            </div>
+            <div class="col-12">
                 <p class="h5">Los documentos marcados con &nbsp; &nbsp;<input type="checkbox" class="scales" disabled checked>&nbsp; &nbsp; son de cargue obligatorio para poder crear el evento.</p>
                 <div class="table table-responsive">
                     <table id="listado_documentos" class="table table-striped table-bordered" style="width:100%">
@@ -195,7 +201,8 @@
                                                 <div class="d-none">
                                                     <input type="text" name="Id_Documento" value="{{$documento->Id_Documento}}">
                                                     <input type="text" name="Nombre_documento" value="{{$documento->Nombre_documento}}">                                                
-                                                    <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">                                                
+                                                    <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">
+                                                    <input  type="text" name="Id_servicio" id="Id_servicio_{{$documento->Id_Documento}}">                                       
                                                 </div>
                                                 <div class="row">
                                                     <div class="input-group">
@@ -294,7 +301,7 @@
                                 <th>Documento</th>
                                 <th>Estado</th>
                                 <th>Archivo</th>
-                                <th>Descarga</th>
+                                {{-- <th>Descarga</th> --}}
                                 <th style="width: 1px !important;">Obligatorio</th>
                             </tr>
                         </thead>

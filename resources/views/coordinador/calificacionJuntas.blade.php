@@ -345,9 +345,10 @@
         </form>
         <form action="{{route($SubModulo)}}" id="formulario2" method="POST">            
             @csrf
-            <input hidden="hidden" type="text" name="Id_evento_juntas" id="Id_evento_juntas" value="{{$array_datos_calificacionJuntas[0]->ID_evento}}">
-            <input hidden="hidden" type="text" name="Id_asignacion_juntas" id="Id_asignacion_juntas" value="{{$array_datos_calificacionJuntas[0]->Id_Asignacion}}">
-            <input hidden="hidden" type="text" name="Id_proceso_juntas" id="Id_proceso_juntas" value="{{$array_datos_calificacionJuntas[0]->Id_proceso}}">
+            <input type="hidden" name="Id_evento_juntas" id="Id_evento_juntas" value="{{$array_datos_calificacionJuntas[0]->ID_evento}}">
+            <input type="hidden" name="Id_asignacion_juntas" id="Id_asignacion_juntas" value="{{$array_datos_calificacionJuntas[0]->Id_Asignacion}}">
+            <input type="hidden" name="Id_proceso_juntas" id="Id_proceso_juntas" value="{{$array_datos_calificacionJuntas[0]->Id_proceso}}">
+            <input type="hidden" name="Id_Servicio" id="Id_Servicio" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Id_Servicio)){ echo $array_datos_calificacionJuntas[0]->Id_Servicio;}?>">
             <button type="submit" id="botonFormulario2" style="display: none; !important"></button>
         </form>
         <!--Retonar al modulo Modulo Nuevo edicion -->

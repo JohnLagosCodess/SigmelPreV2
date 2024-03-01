@@ -358,8 +358,10 @@ $(document).ready(function () {
         $("form[id^='form_modulo_principal_noti_']").attr("action", url_editar_evento);    
     });
 
+    var dato_cargar = "";
     /* CREACIÓN Y AGREGACIÓN DEL MODAL NUEVO SERVICIO AL CONTENEDOR DE RENDERIZAMIENTO */
     $(document).on('mouseover', "a[id^='btn_nuevo_servicio_']", function(){
+        dato_cargar = "Nuevo servicio";
         var id_evento_nuevo_servicio =  $(this).data("id_evento_nuevo_servicio"); //ID EVENTO
         var id_proceso_nuevo_servicio =  $(this).data("id_proceso_nuevo_servicio"); // ID PROCESO ACTUAL
         var nombre_proceso_nuevo_servicio =  $(this).data("nombre_proceso_nuevo_servicio"); // NOMBRE PROCESO ACTUAL
@@ -630,6 +632,20 @@ $(document).ready(function () {
         });
     });
 
+    /* Obtener el ID del servicio a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id servicio */
+    $(document).on('click', "input[id^='listadodocumento_']", function(){
+        
+        if (dato_cargar.includes("Nuevo servicio")) {
+            // nuevo_servicio_987456321
+            var id_servicio_seleccionado = $("select[id^='nuevo_servicio_']").val();
+        } else {
+            // selector_nuevo_servicio_987456321
+            var id_servicio_seleccionado = $("select[id^='selector_nuevo_servicio_']").val();
+        }
+        
+        $("input[id^='Id_servicio_']").val(id_servicio_seleccionado);
+    });
+
     /* CAPTURA ID EVENTO PARA PINTAR EL LISTADO DE DOCUMENTOS PERTENENCIENTES A EL */
     $(document).on('click', "a[id^='cargue_documentos_evento_']", function(){
         let token = $("input[name='_token']").val();
@@ -646,6 +662,7 @@ $(document).ready(function () {
             data: datos_a_consultar,
             success:function(data) {
                 
+                // <td id="estadoDocumento_'+arraylistado_documentos["Id_Documento"]+'">'+(arraylistado_documentos["estado_documento"] == "Cargado" ? '<strong class="text-success">Cargado</strong>': '<strong class="text-danger">No Cargado</strong>')+'</td>\
                 $('#habilitar').removeClass('d-none');
                 $('#agregar_documentos').empty();
                 $.each(data, function(index, arraylistado_documentos){
@@ -653,7 +670,7 @@ $(document).ready(function () {
                         <tr>\
                             <td>'+arraylistado_documentos["Nro_documento"]+'</td>\
                             <td style="width: 34% !important;">'+arraylistado_documentos["Nombre_documento"]+'</td>\
-                            <td id="estadoDocumento_'+arraylistado_documentos["Id_Documento"]+'">'+(arraylistado_documentos["estado_documento"] == "Cargado" ? '<strong class="text-success">Cargado</strong>': '<strong class="text-danger">No Cargado</strong>')+'</td>\
+                            <td id="estadoDocumento_'+arraylistado_documentos["Id_Documento"]+'"><strong class="text-danger">No Cargado</strong></td>\
                             <td>'+(arraylistado_documentos["Nombre_documento"] === "Otros documentos" ? '\
                                 <form id="formulario_documento_'+arraylistado_documentos["Id_Documento"]+'" class="form-inline align-items-center"" method="POST" enctype="multipart/form-data">\
                                     <input type="hidden" name="_token" value="'+token+'">\
@@ -665,12 +682,11 @@ $(document).ready(function () {
                                             <input type="text" name="bandera_nombre_otro_doc" value="'+arraylistado_documentos["nombre_Documento"]+'">\
                                         </div>\
                                         <div class="row">\
-                                            <p>'+(arraylistado_documentos["nombre_Documento"] != "" ? arraylistado_documentos["nombre_Documento"] : '')+'</p>\
                                             <div class="input-group">\
                                                 <input type="file" class="form-control select-doc" name="listadodocumento" id="listadodocumento_'+arraylistado_documentos["Id_Documento"]+'"\
                                                 aria-describedby="Carguedocumentos" aria-label="Upload"'+(arraylistado_documentos["Requerido"] === 'Si' ? 'required' : '')+'>&nbsp;\
                                                 <button class="btn btn-info button-doc-select" type="submit" id="CargarDocumento_'+arraylistado_documentos["Id_Documento"]+'">\
-                                                    '+(arraylistado_documentos["estado_documento"] == "Cargado" ? 'Actualizar' : 'Cargar')+'\
+                                                    '+(arraylistado_documentos["estado_documento"] == "Cargado" ? 'Cargar' : 'Cargar')+'\
                                                 </button>\
                                             </div>\
                                         </div>\
@@ -683,29 +699,20 @@ $(document).ready(function () {
                                         <input type="text" name="Id_Documento" value="'+arraylistado_documentos["Id_Documento"]+'">\
                                         <input type="text" name="Nombre_documento" value="'+arraylistado_documentos["Nombre_documento"]+'">\
                                         <input  type="text" name="EventoID" id="EventoID_'+arraylistado_documentos["Id_Documento"]+'" value="'+id_consultar_documentos_evento+'">\
+                                        <input  type="text" name="Id_servicio" id="Id_servicio_'+arraylistado_documentos["Id_Documento"]+'">\
                                     </div>\
                                     <div class="row">\
-                                            <p>'+(arraylistado_documentos["nombre_Documento"] != "" ? arraylistado_documentos["nombre_Documento"]+'.'+arraylistado_documentos["formato_documento"] : '')+'</p>\
                                             <div class="input-group">\
                                                 <input type="file" class="form-control select-doc" name="listadodocumento" id="listadodocumento_'+arraylistado_documentos["Id_Documento"]+'"\
                                                 aria-describedby="Carguedocumentos" aria-label="Upload"'+(arraylistado_documentos["Requerido"] === 'Si' ? 'required' : '')+'>&nbsp;\
                                                 <button class="btn btn-info button-doc-select" type="submit" id="CargarDocumento_'+arraylistado_documentos["Id_Documento"]+'">\
-                                                    '+(arraylistado_documentos["estado_documento"] == "Cargado" ? 'Actualizar' : 'Cargar')+'\
+                                                    '+(arraylistado_documentos["estado_documento"] == "Cargado" ? 'Cargar' : 'Cargar')+'\
                                                 </button>\
                                             </div>\
                                         </div>\
                                 </form>\
                             ')+'\
                             </td>\
-                            <td>'+(arraylistado_documentos["estado_documento"] == "Cargado" ? '\
-                                <div class="d-none">\
-                                    <input type="text" id="nombre_documento_descarga_'+arraylistado_documentos["Id_Documento"]+'" value="'+arraylistado_documentos["nombre_Documento"]+'">\
-                                    <input type="text" id="extension_documento_descarga_'+arraylistado_documentos["Id_Documento"]+'" value="'+arraylistado_documentos["formato_documento"]+'">\
-                                </div>\
-                                <div class="text-center">\
-                                    <a href="javascript:void(0);" id="btn_generar_descarga_'+arraylistado_documentos["Id_Documento"]+'" data-id_documento_descargar="'+arraylistado_documentos["Id_Documento"]+'"><i class="fas fa-download text-info"></i></a>\
-                                </div>\
-                            ': '')+'</td>\
                             <td class="text-center" style="width: 10% !important;">\
                                 <input type="checkbox" class="scales" name="checkdocumentos" id="check_documento_'+arraylistado_documentos["Id_Documento"]+'"\
                                 '+(arraylistado_documentos["Requerido"] === "Si" ? 'checked disabled' : 'disabled')+'\
@@ -798,6 +805,7 @@ $(document).ready(function () {
 
     /* CREACIÓN Y AGREGACIÓN DEL MODAL NUEVO PROCESO AL CONTENEDOR DE REDENRIZAMIENTO */
     $(document).on('mouseover', "a[id^='btn_nuevo_proceso_']", function(){
+        dato_cargar = "Nuevo proceso";
         var id_evento_nuevo_proceso =  $(this).data("id_evento_nuevo_proceso"); //ID EVENTO
         var id_proceso_nuevo_proceso =  $(this).data("id_proceso_nuevo_proceso"); // ID PROCESO ACTUAL
         var id_servicio_nuevo_proceso =  $(this).data("id_servicio_nuevo_proceso"); //ID SERVICIO ACTUAL
@@ -1133,6 +1141,7 @@ $(document).ready(function () {
             data: datos_a_consultar,
             success:function(data) {
                 
+                // <td id="estadoDocumento_'+arraylistado_documentos["Id_Documento"]+'">'+(arraylistado_documentos["estado_documento"] == "Cargado" ? '<strong class="text-success">Cargado</strong>': '<strong class="text-danger">No Cargado</strong>')+'</td>\
                 $('#habilitar').removeClass('d-none');
                 $('#agregar_documentos').empty();
                 $.each(data, function(index, arraylistado_documentos){
@@ -1140,7 +1149,7 @@ $(document).ready(function () {
                         <tr>\
                             <td>'+arraylistado_documentos["Nro_documento"]+'</td>\
                             <td style="width: 34% !important;">'+arraylistado_documentos["Nombre_documento"]+'</td>\
-                            <td id="estadoDocumento_'+arraylistado_documentos["Id_Documento"]+'">'+(arraylistado_documentos["estado_documento"] == "Cargado" ? '<strong class="text-success">Cargado</strong>': '<strong class="text-danger">No Cargado</strong>')+'</td>\
+                            <td id="estadoDocumento_'+arraylistado_documentos["Id_Documento"]+'"><strong class="text-danger">No Cargado</strong></td>\
                             <td>'+(arraylistado_documentos["Nombre_documento"] === "Otros documentos" ? '\
                                 <form id="formulario_documento_'+arraylistado_documentos["Id_Documento"]+'" class="form-inline align-items-center"" method="POST" enctype="multipart/form-data">\
                                     <input type="hidden" name="_token" value="'+token+'">\
@@ -1152,12 +1161,11 @@ $(document).ready(function () {
                                             <input type="text" name="bandera_nombre_otro_doc" value="'+arraylistado_documentos["nombre_Documento"]+'">\
                                         </div>\
                                         <div class="row">\
-                                            <p>'+(arraylistado_documentos["nombre_Documento"] != "" ? arraylistado_documentos["nombre_Documento"] : '')+'</p>\
                                             <div class="input-group">\
                                                 <input type="file" class="form-control select-doc" name="listadodocumento" id="listadodocumento_'+arraylistado_documentos["Id_Documento"]+'"\
                                                 aria-describedby="Carguedocumentos" aria-label="Upload"'+(arraylistado_documentos["Requerido"] === 'Si' ? 'required' : '')+'>&nbsp;\
                                                 <button class="btn btn-info button-doc-select" type="submit" id="CargarDocumento_'+arraylistado_documentos["Id_Documento"]+'">\
-                                                    '+(arraylistado_documentos["estado_documento"] == "Cargado" ? 'Actualizar' : 'Cargar')+'\
+                                                    '+(arraylistado_documentos["estado_documento"] == "Cargado" ? 'Cargar' : 'Cargar')+'\
                                                 </button>\
                                             </div>\
                                         </div>\
@@ -1170,29 +1178,20 @@ $(document).ready(function () {
                                         <input type="text" name="Id_Documento" value="'+arraylistado_documentos["Id_Documento"]+'">\
                                         <input type="text" name="Nombre_documento" value="'+arraylistado_documentos["Nombre_documento"]+'">\
                                         <input  type="text" name="EventoID" id="EventoID_'+arraylistado_documentos["Id_Documento"]+'" value="'+id_consultar_documentos_evento+'">\
+                                        <input  type="text" name="Id_servicio" id="Id_servicio_'+arraylistado_documentos["Id_Documento"]+'">\
                                     </div>\
                                     <div class="row">\
-                                            <p>'+(arraylistado_documentos["nombre_Documento"] != "" ? arraylistado_documentos["nombre_Documento"]+'.'+arraylistado_documentos["formato_documento"] : '')+'</p>\
                                             <div class="input-group">\
                                                 <input type="file" class="form-control select-doc" name="listadodocumento" id="listadodocumento_'+arraylistado_documentos["Id_Documento"]+'"\
                                                 aria-describedby="Carguedocumentos" aria-label="Upload"'+(arraylistado_documentos["Requerido"] === 'Si' ? 'required' : '')+'>&nbsp;\
                                                 <button class="btn btn-info button-doc-select" type="submit" id="CargarDocumento_'+arraylistado_documentos["Id_Documento"]+'">\
-                                                    '+(arraylistado_documentos["estado_documento"] == "Cargado" ? 'Actualizar' : 'Cargar')+'\
+                                                    '+(arraylistado_documentos["estado_documento"] == "Cargado" ? 'Cargar' : 'Cargar')+'\
                                                 </button>\
                                             </div>\
                                         </div>\
                                 </form>\
                             ')+'\
                             </td>\
-                            <td>'+(arraylistado_documentos["estado_documento"] == "Cargado" ? '\
-                                <div class="d-none">\
-                                    <input type="text" id="nombre_documento_descarga_'+arraylistado_documentos["Id_Documento"]+'" value="'+arraylistado_documentos["nombre_Documento"]+'">\
-                                    <input type="text" id="extension_documento_descarga_'+arraylistado_documentos["Id_Documento"]+'" value="'+arraylistado_documentos["formato_documento"]+'">\
-                                </div>\
-                                <div class="text-center">\
-                                    <a href="javascript:void(0);" id="btn_generar_descarga_'+arraylistado_documentos["Id_Documento"]+'" data-id_documento_descargar="'+arraylistado_documentos["Id_Documento"]+'"><i class="fas fa-download text-info"></i></a>\
-                                </div>\
-                            ': '')+'</td>\
                             <td class="text-center" style="width: 10% !important;">\
                                 <input type="checkbox" class="scales" name="checkdocumentos" id="check_documento_'+arraylistado_documentos["Id_Documento"]+'"\
                                 '+(arraylistado_documentos["Requerido"] === "Si" ? 'checked disabled' : 'disabled')+'\
@@ -1208,11 +1207,17 @@ $(document).ready(function () {
 
     /* FUNCIONALIDAD DESCARGA DOCUMENTO */
     $(document).on('click', "a[id^='btn_generar_descarga_']", function(){
-    // $("a[id^='btn_generar_descarga_']").click(function(){
         var id_documento = $(this).data('id_documento_descargar');
         var nombre_documento = $("#nombre_documento_descarga_"+id_documento).val();
         var extension_documento = $("#extension_documento_descarga_"+id_documento).val();
-        var id_evento = nombre_documento.match(/\d+/g).join('');
+        var regex = /IdEvento_(.*?)_IdServicio/;
+        var resultado = nombre_documento.match(regex);
+
+        if (resultado) {
+            var id_evento = resultado[1];
+        } else {
+            var id_evento = "";
+        }
     
         // Crear un enlace temporal para la descarga
         var enlaceDescarga = document.createElement('a');

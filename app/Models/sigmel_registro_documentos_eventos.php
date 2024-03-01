@@ -18,6 +18,7 @@ class sigmel_registro_documentos_eventos extends Model
     'ID_evento',
     'Nombre_documento',
     'Formato_documento',
+    'Id_servicio',
     'Estado',
     'F_cargue_documento',
     'Nombre_usuario',

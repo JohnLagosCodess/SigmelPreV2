@@ -46,10 +46,11 @@ class CalificacionJuntasController extends Controller
         $date = date("Y-m-d", $time);
         $newIdAsignacion=$request->newIdAsignacion;
         $newIdEvento = $request->newIdEvento;
+        $Id_servicio = $request->Id_Servicio;
 
         $array_datos_calificacionJuntas = DB::select('CALL psrcalificacionJuntas(?)', array($newIdAsignacion));
         //Trae Documetos Generales del evento
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento));
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento, $Id_servicio));
         // Consulta Informacion de afiliado
         $arrayinfo_afiliado= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as Afi')
         ->select('Afi.Direccion','ci.Nombre_municipio','ci.Nombre_departamento','Afi.Telefono_contacto','Afi.Email','Afi.F_actualizacion')
@@ -164,7 +165,9 @@ class CalificacionJuntasController extends Controller
         $SubModulo=$TraeVista[0]->nombre_renderizar; //Enviar a la vista del SubModulo    
 
 
-        return view('coordinador.calificacionJuntas', compact('user','array_datos_calificacionJuntas','arraylistado_documentos','arrayinfo_afiliado','arrayinfo_controvertido','arrayinfo_pagos','listado_documentos_solicitados','dato_validacion_no_aporta_docs','arraycampa_documento_solicitado','consecutivo','hitorialAgregarSeguimiento','SubModulo'));
+        return view('coordinador.calificacionJuntas', compact('user','array_datos_calificacionJuntas','arraylistado_documentos','arrayinfo_afiliado',
+        'arrayinfo_controvertido','arrayinfo_pagos','listado_documentos_solicitados','dato_validacion_no_aporta_docs',
+        'arraycampa_documento_solicitado','consecutivo','hitorialAgregarSeguimiento','SubModulo', 'Id_servicio'));
     }
     //Cargar Selectores Juntas
     public function cargueListadoSelectoresJuntas(Request $request){

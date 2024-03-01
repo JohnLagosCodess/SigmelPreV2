@@ -1414,7 +1414,7 @@ $(document).ready(function(){
 
     /* VALIDACIÓN Información laboral */
     var tipo_laboral = $("input[name='t_laboral']").val();
-    console.log(tipo_laboral);
+    // console.log(tipo_laboral);
     if (tipo_laboral == "Empleado actual") {
         // Set the 'required' attribute to true for specific elements
         document.getElementById('empresa').required = true;

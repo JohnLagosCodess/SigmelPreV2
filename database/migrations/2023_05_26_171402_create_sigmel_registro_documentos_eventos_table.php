@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('ID_evento', 10);
             $table->text('Nombre_documento');
             $table->string('Formato_documento', 7);
+            $table->integer('Id_servicio')->nullable();
             $table->enum('Estado', ['activo', 'inactivo'])->default('activo');
             $table->date('F_cargue_documento');
             $table->text('Descripcion')->nullable();
