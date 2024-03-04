@@ -176,7 +176,7 @@ class BandejaJuntasController extends Controller
 
         if($BandejaJuntasTotal == 'CargaBandejaJuntas'){
 
-            if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional 
+            if($newId_rol=='5' || $newId_rol=='9' || $newId_rol=='10'){ // si el rol es analista o profesional o comité
                 $bandejaJuntas = cndatos_bandeja_eventos::on('sigmel_gestiones')
                 ->where([
                     ['Nombre_proceso_actual', '=', 'Juntas'],
@@ -274,7 +274,7 @@ class BandejaJuntasController extends Controller
         switch (true) {
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and !empty($consultar_g_dias)):
 
-                if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
+                if($newId_rol=='5' || $newId_rol=='9' || $newId_rol=='10'){ // si el rol es analista o profesional o comité
                     $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Juntas'],
@@ -319,7 +319,7 @@ class BandejaJuntasController extends Controller
             break;
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and empty($consultar_g_dias)):
                     
-                if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
+                if($newId_rol=='5' || $newId_rol=='9' || $newId_rol=='10'){ // si el rol es analista o profesional o comité
                     $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Juntas'],
@@ -363,7 +363,7 @@ class BandejaJuntasController extends Controller
             break;
             case (empty($consultar_f_desde) and empty($consultar_f_hasta) and !empty($consultar_g_dias)):
                     
-                if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
+                if($newId_rol=='5' || $newId_rol=='9' || $newId_rol=='10'){ // si el rol es analista o profesional o comité
                     $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Nombre_proceso_actual', '=', 'Juntas'],
