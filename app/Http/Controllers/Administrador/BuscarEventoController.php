@@ -711,6 +711,7 @@ class BuscarEventoController extends Controller
                         ];
                     }                                   
                     // Resultado DTO Origen
+                    
                     $posicionOrigenDto = [];
                     foreach ($resultArrayEventos as $element) {
                         if ($element['Id_proceso'] == $proceso_origen && $element['Id_Servicio'] == $servicio_OrigenDto && $element['ID_evento'] == $consultar_id_evento) {
@@ -721,7 +722,8 @@ class BuscarEventoController extends Controller
                                 'Id_Asignacion' => $element['Id_Asignacion'],
                             ];
                         }
-                    }                                    
+                    }   
+                                                    
                     if (count($posicionOrigenDto) > 0) {
                         $ID_eventoDto = $posicionOrigenDto[0]['ID_evento'];
                         $Id_procesoDto = $posicionOrigenDto[0]['Id_proceso'];
@@ -746,9 +748,18 @@ class BuscarEventoController extends Controller
                                     $elemento['OrigenDtoResultado'] = $OrigenDtoResultado;
                                 }
                             }
+                           
+                            // Filtrar los elementos que contienen [OrigenDtoResultado]
+                            $posicionOrigenDtoFiltrado = array_filter($posicionOrigenDto, function ($item) {
+                                return isset($item['OrigenDtoResultado']);
+                            });
+                            
+                            // Reorganizar los índices del array filtrado
+                            $posicionOrigenDtoFiltrado = array_values($posicionOrigenDtoFiltrado);                                                                                   
+                            
                             //Combinar el array object con el array 
                             foreach ($array_informacion_eventos as $key2 => $item2) {
-                                foreach ($posicionOrigenDto as $item1) {
+                                foreach ($posicionOrigenDtoFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
                                     if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                         // Agregar el elemento a la posición correspondiente
@@ -758,7 +769,7 @@ class BuscarEventoController extends Controller
                                 }
                             }                            
                         } 
-                    }                       
+                    }                                           
                     // // Resultado Adicion DX Origen                    
                     $posicionOrigenAdx = [];
                     foreach ($resultArrayEventos as $element) {
@@ -771,7 +782,7 @@ class BuscarEventoController extends Controller
                             ];
                         }
                     }    
-                                
+                               
                     if (count($posicionOrigenAdx) > 0) {
                         $ID_eventoAdx = $posicionOrigenAdx[0]['ID_evento'];
                         $Id_procesoAdx = $posicionOrigenAdx[0]['Id_proceso'];
@@ -809,7 +820,7 @@ class BuscarEventoController extends Controller
                                 
                             }   
                             
-                            // Filtrar los elementos que contienen [OrigenDtoResultado]
+                            // Filtrar los elementos que contienen [OrigenCieResultado]
                             $posicionOrigenAdxFiltrado = array_filter($posicionOrigenAdx, function ($item) {
                                 return isset($item['OrigenCieResultado']);
                             });
@@ -830,7 +841,9 @@ class BuscarEventoController extends Controller
                             }                            
                         }
                         
-                    }                      
+                    }  
+                       
+                    // Resultado Pronunciamiento Origen
                     $posicionOrigenPron = [];
                     foreach ($resultArrayEventos as $element) {
                         if ($element['Id_proceso'] == $proceso_origen && $element['Id_Servicio'] == $servicio_OrigenPron && $element['ID_evento'] == $consultar_id_evento) {
@@ -864,9 +877,15 @@ class BuscarEventoController extends Controller
                                     $elemento['DecisionProResultado'] = $DecisionProResultado;
                                 }
                             }
+                            // Filtrar los elementos que contienen [DecisionProResultado]
+                            $posicionOrigenPronFiltrado = array_filter($posicionOrigenPron, function ($item) {
+                                return isset($item['DecisionProResultado']);
+                            }); 
+                            // Reorganizar los índices del array filtrado
+                            $posicionOrigenPronFiltrado = array_values($posicionOrigenPronFiltrado);                                                                            
                             //Combinar el array object con el array 
                             foreach ($array_informacion_eventos as $key2 => $item2) {
-                                foreach ($posicionOrigenPron as $item1) {
+                                foreach ($posicionOrigenPronFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
                                     if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                         // Agregar el elemento a la posición correspondiente
@@ -912,9 +931,15 @@ class BuscarEventoController extends Controller
                                     $elemento['ProcentajePClCaliResultado'] = $ProcentajePClCaliResultado;
                                 }
                             }
+                            // Filtrar los elementos que contienen [ProcentajePClCaliResultado]
+                            $posicionPclCaliFiltrado = array_filter($posicionPclCali, function ($item) {
+                                return isset($item['ProcentajePClCaliResultado']);
+                            }); 
+                            // Reorganizar los índices del array filtrado
+                            $posicionPclCaliFiltrado = array_values($posicionPclCaliFiltrado);
                             //Combinar el array object con el array 
                             foreach ($array_informacion_eventos as $key2 => $item2) {
-                                foreach ($posicionPclCali as $item1) {
+                                foreach ($posicionPclCaliFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
                                     if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                         // Agregar el elemento a la posición correspondiente
@@ -962,7 +987,7 @@ class BuscarEventoController extends Controller
                                     $item['ProcentajePClRecaResultado'] = $resultado->Porcentaje_pcl;
                                 } 
                             }                          
-                            // Filtrar los elementos que contienen [OrigenDtoResultado]
+                            // Filtrar los elementos que contienen [ProcentajePClRecaResultado]
                             $posicionPclRecaFiltrado = array_filter($posicionPclReca, function ($item) {
                                 return isset($item['ProcentajePClRecaResultado']);
                             }); 
@@ -1016,9 +1041,15 @@ class BuscarEventoController extends Controller
                                     $elemento['ProcentajePClReviResultado'] = $ProcentajePClReviResultado;
                                 }
                             }
+                            // Filtrar los elementos que contienen [ProcentajePClReviResultado]
+                            $posicionPclReviFiltrado = array_filter($posicionPclRevi, function ($item) {
+                                return isset($item['ProcentajePClReviResultado']);
+                            }); 
+                            // Reorganizar los índices del array filtrado
+                            $posicionPclReviFiltrado = array_values($posicionPclReviFiltrado);
                             //Combinar el array object con el array 
                             foreach ($array_informacion_eventos as $key2 => $item2) {
-                                foreach ($posicionPclRevi as $item1) {
+                                foreach ($posicionPclReviFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
                                     if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                         // Agregar el elemento a la posición correspondiente
@@ -1063,9 +1094,15 @@ class BuscarEventoController extends Controller
                                     $elemento['DecisionProResultado'] = $DecisionProResultado;
                                 }
                             }
+                            // Filtrar los elementos que contienen [DecisionProResultado]
+                            $posicionPclPronFiltrado = array_filter($posicionPclPron, function ($item) {
+                                return isset($item['DecisionProResultado']);
+                            }); 
+                            // Reorganizar los índices del array filtrado
+                            $posicionPclPronFiltrado = array_values($posicionPclPronFiltrado);
                             //Combinar el array object con el array 
                             foreach ($array_informacion_eventos as $key2 => $item2) {
-                                foreach ($posicionPclPron as $item1) {
+                                foreach ($posicionPclPronFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
                                     if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                         // Agregar el elemento a la posición correspondiente
@@ -1134,9 +1171,15 @@ class BuscarEventoController extends Controller
                                         $elemento['ContJuntasOriResultado'] = 'JNCI_'.$OrigenDxJNCIemitido;
                                     }
                                 }
+                                // Filtrar los elementos que contienen [ContJuntasOriResultado]
+                                $posicionJuntasConOriFiltrado = array_filter($posicionJuntasConOri, function ($item) {
+                                    return isset($item['ContJuntasOriResultado']);
+                                }); 
+                                // Reorganizar los índices del array filtrado
+                                $posicionJuntasConOriFiltrado = array_values($posicionJuntasConOriFiltrado);                                                        
                                 //Combinar el array object con el array posicionJuntasConOri
                                 foreach ($array_informacion_eventos as $key2 => $item2) {
-                                    foreach ($posicionJuntasConOri as $item1) {
+                                    foreach ($posicionJuntasConOriFiltrado as $item1) {
                                         // Verificar si hay coincidencia en Id_Asignacion
                                         if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                             // Agregar el elemento a la posición correspondiente
@@ -1153,9 +1196,15 @@ class BuscarEventoController extends Controller
                                         $elemento['ContJuntasOriResultado'] = 'JRCI_'.$OrigenDxJRCIreposicion.'_'.$Decision_dictamen_repo_jrci;
                                     }
                                 }
-                                //Combinar el array object con el array posicionJuntasConOri
+                                // Filtrar los elementos que contienen [ContJuntasOriResultado]
+                                $posicionJuntasConOriFiltrado = array_filter($posicionJuntasConOri, function ($item) {
+                                    return isset($item['ContJuntasOriResultado']);
+                                }); 
+                                // Reorganizar los índices del array filtrado
+                                $posicionJuntasConOriFiltrado = array_values($posicionJuntasConOriFiltrado);                                                        
+                                //Combinar el array object con el array posicionJuntasConOri                                
                                 foreach ($array_informacion_eventos as $key2 => $item2) {
-                                    foreach ($posicionJuntasConOri as $item1) {
+                                    foreach ($posicionJuntasConOriFiltrado as $item1) {
                                         // Verificar si hay coincidencia en Id_Asignacion
                                         if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                             // Agregar el elemento a la posición correspondiente
@@ -1172,9 +1221,15 @@ class BuscarEventoController extends Controller
                                         $elemento['ContJuntasOriResultado'] = 'JRCI_'.$OrigenDxJRCIemitido.'_'.$Decision_dictamen_jrci;
                                     }
                                 }
-                                //Combinar el array object con el array posicionJuntasConOri
+                                // Filtrar los elementos que contienen [ContJuntasOriResultado]
+                                $posicionJuntasConOriFiltrado = array_filter($posicionJuntasConOri, function ($item) {
+                                    return isset($item['ContJuntasOriResultado']);
+                                }); 
+                                // Reorganizar los índices del array filtrado
+                                $posicionJuntasConOriFiltrado = array_values($posicionJuntasConOriFiltrado);                                                        
+                                //Combinar el array object con el array posicionJuntasConOri                                 
                                 foreach ($array_informacion_eventos as $key2 => $item2) {
-                                    foreach ($posicionJuntasConOri as $item1) {
+                                    foreach ($posicionJuntasConOriFiltrado as $item1) {
                                         // Verificar si hay coincidencia en Id_Asignacion
                                         if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                             // Agregar el elemento a la posición correspondiente
@@ -1239,9 +1294,15 @@ class BuscarEventoController extends Controller
                                         $elemento['ContJuntasPclResultado'] = 'JNCI_'.$porcentaje_pcl_jnci_emitido;
                                     }
                                 }
+                                // Filtrar los elementos que contienen [ContJuntasPclResultado]
+                                $posicionJuntasConPclFiltrado = array_filter($posicionJuntasConPcl, function ($item) {
+                                    return isset($item['ContJuntasPclResultado']);
+                                }); 
+                                // Reorganizar los índices del array filtrado
+                                $posicionJuntasConPclFiltrado = array_values($posicionJuntasConPclFiltrado);    
                                 //Combinar el array object con el array posicionJuntasConPcl
                                 foreach ($array_informacion_eventos as $key2 => $item2) {
-                                    foreach ($posicionJuntasConPcl as $item1) {
+                                    foreach ($posicionJuntasConPclFiltrado as $item1) {
                                         // Verificar si hay coincidencia en Id_Asignacion
                                         if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                             // Agregar el elemento a la posición correspondiente
@@ -1258,9 +1319,15 @@ class BuscarEventoController extends Controller
                                         $elemento['ContJuntasPclResultado'] = 'JRCI_'.$porcentaje_pcl_reposicion_jrci.'_'.$Decision_dictamen_repo_jrci;
                                     }
                                 }
+                                // Filtrar los elementos que contienen [ContJuntasPclResultado]
+                                $posicionJuntasConPclFiltrado = array_filter($posicionJuntasConPcl, function ($item) {
+                                    return isset($item['ContJuntasPclResultado']);
+                                }); 
+                                // Reorganizar los índices del array filtrado
+                                $posicionJuntasConPclFiltrado = array_values($posicionJuntasConPclFiltrado);    
                                 //Combinar el array object con el array posicionJuntasConPcl
                                 foreach ($array_informacion_eventos as $key2 => $item2) {
-                                    foreach ($posicionJuntasConPcl as $item1) {
+                                    foreach ($posicionJuntasConPclFiltrado as $item1) {
                                         // Verificar si hay coincidencia en Id_Asignacion
                                         if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                             // Agregar el elemento a la posición correspondiente
@@ -1277,9 +1344,15 @@ class BuscarEventoController extends Controller
                                         $elemento['ContJuntasPclResultado'] = 'JRCI_'.$porcentaje_pcl_jrci_emitido.'_'.$Decision_dictamen_jrci;
                                     }
                                 }
+                                // Filtrar los elementos que contienen [ContJuntasPclResultado]
+                                $posicionJuntasConPclFiltrado = array_filter($posicionJuntasConPcl, function ($item) {
+                                    return isset($item['ContJuntasPclResultado']);
+                                }); 
+                                // Reorganizar los índices del array filtrado
+                                $posicionJuntasConPclFiltrado = array_values($posicionJuntasConPclFiltrado);    
                                 //Combinar el array object con el array posicionJuntasConPcl
                                 foreach ($array_informacion_eventos as $key2 => $item2) {
-                                    foreach ($posicionJuntasConPcl as $item1) {
+                                    foreach ($posicionJuntasConPclFiltrado as $item1) {
                                         // Verificar si hay coincidencia en Id_Asignacion
                                         if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                             // Agregar el elemento a la posición correspondiente
@@ -1357,9 +1430,18 @@ class BuscarEventoController extends Controller
                                     $elemento['OrigenDtoResultado'] = $OrigenDtoResultado;
                                 }
                             }
+
+                            // Filtrar los elementos que contienen [OrigenDtoResultado]
+                            $posicionOrigenDtoFiltrado = array_filter($posicionOrigenDto, function ($item) {
+                                return isset($item['OrigenDtoResultado']);
+                            });
+                            
+                            // Reorganizar los índices del array filtrado
+                            $posicionOrigenDtoFiltrado = array_values($posicionOrigenDtoFiltrado);
+
                             //Combinar el array object con el array 
                             foreach ($array_informacion_eventos as $key2 => $item2) {
-                                foreach ($posicionOrigenDto as $item1) {
+                                foreach ($posicionOrigenDtoFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
                                     if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                         // Agregar el elemento a la posición correspondiente
@@ -1417,7 +1499,7 @@ class BuscarEventoController extends Controller
                                 }
                                 
                             }
-                            // Filtrar los elementos que contienen [OrigenDtoResultado]
+                            // Filtrar los elementos que contienen [OrigenCieResultado]
                             $posicionOrigenAdxFiltrado = array_filter($posicionOrigenAdx, function ($item) {
                                 return isset($item['OrigenCieResultado']);
                             });
@@ -1471,9 +1553,16 @@ class BuscarEventoController extends Controller
                                     $elemento['DecisionProResultado'] = $DecisionProResultado;
                                 }
                             }
+                            // Filtrar los elementos que contienen [DecisionProResultado]
+                            $posicionOrigenPronFiltrado = array_filter($posicionOrigenPron, function ($item) {
+                                return isset($item['DecisionProResultado']);
+                            }); 
+                            // Reorganizar los índices del array filtrado
+                            $posicionOrigenPronFiltrado = array_values($posicionOrigenPronFiltrado);                                                                            
+                                                        
                             //Combinar el array object con el array 
                             foreach ($array_informacion_eventos as $key2 => $item2) {
-                                foreach ($posicionOrigenPron as $item1) {
+                                foreach ($posicionOrigenPronFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
                                     if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                         // Agregar el elemento a la posición correspondiente
@@ -1519,9 +1608,15 @@ class BuscarEventoController extends Controller
                                     $elemento['ProcentajePClCaliResultado'] = $ProcentajePClCaliResultado;
                                 }
                             }
-                            //Combinar el array object con el array 
+                            // Filtrar los elementos que contienen [ProcentajePClCaliResultado]
+                            $posicionPclCaliFiltrado = array_filter($posicionPclCali, function ($item) {
+                                return isset($item['ProcentajePClCaliResultado']);
+                            }); 
+                            // Reorganizar los índices del array filtrado
+                            $posicionPclCaliFiltrado = array_values($posicionPclCaliFiltrado);
+                            //Combinar el array object con el array                             
                             foreach ($array_informacion_eventos as $key2 => $item2) {
-                                foreach ($posicionPclCali as $item1) {
+                                foreach ($posicionPclCaliFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
                                     if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                         // Agregar el elemento a la posición correspondiente
@@ -1569,7 +1664,7 @@ class BuscarEventoController extends Controller
                                     $item['ProcentajePClRecaResultado'] = $resultado->Porcentaje_pcl;
                                 } 
                             }                          
-                            // Filtrar los elementos que contienen [OrigenDtoResultado]
+                            // Filtrar los elementos que contienen [ProcentajePClRecaResultado]
                             $posicionPclRecaFiltrado = array_filter($posicionPclReca, function ($item) {
                                 return isset($item['ProcentajePClRecaResultado']);
                             }); 
@@ -1623,9 +1718,15 @@ class BuscarEventoController extends Controller
                                     $elemento['ProcentajePClReviResultado'] = $ProcentajePClReviResultado;
                                 }
                             }
-                            //Combinar el array object con el array 
+                            // Filtrar los elementos que contienen [ProcentajePClReviResultado]
+                            $posicionPclReviFiltrado = array_filter($posicionPclRevi, function ($item) {
+                                return isset($item['ProcentajePClReviResultado']);
+                            }); 
+                            // Reorganizar los índices del array filtrado
+                            $posicionPclReviFiltrado = array_values($posicionPclReviFiltrado);
+                            //Combinar el array object con el array                             
                             foreach ($array_informacion_eventos as $key2 => $item2) {
-                                foreach ($posicionPclRevi as $item1) {
+                                foreach ($posicionPclReviFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
                                     if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                         // Agregar el elemento a la posición correspondiente
@@ -1670,9 +1771,15 @@ class BuscarEventoController extends Controller
                                     $elemento['DecisionProResultado'] = $DecisionProResultado;
                                 }
                             }
+                            // Filtrar los elementos que contienen [DecisionProResultado]
+                            $posicionPclPronFiltrado = array_filter($posicionPclPron, function ($item) {
+                                return isset($item['DecisionProResultado']);
+                            }); 
+                            // Reorganizar los índices del array filtrado
+                            $posicionPclPronFiltrado = array_values($posicionPclPronFiltrado);                            
                             //Combinar el array object con el array 
                             foreach ($array_informacion_eventos as $key2 => $item2) {
-                                foreach ($posicionPclPron as $item1) {
+                                foreach ($posicionPclPronFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
                                     if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                         // Agregar el elemento a la posición correspondiente
@@ -1741,9 +1848,15 @@ class BuscarEventoController extends Controller
                                         $elemento['ContJuntasOriResultado'] = 'JNCI_'.$OrigenDxJNCIemitido;
                                     }
                                 }
+                                // Filtrar los elementos que contienen [ContJuntasOriResultado]
+                                $posicionJuntasConOriFiltrado = array_filter($posicionJuntasConOri, function ($item) {
+                                    return isset($item['ContJuntasOriResultado']);
+                                }); 
+                                // Reorganizar los índices del array filtrado
+                                $posicionJuntasConOriFiltrado = array_values($posicionJuntasConOriFiltrado);                                                        
                                 //Combinar el array object con el array posicionJuntasConOri
                                 foreach ($array_informacion_eventos as $key2 => $item2) {
-                                    foreach ($posicionJuntasConOri as $item1) {
+                                    foreach ($posicionJuntasConOriFiltrado as $item1) {
                                         // Verificar si hay coincidencia en Id_Asignacion
                                         if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                             // Agregar el elemento a la posición correspondiente
@@ -1760,9 +1873,15 @@ class BuscarEventoController extends Controller
                                         $elemento['ContJuntasOriResultado'] = 'JRCI_'.$OrigenDxJRCIreposicion.'_'.$Decision_dictamen_repo_jrci;
                                     }
                                 }
+                                // Filtrar los elementos que contienen [ContJuntasOriResultado]
+                                $posicionJuntasConOriFiltrado = array_filter($posicionJuntasConOri, function ($item) {
+                                    return isset($item['ContJuntasOriResultado']);
+                                }); 
+                                // Reorganizar los índices del array filtrado
+                                $posicionJuntasConOriFiltrado = array_values($posicionJuntasConOriFiltrado);                                                        
                                 //Combinar el array object con el array posicionJuntasConOri
                                 foreach ($array_informacion_eventos as $key2 => $item2) {
-                                    foreach ($posicionJuntasConOri as $item1) {
+                                    foreach ($posicionJuntasConOriFiltrado as $item1) {
                                         // Verificar si hay coincidencia en Id_Asignacion
                                         if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                             // Agregar el elemento a la posición correspondiente
@@ -1779,9 +1898,15 @@ class BuscarEventoController extends Controller
                                         $elemento['ContJuntasOriResultado'] = 'JRCI_'.$OrigenDxJRCIemitido.'_'.$Decision_dictamen_jrci;
                                     }
                                 }
+                                // Filtrar los elementos que contienen [ContJuntasOriResultado]
+                                $posicionJuntasConOriFiltrado = array_filter($posicionJuntasConOri, function ($item) {
+                                    return isset($item['ContJuntasOriResultado']);
+                                }); 
+                                // Reorganizar los índices del array filtrado
+                                $posicionJuntasConOriFiltrado = array_values($posicionJuntasConOriFiltrado);                                                        
                                 //Combinar el array object con el array posicionJuntasConOri
                                 foreach ($array_informacion_eventos as $key2 => $item2) {
-                                    foreach ($posicionJuntasConOri as $item1) {
+                                    foreach ($posicionJuntasConOriFiltrado as $item1) {
                                         // Verificar si hay coincidencia en Id_Asignacion
                                         if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                             // Agregar el elemento a la posición correspondiente
@@ -1846,9 +1971,15 @@ class BuscarEventoController extends Controller
                                         $elemento['ContJuntasPclResultado'] = 'JNCI_'.$porcentaje_pcl_jnci_emitido;
                                     }
                                 }
+                                // Filtrar los elementos que contienen [ContJuntasPclResultado]
+                                $posicionJuntasConPclFiltrado = array_filter($posicionJuntasConPcl, function ($item) {
+                                    return isset($item['ContJuntasPclResultado']);
+                                }); 
+                                // Reorganizar los índices del array filtrado
+                                $posicionJuntasConPclFiltrado = array_values($posicionJuntasConPclFiltrado);    
                                 //Combinar el array object con el array posicionJuntasConPcl
                                 foreach ($array_informacion_eventos as $key2 => $item2) {
-                                    foreach ($posicionJuntasConPcl as $item1) {
+                                    foreach ($posicionJuntasConPclFiltrado as $item1) {
                                         // Verificar si hay coincidencia en Id_Asignacion
                                         if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                             // Agregar el elemento a la posición correspondiente
@@ -1865,9 +1996,15 @@ class BuscarEventoController extends Controller
                                         $elemento['ContJuntasPclResultado'] = 'JRCI_'.$porcentaje_pcl_reposicion_jrci.'_'.$Decision_dictamen_repo_jrci;
                                     }
                                 }
+                                // Filtrar los elementos que contienen [ContJuntasPclResultado]
+                                $posicionJuntasConPclFiltrado = array_filter($posicionJuntasConPcl, function ($item) {
+                                    return isset($item['ContJuntasPclResultado']);
+                                }); 
+                                // Reorganizar los índices del array filtrado
+                                $posicionJuntasConPclFiltrado = array_values($posicionJuntasConPclFiltrado);    
                                 //Combinar el array object con el array posicionJuntasConPcl
                                 foreach ($array_informacion_eventos as $key2 => $item2) {
-                                    foreach ($posicionJuntasConPcl as $item1) {
+                                    foreach ($posicionJuntasConPclFiltrado as $item1) {
                                         // Verificar si hay coincidencia en Id_Asignacion
                                         if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                             // Agregar el elemento a la posición correspondiente
@@ -1884,9 +2021,15 @@ class BuscarEventoController extends Controller
                                         $elemento['ContJuntasPclResultado'] = 'JRCI_'.$porcentaje_pcl_jrci_emitido.'_'.$Decision_dictamen_jrci;
                                     }
                                 }
+                                // Filtrar los elementos que contienen [ContJuntasPclResultado]
+                                $posicionJuntasConPclFiltrado = array_filter($posicionJuntasConPcl, function ($item) {
+                                    return isset($item['ContJuntasPclResultado']);
+                                }); 
+                                // Reorganizar los índices del array filtrado
+                                $posicionJuntasConPclFiltrado = array_values($posicionJuntasConPclFiltrado);    
                                 //Combinar el array object con el array posicionJuntasConPcl
                                 foreach ($array_informacion_eventos as $key2 => $item2) {
-                                    foreach ($posicionJuntasConPcl as $item1) {
+                                    foreach ($posicionJuntasConPclFiltrado as $item1) {
                                         // Verificar si hay coincidencia en Id_Asignacion
                                         if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                             // Agregar el elemento a la posición correspondiente
