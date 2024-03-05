@@ -842,7 +842,8 @@
                 <!-- Comite Interdisciplinario -->                    
             <div class="card-info d-none" id="div_comite_interdisciplinario">
                 <div class="card-header text-center" style="border: 1.5px solid black;">
-                    <h5>Comité Interdiciplinario</h5>
+                    <h5>Comité Interdisciplinario</h5>
+                    <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
                 </div>
                 <form id="form_comite_interdisciplinario" action="POST">                            
                     <div class="card-body">

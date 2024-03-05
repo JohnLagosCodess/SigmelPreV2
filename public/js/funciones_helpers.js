@@ -532,6 +532,16 @@ $(document).ready(function () {
         var inputId = this.id;
         Maximo2Decimales(inputId);
     });
+
+    /* Funcionalidad para habilitar el formulario de visado para el rol de Comité (Id del rol: 10) */
+    var id_rol = $("#id_rol").val();
+    if (id_rol == 10) {
+        $("#visar").prop('disabled', false);
+        $("#GuardarComiteInter").prop('disabled', false);
+    } else {
+        $("#visar").prop('disabled', true);
+        $("#GuardarComiteInter").prop('disabled', true);
+    }
     
 });
 

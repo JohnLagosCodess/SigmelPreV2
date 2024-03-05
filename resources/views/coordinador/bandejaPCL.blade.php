@@ -5,6 +5,11 @@
         <div class='col-sm-6'>
             <?php 
                $dato_rol=$captura_id_rol = session('id_cambio_rol');
+               /* 
+                    Id rol #5 pertenece al Profesional
+                    Id rol #9 pertenece al Analista
+                    Id rol #10 pertenece al Comité
+                */
             ?>
         </div>
     </div>
@@ -130,7 +135,7 @@
                             </table>
                         </div>
                     </div>
-                    @if ($dato_rol<>'5' && $dato_rol<>'9')
+                    @if ($dato_rol<>'5' && $dato_rol<>'9' && $dato_rol<>'10')
                         <div class="card-body" id="contenedor_selectores">
                             <div class="row">
                                 <div class="col-12">
@@ -172,7 +177,7 @@
                             asociada. Debe configurar una.
                         </div>
                         <div class="grupo_botones" style="float: left;">
-                            @if ($dato_rol<>'5' && $dato_rol<>'9')
+                            @if ($dato_rol<>'5' && $dato_rol<>'9' && $dato_rol<>'10')
                                 <input type="submit" id="btn_guardar" class="btn btn-info" value="Actualizar">
                                 <input type="button" id="btn_bandeja" class="btn btn-info d-none" value="Retornar Bandeja"> 
                             @endif
