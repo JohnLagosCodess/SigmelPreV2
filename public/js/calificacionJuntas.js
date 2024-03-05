@@ -64,6 +64,12 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    $(".profesional").select2({
+        width: '100%',
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
     // llenado de selectores
     let token = $('input[name=_token]').val();
 
@@ -191,6 +197,32 @@ $(document).ready(function(){
             for (let i = 0; i < juntapago.length; i++) {
                 if (data[juntapago[i]]['Id_Parametro'] != IdJuntaPagos) {  
                     $('#pago_junta').append('<option value="'+data[juntapago[i]]["Id_Parametro"]+'">'+data[juntapago[i]]["Nombre_parametro"]+'</option>');
+                }
+            }
+        }
+    });
+
+    var Id_proceso_actual = $('#Id_proceso').val();
+
+    //Listado de profesional    
+
+    let datos_lista_profesional={
+        '_token':token,
+        'parametro':"lista_profesional_proceso",
+        'id_proceso' : Id_proceso_actual,
+    }
+
+    $.ajax({
+        type:'POST',
+        url:'/selectoresJuntas',
+        data: datos_lista_profesional,
+        success:function (data) {
+            // console.log(data)
+            let id_profesional= $('select[name=profesional]').val();
+            let profecionalpcl = Object.keys(data);
+            for (let i = 0; i < profecionalpcl.length; i++) {
+                if (data[profecionalpcl[i]]['id'] != id_profesional) {
+                    $('#profesional').append('<option value="'+data[profecionalpcl[i]]['id']+'">'+data[profecionalpcl[i]]['name']+'</option>')                    
                 }
             }
         }
@@ -353,6 +385,7 @@ $(document).ready(function(){
         var accion = $('#accion').val();
         var fecha_alerta = $('#fecha_alerta').val();
         var enviar = $('#enviar').val();
+        var profesional = $('#profesional').val();
         var descripcion_accion = $('#descripcion_accion').val();
         var banderaguardar =$('#bandera_accion_guardar_actualizar').val();
 
@@ -368,6 +401,7 @@ $(document).ready(function(){
             'accion':accion,
             'fecha_alerta':fecha_alerta,
             'enviar':enviar,
+            'profesional':profesional,
             'descripcion_accion':descripcion_accion,
             'bandera_accion_guardar_actualizar':banderaguardar,
         }

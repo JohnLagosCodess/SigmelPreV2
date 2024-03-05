@@ -179,7 +179,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fecha_asignacion_calificacion">Fecha de asignación para calificación</label>
-                                                <input type="datetime-local" class="form-control" name="fecha_asignacion_calificacion" id="fecha_asignacion_calificacion" value="{{$array_datos_calificacionPcl[0]->Fecha_asignacion_calif}}" disabled>
+                                                <input type="text" class="form-control" name="fecha_asignacion_calificacion" id="fecha_asignacion_calificacion" value="{{$array_datos_calificacionPcl[0]->Fecha_asignacion_calif}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -333,6 +333,18 @@
                                                     <label for="enviar">Enviar a <span style="color: red;">(*)</span></label>
                                                     <select class="custom-select" name="enviar" id="enviar" style="color: red;">
                                                         <option value="NO ESTA DEFINIDO">NO ESTA DEFINIDO</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="profesional" class="col-form label">Profesional</label>
+                                                    <select class="profesional custom-select" name="profesional" id="profesional">
+                                                        @if (!empty($array_datos_calificacionPcl[0]->Id_profesional))
+                                                            <option value="{{$array_datos_calificacionPcl[0]->Id_profesional}}" selected>{{$array_datos_calificacionPcl[0]->Nombre_profesional}}</option>                                                        
+                                                        @else
+                                                            <option value="">Seleccione una opción</option>                                                        
+                                                        @endif
                                                     </select>
                                                 </div>
                                             </div>

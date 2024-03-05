@@ -707,7 +707,15 @@
                                                     <input type="date" class="fecha_alerta form-control" name="fecha_alerta" id="fecha_alerta" min="{{date("Y-m-d")}}">
                                                 </div>
                                             </div>                                                                                      
-                                        </div>    
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <label for="profesional" class="col-form label">Profesional</label>
+                                                    <select class="profesional custom-select" name="profesional" id="profesional" disabled></select>
+                                                </div>
+                                            </div> 
+                                        </div>  
                                         <div class="row">
                                             <div class="col-sm">
                                                 <label for="descripcion_asignacion" class="col-form label">Descripción</label>                                            

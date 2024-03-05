@@ -156,6 +156,14 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-12 columna_decripcion_bandeja">
+                                            <div class="form-group">
+                                                <label for="descripcion_bandeja" class="col-form-label">Descripción</label>
+                                                <textarea class="form-control" name="descripcion_bandeja" id="descripcion_bandeja" cols="30" rows="2" style="resize: none;"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

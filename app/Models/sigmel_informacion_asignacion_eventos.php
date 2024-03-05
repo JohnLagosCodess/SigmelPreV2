@@ -32,6 +32,7 @@ class sigmel_informacion_asignacion_eventos extends Model
         'Consecutivo_dictamen',
         'Id_profesional',
         'Nombre_profesional',
+        'Descripcion_bandeja',
         'F_calificacion',
         'F_ajuste_calificacion',
         'Detener_tiempo_gestion',

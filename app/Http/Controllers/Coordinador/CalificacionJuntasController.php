@@ -278,6 +278,17 @@ class CalificacionJuntasController extends Controller
             return response()->json($informacion_solicitantes);
         }
 
+        // listado de profesionales segun proceso
+        if ($parametro == 'lista_profesional_proceso') {
+            $id_proceso_asignacion = $request->id_proceso;
+            $lista_profesional_proceso = DB::table('users')->select('id', 'name')
+            ->where('estado', 'Activo')
+            ->whereRaw("FIND_IN_SET($id_proceso_asignacion, id_procesos_usuario) > 0")->get();
+
+            $info_lista_profesional_proceso = json_decode(json_encode($lista_profesional_proceso, true));
+            return response()->json($info_lista_profesional_proceso);
+        }
+
         if($parametro = "listado_accion"){
             /* Iniciamos trayendo las acciones a ejecutar configuradas en la tabla de parametrizaciones
             dependiendo del id del cliente, id del proceso, id del servicio, estado activo */
@@ -459,10 +470,29 @@ class CalificacionJuntasController extends Controller
                 }
             };
 
+            //Captura de datos para el id y nombre del profesional
+
+            $id_profesional = $request->profesional;
+
+            if (!empty($id_profesional)) {
+                $nombre_profesional = DB::table('users')->select('id', 'name')
+                ->where('id',$id_profesional)->get();   
+                
+                if (count($nombre_profesional) > 0) {
+                    $asignacion_profesional = $nombre_profesional[0]->name;                    
+                }
+                
+            } else {
+                $id_profesional = null;
+                $asignacion_profesional = null;                    
+            }
+
             $datos_info_actualizarAsignacionEvento= [ 
                 'Id_accion' => $request->accion,
                 'Id_Estado_evento' => $Id_Estado_evento,             
-                'F_alerta' => $request->fecha_alerta,                
+                'F_alerta' => $request->fecha_alerta,   
+                'Id_profesional' => $id_profesional,
+                'Nombre_profesional' => $asignacion_profesional,             
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
@@ -561,10 +591,29 @@ class CalificacionJuntasController extends Controller
                 }
             };
 
+            //Captura de datos para el id y nombre del profesional
+
+            $id_profesional = $request->profesional;
+
+            if (!empty($id_profesional)) {
+                $nombre_profesional = DB::table('users')->select('id', 'name')
+                ->where('id',$id_profesional)->get();   
+                
+                if (count($nombre_profesional) > 0) {
+                    $asignacion_profesional = $nombre_profesional[0]->name;                    
+                }
+                
+            } else {
+                $id_profesional = null;
+                $asignacion_profesional = null;                    
+            }
+
             $datos_info_actualizarAsignacionEvento= [      
                 'Id_accion' => $request->accion,
                 'Id_Estado_evento' => $Id_Estado_evento,        
-                'F_alerta' => $request->fecha_alerta,                
+                'F_alerta' => $request->fecha_alerta, 
+                'Id_profesional' => $id_profesional,
+                'Nombre_profesional' => $asignacion_profesional,                
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,

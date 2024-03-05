@@ -279,6 +279,18 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="profesional" class="col-form label">Profesional</label>
+                                                    <select class="profesional custom-select" name="profesional" id="profesional">
+                                                        @if (!empty($array_datos_calificacionJuntas[0]->Id_profesional))
+                                                            <option value="{{$array_datos_calificacionJuntas[0]->Id_profesional}}" selected>{{$array_datos_calificacionJuntas[0]->Nombre_profesional}}</option>                                                        
+                                                        @else
+                                                            <option value="">Seleccione una opción</option>                                                        
+                                                        @endif
+                                                    </select>
+                                                </div>
+                                            </div>
                                             <div class="col-12">
                                                 <div class="form-group">
                                                     <label for="descripcion_accion">Descripción acción</label>

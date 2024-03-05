@@ -996,6 +996,7 @@ class CoordinadorController extends Controller
         $Id_Servicio_redireccionar = $request->json['redireccionar'];
         $Id_accion = $request->json['accion'];
         $Id_profesional = $request->json['profesional'];
+        $Descripcion_bandeja = $request->json['descripcion_bandeja'];
 
         // Paso N°1: Extraemos el id estado de la tabla de parametrizaciones dependiendo del
         // id proceso, id servicio, id accion. Este id irá como estado  en el evento
@@ -1081,6 +1082,7 @@ class CoordinadorController extends Controller
                         'F_asignacion_calificacion' => $F_asignacion_calificacion,
                         'Id_profesional' =>  $Id_profesional,
                         'Nombre_profesional' => $nombre_profesional,
+                        'Descripcion_bandeja' => $Descripcion_bandeja,
                         'Nombre_usuario' => $usuario,
                         'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                         'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion
@@ -1185,6 +1187,7 @@ class CoordinadorController extends Controller
                         'F_asignacion_calificacion' => $F_asignacion_calificacion,
                         'Id_profesional' =>  $Id_profesional,
                         'Nombre_profesional' => $nombre_profesional,
+                        'Descripcion_bandeja' => $Descripcion_bandeja,
                         'Nombre_usuario' => $usuario,
                         'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                         'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion

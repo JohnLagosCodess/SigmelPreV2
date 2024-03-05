@@ -21,6 +21,12 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    $(".profesional").select2({
+        width: '100%',
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
     $(".causal_devolucion_comite").select2({      
         width: '100%',
         placeholder:"Seleccione una opción",
@@ -220,9 +226,34 @@ $(document).ready(function(){
         });
     });
 
-    //Listado de causal de devolucion comite calificacion PCL    
     var Id_asignacion_pro = $('#newId_asignacion').val();
     var Id_proceso_actual = $('#Id_proceso').val();
+    
+    //Listado de profesional    
+    let datos_lista_profesional={
+        '_token':token,
+        'parametro':"lista_profesional_proceso",
+        'id_proceso' : Id_proceso_actual,
+    }
+
+    $.ajax({
+        type:'POST',
+        url:'/cargarselectores',
+        data: datos_lista_profesional,
+        success:function (data) {
+            // console.log(data)
+            let id_profesional= $('select[name=profesional]').val();
+            let profecionalpcl = Object.keys(data);
+            for (let i = 0; i < profecionalpcl.length; i++) {
+                if (data[profecionalpcl[i]]['id'] != id_profesional) {
+                    $('#profesional').append('<option value="'+data[profecionalpcl[i]]['id']+'">'+data[profecionalpcl[i]]['name']+'</option>')                    
+                }
+            }
+        }
+    });
+
+    //Listado de causal de devolucion comite calificacion PCL    
+    
     let datos_lista_causal_devolucion_comite = {
         '_token': token,
         'parametro':"lista_causal_devo_comite",
@@ -409,6 +440,7 @@ $(document).ready(function(){
         var accion = $('#accion').val();
         var fecha_alerta = $('#fecha_alerta').val();
         var enviar = $('#enviar').val();
+        var profesional = $('#profesional').val();
         var causal_devolucion_comite = $('#causal_devolucion_comite').val();
         var descripcion_accion = $('#descripcion_accion').val();
         var banderaguardar =$('#bandera_accion_guardar_actualizar').val();
@@ -426,6 +458,7 @@ $(document).ready(function(){
             'accion':accion,
             'fecha_alerta':fecha_alerta,
             'enviar':enviar,
+            'profesional':profesional,
             'causal_devolucion_comite':causal_devolucion_comite,
             'descripcion_accion':descripcion_accion,
             'bandera_accion_guardar_actualizar':banderaguardar,

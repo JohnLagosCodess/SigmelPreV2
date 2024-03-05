@@ -67,6 +67,7 @@ $(document).ready(function () {
                 $('#accion').empty();
                 $('#profesional').empty();
                 $(".columna_selector_profesional").slideUp('slow');
+                $(".columna_decripcion_bandeja").slideUp('slow');
                 $('#redireccionar').empty();
                 $('#redireccionar').append('<option></option>');
                 let servicioorigen = Object.keys(data);
@@ -78,6 +79,7 @@ $(document).ready(function () {
     });
 
     $(".columna_selector_profesional").slideUp('slow');
+    $(".columna_decripcion_bandeja").slideUp('slow');
     // listado de acciones a ejecutar dependiendo del proceso y servicio (es decir lo de parametrizaciones)
     $("#redireccionar").change(function(){
         let datos_listado_accion = {
@@ -137,6 +139,7 @@ $(document).ready(function () {
                             $(".no_ejecutar_parametrica_bandeja_trabajo").removeClass('d-none');
                             $("#btn_guardar").addClass('d-none');
                             $(".columna_selector_profesional").slideUp('slow');
+                            $(".columna_decripcion_bandeja").slideUp('slow');
                         } else {
                             $(".no_ejecutar_parametrica_bandeja_trabajo").addClass('d-none');
                             $("#btn_guardar").removeClass('d-none');
@@ -144,6 +147,7 @@ $(document).ready(function () {
 
                             // Cargue Listado de seleccion profesional bandeja Origen
                             $(".columna_selector_profesional").slideDown('slow');
+                            $(".columna_decripcion_bandeja").slideDown('slow');
                             let datos_lista_profesional ={
                                 '_token':token,
                                 'parametro':"lista_profesional_origen"
@@ -585,6 +589,7 @@ $(document).ready(function () {
             var redireccionar = $('#redireccionar').val();
             var accion = $("#accion").val();
             var profesional = $('#profesional').val();
+            var descripcion_bandeja = $('#descripcion_bandeja').val();
 
             let token = $('input[name=_token]').val();
                         
@@ -593,6 +598,7 @@ $(document).ready(function () {
                 'redireccionar': redireccionar,
                 'accion': accion,
                 'profesional': profesional,
+                'descripcion_bandeja':descripcion_bandeja
             }
             
             var datos_enviar ={

@@ -2177,6 +2177,17 @@ class AdministradorController extends Controller
             return response()->json(($info_listado_servicios));
         }
 
+        // listado de profesionales segun proceso seleccionado
+        if ($parametro == 'lista_profesional_proceso') {
+            $id_proceso_asignacion = $request->id_proceso;
+            $lista_profesional_proceso = DB::table('users')->select('id', 'name')
+            ->where('estado', 'Activo')
+            ->whereRaw("FIND_IN_SET($id_proceso_asignacion, id_procesos_usuario) > 0")->get();
+
+            $info_lista_profesional_proceso = json_decode(json_encode($lista_profesional_proceso, true));
+            return response()->json($info_lista_profesional_proceso);
+        }
+
         /* LISTADO ACCION */
         if($parametro == 'listado_accion'){
 
@@ -3242,6 +3253,21 @@ class AdministradorController extends Controller
                 
             }
 
+            $id_profesional = $request->profesional;
+
+            if (!empty($id_profesional)) {
+                $nombre_profesional = DB::table('users')->select('id', 'name')
+                ->where('id',$id_profesional)->get();   
+                
+                if (count($nombre_profesional) > 0) {
+                    $asignacion_profesional = $nombre_profesional[0]->name;                    
+                }
+                
+            } else {
+                $id_profesional = null;
+                $asignacion_profesional = null;                    
+            }
+
             $datos_info_asignacion_evento =[
                 'ID_evento' => $request->id_evento,
                 'Id_proceso' => $request->proceso,
@@ -3254,7 +3280,10 @@ class AdministradorController extends Controller
                 'N_de_orden' => $N_orden_evento,
                 'Id_proceso_anterior' => $request->proceso,
                 'Id_servicio_anterior' => $request->servicio,
+                'F_asignacion_calificacion' => $date_con_hora,
                 'Consecutivo_dictamen' => $consecutivoDictamen,
+                'Id_profesional' => $id_profesional,
+                'Nombre_profesional' => $asignacion_profesional,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date
             ];

@@ -31,6 +31,7 @@ return new class extends Migration
             $table->text('Consecutivo_dictamen')->nullable();
             $table->integer('Id_profesional')->nullable();
             $table->text('Nombre_profesional')->nullable();
+            $table->text('Descripcion_bandeja')->nullable();            
             $table->date('F_calificacion')->nullable();           
             $table->date('F_ajuste_calificacion')->nullable();            
             $table->enum('Detener_tiempo_gestion', ['Si','No'])->nullable();

@@ -218,6 +218,12 @@ $(document).ready(function(){
         allowClear: false
     });
 
+    /* INICIALIZACIÓN DEL SELECT2 DE LISTADO PROFESIONAL */
+    $(".profesional").select2({
+        placeholder: "Seleccione una opción",
+        allowClear: false
+    });
+
     /* VALIDACIÓN CUANDO SE ESCRIBA EL NOMBRE DEL AFILIADO SIEMPRE SEA EN MAYUSCULA */
     $('#nombre_afiliado').keyup(function(){
         $('#nombre_afiliado').val($(this).val().toUpperCase());
@@ -942,7 +948,7 @@ $(document).ready(function(){
     });
     
 
-    // LISTADO DE SERVICIOS
+    // LISTADO DE SERVICIOS Y PROFESIONAL
     $('#proceso').change(function(){
         $('#servicio').prop('disabled', false);
         let id_proceso = $('#proceso').val();
@@ -963,6 +969,29 @@ $(document).ready(function(){
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
                     $('#servicio').append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
+                }
+            }
+        });
+
+        // LISTADO PROFESIONAL
+        $('#profesional').prop('disabled', false);
+        let datos_lista_profesional={
+            '_token':token,
+            'parametro':"lista_profesional_proceso",
+            'id_proceso' : id_proceso,
+        }
+
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_lista_profesional,
+            success:function (data) {
+                //console.log(data)
+                $('#profesional').empty();
+                $('#profesional').append('<option value="" selected>Seleccione</option>');
+                let profecionalpcl = Object.keys(data);
+                for (let i = 0; i < profecionalpcl.length; i++) {
+                    $('#profesional').append('<option value="'+data[profecionalpcl[i]]['id']+'">'+data[profecionalpcl[i]]['name']+'</option>')
                 }
             }
         });
