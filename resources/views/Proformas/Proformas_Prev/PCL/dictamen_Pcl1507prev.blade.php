@@ -38,7 +38,7 @@
             max-width: 40%;
             height: auto;
             left: 530px;
-            max-height: 80px; 
+            max-height: 75px; 
         } 
         
         .sinborder{

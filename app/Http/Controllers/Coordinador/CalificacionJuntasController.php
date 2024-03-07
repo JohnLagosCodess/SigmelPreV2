@@ -963,8 +963,40 @@ class CalificacionJuntasController extends Controller
         return json_decode(json_encode($mensajes, true));
 
     }
-    //Captura de datos para insertar el comunicado Orige
+     // Editar fecha de algun registro de la tabla de listado documentos solicitados
+     public function EditarFecha_Recepcion_Doc_soli_jun(Request $request){
 
+        $Id_evento   = $request->Id_evento;
+        $Fechas_recepcion = $request->Fechas_recepcion;
+
+        if(isset($Fechas_recepcion)){
+            // Itera sobre las fechas de recepción
+            foreach ($Fechas_recepcion as $fecha) {
+                $id = $fecha['id'];
+                $nueva_fecha = $fecha['fecha'];
+    
+                // Actualiza las fechas de recepción para el evento específico
+                sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
+                    ->where('ID_evento', $Id_evento)
+                    ->where('Id_Documento_Solicitado', $id)
+                    ->update(['F_recepcion_documento' => $nueva_fecha]);
+            }   
+    
+            $mensajes = array(
+                "parametro" => 'filas_editadas',
+                "mensaje" => 'Fechas actualizadas satisfactoriamente.'
+            );
+            return json_decode(json_encode($mensajes, true));
+        }
+        // else {
+        //     $mensajes = array(
+        //         "parametro" => 'filas_NO_editadas',
+        //         "mensaje" => 'Debe seleccionar la Fecha de recepción de documentos.'
+        //     );  
+        // }
+
+    }
+    //Captura de datos para insertar el comunicado Orige
     public function captuarDestinatariosPrincipalJuntas(Request $request){
         if(!Auth::check()){
             return redirect('/');

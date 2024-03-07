@@ -994,6 +994,77 @@ $(document).ready(function(){
 
     });
 
+    // Actualizar fecha de recepcion de documentos solicitados
+    $('#actualizar_datos_tabla').click(function (e) {
+        e.preventDefault();            
+        var valoresInputsFecha = {};
+        $('input[id^="fecha_recepcion_"]').each(function() {
+            var id = $(this).attr('id').split('_').pop();
+            var valor = $(this).val();
+            if (valor !== "" && typeof valor !== "undefined") {
+                valoresInputsFecha[id] = valor;
+            }
+        });
+        // console.log(valoresInputsFecha);
+        // Convertir el objeto en un array de objetos
+        var Fechas_recepcion = Object.keys(valoresInputsFecha).map(function(key) {
+            return { id: key, fecha: valoresInputsFecha[key] };
+        });
+        // console.log(Fechas_recepcion);
+        let token = $("input[name='_token']").val();
+        let datos_fila_editar= {
+            '_token': token,
+            'Fechas_recepcion' : Fechas_recepcion,
+            'Id_evento': $('#newId_evento').val()
+        };    
+
+        $.ajax({
+            type:'POST',
+            url:'/EditarFechas_Recepcion_Doc_soli_jun',
+            data: datos_fila_editar,
+            success:function(response){
+                // console.log(response);
+                if (response.parametro == "filas_editadas") {
+                    $('#resultado_insercion').empty();
+                    $('#resultado_insercion').removeClass('d-none');
+                    $('#resultado_insercion').addClass('alert-success');
+                    $('#resultado_insercion').append('<strong>'+response.mensaje+'</strong>');
+                    
+                    setTimeout(() => {
+                        $('#resultado_insercion').addClass('d-none');
+                        $('#resultado_insercion').removeClass('alert-success');
+                        $('#resultado_insercion').empty();
+                    }, 3000);
+                    localStorage.setItem("#guardar_datos_tabla", true);
+                    
+                    setTimeout(() => {
+                        location.reload();
+                    }, 3000);
+                }
+                // else{
+                //     $('#resultado_insercion').empty();
+                //     $('#resultado_insercion').removeClass('d-none');
+                //     $('#resultado_insercion').addClass('alert-danger');
+                //     $('#resultado_insercion').append('<strong>'+response.mensaje+'</strong>');
+                    
+                //     setTimeout(() => {
+                //         $('#resultado_insercion').addClass('d-none');
+                //         $('#resultado_insercion').removeClass('alert-danger');
+                //         $('#resultado_insercion').empty();
+                //     }, 3000);
+                // }             
+            }
+        });
+
+    });
+
+    // Abrir modal de agregar seguimiento despues de guardar 
+    if (localStorage.getItem("#guardar_datos_tabla")) {
+        // Simular el clic en la etiqueta a después de recargar la página
+        localStorage.removeItem("#guardar_datos_tabla");
+        document.querySelector("#clicGuardado").click();
+    }
+    
     // Captura de datos segun la opcion seleccionada en destinatario principal
     // En la modal de generar comunicado
     $('input[type="radio"]').change(function(){
