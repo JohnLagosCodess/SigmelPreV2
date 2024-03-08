@@ -1193,7 +1193,7 @@
 
         {{-- MODAL PARA AGREGAR DOCUMENTOS INFORMACION PERICIAL --}}
         <?php $aperturaModal = 'Edicion'; ?>
-        @include('administrador.modalcarguedocumentos')
+        {{-- @include('administrador.modalcarguedocumentos') --}}
         <?php 
         /* echo'<pre>';
         print_r($arraylistado_documentos) ;
