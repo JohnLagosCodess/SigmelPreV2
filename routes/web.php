@@ -313,6 +313,8 @@ Route::post('/GuardarDocumentosSolicitados',[CalificacionPCLController::class, '
 Route::post('/CargarDocumentosSolicitados',[CalificacionPCLController::class, 'CargarDocumentosSolicitados']);
 // Acción: Eliminar Fila (Cambiar a estado inactivo)
 Route::post('/EliminarFila', [CalificacionPCLController::class, 'EliminarFila'])->name('EliminarFila');
+// Acción: Editar Fecha de recepcion documentos solicitados
+Route::post('/EditarFecha_Recepcion_Doc_soliPCl', [CalificacionPCLController::class, 'EditarFecha_Recepcion_Doc_soli']);
 // Acción: Insertar Agregar Seguimiento
 Route::post('/registrarCausalSeguimiento', [CalificacionPCLController::class, 'guardarAgregarSeguimiento']);
 // Acción: Capturar datos para el dataTable Historial de seguimientos
@@ -563,6 +565,8 @@ Route::post('/selectoresOrigenAtel', [CalificacionOrigenController::class, 'carg
 Route::post('/GuardarDocumentosSeguimiento', [CalificacionOrigenController::class, 'GuardarDocumentosSeguimiento']);
 // Acción: Eliminar Fila (Cambiar a estado inactivo)
 Route::post('/EliminarFilaSeguimiento', [CalificacionOrigenController::class, 'EliminarFilaSeguimiento'])->name('EliminarFilaSeguimiento');
+// Actualizar las fechas de recepcion de la tabla de solicitud de documentos
+Route::post('/EditarFechas_Recepcion_Doc_soli_ori', [CalificacionOrigenController::class, 'EditarFecha_Recepcion_Doc_soli_ori']);
 // Acción: Capturar de datos para el formulario generar comunicado destinatario final en Origen ATEL
 Route::post('/captuarDestinatarioOrigen', [CalificacionOrigenController::class, 'captuarDestinatariosPrincipalOrigen']);
 // Acción Insertar comunicado
@@ -652,6 +656,8 @@ Route::post('/registrarControversia', [CalificacionJuntasController::class, 'gua
 Route::post('/registrarPagoJuntas', [CalificacionJuntasController::class, 'guardarPagosJuntas']);
 // Acción: Guardar Datos Listado de documentos solicitados
 Route::post('/GuardarDocumentosSolicitadosJuntas',[CalificacionJuntasController::class, 'GuardarDocumentosSolicitadosJuntas']);
+// Actualizar las fechas de recepcion de solicitud de documentos
+Route::post('/EditarFechas_Recepcion_Doc_soli_jun',[CalificacionJuntasController::class, 'EditarFecha_Recepcion_Doc_soli_jun']);
 // Acción: Capturar de datos para el formulario generar comunicado destinatario final en Juntas
 Route::post('/captuarDestinatarioJuntas', [CalificacionJuntasController::class, 'captuarDestinatariosPrincipalJuntas']);
 // Acción Insertar comunicado

@@ -484,6 +484,7 @@
                                                 <td>{{$prueba->Nombre_solicitante}}</td>
                                                 <td>{{$prueba->F_recepcion_documento}}</td>
                                                 <td>
+                                                    <div style="text-align:center;"><a href="javascript:void(0);" id="btn_edicion_documento_solicitud_{{$prueba->Id_Documento_Solicitado}}" data-id_fila_editar="{{$prueba->Id_Documento_Solicitado}}" data-clase_fila="fila_visual_{{$prueba->Id_Documento_Solicitado}}" class="text-info"><i class="fas fa-pen" style="font-size:24px;"></i></a></div>
                                                     {{-- <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila_visual_{{$prueba->Id_Documento_Solicitado}}" data-id_fila_quitar="{{$prueba->Id_Documento_Solicitado}}" data-clase_fila="fila_visual_{{$prueba->Id_Documento_Solicitado}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div> --}}
                                                 </td>
                                             </tr>
@@ -492,6 +493,7 @@
                                     </table>
                                 </div><br>
                                 <x-adminlte-button class="mr-auto" id="guardar_datos_tabla" theme="info" label="Guardar"/>
+                                <x-adminlte-button class="mr-auto d-none" id="actualizar_datos_tabla" theme="info" label="Actualizar"/>
                                 <br><br>
                                 <div class="row">
                                     <div class="col-4 text-center">
@@ -1386,7 +1388,7 @@
             var contador = 0;
             $('#btn_agregar_fila').click(function(){
                 $('#guardar_datos_tabla').removeClass('d-none');
-
+                $('#actualizar_datos_tabla').addClass('d-none');                
                 contador = contador + 1;
                 var nueva_fila = [
                     '<?php echo date("Y-m-d");?> <input type="hidden" id="fecha_solicitud_fila_'+contador+'" name="fecha_solicitud" value="{{date("Y-m-d")}}" />',
@@ -1404,6 +1406,21 @@
 
                 // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionpcl.js)
                 funciones_elementos_fila(contador);
+            });
+
+            // Agregar controlador de eventos para agregar input de fecha al hacer clic en las etiquetas 'a'
+            $('#listado_docs_solicitados').on('click', 'a[id^="btn_edicion_documento_solicitud_"]', function() {
+                // Obtener el id de la etiqueta 'a'
+                var id_doc_solicitado = $(this).attr('id').split('_').pop();
+                // console.log(id_doc_solicitado);
+                // Crear el input tipo fecha
+                var inputFecha = '<input type="date" class="form-control fecha_recepcion" id="fecha_recepcion_'+id_doc_solicitado+'" max="{{date("Y-m-d")}}"/>';
+                
+                // Insertar el input tipo fecha en la columna Fecha recepción de la misma fila
+                $(this).closest('tr').find('td:eq(4)').html(inputFecha);
+
+                $('#guardar_datos_tabla').addClass('d-none');
+                $('#actualizar_datos_tabla').removeClass('d-none');                
             });
             
             $(document).on('click', '#btn_remover_fila', function(){
