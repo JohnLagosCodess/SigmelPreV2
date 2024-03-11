@@ -107,7 +107,7 @@
                 <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>           
             <?php endif ?>
         </div>
-        <div class="col-2" style="text-align: left !important; margin-left: -75px;">
+        <div class="col-3" style="text-align: left !important; margin-left: -55px;">
             <a href="javascript:void(0);" data-toggle="modal" data-target="#modalHistorialAcciones" class="btn btn-info" id="cargar_historial_acciones"><i class="fas fa-list"></i> Historial Acciones</a>
         </div>
     </div>
@@ -1254,7 +1254,7 @@
             
             $.ajax({
                 type:'POST',
-                url:'/consultaHistorialAcciones',
+                url:'/historialAccionesEventos',
                 data: datos_llenar_tabla_historial_acciones,
                 success:function(data) {
                     if(data.length == 0){
@@ -1347,7 +1347,7 @@
                 "columns":[
                     {"data":"F_accion"},
                     {"data":"Nombre_usuario"},
-                    {"data":"Accion_realizada"},
+                    {"data":"Accion"},
                     {"data":"Descripcion"}
                 ],
                 "language":{

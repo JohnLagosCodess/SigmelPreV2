@@ -69,6 +69,7 @@ use App\Models\sigmel_informacion_entidades;
 /* Parametrizaciones */
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
+use App\Models\sigmel_informacion_historial_accion_eventos;
 
 class AdministradorController extends Controller
 {
@@ -2748,6 +2749,7 @@ class AdministradorController extends Controller
         $time = time();
         $date = date("Y-m-d", $time);
         $date_con_hora = date("Y-m-d h:i:s", $time);
+        $date_time = date("Y-m-d H:i:s");
         $nombre_usuario = Auth::user()->name;
 
         $array_evento = sigmel_informacion_eventos::on('sigmel_gestiones')->select('ID_evento')->where('ID_evento', '=', $request->id_evento)->first();
@@ -3305,6 +3307,23 @@ class AdministradorController extends Controller
 
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_historial_acciones);
             sleep(2);
+
+            // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
+
+            $datos_historial_accion_eventos = [
+                'ID_evento' => $request->id_evento,
+                'Id_proceso' => $request->proceso,
+                'Id_servicio' => $request->servicio,
+                'Id_accion' => $request->accion,
+                'Descripcion' => $request->descripcion_asignacion,
+                'F_accion' => $date_time,
+                'Nombre_usuario' => $nombre_usuario,
+            ];
+
+            sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insert($datos_historial_accion_eventos);
+
+            sleep(2);
+
             return back()->with('mensaje_confirmacion_nuevo_evento', 'Evento creado correctamente');
         }
         
@@ -4649,6 +4668,19 @@ class AdministradorController extends Controller
         ->get();
 
         return response()->json($array_datos_historial_acciones);
+    }
+
+    // Historial de acciones de la parametrica de la tabla sigmel_informacion_historial_accion_eventos
+
+    public function historialAccionesEvento (Request $request){
+
+        $array_datos_historial_accion_eventos = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_historial_accion_eventos as sihae')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia', 'sia.Id_Accion', '=', 'sihae.Id_accion')
+        ->select('sihae.ID_evento', 'sihae.Id_proceso', 'sihae.Id_servicio', 'sihae.Id_accion', 
+        'sia.Accion', 'sihae.Descripcion', 'sihae.F_accion', 'sihae.Nombre_usuario')
+        ->where('sihae.ID_evento', $request->ID_evento)->orderBy('sihae.F_accion', 'asc')->get();
+       
+        return response()->json($array_datos_historial_accion_eventos);
     }
 
     /* TODO LO REFERENTE A BUSQUEDA DE EVENTO */

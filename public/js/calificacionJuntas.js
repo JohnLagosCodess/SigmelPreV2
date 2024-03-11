@@ -302,12 +302,13 @@ $(document).ready(function(){
 
         var datos_llenar_tabla_historial_acciones = {
              '_token': $('input[name=_token]').val(),
-             'ID_evento' : $('#id_evento').val()
+             'ID_evento' : $('#id_evento').val(),
+             'Id_proceso': $('#Id_proceso').val()
          };
          
          $.ajax({
              type:'POST',
-             url:'/consultarHistorialAcciones',
+             url:'/historialAccionesEventosJun',
              data: datos_llenar_tabla_historial_acciones,
              success:function(data) {
                  if(data.length == 0){
@@ -353,7 +354,7 @@ $(document).ready(function(){
             "columns":[
                 {"data":"F_accion"},
                 {"data":"Nombre_usuario"},
-                {"data":"Accion_realizada"},
+                {"data":"Accion"},
                 {"data":"Descripcion"}
             ],
             "language":{

@@ -333,6 +333,8 @@ Route::post('/actualizarComunicado', [CalificacionPCLController::class, 'actuali
 Route::post('/generarPdf', [CalificacionPCLController::class, 'generarPdf'])->name('descargarPdf');
 // Acción: Historia de Acciones del evento desde calificacion Pcl
 Route::post('/consultarHistorialAcciones', [CalificacionPCLController::class, 'historialAcciones']);
+// Acción: Traer historial de acciones del evento de la tabla sigmel_informacion_historial_accion_eventos
+Route::post('/historialAccionesEventosPcl', [CalificacionPCLController::class, 'historialAccionesEventoPcl']);
 
 
 // 01/08/2023
@@ -500,6 +502,8 @@ Route::get  ('/Sigmel/RolAdministrador/ListarClientes', [AdministradorController
 
 // Acción: Traer el listado de historial de acciones del evento
 Route::post('/consultaHistorialAcciones', [AdministradorController::class, 'consultaHistorialAcciones']);
+// Acción: Traer historial de acciones del evento de la tabla sigmel_informacion_historial_accion_eventos
+Route::post('/historialAccionesEventos', [AdministradorController::class, 'historialAccionesEvento']);
 // Acción: Traer la información de los documentos acorde al id evento: Vista Buscador de Eventos (Modal Formulario Nuevo Servicio)
 Route::post('/cargueDocumentosXEvento', [AdministradorController::class, 'cargueDocumentosXEvento']);
 // Acción: Traer el listado de profesionales acorde al evento
@@ -581,6 +585,8 @@ Route::post('/GuardarHistorialSeguiOrigen', [CalificacionOrigenController::class
 Route::post('/actualizarComunicadoOrigen', [CalificacionOrigenController::class, 'actualizarComunicadoOrigen']);
 // Acción: Eliminar Fila (Cambiar a estado inactivo) Historial Seguimiento
 Route::post('/EliminarFilaHistoSeguimiento', [CalificacionOrigenController::class, 'EliminarFilaHistoSeguimiento'])->name('EliminarFilaHistoSeguimiento');
+// Acción: Traer historial de acciones del evento de la tabla sigmel_informacion_historial_accion_eventos
+Route::post('/historialAccionesEventosOri', [CalificacionOrigenController::class, 'historialAccionesEventoOri']);
 // Acción: Mostrar vista Determinación del Origen DTO ATEL
 Route::get('/determinacionOrigenATEL', [DeterminacionOrigenATEL::class, 'mostrarVistaDtoATEL'])->name('determinacionOrigenATEL');
 Route::post('/determinacionOrigenATEL', [DeterminacionOrigenATEL::class, 'mostrarVistaDtoATEL'])->name('determinacionOrigenATEL');
@@ -670,6 +676,8 @@ Route::post('/modalComunicadoJuntas', [CalificacionJuntasController::class, 'mos
 Route::post('/actualizarComunicadoJuntas', [CalificacionJuntasController::class, 'actualizarComunicadoJuntas']);
 // Acción: Insertar Agregar Seguimiento
 Route::post('/registrarCausalSeguimientoJuntas', [CalificacionJuntasController::class, 'guardarAgregarSeguimientoJuntas']);
+// Acción: Traer historial de acciones del evento de la tabla sigmel_informacion_historial_accion_eventos
+Route::post('/historialAccionesEventosJun', [CalificacionJuntasController::class, 'historialAccionesEventoJun']);
 
 //18/11/2023
 // Vista: Módulo Controversia Juntas
