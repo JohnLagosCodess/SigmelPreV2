@@ -38,4 +38,10 @@ $(document).ready(function(){
             }
         }
     });
+
+    $("#listado_roles_usuario").change(function(){
+        $("input[name='_token']").prop('disabled', false);
+        $("input[name='id_usuario']").prop('disabled', false);
+        $("input[name='correo_usuario']").prop('disabled', false);
+    });
 })

@@ -46,7 +46,11 @@ class CalificacionJuntasController extends Controller
         $date = date("Y-m-d", $time);
         $newIdAsignacion=$request->newIdAsignacion;
         $newIdEvento = $request->newIdEvento;
-        $Id_servicio = $request->Id_Servicio;
+        if ($request->Id_Servicio <> "") {
+            $Id_servicio = $request->Id_Servicio;
+        } else {
+            $Id_servicio = $request->newIdServicio;
+        }
 
         $array_datos_calificacionJuntas = DB::select('CALL psrcalificacionJuntas(?)', array($newIdAsignacion));
         //Trae Documetos Generales del evento

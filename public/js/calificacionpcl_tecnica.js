@@ -1,4 +1,6 @@
 $(document).ready(function(){
+
+    var idRol = $("#id_rol").val();
     //localStorage.clear();
     localStorage.removeItem('filas');
     localStorage.removeItem('checkboxDxPrincipalNew');
@@ -2602,7 +2604,9 @@ $(document).ready(function(){
 
         }else if(valorFecha !== ""){
             // seccion comite interdisciplinario
-            $('#div_comite_interdisciplinario').removeClass('d-none');
+            if (idRol != 7) {
+                $('#div_comite_interdisciplinario').removeClass('d-none');
+            } 
             $('#div_comunicado_dictamen_oficioremisorio').removeClass('d-none');
         }
 
@@ -3466,6 +3470,19 @@ $(document).ready(function(){
         $('#cuerpo_comunicado_cero').summernote('editor.insertText', etiqueta_nombreCIE10_cero);
     });
 
+    /* Funcionalidad para mostrar solo la tabla de comunicados para el rol de Consulta */
+    if (idRol == 7) {
+        $("#form_CaliTecDecreto").addClass('d-none');
+        $(".columna_row1_interconsulta").addClass('d-none');
+        $(".columna_row1_motivo_cali").addClass('d-none');
+        $(".columna_row1_deficiencia").addClass('d-none');
+        $(".columna_row1_valoracion_laboral").addClass('d-none');
+        $("#form_libros_2_3").addClass('d-none');
+        $(".columna_row1_dictamen").addClass('d-none');
+        $("#div_comite_interdisciplinario").addClass('d-none');
+        $("#div_correspondecia").addClass('d-none');
+        $("label[for='editar_correspondencia']").addClass('d-none');
+    }
 
 });
 // guardar examenes de interconsulta

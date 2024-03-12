@@ -79,7 +79,12 @@ class CalificacionPCLController extends Controller
             // vienen del formulario de la bandeja
             $newIdAsignacion=$request->newIdAsignacion;
             $newIdEvento = $request->newIdEvento;         
-            $Id_servicio = $request->Id_Servicio;
+            // $Id_servicio = $request->Id_Servicio;
+            if ($request->Id_Servicio <> "") {
+                $Id_servicio = $request->Id_Servicio;
+            } else {
+                $Id_servicio = $request->newIdServicio;
+            }
         } else {
             // vienen desde la edición del evento
             $newIdAsignacion=$request->Id_asignacion_pcl;
@@ -2726,7 +2731,8 @@ class CalificacionPCLController extends Controller
 
         $array_info_decreto_evento = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')        
         ->where([
-            ['ID_Evento', $Id_evento_calitec]
+            ['ID_Evento', $Id_evento_calitec],
+            ['Id_Asignacion', $Id_asignacion_calitec]
         ])
         ->get();
         if (count($array_info_decreto_evento) > 0) {

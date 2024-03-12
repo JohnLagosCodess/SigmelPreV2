@@ -4609,7 +4609,7 @@ class AdministradorController extends Controller
     public function DescargarDocumentos(Request $request, $nombreArchivo, $id_evento)
     {
         // Validar la extensión del archivo
-        $extensionesPermitidas = ['pdf', 'xls', 'xlsx', 'doc', 'docx', 'jpeg', 'png'];
+        $extensionesPermitidas = ['pdf', 'xls', 'xlsx', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
         $extensionArchivo = pathinfo($nombreArchivo, PATHINFO_EXTENSION);
 
         if (!in_array($extensionArchivo, $extensionesPermitidas)) {

@@ -1,5 +1,6 @@
 $(document).ready(function(){
 
+    var idRol = $("#id_rol").val();
     // Obtener sessionStorage del navegador
     //var posicionActual = $(window).scrollTop(); // Guarda cuando recarga la pagina
     var posicionMemoria = sessionStorage.getItem("scrollTopPronuncia"); // Guarda session scrollTop
@@ -837,6 +838,20 @@ $(document).ready(function(){
         });        
 
     });
+
+    /* Validaciones para el rol Consulta cuando entra a la vista */
+    if (idRol == 7) {
+        $("#div_info_afi").addClass('d-none');
+        $("#div_info_enti_califi").addClass('d-none');
+        $("#div_info_califi").addClass('d-none');
+        $("#div_mot_cali").addClass('d-none');
+        $("#div_pronu_califi").addClass('d-none');
+        $(".row_correspondencia").addClass('d-none');
+        $("#div_doc_pronu").addClass('d-none');
+        $("#div_msg_alerta").addClass('d-none');
+        $("#ActualizarPronuncia").addClass('d-none');
+        $("#GuardarPronuncia").addClass('d-none');
+    }
 });
 
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/

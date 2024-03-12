@@ -1,5 +1,6 @@
 $(document).ready(function(){
 
+    var idRol = $("#id_rol").val();
     // Obtener sessionStorage del navegador
     //var posicionActual = $(window).scrollTop(); // Guarda cuando recarga la pagina
     var posicionMemoria = sessionStorage.getItem("scrollTopControJuntas"); // Guarda session scrollTop
@@ -3933,7 +3934,26 @@ $(document).ready(function(){
 
     });
 
-
+    /* Funcionalidad para mostrar solo la tabla de comunicados para el rol de Consulta */
+    if (idRol == 7) {
+        $("#form_DTO_ATEL").addClass('d-none');
+        $("#div_info_afiliado").addClass('d-none');
+        $("#div_info_dic_cotrover").addClass('d-none');
+        $("#div_dx_dicta_contro").addClass('d-none');
+        $("#div_dicta_jun_regio").addClass('d-none');
+        $("#div_rev_concep_jun_regio").addClass('d-none');
+        $(".row_recurso_ante_jrci").addClass('d-none');
+        $("#div_Firmeza_controversiaJRCI").addClass('d-none');
+        $("#row_firmeza_intere").addClass('d-none');
+        $("#row_repo_dictamen").addClass('d-none');
+        $("#div_rev_recur_repo").addClass('d-none');
+        $("#apela_recu").addClass('d-none');
+        $("#row_acta_ejecutoria").addClass('d-none');
+        $("#row_emitido_jnci").addClass('d-none');
+        $("#div_correspondencia").addClass('d-none');
+        $("#msg_alerta").addClass('d-none');
+        $("a[id^='editar_correspondencia_']").addClass('d-none');
+    }
 
 });
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/

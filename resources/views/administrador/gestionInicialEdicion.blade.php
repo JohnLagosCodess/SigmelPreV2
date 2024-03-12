@@ -147,6 +147,7 @@
     <div class="card-info" style="border: 1px solid black;">
         <div class="card-header text-center">
             <h4>Edición de Evento: {{$array_datos_info_evento[0]->ID_evento}}</h4>
+            <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
         </div>
         <form action="{{route('actualizarEvento')}}" method="POST">
             @csrf
@@ -421,7 +422,7 @@
                                                 </div>
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="afp" class="col-form label">AFP<span style="color:red;">(*)</span></</label>
+                                                        <label for="afp" class="col-form label">AFP <span style="color:red;">(*)</span></</label>
                                                         <select class="afp custom-select" name="afp" id="afp"required>
                                                             <option value="{{$array_datos_info_afiliados[0]->Id_afp}}">{{$array_datos_info_afiliados[0]->Nombre_afp}}</option>
                                                         </select>
