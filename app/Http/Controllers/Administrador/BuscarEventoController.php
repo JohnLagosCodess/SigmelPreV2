@@ -14,6 +14,7 @@ use App\Models\sigmel_informacion_decreto_eventos;
 use App\Models\sigmel_informacion_diagnosticos_eventos;
 use App\Models\sigmel_numero_orden_eventos;
 use App\Models\sigmel_informacion_eventos;
+use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_informacion_pronunciamiento_eventos;
 
 class BuscarEventoController extends Controller
@@ -2087,6 +2088,7 @@ class BuscarEventoController extends Controller
         $date = date("Y-m-d", $time);
         $date_con_hora = date("Y-m-d h:i:s", $time);
         $nombre_usuario = Auth::user()->name;
+        $date_time = date("Y-m-d H:i:s");
         
         // Actualizamos a No el servicio escogido (tupla) para deshabilitar la opcion
         // de crear nuevo servicio
@@ -2194,6 +2196,22 @@ class BuscarEventoController extends Controller
         sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insert($datos_nuevo_servicio);
 
         sleep(1);
+
+        // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
+
+        $datos_historial_accion_eventos = [
+            'ID_evento' => $request->id_evento,
+            'Id_proceso' => $request->id_proceso_actual,
+            'Id_servicio' => $request->nuevo_servicio,
+            'Id_accion' => $request->nueva_accion,
+            'Descripcion' => $request->nueva_descripcion,
+            'F_accion' => $date_time,
+            'Nombre_usuario' => $nombre_usuario,
+        ];
+
+        sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insert($datos_historial_accion_eventos);
+        sleep(2);
+        
         $mensajes = array(
             "parametro" => 'creo_servicio',
             "retorno_id_evento" => $request->id_evento,
@@ -2214,6 +2232,7 @@ class BuscarEventoController extends Controller
         $date = date("Y-m-d", $time);
         $date_con_hora = date("Y-m-d h:i:s", $time);
         $nombre_usuario = Auth::user()->name;
+        $date_time = date("Y-m-d H:i:s");        
 
         // Actualizamos a No el proceso escogido (tupla) para deshabilitar la opcion
         // de crear nuevo proceso.
@@ -2322,6 +2341,22 @@ class BuscarEventoController extends Controller
         sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insert($datos_nuevo_proceso);
 
         sleep(1);
+
+        // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
+
+        $datos_historial_accion_eventos = [
+            'ID_evento' => $request->id_evento,
+            'Id_proceso' => $request->selector_nuevo_proceso,
+            'Id_servicio' => $request->selector_nuevo_servicio,
+            'Id_accion' => $request->nueva_accion_nuevo_proceso,
+            'Descripcion' => $request->nueva_descripcion_nuevo_proceso,
+            'F_accion' => $date_time,
+            'Nombre_usuario' => $nombre_usuario,
+        ];
+
+        sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insert($datos_historial_accion_eventos);
+        sleep(2);
+        
         $mensajes = array(
             "parametro" => 'creo_proceso',
             "retorno_id_evento" => $request->id_evento,

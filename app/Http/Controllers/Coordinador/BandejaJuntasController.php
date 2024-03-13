@@ -14,6 +14,7 @@ use App\Models\sigmel_informacion_asignacion_eventos;
 
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
+use App\Models\sigmel_informacion_historial_accion_eventos;
 
 class BandejaJuntasController extends Controller
 {
@@ -451,6 +452,7 @@ class BandejaJuntasController extends Controller
         $time = time();
         $date = date("Y-m-d", $time);
         $date_con_hora = date("Y-m-d h:i:s", $time);
+        $date_time = date("Y-m-d H:i:s");
 
         $IdEventoBandejaJuntas = $request->array;
         $Id_proceso = $request->json['proceso_parametrizado'];
@@ -680,6 +682,40 @@ class BandejaJuntasController extends Controller
             ->update($array_datos_finales_actualizar[$b]);
         }
         $array_datos_finales_actualizar = [];
+
+        sleep(2);
+        
+        // Capturar todos los eventos de los id de asignacion y almacenarlo en array array_id_eventos
+        $array_id_eventos = [];
+        for ($a=0; $a < count($IdEventoBandejaJuntas); $a++) {
+            $array_datos_eventos = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            ->select('ID_evento')->where('Id_Asignacion', $IdEventoBandejaJuntas[$a])->get();
+            $info_array_eventos = json_decode(json_encode($array_datos_eventos, true));
+            array_push($array_id_eventos, $info_array_eventos[0]->ID_evento);
+        }
+
+        // Captura de informacion de los campos de la bandeja que se van actualizar
+
+        $datos_historial_accion_eventos = [
+            'Id_proceso' => $Id_proceso,
+            'Id_servicio' => $Id_Servicio_redireccionar,
+            'Id_accion' => $Id_accion,
+            'Descripcion' => $Descripcion_bandeja,
+            'F_accion' => $date_time,
+            'Nombre_usuario' => $usuario,
+        ];
+       
+        // Construir array para la insercion
+        $array_datos_historial_accion_eventos = array();
+        foreach ($array_id_eventos as $evento) {
+            $item = array_merge(array('ID_evento' => $evento), $datos_historial_accion_eventos);
+            $array_datos_historial_accion_eventos[] = $item;
+        }
+
+        foreach ($array_datos_historial_accion_eventos as $historial) {
+            sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')
+            ->insert($historial);
+        }
         return json_decode(json_encode($mensajes, true));
 
         /* $profesional = DB::table('users')

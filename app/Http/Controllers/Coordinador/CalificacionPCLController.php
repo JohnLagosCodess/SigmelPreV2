@@ -58,6 +58,7 @@ use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
 use App\Models\sigmel_informacion_agudeza_visualre_eventos;
 use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
+use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_lista_causal_devoluciones;
 use Psy\Readline\Hoa\Console;
 use Svg\Tag\Rect;
@@ -394,6 +395,7 @@ class CalificacionPCLController extends Controller
         $time = time();
         $date = date("Y-m-d", $time);
         $datetime = date("Y-m-d h:i:s", $time);
+        $date_time = date("Y-m-d H:i:s");
         $user = Auth::user();
         $nombre_usuario = Auth::user()->name;
         $newIdAsignacion = $request->newId_asignacion;
@@ -545,6 +547,22 @@ class CalificacionPCLController extends Controller
 
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
             sleep(2);
+
+            // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
+
+            $datos_historial_accion_eventos = [
+                'ID_evento' => $newIdEvento,
+                'Id_proceso' => $Id_proceso,
+                'Id_servicio' => $Id_servicio,
+                'Id_accion' => $Accion_realizar,
+                'Descripcion' => $request->descripcion_accion,
+                'F_accion' => $date_time,
+                'Nombre_usuario' => $nombre_usuario,
+            ];
+
+            sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insert($datos_historial_accion_eventos);
+            sleep(2); 
+            
             $mensajes = array(
                 "parametro" => 'agregarCalificacionPcl',
                 "parametro_1" => 'guardo',
@@ -687,6 +705,22 @@ class CalificacionPCLController extends Controller
 
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
             sleep(2);
+
+            // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
+
+            $datos_historial_accion_eventos = [
+                'ID_evento' => $newIdEvento,
+                'Id_proceso' => $Id_proceso,
+                'Id_servicio' => $Id_servicio,
+                'Id_accion' => $Accion_realizar,
+                'Descripcion' => $request->descripcion_accion,
+                'F_accion' => $date_time,
+                'Nombre_usuario' => $nombre_usuario,
+            ];
+
+            sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insert($datos_historial_accion_eventos);
+            sleep(2); 
+
             $mensajes = array(
                 "parametro" => 'agregarCalificacionPcl',
                 "mensaje" => 'Registro actualizado satisfactoriamente.'
@@ -2669,6 +2703,20 @@ class CalificacionPCLController extends Controller
         ->get();        
 
         return response()->json($datos_info_historial_acciones);
+    }
+
+    // Historial de acciones de la parametrica de la tabla sigmel_informacion_historial_accion_eventos
+
+    public function historialAccionesEventoPcl (Request $request){
+
+        $array_datos_historial_accion_eventos = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_historial_accion_eventos as sihae')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia', 'sia.Id_Accion', '=', 'sihae.Id_accion')
+        ->select('sihae.ID_evento', 'sihae.Id_proceso', 'sihae.Id_servicio', 'sihae.Id_accion', 
+        'sia.Accion', 'sihae.Descripcion', 'sihae.F_accion', 'sihae.Nombre_usuario')
+        ->where([['sihae.ID_evento', $request->ID_evento],['sihae.Id_proceso', $request->Id_proceso]])
+        ->orderBy('sihae.F_accion', 'asc')->get();
+       
+        return response()->json($array_datos_historial_accion_eventos);
     }
 
 
