@@ -1747,6 +1747,15 @@ $(document).ready(function(){
 
     $('#form_CaliTecDecreto').submit(function (e){
         e.preventDefault();
+        var GuardarDecreto = $('#GuardarDecreto');
+        var ActualizarDecreto = $('#ActualizarDecreto');
+
+        if (GuardarDecreto.length > 0) {
+            document.querySelector('#GuardarDecreto').disabled=true;            
+        }
+        if (ActualizarDecreto.length > 0) {
+            document.querySelector('#ActualizarDecreto').disabled=true;
+        }
 
         var origen_firme = $('#origen_firme').val();
         var origen_cobertura = $('#origen_cobertura').val();
@@ -1846,19 +1855,19 @@ $(document).ready(function(){
                 data: datos_agregarDecretoDicRelFun,
                 success: function(response){
                     if (response.parametro == 'agregar_decreto_parte') {
-                        document.querySelector('#GuardarDecreto').disabled=true;
                         $('#div_alerta_decreto').removeClass('d-none');
                         $('.alerta_decreto').append('<strong>'+response.mensaje+'</strong>');                                            
                         setTimeout(function(){
+                            document.querySelector('#GuardarDecreto').disabled=false;
                             $('#div_alerta_decreto').addClass('d-none');
                             $('.alerta_decreto').empty();   
                             location.reload();
                         }, 3000);   
                     }else if(response.parametro == 'update_decreto_parte'){
-                        document.querySelector('#ActualizarDecreto').disabled=true;
                         $('#div_alerta_decreto').removeClass('d-none');
                         $('.alerta_decreto').append('<strong>'+response.mensaje2+'</strong>');                                            
                         setTimeout(function(){
+                            document.querySelector('#ActualizarDecreto').disabled=false;
                             $('#div_alerta_decreto').addClass('d-none');
                             $('.alerta_decreto').empty();
                             document.querySelector('#ActualizarDecreto').disabled=false;
