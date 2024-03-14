@@ -3315,6 +3315,7 @@ class AdministradorController extends Controller
                 'Id_proceso' => $request->proceso,
                 'Id_servicio' => $request->servicio,
                 'Id_accion' => $request->accion,
+                'Documento' => 'N/A',
                 'Descripcion' => $request->descripcion_asignacion,
                 'F_accion' => $date_time,
                 'Nombre_usuario' => $nombre_usuario,

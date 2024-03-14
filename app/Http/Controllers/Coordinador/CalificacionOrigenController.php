@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use App\Models\sigmel_informacion_accion_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_historial_acciones_eventos;
@@ -243,7 +245,7 @@ class CalificacionOrigenController extends Controller
         }
 
         // validacion de bandera para guardar o actualizar
-        if ($request->bandera_accion_guardar_actualizar == 'Guardar') {
+        if ($request->banderaguardar == 'Guardar') {
                
             // insercion de datos a la tabla de sigmel_informacion_accion_eventos
     
@@ -252,7 +254,8 @@ class CalificacionOrigenController extends Controller
                 'Id_Asignacion' => $request->newId_asignacion,
                 'Id_proceso' => $request->Id_proceso,
                 'Modalidad_calificacion' => 'N/A',
-                'F_accion' => $request->f_accion,
+                // 'F_accion' => $request->f_accion,
+                'F_accion' => $date_time,
                 'Accion' => $request->accion,
                 'F_Alerta' => $request->fecha_alerta,
                 'Enviar' => $request->enviar,
@@ -372,7 +375,39 @@ class CalificacionOrigenController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
             ];
 
-            sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insert($datos_historial_accion_eventos);
+            $idInsertado = sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insertGetId($datos_historial_accion_eventos);
+
+            sleep(2);
+
+            // Cargue de documento
+            if($request->hasFile('cargue_documentos')){
+                $archivo = $request->file('cargue_documentos');
+                $path = public_path('Documentos_Eventos/'.$newIdEvento);
+                $mode = 0777;
+                $tipo_archivo = "Documento Historial Origen";
+                $nombre_documento = str_replace(' ', '_', $tipo_archivo);
+
+                if (!File::exists($path)) {
+                    File::makeDirectory($path, $mode, true, true);
+                    chmod($path, $mode);
+                }
+
+                $nombre_final_documento = $nombre_documento."$idInsertado"."_IdEvento_".$newIdEvento.".".$archivo->extension();
+                Storage::putFileAs($newIdEvento, $archivo, $nombre_final_documento);
+            }else{
+                
+                $nombre_final_documento='N/A';            
+            }     
+
+            // Insertar nombre documento
+            
+            $nombre_documento_historial = [                
+                'Documento' => $nombre_final_documento,                
+            ];
+
+            sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')
+            ->where('Id_historial_accion',$idInsertado)->update($nombre_documento_historial);           
+
             sleep(2);
             
             $mensajes = array(
@@ -383,7 +418,7 @@ class CalificacionOrigenController extends Controller
 
             return json_decode(json_encode($mensajes, true));
 
-        }elseif ($request->bandera_accion_guardar_actualizar == 'Actualizar') {
+        }elseif ($request->banderaguardar == 'Actualizar') {
             
             // actualizacion de datos a la tabla de sigmel_informacion_accion_eventos
 
@@ -392,7 +427,8 @@ class CalificacionOrigenController extends Controller
                 'Id_Asignacion' => $request->newId_asignacion,
                 'Id_proceso' => $request->Id_proceso,
                 'Modalidad_calificacion' => 'N/A',
-                'F_accion' => $request->f_accion,
+                // 'F_accion' => $request->f_accion,
+                'F_accion' => $date_time,
                 'Accion' => $request->accion,
                 'F_Alerta' => $request->fecha_alerta,
                 'Enviar' => $request->enviar,
@@ -509,7 +545,39 @@ class CalificacionOrigenController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
             ];
 
-            sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insert($datos_historial_accion_eventos);
+            $idInsertado = sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insertGetId($datos_historial_accion_eventos);
+
+            sleep(2);
+
+            // Cargue de documento
+            if($request->hasFile('cargue_documentos')){
+                $archivo = $request->file('cargue_documentos');
+                $path = public_path('Documentos_Eventos/'.$newIdEvento);
+                $mode = 0777;
+                $tipo_archivo = "Documento Historial Origen";
+                $nombre_documento = str_replace(' ', '_', $tipo_archivo);
+
+                if (!File::exists($path)) {
+                    File::makeDirectory($path, $mode, true, true);
+                    chmod($path, $mode);
+                }
+
+                $nombre_final_documento = $nombre_documento."$idInsertado"."_IdEvento_".$newIdEvento.".".$archivo->extension();
+                Storage::putFileAs($newIdEvento, $archivo, $nombre_final_documento);
+            }else{
+                
+                $nombre_final_documento='N/A';            
+            }     
+
+            // Insertar nombre documento
+            
+            $nombre_documento_historial = [                
+                'Documento' => $nombre_final_documento,                
+            ];
+
+            sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')
+            ->where('Id_historial_accion',$idInsertado)->update($nombre_documento_historial);           
+
             sleep(2);
 
             $mensajes = array(
@@ -1369,8 +1437,8 @@ class CalificacionOrigenController extends Controller
 
         $array_datos_historial_accion_eventos = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_historial_accion_eventos as sihae')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia', 'sia.Id_Accion', '=', 'sihae.Id_accion')
-        ->select('sihae.ID_evento', 'sihae.Id_proceso', 'sihae.Id_servicio', 'sihae.Id_accion', 
-        'sia.Accion', 'sihae.Descripcion', 'sihae.F_accion', 'sihae.Nombre_usuario')
+        ->select('sihae.Id_historial_accion', 'sihae.ID_evento', 'sihae.Id_proceso', 'sihae.Id_servicio', 'sihae.Id_accion', 
+        'sia.Accion', 'sihae.Documento', 'sihae.Descripcion', 'sihae.F_accion', 'sihae.Nombre_usuario')
         ->where([['sihae.ID_evento', $request->ID_evento],['sihae.Id_proceso', $request->Id_proceso]])
         ->orderBy('sihae.F_accion', 'asc')->get();
        
