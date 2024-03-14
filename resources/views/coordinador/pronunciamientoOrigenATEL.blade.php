@@ -15,7 +15,7 @@
         <div class="col-8">
             <div>
                 <a href="{{route("bandejaOrigen")}}" class="btn btn-info" type="button"><i class="fas fa-archive"></i> Regresar Bandeja</a>
-                <a onclick="document.getElementById('botonEnvioVista').click();" style="cursor:pointer;" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Módulo OrigenATEL</a>
+                <a onclick="document.getElementById('botonEnvioVista').click();" id="regresar_modulo" style="cursor:pointer;" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Módulo OrigenATEL</a>
                 <p>
                     <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
                 </p>
@@ -26,6 +26,7 @@
         <div class="card-header text-center">
             <h4>Calificación Origen ATEL - Evento: {{$array_datos_pronunciamientoOrigen[0]->ID_evento}}</h4>
             <h5 style="font-style: italic;">Pronunciamiento</h5>
+            <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
         </div>
         <div class="card-body">
             <div class="row">
@@ -33,7 +34,7 @@
                     <form id="form_CaliPronuncia" method="POST" enctype="multipart/form-data">
                         @csrf
                         <!-- Informacion Afiliado-->
-                        <div class="card-info">
+                        <div class="card-info" id="div_info_afi">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Información del afiliado</h5>
                             </div>
@@ -59,14 +60,14 @@
                                             <label for="id_evento">ID evento</label>
                                             <br>
                                             {{-- DATOS PARA VER EDICIÓN DE EVENTO --}}
-                                            <a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer; font-weight: bold;" class="btn text-info" type="button"><?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;}?></a>                                            
+                                            <a onclick="document.getElementById('botonVerEdicionEvento').click();" id="enlace_ed_evento" style="cursor:pointer; font-weight: bold;" class="btn text-info" type="button"><?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;}?></a>                                            
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <!-- Información de la entidad calificadora -->
-                        <div class="card-info">
+                        <div class="card-info" id="div_info_enti_califi">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Información de la entidad calificadora</h5>
                             </div>
@@ -162,7 +163,7 @@
                             </div>
                         </div>
                         <!-- Información de la calificacion -->
-                        <div class="card-info">
+                        <div class="card-info" id="div_info_califi">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Información de la Calificación</h5>
                             </div>
@@ -238,7 +239,7 @@
                             </div>
                         </div>
                         <!-- Diagnósticos motivo de calificación -->
-                        <div class="card-info">
+                        <div class="card-info" id="div_mot_cali">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Diagnósticos motivo de calificación</h5>
                             </div>
@@ -282,7 +283,7 @@
                             </div>
                         </div>
                         <!-- Pronunciamiento ante la calificación -->
-                        <div class="card-info">
+                        <div class="card-info" id="div_pronu_califi" >
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Pronunciamiento ante la calificación </h5>
                             </div>
@@ -570,7 +571,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" id="div_doc_pronu" >
                             <div class="col-12">
                                 <div class="form-group">
                                     <label for="n_radicado">Cargue Documento Pronunciamiento:</label>
@@ -589,7 +590,7 @@
                         </div>
                         <div class="card-footer">
                             <div class="row">
-                                <div class="col-12">
+                                <div class="col-12" id="div_msg_alerta">
                                     <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
                                         <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para guardar la información es necesario dar clic en el botón guardar o actualizar (dependiendo del caso).
                                     </div>

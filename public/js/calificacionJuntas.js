@@ -1,5 +1,7 @@
 $(document).ready(function(){
 
+    var idRol = $("#id_rol").val();
+
     $(".primer_calificador").select2({
         placeholder:"Seleccione una opción",
         allowClear:false
@@ -1864,6 +1866,11 @@ $(document).ready(function(){
             $('form[name="formu_comunicado"]').removeAttr('id');
             
         }
+
+        // Deshabilitar todo para descargar el o los comunicados
+        if (idRol == 7) {
+            $(':input, select, a, button').prop('disabled', false);
+        }
     });
 
     $(document).on('mouseover',"input[id^='Editar_comunicados']", function(){ 
@@ -1885,6 +1892,31 @@ $(document).ready(function(){
             $('#mostrar_barra_descarga_pdf').addClass('d-none');                        
             $('#Pdf').attr('disabled', false);  
             $('#Editar_comunicados').attr('disabled', false);
+
+            /* Validaciones para el rol Consulta cuando entra a la vista */
+            if (idRol == 7) {
+                // Desactivar todos los elementos excepto los especificados
+                $(':input, select, a, button').not('#listado_roles_usuario, #Hacciones, #botonVerEdicionEvento, #cargue_docs, #clicGuardado, #cargue_docs_modal_listado_docs, #botonFormulario2, .btn-danger, a[id^="EditarComunicado_"]').prop('disabled', true);
+                $("#enlace_ed_evento").hover(function(){
+                    $("input[name='_token']").prop('disabled', false);
+                    $("#bandera_buscador_juntas").prop('disabled', false);
+                    $("#newIdEvento").prop('disabled', false);
+                    $("#newIdAsignacion").prop('disabled', false);
+                    $("#newIdproceso").prop('disabled', false);
+                    $("#newIdservicio").prop('disabled', false);
+                });
+
+                // Quitar el disabled al formulario oculto para permitirme ir al submodulo
+                $("#llevar_servicio").hover(function(){
+                    $("input[name='_token']").prop('disabled', false);
+                    $("#Id_evento_juntas").prop('disabled', false);
+                    $("#Id_asignacion_juntas").prop('disabled', false);
+                    $("#Id_proceso_juntas").prop('disabled', false);
+                    $("#Id_Servicio").prop('disabled', false);
+                });
+                // Deshabilitar el botón Actualizar y Activar el botón Pdf en los comunicados
+                $("#Pdf").prop('disabled', false);
+            }
         }, 5000);
 
     });
@@ -2951,7 +2983,11 @@ $(document).ready(function(){
     setInterval(function() {
         if (verificarCamposLlenos()) {
             // Si todos los campos están llenos, habilita el botón
-            $('#Editar_comunicados').prop('disabled', false); 
+            if (idRol == 7) {
+                $('#Editar_comunicados').prop('disabled', true); 
+            } else {
+                $('#Editar_comunicados').prop('disabled', false); 
+            }
             // $('#Pdf').prop('disabled', false);           
         } else {
             // Si hay campos vacíos, deshabilita el botón
@@ -3234,6 +3270,30 @@ $(document).ready(function(){
          }
      });
 
+     /* Validaciones para el rol Consulta cuando entra a la vista */
+    if (idRol == 7) {
+        // Desactivar todos los elementos excepto los especificados
+        $(':input, select, a, button').not('#listado_roles_usuario, #Hacciones, #botonVerEdicionEvento, #cargue_docs, #clicGuardado, #cargue_docs_modal_listado_docs, #botonFormulario2, .btn-danger, a[id^="EditarComunicado_"]').prop('disabled', true);
+        $("#enlace_ed_evento").hover(function(){
+            $("input[name='_token']").prop('disabled', false);
+            $("#bandera_buscador_juntas").prop('disabled', false);
+            $("#newIdEvento").prop('disabled', false);
+            $("#newIdAsignacion").prop('disabled', false);
+            $("#newIdproceso").prop('disabled', false);
+            $("#newIdservicio").prop('disabled', false);
+        });
+
+        // Quitar el disabled al formulario oculto para permitirme ir al submodulo
+        $("#llevar_servicio").hover(function(){
+            $("input[name='_token']").prop('disabled', false);
+            $("#Id_evento_juntas").prop('disabled', false);
+            $("#Id_asignacion_juntas").prop('disabled', false);
+            $("#Id_proceso_juntas").prop('disabled', false);
+            $("#Id_Servicio").prop('disabled', false);
+        });
+        // Deshabilitar el botón Actualizar y Activar el botón Pdf en los comunicados
+        $("#Pdf").prop('disabled', false);
+    }
   
 
 });

@@ -48,7 +48,11 @@ class CalificacionJuntasController extends Controller
         $date = date("Y-m-d", $time);
         $newIdAsignacion=$request->newIdAsignacion;
         $newIdEvento = $request->newIdEvento;
-        $Id_servicio = $request->Id_Servicio;
+        if ($request->Id_Servicio <> "") {
+            $Id_servicio = $request->Id_Servicio;
+        } else {
+            $Id_servicio = $request->newIdServicio;
+        }
 
         $array_datos_calificacionJuntas = DB::select('CALL psrcalificacionJuntas(?)', array($newIdAsignacion));
         //Trae Documetos Generales del evento
@@ -306,6 +310,7 @@ class CalificacionJuntasController extends Controller
                 ['sipc.Id_cliente', '=', $id_cliente],
                 ['sipc.Id_proceso', '=', $request->Id_proceso],
                 ['sipc.Servicio_asociado', '=', $request->Id_servicio],
+                ['sipc.Modulo_principal', '=', 'Si'],
                 ['sipc.Status_parametrico', '=', 'Activo']
             ])->get();
 

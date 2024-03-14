@@ -1951,6 +1951,17 @@ $(document).ready(function(){
             document.getElementById('empresa_registrar').required = false;
             document.getElementById('nit_cc_registrar').required = false;
         }
-    }); 
+    });
+
+    /* 
+        Funcionalidad para deshabilitar el formulario de edición evento Excepto para:
+        Historial de Acciones, Histórico de empresas para el rol de consulta
+    */
+
+    var idRol = $("#id_rol").val();
+    if (idRol == 7) {
+        // Desactivar todos los elementos excepto los especificados
+        $(':input, select, a, button').not('#listado_roles_usuario, #cargar_historial_acciones, #llenar_tabla_historico_empresas, .btn-danger').prop('disabled', true);
+    }
 
 });

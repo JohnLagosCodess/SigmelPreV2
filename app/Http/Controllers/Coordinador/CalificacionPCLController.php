@@ -80,7 +80,12 @@ class CalificacionPCLController extends Controller
             // vienen del formulario de la bandeja
             $newIdAsignacion=$request->newIdAsignacion;
             $newIdEvento = $request->newIdEvento;         
-            $Id_servicio = $request->Id_Servicio;
+            // $Id_servicio = $request->Id_Servicio;
+            if ($request->Id_Servicio <> "") {
+                $Id_servicio = $request->Id_Servicio;
+            } else {
+                $Id_servicio = $request->newIdServicio;
+            }
         } else {
             // vienen desde la edición del evento
             $newIdAsignacion=$request->Id_asignacion_pcl;

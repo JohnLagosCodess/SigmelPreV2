@@ -23,6 +23,11 @@
                                 <strong>{{session()->get('rol_creado')}}</strong>
                             </div>
                         @endif
+                        @if (session()->get('rol_no_creado'))
+                            <div class="alert alert-danger mt-2" role="alert">
+                                <strong>{{session()->get('rol_no_creado')}}</strong>
+                            </div>
+                        @endif
                         <div class="form-group row">
                             <label for="nombre_rol" class="col-sm-2 col-form-label">Nombre del rol <span style="color:red;">(*)</span></label>
                             <div class="col-sm-10">

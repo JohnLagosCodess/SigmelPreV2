@@ -33,6 +33,7 @@
     <div class="card-header text-center">
         <h4>Origen ATEL - Evento: {{$array_datos_calificacionOrigen[0]->ID_evento}}</h4>
         <input type="hidden" id="action_actualizar_comunicado" value="{{ route('descargarPdf') }}">
+        <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
     </div>
     <form id="form_calificacionOrigen" method="POST">
         @csrf
@@ -94,7 +95,7 @@
                                                 <br>
                                                 <input hidden="hidden" type="text" class="form-control" name="id_evento" id="id_evento" value="<?php if(!empty($array_datos_calificacionOrigen[0]->ID_evento)){echo $array_datos_calificacionOrigen[0]->ID_evento;}?>" disabled>
                                                 {{-- DATOS PARA VER EDICIÓN DE EVENTO --}}
-                                                <a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer; font-weight: bold;" class="btn text-info" type="button"><?php if(!empty($array_datos_calificacionOrigen[0]->ID_evento)){echo $array_datos_calificacionOrigen[0]->ID_evento;}?></a>                                            
+                                                <a onclick="document.getElementById('botonVerEdicionEvento').click();" id="enlace_ed_evento" style="cursor:pointer; font-weight: bold;" class="btn text-info" type="button"><?php if(!empty($array_datos_calificacionOrigen[0]->ID_evento)){echo $array_datos_calificacionOrigen[0]->ID_evento;}?></a>                                            
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -130,7 +131,7 @@
                                         @else
                                             <div class="form-group">
                                                 <label for="servicio">Servicio</label><br>
-                                                <a onclick="document.getElementById('botonFormulario2').click();" style="cursor:pointer;" id="servicio_Origen"><i class="fa fa-puzzle-piece text-info"></i> <strong class="text-dark">{{$array_datos_calificacionOrigen[0]->Nombre_servicio}}</strong></a>
+                                                <a onclick="document.getElementById('botonFormulario2').click();" id="llevar_servicio" style="cursor:pointer;" id="servicio_Origen"><i class="fa fa-puzzle-piece text-info"></i> <strong class="text-dark">{{$array_datos_calificacionOrigen[0]->Nombre_servicio}}</strong></a>
                                                 <input type="hidden" class="form-control" name="servicio" id="servicio" value="{{$array_datos_calificacionOrigen[0]->Nombre_servicio}}">
                                             </div>
                                         @endif
@@ -217,7 +218,7 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="modalidad_calificacion">Documentos adjuntos</label><br>
-                                            <a href="javascript:void(0);" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
+                                            <a href="javascript:void(0);" id="cargue_docs" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
                                         </div>
                                     </div>
                                     <div class="col-4">

@@ -1,4 +1,6 @@
 $(document).ready(function(){
+
+    var idRol = $("#id_rol").val();
     //localStorage.removeItem("#Generar_comunicados");
     //console.log(Generar_comunicadossesion);
     // Inicializacion del select2 de listados  Módulo Calificacion PCL
@@ -598,7 +600,12 @@ $(document).ready(function(){
     $(document).on('mouseover',"input[id^='Pdf']", function(){
         let url_editar_evento = $('#action_actualizar_comunicado').val();        
         $('form[name="formu_comunicado"]').attr("action", url_editar_evento);    
-        $('form[name="formu_comunicado"]').removeAttr('id');        
+        $('form[name="formu_comunicado"]').removeAttr('id');
+
+        // Deshabilitar todo para descargar el o los comunicados
+        if (idRol == 7) {
+            $(':input, select, a, button').prop('disabled', false);
+        }
     });
 
     $(document).on('mouseover',"input[id^='Editar_comunicados']", function(){ 
@@ -619,6 +626,29 @@ $(document).ready(function(){
             $('#mostrar_barra_descarga_pdf').addClass('d-none');                        
             $('#Pdf').attr('disabled', false);  
             $('#Editar_comunicados').attr('disabled', false);
+
+            // Despues de descargado el documento deja todo nuevamente deshabilitado + los controles hechos
+            if (idRol == 7) {
+                // Desactivar todos los elementos excepto los especificados
+                $(':input, select, a, button').not('#listado_roles_usuario, #Hacciones, #botonVerEdicionEvento, #cargue_docs, #clicGuardado, #cargue_docs_modal_listado_docs, #botonFormulario2, .btn-danger, a[id^="EditarComunicado_"]').prop('disabled', true);
+                // Quitar el disabled al formulario oculto para permitirme ir a la edicion del evento.
+                $("#enlace_ed_evento").hover(function(){
+                    $("input[name='_token']").prop('disabled', false);
+                    $("#bandera_buscador_clpcl").prop('disabled', false);
+                    $("#newIdEvento").prop('disabled', false);
+                    $("#newIdAsignacion").prop('disabled', false);
+                    $("#newIdproceso").prop('disabled', false);
+                    $("#newIdservicio").prop('disabled', false);
+                });
+                // Quitar el disabled al formulario oculto para permitirme ir al submodulo
+                $("#llevar_servicio").hover(function(){
+                    $("input[name='_token']").prop('disabled', false);
+                    $("#Id_evento_pcl").prop('disabled', false);
+                    $("#Id_asignacion_pcl").prop('disabled', false);
+                });
+                // Deshabilitar el botón Actualizar y Activar el botón Pdf en los comunicados
+                $("#Pdf").prop('disabled', false);
+            }
         }, 10000);
 
     })     
@@ -1295,7 +1325,11 @@ $(document).ready(function(){
     setInterval(function() {
         if (verificarCamposLlenos()) {
             // Si todos los campos están llenos, habilita el botón
-            $('#Editar_comunicados').prop('disabled', false); 
+            if (idRol == 7) {
+                $('#Editar_comunicados').prop('disabled', true); 
+            } else {
+                $('#Editar_comunicados').prop('disabled', false); 
+            }
             // $('#Pdf').prop('disabled', false);           
         } else {
             // Si hay campos vacíos, deshabilita el botón
@@ -2135,6 +2169,36 @@ $(document).ready(function(){
         }, 1000);
 
     });
+
+    /* Validaciones para el rol Consulta cuando entra a la vista */
+    if (idRol == 7) {
+        // Desactivar todos los elementos excepto los especificados
+        $(':input, select, a, button').not('#listado_roles_usuario, #Hacciones, #botonVerEdicionEvento, #cargue_docs, #clicGuardado, #cargue_docs_modal_listado_docs, #botonFormulario2, .btn-danger, a[id^="EditarComunicado_"]').prop('disabled', true);
+        // Quitar el disabled al formulario oculto para permitirme ir a la edicion del evento.
+        $("#enlace_ed_evento").hover(function(){
+            $("input[name='_token']").prop('disabled', false);
+            $("#bandera_buscador_clpcl").prop('disabled', false);
+            $("#newIdEvento").prop('disabled', false);
+            $("#newIdAsignacion").prop('disabled', false);
+            $("#newIdproceso").prop('disabled', false);
+            $("#newIdservicio").prop('disabled', false);
+        });
+        
+        // Si el servicio es Pronunciamiento deshabilita la entrada al submodulo
+        if ($("#newIdservicio").val() == 9) {
+            $("#botonFormulario2").prop('disabled', true);
+        }
+
+        // Quitar el disabled al formulario oculto para permitirme ir al submodulo
+        $("#llevar_servicio").hover(function(){
+            $("input[name='_token']").prop('disabled', false);
+            $("#Id_evento_pcl").prop('disabled', false);
+            $("#Id_asignacion_pcl").prop('disabled', false);
+        });
+        // Deshabilitar el botón Actualizar y Activar el botón Pdf en los comunicados
+        $("#Pdf").prop('disabled', false);
+
+    }
      
 });
 

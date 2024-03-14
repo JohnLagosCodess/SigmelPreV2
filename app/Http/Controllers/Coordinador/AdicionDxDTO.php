@@ -175,7 +175,6 @@ class AdicionDxDTO extends Controller
                 $nombre_grado_severidad = '';                                
             }
             
-
             $nombre_factor_riesgo = sigmel_lista_parametros::on('sigmel_gestiones')
             ->select('Nombre_parametro')
             ->where([
@@ -184,7 +183,12 @@ class AdicionDxDTO extends Controller
                 ['Estado', '=' ,'activo']
             ])->get();
 
-            $nombre_factor_riesgo = $nombre_factor_riesgo[0]['Nombre_parametro'];
+            if (count($nombre_factor_riesgo) > 0 ) {
+                $nombre_factor_riesgo = $nombre_factor_riesgo[0]['Nombre_parametro'];
+            } else {
+                $nombre_factor_riesgo = '';
+            }
+            
 
             $nombre_tipo_lesion = sigmel_lista_parametros::on('sigmel_gestiones')
             ->select('Nombre_parametro')

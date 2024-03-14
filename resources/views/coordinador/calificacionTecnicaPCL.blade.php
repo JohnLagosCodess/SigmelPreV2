@@ -26,6 +26,7 @@
         <div class="card-header text-center">
             <h4>Calificación PCL - Evento: {{$array_datos_calificacionPclTecnica[0]->ID_evento}}</h4>
             <h5 style="font-style: italic;">Calificación Técnica</h5>
+            <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
         </div>
 
         <div class="card-body">

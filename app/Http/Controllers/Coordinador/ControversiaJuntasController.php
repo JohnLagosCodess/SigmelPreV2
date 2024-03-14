@@ -2424,8 +2424,13 @@ class ControversiaJuntasController extends Controller
             // Quitamos el style y agregamos los atributos width y height
             $patronstyle = '/<img[^>]+style="width:\s*([\d.]+)px;\s*height:\s*([\d.]+)px[^"]*"[^>]*>/';
             preg_match($patronstyle, $Firma_cliente, $coincidencias);
-            $width = $coincidencias[1]; // Valor de width
-            $height = $coincidencias[2]; // Valor de height
+            if (count($coincidencias) == 0) {
+                $width = "119.075";
+                $height = "69.9062";
+            }else{
+                $width = $coincidencias[1]; // Valor de width
+                $height = $coincidencias[2]; // Valor de height
+            }
         
             $nuevoStyle = 'width="'.$width.'" height="'.$height.'"';
             $htmlModificado = reemplazarStyleImg($Firma_cliente, $nuevoStyle);
@@ -2434,7 +2439,7 @@ class ControversiaJuntasController extends Controller
             $section->addText($Firma_cliente);
         }
 
-        $section->addTextBreak();
+        // $section->addTextBreak();
         $section->addText('HUGO IGNACIO GÓMEZ DAZA', array('bold' => true));
         $section->addTextBreak();
         $section->addText('Representante Legal para Asuntos de Seguridad Social', array('bold' => true));

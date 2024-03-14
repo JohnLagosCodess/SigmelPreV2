@@ -46,12 +46,13 @@
                 <input type="hidden" id="id_cliente" value="<?php if(!empty($array_datos_controversiaJuntas[0]->Id_cliente)){echo $array_datos_controversiaJuntas[0]->Id_cliente;}?>">
                 <input type="hidden" id="tipo_documento" value="<?php if(!empty($array_datos_controversiaJuntas[0]->Nombre_tipo_documento)){echo $array_datos_controversiaJuntas[0]->Nombre_tipo_documento;}?>">
                 <input type="hidden" id="id_Jrci_califi_invalidez" value="<?php if(!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez)){echo $arrayinfo_controvertido[0]->Jrci_califi_invalidez;}?>">
+                <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-12">
                         <!-- Informacion Afiliado-->
-                        <div class="card-info">
+                        <div class="card-info" id="div_info_afiliado">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Información del afiliado</h5>
                             </div>
@@ -82,7 +83,7 @@
                             </div>
                         </div>
                         <!-- Información del Dictamen Controvertido-->
-                        <div class="card-info">
+                        <div class="card-info" id="div_info_dic_cotrover">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Información del Dictamen Controvertido</h5>
                             </div>
@@ -173,7 +174,7 @@
                             </div>
                         </div>
                         <!-- Diagnósticos del Dictamen Controvertido -->
-                        <div class="card-info">
+                        <div class="card-info" id="div_dx_dicta_contro">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Diagnósticos del Dictamen Controvertido</h5>
                             </div>
@@ -333,7 +334,7 @@
                             </div>
                         </div>
                         <!--- Dictamen emitido por la Junta Regional de Calificación de Invalidez (JRCI) -->
-                        <div class="card-info">
+                        <div class="card-info" id="div_dicta_jun_regio">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Dictamen emitido por la Junta Regional de Calificación de Invalidez (JRCI)</h5>
                             </div>
@@ -518,7 +519,7 @@
                             </div>
                         </div>
                         <!--- Revisión ante concepto de la Junta Regional -->
-                        <div class="card-info">
+                        <div class="card-info" id="div_rev_concep_jun_regio">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Revisión ante concepto de la Junta Regional</h5>
                             </div>
@@ -968,7 +969,7 @@
                             </div>
                         </div>
                         <!-- Revisión ante recurso de reposición de la Junta Regional -->
-                        <div class="card-info" <?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_reposicion_jrci)){ ?>class="card-info" <?php }else{ ?>class="card-info d-none"<?php } ?> >
+                        <div class="card-info" id="div_rev_recur_repo" <?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_reposicion_jrci)){ ?>class="card-info" <?php }else{ ?>class="card-info d-none"<?php } ?> >
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Revisión ante recurso de reposición de la Junta Regional</h5>
                             </div>
@@ -1054,7 +1055,7 @@
                             </div>
                         </div>
                         <!-- Apelación de recurso ante la JNCI -->
-                        <div class="card-info" <?php if(!empty($arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci)&& $arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci=='Desacuerdo'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
+                        <div class="card-info" id="apela_recu" <?php if(!empty($arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci)&& $arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci=='Desacuerdo'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Apelación de recurso ante la JNCI</h5>
                             </div>
@@ -1758,7 +1759,7 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-12">
+                                        <div class="col-12" id="msg_alerta">
                                             <div class="alert alert-warning mensaje_confirmacion_emitido_jnci" role="alert">
                                                 <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de ver la información de una correspondencia, 
                                                 tenga en cuenta que al modifcarla y hacer clic en el botón Guardar, el sistema generará un nuevo registro más no una actualización de la información.

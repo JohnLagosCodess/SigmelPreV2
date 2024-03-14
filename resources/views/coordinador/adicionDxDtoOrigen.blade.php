@@ -37,6 +37,7 @@
             <div class="card-header text-center">
                 <h4>Origen ATEL - Evento: {{$array_datos_calificacion_origen[0]->ID_evento}}</h4>
                 <h5 style="font-style: italic;">Adición DX</h5>
+                <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
                 <input type="hidden" name="NombreUsuario" id="NombreUsuario" value="{{$user->name}}">
                 <input type="hidden" id="para_ver_edicion_evento" value="{{ route('gestionInicialEdicion') }}">
                 <input type="hidden" name="Id_Evento" id="Id_Evento" value="<?php if(!empty($array_datos_calificacion_origen[0]->ID_evento)){ echo $array_datos_calificacion_origen[0]->ID_evento;}?>">
