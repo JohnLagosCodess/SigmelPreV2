@@ -29,6 +29,7 @@ use App\Http\Controllers\Coordinador\ControversiaJuntasController;
 use App\Http\Controllers\Profesional\ProfesionalController;
 use App\Http\Controllers\Comite\ComiteController;
 use App\Http\Controllers\Analista\AnalistaController;
+use App\Http\Controllers\Consulta\ConsultaController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -238,7 +239,9 @@ Route::get('/Sigmel/Analista', [AnalistaController::class, 'show'])->name('Index
 
 // 04/03/2024 Creación del Rol Comité
 // Vista: Index Rol Profesional 15/12/2023
-Route::get('/Sigmel/Comité', [ComiteController::class, 'show'])->name('IndexComite');
+Route::get('/Sigmel/Comite', [ComiteController::class, 'show'])->name('IndexComite');
+// 04/03/2024 Vista rol Consulta
+Route::get('/Sigmel/Consulta', [ConsultaController::class, 'show'])->name('IndexConsulta');
 
 // 23/05/2023
 // Vista: Gestión Inicial Nuevo

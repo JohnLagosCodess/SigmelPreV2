@@ -175,7 +175,6 @@ class AdicionDxDTO extends Controller
                 $nombre_grado_severidad = '';                                
             }
             
-
             $nombre_factor_riesgo = sigmel_lista_parametros::on('sigmel_gestiones')
             ->select('Nombre_parametro')
             ->where([
@@ -184,7 +183,12 @@ class AdicionDxDTO extends Controller
                 ['Estado', '=' ,'activo']
             ])->get();
 
-            $nombre_factor_riesgo = $nombre_factor_riesgo[0]['Nombre_parametro'];
+            if (count($nombre_factor_riesgo) > 0 ) {
+                $nombre_factor_riesgo = $nombre_factor_riesgo[0]['Nombre_parametro'];
+            } else {
+                $nombre_factor_riesgo = '';
+            }
+            
 
             $nombre_tipo_lesion = sigmel_lista_parametros::on('sigmel_gestiones')
             ->select('Nombre_parametro')
@@ -1097,6 +1101,12 @@ class AdicionDxDTO extends Controller
             $logo_header = "Sin logo";
         }
 
+        //consulta si esta visado o no para mostrar las firmas
+
+        $validacion_visado = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        ->select('ID_evento', 'Id_proceso', 'Id_Asignacion', 'Visar')
+        ->where([['Id_Asignacion',$Id_Asignacion], ['Visar','Si']])->get();
+
         /* Armado de datos para reemplazarlos en la plantilla */
         $datos_finales_dml_origen_previsional = [
             'id_cliente' => $id_cliente,
@@ -1128,7 +1138,8 @@ class AdicionDxDTO extends Controller
             'fecha_evento' => $f_evento,
             'fecha_fallecimiento' => $f_fallecimiento,
             'sustentacion_califi_origen' => $sustentacion_califi_origen,
-            'nombre_usuario' => $nombre_usuario
+            'nombre_usuario' => $nombre_usuario,
+            'validacion_visado' => $validacion_visado
         ];
 
         /* Creación del pdf */

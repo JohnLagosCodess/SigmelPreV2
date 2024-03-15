@@ -1,4 +1,6 @@
 $(document).ready(function(){
+
+    var idRol = $("#id_rol").val();
     //localStorage.clear();
     localStorage.removeItem('filas');
     localStorage.removeItem('checkboxDxPrincipalNew');
@@ -1745,6 +1747,15 @@ $(document).ready(function(){
 
     $('#form_CaliTecDecreto').submit(function (e){
         e.preventDefault();
+        var GuardarDecreto = $('#GuardarDecreto');
+        var ActualizarDecreto = $('#ActualizarDecreto');
+
+        if (GuardarDecreto.length > 0) {
+            document.querySelector('#GuardarDecreto').disabled=true;            
+        }
+        if (ActualizarDecreto.length > 0) {
+            document.querySelector('#ActualizarDecreto').disabled=true;
+        }
 
         var origen_firme = $('#origen_firme').val();
         var origen_cobertura = $('#origen_cobertura').val();
@@ -1844,19 +1855,19 @@ $(document).ready(function(){
                 data: datos_agregarDecretoDicRelFun,
                 success: function(response){
                     if (response.parametro == 'agregar_decreto_parte') {
-                        document.querySelector('#GuardarDecreto').disabled=true;
                         $('#div_alerta_decreto').removeClass('d-none');
                         $('.alerta_decreto').append('<strong>'+response.mensaje+'</strong>');                                            
                         setTimeout(function(){
+                            document.querySelector('#GuardarDecreto').disabled=false;
                             $('#div_alerta_decreto').addClass('d-none');
                             $('.alerta_decreto').empty();   
                             location.reload();
                         }, 3000);   
                     }else if(response.parametro == 'update_decreto_parte'){
-                        document.querySelector('#ActualizarDecreto').disabled=true;
                         $('#div_alerta_decreto').removeClass('d-none');
                         $('.alerta_decreto').append('<strong>'+response.mensaje2+'</strong>');                                            
                         setTimeout(function(){
+                            document.querySelector('#ActualizarDecreto').disabled=false;
                             $('#div_alerta_decreto').addClass('d-none');
                             $('.alerta_decreto').empty();
                             document.querySelector('#ActualizarDecreto').disabled=false;
@@ -2602,7 +2613,9 @@ $(document).ready(function(){
 
         }else if(valorFecha !== ""){
             // seccion comite interdisciplinario
-            $('#div_comite_interdisciplinario').removeClass('d-none');
+            if (idRol != 7) {
+                $('#div_comite_interdisciplinario').removeClass('d-none');
+            } 
             $('#div_comunicado_dictamen_oficioremisorio').removeClass('d-none');
         }
 
@@ -3466,6 +3479,19 @@ $(document).ready(function(){
         $('#cuerpo_comunicado_cero').summernote('editor.insertText', etiqueta_nombreCIE10_cero);
     });
 
+    /* Funcionalidad para mostrar solo la tabla de comunicados para el rol de Consulta */
+    if (idRol == 7) {
+        $("#form_CaliTecDecreto").addClass('d-none');
+        $(".columna_row1_interconsulta").addClass('d-none');
+        $(".columna_row1_motivo_cali").addClass('d-none');
+        $(".columna_row1_deficiencia").addClass('d-none');
+        $(".columna_row1_valoracion_laboral").addClass('d-none');
+        $("#form_libros_2_3").addClass('d-none');
+        $(".columna_row1_dictamen").addClass('d-none');
+        $("#div_comite_interdisciplinario").addClass('d-none');
+        $("#div_correspondecia").addClass('d-none');
+        $("label[for='editar_correspondencia']").addClass('d-none');
+    }
 
 });
 // guardar examenes de interconsulta

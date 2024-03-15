@@ -1,4 +1,6 @@
 $(document).ready(function(){
+
+    var idRol = $("#id_rol").val();
     //localStorage.removeItem("#Generar_comunicados");
     //console.log(Generar_comunicadossesion);
     // Inicializacion del select2 de listados  Módulo Calificacion PCL
@@ -399,49 +401,39 @@ $(document).ready(function(){
     //console.log(newId_evento);
     $('#form_calificacionPcl').submit(function (e) {
         e.preventDefault();  
-        
+        // Deshabilitar elementos mientras se realiza la petición        
         document.querySelector("#Edicion").disabled = true;
         document.querySelector("#Borrar").disabled = true;
 
-        var newId_evento = $('#newId_evento').val();
-        var newId_asignacion = $('#newId_asignacion').val();
-        var Id_proceso = $('#Id_proceso').val();
-        var Id_servicio = $("#Id_servicio").val();
-        var modalidad_calificacion = $('#modalidad_calificacion').val();   
-        var fecha_devolucion = $('#fecha_devolucion').val();   
-        var fuente_informacion = $('#fuente_informacion').val();        
-        var accion = $('#accion').val();
-        var fecha_alerta = $('#fecha_alerta').val();
-        var enviar = $('#enviar').val();
-        var profesional = $('#profesional').val();
-        var causal_devolucion_comite = $('#causal_devolucion_comite').val();
-        var descripcion_accion = $('#descripcion_accion').val();
-        var banderaguardar =$('#bandera_accion_guardar_actualizar').val();
-        
-        let token = $('input[name=_token]').val();
-        
-        var datos_agregarCalificacionPcl = {
-            '_token': token,
-            'newId_evento':newId_evento,
-            'newId_asignacion':newId_asignacion,
-            'Id_proceso':Id_proceso,
-            'Id_servicio': Id_servicio,
-            'modalidad_calificacion':modalidad_calificacion,
-            'fecha_devolucion':fecha_devolucion,
-            'fuente_informacion':fuente_informacion,
-            'accion':accion,
-            'fecha_alerta':fecha_alerta,
-            'enviar':enviar,
-            'profesional':profesional,
-            'causal_devolucion_comite':causal_devolucion_comite,
-            'descripcion_accion':descripcion_accion,
-            'bandera_accion_guardar_actualizar':banderaguardar,
-        }
+        // Obtener el archivo seleccionado
+        var archivo = $('#cargue_documentos')[0].files[0];
+
+        // Crear un objeto FormData para enviar el archivo
+        var formData = new FormData($('form')[0]);
+        formData.append('cargue_documentos', archivo);
+        // Agregar otros datos al formData
+        formData.append('token', $('input[name=_token]').val());
+        formData.append('newId_evento', $('#newId_evento').val());
+        formData.append('newId_asignacion', $('#newId_asignacion').val());
+        formData.append('Id_proceso', $('#Id_proceso').val());
+        formData.append('Id_servicio', $("#Id_servicio").val());
+        formData.append('modalidad_calificacion', $('#modalidad_calificacion').val());   
+        formData.append('fecha_devolucion', $('#fecha_devolucion').val());   
+        formData.append('fuente_informacion', $('#fuente_informacion').val());        
+        formData.append('accion', $('#accion').val());
+        formData.append('fecha_alerta', $('#fecha_alerta').val());
+        formData.append('enviar', $('#enviar').val());
+        formData.append('profesional', $('#profesional').val());
+        formData.append('causal_devolucion_comite', $('#causal_devolucion_comite').val());
+        formData.append('descripcion_accion', $('#descripcion_accion').val());
+        formData.append('banderaguardar',$('#bandera_accion_guardar_actualizar').val());        
 
         $.ajax({
             type:'POST',
             url:'/registrarCalificacionPCL',
-            data: datos_agregarCalificacionPcl,
+            data: formData,
+            processData: false,
+            contentType: false,
             success:function(response){
                 if (response.parametro == 'agregarCalificacionPcl') {
                     $('.alerta_calificacion').removeClass('d-none');
@@ -608,7 +600,12 @@ $(document).ready(function(){
     $(document).on('mouseover',"input[id^='Pdf']", function(){
         let url_editar_evento = $('#action_actualizar_comunicado').val();        
         $('form[name="formu_comunicado"]').attr("action", url_editar_evento);    
-        $('form[name="formu_comunicado"]').removeAttr('id');        
+        $('form[name="formu_comunicado"]').removeAttr('id');
+
+        // Deshabilitar todo para descargar el o los comunicados
+        if (idRol == 7) {
+            $(':input, select, a, button').prop('disabled', false);
+        }
     });
 
     $(document).on('mouseover',"input[id^='Editar_comunicados']", function(){ 
@@ -629,6 +626,29 @@ $(document).ready(function(){
             $('#mostrar_barra_descarga_pdf').addClass('d-none');                        
             $('#Pdf').attr('disabled', false);  
             $('#Editar_comunicados').attr('disabled', false);
+
+            // Despues de descargado el documento deja todo nuevamente deshabilitado + los controles hechos
+            if (idRol == 7) {
+                // Desactivar todos los elementos excepto los especificados
+                $(':input, select, a, button').not('#listado_roles_usuario, #Hacciones, #botonVerEdicionEvento, #cargue_docs, #clicGuardado, #cargue_docs_modal_listado_docs, #botonFormulario2, .btn-danger, a[id^="EditarComunicado_"]').prop('disabled', true);
+                // Quitar el disabled al formulario oculto para permitirme ir a la edicion del evento.
+                $("#enlace_ed_evento").hover(function(){
+                    $("input[name='_token']").prop('disabled', false);
+                    $("#bandera_buscador_clpcl").prop('disabled', false);
+                    $("#newIdEvento").prop('disabled', false);
+                    $("#newIdAsignacion").prop('disabled', false);
+                    $("#newIdproceso").prop('disabled', false);
+                    $("#newIdservicio").prop('disabled', false);
+                });
+                // Quitar el disabled al formulario oculto para permitirme ir al submodulo
+                $("#llevar_servicio").hover(function(){
+                    $("input[name='_token']").prop('disabled', false);
+                    $("#Id_evento_pcl").prop('disabled', false);
+                    $("#Id_asignacion_pcl").prop('disabled', false);
+                });
+                // Deshabilitar el botón Actualizar y Activar el botón Pdf en los comunicados
+                $("#Pdf").prop('disabled', false);
+            }
         }, 10000);
 
     })     
@@ -1305,7 +1325,11 @@ $(document).ready(function(){
     setInterval(function() {
         if (verificarCamposLlenos()) {
             // Si todos los campos están llenos, habilita el botón
-            $('#Editar_comunicados').prop('disabled', false); 
+            if (idRol == 7) {
+                $('#Editar_comunicados').prop('disabled', true); 
+            } else {
+                $('#Editar_comunicados').prop('disabled', false); 
+            }
             // $('#Pdf').prop('disabled', false);           
         } else {
             // Si hay campos vacíos, deshabilita el botón
@@ -2033,26 +2057,44 @@ $(document).ready(function(){
         $('#borrar_tabla_historial_acciones').empty();
 
         var datos_llenar_tabla_historial_acciones = {
-             '_token': $('input[name=_token]').val(),
-             'ID_evento' : $('#id_evento').val(),
-             'Id_proceso': $('#Id_proceso').val()
-         };
+            '_token': $('input[name=_token]').val(),
+            'ID_evento' : $('#id_evento').val(),
+            'Id_proceso': $('#Id_proceso').val()
+        };
          
-         $.ajax({
-             type:'POST',
-             url:'/historialAccionesEventosPcl',
-             data: datos_llenar_tabla_historial_acciones,
-             success:function(data) {
-                 if(data.length == 0){
-                     $('#borrar_tabla_historial_acciones').empty();
-                 }else{
-                     // console.log(data);
-                     $.each(data, function(index, value){
-                         llenar_historial_acciones(data, index, value);
-                     });
-                 }
-             }
-         });
+        $.ajax({
+            type:'POST',
+            url:'/historialAccionesEventosPcl',
+            data: datos_llenar_tabla_historial_acciones,
+            success:function(data) {
+                if(data.length == 0){
+                    $('#borrar_tabla_historial_acciones').empty();
+                }else{
+                    // console.log(data);
+                    var descargaDocHistorial = '';
+
+                    for (let i = 0; i < data.length; i++) {                                   
+                        
+                        if (data[i]['Documento'] != 'N/A'){
+                            descargaDocHistorial = '<a href="javascript:void(0);" id="DescargaHistorialdoc_' + data[i]['Id_historial_accion'] + '" data-id_doc_descargar="' + data[i]['Id_historial_accion'] + '"><i class="fas fa-download text-info"></i></a>' + 
+                                        '<input type="hidden" name="nom_archivo" id="nom_archivo" value="'+data[i]["Documento"]+'">'+
+                                        '<input type="hidden" type="text" name="Id_historial_accion" id="Id_historial_accion" value="'+data[i]["Id_historial_accion"]+'">'+                                        
+                                        '<input type="hidden" name="ID_evento" id="ID_evento" value="'+data[i]["ID_evento"]+'">'+
+                                        '<input type="hidden" name="Id_proceso" id="Id_proceso" value="'+data[i]["Id_proceso"]+'">'+
+                                        '<input type="hidden" name="Id_servicio" id="Id_servicio" value="'+data[i]["Id_servicio"]+'">';                          
+                            data[i]['descargardoc'] = descargaDocHistorial;
+                            
+                        }else{
+                            data[i]['descargardoc'] = ""; 
+                        } 
+                    } 
+
+                    $.each(data, function(index, value){
+                        llenar_historial_acciones(data, index, value);
+                    });
+                }
+            }
+        });
     });
 
     function llenar_historial_acciones(response, index, value){
@@ -2087,7 +2129,8 @@ $(document).ready(function(){
                 {"data":"F_accion"},
                 {"data":"Nombre_usuario"},
                 {"data":"Accion"},
-                {"data":"Descripcion"}
+                {"data":"Descripcion"},
+                {"data":"descargardoc"},
             ],
             "language":{
                 "search": "Buscar",
@@ -2102,6 +2145,59 @@ $(document).ready(function(){
                 "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
             }
         });
+    }
+
+    // Descargar documento del historial de acciones
+    $(document).on('click', 'a[id^="DescargaHistorialdoc_"]', function() {
+        var id_documento = $(this).data('id_doc_descargar');
+        var nom_archivo = $(this).siblings('input[name="nom_archivo"]').val();
+        var ID_evento = $(this).siblings('input[name="ID_evento"]').val();     
+    
+        // Crear un enlace temporal para la descarga
+        var enlaceDescarga = document.createElement('a');
+        enlaceDescarga.href = '/descargar-archivo/'+nom_archivo+'/'+ID_evento;
+        enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+        enlaceDescarga.style.display = 'none';
+        document.body.appendChild(enlaceDescarga);
+    
+        // Simular clic en el enlace para iniciar la descarga
+        enlaceDescarga.click();
+    
+        // Eliminar el enlace después de la descarga
+        setTimeout(function() {
+            document.body.removeChild(enlaceDescarga);
+        }, 1000);
+
+    });
+
+    /* Validaciones para el rol Consulta cuando entra a la vista */
+    if (idRol == 7) {
+        // Desactivar todos los elementos excepto los especificados
+        $(':input, select, a, button').not('#listado_roles_usuario, #Hacciones, #botonVerEdicionEvento, #cargue_docs, #clicGuardado, #cargue_docs_modal_listado_docs, #botonFormulario2, .btn-danger, a[id^="EditarComunicado_"]').prop('disabled', true);
+        // Quitar el disabled al formulario oculto para permitirme ir a la edicion del evento.
+        $("#enlace_ed_evento").hover(function(){
+            $("input[name='_token']").prop('disabled', false);
+            $("#bandera_buscador_clpcl").prop('disabled', false);
+            $("#newIdEvento").prop('disabled', false);
+            $("#newIdAsignacion").prop('disabled', false);
+            $("#newIdproceso").prop('disabled', false);
+            $("#newIdservicio").prop('disabled', false);
+        });
+        
+        // Si el servicio es Pronunciamiento deshabilita la entrada al submodulo
+        if ($("#newIdservicio").val() == 9) {
+            $("#botonFormulario2").prop('disabled', true);
+        }
+
+        // Quitar el disabled al formulario oculto para permitirme ir al submodulo
+        $("#llevar_servicio").hover(function(){
+            $("input[name='_token']").prop('disabled', false);
+            $("#Id_evento_pcl").prop('disabled', false);
+            $("#Id_asignacion_pcl").prop('disabled', false);
+        });
+        // Deshabilitar el botón Actualizar y Activar el botón Pdf en los comunicados
+        $("#Pdf").prop('disabled', false);
+
     }
      
 });

@@ -1,4 +1,6 @@
 $(document).ready(function(){
+
+    var idRol = $("#id_rol").val();
     //localStorage.clear();
     localStorage.removeItem('filas');
     localStorage.removeItem('checkboxDxPrincipalNew');
@@ -3006,7 +3008,9 @@ $(document).ready(function(){
 
         if($bandera_guardar_dictamen == 'dictamen_guardado'){
             // seccion comite interdisciplinario
-            $('#div_comite_interdisciplinario').removeClass('d-none');
+            if (idRol != 7) {
+                $('#div_comite_interdisciplinario').removeClass('d-none');
+            }
             $('#div_comunicado_dictamen_oficioremisorio').removeClass('d-none');
         }
 
@@ -4209,6 +4213,21 @@ $(document).ready(function(){
         var etiqueta_nombreCIE10 = "{{$OrigenPcl_dp}}";
         $('#cuerpo_comunicado_formatos_pension').summernote('editor.insertText', etiqueta_nombreCIE10);
     });
+
+    /* Funcionalidad para mostrar solo la tabla de comunicados para el rol de Consulta */
+    if (idRol == 7) {
+        $("#form_RecaliDecreto").addClass('d-none');
+        $(".columna_row1_interconsulta").addClass('d-none');
+        $(".columna_row1_motivo_cali").addClass('d-none');
+        $(".columna_row1_deficiencia").addClass('d-none');
+        $(".columna_row1_valoracion_laboral").addClass('d-none');
+        $(".columna_row1_discapacidades").addClass('d-none');
+        $(".columna_row1_minusvalias").addClass('d-none');
+        $(".columna_row1_dictamen").addClass('d-none');
+        $("#div_comite_interdisciplinario").addClass('d-none');
+        $("#div_correspondecia").addClass('d-none');
+        $("label[for='editar_correspondencia']").addClass('d-none');
+    }
     
 });
 // Examenes Interconsultas

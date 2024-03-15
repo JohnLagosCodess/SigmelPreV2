@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('Id_proceso')->nullable();
             $table->integer('Id_servicio')->nullable();            
             $table->integer('Id_accion')->nullable();
+            $table->text('Documento')->nullable();
             $table->text('Descripcion')->nullable();
             $table->datetime('F_accion')->nullable();
             $table->text('Nombre_usuario')->nullable();

@@ -1,4 +1,7 @@
 $(document).ready(function(){
+
+    var idRol = $("#id_rol").val();
+
     $("#mostrar_ocultar_formularios").slideUp('fast');
 
     // Incialización selec2 activo o no
@@ -1542,6 +1545,14 @@ $(document).ready(function(){
             }       
         });
     });
+
+    /* Funcionalidad para mostrar solo la tabla de comunicados para el rol de Consulta */
+    if (idRol == 7) {
+        $("#form_Adicion_Dx").addClass('d-none');
+        $("#div_comite_interdisciplinario").addClass('d-none');
+        $("#div_correspondecia").addClass('d-none');
+        $("label[for='editar_correspondencia']").addClass('d-none');
+    }
 });
 
 

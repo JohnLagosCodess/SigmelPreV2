@@ -3315,6 +3315,7 @@ class AdministradorController extends Controller
                 'Id_proceso' => $request->proceso,
                 'Id_servicio' => $request->servicio,
                 'Id_accion' => $request->accion,
+                'Documento' => 'N/A',
                 'Descripcion' => $request->descripcion_asignacion,
                 'F_accion' => $date_time,
                 'Nombre_usuario' => $nombre_usuario,
@@ -4628,7 +4629,7 @@ class AdministradorController extends Controller
     public function DescargarDocumentos(Request $request, $nombreArchivo, $id_evento)
     {
         // Validar la extensión del archivo
-        $extensionesPermitidas = ['pdf', 'xls', 'xlsx', 'doc', 'docx', 'jpeg', 'png'];
+        $extensionesPermitidas = ['pdf', 'xls', 'xlsx', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
         $extensionArchivo = pathinfo($nombreArchivo, PATHINFO_EXTENSION);
 
         if (!in_array($extensionArchivo, $extensionesPermitidas)) {

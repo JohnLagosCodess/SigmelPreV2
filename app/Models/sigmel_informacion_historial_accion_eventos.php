@@ -18,6 +18,7 @@ class sigmel_informacion_historial_accion_eventos extends Model
     'Id_proceso',
     'Id_servicio',
     'Id_accion',
+    'Documento',
     'Descripcion',
     'F_accion',
     'Nombre_usuario',    

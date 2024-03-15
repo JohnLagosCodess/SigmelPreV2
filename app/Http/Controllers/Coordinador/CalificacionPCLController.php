@@ -80,7 +80,12 @@ class CalificacionPCLController extends Controller
             // vienen del formulario de la bandeja
             $newIdAsignacion=$request->newIdAsignacion;
             $newIdEvento = $request->newIdEvento;         
-            $Id_servicio = $request->Id_Servicio;
+            // $Id_servicio = $request->Id_Servicio;
+            if ($request->Id_Servicio <> "") {
+                $Id_servicio = $request->Id_Servicio;
+            } else {
+                $Id_servicio = $request->newIdServicio;
+            }
         } else {
             // vienen desde la edición del evento
             $newIdAsignacion=$request->Id_asignacion_pcl;
@@ -409,7 +414,7 @@ class CalificacionPCLController extends Controller
         }
         
         // validacion de bandera para guardar o actualizar
-        if ($request->bandera_accion_guardar_actualizar == 'Guardar') {
+        if ($request->banderaguardar == 'Guardar') {
                
             // insercion de datos a la tabla de sigmel_informacion_accion_eventos
 
@@ -420,7 +425,7 @@ class CalificacionPCLController extends Controller
                     'Id_proceso' => $request->Id_proceso,
                     'Modalidad_calificacion' => 'N/A',
                     'fuente_informacion' => $request->fuente_informacion,
-                    'F_accion' => $datetime,
+                    'F_accion' => $date_time,
                     'Accion' => $request->accion,
                     'F_Alerta' => $request->fecha_alerta,
                     'Enviar' => $request->enviar,
@@ -437,7 +442,7 @@ class CalificacionPCLController extends Controller
                     'Id_proceso' => $request->Id_proceso,
                     'Modalidad_calificacion' => $request->modalidad_calificacion,
                     'fuente_informacion' => $request->fuente_informacion,
-                    'F_accion' => $datetime,
+                    'F_accion' => $date_time,
                     'Accion' => $request->accion,
                     'F_Alerta' => $request->fecha_alerta,
                     'Enviar' => $request->enviar,
@@ -555,8 +560,40 @@ class CalificacionPCLController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
             ];
 
-            sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insert($datos_historial_accion_eventos);
-            sleep(2); 
+            $idInsertado = sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insertGetId($datos_historial_accion_eventos);
+
+            sleep(2);
+
+            // Cargue de documento
+            if($request->hasFile('cargue_documentos')){
+                $archivo = $request->file('cargue_documentos');
+                $path = public_path('Documentos_Eventos/'.$newIdEvento);
+                $mode = 0777;
+                $tipo_archivo = "Documento Historial PCL";
+                $nombre_documento = str_replace(' ', '_', $tipo_archivo);
+
+                if (!File::exists($path)) {
+                    File::makeDirectory($path, $mode, true, true);
+                    chmod($path, $mode);
+                }
+
+                $nombre_final_documento = $nombre_documento."$idInsertado"."_IdEvento_".$newIdEvento.".".$archivo->extension();
+                Storage::putFileAs($newIdEvento, $archivo, $nombre_final_documento);
+            }else{
+                
+                $nombre_final_documento='N/A';            
+            }     
+
+            // Insertar nombre documento
+            
+            $nombre_documento_historial = [                
+                'Documento' => $nombre_final_documento,                
+            ];
+
+            sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')
+            ->where('Id_historial_accion',$idInsertado)->update($nombre_documento_historial);           
+
+            sleep(2);
             
             $mensajes = array(
                 "parametro" => 'agregarCalificacionPcl',
@@ -566,7 +603,7 @@ class CalificacionPCLController extends Controller
 
             return json_decode(json_encode($mensajes, true));
 
-        }elseif ($request->bandera_accion_guardar_actualizar == 'Actualizar') {
+        }elseif ($request->banderaguardar == 'Actualizar') {
             
             // actualizacion de datos a la tabla de sigmel_informacion_accion_eventos
 
@@ -577,7 +614,7 @@ class CalificacionPCLController extends Controller
                     'Id_proceso' => $request->Id_proceso,
                     'Modalidad_calificacion' => 'N/A',
                     'fuente_informacion' => $request->fuente_informacion,
-                    'F_accion' => $datetime,
+                    'F_accion' => $date_time,
                     'Accion' => $request->accion,
                     'F_Alerta' => $request->fecha_alerta,
                     'Enviar' => $request->enviar,
@@ -594,7 +631,7 @@ class CalificacionPCLController extends Controller
                     'Id_proceso' => $request->Id_proceso,
                     'Modalidad_calificacion' => $request->modalidad_calificacion,
                     'fuente_informacion' => $request->fuente_informacion,
-                    'F_accion' => $datetime,
+                    'F_accion' => $date_time,
                     'Accion' => $request->accion,
                     'F_Alerta' => $request->fecha_alerta,
                     'Enviar' => $request->enviar,
@@ -713,7 +750,39 @@ class CalificacionPCLController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
             ];
 
-            sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insert($datos_historial_accion_eventos);
+            $idInsertado = sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insertGetId($datos_historial_accion_eventos);
+
+            sleep(2);
+
+            // Cargue de documento
+            if($request->hasFile('cargue_documentos')){
+                $archivo = $request->file('cargue_documentos');
+                $path = public_path('Documentos_Eventos/'.$newIdEvento);
+                $mode = 0777;
+                $tipo_archivo = "Documento Historial PCL";
+                $nombre_documento = str_replace(' ', '_', $tipo_archivo);
+
+                if (!File::exists($path)) {
+                    File::makeDirectory($path, $mode, true, true);
+                    chmod($path, $mode);
+                }
+
+                $nombre_final_documento = $nombre_documento."$idInsertado"."_IdEvento_".$newIdEvento.".".$archivo->extension();
+                Storage::putFileAs($newIdEvento, $archivo, $nombre_final_documento);
+            }else{
+                
+                $nombre_final_documento='N/A';            
+            }     
+
+            // Insertar nombre documento
+            
+            $nombre_documento_historial = [                
+                'Documento' => $nombre_final_documento,                
+            ];
+
+            sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')
+            ->where('Id_historial_accion',$idInsertado)->update($nombre_documento_historial);           
+
             sleep(2); 
 
             $mensajes = array(
@@ -2706,8 +2775,8 @@ class CalificacionPCLController extends Controller
 
         $array_datos_historial_accion_eventos = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_historial_accion_eventos as sihae')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia', 'sia.Id_Accion', '=', 'sihae.Id_accion')
-        ->select('sihae.ID_evento', 'sihae.Id_proceso', 'sihae.Id_servicio', 'sihae.Id_accion', 
-        'sia.Accion', 'sihae.Descripcion', 'sihae.F_accion', 'sihae.Nombre_usuario')
+        ->select('sihae.Id_historial_accion', 'sihae.ID_evento', 'sihae.Id_proceso', 'sihae.Id_servicio', 'sihae.Id_accion', 
+        'sia.Accion', 'sihae.Documento', 'sihae.Descripcion', 'sihae.F_accion', 'sihae.Nombre_usuario')
         ->where([['sihae.ID_evento', $request->ID_evento],['sihae.Id_proceso', $request->Id_proceso]])
         ->orderBy('sihae.F_accion', 'asc')->get();
        
@@ -6285,6 +6354,12 @@ class CalificacionPCLController extends Controller
         $Requiere_tercera_persona_decisiones_dp = $array_datos_info_dictamen[0]->Requiere_tercera_persona_decisiones;
         $Requiere_dispositivo_apoyo_dp = $array_datos_info_dictamen[0]->Requiere_dispositivo_apoyo;
         $Justificacion_dependencia_dp = $array_datos_info_dictamen[0]->Justificacion_dependencia;
+
+        //consulta si esta visado o no para mostrar las firmas
+        
+        $validacion_visado = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        ->select('ID_evento', 'Id_proceso', 'Id_Asignacion', 'Visar')
+        ->where([['Id_Asignacion',$Id_Asignacion_comuni], ['Visar','Si']])->get();
                
         //Obtener los datos del formulario
         
@@ -6378,7 +6453,8 @@ class CalificacionPCLController extends Controller
             'Justificacion_dependencia_dp' => $Justificacion_dependencia_dp,
             'Numero_documento_afiliado' => $Numero_documento_afiliado,
             'Documento_afiliado' => $Documento_afiliado,
-            'Nombre_afiliado_pre' => $Nombre_afiliado_pre
+            'Nombre_afiliado_pre' => $Nombre_afiliado_pre,
+            'validacion_visado' => $validacion_visado
         ];
 
         // Crear una instancia de Dompdf
@@ -6632,6 +6708,12 @@ class CalificacionPCLController extends Controller
         $Requiere_tercera_persona_decisiones_dp = $array_datos_info_dictamen[0]->Requiere_tercera_persona_decisiones;
         $Requiere_dispositivo_apoyo_dp = $array_datos_info_dictamen[0]->Requiere_dispositivo_apoyo;
         $Justificacion_dependencia_dp = $array_datos_info_dictamen[0]->Justificacion_dependencia;
+
+        //consulta si esta visado o no para mostrar las firmas
+        
+        $validacion_visado = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        ->select('ID_evento', 'Id_proceso', 'Id_Asignacion', 'Visar')
+        ->where([['Id_Asignacion',$Id_Asignacion_comuni], ['Visar','Si']])->get();
                
         //Obtener los datos del formulario
         
@@ -6703,7 +6785,8 @@ class CalificacionPCLController extends Controller
             'Justificacion_dependencia_dp' => $Justificacion_dependencia_dp,
             'Numero_documento_afiliado' => $Numero_documento_afiliado,
             'Documento_afiliado' => $Documento_afiliado,
-            'Nombre_afiliado_pre' => $Nombre_afiliado_pre
+            'Nombre_afiliado_pre' => $Nombre_afiliado_pre,
+            'validacion_visado' => $validacion_visado
         ];
 
         // Crear una instancia de Dompdf
@@ -7624,6 +7707,12 @@ class CalificacionPCLController extends Controller
         $Requiere_tercera_persona_decisiones_dp = $array_datos_info_dictamen[0]->Requiere_tercera_persona_decisiones;
         $Requiere_dispositivo_apoyo_dp = $array_datos_info_dictamen[0]->Requiere_dispositivo_apoyo;
         $Justificacion_dependencia_dp = $array_datos_info_dictamen[0]->Justificacion_dependencia;
+
+        //consulta si esta visado o no para mostrar las firmas
+        
+        $validacion_visado = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        ->select('ID_evento', 'Id_proceso', 'Id_Asignacion', 'Visar')
+        ->where([['Id_Asignacion',$Id_Asignacion_comuni], ['Visar','Si']])->get();
                
         //Obtener los datos del formulario
         
@@ -7717,7 +7806,8 @@ class CalificacionPCLController extends Controller
             'Justificacion_dependencia_dp' => $Justificacion_dependencia_dp,
             'Numero_documento_afiliado' => $Numero_documento_afiliado,
             'Documento_afiliado' => $Documento_afiliado,
-            'Nombre_afiliado_pre' => $Nombre_afiliado_pre
+            'Nombre_afiliado_pre' => $Nombre_afiliado_pre,
+            'validacion_visado' => $validacion_visado
         ];
 
         // Crear una instancia de Dompdf

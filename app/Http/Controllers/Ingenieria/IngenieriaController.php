@@ -297,11 +297,18 @@ class IngenieriaController extends Controller
         $time = time();
         $date = date("Y-m-d h:i:s", $time);
         
-        $nuevo_rol = array(
-            'nombre_rol' => $request->nombre_rol,
-            'descripcion_rol' => $request->descripcion_rol,
-            'created_at' => $date,
-        );
+        // validación para determinar si ya existe un rol dentro del aplicativo
+        $validar_rol = DB::table('sigmel_roles')->where('nombre_rol', $request->nombre_rol)->get();
+
+        if(count($validar_rol) > 0){
+            return back()->with('rol_no_creado','Este rol se encuentra actualmente registrado. Para verlo y/o modificarlo debe ir a: Consultar Lista Roles');
+        }else{
+            $nuevo_rol = array(
+                'nombre_rol' => $request->nombre_rol,
+                'descripcion_rol' => $request->descripcion_rol,
+                'created_at' => $date,
+            );
+        }
 
         DB::table('sigmel_roles')->insert($nuevo_rol);
         return back()->with('rol_creado','Rol creado correctamente.');
