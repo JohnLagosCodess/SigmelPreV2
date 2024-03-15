@@ -2462,10 +2462,25 @@ class AdministradorController extends Controller
                 array_push($string_ids_procesos, $listado_id_procesos_evento[$i]->Id_proceso);
             }*/
 
+            // Validar los procesos contratados del cliente
+            $procesos_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+            ->select('Id_proceso')
+            ->where([
+                ['Id_cliente',$request->id_clientes]
+            ])->get();
+
+            $procesos_cliente = array();
+            for ($i=0; $i < count($procesos_contratados); $i++) { 
+                array_push($procesos_cliente, $procesos_contratados[$i]->Id_proceso);
+            }
+
+            // Consultar los procesos segun a los contratados
+
             $listado_procesos_nuevo_proceso = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
                 ->select('Id_proceso', 'Nombre_proceso')
                 ->where('Estado', 'activo')
                 ->whereNotIn('Id_proceso', $string_ids_procesos)
+                ->whereIn('Id_proceso', $procesos_cliente)
                 ->groupBy('Id_proceso','Nombre_proceso')
                 ->get();
 
@@ -2491,14 +2506,71 @@ class AdministradorController extends Controller
                 array_push($string_ids_servicios, $listado_id_servicios_evento[$i]->Id_servicio);
             }
 
-            $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
-            ->select('Id_Servicio', 'Nombre_servicio')
-            ->where([
-                ['Id_proceso', '=', $request->id_proceso_escogido],
-                ['Estado', '=', 'activo']
-            ])
-            ->whereNotIn('Id_Servicio', $string_ids_servicios)
-            ->get();
+            // Despues de obtener los servicios de cada proceso se realiza las siguiente validaciones 
+            // segun el caso
+            // CASO 1: traer servicios del proceso Origen distintos a la Adicion Dx
+            // CASO 2: traer servicios del proceso PCL distintos a Recalificacion y Revision pension
+            // CASO 3: traer servicios del proceso Juntas segun los contratados
+            
+            switch(true)
+            {
+                case($request->id_proceso_escogido == 1):
+                    $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                    ->select('Id_Servicio', 'Nombre_servicio')
+                    ->where([
+                        ['Id_proceso', '=', $request->id_proceso_escogido],
+                        ['Estado', '=', 'activo']
+                    ])
+                    ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                    ->where('Id_Servicio', '<>', 2)
+                    ->get();
+                break;
+                case($request->id_proceso_escogido == 2):
+                    $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                    ->select('Id_Servicio', 'Nombre_servicio')
+                    ->where([
+                        ['Id_proceso', '=', $request->id_proceso_escogido],
+                        ['Estado', '=', 'activo']
+                    ])
+                    ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                    ->whereNotIn('Id_Servicio', [7,8])
+                    ->get();
+                break;
+                case($request->id_proceso_escogido == 3):
+                    $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+                    ->select('Id_servicio')
+                    ->where([
+                        ['Id_proceso',$request->id_proceso_escogido],
+                        ['Id_cliente',$request->id_cliente]
+                    ])->get();
+
+                    $servicio_cliente = array();
+                    for ($i=0; $i < count($servicios_contratados); $i++) { 
+                        array_push($servicio_cliente, $servicios_contratados[$i]->Id_servicio);
+                    }
+
+                    $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                    ->select('Id_Servicio', 'Nombre_servicio')
+                    ->where([
+                        ['Id_proceso', '=', $request->id_proceso_escogido],
+                        ['Estado', '=', 'activo']
+                    ])
+                    ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                    ->whereIn('Id_Servicio', $servicio_cliente)
+                    ->get();
+
+                break;
+                default:
+                    $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                    ->select('Id_Servicio', 'Nombre_servicio')
+                    ->where([
+                        ['Id_proceso', '=', $request->id_proceso_escogido],
+                        ['Estado', '=', 'activo']
+                    ])
+                    ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                    ->get();
+                break;
+            }     
 
             $info_listado_servicios = json_decode(json_encode($listado_servicios, true));
             return response()->json(($info_listado_servicios));
