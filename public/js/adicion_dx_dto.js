@@ -799,6 +799,16 @@ $(document).ready(function(){
     $("#form_Adicion_Dx").submit(function(e){
         e.preventDefault();
 
+        var GuardarAdicionDx = $('#GuardarAdicionDx');
+        var ActualizarAdicionDx = $('#ActualizarAdicionDx');
+
+        if (GuardarAdicionDx.length > 0) {
+            document.querySelector('#GuardarAdicionDx').disabled=true;            
+        }
+        if (ActualizarAdicionDx.length > 0) {
+            document.querySelector('#ActualizarAdicionDx').disabled=true;
+        }
+
         // Captura del Id_evento
         var id_evento = $("#Id_Evento").val();
         // caputra del id de asignacion y id proceso de la adicion dx
