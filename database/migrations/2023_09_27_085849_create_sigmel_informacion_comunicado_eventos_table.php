@@ -24,6 +24,7 @@ return new class extends Migration
             $table->text('T_documento');
             $table->string('N_identificacion', 25);
             $table->text('Destinatario');
+            $table->text('JRCI_Destinatario')->nullable();
             $table->string('Nombre_destinatario', 100);
             $table->text('Nit_cc');
             $table->text('Direccion_destinatario');
@@ -38,6 +39,7 @@ return new class extends Migration
             $table->string('Elaboro', 100);
             $table->integer('Reviso');
             $table->text('Agregar_copia')->nullable();
+            $table->text('JRCI_copia')->nullable();
             $table->string('Firmar_Comunicado', 20)->nullable();
             $table->text('Tipo_descarga')->nullable();
             $table->string('Nombre_usuario', 100);

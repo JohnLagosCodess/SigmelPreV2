@@ -180,6 +180,8 @@
                             $EPS = 'EPS';
                             $AFP = 'AFP';
                             $ARL = 'ARL';
+                            $JRCI = 'JRCI';
+                            $JNCI = 'JNCI';
                         ?>
                         <?php 
                             if (isset($Agregar_copia[$Afiliado])) { ?>
@@ -230,6 +232,26 @@
                                 </tr>
                             <?php       
                             }
+                        ?>
+                        <?php 
+                            if (isset($Agregar_copia[$JRCI])) { ?>
+                                <tr>
+                                    <td class="copias">
+                                        <b>JRCI: </b><?=$Agregar_copia['JRCI'];?>
+                                    </td>
+                                </tr>
+                            <?php       
+                            }
+                        ?>
+                        <?php 
+                        if (isset($Agregar_copia[$JNCI])) { ?>
+                            <tr>
+                                <td class="copias">
+                                    <b>JNCI: </b><?=$Agregar_copia['JNCI'];?>
+                                </td>
+                            </tr>
+                        <?php       
+                        }
                         ?>
                     @endif
                 </table>

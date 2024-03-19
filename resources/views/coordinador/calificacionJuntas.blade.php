@@ -1017,21 +1017,53 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row text-center">
-                                        <label for="destinatario_principal" style="margin-left: 7px;">Destinatario Principal: <span style="color: red;">(*)</span></label>                                        
-                                        <div class="col-3">
+                                    <div class="row">
+                                        <label for="destinatario_principal" style="margin-left: 7px;">Destinatario Principal: <span style="color: red;">(*)</span></label> &nbsp;    
+                                        <div class="col">
+                                            <label for="jrci_comunicado"><strong>Junta Regional de Calificación de Invalidez</strong></label>
+                                            <input class="scalesR" type="radio" name="afiliado_comunicado" id="jrci_comunicado" value="JRCI_comunicado" style="margin-left: revert;" required>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group d-none" id="div_input_jrci">
+                                                <input type="text" class="form-control" name="input_jrci_seleccionado" id="input_jrci_seleccionado" disabled>
+                                            </div>
+                                            <div class="form-group d-none" id="div_select_jrci">
+                                                <select class="custom-select jrci_califi_invalidez_comunicado" name="jrci_califi_invalidez_comunicado" id="jrci_califi_invalidez_comunicado" style="width: 100%;"></select>
+                                            </div>
+                                        </div>                                
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="jnci_comunicado"><strong>Junta Nacional de Calificación de Invalidez</strong></label>
+                                            <input class="scalesR" type="radio" name="afiliado_comunicado" id="jnci_comunicado" value="JNCI_comunicado" style="margin-left: revert;" required>
+                                        </div> 
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
                                             <label for="afiliado_comunicado"><strong>Afiliado</strong></label>
                                             <input class="scalesR" type="radio" name="afiliado_comunicado" id="afiliado_comunicado" value="Afiliado" style="margin-left: revert;" required>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col">
                                             <label for="empresa_comunicado"><strong>Empresa</strong></label>
                                             <input class="scalesR" type="radio" name="afiliado_comunicado" id="empresa_comunicado" value="Empresa" style="margin-left: revert;" required>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col">
+                                            <label for="eps_comunicado"><strong>EPS</strong></label>
+                                            <input class="scalesR" type="radio" name="afiliado_comunicado" id="eps_comunicado" value="EPS_comunicado" style="margin-left: revert;" required>
+                                        </div>
+                                        <div class="col">
+                                            <label for="afp_comunicado"><strong>AFP</strong></label>
+                                            <input class="scalesR" type="radio" name="afiliado_comunicado" id="afp_comunicado" value="AFP_comunicado" style="margin-left: revert;" required>
+                                        </div>
+                                        <div class="col">
+                                            <label for="arl_comunicado"><strong>ARL</strong></label>
+                                            <input class="scalesR" type="radio" name="afiliado_comunicado" id="arl_comunicado" value="ARL_comunicado" style="margin-left: revert;" required>
+                                        </div>
+                                        <div class="col">
                                             <label for="Otro"><strong>Otro</strong></label>
                                             <input class="scalesR" type="radio" name="afiliado_comunicado" id="Otro" value="Otro" style="margin-left: revert;" required>
                                         </div>
-                                    </div> 
+                                    </div>
                                     <div class="row">
                                         <div class="col-4">
                                             <div class="form-group">
@@ -1209,7 +1241,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
                                                         <input class="custom-control-input" type="checkbox" id="copia_jrci" name="copia_jrci" value="JRCI">
@@ -1217,7 +1249,21 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-5 d-none" id="div_input_jrci_copia">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="input_jrci_seleccionado_copia" id="input_jrci_seleccionado_copia" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-5 d-none" id="div_select_jrci_copia">
+                                            <div class="form-group">
+                                                <label for="jrci_califi_invalidez_copia">¿Cual?</label><br>
+                                                <select class="jrci_califi_invalidez_copia custom-select" name="jrci_califi_invalidez_copia" id="jrci_califi_invalidez_copia" style="width: 100%;">                                                    
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
                                                         <input class="custom-control-input" type="checkbox" id="copia_jnci" name="copia_jnci" value="JNCI">
@@ -1384,19 +1430,51 @@
                                     </div>                         
                                     <div class="row text-center">                                  
                                         <label for="destinatario_principal_act" style="margin-left: 7px;">Destinatario Principal: <span style="color: red;">(*)</span></label>                                        
-                                        <div class="col-3">
+                                        <div class="col">
+                                            <label for="jrci_comunicado_editar"><strong>Junta Regional de Calificación de Invalidez</strong></label>
+                                            <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="jrci_comunicado_editar" value="JRCI_comunicado" style="margin-left: revert;" required>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group d-none" id="div_input_jrci_editar">
+                                                <input type="text" class="form-control" name="input_jrci_seleccionado_editar" id="input_jrci_seleccionado_editar" disabled>
+                                            </div>
+                                            <div class="form-group d-none" id="div_select_jrci_editar">
+                                                <select class="custom-select jrci_califi_invalidez_comunicado_editar" name="jrci_califi_invalidez_comunicado_editar" id="jrci_califi_invalidez_comunicado_editar" style="width: 100%;"></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="jnci_comunicado_editar"><strong>Junta Nacional de Calificación de Invalidez</strong></label>
+                                            <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="jnci_comunicado_editar" value="JNCI_comunicado" style="margin-left: revert;" required>
+                                        </div> 
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
                                             <label for="afiliado_comunicado_act"><strong>Afiliado</strong></label>
                                             <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="afiliado_comunicado_editar" value="Afiliado" style="margin-left: revert;" required>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col">
                                             <label for="empresa_comunicado"><strong>Empresa</strong></label>
                                             <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="empresa_comunicado_editar" value="Empresa" style="margin-left: revert;" required>
                                         </div>
-                                        <div class="col-3">
-                                            <label for="Otro"><strong>Otro</strong></label>
+                                        <div class="col">
+                                            <label for="eps_comunicado_editar"><strong>EPS</strong></label>
+                                            <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="eps_comunicado_editar" value="EPS_comunicado" style="margin-left: revert;" required>
+                                        </div>
+                                        <div class="col">
+                                            <label for="afp_comunicado_editar"><strong>AFP</strong></label>
+                                            <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="afp_comunicado_editar" value="AFP_comunicado" style="margin-left: revert;" required>
+                                        </div>
+                                        <div class="col">
+                                            <label for="arl_comunicado_editar"><strong>ARL</strong></label>
+                                            <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="arl_comunicado_editar" value="ARL_comunicado" style="margin-left: revert;" required>
+                                        </div>
+                                        <div class="col">
+                                            <label for="Otro_editar"><strong>Otro</strong></label>
                                             <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="Otro_editar" value="Otro" style="margin-left: revert;" required>
                                         </div>
-                                    </div>                                                                                                                     
+                                    </div>                                                                                                                
                                     <div class="row">                                        
                                         <div class="col-4">
                                             <div class="form-group">
@@ -1583,23 +1661,37 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                        <input class="custom-control-input" type="checkbox" id="edit_copia_jrci" name="edit_copia_jrci" value="JRCI">
-                                                        <label for="edit_copia_jrci" class="custom-control-label">Junta Regional de Calificación de Invalidez</label>                 
+                                                    <input class="custom-control-input" type="checkbox" id="edit_copia_jrci" name="edit_copia_jrci" value="JRCI">
+                                                    <label for="edit_copia_jrci" class="custom-control-label">Junta Regional de Calificación de Invalidez</label>                 
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-5 d-none" id="div_input_jrci_copia_editar">
+                                            <div class="form-group">
+                                                <input type="hidden" name="id_jrci_del_input" id="id_jrci_del_input">
+                                                <input type="text" class="form-control" name="input_jrci_seleccionado_copia_editar" id="input_jrci_seleccionado_copia_editar" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-5 d-none" id="div_select_jrci_copia_editar">
+                                            <div class="form-group">
+                                                <label for="jrci_califi_invalidez_copia_editar">¿Cual?</label><br>
+                                                <select class="jrci_califi_invalidez_copia_editar custom-select" name="jrci_califi_invalidez_copia_editar" id="jrci_califi_invalidez_copia_editar" style="width: 100%;">                                                    
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                        <input class="custom-control-input" type="checkbox" id="edit_copia_jnci" name="edit_copia_jnci" value="JNCI">
-                                                        <label for="edit_copia_jnci" class="custom-control-label">Junta Nacional de Calificación de Invalidez</label>                 
+                                                    <input class="custom-control-input" type="checkbox" id="edit_copia_jnci" name="edit_copia_jnci" value="JNCI">
+                                                    <label for="edit_copia_jnci" class="custom-control-label">Junta Nacional de Calificación de Invalidez</label>                 
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
                                     <div class="row">
                                         <div class="col-4">
