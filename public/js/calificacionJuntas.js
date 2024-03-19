@@ -1896,7 +1896,8 @@ $(document).ready(function(){
             /* Validaciones para el rol Consulta cuando entra a la vista */
             if (idRol == 7) {
                 // Desactivar todos los elementos excepto los especificados
-                $(':input, select, a, button').not('#listado_roles_usuario, #Hacciones, #botonVerEdicionEvento, #cargue_docs, #clicGuardado, #cargue_docs_modal_listado_docs, #botonFormulario2, .btn-danger, a[id^="EditarComunicado_"]').prop('disabled', true);
+                $(':input, select, a, button').not('#listado_roles_usuario, #Hacciones, #botonVerEdicionEvento, #cargue_docs, #clicGuardado, #cargue_docs_modal_listado_docs, #abrir_agregar_seguimiento, #fecha_seguimiento, #causal_seguimiento, #descripcion_seguimiento, #Guardar_seguimientos, #botonFormulario2, .btn-danger, a[id^="EditarComunicado_"]').prop('disabled', true);
+                $('#aumentarColAccionRealizar').addClass('d-none');
                 $("#enlace_ed_evento").hover(function(){
                     $("input[name='_token']").prop('disabled', false);
                     $("#bandera_buscador_juntas").prop('disabled', false);
@@ -3273,7 +3274,8 @@ $(document).ready(function(){
      /* Validaciones para el rol Consulta cuando entra a la vista */
     if (idRol == 7) {
         // Desactivar todos los elementos excepto los especificados
-        $(':input, select, a, button').not('#listado_roles_usuario, #Hacciones, #botonVerEdicionEvento, #cargue_docs, #clicGuardado, #cargue_docs_modal_listado_docs, #botonFormulario2, .btn-danger, a[id^="EditarComunicado_"]').prop('disabled', true);
+        $(':input, select, a, button').not('#listado_roles_usuario, #Hacciones, #botonVerEdicionEvento, #cargue_docs, #clicGuardado, #cargue_docs_modal_listado_docs, #abrir_agregar_seguimiento, #fecha_seguimiento, #causal_seguimiento, #descripcion_seguimiento, #Guardar_seguimientos, #botonFormulario2, .btn-danger, a[id^="EditarComunicado_"]').prop('disabled', true);
+        $('#aumentarColAccionRealizar').addClass('d-none');
         $("#enlace_ed_evento").hover(function(){
             $("input[name='_token']").prop('disabled', false);
             $("#bandera_buscador_juntas").prop('disabled', false);

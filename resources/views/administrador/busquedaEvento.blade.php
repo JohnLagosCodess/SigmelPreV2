@@ -4,7 +4,9 @@
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
-            
+            <?php 
+                $dato_rol=$captura_id_rol = session('id_cambio_rol');                
+            ?>
         </div>
     </div>
 
@@ -26,6 +28,7 @@
     <div class="card-info" style="border: 1px solid black;">
         <div class="card-header text-center">
             <h4>Consultar Evento</h4>
+            <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
         </div>
         <!-- Busqueda Filtros -->
         <form id="form_consultar_evento" method="POST">
