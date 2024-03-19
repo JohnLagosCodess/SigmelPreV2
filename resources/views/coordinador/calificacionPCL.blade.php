@@ -312,7 +312,7 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="fecha_accion">Fecha de acción <span style="color: red;">(*)</span></label>
-                                                    <input type="datetime-local" class="form-control" name="fecha_accion" id="fecha_accion" value="<?php if(!empty($array_datos_calificacionPcl[0]->F_accion_realizar)){echo $array_datos_calificacionPcl[0]->F_accion_realizar; }else{echo now()->format('Y-m-d h:i:s');} ?>" disabled>
+                                                    <input type="text" class="form-control" name="fecha_accion" id="fecha_accion" value="<?php if(!empty($array_datos_calificacionPcl[0]->F_accion_realizar)){echo $array_datos_calificacionPcl[0]->F_accion_realizar; }else{echo now()->format('Y-m-d H:i:s');} ?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -363,6 +363,12 @@
                                             </div>
                                             <div class="col-12">
                                                 <div class="form-group">
+                                                    <label for="cargue_documentos">Cargue Documento Historial:</label>                                                
+                                                    <input type="file" class="form-control select-doc" name="cargue_documentos" id="cargue_documentos" aria-describedby="Carguedocumentos" aria-label="Upload"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
                                                     <label for="descripcion_accion">Descripción acción</label>
                                                     <textarea class="form-control" name="descripcion_accion" id="descripcion_accion" cols="30" rows="5" style="resize: none;">{{$array_datos_calificacionPcl[0]->Descripcion_accion}}</textarea>                                                
                                                 </div>
@@ -389,6 +395,7 @@
                                                         <th>Usuario de acción</th>
                                                         <th>Acción realizada</th>
                                                         <th>Descripción</th>
+                                                        <th>Descarga</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="borrar_tabla_historial_acciones"></tbody>

@@ -5304,6 +5304,12 @@ class RecalificacionPCLController extends Controller
         $Requiere_tercera_persona_decisiones_dp = $array_datos_info_dictamen[0]->Requiere_tercera_persona_decisiones;
         $Requiere_dispositivo_apoyo_dp = $array_datos_info_dictamen[0]->Requiere_dispositivo_apoyo;
         $Justificacion_dependencia_dp = $array_datos_info_dictamen[0]->Justificacion_dependencia;
+
+        //consulta si esta visado o no para mostrar las firmas
+
+        $validacion_visado = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        ->select('ID_evento', 'Id_proceso', 'Id_Asignacion', 'Visar')
+        ->where([['Id_Asignacion',$Id_Asignacion_comuni], ['Visar','Si']])->get();
                
         //Obtener los datos del formulario
         
@@ -5397,7 +5403,8 @@ class RecalificacionPCLController extends Controller
             'Justificacion_dependencia_dp' => $Justificacion_dependencia_dp,
             'Numero_documento_afiliado' => $Numero_documento_afiliado,
             'Documento_afiliado' => $Documento_afiliado,
-            'Nombre_afiliado_pre' => $Nombre_afiliado_pre
+            'Nombre_afiliado_pre' => $Nombre_afiliado_pre,
+            'validacion_visado' => $validacion_visado
         ];
 
         // Crear una instancia de Dompdf
@@ -5650,6 +5657,12 @@ class RecalificacionPCLController extends Controller
         $Requiere_tercera_persona_decisiones_dp = $array_datos_info_dictamen[0]->Requiere_tercera_persona_decisiones;
         $Requiere_dispositivo_apoyo_dp = $array_datos_info_dictamen[0]->Requiere_dispositivo_apoyo;
         $Justificacion_dependencia_dp = $array_datos_info_dictamen[0]->Justificacion_dependencia;
+
+        //consulta si esta visado o no para mostrar las firmas
+
+        $validacion_visado = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        ->select('ID_evento', 'Id_proceso', 'Id_Asignacion', 'Visar')
+        ->where([['Id_Asignacion',$Id_Asignacion_comuni], ['Visar','Si']])->get();
                
         //Obtener los datos del formulario
         
@@ -5721,7 +5734,8 @@ class RecalificacionPCLController extends Controller
             'Justificacion_dependencia_dp' => $Justificacion_dependencia_dp,
             'Numero_documento_afiliado' => $Numero_documento_afiliado,
             'Documento_afiliado' => $Documento_afiliado,
-            'Nombre_afiliado_pre' => $Nombre_afiliado_pre
+            'Nombre_afiliado_pre' => $Nombre_afiliado_pre,
+            'validacion_visado' => $validacion_visado
         ];
 
         // Crear una instancia de Dompdf
@@ -5735,7 +5749,7 @@ class RecalificacionPCLController extends Controller
         file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni}/{$nombre_pdf}"), $output);
         return $pdf->download($nombre_pdf);
     }
-    // Generar PDF de Notificacion numerica para el decreto 1507 y 917
+    // Generar PDF de Notificacion numerica para el decreto 1507, 1507 cero y 917
 
     public function generarOficio_PclRe(Request $request){
         if (!Auth::check()) {
@@ -6997,6 +7011,12 @@ class RecalificacionPCLController extends Controller
         $Requiere_tercera_persona_decisiones_dp = $array_datos_info_dictamen[0]->Requiere_tercera_persona_decisiones;
         $Requiere_dispositivo_apoyo_dp = $array_datos_info_dictamen[0]->Requiere_dispositivo_apoyo;
         $Justificacion_dependencia_dp = $array_datos_info_dictamen[0]->Justificacion_dependencia;
+
+        //consulta si esta visado o no para mostrar las firmas
+
+        $validacion_visado = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        ->select('ID_evento', 'Id_proceso', 'Id_Asignacion', 'Visar')
+        ->where([['Id_Asignacion',$Id_Asignacion_comuni], ['Visar','Si']])->get();
                
         //Obtener los datos del formulario
         
@@ -7090,7 +7110,8 @@ class RecalificacionPCLController extends Controller
             'Justificacion_dependencia_dp' => $Justificacion_dependencia_dp,
             'Numero_documento_afiliado' => $Numero_documento_afiliado,
             'Documento_afiliado' => $Documento_afiliado,
-            'Nombre_afiliado_pre' => $Nombre_afiliado_pre
+            'Nombre_afiliado_pre' => $Nombre_afiliado_pre,
+            'validacion_visado' => $validacion_visado
         ];
 
         // Crear una instancia de Dompdf

@@ -731,6 +731,12 @@ $(document).ready(function () {
     $(document).on('submit', "form[id^='form_nuevo_servicio_evento_']", function(e){
         e.preventDefault();
 
+        var crear_servicio_evento = $("button[id^='crear_servicio_evento_']");
+
+        if (crear_servicio_evento.length > 0) {
+            document.querySelector("button[id^='crear_servicio_evento_']").disabled=true;            
+        }
+
         let id_clientes = $('.renderizar_nuevo_servicio').find("input[id^='id_clientes_']").val();        
         let nro_evento = $('.renderizar_nuevo_servicio').find("input[id^='nro_evento_']").val();
         let tupla_servicio_escogido = $('.renderizar_nuevo_servicio').find("input[id^='tupla_servicio_evento_']").val();
@@ -1064,6 +1070,7 @@ $(document).ready(function () {
 
     /* CARGUE DE INFORMACIÓN DEL SELECTOR de Servicios y Profesionales que dependen del proceso. */
     $(document).on('change', "select[id^='selector_nuevo_proceso_']", function(){
+        let id_clientes = $('.renderizar_nuevo_proceso').find("input[id^='id_clientes_']").val();
         let id_servicio_actual_nuevo_proceso = $('.renderizar_nuevo_proceso').find("input[id^='id_servicio_actual_']").val();
         let nro_evento_nuevo_proceso = $('.renderizar_nuevo_proceso').find("input[id^='nro_evento_nuevo_proceso_']").val();
         let token = $("input[name='_token']").val();
@@ -1077,7 +1084,8 @@ $(document).ready(function () {
             'parametro' : "listado_servicios_nuevo_proceso",
             'id_proceso_escogido' : id_proceso_escogido,
             'id_servicio_actual_nuevo_proceso': id_servicio_actual_nuevo_proceso,
-            'nro_evento': nro_evento_nuevo_proceso
+            'nro_evento': nro_evento_nuevo_proceso,
+            'id_cliente':id_clientes
         };
 
         $.ajax({
@@ -1295,6 +1303,12 @@ $(document).ready(function () {
     /* CREACIÓN DEL NUEVO PROCESO */
     $(document).on('submit', "form[id^='form_nuevo_proceso_evento_']", function(e){
         e.preventDefault();
+
+        var crear_proceso_evento = $("button[id^='crear_proceso_evento_']");
+
+        if (crear_proceso_evento.length > 0) {
+            document.querySelector("button[id^='crear_proceso_evento_']").disabled=true;            
+        }
 
         let nro_evento_nuevo_proceso = $('.renderizar_nuevo_proceso').find("input[id^='nro_evento_nuevo_proceso_']").val();
         let tupla_proceso_escogido = $('.renderizar_nuevo_proceso').find("input[id^='tupla_proceso_evento_']").val();

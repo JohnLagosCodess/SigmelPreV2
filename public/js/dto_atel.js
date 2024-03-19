@@ -1150,6 +1150,16 @@ $(document).ready(function(){
     $("#form_DTO_ATEL").submit(function(e){
         e.preventDefault();
 
+        var GuardarDTOATEL = $('#GuardarDTOATEL');
+        var EditarDTOATEL = $('#EditarDTOATEL');
+
+        if (GuardarDTOATEL.length > 0) {
+            document.querySelector('#GuardarDTOATEL').disabled=true;            
+        }
+        if (EditarDTOATEL.length > 0) {
+            document.querySelector('#EditarDTOATEL').disabled=true;
+        }
+
         // Captura de Id evento, Id asignacion, Id proceso
         var id_evento = $("#Id_Evento_dto_atel").val();
         var id_asignacion = $('#Id_Asignacion_dto_atel').val();

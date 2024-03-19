@@ -629,6 +629,15 @@ $(document).ready(function(){
     /*GUARDAR INFO PRONUNCIAMIENTO*/
     $('#form_CaliPronuncia').submit(function (e){
         e.preventDefault();
+        var GuardarPronuncia = $('#GuardarPronuncia');
+        var ActualizarPronuncia = $('#ActualizarPronuncia');
+
+        if (GuardarPronuncia.length > 0) {
+            document.querySelector('#GuardarPronuncia').disabled=true;            
+        }
+        if (ActualizarPronuncia.length > 0) {
+            document.querySelector('#ActualizarPronuncia').disabled=true;
+        }
         var guardar_datos = [];
         var datos_finales_diagnosticos_moticalifi = [];
         var array_id_filas = [];
@@ -706,19 +715,19 @@ $(document).ready(function(){
             contentType: false,
             success: function(response){
                 if (response.parametro == 'agregar_pronunciamiento') {
-                    document.querySelector('#GuardarPronuncia').disabled=true;
                     $('#div_alerta_pronuncia').removeClass('d-none');
                     $('.alerta_pronucia').append('<strong>'+response.mensaje+'</strong>');                                            
                     setTimeout(function(){
+                        document.querySelector('#GuardarPronuncia').disabled=false;
                         $('#div_alerta_pronuncia').addClass('d-none');
                         $('.alerta_pronucia').empty();   
                         location.reload();
                     }, 3000);   
                 }else if(response.parametro == 'update_pronunciamiento'){
-                    document.querySelector('#ActualizarPronuncia').disabled=true;
                     $('#div_alerta_pronuncia').removeClass('d-none');
                     $('.alerta_pronucia').append('<strong>'+response.mensaje2+'</strong>');                                           
                     setTimeout(function(){
+                        document.querySelector('#ActualizarPronuncia').disabled=false;
                         $('#div_alerta_pronuncia').addClass('d-none');
                         $('.alerta_pronucia').empty();
                         document.querySelector('#ActualizarPronuncia').disabled=false;

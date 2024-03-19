@@ -700,6 +700,7 @@ class BandejaJuntasController extends Controller
             'Id_proceso' => $Id_proceso,
             'Id_servicio' => $Id_Servicio_redireccionar,
             'Id_accion' => $Id_accion,
+            'Documento' => 'N/A',
             'Descripcion' => $Descripcion_bandeja,
             'F_accion' => $date_time,
             'Nombre_usuario' => $usuario,
