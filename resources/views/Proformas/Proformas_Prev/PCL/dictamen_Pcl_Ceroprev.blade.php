@@ -37,7 +37,7 @@
             position: absolute;
             max-width: 40%;
             height: auto;
-            left: 530px;
+            left: 535px;
             max-height: 75px; 
         } 
         
@@ -207,7 +207,11 @@
 </head>
 <body>
     <?php
-        $Fecha_dictamenF = date("d-m-Y", strtotime($Fecha_dictamen));
+        if ($Fecha_dictamen == ''){
+            $Fecha_dictamenF = '';
+        } else {            
+            $Fecha_dictamenF = date("d-m-Y", strtotime($Fecha_dictamen));
+        }  
         $F_nacimiento_per_calF = date("d-m-Y", strtotime($F_nacimiento_per_cal));
         $F_estructuracion_dpF = date("d-m-Y", strtotime($F_estructuracion_dp));
         $F_evento_dpF = date("d-m-Y", strtotime($F_evento_dp));

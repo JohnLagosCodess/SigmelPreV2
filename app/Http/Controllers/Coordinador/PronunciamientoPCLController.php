@@ -1089,11 +1089,11 @@ class PronunciamientoPCLController extends Controller
             $patron4 = '/\{\{\$F_estructuracionPcl\}\}/';
             if (preg_match($patron1, $Sustenta_cali) && preg_match($patron2, $Sustenta_cali) &&
             preg_match($patron3, $Sustenta_cali) && preg_match($patron4, $Sustenta_cali)) {
-                $texto_modificado = str_replace('{{$Nombre_afiliado}}', $Nombre_afiliado_corre, $Sustenta_cali);
-                $texto_modificado = str_replace('{{$CIE10_Nombres_Origen}}', $CIE10Nombres, $texto_modificado);
+                $texto_modificado = str_replace('{{$Nombre_afiliado}}', '<b>'.$Nombre_afiliado_corre.'</b>', $Sustenta_cali);
+                $texto_modificado = str_replace('{{$CIE10_Nombres_Origen}}', '<b>'.$CIE10Nombres.'</b>', $texto_modificado);
                 // $texto_modificado = str_replace('{{$OrigenPcl}}', $T_origen , $texto_modificado);
-                $texto_modificado = str_replace('{{$PorcentajePcl}}', $Porcentaje_pcl, $texto_modificado);
-                $texto_modificado = str_replace('{{$F_estructuracionPcl}}', $Fecha_estruturacion, $texto_modificado);
+                $texto_modificado = str_replace('{{$PorcentajePcl}}', '<b>'.$Porcentaje_pcl.'</b>', $texto_modificado);
+                $texto_modificado = str_replace('{{$F_estructuracionPcl}}', '<b>'.$Fecha_estruturacion.'</b>', $texto_modificado);
                 $texto_modificado = str_replace('</p>', '</p><br></br>', $texto_modificado);
                 $texto_modificado = str_replace('<p><br>', ' ', $texto_modificado);
                 $cuerpo = $texto_modificado;
