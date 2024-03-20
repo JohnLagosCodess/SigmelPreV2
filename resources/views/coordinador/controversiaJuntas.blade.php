@@ -1606,7 +1606,16 @@
                                                 <label for="tipo_clasificacion">Copia a partes interesadas</label>
                                             </div>
                                         </div>
-
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" type="checkbox" id="afiliado" name="afiliado" value="Afiliado">
+                                                    <label for="afiliado" class="custom-control-label">Afiliado</label>                 
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">

@@ -52,7 +52,7 @@ class PronunciamientoOrigenController extends Controller
         ,'pr.Id_tipo_pronunciamiento','p.Nombre_parametro as Tpronuncia','pr.Id_tipo_evento','ti.Nombre_evento','pr.Id_tipo_origen','or.Nombre_parametro as T_origen'
         ,'pr.Fecha_evento','pr.Dictamen_calificador','pr.Fecha_calificador','pr.Fecha_estruturacion','pr.Porcentaje_pcl','pr.Rango_pcl'
         ,'pr.Decision','pr.Fecha_pronuncia','pr.Asunto_cali','pr.Sustenta_cali','pr.Destinatario_principal','pr.Tipo_entidad','pr.Nombre_entidad as Nombre_entidad_correspon','pr.Copia_afiliado','pr.copia_empleador','pr.Copia_eps'
-        ,'pr.Copia_afp','pr.Copia_arl','pr.Copia_junta_regional','pr.Copia_junta_nacional','pr.Junta_regional_cual','j.Ciudad_Junta'
+        ,'pr.Copia_afp','pr.Copia_arl','pr.Copia_junta_regional','pr.Copia_junta_nacional','pr.Junta_regional_cual','sie.Nombre_entidad as Ciudad_Junta'
         ,'pr.N_anexos','pr.Elaboro_pronuncia','pr.Reviso_Pronuncia','pr.Ciudad_correspon','pr.N_radicado','pr.Firmar','pr.Fecha_correspondencia'
         ,'pr.Archivo_pronuncia')
         ->leftJoin('sigmel_gestiones.sigmel_lista_entidades as c', 'c.Id_Entidad', '=', 'pr.Id_primer_calificador')
@@ -60,7 +60,7 @@ class PronunciamientoOrigenController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as p', 'p.Id_Parametro', '=', 'pr.Id_tipo_pronunciamiento')
         ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as ti', 'ti.Id_Evento', '=', 'pr.Id_tipo_evento')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as or', 'or.Id_Parametro', '=', 'pr.Id_tipo_origen')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_regional_juntas as j', 'j.Id_juntaR', '=', 'pr.Junta_regional_cual')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'pr.Junta_regional_cual')
         ->where([
             ['pr.ID_evento', '=', $Id_evento_calitec],
             ['pr.Id_Asignacion', '=', $Id_asignacion_calitec]
@@ -206,12 +206,18 @@ class PronunciamientoOrigenController extends Controller
         }
         //Lista juntas regional
         if($parametro == "lista_regional_junta"){
-            $datos_tipo_junta = sigmel_lista_regional_juntas::on('sigmel_gestiones')
-                ->select('Id_juntaR','Ciudad_Junta')
-                ->where([
-                    ['Estado', '=', 'activo'],
-                ])
-                ->get();
+            // $datos_tipo_junta = sigmel_lista_regional_juntas::on('sigmel_gestiones')
+            //     ->select('Id_juntaR','Ciudad_Junta')
+            //     ->where([
+            //         ['Estado', '=', 'activo'],
+            //     ])
+            //     ->get();
+
+            $datos_tipo_junta = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+            ->select('sie.Id_Entidad as Id_juntaR','sie.Nombre_entidad as Ciudad_Junta')
+            ->where([
+                ['sie.IdTipo_entidad', 4]
+            ])->get();
 
             $informacion_datos_tipo_junta = json_decode(json_encode($datos_tipo_junta, true));
             return response()->json($informacion_datos_tipo_junta);
@@ -679,6 +685,8 @@ class PronunciamientoOrigenController extends Controller
         $copia_eps = $request->copia_eps;
         $copia_afp = $request->copia_afp;
         $copia_arl = $request->copia_arl;
+        $copia_junta_regional = $request->copia_junta_regional;
+        $copia_junta_nacional = $request->copia_junta_nacional;
 
         $firmar = $request->firmar;
 
@@ -779,6 +787,8 @@ class PronunciamientoOrigenController extends Controller
         $final_copia_eps = isset($copia_eps) ? 'EPS' : '';
         $final_copia_afp = isset($copia_afp) ? 'AFP' : '';
         $final_copia_arl = isset($copia_arl) ? 'ARL' : '';
+        $final_copias_jrci = isset($copia_junta_regional) ? 'JRCI': '';
+        $final_copias_jnci = isset($copia_junta_nacional) ? 'JNCI': '';
 
         $total_copias = array_filter(array(
             'copia_afiliado' => $final_copia_afiliado,
@@ -786,6 +796,8 @@ class PronunciamientoOrigenController extends Controller
             'copia_eps' => $final_copia_eps,
             'copia_afp' => $final_copia_afp,
             'copia_arl' => $final_copia_arl,
+            'copia_jrci' => $final_copias_jrci,
+            'copia_jnci' => $final_copias_jnci,
         )); 
 
         sleep(2);
@@ -889,6 +901,74 @@ class PronunciamientoOrigenController extends Controller
             $minucipio_arl = $datos_arl[0]->Nombre_municipio;
 
             $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+        }
+
+        if(isset($copia_jrci)){
+            $datos_jrci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+            ->select('sie.Nombre_entidad', 
+                'sie.Nit_entidad', 
+                'sie.Direccion', 
+                'sie.Telefonos',
+                'sie.Otros_Telefonos',
+                'sie.Emails',
+                'sldm.Id_departamento',
+                'sldm.Nombre_departamento',
+                'sldm1.Id_municipios',
+                'sldm1.Nombre_municipio as Nombre_ciudad'
+            )->where([
+                ['sie.Id_Entidad', $request->junta_regional_cual]
+            ])->get();
+
+            $nombre_jrci = $datos_jrci[0]->Nombre_entidad;
+            $direccion_jrci = $datos_jrci[0]->Direccion;
+
+            if ($datos_jrci[0]->Otros_Telefonos != "") {
+                $telefonos_jrci = $datos_jrci[0]->Telefonos.",".$datos_jrci[0]->Otros_Telefonos;
+            } else {
+                $telefonos_jrci = $datos_jrci[0]->Telefonos;
+            }
+
+            $ciudad_jrci = $datos_jrci[0]->Nombre_ciudad;
+            $departamento_jrci = $datos_jrci[0]->Nombre_departamento;
+                
+            $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
+
+        }
+        
+        if(isset($copia_jnci)){
+            $datos_jnci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+            ->select('sie.Nombre_entidad', 
+                'sie.Nit_entidad', 
+                'sie.Direccion', 
+                'sie.Telefonos',
+                'sie.Otros_Telefonos',
+                'sie.Emails',
+                'sldm.Id_departamento',
+                'sldm.Nombre_departamento',
+                'sldm1.Id_municipios',
+                'sldm1.Nombre_municipio as Nombre_ciudad'
+            )->where([
+                ['sie.IdTipo_entidad', 5]
+            ])->limit(1)->get();
+
+            $nombre_jnci = $datos_jnci[0]->Nombre_entidad;
+            $direccion_jnci = $datos_jnci[0]->Direccion;
+
+            if ($datos_jnci[0]->Otros_Telefonos != "") {
+                $telefonos_jnci = $datos_jnci[0]->Telefonos.",".$datos_jnci[0]->Otros_Telefonos;
+            } else {
+                $telefonos_jnci = $datos_jnci[0]->Telefonos;
+            }
+
+            $ciudad_jnci = $datos_jnci[0]->Nombre_ciudad;
+            $departamento_jnci = $datos_jnci[0]->Nombre_departamento;
+
+            $Agregar_copias['JNCI'] = $nombre_jnci."; ".$direccion_jnci."; ".$telefonos_jnci."; ".$ciudad_jnci." - ".$departamento_jnci;
+
         }
 
         /* Validación Firma Cliente */
@@ -1146,6 +1226,8 @@ class PronunciamientoOrigenController extends Controller
                 $EPS = 'EPS';
                 $AFP = 'AFP';
                 $ARL = 'ARL';
+                $JRCI = 'JRCI';
+                $JNCI = 'JNCI';
 
                 if (isset($Agregar_copias[$Afiliado])) {
                     $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
@@ -1165,6 +1247,14 @@ class PronunciamientoOrigenController extends Controller
 
                 if (isset($Agregar_copias[$ARL])) {
                     $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+                }
+
+                if (isset($Agregar_copias[$JRCI])) {
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
+                }
+
+                if (isset($Agregar_copias[$JNCI])) {
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
                 }
             }
 

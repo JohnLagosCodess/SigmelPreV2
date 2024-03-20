@@ -1508,6 +1508,7 @@ class ControversiaJuntasController extends Controller
         }
         $Asunto = $request->Asunto;
         $cuerpo_comunicado = $request->cuerpo_comunicado;
+        $afiliado = $request->afiliado;
         $empleador = $request->empleador;
         $eps = $request->eps;
         $afp = $request->afp;
@@ -1550,6 +1551,7 @@ class ControversiaJuntasController extends Controller
                 'Ciudad_destinatario' => $ciudad_destinatario,
                 'Asunto' => $Asunto,
                 'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Copia_afiliado' => $afiliado,
                 'Copia_empleador' => $empleador,
                 'Copia_eps' => $eps,
                 'Copia_afp' => $afp,
@@ -1626,6 +1628,7 @@ class ControversiaJuntasController extends Controller
                 'Ciudad_destinatario' => $ciudad_destinatario,
                 'Asunto' => $Asunto,
                 'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Copia_afiliado' => $afiliado,
                 'Copia_empleador' => $empleador,
                 'Copia_eps' => $eps,
                 'Copia_afp' => $afp,
@@ -1726,7 +1729,7 @@ class ControversiaJuntasController extends Controller
             ->select('sicie.ID_evento', 'sicie.Id_proceso', 'sicie.Id_Asignacion', 'sicie.Visar', 'sicie.Profesional_comite', 'sicie.F_visado_comite',
             'sicie.Destinatario_principal', 'sicie.Otro_destinatario', 'sicie.Tipo_destinatario', 'sicie.Nombre_dest_principal', 'sie.Nombre_entidad',
             'sicie.Nombre_destinatario','sicie.Nit_cc', 'sicie.Direccion_destinatario', 'sicie.Telefono_destinatario', 'sicie.Email_destinatario',
-            'sicie.Departamento_destinatario', 'sicie.Ciudad_destinatario', 'sicie.Asunto', 'sicie.Cuerpo_comunicado', 'sicie.Copia_empleador',
+            'sicie.Departamento_destinatario', 'sicie.Ciudad_destinatario', 'sicie.Asunto', 'sicie.Cuerpo_comunicado', 'sicie.Copia_afiliado', 'sicie.Copia_empleador',
             'sicie.Copia_eps', 'sicie.Copia_afp', 'sicie.Copia_arl', 'sicie.Copia_jr', 'sicie.Cual_jr', 'sicie.Copia_jn', 'sicie.Anexos',
             'sicie.Elaboro', 'sicie.Reviso', 'sicie.Firmar', 'sicie.Ciudad', 'sicie.F_correspondecia', 'sicie.N_radicado', 'sicie.Nombre_usuario',
             'sicie.F_registro')        
@@ -1819,6 +1822,12 @@ class ControversiaJuntasController extends Controller
             }
             
             // Copias a partes interesadas
+            if (!empty($array_comite_interdisciplinario[0]->Copia_afiliado)) {
+                $checkeado_afiliado = "Si";
+            } else {
+                $checkeado_afiliado = "No";
+            }
+
             if (!empty($array_comite_interdisciplinario[0]->Copia_empleador)) {
                 $checkeado_empleador = "Si";
             } else {
@@ -1917,6 +1926,7 @@ class ControversiaJuntasController extends Controller
                 'ciudad_destinatario' => $ciudad_destinatario,
                 'Asunto' => $Asunto,
                 'cuerpo_comunicado' => $cuerpo_comunicado,
+                'checkeado_afiliado' => $checkeado_afiliado,
                 'checkeado_empleador' => $checkeado_empleador,
                 'checkeado_eps' => $checkeado_eps,
                 'checkeado_afp' => $checkeado_afp,
@@ -1981,6 +1991,7 @@ class ControversiaJuntasController extends Controller
         $f_dictamen_jrci_emitido = $request->f_dictamen_jrci_emitido;
         $sustentacion_concepto_jrci = $request->sustentacion_concepto_jrci;
         $sustentacion_concepto_jrci1 = $request->sustentacion_concepto_jrci1;
+        $copia_afiliado = $request->copia_afiliado;
         $copia_empleador = $request->copia_empleador;
         $copia_eps = $request->copia_eps;
         $copia_afp = $request->copia_afp;
@@ -2149,12 +2160,14 @@ class ControversiaJuntasController extends Controller
 
         /* Copias Interesadas */
         // Validamos si los checkbox esta marcados
+        $final_copia_afiliado = isset($copia_afiliado) ? 'Afiliado' : '';
         $final_copia_empleador = isset($copia_empleador) ? 'Empleador' : '';
         $final_copia_eps = isset($copia_eps) ? 'EPS' : '';
         $final_copia_afp = isset($copia_afp) ? 'AFP' : '';
         $final_copia_arl = isset($copia_arl) ? 'ARL' : '';
 
         $total_copias = array_filter(array(
+            'copia_afiliado' => $final_copia_afiliado,
             'copia_empleador' => $final_copia_empleador,
             'copia_eps' => $final_copia_eps,
             'copia_afp' => $final_copia_afp,
@@ -2167,6 +2180,14 @@ class ControversiaJuntasController extends Controller
         extract($total_copias);
         
         $Agregar_copias = [];
+        if(isset($copia_afiliado)){
+            $emailAfiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->select('siae.Email')
+            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
+            ->get();
+            $afiliadoEmail = $emailAfiliado[0]->Email;            
+            $Agregar_copias['Afiliado'] = $afiliadoEmail;            
+        }
         if(isset($copia_empleador)){
 
             $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
@@ -2462,15 +2483,15 @@ class ControversiaJuntasController extends Controller
                     <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
                 </tr>';
 
-            // $Afiliado = 'Afiliado';
+            $Afiliado = 'Afiliado';
             $Empleador = 'Empleador';
             $EPS = 'EPS';
             $AFP = 'AFP';
             $ARL = 'ARL';
 
-            // if (isset($Agregar_copias[$Afiliado])) {
-            //     $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
-            // }
+            if (isset($Agregar_copias[$Afiliado])) {
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
+            }
 
             if (isset($Agregar_copias[$Empleador])) {
                 $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
@@ -2559,6 +2580,7 @@ class ControversiaJuntasController extends Controller
         $manual_de_califi_jrci_emitido = $request->manual_de_califi_jrci_emitido;
         $sustentacion_concepto_jrci = "<b>".$request->sustentacion_concepto_jrci."</b>";
         $sustentacion_concepto_jrci1 = "<b>".$request->sustentacion_concepto_jrci1."</b>";
+        $copia_afiliado = $request->copia_afiliado;
         $copia_empleador = $request->copia_empleador;
         $copia_eps = $request->copia_eps;
         $copia_afp = $request->copia_afp;
@@ -2771,12 +2793,14 @@ class ControversiaJuntasController extends Controller
 
         /* Copias Interesadas */
         // Validamos si los checkbox esta marcados
+        $final_copia_afiliado = isset($copia_afiliado) ? 'Afiliado' : '';
         $final_copia_empleador = isset($copia_empleador) ? 'Empleador' : '';
         $final_copia_eps = isset($copia_eps) ? 'EPS' : '';
         $final_copia_afp = isset($copia_afp) ? 'AFP' : '';
         $final_copia_arl = isset($copia_arl) ? 'ARL' : '';
 
         $total_copias = array_filter(array(
+            'copia_afiliado' => $final_copia_afiliado,
             'copia_empleador' => $final_copia_empleador,
             'copia_eps' => $final_copia_eps,
             'copia_afp' => $final_copia_afp,
@@ -2789,6 +2813,14 @@ class ControversiaJuntasController extends Controller
         extract($total_copias);
         
         $Agregar_copias = [];
+        if(isset($copia_afiliado)){
+            $emailAfiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->select('siae.Email')
+            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
+            ->get();
+            $afiliadoEmail = $emailAfiliado[0]->Email;            
+            $Agregar_copias['Afiliado'] = $afiliadoEmail;            
+        }
         if(isset($copia_empleador)){
 
             $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
