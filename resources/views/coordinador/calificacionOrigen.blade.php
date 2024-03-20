@@ -19,6 +19,8 @@
         <div>
             <?php if (isset($_POST['badera_modulo_principal_origen']) &&  $_POST['badera_modulo_principal_origen'] == 'desdebus_mod_origen' ):?>
                 <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>            
+            <?php elseif ($dato_rol == 7):?>
+                <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
             <?php else: ?>
                 <a href="{{route("bandejaOrigen")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
             <?php endif ?>

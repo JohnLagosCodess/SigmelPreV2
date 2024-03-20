@@ -2569,11 +2569,16 @@ class CalificacionPCLController extends Controller
             'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro')
             ->where([['side.ID_Evento',$ID_evento], ['side.Id_Asignacion',$Id_Asignacion]])->get(); 
             
-            
-            $PorcentajePcl_dp = $array_datos_info_dictamen[0]->Porcentaje_pcl;
-            $F_estructuracionPcl_dp = $array_datos_info_dictamen[0]->F_estructuracion;
-            $OrigenPcl_dp = $array_datos_info_dictamen[0]->Nombre_origen;
-            
+            if (count($array_datos_info_dictamen) > 0) {
+                $PorcentajePcl_dp = $array_datos_info_dictamen[0]->Porcentaje_pcl;
+                $F_estructuracionPcl_dp = $array_datos_info_dictamen[0]->F_estructuracion;
+                $OrigenPcl_dp = $array_datos_info_dictamen[0]->Nombre_origen;                
+            } else {
+                $PorcentajePcl_dp = '';
+                $F_estructuracionPcl_dp = '';
+                $OrigenPcl_dp = '';    
+            }
+                        
             // Captura de info para los CIE10
             $array_diagnosticosPcl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
             ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
@@ -6056,7 +6061,7 @@ class CalificacionPCLController extends Controller
         $fecha_dictamen = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
         ->select('F_visado_comite')->where([['ID_evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();
         if(count($fecha_dictamen) == 0){
-            $Fecha_dictamen = $date;
+            $Fecha_dictamen = '';
         }else{
             $Fecha_dictamen = $fecha_dictamen[0]->F_visado_comite;
         }
@@ -6357,11 +6362,11 @@ class CalificacionPCLController extends Controller
         $Tipo_empleado_laboral = $array_datos_info_antecedentes_laborales[0]->Tipo_empleado;
 
         if ($Tipo_empleado_laboral == 'Empleado actual') {
-            $Independiente_laboral = 'X';
-            $Dedependiente_laboral = '';
-        } else {
             $Independiente_laboral = '';
             $Dedependiente_laboral = 'X';
+        } else {
+            $Independiente_laboral = 'X';
+            $Dedependiente_laboral = '';
         }
 
         $Nombre_cargo_laboral = $array_datos_info_antecedentes_laborales[0]->Cargo;
@@ -6569,7 +6574,7 @@ class CalificacionPCLController extends Controller
         $fecha_dictamen = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
         ->select('F_visado_comite')->where([['ID_evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();
         if(count($fecha_dictamen) == 0){
-            $Fecha_dictamen = $date;
+            $Fecha_dictamen = '';
         }else{
             $Fecha_dictamen = $fecha_dictamen[0]->F_visado_comite;
         }
@@ -6726,11 +6731,11 @@ class CalificacionPCLController extends Controller
         $Tipo_empleado_laboral = $array_datos_info_antecedentes_laborales[0]->Tipo_empleado;
 
         if ($Tipo_empleado_laboral == 'Empleado actual') {
-            $Independiente_laboral = 'X';
-            $Dedependiente_laboral = '';
-        } else {
             $Independiente_laboral = '';
             $Dedependiente_laboral = 'X';
+        } else {
+            $Independiente_laboral = 'X';
+            $Dedependiente_laboral = '';
         }
 
         $Nombre_cargo_laboral = $array_datos_info_antecedentes_laborales[0]->Cargo;
@@ -7410,7 +7415,7 @@ class CalificacionPCLController extends Controller
         $fecha_dictamen = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
         ->select('F_visado_comite')->where([['ID_evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();
         if(count($fecha_dictamen) == 0){
-            $Fecha_dictamen = $date;
+            $Fecha_dictamen = '';
         }else{
             $Fecha_dictamen = $fecha_dictamen[0]->F_visado_comite;
         }
@@ -7714,11 +7719,11 @@ class CalificacionPCLController extends Controller
         $Tipo_empleado_laboral = $array_datos_info_antecedentes_laborales[0]->Tipo_empleado;
 
         if ($Tipo_empleado_laboral == 'Empleado actual') {
-            $Independiente_laboral = 'X';
-            $Dedependiente_laboral = '';
-        } else {
             $Independiente_laboral = '';
             $Dedependiente_laboral = 'X';
+        } else {
+            $Independiente_laboral = 'X';
+            $Dedependiente_laboral = '';
         }
 
         $Nombre_cargo_laboral = $array_datos_info_antecedentes_laborales[0]->Cargo;

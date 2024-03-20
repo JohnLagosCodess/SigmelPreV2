@@ -18,7 +18,9 @@
         <div class="col-8">
             <div>
                 <?php if (isset($_POST['badera_modulo_principal_origen']) &&  $_POST['badera_modulo_principal_origen'] == 'desdebus_mod_origen' ):?>
-                <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                    <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+                <?php elseif ($dato_rol == 7):?>
+                    <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
                 <?php elseif (isset($_POST['badera_modulo_principal_pcl']) &&  $_POST['badera_modulo_principal_pcl'] == 'desdebus_mod_pcl' ):?>
                     <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
                 <?php elseif (isset($_POST['badera_modulo_principal_juntas']) &&  $_POST['badera_modulo_principal_juntas'] == 'desdebus_mod_juntas' ):?>
@@ -517,7 +519,7 @@
                                     </div>
                                     <div class="col-4 text-center">
                                         <div class="form-group">
-                                            <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalAgregarSeguimiento"><i class="fas fa-folder-open text-info"></i> <strong>Agregar Seguimiento</strong></a>
+                                            <a href="#" class="text-dark text-md" id="abrir_agregar_seguimiento" label="Open Modal" data-toggle="modal" data-target="#modalAgregarSeguimiento"><i class="fas fa-folder-open text-info"></i> <strong>Agregar Seguimiento</strong></a>
                                         </div>
                                     </div>
                                 </div>                                

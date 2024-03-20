@@ -4930,7 +4930,7 @@ class RecalificacionPCLController extends Controller
         $fecha_dictamen = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
         ->select('F_visado_comite')->where([['ID_evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();
         if(count($fecha_dictamen) == 0){
-            $Fecha_dictamen = $date;
+            $Fecha_dictamen = '';
         }else{
             $Fecha_dictamen = $fecha_dictamen[0]->F_visado_comite;
         }
@@ -5231,11 +5231,11 @@ class RecalificacionPCLController extends Controller
         $Tipo_empleado_laboral = $array_datos_info_antecedentes_laborales[0]->Tipo_empleado;
 
         if ($Tipo_empleado_laboral == 'Empleado actual') {
-            $Independiente_laboral = 'X';
-            $Dedependiente_laboral = '';
-        } else {
             $Independiente_laboral = '';
             $Dedependiente_laboral = 'X';
+        } else {
+            $Independiente_laboral = 'X';
+            $Dedependiente_laboral = '';
         }
 
         $Nombre_cargo_laboral = $array_datos_info_antecedentes_laborales[0]->Cargo;
@@ -5442,7 +5442,7 @@ class RecalificacionPCLController extends Controller
         $fecha_dictamen = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
         ->select('F_visado_comite')->where([['ID_evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();
         if(count($fecha_dictamen) == 0){
-            $Fecha_dictamen = $date;
+            $Fecha_dictamen = '';
         }else{
             $Fecha_dictamen = $fecha_dictamen[0]->F_visado_comite;
         }
@@ -5599,11 +5599,11 @@ class RecalificacionPCLController extends Controller
         $Tipo_empleado_laboral = $array_datos_info_antecedentes_laborales[0]->Tipo_empleado;
 
         if ($Tipo_empleado_laboral == 'Empleado actual') {
-            $Independiente_laboral = 'X';
-            $Dedependiente_laboral = '';
-        } else {
             $Independiente_laboral = '';
             $Dedependiente_laboral = 'X';
+        } else {
+            $Independiente_laboral = 'X';
+            $Dedependiente_laboral = '';
         }
 
         $Nombre_cargo_laboral = $array_datos_info_antecedentes_laborales[0]->Cargo;
@@ -6638,7 +6638,7 @@ class RecalificacionPCLController extends Controller
         $fecha_dictamen = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
         ->select('F_visado_comite')->where([['ID_evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();
         if(count($fecha_dictamen) == 0){
-            $Fecha_dictamen = $date;
+            $Fecha_dictamen = '';
         }else{
             $Fecha_dictamen = $fecha_dictamen[0]->F_visado_comite;
         }
@@ -6942,11 +6942,11 @@ class RecalificacionPCLController extends Controller
         $Tipo_empleado_laboral = $array_datos_info_antecedentes_laborales[0]->Tipo_empleado;
 
         if ($Tipo_empleado_laboral == 'Empleado actual') {
-            $Independiente_laboral = 'X';
-            $Dedependiente_laboral = '';
-        } else {
             $Independiente_laboral = '';
             $Dedependiente_laboral = 'X';
+        } else {
+            $Independiente_laboral = 'X';
+            $Dedependiente_laboral = '';
         }
 
         $Nombre_cargo_laboral = $array_datos_info_antecedentes_laborales[0]->Cargo;

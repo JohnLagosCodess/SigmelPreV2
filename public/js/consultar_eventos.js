@@ -1,5 +1,5 @@
 $(document).ready(function () {
-            
+    var idRol = $("#id_rol").val();            
     $('#form_consultar_evento').submit(function(e){
         e.preventDefault();
 
@@ -175,6 +175,13 @@ $(document).ready(function () {
                             var contenedorBotonBuscar = botonBuscar[0].childNodes[5].childNodes[1].childNodes[1].childNodes[0].classList[0];
                             $('.'+contenedorBotonBuscar).addClass('d-none');
                         }, 100);
+
+                        // Desactivar los elementos de nuevo proceso y nuevo servicio si el id rol del usuario es 7 = Consulta
+                        
+                        if (idRol == 7) {
+                            $("a[id^='btn_nuevo_servicio_']").prop('disabled', true);                                   
+                            $("a[id^='btn_nuevo_proceso_']").prop('disabled', true);                            
+                        } 
                     }
 
                 }

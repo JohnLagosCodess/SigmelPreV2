@@ -19,6 +19,8 @@
             <div>                
                 <?php if (isset($_POST['badera_modulo_principal_juntas']) &&  $_POST['badera_modulo_principal_juntas'] == 'desdebus_mod_juntas' ):?>
                     <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>                
+                <?php elseif($dato_rol  == 7):?>
+                    <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>                                                
                 <?php else: ?>
                     <a href="{{route("bandejaJuntas")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
                 <?php endif ?>
@@ -841,7 +843,7 @@
                             </div>
                             <div class="col-3 text-center" <?php if(!empty($arrayinfo_controvertido[0]->Termino_contro_califi) && $arrayinfo_controvertido[0]->Termino_contro_califi=='Fuera de términos'){ ?> style="display:none" <?php } ?>>
                                 <div class="form-group">
-                                    <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalAgregarSeguimiento"><i class="fas fa-folder-open text-info"></i> <strong>Agregar Seguimiento</strong></a>
+                                    <a href="#" class="text-dark text-md" id="abrir_agregar_seguimiento" label="Open Modal" data-toggle="modal" data-target="#modalAgregarSeguimiento"><i class="fas fa-folder-open text-info"></i> <strong>Agregar Seguimiento</strong></a>
                                 </div>
                             </div>
                         </div>
