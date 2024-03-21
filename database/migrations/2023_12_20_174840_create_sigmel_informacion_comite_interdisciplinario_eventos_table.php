@@ -40,6 +40,7 @@ return new class extends Migration
             $table->text('Ciudad_destinatario')->nullable();
             $table->text('Asunto');
             $table->text('Cuerpo_comunicado');
+            $table->text('Copia_afiliado')->nullable();
             $table->text('Copia_empleador')->nullable();
             $table->text('Copia_eps')->nullable();
             $table->text('Copia_afp')->nullable();

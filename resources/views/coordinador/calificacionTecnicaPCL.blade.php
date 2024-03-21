@@ -6,6 +6,9 @@
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
+            <?php 
+                $dato_rol=$captura_id_rol = session('id_cambio_rol');
+            ?>
         </div>
     </div>
 @stop
@@ -14,7 +17,11 @@
     <div class="row">
         <div class="col-8">
             <div>
-                <a href="{{route("bandejaPCL")}}" class="btn btn-info" type="button"><i class="fas fa-archive"></i> Regresar Bandeja</a>
+                <?php if ($dato_rol == 7):?>
+                    <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Consultar Evento</a>
+                <?php else:?>
+                    <a href="{{route("bandejaPCL")}}" class="btn btn-info" type="button"><i class="fas fa-archive"></i> Regresar Bandeja</a>
+                <?php endif ?>
                 <a onclick="document.getElementById('botonEnvioVista').click();" style="cursor:pointer;" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Módulo PCL</a>
                 <p>
                     <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>

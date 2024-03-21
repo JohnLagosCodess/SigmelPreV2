@@ -232,7 +232,7 @@
             <tbody>
                 @if (count($deficiencias_calculadas_factores) > 0) 
                     <tr>
-                        <td>Se revisa la calificación de la pérdida de capacidad laboral:</td>
+                        <td class="fuente_todo_texto">Se revisa la calificación de la pérdida de capacidad laboral:</td>
                     </tr>                   
                     <tr>
                         <td class="fuente_todo_texto">Título I.</td>
@@ -244,7 +244,7 @@
                     @endforeach                
                 @else
                     <tr>
-                        <td>Se revisa la calificación de la pérdida de capacidad laboral:</td>
+                        <td class="fuente_todo_texto">Se revisa la calificación de la pérdida de capacidad laboral:</td>
                     </tr>                   
                     <tr>
                         <td class="fuente_todo_texto">Título I. No se registran Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores</td>
@@ -255,25 +255,25 @@
         <table class="tabla1">            
             <tbody>
                 <tr>
-                    <td>Deficiencia total: {{$Total_Deficiencia50_dp}}%. Valor ponderado: {{$Suma_combinada_dp}}</td>
+                    <td class="fuente_todo_texto">Deficiencia total: {{$Total_Deficiencia50_dp}}%. Valor ponderado: {{$Suma_combinada_dp}}</td>
                 </tr>
                 <tr>
-                    <td>Título II: Rol laboral con restricciones completas: {{$total_rol_ocupacional50}}</td>
+                    <td class="fuente_todo_texto">Título II: Rol laboral con restricciones completas: {{$total_rol_ocupacional50}}</td>
                 </tr>
                 <tr>
-                    <td>Autosuficiencia económica reajustada: {{$Total_rol_laboral}} %</td>
+                    <td class="fuente_todo_texto">Autosuficiencia económica reajustada: {{$Total_rol_laboral}} %</td>
                 </tr>
                 <tr>
-                    <td>Edad {{$Edad_afiliado}} años: {{$total_edad_cronologica}}</td>
+                    <td class="fuente_todo_texto">Edad {{$Edad_afiliado}} años: {{$total_edad_cronologica}}</td>
                 </tr>
                 <tr>
-                    <td>Otras áreas ocupacionales: {{$Total_otras_areas}} %</td>
+                    <td class="fuente_todo_texto">Otras áreas ocupacionales: {{$Total_otras_areas}} %</td>
                 </tr>
                 <tr>
-                    <td>Total título II: {{$Total_laboral_otras_areas}} %</td>
+                    <td class="fuente_todo_texto">Total título II: {{$Total_laboral_otras_areas}} %</td>
                 </tr>
                 <tr>
-                    <td>Total calificación de pérdida de capacidad laboral: {{$PorcentajePcl_dp}} %.</td>
+                    <td class="fuente_todo_texto">Total calificación de pérdida de capacidad laboral: {{$PorcentajePcl_dp}} %.</td>
                 </tr>
             </tbody>
         </table>        

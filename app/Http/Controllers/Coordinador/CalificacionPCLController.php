@@ -1476,20 +1476,7 @@ class CalificacionPCLController extends Controller
         $reviso_lider = $reviso_info_lider[0]->name;
         $forma_envio = $forma_info_envio[0]->Nombre_parametro;
         
-        // Validamos si los checkbox esta marcados
-        $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-        $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-        $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-        $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-        $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
-        $total_copias = array_filter(array(
-            'edit_copia_afiliado' => $edit_copias_afiliado,
-            'edit_copia_empleador' => $edit_copias_empleador,
-            'edit_copia_eps' => $edit_copias_eps,
-            'edit_copia_afp' => $edit_copias_afp,
-            'edit_copia_arl' => $edit_copias_arl,
-        ));   
-        sleep(2);              
+                     
         $Id_comunicado = $request->Id_comunicado_act;
         $ID_evento = $request->Id_evento_act;
         $Id_Asignacion = $request->Id_asignacion_act;
@@ -1513,63 +1500,6 @@ class CalificacionPCLController extends Controller
         $Reviso_lider = $reviso_lider;        
         $Nombre_usuario = $nombre_usuario;
         $F_registro = $date;
-
-        // echo $Cuerpo_comunicado
-        // Filtramos las llaves del array
-        extract($total_copias);
-        // Creamos array para empezar a llenarlos con las copias
-        $Agregar_copias = [];
-        if (isset($edit_copia_afiliado)) {
-            $emailAfiliado = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-            ->select('Email')
-            ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
-            ->get();
-            $afiliadoEmail = $emailAfiliado[0]->Email;            
-            $Agregar_copias['Afiliado'] = $afiliadoEmail;            
-        } 
-        
-        if(isset($edit_copia_empleador)) {            
-            $nomb_email_Empleador = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
-            ->select('Empresa', 'Email')
-            ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
-            ->get();
-            $empleador_nomb = $nomb_email_Empleador[0]->Empresa;
-            $empleador_email = $nomb_email_Empleador[0]->Email;            
-            $Agregar_copias['Empleador'] = $empleador_nomb.' '.$empleador_email;            
-        }
-
-        if (isset($edit_copia_eps)) {
-            $nomb_email_eps = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
-            ->select('siae.Id_eps', 'sie.Nombre_entidad', 'sie.Emails')
-            ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
-            ->get(); 
-            $eps_nomb = $nomb_email_eps[0]->Nombre_entidad;
-            $eps_email = $nomb_email_eps[0]->Emails;
-            $Agregar_copias['EPS'] = $eps_nomb.' '.$eps_email;
-        }
-
-        if (isset($edit_copia_afp)) {
-            $nomb_email_afp = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
-            ->select('siae.Id_afp', 'sie.Nombre_entidad', 'sie.Emails')
-            ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
-            ->get(); 
-            $afp_nomb = $nomb_email_afp[0]->Nombre_entidad;
-            $afp_email = $nomb_email_afp[0]->Emails;
-            $Agregar_copias['AFP'] = $afp_nomb.' '.$afp_email;
-        }
-
-        if (isset($edit_copia_arl)) {
-            $nomb_email_arl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
-            ->select('siae.Id_arl', 'sie.Nombre_entidad', 'sie.Emails')
-            ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
-            ->get();
-            $arl_nomb = $nomb_email_arl[0]->Nombre_entidad;
-            $arl_email = $nomb_email_arl[0]->Emails;
-            $Agregar_copias['ARL'] = $arl_nomb.' '.$arl_email;
-        }
 
         // validamos si el checkbox de la firma esta marcado
         $validarFirma = isset($request->firmarcomunicado_editar) ? 'Firmar Documento' : 'No lleva firma';
@@ -2639,11 +2569,16 @@ class CalificacionPCLController extends Controller
             'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro')
             ->where([['side.ID_Evento',$ID_evento], ['side.Id_Asignacion',$Id_Asignacion]])->get(); 
             
-            
-            $PorcentajePcl_dp = $array_datos_info_dictamen[0]->Porcentaje_pcl;
-            $F_estructuracionPcl_dp = $array_datos_info_dictamen[0]->F_estructuracion;
-            $OrigenPcl_dp = $array_datos_info_dictamen[0]->Nombre_origen;
-            
+            if (count($array_datos_info_dictamen) > 0) {
+                $PorcentajePcl_dp = $array_datos_info_dictamen[0]->Porcentaje_pcl;
+                $F_estructuracionPcl_dp = $array_datos_info_dictamen[0]->F_estructuracion;
+                $OrigenPcl_dp = $array_datos_info_dictamen[0]->Nombre_origen;                
+            } else {
+                $PorcentajePcl_dp = '';
+                $F_estructuracionPcl_dp = '';
+                $OrigenPcl_dp = '';    
+            }
+                        
             // Captura de info para los CIE10
             $array_diagnosticosPcl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
             ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
@@ -2716,6 +2651,152 @@ class CalificacionPCLController extends Controller
 
         }
         else{
+            // Validamos si los checkbox esta marcados
+            $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
+            $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
+            $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
+            $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
+            $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+            $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
+            $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+            $total_copias = array_filter(array(
+                'edit_copia_afiliado' => $edit_copias_afiliado,
+                'edit_copia_empleador' => $edit_copias_empleador,
+                'edit_copia_eps' => $edit_copias_eps,
+                'edit_copia_afp' => $edit_copias_afp,
+                'edit_copia_arl' => $edit_copias_arl,
+                'edit_copia_jrci' => $edit_copias_jrci,
+                'edit_copia_jnci' => $edit_copias_jnci,
+            ));   
+            sleep(2);
+            // Filtramos las llaves del array
+            extract($total_copias);
+            // Creamos array para empezar a llenarlos con las copias
+            $Agregar_copias = [];
+            if (isset($edit_copia_afiliado)) {
+                $emailAfiliado = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+                ->select('Email')
+                ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+                ->get();
+                $afiliadoEmail = $emailAfiliado[0]->Email;            
+                $Agregar_copias['Afiliado'] = $afiliadoEmail;            
+            } 
+            
+            if(isset($edit_copia_empleador)) {            
+                $nomb_email_Empleador = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
+                ->select('Empresa', 'Email')
+                ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+                ->get();
+                $empleador_nomb = $nomb_email_Empleador[0]->Empresa;
+                $empleador_email = $nomb_email_Empleador[0]->Email;            
+                $Agregar_copias['Empleador'] = $empleador_nomb.' '.$empleador_email;            
+            }
+
+            if (isset($edit_copia_eps)) {
+                $nomb_email_eps = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
+                ->select('siae.Id_eps', 'sie.Nombre_entidad', 'sie.Emails')
+                ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+                ->get(); 
+                $eps_nomb = $nomb_email_eps[0]->Nombre_entidad;
+                $eps_email = $nomb_email_eps[0]->Emails;
+                $Agregar_copias['EPS'] = $eps_nomb.' '.$eps_email;
+            }
+
+            if (isset($edit_copia_afp)) {
+                $nomb_email_afp = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
+                ->select('siae.Id_afp', 'sie.Nombre_entidad', 'sie.Emails')
+                ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+                ->get(); 
+                $afp_nomb = $nomb_email_afp[0]->Nombre_entidad;
+                $afp_email = $nomb_email_afp[0]->Emails;
+                $Agregar_copias['AFP'] = $afp_nomb.' '.$afp_email;
+            }
+
+            if (isset($edit_copia_arl)) {
+                $nomb_email_arl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
+                ->select('siae.Id_arl', 'sie.Nombre_entidad', 'sie.Emails')
+                ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+                ->get();
+                $arl_nomb = $nomb_email_arl[0]->Nombre_entidad;
+                $arl_email = $nomb_email_arl[0]->Emails;
+                $Agregar_copias['ARL'] = $arl_nomb.' '.$arl_email;
+            }
+            
+            if(isset($edit_copia_jrci)){
+                if(!empty($request->input_jrci_seleccionado_copia_editar)){
+                    $datos_jrci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                    ->select('sie.Nombre_entidad', 
+                        'sie.Nit_entidad', 
+                        'sie.Direccion', 
+                        'sie.Telefonos',
+                        'sie.Emails',
+                        'sldm.Id_departamento',
+                        'sldm.Nombre_departamento',
+                        'sldm1.Id_municipios',
+                        'sldm1.Nombre_municipio as Nombre_ciudad'
+                    )->where([
+                        ['sie.Id_Entidad', $request->id_jrci_del_input]
+                    ])->get();
+
+                    $jrci_nomb = $datos_jrci[0]->Nombre_entidad;
+                    $jrci_email = $datos_jrci[0]->Emails;
+
+                    $Agregar_copias['JRCI'] = $jrci_nomb.' '.$jrci_email;
+
+                }else{
+
+                    $datos_jrci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                    ->select('sie.Nombre_entidad', 
+                        'sie.Nit_entidad', 
+                        'sie.Direccion', 
+                        'sie.Telefonos',
+                        'sie.Emails',
+                        'sldm.Id_departamento',
+                        'sldm.Nombre_departamento',
+                        'sldm1.Id_municipios',
+                        'sldm1.Nombre_municipio as Nombre_ciudad'
+                    )->where([
+                        ['sie.Id_Entidad', $request->jrci_califi_invalidez_copia_editar]
+                    ])->get();
+
+                    $jrci_nomb = $datos_jrci[0]->Nombre_entidad;
+                    $jrci_email = $datos_jrci[0]->Emails;
+
+                    $Agregar_copias['JRCI'] = $jrci_nomb.' '.$jrci_email;
+                }
+            }
+            
+            if(isset($edit_copia_jnci)){
+                $datos_jnci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                ->select('sie.Nombre_entidad', 
+                    'sie.Nit_entidad', 
+                    'sie.Direccion', 
+                    'sie.Telefonos',
+                    'sie.Emails',
+                    'sldm.Id_departamento',
+                    'sldm.Nombre_departamento',
+                    'sldm1.Id_municipios',
+                    'sldm1.Nombre_municipio as Nombre_ciudad'
+                )->where([
+                    ['sie.IdTipo_entidad', 5]
+                ])->limit(1)->get();
+
+                $jnci_nomb = $datos_jnci[0]->Nombre_entidad;
+                $jnci_email = $datos_jnci[0]->Emails;
+
+                $Agregar_copias['JNCI'] = $jnci_nomb.' '.$jnci_email;
+
+            }
+            
             //Obtener los datos del formulario
             $data = [
                 'ID_evento' => $ID_evento,
@@ -5980,7 +6061,7 @@ class CalificacionPCLController extends Controller
         $fecha_dictamen = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
         ->select('F_visado_comite')->where([['ID_evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();
         if(count($fecha_dictamen) == 0){
-            $Fecha_dictamen = $date;
+            $Fecha_dictamen = '';
         }else{
             $Fecha_dictamen = $fecha_dictamen[0]->F_visado_comite;
         }
@@ -6281,11 +6362,11 @@ class CalificacionPCLController extends Controller
         $Tipo_empleado_laboral = $array_datos_info_antecedentes_laborales[0]->Tipo_empleado;
 
         if ($Tipo_empleado_laboral == 'Empleado actual') {
-            $Independiente_laboral = 'X';
-            $Dedependiente_laboral = '';
-        } else {
             $Independiente_laboral = '';
             $Dedependiente_laboral = 'X';
+        } else {
+            $Independiente_laboral = 'X';
+            $Dedependiente_laboral = '';
         }
 
         $Nombre_cargo_laboral = $array_datos_info_antecedentes_laborales[0]->Cargo;
@@ -6493,7 +6574,7 @@ class CalificacionPCLController extends Controller
         $fecha_dictamen = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
         ->select('F_visado_comite')->where([['ID_evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();
         if(count($fecha_dictamen) == 0){
-            $Fecha_dictamen = $date;
+            $Fecha_dictamen = '';
         }else{
             $Fecha_dictamen = $fecha_dictamen[0]->F_visado_comite;
         }
@@ -6650,11 +6731,11 @@ class CalificacionPCLController extends Controller
         $Tipo_empleado_laboral = $array_datos_info_antecedentes_laborales[0]->Tipo_empleado;
 
         if ($Tipo_empleado_laboral == 'Empleado actual') {
-            $Independiente_laboral = 'X';
-            $Dedependiente_laboral = '';
-        } else {
             $Independiente_laboral = '';
             $Dedependiente_laboral = 'X';
+        } else {
+            $Independiente_laboral = 'X';
+            $Dedependiente_laboral = '';
         }
 
         $Nombre_cargo_laboral = $array_datos_info_antecedentes_laborales[0]->Cargo;
@@ -7334,7 +7415,7 @@ class CalificacionPCLController extends Controller
         $fecha_dictamen = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
         ->select('F_visado_comite')->where([['ID_evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();
         if(count($fecha_dictamen) == 0){
-            $Fecha_dictamen = $date;
+            $Fecha_dictamen = '';
         }else{
             $Fecha_dictamen = $fecha_dictamen[0]->F_visado_comite;
         }
@@ -7638,11 +7719,11 @@ class CalificacionPCLController extends Controller
         $Tipo_empleado_laboral = $array_datos_info_antecedentes_laborales[0]->Tipo_empleado;
 
         if ($Tipo_empleado_laboral == 'Empleado actual') {
-            $Independiente_laboral = 'X';
-            $Dedependiente_laboral = '';
-        } else {
             $Independiente_laboral = '';
             $Dedependiente_laboral = 'X';
+        } else {
+            $Independiente_laboral = 'X';
+            $Dedependiente_laboral = '';
         }
 
         $Nombre_cargo_laboral = $array_datos_info_antecedentes_laborales[0]->Cargo;

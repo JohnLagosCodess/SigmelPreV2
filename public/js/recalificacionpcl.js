@@ -3918,7 +3918,7 @@ $(document).ready(function(){
             "</tr>" +
             "</table>"+
             "<p>Le informamos que de no encontrarse de acuerdo con la calificación emitida, usted tiene la posibilidad de manifestar a Seguros de "+
-            "Vida Alfa S.A. su inconformidad dentro de los diez (IO) días siguientes a partir de la fecha de recibida la notificación, evento en "+
+            "Vida Alfa S.A. su inconformidad dentro de los diez (10) días siguientes a partir de la fecha de recibida la notificación, evento en "+
             "el cual procederemos a remitir su caso a la respectiva Junta Regional de Calificación de Invalidez para obtener una segunda calificación.</p>"+
             "<p>Dicha manifestación debe realizarla por escrito dirigida a Seguros de Vida Alfa, en la que debe expresar sobre cuál de los aspectos "+
             "apela: origen, pérdida de capacidad laboral y/o fecha de estructuración. Remitirla a la Cra 10 N° 18 - 36 Piso 4 Edificio José María "+
@@ -4039,7 +4039,7 @@ $(document).ready(function(){
             "</tr>" +
             "</table>"+
             "<p>Le informamos que de no encontrarse de acuerdo con la calificación emitida, usted tiene la posibilidad de manifestar a Seguros de "+
-            "Vida Alfa S.A. su inconformidad dentro de los diez (IO) días siguientes a partir de la fecha de recibida la notificación, evento en "+
+            "Vida Alfa S.A. su inconformidad dentro de los diez (10) días siguientes a partir de la fecha de recibida la notificación, evento en "+
             "el cual procederemos a remitir su caso a la respectiva Junta Regional de Calificación de Invalidez para obtener una segunda calificación.</p>"+
             "<p>Dicha manifestación debe realizarla por escrito dirigida a Seguros de Vida Alfa, en la que debe expresar sobre cuál de los aspectos "+
             "apela: origen, pérdida de capacidad laboral y/o fecha de estructuración. Remitirla a la Cra 10 N° 18 - 36 Piso 4 Edificio José María "+

@@ -297,6 +297,16 @@
                         $ARL = 'ARL';
                     ?>
                     <?php 
+                        if (isset($Agregar_copia[$Afiliado])) { ?>
+                            <tr>
+                                <td>
+                                    <span class="negrita">Afiliado: </span><?=$Agregar_copia['Afiliado'];?>
+                                </td>
+                            </tr>
+                        <?php       
+                        }
+                    ?>
+                    <?php 
                         if (isset($Agregar_copia[$Empleador])) { ?>
                             <tr>
                                 <td>

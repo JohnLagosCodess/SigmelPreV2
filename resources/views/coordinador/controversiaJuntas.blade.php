@@ -7,6 +7,9 @@
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
+            <?php 
+                $dato_rol=$captura_id_rol = session('id_cambio_rol');
+            ?>
         </div>
     </div>
 @stop
@@ -14,7 +17,11 @@
     <div class="row">
         <div class="col-8">
             <div>
-                <a href="{{route("bandejaJuntas")}}" class="btn btn-info" type="button"><i class="fas fa-archive"></i> Regresar Bandeja</a>
+                <?php if($dato_rol == 7): ?>
+                    <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Consultar Evento</a>                                                
+                <?php else:?>
+                    <a href="{{route("bandejaJuntas")}}" class="btn btn-info" type="button"><i class="fas fa-archive"></i> Regresar Bandeja</a>
+                <?php endif ?>
                 <a onclick="document.getElementById('botonEnvioVista').click();" style="cursor:pointer;" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Módulo Juntas</a>
                 <p>
                     <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
@@ -1606,7 +1613,16 @@
                                                 <label for="tipo_clasificacion">Copia a partes interesadas</label>
                                             </div>
                                         </div>
-
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" type="checkbox" id="afiliado" name="afiliado" value="Afiliado">
+                                                    <label for="afiliado" class="custom-control-label">Afiliado</label>                 
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">

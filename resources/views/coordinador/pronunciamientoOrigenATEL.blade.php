@@ -7,6 +7,9 @@
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
+            <?php 
+                $dato_rol=$captura_id_rol = session('id_cambio_rol');
+            ?>
         </div>
     </div>
 @stop
@@ -14,7 +17,11 @@
     <div class="row">
         <div class="col-8">
             <div>
-                <a href="{{route("bandejaOrigen")}}" class="btn btn-info" type="button"><i class="fas fa-archive"></i> Regresar Bandeja</a>
+                <?php if ($dato_rol == 7):?>
+                    <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Consultar Evento</a>
+                <?php else: ?>
+                    <a href="{{route("bandejaOrigen")}}" class="btn btn-info" type="button"><i class="fas fa-archive"></i> Regresar Bandeja</a>
+                <?php endif ?>
                 <a onclick="document.getElementById('botonEnvioVista').click();" id="regresar_modulo" style="cursor:pointer;" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Módulo OrigenATEL</a>
                 <p>
                     <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
@@ -484,7 +491,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="contenedor_cual_ciudad" @if (!empty($info_pronuncia[0]->Junta_regional_cual) && $info_pronuncia[0]->Copia_junta_regional <>'undefined') class="col-4" @else class="col-4 d-none" @endif>
+                                    {{-- <div id="contenedor_cual_ciudad" @if (!empty($info_pronuncia[0]->Junta_regional_cual) && $info_pronuncia[0]->Copia_junta_regional <>'undefined') class="col-4" @else class="col-4 d-none" @endif>
                                         <div class="form-group">
                                             <label for="junta_regional_cual">¿Cuál?<span style="color: red;">(*)</span></label>
                                             <select class="custom-select" name="junta_regional_cual" id="junta_regional_cual">
@@ -495,7 +502,7 @@
                                                  @endif
                                             </select>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="n_anexos">N° Anexos</label>

@@ -41,6 +41,7 @@ class sigmel_informacion_comite_interdisciplinario_eventos extends Model
         'Ciudad',
         'Asunto',
         'Cuerpo_comunicado',
+        'Copia_afiliado',
         'Copia_empleador',
         'Copia_eps',
         'Copia_afp',

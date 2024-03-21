@@ -1145,6 +1145,183 @@ class CalificacionJuntasController extends Controller
 
                 ]);
             break;
+            case ($destinatarioPrincipal == 'EPS_comunicado'):
+                $dato_id_eps = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                ->select('siae.Id_eps')
+                ->where([
+                    ['siae.ID_evento',$newIdEvento],
+                    ['siae.Nro_identificacion', $identificacion_comunicado_afiliado]
+                ])
+                ->get();
+                
+                $id_eps = $dato_id_eps[0]->Id_eps;
+
+                $array_datos_destinatarios = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                ->select('sie.Nombre_entidad', 
+                    'sie.Nit_entidad', 
+                    'sie.Direccion', 
+                    'sie.Telefonos',
+                    'sie.Emails',
+                    'sldm.Id_departamento',
+                    'sldm.Nombre_departamento',
+                    'sldm1.Id_municipios',
+                    'sldm1.Nombre_municipio as Nombre_ciudad'
+                )->where([
+                    ['sie.Id_Entidad', $id_eps]
+                ])->get();
+
+                $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+                ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+                ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                return response()->json([
+                    'nombreusuario' => $nombreusuario,
+                    'destinatarioPrincipal' => $destinatarioPrincipal,
+                    'array_datos_destinatarios' => $array_datos_destinatarios,                    
+                    'array_datos_lider' => $array_datos_lider
+
+                ]);
+            break;
+            case ($destinatarioPrincipal == 'AFP_comunicado'):
+                $dato_id_afp = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                ->select('siae.Id_afp')
+                ->where([
+                    ['siae.ID_evento',$newIdEvento],
+                    ['siae.Nro_identificacion', $identificacion_comunicado_afiliado]
+                ])
+                ->get();
+                
+                $id_afp = $dato_id_afp[0]->Id_afp;
+
+                $array_datos_destinatarios = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                ->select('sie.Nombre_entidad', 
+                    'sie.Nit_entidad', 
+                    'sie.Direccion', 
+                    'sie.Telefonos',
+                    'sie.Emails',
+                    'sldm.Id_departamento',
+                    'sldm.Nombre_departamento',
+                    'sldm1.Id_municipios',
+                    'sldm1.Nombre_municipio as Nombre_ciudad'
+                )->where([
+                    ['sie.Id_Entidad', $id_afp]
+                ])->get();
+
+                $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+                ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+                ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                return response()->json([
+                    'nombreusuario' => $nombreusuario,
+                    'destinatarioPrincipal' => $destinatarioPrincipal,
+                    'array_datos_destinatarios' => $array_datos_destinatarios,                    
+                    'array_datos_lider' => $array_datos_lider
+
+                ]);
+            break;
+            case ($destinatarioPrincipal == 'ARL_comunicado'):
+                $dato_id_arl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                ->select('siae.Id_arl')
+                ->where([
+                    ['siae.ID_evento',$newIdEvento],
+                    ['siae.Nro_identificacion', $identificacion_comunicado_afiliado]
+                ])
+                ->get();
+                
+                $id_arl = $dato_id_arl[0]->Id_arl;
+
+                $array_datos_destinatarios = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                ->select('sie.Nombre_entidad', 
+                    'sie.Nit_entidad', 
+                    'sie.Direccion', 
+                    'sie.Telefonos',
+                    'sie.Emails',
+                    'sldm.Id_departamento',
+                    'sldm.Nombre_departamento',
+                    'sldm1.Id_municipios',
+                    'sldm1.Nombre_municipio as Nombre_ciudad'
+                )->where([
+                    ['sie.Id_Entidad', $id_arl]
+                ])->get();
+
+                $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+                ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+                ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                return response()->json([
+                    'nombreusuario' => $nombreusuario,
+                    'destinatarioPrincipal' => $destinatarioPrincipal,
+                    'array_datos_destinatarios' => $array_datos_destinatarios,                    
+                    'array_datos_lider' => $array_datos_lider
+
+                ]);
+            break;
+            case ($destinatarioPrincipal == 'JRCI_comunicado'):
+
+                $array_datos_destinatarios = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                ->select('sie.Nombre_entidad', 
+                    'sie.Nit_entidad', 
+                    'sie.Direccion', 
+                    'sie.Telefonos',
+                    'sie.Emails',
+                    'sldm.Id_departamento',
+                    'sldm.Nombre_departamento',
+                    'sldm1.Id_municipios',
+                    'sldm1.Nombre_municipio as Nombre_ciudad'
+                )->where([
+                    ['sie.Id_Entidad', $request->id_jrci]
+                ])->get();
+
+                $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+                ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+                ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                return response()->json([
+                    'nombreusuario' => $nombreusuario,
+                    'destinatarioPrincipal' => $destinatarioPrincipal,
+                    'array_datos_destinatarios' => $array_datos_destinatarios,                    
+                    'array_datos_lider' => $array_datos_lider
+
+                ]);
+            break;
+            case ($destinatarioPrincipal == 'JNCI_comunicado'):
+
+                $array_datos_destinatarios = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                ->select('sie.Nombre_entidad', 
+                    'sie.Nit_entidad', 
+                    'sie.Direccion', 
+                    'sie.Telefonos',
+                    'sie.Emails',
+                    'sldm.Id_departamento',
+                    'sldm.Nombre_departamento',
+                    'sldm1.Id_municipios',
+                    'sldm1.Nombre_municipio as Nombre_ciudad'
+                )->where([
+                    ['sie.IdTipo_entidad', 5]
+                ])->limit(1)->get();
+
+                $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+                ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+                ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                return response()->json([
+                    'nombreusuario' => $nombreusuario,
+                    'destinatarioPrincipal' => $destinatarioPrincipal,
+                    'array_datos_destinatarios' => $array_datos_destinatarios,                    
+                    'array_datos_lider' => $array_datos_lider
+
+                ]);
+            break;
             case ($destinatarioPrincipal == 'Otro'):  
                 $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
@@ -1173,8 +1350,14 @@ class CalificacionJuntasController extends Controller
         $Id_evento = $request->Id_evento;
         $Id_asignacion = $request->Id_asignacion;
         $Id_procesos = $request->Id_procesos;
+        $radiojrci_comunicado = $request->radiojrci_comunicado;
+        $radiojnci_comunicado = $request->radiojnci_comunicado;
         $radioafiliado_comunicado = $request->radioafiliado_comunicado;
         $radioempresa_comunicado = $request->radioempresa_comunicado;
+        $radioeps_comunicado = $request->radioeps_comunicado;
+        $radioafp_comunicado = $request->radioafp_comunicado;
+        $radioarl_comunicado = $request->radioarl_comunicado;
+
         $radioOtro = $request->radioOtro;
         $copiaComunicadoTotal = $request->copiaComunicadoTotal;
         if (!empty($copiaComunicadoTotal)) {
@@ -1183,13 +1366,39 @@ class CalificacionJuntasController extends Controller
             $total_copia_comunicado = '';
         }
 
-        if(!empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && empty($radioOtro)){
-            $destinatario = 'Afiliado';
-        }elseif(empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado) && empty($radioOtro)){
-            $destinatario = 'Empresa';
-        }elseif(empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && !empty($radioOtro)){
-            $destinatario = 'Otro';
+        if(!empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+                $destinatario = 'Jrci';
         }
+        elseif(empty($radiojrci_comunicado) && !empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+                $destinatario = 'Jnci';
+        }
+        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && !empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+            $destinatario = 'Afiliado';
+        }
+        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado)
+            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+            $destinatario = 'Empresa';
+        }
+        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+            && !empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+                $destinatario = 'Eps';
+        }
+        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+            && empty($radioeps_comunicado) && !empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+                $destinatario = 'Afp';
+        }
+        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && !empty($radioarl_comunicado) && empty($radioOtro)){
+                $destinatario = 'Arl';
+        }
+        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && !empty($radioOtro)){
+                $destinatario = 'Otro';
+        }
+
         $datos_info_registrarComunicadoPcl=[
 
             'ID_evento' => $Id_evento,
@@ -1203,6 +1412,7 @@ class CalificacionJuntasController extends Controller
             'T_documento' => $request->tipo_documento_comunicado2,
             'N_identificacion' => $request->identificacion_comunicado2,
             'Destinatario' => $destinatario,
+            'JRCI_Destinatario' => $request->JRCI_Destinatario,
             'Nombre_destinatario' => $request->nombre_destinatario,
             'Nit_cc' => $request->nic_cc,
             'Direccion_destinatario' => $request->direccion_destinatario,
@@ -1217,6 +1427,7 @@ class CalificacionJuntasController extends Controller
             'Elaboro' => $request->elaboro2,
             'Reviso' => $request->reviso,
             'Agregar_copia' => $total_copia_comunicado,
+            'JRCI_copia' => $request->JRCI_copia,
             'Firmar_Comunicado' => $request->firmarcomunicado,
             'Tipo_descarga' => $request->tipo_descarga,
             'Nombre_usuario' => $nombre_usuario,
@@ -1301,8 +1512,13 @@ class CalificacionJuntasController extends Controller
         $Id_evento_editar = $request->Id_evento_editar;
         $Id_asignacion_editar = $request->Id_asignacion_editar;
         $Id_procesos_editar = $request->Id_procesos_editar;
+        $radiojrci_comunicado_editar = $request->radiojrci_comunicado_editar;
+        $radiojnci_comunicado_editar = $request->radiojnci_comunicado_editar;
         $radioafiliado_comunicado_editar = $request->radioafiliado_comunicado_editar;
         $radioempresa_comunicado_editar = $request->radioempresa_comunicado_editar;
+        $radioeps_comunicado_editar = $request->radioeps_comunicado_editar;
+        $radioafp_comunicado_editar = $request->radioafp_comunicado_editar;
+        $radioarl_comunicado_editar = $request->radioarl_comunicado_editar;
         $radioOtro_editar = $request->radioOtro_editar;
         $copiaComunicadoTotal = $request->agregar_copia_editar;
         if (!empty($copiaComunicadoTotal)) {
@@ -1311,12 +1527,37 @@ class CalificacionJuntasController extends Controller
             $total_copia_comunicado = '';
         }
 
-        if(!empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar) && empty($radioOtro_editar)){
-            $destinatario = 'Afiliado';
-        }elseif(empty($radioafiliado_comunicado_editar) && !empty($radioempresa_comunicado_editar) && empty($radioOtro_editar)){
-            $destinatario = 'Empresa';
-        }elseif(empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar) && !empty($radioOtro_editar)){
-            $destinatario = 'Otro';
+        if(!empty($radiojrci_comunicado_editar) && empty($radiojnci_comunicado_editar) && empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar)
+            && empty($radioeps_comunicado_editar) && empty($radioafp_comunicado_editar) && empty($radioarl_comunicado_editar) && empty($radioOtro_editar)){
+                $destinatario = 'Jrci';
+        }
+        elseif(empty($radiojrci_comunicado_editar) && !empty($radiojnci_comunicado_editar) && empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar)
+            && empty($radioeps_comunicado_editar) && empty($radioafp_comunicado_editar) && empty($radioarl_comunicado_editar) && empty($radioOtro_editar)){
+                $destinatario = 'Jnci';
+        }
+        elseif(empty($radiojrci_comunicado_editar) && empty($radiojnci_comunicado_editar) && !empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar)
+            && empty($radioeps_comunicado_editar) && empty($radioafp_comunicado_editar) && empty($radioarl_comunicado_editar) && empty($radioOtro_editar)){
+                $destinatario = 'Afiliado';
+        }
+        elseif(empty($radiojrci_comunicado_editar) && empty($radiojnci_comunicado_editar) && empty($radioafiliado_comunicado_editar) && !empty($radioempresa_comunicado_editar)
+            && empty($radioeps_comunicado_editar) && empty($radioafp_comunicado_editar) && empty($radioarl_comunicado_editar) && empty($radioOtro_editar)){
+                $destinatario = 'Empresa';
+        }
+        elseif(empty($radiojrci_comunicado_editar) && empty($radiojnci_comunicado_editar) && empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar)
+            && !empty($radioeps_comunicado_editar) && empty($radioafp_comunicado_editar) && empty($radioarl_comunicado_editar) && empty($radioOtro_editar)){
+                $destinatario = 'Eps';
+        }
+        elseif(empty($radiojrci_comunicado_editar) && empty($radiojnci_comunicado_editar) && empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar)
+            && empty($radioeps_comunicado_editar) && !empty($radioafp_comunicado_editar) && empty($radioarl_comunicado_editar) && empty($radioOtro_editar)){
+                $destinatario = 'Afp';
+        }
+        elseif(empty($radiojrci_comunicado_editar) && empty($radiojnci_comunicado_editar) && empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar)
+            && empty($radioeps_comunicado_editar) && empty($radioafp_comunicado_editar) && !empty($radioarl_comunicado_editar) && empty($radioOtro_editar)){
+                $destinatario = 'Arl';
+        }
+        elseif(empty($radiojrci_comunicado_editar) && empty($radiojnci_comunicado_editar) && empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar)
+            && empty($radioeps_comunicado_editar) && empty($radioafp_comunicado_editar) && empty($radioarl_comunicado_editar) && !empty($radioOtro_editar)){
+                $destinatario = 'Otro';
         }
 
         $datos_info_actualizarComunicadoPcl=[
@@ -1332,6 +1573,7 @@ class CalificacionJuntasController extends Controller
             'T_documento' => $request->tipo_documento_comunicado2_editar,
             'N_identificacion' => $request->identificacion_comunicado2_editar,
             'Destinatario' => $destinatario,
+            'JRCI_Destinatario' => $request->JRCI_Destinatario_editar,
             'Nombre_destinatario' => $request->nombre_destinatario_editar,
             'Nit_cc' => $request->nic_cc_editar,
             'Direccion_destinatario' => $request->direccion_destinatario_editar,
@@ -1346,6 +1588,7 @@ class CalificacionJuntasController extends Controller
             'Elaboro' => $request->elaboro2_editar,
             'Reviso' => $request->reviso_editar,
             'Agregar_copia' => $total_copia_comunicado,
+            'JRCI_copia' => $request->JRCI_copia_editar,
             'Firmar_Comunicado' => $request->firmarcomunicado_editar,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
@@ -1492,12 +1735,16 @@ class CalificacionJuntasController extends Controller
                 $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
                 $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
                 $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
+                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
                     'edit_copia_empleador' => $edit_copias_empleador,
                     'edit_copia_eps' => $edit_copias_eps,
                     'edit_copia_afp' => $edit_copias_afp,
                     'edit_copia_arl' => $edit_copias_arl,
+                    'edit_copia_jrci' => $edit_copias_jrci,
+                    'edit_copia_jnci' => $edit_copias_jnci,
                 ));   
                 sleep(2);
 
@@ -1600,6 +1847,108 @@ class CalificacionJuntasController extends Controller
 
                     $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl." - ".$departamento_arl;
                 };
+
+                if(isset($edit_copia_jrci)){
+                    if(!empty($request->input_jrci_seleccionado_copia_editar)){
+                        $datos_jrci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                        ->select('sie.Nombre_entidad', 
+                            'sie.Nit_entidad', 
+                            'sie.Direccion', 
+                            'sie.Telefonos',
+                            'sie.Otros_Telefonos',
+                            'sie.Emails',
+                            'sldm.Id_departamento',
+                            'sldm.Nombre_departamento',
+                            'sldm1.Id_municipios',
+                            'sldm1.Nombre_municipio as Nombre_ciudad'
+                        )->where([
+                            ['sie.Id_Entidad', $request->id_jrci_del_input]
+                        ])->get();
+    
+                        $nombre_jrci = $datos_jrci[0]->Nombre_entidad;
+                        $direccion_jrci = $datos_jrci[0]->Direccion;
+
+                        if ($datos_jrci[0]->Otros_Telefonos != "") {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos.",".$datos_jrci[0]->Otros_Telefonos;
+                        } else {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos;
+                        }
+
+                        $ciudad_jrci = $datos_jrci[0]->Nombre_ciudad;
+                        $departamento_jrci = $datos_jrci[0]->Nombre_departamento;
+    
+                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
+    
+                    }else{
+    
+                        $datos_jrci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                        ->select('sie.Nombre_entidad', 
+                            'sie.Nit_entidad', 
+                            'sie.Direccion', 
+                            'sie.Telefonos',
+                            'sie.Otros_Telefonos',
+                            'sie.Emails',
+                            'sldm.Id_departamento',
+                            'sldm.Nombre_departamento',
+                            'sldm1.Id_municipios',
+                            'sldm1.Nombre_municipio as Nombre_ciudad'
+                        )->where([
+                            ['sie.Id_Entidad', $request->jrci_califi_invalidez_copia_editar]
+                        ])->get();
+    
+                        $nombre_jrci = $datos_jrci[0]->Nombre_entidad;
+                        $direccion_jrci = $datos_jrci[0]->Direccion;
+
+                        if ($datos_jrci[0]->Otros_Telefonos != "") {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos.",".$datos_jrci[0]->Otros_Telefonos;
+                        } else {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos;
+                        }
+
+                        $ciudad_jrci = $datos_jrci[0]->Nombre_ciudad;
+                        $departamento_jrci = $datos_jrci[0]->Nombre_departamento;
+    
+                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
+                    }
+                }
+                
+                if(isset($edit_copia_jnci)){
+                    $datos_jnci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                    ->select('sie.Nombre_entidad', 
+                        'sie.Nit_entidad', 
+                        'sie.Direccion', 
+                        'sie.Telefonos',
+                        'sie.Otros_Telefonos',
+                        'sie.Emails',
+                        'sldm.Id_departamento',
+                        'sldm.Nombre_departamento',
+                        'sldm1.Id_municipios',
+                        'sldm1.Nombre_municipio as Nombre_ciudad'
+                    )->where([
+                        ['sie.IdTipo_entidad', 5]
+                    ])->limit(1)->get();
+    
+                    $nombre_jnci = $datos_jnci[0]->Nombre_entidad;
+                    $direccion_jnci = $datos_jnci[0]->Direccion;
+
+                    if ($datos_jnci[0]->Otros_Telefonos != "") {
+                        $telefonos_jnci = $datos_jnci[0]->Telefonos.",".$datos_jnci[0]->Otros_Telefonos;
+                    } else {
+                        $telefonos_jnci = $datos_jnci[0]->Telefonos;
+                    }
+
+                    $ciudad_jnci = $datos_jnci[0]->Nombre_ciudad;
+                    $departamento_jnci = $datos_jnci[0]->Nombre_departamento;
+
+                    $Agregar_copias['JNCI'] = $nombre_jnci."; ".$direccion_jnci."; ".$telefonos_jnci."; ".$ciudad_jnci." - ".$departamento_jnci;
+    
+                }
 
                 // validamos si el checkbox de la firma esta marcado
                 $validarFirma = isset($request->firmarcomunicado_editar) ? 'firmar comunicado' : 'No lleva firma';
@@ -2139,12 +2488,17 @@ class CalificacionJuntasController extends Controller
                 $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
                 $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
                 $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
+                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
                     'edit_copia_empleador' => $edit_copias_empleador,
                     'edit_copia_eps' => $edit_copias_eps,
                     'edit_copia_afp' => $edit_copias_afp,
                     'edit_copia_arl' => $edit_copias_arl,
+                    'edit_copia_jrci' => $edit_copias_jrci,
+                    'edit_copia_jnci' => $edit_copias_jnci,
                 ));   
                 sleep(2);
 
@@ -2247,6 +2601,108 @@ class CalificacionJuntasController extends Controller
 
                     $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl." - ".$departamento_arl;
                 };
+
+                if(isset($edit_copia_jrci)){
+                    if(!empty($request->input_jrci_seleccionado_copia_editar)){
+                        $datos_jrci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                        ->select('sie.Nombre_entidad', 
+                            'sie.Nit_entidad', 
+                            'sie.Direccion', 
+                            'sie.Telefonos',
+                            'sie.Otros_Telefonos',
+                            'sie.Emails',
+                            'sldm.Id_departamento',
+                            'sldm.Nombre_departamento',
+                            'sldm1.Id_municipios',
+                            'sldm1.Nombre_municipio as Nombre_ciudad'
+                        )->where([
+                            ['sie.Id_Entidad', $request->id_jrci_del_input]
+                        ])->get();
+    
+                        $nombre_jrci = $datos_jrci[0]->Nombre_entidad;
+                        $direccion_jrci = $datos_jrci[0]->Direccion;
+
+                        if ($datos_jrci[0]->Otros_Telefonos != "") {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos.",".$datos_jrci[0]->Otros_Telefonos;
+                        } else {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos;
+                        }
+
+                        $ciudad_jrci = $datos_jrci[0]->Nombre_ciudad;
+                        $departamento_jrci = $datos_jrci[0]->Nombre_departamento;
+    
+                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
+    
+                    }else{
+    
+                        $datos_jrci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                        ->select('sie.Nombre_entidad', 
+                            'sie.Nit_entidad', 
+                            'sie.Direccion', 
+                            'sie.Telefonos',
+                            'sie.Otros_Telefonos',
+                            'sie.Emails',
+                            'sldm.Id_departamento',
+                            'sldm.Nombre_departamento',
+                            'sldm1.Id_municipios',
+                            'sldm1.Nombre_municipio as Nombre_ciudad'
+                        )->where([
+                            ['sie.Id_Entidad', $request->jrci_califi_invalidez_copia_editar]
+                        ])->get();
+    
+                        $nombre_jrci = $datos_jrci[0]->Nombre_entidad;
+                        $direccion_jrci = $datos_jrci[0]->Direccion;
+
+                        if ($datos_jrci[0]->Otros_Telefonos != "") {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos.",".$datos_jrci[0]->Otros_Telefonos;
+                        } else {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos;
+                        }
+
+                        $ciudad_jrci = $datos_jrci[0]->Nombre_ciudad;
+                        $departamento_jrci = $datos_jrci[0]->Nombre_departamento;
+    
+                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
+                    }
+                }
+                
+                if(isset($edit_copia_jnci)){
+                    $datos_jnci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                    ->select('sie.Nombre_entidad', 
+                        'sie.Nit_entidad', 
+                        'sie.Direccion', 
+                        'sie.Telefonos',
+                        'sie.Otros_Telefonos',
+                        'sie.Emails',
+                        'sldm.Id_departamento',
+                        'sldm.Nombre_departamento',
+                        'sldm1.Id_municipios',
+                        'sldm1.Nombre_municipio as Nombre_ciudad'
+                    )->where([
+                        ['sie.IdTipo_entidad', 5]
+                    ])->limit(1)->get();
+    
+                    $nombre_jnci = $datos_jnci[0]->Nombre_entidad;
+                    $direccion_jnci = $datos_jnci[0]->Direccion;
+
+                    if ($datos_jnci[0]->Otros_Telefonos != "") {
+                        $telefonos_jnci = $datos_jnci[0]->Telefonos.",".$datos_jnci[0]->Otros_Telefonos;
+                    } else {
+                        $telefonos_jnci = $datos_jnci[0]->Telefonos;
+                    }
+
+                    $ciudad_jnci = $datos_jnci[0]->Nombre_ciudad;
+                    $departamento_jnci = $datos_jnci[0]->Nombre_departamento;
+
+                    $Agregar_copias['JNCI'] = $nombre_jnci."; ".$direccion_jnci."; ".$telefonos_jnci."; ".$ciudad_jnci." - ".$departamento_jnci;
+    
+                }
 
                 // validamos si el checkbox de la firma esta marcado
                 $validarFirma = isset($request->firmarcomunicado_editar) ? 'firmar comunicado' : 'No lleva firma';
@@ -2420,12 +2876,17 @@ class CalificacionJuntasController extends Controller
                 $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
                 $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
                 $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
+                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
                     'edit_copia_empleador' => $edit_copias_empleador,
                     'edit_copia_eps' => $edit_copias_eps,
                     'edit_copia_afp' => $edit_copias_afp,
                     'edit_copia_arl' => $edit_copias_arl,
+                    'edit_copia_jrci' => $edit_copias_jrci,
+                    'edit_copia_jnci' => $edit_copias_jnci,
                 ));   
                 sleep(2);
 
@@ -2528,6 +2989,108 @@ class CalificacionJuntasController extends Controller
 
                     $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl." - ".$departamento_arl;
                 };
+
+                if(isset($edit_copia_jrci)){
+                    if(!empty($request->input_jrci_seleccionado_copia_editar)){
+                        $datos_jrci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                        ->select('sie.Nombre_entidad', 
+                            'sie.Nit_entidad', 
+                            'sie.Direccion', 
+                            'sie.Telefonos',
+                            'sie.Otros_Telefonos',
+                            'sie.Emails',
+                            'sldm.Id_departamento',
+                            'sldm.Nombre_departamento',
+                            'sldm1.Id_municipios',
+                            'sldm1.Nombre_municipio as Nombre_ciudad'
+                        )->where([
+                            ['sie.Id_Entidad', $request->id_jrci_del_input]
+                        ])->get();
+    
+                        $nombre_jrci = $datos_jrci[0]->Nombre_entidad;
+                        $direccion_jrci = $datos_jrci[0]->Direccion;
+
+                        if ($datos_jrci[0]->Otros_Telefonos != "") {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos.",".$datos_jrci[0]->Otros_Telefonos;
+                        } else {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos;
+                        }
+
+                        $ciudad_jrci = $datos_jrci[0]->Nombre_ciudad;
+                        $departamento_jrci = $datos_jrci[0]->Nombre_departamento;
+    
+                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
+    
+                    }else{
+    
+                        $datos_jrci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                        ->select('sie.Nombre_entidad', 
+                            'sie.Nit_entidad', 
+                            'sie.Direccion', 
+                            'sie.Telefonos',
+                            'sie.Otros_Telefonos',
+                            'sie.Emails',
+                            'sldm.Id_departamento',
+                            'sldm.Nombre_departamento',
+                            'sldm1.Id_municipios',
+                            'sldm1.Nombre_municipio as Nombre_ciudad'
+                        )->where([
+                            ['sie.Id_Entidad', $request->jrci_califi_invalidez_copia_editar]
+                        ])->get();
+    
+                        $nombre_jrci = $datos_jrci[0]->Nombre_entidad;
+                        $direccion_jrci = $datos_jrci[0]->Direccion;
+
+                        if ($datos_jrci[0]->Otros_Telefonos != "") {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos.",".$datos_jrci[0]->Otros_Telefonos;
+                        } else {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos;
+                        }
+
+                        $ciudad_jrci = $datos_jrci[0]->Nombre_ciudad;
+                        $departamento_jrci = $datos_jrci[0]->Nombre_departamento;
+    
+                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
+                    }
+                }
+                
+                if(isset($edit_copia_jnci)){
+                    $datos_jnci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                    ->select('sie.Nombre_entidad', 
+                        'sie.Nit_entidad', 
+                        'sie.Direccion', 
+                        'sie.Telefonos',
+                        'sie.Otros_Telefonos',
+                        'sie.Emails',
+                        'sldm.Id_departamento',
+                        'sldm.Nombre_departamento',
+                        'sldm1.Id_municipios',
+                        'sldm1.Nombre_municipio as Nombre_ciudad'
+                    )->where([
+                        ['sie.IdTipo_entidad', 5]
+                    ])->limit(1)->get();
+    
+                    $nombre_jnci = $datos_jnci[0]->Nombre_entidad;
+                    $direccion_jnci = $datos_jnci[0]->Direccion;
+
+                    if ($datos_jnci[0]->Otros_Telefonos != "") {
+                        $telefonos_jnci = $datos_jnci[0]->Telefonos.",".$datos_jnci[0]->Otros_Telefonos;
+                    } else {
+                        $telefonos_jnci = $datos_jnci[0]->Telefonos;
+                    }
+
+                    $ciudad_jnci = $datos_jnci[0]->Nombre_ciudad;
+                    $departamento_jnci = $datos_jnci[0]->Nombre_departamento;
+
+                    $Agregar_copias['JNCI'] = $nombre_jnci."; ".$direccion_jnci."; ".$telefonos_jnci."; ".$ciudad_jnci." - ".$departamento_jnci;
+    
+                }
 
                 // validamos si el checkbox de la firma esta marcado
                 $validarFirma = isset($request->firmarcomunicado_editar) ? 'firmar comunicado' : 'No lleva firma';
@@ -2707,6 +3270,8 @@ class CalificacionJuntasController extends Controller
                         $EPS = 'EPS';
                         $AFP = 'AFP';
                         $ARL = 'ARL';
+                        $JRCI = 'JRCI';
+                        $JNCI = 'JNCI';
 
                         if (isset($Agregar_copias[$Afiliado])) {
                             $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
@@ -2726,6 +3291,14 @@ class CalificacionJuntasController extends Controller
 
                         if (isset($Agregar_copias[$ARL])) {
                             $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$JRCI])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$JNCI])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
                         }
                     }
 
@@ -2846,12 +3419,17 @@ class CalificacionJuntasController extends Controller
                 $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
                 $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
                 $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
+                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
                     'edit_copia_empleador' => $edit_copias_empleador,
                     'edit_copia_eps' => $edit_copias_eps,
                     'edit_copia_afp' => $edit_copias_afp,
                     'edit_copia_arl' => $edit_copias_arl,
+                    'edit_copia_jrci' => $edit_copias_jrci,
+                    'edit_copia_jnci' => $edit_copias_jnci,
                 ));   
                 sleep(2);
 
@@ -2954,6 +3532,108 @@ class CalificacionJuntasController extends Controller
 
                     $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl." - ".$departamento_arl;
                 };
+
+                if(isset($edit_copia_jrci)){
+                    if(!empty($request->input_jrci_seleccionado_copia_editar)){
+                        $datos_jrci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                        ->select('sie.Nombre_entidad', 
+                            'sie.Nit_entidad', 
+                            'sie.Direccion', 
+                            'sie.Telefonos',
+                            'sie.Otros_Telefonos',
+                            'sie.Emails',
+                            'sldm.Id_departamento',
+                            'sldm.Nombre_departamento',
+                            'sldm1.Id_municipios',
+                            'sldm1.Nombre_municipio as Nombre_ciudad'
+                        )->where([
+                            ['sie.Id_Entidad', $request->id_jrci_del_input]
+                        ])->get();
+    
+                        $nombre_jrci = $datos_jrci[0]->Nombre_entidad;
+                        $direccion_jrci = $datos_jrci[0]->Direccion;
+
+                        if ($datos_jrci[0]->Otros_Telefonos != "") {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos.",".$datos_jrci[0]->Otros_Telefonos;
+                        } else {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos;
+                        }
+
+                        $ciudad_jrci = $datos_jrci[0]->Nombre_ciudad;
+                        $departamento_jrci = $datos_jrci[0]->Nombre_departamento;
+    
+                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
+    
+                    }else{
+    
+                        $datos_jrci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                        ->select('sie.Nombre_entidad', 
+                            'sie.Nit_entidad', 
+                            'sie.Direccion', 
+                            'sie.Telefonos',
+                            'sie.Otros_Telefonos',
+                            'sie.Emails',
+                            'sldm.Id_departamento',
+                            'sldm.Nombre_departamento',
+                            'sldm1.Id_municipios',
+                            'sldm1.Nombre_municipio as Nombre_ciudad'
+                        )->where([
+                            ['sie.Id_Entidad', $request->jrci_califi_invalidez_copia_editar]
+                        ])->get();
+    
+                        $nombre_jrci = $datos_jrci[0]->Nombre_entidad;
+                        $direccion_jrci = $datos_jrci[0]->Direccion;
+
+                        if ($datos_jrci[0]->Otros_Telefonos != "") {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos.",".$datos_jrci[0]->Otros_Telefonos;
+                        } else {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos;
+                        }
+
+                        $ciudad_jrci = $datos_jrci[0]->Nombre_ciudad;
+                        $departamento_jrci = $datos_jrci[0]->Nombre_departamento;
+    
+                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
+                    }
+                }
+                
+                if(isset($edit_copia_jnci)){
+                    $datos_jnci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                    ->select('sie.Nombre_entidad', 
+                        'sie.Nit_entidad', 
+                        'sie.Direccion', 
+                        'sie.Telefonos',
+                        'sie.Otros_Telefonos',
+                        'sie.Emails',
+                        'sldm.Id_departamento',
+                        'sldm.Nombre_departamento',
+                        'sldm1.Id_municipios',
+                        'sldm1.Nombre_municipio as Nombre_ciudad'
+                    )->where([
+                        ['sie.IdTipo_entidad', 5]
+                    ])->limit(1)->get();
+    
+                    $nombre_jnci = $datos_jnci[0]->Nombre_entidad;
+                    $direccion_jnci = $datos_jnci[0]->Direccion;
+
+                    if ($datos_jnci[0]->Otros_Telefonos != "") {
+                        $telefonos_jnci = $datos_jnci[0]->Telefonos.",".$datos_jnci[0]->Otros_Telefonos;
+                    } else {
+                        $telefonos_jnci = $datos_jnci[0]->Telefonos;
+                    }
+
+                    $ciudad_jnci = $datos_jnci[0]->Nombre_ciudad;
+                    $departamento_jnci = $datos_jnci[0]->Nombre_departamento;
+
+                    $Agregar_copias['JNCI'] = $nombre_jnci."; ".$direccion_jnci."; ".$telefonos_jnci."; ".$ciudad_jnci." - ".$departamento_jnci;
+    
+                }
 
                 // validamos si el checkbox de la firma esta marcado
                 $validarFirma = isset($request->firmarcomunicado_editar) ? 'firmar comunicado' : 'No lleva firma';
@@ -3135,6 +3815,8 @@ class CalificacionJuntasController extends Controller
                         $EPS = 'EPS';
                         $AFP = 'AFP';
                         $ARL = 'ARL';
+                        $JRCI = 'JRCI';
+                        $JNCI = 'JNCI';
 
                         if (isset($Agregar_copias[$Afiliado])) {
                             $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
@@ -3154,6 +3836,14 @@ class CalificacionJuntasController extends Controller
 
                         if (isset($Agregar_copias[$ARL])) {
                             $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$JRCI])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$JNCI])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
                         }
                     }
 

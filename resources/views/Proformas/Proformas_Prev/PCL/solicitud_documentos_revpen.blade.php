@@ -43,7 +43,7 @@
         }        
         #footer{
             position: fixed;
-            bottom: -2.4cm;
+            bottom: -3cm;
             left: 0cm;
             width: 100%;
         }
@@ -106,6 +106,7 @@
             padding-left: 25px;
             padding-right: 25px;
             text-align: justify;
+            font-style: italic;
         }
 
         section{
@@ -248,8 +249,8 @@
             <br>
             <b>Elaboró:</b> {{$nombre_usuario}}
         </p>
-        <section class="fuente_todo_texto">
-            <table class="tabla1" style="text-align: justify;">                               
+        {{-- <p class="fuente_todo_texto"> --}}
+            <table class="tabla1 fuente_todo_texto" style="text-align: justify;">                               
                 @if (count($Agregar_copia) == 0)
                     <tr>
                         <td><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
@@ -317,7 +318,7 @@
                     ?>
                 @endif
             </table>
-        </section>               
+        {{-- </p>                --}}
     </div>
 </body>
 </html>

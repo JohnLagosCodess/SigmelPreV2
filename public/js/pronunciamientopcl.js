@@ -551,13 +551,13 @@ $(document).ready(function(){
         }else if (opc_seleccionada == 'Desacuerdo') {
             $('#asunto_cali').val('RECURSO DE REPOSICIÓN EN SUBSIDIO DE APELACIÓN FRENTE A DICTAMEN N°');
             var texto_insertar = "<p>Respetados Señores, </p>"+
-            "<p>Yo, HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA "+ 
-            "ALFA S.A. Aseguradora que expidió el seguro previsional a la AFP PORVENIR S.A., debidamente facultado para ello, en atención al "+
-            "dictamen de la referencia, estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE "+
-            "APELACIÓN ante la Junta, por los siguientes motivos: </p>"+
-            "<p>Nuestra inconformidad se dirige a la calificación de PERDIDA DE CAPACIDAD LABORAL dictaminada al afiliado {{$Nombre_afiliado}}, "+
-            "donde califican los diagnósticos: {{$CIE10_Nombres_Origen}}, y por los cuales les otorga una calificación de {{$PorcentajePcl}}% fecha de "+
-            "estructuración: {{$F_estructuracionPcl}}.</p>"+
+            "<p>Yo, <strong>HUGO IGNACIO GÓMEZ DAZA</strong>, identificado como aparece al pie de mi firma, actuando en nombre y representación de <strong>SEGUROS DE VIDA "+ 
+            "ALFA S.A.</strong> Aseguradora que expidió el seguro previsional a la <strong>AFP PORVENIR S.A.</strong>, debidamente facultado para ello, en atención al "+
+            "dictamen de la referencia, estando dentro de los términos de ley, me permito interponer <strong>RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE "+
+            "APELACIÓN</strong> ante la Junta, por los siguientes motivos: </p>"+
+            "<p>Nuestra inconformidad se dirige a la calificación de <strong>PERDIDA DE CAPACIDAD LABORAL</strong> dictaminada al afiliado <strong>{{$Nombre_afiliado}}</strong>, "+
+            "donde califican los diagnósticos: <strong>{{$CIE10_Nombres_Origen}}</strong>, y por los cuales les otorga una calificación de <strong>{{$PorcentajePcl}}%</strong> fecha de "+
+            "estructuración: <strong>{{$F_estructuracionPcl}}</strong>.</p>"+
             "<p>1. </p>"+
             "<p>Por lo anterior, presentamos el recurso de reposición y en subsidio el de apelación, contra la pérdida de capacidad laboral (PCL), "+
             "con el fin que se dictamine el valor correspondiente a las patologías del paciente dando aplicación al Decreto  1507/2014 como "+
@@ -629,6 +629,15 @@ $(document).ready(function(){
     /*GUARDAR INFO PRONUNCIAMIENTO*/
     $('#form_CaliPronuncia').submit(function (e){
         e.preventDefault();
+        var GuardarPronuncia = $('#GuardarPronuncia');
+        var ActualizarPronuncia = $('#ActualizarPronuncia');
+
+        if (GuardarPronuncia.length > 0) {
+            document.querySelector('#GuardarPronuncia').disabled=true;            
+        }
+        if (ActualizarPronuncia.length > 0) {
+            document.querySelector('#ActualizarPronuncia').disabled=true;
+        }
         var guardar_datos = [];
         var datos_finales_diagnosticos_moticalifi = [];
         var array_id_filas = [];
@@ -706,19 +715,19 @@ $(document).ready(function(){
             contentType: false,
             success: function(response){
                 if (response.parametro == 'agregar_pronunciamiento') {
-                    document.querySelector('#GuardarPronuncia').disabled=true;
                     $('#div_alerta_pronuncia').removeClass('d-none');
                     $('.alerta_pronucia').append('<strong>'+response.mensaje+'</strong>');                                            
                     setTimeout(function(){
+                        document.querySelector('#GuardarPronuncia').disabled=false;
                         $('#div_alerta_pronuncia').addClass('d-none');
                         $('.alerta_pronucia').empty();   
                         location.reload();
                     }, 3000);   
                 }else if(response.parametro == 'update_pronunciamiento'){
-                    document.querySelector('#ActualizarPronuncia').disabled=true;
                     $('#div_alerta_pronuncia').removeClass('d-none');
                     $('.alerta_pronucia').append('<strong>'+response.mensaje2+'</strong>');                                           
                     setTimeout(function(){
+                        document.querySelector('#ActualizarPronuncia').disabled=false;
                         $('#div_alerta_pronuncia').addClass('d-none');
                         $('.alerta_pronucia').empty();
                         document.querySelector('#ActualizarPronuncia').disabled=false;
