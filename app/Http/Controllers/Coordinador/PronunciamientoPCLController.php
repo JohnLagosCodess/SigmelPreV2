@@ -1112,6 +1112,7 @@ class PronunciamientoPCLController extends Controller
                 // Agregar </img> en la imagen de la firma
                 $patronetiqueta = '/<img(.*?)>/';
                 $Firma_cliente = preg_replace($patronetiqueta, '<img$1></img>', $Firma_cliente);
+                $Firma_cliente = str_replace(['<br>', '<br/>', '<br />', '</br>'], '', $Firma_cliente);
                 
                 // Quitamos el style y agregamos los atributos width y height
                 $patronstyle = '/<img[^>]+style="width:\s*([\d.]+)px;\s*height:\s*([\d.]+)px[^"]*"[^>]*>/';
