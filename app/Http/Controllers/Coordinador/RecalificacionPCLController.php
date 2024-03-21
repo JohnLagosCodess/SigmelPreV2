@@ -4921,9 +4921,37 @@ class RecalificacionPCLController extends Controller
         $Id_Proceso_comuni = $request->Id_Proceso_comuni;
         $Radicado_comuni = $request->Radicado_comuni;
         
-        $datos = $ID_Evento_comuni;
-        // Codigo QR y Logo del Header
-        $codigoQR = QrCode::size(110)->margin(0.5)->generate($datos);        
+        $formattedData = "";
+
+        $dictamenPclQr = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_decreto_eventos as side', 'side.Id_Asignacion', '=', 'siae.Id_Asignacion')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_afiliado_eventos as siaf', 'siaf.ID_evento', '=', 'siae.ID_evento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siaf.Tipo_documento')
+        ->select('siaf.Nombre_afiliado', 'slp.Nombre_parametro', 'siaf.Nro_identificacion', 'siae.Consecutivo_dictamen', 
+        'side.Porcentaje_pcl', 'side.F_estructuracion', 'siae.ID_evento')
+        ->where('siae.Id_Asignacion', $Id_Asignacion_comuni)->get();     
+
+        if (!$dictamenPclQr->isEmpty()) {
+            // Crear una cadena para almacenar los datos en el formato deseado                    
+        
+            foreach ($dictamenPclQr as $evento) {
+                // Construir la cadena de texto con el formato deseado
+                $formattedData .= $evento->Nombre_afiliado."\n";
+                $formattedData .= $evento->Nombre_parametro." ".$evento->Nro_identificacion . "\n";
+                $formattedData .= "N° Dictámen: ".$evento->Consecutivo_dictamen."\n";
+                $formattedData .= "CALIFICACIÓN: ".$evento->Porcentaje_pcl."\n";
+                $formattedData .= "Fecha estructuración: ".$evento->F_estructuracion."\n";
+                $formattedData .= "Cod. Verificación: ".$evento->ID_evento."\n";
+        
+                // Agregar un salto de línea después de cada conjunto de atributos de evento
+                $formattedData .= "\n";
+            }
+                            
+        }
+
+        // Codigo QR
+        $datos = $formattedData;
+        $codigoQR = QrCode::size(110)->margin(0.5)->generate($datos);          
 
         //Captura de datos de informacion general del dictamen pericial
 
@@ -5433,9 +5461,37 @@ class RecalificacionPCLController extends Controller
         $Id_Proceso_comuni = $request->Id_Proceso_comuni;
         $Radicado_comuni = $request->Radicado_comuni;
         
-        $datos = $ID_Evento_comuni;
-        // Codigo QR y Logo del Header
-        $codigoQR = QrCode::size(110)->margin(0.5)->generate($datos);        
+        $formattedData = "";
+
+        $dictamenPclQr = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_decreto_eventos as side', 'side.Id_Asignacion', '=', 'siae.Id_Asignacion')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_afiliado_eventos as siaf', 'siaf.ID_evento', '=', 'siae.ID_evento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siaf.Tipo_documento')
+        ->select('siaf.Nombre_afiliado', 'slp.Nombre_parametro', 'siaf.Nro_identificacion', 'siae.Consecutivo_dictamen', 
+        'side.Porcentaje_pcl', 'side.F_estructuracion', 'siae.ID_evento')
+        ->where('siae.Id_Asignacion', $Id_Asignacion_comuni)->get();     
+
+        if (!$dictamenPclQr->isEmpty()) {
+            // Crear una cadena para almacenar los datos en el formato deseado                    
+        
+            foreach ($dictamenPclQr as $evento) {
+                // Construir la cadena de texto con el formato deseado
+                $formattedData .= $evento->Nombre_afiliado."\n";
+                $formattedData .= $evento->Nombre_parametro." ".$evento->Nro_identificacion . "\n";
+                $formattedData .= "N° Dictámen: ".$evento->Consecutivo_dictamen."\n";
+                $formattedData .= "CALIFICACIÓN: ".$evento->Porcentaje_pcl."\n";
+                $formattedData .= "Fecha estructuración: ".$evento->F_estructuracion."\n";
+                $formattedData .= "Cod. Verificación: ".$evento->ID_evento."\n";
+        
+                // Agregar un salto de línea después de cada conjunto de atributos de evento
+                $formattedData .= "\n";
+            }
+                            
+        }
+
+        // Codigo QR
+        $datos = $formattedData;
+        $codigoQR = QrCode::size(110)->margin(0.5)->generate($datos);         
 
         //Captura de datos de informacion general del dictamen pericial
 
@@ -5766,9 +5822,37 @@ class RecalificacionPCLController extends Controller
         $Radicado_comuni_comite = $request->Radicado_comuni_comite;
         $Firma_comuni_comite = $request->Firma_comuni_comite;
 
-        $datos = $ID_Evento_comuni_comite;
-        // Codigo QR y Logo del Header
-        $codigoQR = QrCode::size(110)->margin(0.5)->generate($datos);   
+        $formattedData = "";
+
+        $dictamenPclQr = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_decreto_eventos as side', 'side.Id_Asignacion', '=', 'siae.Id_Asignacion')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_afiliado_eventos as siaf', 'siaf.ID_evento', '=', 'siae.ID_evento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siaf.Tipo_documento')
+        ->select('siaf.Nombre_afiliado', 'slp.Nombre_parametro', 'siaf.Nro_identificacion', 'siae.Consecutivo_dictamen', 
+        'side.Porcentaje_pcl', 'side.F_estructuracion', 'siae.ID_evento')
+        ->where('siae.Id_Asignacion', $Id_Asignacion_comuni_comite)->get();     
+
+        if (!$dictamenPclQr->isEmpty()) {
+            // Crear una cadena para almacenar los datos en el formato deseado                    
+        
+            foreach ($dictamenPclQr as $evento) {
+                // Construir la cadena de texto con el formato deseado
+                $formattedData .= $evento->Nombre_afiliado."\n";
+                $formattedData .= $evento->Nombre_parametro." ".$evento->Nro_identificacion . "\n";
+                $formattedData .= "N° Dictámen: ".$evento->Consecutivo_dictamen."\n";
+                $formattedData .= "CALIFICACIÓN: ".$evento->Porcentaje_pcl."\n";
+                $formattedData .= "Fecha estructuración: ".$evento->F_estructuracion."\n";
+                $formattedData .= "Cod. Verificación: ".$evento->ID_evento."\n";
+        
+                // Agregar un salto de línea después de cada conjunto de atributos de evento
+                $formattedData .= "\n";
+            }
+                            
+        }
+
+        // Codigo QR
+        $datos = $formattedData;
+        $codigoQR = QrCode::size(110)->margin(0.5)->generate($datos);     
 
         // Captura de datos para logo del cliente y informacion de las entidades
 
@@ -6629,9 +6713,37 @@ class RecalificacionPCLController extends Controller
         $Id_Proceso_comuni = $request->Id_Proceso_comuni;
         $Radicado_comuni = $request->Radicado_comuni;
         
-        $datos = $ID_Evento_comuni;
-        // Codigo QR y Logo del Header
-        $codigoQR = QrCode::size(110)->margin(0.5)->generate($datos);        
+        $formattedData = "";
+
+        $dictamenPclQr = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_decreto_eventos as side', 'side.Id_Asignacion', '=', 'siae.Id_Asignacion')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_afiliado_eventos as siaf', 'siaf.ID_evento', '=', 'siae.ID_evento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siaf.Tipo_documento')
+        ->select('siaf.Nombre_afiliado', 'slp.Nombre_parametro', 'siaf.Nro_identificacion', 'siae.Consecutivo_dictamen', 
+        'side.Porcentaje_pcl', 'side.F_estructuracion', 'siae.ID_evento')
+        ->where('siae.Id_Asignacion', $Id_Asignacion_comuni)->get();     
+
+        if (!$dictamenPclQr->isEmpty()) {
+            // Crear una cadena para almacenar los datos en el formato deseado                    
+        
+            foreach ($dictamenPclQr as $evento) {
+                // Construir la cadena de texto con el formato deseado
+                $formattedData .= $evento->Nombre_afiliado."\n";
+                $formattedData .= $evento->Nombre_parametro." ".$evento->Nro_identificacion . "\n";
+                $formattedData .= "N° Dictámen: ".$evento->Consecutivo_dictamen."\n";
+                $formattedData .= "CALIFICACIÓN: ".$evento->Porcentaje_pcl."\n";
+                $formattedData .= "Fecha estructuración: ".$evento->F_estructuracion."\n";
+                $formattedData .= "Cod. Verificación: ".$evento->ID_evento."\n";
+        
+                // Agregar un salto de línea después de cada conjunto de atributos de evento
+                $formattedData .= "\n";
+            }
+                            
+        }
+
+        // Codigo QR
+        $datos = $formattedData;
+        $codigoQR = QrCode::size(110)->margin(0.5)->generate($datos);         
 
         //Captura de datos de informacion general del dictamen pericial
 
