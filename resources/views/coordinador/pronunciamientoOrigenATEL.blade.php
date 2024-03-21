@@ -491,7 +491,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="contenedor_cual_ciudad" @if (!empty($info_pronuncia[0]->Junta_regional_cual) && $info_pronuncia[0]->Copia_junta_regional <>'undefined') class="col-4" @else class="col-4 d-none" @endif>
+                                    {{-- <div id="contenedor_cual_ciudad" @if (!empty($info_pronuncia[0]->Junta_regional_cual) && $info_pronuncia[0]->Copia_junta_regional <>'undefined') class="col-4" @else class="col-4 d-none" @endif>
                                         <div class="form-group">
                                             <label for="junta_regional_cual">¿Cuál?<span style="color: red;">(*)</span></label>
                                             <select class="custom-select" name="junta_regional_cual" id="junta_regional_cual">
@@ -502,7 +502,7 @@
                                                  @endif
                                             </select>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="n_anexos">N° Anexos</label>

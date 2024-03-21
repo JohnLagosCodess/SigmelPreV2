@@ -2799,6 +2799,12 @@ $(document).ready(function(){
                 $("#cuerpo_comunicado").summernote('code', data_correspondencia["cuerpo_comunicado"]);
 
                 /* Copias partes interesadas */
+                if (data_correspondencia["checkeado_afiliado"] == "Si") {
+                    $("#afiliado").prop("checked", true);
+                }else{
+                    $("#afiliado").prop("checked", false);
+                }
+
                 if (data_correspondencia["checkeado_empleador"] == "Si") {
                     $("#empleador").prop("checked", true);
                 }else{
@@ -2956,7 +2962,12 @@ $(document).ready(function(){
         var newId_evento = $('#newId_evento').val();
         var Id_proceso = $('#Id_proceso').val();
         var newId_asignacion  = $('#newId_asignacion').val();
-        var destinatario_principal = $('#destinatario_principal').val();
+        
+        if ($('#destinatario_principal').val() == '') {
+            var destinatario_principal = $("#nombre_afiliado").val();
+        }else{
+            var destinatario_principal = $('#destinatario_principal').val();
+        }
 
         var otrodestinariop = $('input[name="otrodestinariop"]:checked').val();
 
@@ -2997,7 +3008,8 @@ $(document).ready(function(){
 
         var Asunto = $('#Asunto').val();
         var cuerpo_comunicado = $('#cuerpo_comunicado').val();
-        var empleador = $('input[name="empleador"]:checked').val();;        
+        var afiliado = $('input[name="afiliado"]:checked').val();
+        var empleador = $('input[name="empleador"]:checked').val();
         var eps = $('input[name="eps"]:checked').val();
         var afp = $('input[name="afp"]:checked').val();
         var arl = $('input[name="arl"]:checked').val();
@@ -3038,6 +3050,7 @@ $(document).ready(function(){
             'ciudad_destinatario': ciudad_destinatario,
             'Asunto':Asunto,
             'cuerpo_comunicado':cuerpo_comunicado,
+            'afiliado': afiliado,
             'empleador':empleador,
             'eps':eps,
             'afp':afp,
@@ -3265,6 +3278,12 @@ $(document).ready(function(){
                 $("#cuerpo_comunicado").summernote('code', data_correspondencia["cuerpo_comunicado"]);
 
                 /* Copias partes interesadas */
+                if (data_correspondencia["checkeado_afiliado"] == "Si") {
+                    $("#afiliado").prop("checked", true);
+                }else{
+                    $("#afiliado").prop("checked", false);
+                }
+
                 if (data_correspondencia["checkeado_empleador"] == "Si") {
                     $("#empleador").prop("checked", true);
                 }else{
@@ -3441,6 +3460,7 @@ $(document).ready(function(){
         var manual_de_califi_jrci_emitido = $("#manual_de_califi_jrci_emitido option:selected").text();
         var sustentacion_concepto_jrci = $("#sustentacion_concepto_jrci").val();
         var sustentacion_concepto_jrci1 = $("#sustentacion_concepto_repo_jrci").val();
+        var copia_afiliado = $('#afiliado').filter(":checked").val();
         var copia_empleador = $('#empleador').filter(":checked").val();
         var copia_eps = $('#eps').filter(":checked").val();
         var copia_afp = $('#afp').filter(":checked").val();
@@ -3471,6 +3491,7 @@ $(document).ready(function(){
             'manual_de_califi_jrci_emitido': manual_de_califi_jrci_emitido,
             'sustentacion_concepto_jrci': sustentacion_concepto_jrci,
             'sustentacion_concepto_jrci1': sustentacion_concepto_jrci1,
+            'copia_afiliado': copia_afiliado,
             'copia_empleador': copia_empleador,
             'copia_eps': copia_eps,
             'copia_afp': copia_afp,
@@ -3695,6 +3716,12 @@ $(document).ready(function(){
                 $("#cuerpo_comunicado").summernote('code', data_correspondencia["cuerpo_comunicado"]);
 
                 /* Copias partes interesadas */
+                if (data_correspondencia["checkeado_afiliado"] == "Si") {
+                    $("#afiliado").prop("checked", true);
+                }else{
+                    $("#afiliado").prop("checked", false);
+                }
+
                 if (data_correspondencia["checkeado_empleador"] == "Si") {
                     $("#empleador").prop("checked", true);
                 }else{
@@ -3866,6 +3893,7 @@ $(document).ready(function(){
         var f_dictamen_jrci_emitido = $("#f_dictamen_jrci_emitido").val();
         var sustentacion_concepto_jrci = $("#sustentacion_concepto_jrci").val();
         var sustentacion_concepto_jrci1 = $("#sustentacion_concepto_repo_jrci").val();
+        var copia_afiliado = $('#afiliado').filter(":checked").val();
         var copia_empleador = $('#empleador').filter(":checked").val();
         var copia_eps = $('#eps').filter(":checked").val();
         var copia_afp = $('#afp').filter(":checked").val();
@@ -3891,6 +3919,7 @@ $(document).ready(function(){
             'f_dictamen_jrci_emitido': f_dictamen_jrci_emitido,
             'sustentacion_concepto_jrci': sustentacion_concepto_jrci,
             'sustentacion_concepto_jrci1': sustentacion_concepto_jrci1,
+            'copia_afiliado': copia_afiliado,
             'copia_empleador': copia_empleador,
             'copia_eps': copia_eps,
             'copia_afp': copia_afp,

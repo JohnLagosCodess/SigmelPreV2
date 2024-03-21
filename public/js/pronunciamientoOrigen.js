@@ -452,6 +452,16 @@ $(document).ready(function(){
         $("#btn_insertar_tipo_doc").prop('disabled', false);
         $("#btn_insertar_nro_identificacion").prop('disabled', false);
         $("#btn_insertar_cie10_nombrecie10").prop('disabled', false);
+    }else if(opt_predeterminada == "Silencio"){
+        $("#mostrar_mensaje_importante").addClass('d-none');
+        $("#mostrar_mensaje_importante1").addClass('d-none');
+
+        $("#btn_insertar_nro_dictamen_pri_cali").prop('disabled', true);
+        $("#btn_insertar_fecha_dictamen_pri_cali").prop('disabled', true);
+        $("#btn_insertar_nombre_afiliado").prop('disabled', true);
+        $("#btn_insertar_tipo_doc").prop('disabled', true);
+        $("#btn_insertar_nro_identificacion").prop('disabled', true);
+        $("#btn_insertar_cie10_nombrecie10").prop('disabled', true);
     }
 
     /* VALIDACIÓN MOSTRAR ITEM DE CORRESPONDECIA */
@@ -474,7 +484,7 @@ $(document).ready(function(){
             $("#btn_insertar_nro_identificacion").prop('disabled', true);
             $("#btn_insertar_cie10_nombrecie10").prop('disabled', true);
             
-            $("#asunto_cali").val("CONCEPTO MÉDICO DE DICTAMEN PÉRDIDA DE CAPACIDAD LABORAL ");
+            $("#asunto_cali").val("CONCEPTO MÉDICO DE DICTAMEN ORIGEN");
             $('#sustenta_cali').summernote('code', '');
             
         } else if(opt_correspondencia == "Desacuerdo") {
@@ -493,6 +503,19 @@ $(document).ready(function(){
             var texto_insertar = "<p>Respetados Señores,</p><p>Yo, HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. Aseguradora que expidió el seguro previsional a la AFP PORVENIR S.A., debidamente facultado para ello, en atención al dictamen de la referencia, estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN ante la Junta, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de ORIGEN dictaminada al afiliado {{$nombre_afiliado}} {{$tipo_documento}} {{$nro_identificacion}}, donde califican los diagnósticos: {{$cie10_nombrecie10_origencie10}}.</p><p>1. (Descripción de recurso)</p><p>Por lo anterior, presentamos el recurso de reposición en subsidio de apelación, contra el origen de la patología de {{$cie10_nombrecie10_origencie10}}, con el fin que la Junta dictamine el origen de la patología del paciente dando aplicación a la Ley 1562 de 2012 y Decreto 1477 de 2014 como normatividad vigente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación, e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Recibiré notificaciones en la Carrera 10 # 18 – 36 Edificio Córdoba Piso 4, en la ciudad de Bogotá, D.C.</p><p>Cualquier Información adicional con gusto le será suministrada,</p>";
             $('#sustenta_cali').summernote('code', texto_insertar);
 
+        }else if(opt_correspondencia == "Silencio"){
+            $("#mostrar_mensaje_importante").addClass('d-none');
+            $("#mostrar_mensaje_importante1").addClass('d-none');
+            
+            $("#btn_insertar_nro_dictamen_pri_cali").prop('disabled', true);
+            $("#btn_insertar_fecha_dictamen_pri_cali").prop('disabled', true);
+            $("#btn_insertar_nombre_afiliado").prop('disabled', true);
+            $("#btn_insertar_tipo_doc").prop('disabled', true);
+            $("#btn_insertar_nro_identificacion").prop('disabled', true);
+            $("#btn_insertar_cie10_nombrecie10").prop('disabled', true);
+            
+            $("#asunto_cali").val('');
+            $('#sustenta_cali').summernote('code', '');
         }
     });
     
@@ -563,6 +586,7 @@ $(document).ready(function(){
         } else {
             $('#div_cual').slideUp('up');
             $('#junta_regional_cual').prop('required', false);
+            
         }
     });
 
@@ -772,6 +796,9 @@ $(document).ready(function(){
         var copia_eps = $('#copia_eps').filter(":checked").val();
         var copia_afp = $('#copia_afp').filter(":checked").val();
         var copia_arl = $('#copia_arl').filter(":checked").val();
+        var copia_junta_regional = $('#junta_regional').filter(":checked").val();
+        var junta_regional_cual = $("#junta_regional_cual").val();
+        var copia_junta_nacional = $('#junta_nacional').filter(":checked").val();
         var firmar = $('#firmar').filter(":checked").val();
         var Id_cliente_firma = $('#Id_cliente_firma').val();
         var nro_anexos = $("#n_anexos").val();
@@ -808,6 +835,9 @@ $(document).ready(function(){
             'copia_eps': copia_eps,
             'copia_afp': copia_afp,
             'copia_arl': copia_arl,
+            'copia_junta_regional': copia_junta_regional,
+            'junta_regional_cual' : junta_regional_cual,
+            'copia_junta_nacional': copia_junta_nacional,
             'firmar': firmar,
             'Id_cliente_firma': Id_cliente_firma,
             'nro_anexos': nro_anexos,
