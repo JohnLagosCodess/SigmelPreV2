@@ -653,7 +653,7 @@
                             </div>
                         </div>
                         <!---  Firmeza o controversia por otra parte interesada del Dictamen de Calificación de Invalidez (JRCI) -->
-                        <div class="card-info d-none" id="div_Firmeza_controversiaJRCI">
+                        <div class="card-info" id="div_Firmeza_controversiaJRCI">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5> Firmeza o controversia por otra parte interesada del Dictamen Junta Regional de Calificación de Invalidez (JRCI)</h5>
                             </div>
@@ -976,7 +976,7 @@
                             </div>
                         </div>
                         <!-- Revisión ante recurso de reposición de la Junta Regional -->
-                        <div class="card-info" id="div_rev_recur_repo" <?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_reposicion_jrci)){ ?>class="card-info" <?php }else{ ?>class="card-info d-none"<?php } ?> >
+                        <div id="div_rev_recur_repo" class="card-info d-none">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Revisión ante recurso de reposición de la Junta Regional</h5>
                             </div>
