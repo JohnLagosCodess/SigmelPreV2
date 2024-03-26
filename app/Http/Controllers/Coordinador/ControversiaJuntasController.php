@@ -1520,7 +1520,31 @@ class ControversiaJuntasController extends Controller
             $cual = null;
         }
         $jnci = $request->jnci;
-        $agregar_copias_comu = $afiliado.','.$empleador.','.$eps.','.$afp.','.$arl.','.$jrci.','.$jnci;
+        // $agregar_copias_comu = $afiliado.','.$empleador.','.$eps.','.$afp.','.$arl.','.$jrci.','.$jnci;
+
+        $variables_llenas = array();
+
+        if (!empty($empleador)) {
+            $variables_llenas[] = $empleador;
+        }
+        if (!empty($eps)) {
+            $variables_llenas[] = $eps;
+        }
+        if (!empty($afp)) {
+            $variables_llenas[] = $afp;
+        }
+        if (!empty($arl)) {
+            $variables_llenas[] = $arl;
+        }
+        if (!empty($jrci)) {
+            $variables_llenas[] = $jrci;
+        }
+        if (!empty($jnci)) {
+            $variables_llenas[] = $jnci;
+        }
+
+        $agregar_copias_comu = implode(',', $variables_llenas);
+        
         $anexos = $request->anexos;
         $elaboro = $request->elaboro;
         $reviso = $request->reviso;
