@@ -20,6 +20,7 @@ use App\Models\sigmel_lista_regional_juntas;
 use App\Models\sigmel_lista_solicitantes;
 use App\Models\sigmel_clientes;
 use App\Models\sigmel_informacion_firmas_clientes;
+use App\Models\sigmel_registro_descarga_documentos;
 
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
@@ -2553,6 +2554,42 @@ class ControversiaJuntasController extends Controller
         $writer = new Word2007($phpWord);
         $nombre_docx = "JUN_DESACUERDO_{$id_asignacion}_{$num_identificacion}_{$nro_radicado}.docx";
         $writer->save(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
+
+        /* Inserción del registro de que fue descargado */
+
+        // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
+        $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
+        ->select('sice.F_comunicado')
+        ->where([
+            ['sice.N_radicado', $nro_radicado]
+        ])
+        ->get();
+
+        $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
+
+        // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+        $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+        ->select('Nombre_documento')
+        ->where([
+            ['Nombre_documento', $nombre_docx],
+        ])->get();
+        
+        if(count($verficar_documento) == 0){
+            $info_descarga_documento = [
+                'Id_Asignacion' => $id_asignacion,
+                'Id_proceso' => $id_proceso,
+                'Id_servicio' => $id_servicio,
+                'ID_evento' => $id_evento,
+                'Nombre_documento' => $nombre_docx,
+                'N_radicado_documento' => $nro_radicado,
+                'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                'F_descarga_documento' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+            ];
+            
+            sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+        }
+
         return response()->download(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
     }
 
@@ -3012,6 +3049,41 @@ class ControversiaJuntasController extends Controller
         $output = $pdf->output();
         //Guardar el PDF en un archivo
         file_put_contents(public_path("Documentos_Eventos/{$id_evento}/{$nombre_pdf}"), $output);
+
+        /* Inserción del registro de que fue descargado */
+
+        // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
+        $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
+        ->select('sice.F_comunicado')
+        ->where([
+            ['sice.N_radicado', $nro_radicado]
+        ])
+        ->get();
+
+        $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
+
+        // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+        $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+        ->select('Nombre_documento')
+        ->where([
+            ['Nombre_documento', $nombre_pdf],
+        ])->get();
+        
+        if(count($verficar_documento) == 0){
+            $info_descarga_documento = [
+                'Id_Asignacion' => $id_asignacion,
+                'Id_proceso' => $id_proceso,
+                'Id_servicio' => $id_servicio,
+                'ID_evento' => $id_evento,
+                'Nombre_documento' => $nombre_pdf,
+                'N_radicado_documento' => $nro_radicado,
+                'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                'F_descarga_documento' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+            ];
+            
+            sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+        }
 
         // return $dompdf->stream($nombre_pdf);
         return $pdf->download($nombre_pdf);

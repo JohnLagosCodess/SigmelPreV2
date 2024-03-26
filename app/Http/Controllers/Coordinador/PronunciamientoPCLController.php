@@ -28,6 +28,7 @@ use App\Models\sigmel_clientes;
 use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_firmas_clientes;
+use App\Models\sigmel_registro_descarga_documentos;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
@@ -49,7 +50,7 @@ class PronunciamientoPCLController extends Controller
         $array_datos_pronunciamientoPcl = DB::select('CALL psrcalificacionpcl(?)', array($Id_asignacion_calitec));
         //Traer info informacion pronunciamiento
         $info_pronuncia= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_pronunciamiento_eventos as pr')
-        ->select('pr.ID_evento','pr.Id_primer_calificador','c.Tipo_Entidad','pr.Id_nombre_calificador','e.Nombre_entidad as Nombre_calificador'
+        ->select('pr.ID_evento', 'pr.Id_Asignacion', 'Id_proceso','pr.Id_primer_calificador','c.Tipo_Entidad','pr.Id_nombre_calificador','e.Nombre_entidad as Nombre_calificador'
         ,'pr.Nit_calificador','pr.Dir_calificador','pr.Email_calificador','pr.Telefono_calificador','pr.Depar_calificador','pr.Ciudad_calificador'
         ,'pr.Id_tipo_pronunciamiento','p.Nombre_parametro as Tpronuncia','pr.Id_tipo_evento','ti.Nombre_evento','pr.Id_tipo_origen','or.Nombre_parametro as T_origen'
         ,'pr.Fecha_evento','pr.Dictamen_calificador','pr.Fecha_calificador','pr.Fecha_estruturacion','pr.Porcentaje_pcl','pr.Rango_pcl'
@@ -130,9 +131,51 @@ class PronunciamientoPCLController extends Controller
     public function VerDocumentoPronuncia(Request $request){
         $Idevento=$request->Id_evento;
         $nomarchivo=$request->nom_archivo;
+        $Id_Asignacion = $request->Id_Asignacion;
+        $Id_proceso = $request->Id_proceso;
+        $Fecha_correspondencia = $request->Fecha_correspondencia;
+        $N_radicado = $request->N_radicado;
         $rutaDocumento = $Idevento. '/' .$nomarchivo;
         $urlDocumentoPr = public_path('Documentos_Eventos/' .$rutaDocumento);
         if (file_exists($urlDocumentoPr)) {
+
+            $time = time();
+            $date = date("Y-m-d", $time);
+            /* Inserción del registro de que fue descargado */
+            // Extraemos el id del servicio asociado
+            $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+            ->select('siae.Id_servicio')
+            ->where([
+                ['siae.Id_Asignacion', $Id_Asignacion],
+                ['siae.ID_evento', $Idevento],
+                ['siae.Id_proceso', $Id_proceso],
+            ])->get();
+
+            $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+            // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+            $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Nombre_documento', $nomarchivo],
+            ])->get();
+            
+            if(count($verficar_documento) == 0){
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $Id_Asignacion,
+                    'Id_proceso' => $Id_proceso,
+                    'Id_servicio' => $Id_servicio,
+                    'ID_evento' => $Idevento,
+                    'Nombre_documento' => $nomarchivo,
+                    'N_radicado_documento' => $N_radicado,
+                    'F_elaboracion_correspondencia' => $Fecha_correspondencia,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => Auth::user()->name,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }
+
             return response()->download($urlDocumentoPr,$nomarchivo);
         } else {
             return response()->json([
@@ -666,6 +709,8 @@ class PronunciamientoPCLController extends Controller
         $nombre_usuario = Auth::user()->name;
         $cargo_profesional = Auth::user()->cargo;
 
+        $fecha = $request->fecha;
+        $nro_radicado = $request->nro_radicado;
         $Id_Evento_pronuncia_corre = $request->Id_Evento_pronuncia_corre;
         $Asignacion_Pronuncia_corre = $request->Asignacion_Pronuncia_corre;
         $Id_Proceso_pronuncia_corre = $request->Id_Proceso_pronuncia_corre;
@@ -1008,11 +1053,47 @@ class PronunciamientoPCLController extends Controller
             // Crear una instancia de Dompdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_pro_acuerdo', $data);            
-            $nombre_pdf = "PCL_ACUERDO_'{$Asignacion_Pronuncia_corre}_{$Iden_afiliado_corre}.pdf";    
+            $nombre_pdf = "PCL_ACUERDO_{$Asignacion_Pronuncia_corre}_{$Iden_afiliado_corre}.pdf";    
             //Obtener el contenido del PDF
             $output = $pdf->output();
             //Guardar el PDF en un archivo
             file_put_contents(public_path("Documentos_Eventos/{$Id_Evento_pronuncia_corre}/{$nombre_pdf}"), $output);
+
+            /* Inserción del registro de que fue descargado */
+            // Extraemos el id del servicio asociado
+            $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+            ->select('siae.Id_servicio')
+            ->where([
+                ['siae.Id_Asignacion', $Asignacion_Pronuncia_corre],
+                ['siae.ID_evento', $Id_Evento_pronuncia_corre],
+                ['siae.Id_proceso', $Id_Proceso_pronuncia_corre],
+            ])->get();
+
+            $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+            // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+            $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Nombre_documento', $nombre_pdf],
+            ])->get();
+            
+            if(count($verficar_documento) == 0){
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $Asignacion_Pronuncia_corre,
+                    'Id_proceso' => $Id_Proceso_pronuncia_corre,
+                    'Id_servicio' => $Id_servicio,
+                    'ID_evento' => $Id_Evento_pronuncia_corre,
+                    'Nombre_documento' => $nombre_pdf,
+                    'N_radicado_documento' => $nro_radicado,
+                    'F_elaboracion_correspondencia' => $fecha,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }
+
             return $pdf->download($nombre_pdf);   
         } 
         else {
@@ -1210,6 +1291,42 @@ class PronunciamientoPCLController extends Controller
             $writer = new Word2007($phpWord);
             $nombre_docx = "PCL_DESACUERDO_{$Asignacion_Pronuncia_corre}_{$Iden_afiliado_corre}.docx";
             $writer->save(public_path("Documentos_Eventos/{$Id_Evento_pronuncia_corre}/{$nombre_docx}"));
+
+            /* Inserción del registro de que fue descargado */
+            // Extraemos el id del servicio asociado
+            $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+            ->select('siae.Id_servicio')
+            ->where([
+                ['siae.Id_Asignacion', $Asignacion_Pronuncia_corre],
+                ['siae.ID_evento', $Id_Evento_pronuncia_corre],
+                ['siae.Id_proceso', $Id_Proceso_pronuncia_corre],
+            ])->get();
+
+            $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+            // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+            $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Nombre_documento', $nombre_docx],
+            ])->get();
+            
+            if(count($verficar_documento) == 0){
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $Asignacion_Pronuncia_corre,
+                    'Id_proceso' => $Id_Proceso_pronuncia_corre,
+                    'Id_servicio' => $Id_servicio,
+                    'ID_evento' => $Id_Evento_pronuncia_corre,
+                    'Nombre_documento' => $nombre_docx,
+                    'N_radicado_documento' => $nro_radicado,
+                    'F_elaboracion_correspondencia' => $fecha,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }
+
             return response()->download(public_path("Documentos_Eventos/{$Id_Evento_pronuncia_corre}/{$nombre_docx}"));
         }       
         

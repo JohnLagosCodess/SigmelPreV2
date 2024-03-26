@@ -28,6 +28,7 @@ use App\Models\sigmel_informacion_entidades;
 use App\Models\sigmel_lista_departamentos_municipios;
 use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_laboral_eventos;
+use App\Models\sigmel_registro_descarga_documentos;
 
 use App\Models\sigmel_clientes;
 use App\Models\sigmel_informacion_firmas_clientes;
@@ -1590,6 +1591,7 @@ class CalificacionJuntasController extends Controller
             'Agregar_copia' => $total_copia_comunicado,
             'JRCI_copia' => $request->JRCI_copia_editar,
             'Firmar_Comunicado' => $request->firmarcomunicado_editar,
+            'Tipo_descarga' => $request->tipo_descarga,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
         ];
@@ -1673,6 +1675,10 @@ class CalificacionJuntasController extends Controller
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
+
+        $Id_comunicado = $request->Id_comunicado_act;
+        $F_elaboracion_correspondencia = $request->fecha_comunicado2_act;
+        $N_radicado_documento = $request->radicado2_act;
 
         /* Datos Fijos en la proforma */
         $nombre_afiliado = $request->nombre_afiliado_comunicado2_act;
@@ -2048,14 +2054,48 @@ class CalificacionJuntasController extends Controller
                 $pdf = app('dompdf.wrapper');
                 $pdf->loadView($ruta_proforma, $data);
                 
-                $nombre_pdf = "{$nombre_documento}_{$Id_Asignacion}_{$N_identificacion}.{$extension_proforma}";
+                $nombre_pdf = "{$nombre_documento}_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.{$extension_proforma}";
 
                 //Obtener el contenido del PDF
                 $output = $pdf->output();
                 //Guardar el PDF en un archivo
                 file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
 
-                // return $dompdf->stream($nombre_pdf);
+                /* Inserción del registro de que fue descargado */
+                // Extraemos el id del servicio asociado
+                $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+                ->select('siae.Id_servicio')
+                ->where([
+                    ['siae.Id_Asignacion', $Id_Asignacion],
+                    ['siae.ID_evento', $ID_evento],
+                    ['siae.Id_proceso', $Id_proceso],
+                ])->get();
+
+                $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+                // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+                $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->where([
+                    ['Nombre_documento', $nombre_pdf],
+                ])->get();
+                
+                if(count($verficar_documento) == 0){
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado_documento,
+                        'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                }
+
                 return $pdf->download($nombre_pdf); 
 
             break;
@@ -2293,14 +2333,48 @@ class CalificacionJuntasController extends Controller
                 $pdf = app('dompdf.wrapper');
                 $pdf->loadView($ruta_proforma, $data);
                 
-                $nombre_pdf = "{$nombre_documento}_{$Id_Asignacion}_{$num_identificacion_afiliado}.{$extension_proforma}";
+                $nombre_pdf = "{$nombre_documento}_{$Id_comunicado}_{$Id_Asignacion}_{$num_identificacion_afiliado}.{$extension_proforma}";
 
                 //Obtener el contenido del PDF
                 $output = $pdf->output();
                 //Guardar el PDF en un archivo
                 file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
 
-                // return $dompdf->stream($nombre_pdf);
+                /* Inserción del registro de que fue descargado */
+                // Extraemos el id del servicio asociado
+                $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+                ->select('siae.Id_servicio')
+                ->where([
+                    ['siae.Id_Asignacion', $Id_Asignacion],
+                    ['siae.ID_evento', $ID_evento],
+                    ['siae.Id_proceso', $Id_proceso],
+                ])->get();
+
+                $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+                // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+                $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->where([
+                    ['Nombre_documento', $nombre_pdf],
+                ])->get();
+                
+                if(count($verficar_documento) == 0){
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado_documento,
+                        'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                }
+
                 return $pdf->download($nombre_pdf); 
             break;
 
@@ -2800,14 +2874,48 @@ class CalificacionJuntasController extends Controller
                 $pdf = app('dompdf.wrapper');
                 $pdf->loadView($ruta_proforma, $data);
                 
-                $nombre_pdf = "{$nombre_documento}_{$Id_Asignacion}_{$N_identificacion}.{$extension_proforma}";
+                $nombre_pdf = "{$nombre_documento}_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.{$extension_proforma}";
 
                 //Obtener el contenido del PDF
                 $output = $pdf->output();
                 //Guardar el PDF en un archivo
                 file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
 
-                // return $dompdf->stream($nombre_pdf);
+                /* Inserción del registro de que fue descargado */
+                // Extraemos el id del servicio asociado
+                $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+                ->select('siae.Id_servicio')
+                ->where([
+                    ['siae.Id_Asignacion', $Id_Asignacion],
+                    ['siae.ID_evento', $ID_evento],
+                    ['siae.Id_proceso', $Id_proceso],
+                ])->get();
+
+                $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+                // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+                $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->where([
+                    ['Nombre_documento', $nombre_pdf],
+                ])->get();
+                
+                if(count($verficar_documento) == 0){
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado_documento,
+                        'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                }
+
                 return $pdf->download($nombre_pdf); 
             break;
             
@@ -3342,8 +3450,44 @@ class CalificacionJuntasController extends Controller
 
                     // Generamos el documento y luego se guarda
                     $writer = new Word2007($phpWord);
-                    $nombre_docx = "JUN_DEV_EXPEDIENTE_{$Id_Asignacion}_{$num_identificacion_afiliado}.docx";
+                    $nombre_docx = "JUN_DEV_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$num_identificacion_afiliado}.docx";
                     $writer->save(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
+
+                    /* Inserción del registro de que fue descargado */
+                    // Extraemos el id del servicio asociado
+                    $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+                    ->select('siae.Id_servicio')
+                    ->where([
+                        ['siae.Id_Asignacion', $Id_Asignacion],
+                        ['siae.ID_evento', $ID_evento],
+                        ['siae.Id_proceso', $Id_proceso],
+                    ])->get();
+
+                    $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+                    // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+                    $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->select('Nombre_documento')
+                    ->where([
+                        ['Nombre_documento', $nombre_docx],
+                    ])->get();
+                    
+                    if(count($verficar_documento) == 0){
+                        $info_descarga_documento = [
+                            'Id_Asignacion' => $Id_Asignacion,
+                            'Id_proceso' => $Id_proceso,
+                            'Id_servicio' => $Id_servicio,
+                            'ID_evento' => $ID_evento,
+                            'Nombre_documento' => $nombre_docx,
+                            'N_radicado_documento' => $N_radicado_documento,
+                            'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                            'F_descarga_documento' => $date,
+                            'Nombre_usuario' => $nombre_usuario,
+                        ];
+                        
+                        sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                    }
+
                     return response()->download(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
             break;
 
@@ -3888,8 +4032,44 @@ class CalificacionJuntasController extends Controller
 
                     // Generamos el documento y luego se guarda
                     $writer = new Word2007($phpWord);
-                    $nombre_docx = "JUN_SOL-DICTAMEN_{$Id_Asignacion}_{$num_identificacion_afiliado}.docx";
+                    $nombre_docx = "JUN_SOL_DICTAMEN_{$Id_comunicado}_{$Id_Asignacion}_{$num_identificacion_afiliado}.docx";
                     $writer->save(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
+
+                    /* Inserción del registro de que fue descargado */
+                    // Extraemos el id del servicio asociado
+                    $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+                    ->select('siae.Id_servicio')
+                    ->where([
+                        ['siae.Id_Asignacion', $Id_Asignacion],
+                        ['siae.ID_evento', $ID_evento],
+                        ['siae.Id_proceso', $Id_proceso],
+                    ])->get();
+
+                    $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+                    // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+                    $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->select('Nombre_documento')
+                    ->where([
+                        ['Nombre_documento', $nombre_docx],
+                    ])->get();
+                    
+                    if(count($verficar_documento) == 0){
+                        $info_descarga_documento = [
+                            'Id_Asignacion' => $Id_Asignacion,
+                            'Id_proceso' => $Id_proceso,
+                            'Id_servicio' => $Id_servicio,
+                            'ID_evento' => $ID_evento,
+                            'Nombre_documento' => $nombre_docx,
+                            'N_radicado_documento' => $N_radicado_documento,
+                            'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                            'F_descarga_documento' => $date,
+                            'Nombre_usuario' => $nombre_usuario,
+                        ];
+                        
+                        sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                    }
+
                     return response()->download(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
 
             break;

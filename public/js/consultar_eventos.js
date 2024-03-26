@@ -333,7 +333,7 @@ $(document).ready(function () {
     $('#btn_expor_datos').click(function () {
         var infobtnExcel = $(this).parents();
         var selectorbtnExcel = infobtnExcel[4].childNodes[13].childNodes[1].childNodes[5].childNodes[1].childNodes[1].childNodes[0].childNodes[0].classList[0];
-
+        console.log(selectorbtnExcel);
         $('.'+selectorbtnExcel).click();
 
         //console.log(selectorbtnExcel);
@@ -482,7 +482,7 @@ $(document).ready(function () {
         });
 
         let token = $("input[name='_token']").val();
-
+        let id_clientes_actual = $('.renderizar_nuevo_servicio').find("input[id^='id_clientes_']").val();
         let id_proceso_actual = $('.renderizar_nuevo_servicio').find("input[id^='id_proceso_actual_']").val();
         let id_servicio_actual = $('.renderizar_nuevo_servicio').find("input[id^='id_servicio_actual_']").val();
         let nro_evento = $('.renderizar_nuevo_servicio').find("input[id^='nro_evento_']").val();
@@ -498,6 +498,7 @@ $(document).ready(function () {
             'id_servicio_actual': id_servicio_actual,
             'nro_evento': nro_evento,
             'id_asignacion': id_asignacion,
+            'id_cliente':id_clientes_actual
         };
         
         $.ajax({

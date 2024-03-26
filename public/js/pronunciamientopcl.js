@@ -749,6 +749,8 @@ $(document).ready(function(){
         }else if(desicion_proforma_di_acuerdo_pr.prop('checked')){
             var desicion_proforma = 'proforma_desacuerdo';
         }
+        var fecha = $("#fecha_correspon").val();
+        var nro_radicado = $("#n_radicado").val();
         var Id_Evento_pronuncia_corre = $('#Id_Evento_pronuncia').val();
         var Id_Proceso_pronuncia_corre = $('#Id_Proceso_pronuncia').val();
         var Asignacion_Pronuncia_corre = $('#Asignacion_Pronuncia').val();        
@@ -764,6 +766,8 @@ $(document).ready(function(){
         let token = $("input[name='_token']").val();
         var datos_proforma_pro = {
             '_token': token,
+            'fecha': fecha,
+            'nro_radicado': nro_radicado,
             'Id_Evento_pronuncia_corre': Id_Evento_pronuncia_corre,
             'Id_Proceso_pronuncia_corre': Id_Proceso_pronuncia_corre,
             'Asignacion_Pronuncia_corre': Asignacion_Pronuncia_corre,
@@ -777,7 +781,7 @@ $(document).ready(function(){
             'Firma_corre':firmar,
             'desicion_proforma':desicion_proforma,
         };
-
+        
         $.ajax({
             type:'POST',
             url:'/generarPdfProformaspro',

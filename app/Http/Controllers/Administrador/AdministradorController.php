@@ -2275,6 +2275,15 @@ class AdministradorController extends Controller
 
             $string_ids_servicios = array();
 
+             /* Quitar los servicios no contratados */
+             $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+             ->select('Id_servicio')
+             ->where([
+                 ['Id_proceso',$request->id_proceso_actual],
+                 ['Id_cliente',$request->id_cliente]
+             ])
+             ->get();
+
             for ($i=0; $i < count($listado_id_servicios_evento); $i++) { 
                 array_push($string_ids_servicios, $listado_id_servicios_evento[$i]->Id_servicio);
                 array_push($string_ids_servicios, 3); // Se agrega pronunciamiento Origen para no mostrar
@@ -2332,6 +2341,7 @@ class AdministradorController extends Controller
                 ['Id_proceso', '=', $request->id_proceso_actual],
                 ['Estado', '=', 'activo']
             ])
+            ->whereIn('Id_Servicio', $servicios_contratados)
             ->whereNotIn('Id_Servicio', $string_ids_servicios)
             ->get();
 
@@ -2511,7 +2521,29 @@ class AdministradorController extends Controller
             // CASO 1: traer servicios del proceso Origen distintos a la Adicion Dx
             // CASO 2: traer servicios del proceso PCL distintos a Recalificacion y Revision pension
             // CASO 3: traer servicios del proceso Juntas segun los contratados
-            
+            $tamanio = count($string_ids_servicios);
+            for ($a = 0; $a < $tamanio; $a++) { 
+                if (in_array(12, $string_ids_servicios)) {
+                    // Eliminar el valor 12 del array
+                    $index = array_search(12, $string_ids_servicios);
+                    unset($string_ids_servicios[$index]);
+                    // Reindexar el array después de eliminar un elemento
+                    $string_ids_servicios = array_values($string_ids_servicios);
+                    // Actualizar el tamaño del array
+                    $tamanio = count($string_ids_servicios);
+                } else if (in_array(13, $string_ids_servicios)) {
+                    // Eliminar el valor 13 del array
+                    $index = array_search(13, $string_ids_servicios);
+                    unset($string_ids_servicios[$index]);
+                    // Reindexar el array después de eliminar un elemento
+                    $string_ids_servicios = array_values($string_ids_servicios);
+                    // Actualizar el tamaño del array
+                    $tamanio = count($string_ids_servicios);
+                } else {
+                    // Si el valor 12,12 ya no está en el array, salimos del bucle
+                    break;
+                }
+            }
             switch(true)
             {
                 case($request->id_proceso_escogido == 1):
