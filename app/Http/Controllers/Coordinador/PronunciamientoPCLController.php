@@ -35,6 +35,7 @@ use PhpOffice\PhpWord\Writer\Word2007;
 use PhpOffice\PhpWord\Shared\Html;
 use PhpOffice\PhpWord\Style\Image;
 use Html2Text\Html2Text;
+use Mockery\Undefined;
 
 class PronunciamientoPCLController extends Controller
 {
@@ -402,6 +403,21 @@ class PronunciamientoPCLController extends Controller
             $tipo_entidad = null;
             $nombre_entidad = null;
         }
+        if ($request->copia_afiliado == 'undefined') {
+            $copia_afiliado = null;            
+        } else {
+            $copia_afiliado = $request->copia_afiliado;            
+        }
+        
+        $copia_empleador = $request->copia_empleador;
+        $copia_eps = $request->copia_eps;
+        $copia_afp = $request->copia_afp;
+        $copia_arl = $request->copia_arl;
+        $junta_regional = $request->junta_regional;
+        $junta_nacional = $request->junta_nacional;
+
+        $agregar_copias_comu = $copia_afiliado.','.$copia_empleador.','.$copia_eps.','.$copia_afp.','.$copia_arl.','.$junta_regional.','.$junta_nacional;
+        $radicado = $request->n_radicado;
 
         //valida la acción del botón
         if ($request->bandera_pronuncia_guardar_actualizar == 'Guardar') {
@@ -434,13 +450,13 @@ class PronunciamientoPCLController extends Controller
                 'Destinatario_principal' => $destinatario_principal,
                 'Tipo_entidad' => $tipo_entidad,
                 'Nombre_entidad' => $nombre_entidad,
-                'Copia_afiliado' => $request->copia_afiliado,
-                'Copia_empleador' => $request->copia_empleador,
-                'Copia_eps' => $request->copia_eps,
-                'Copia_afp' => $request->copia_afp,
-                'Copia_arl' => $request->copia_arl,
-                'Copia_junta_regional' => $request->junta_regional,
-                'Copia_junta_nacional' => $request->junta_nacional,
+                'Copia_afiliado' => $copia_afiliado,
+                'Copia_empleador' => $copia_empleador,
+                'Copia_eps' => $copia_eps,
+                'Copia_afp' => $copia_afp,
+                'Copia_arl' => $copia_arl,
+                'Copia_junta_regional' => $junta_regional,
+                'Copia_junta_nacional' => $junta_nacional,
                 'Junta_regional_cual' => $request->junta_regional_cual,
                 'N_anexos' => $request->n_anexos,
                 'Elaboro_pronuncia' => $request->elaboro,
@@ -476,6 +492,7 @@ class PronunciamientoPCLController extends Controller
                 'Forma_envio' => '0',
                 'Elaboro' => $request->elaboro,
                 'Reviso' => '0',
+                'Agregar_copia' => $agregar_copias_comu,
                 'Anexos' => $request->n_anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
@@ -669,6 +686,18 @@ class PronunciamientoPCLController extends Controller
                 'acccion_realizada' => $accion_realizada,
                 'fecha_registro_accion' => $datetime
             ];
+
+            $datos_info_comunicado_eventos = [
+                'Agregar_copia' => $agregar_copias_comu,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];   
+                
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([                
+                ['N_radicado',$radicado]
+            ])->update($datos_info_comunicado_eventos);
+            
             // Actualizacion del profesional calificador
             $datos_profesional_calificador = [
                 'Id_profesional' => Auth::user()->id,

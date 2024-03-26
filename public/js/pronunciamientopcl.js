@@ -225,8 +225,8 @@ $(document).ready(function(){
             let IdJunta = $('select[name=junta_regional_cual]').val();
             let primercali = Object.keys(data);
             for (let i = 0; i < primercali.length; i++) {
-                if (data[primercali[i]]['Id_juntaR'] != IdJunta) {  
-                    $('#junta_regional_cual').append('<option value="'+data[primercali[i]]["Id_juntaR"]+'">'+data[primercali[i]]["Ciudad_Junta"]+'</option>');
+                if (data[primercali[i]]['Ciudad_Junta'] != IdJunta) {  
+                    $('#junta_regional_cual').append('<option value="'+data[primercali[i]]["Ciudad_Junta"]+'">'+data[primercali[i]]["Ciudad_Junta"]+'</option>');
                 }
             }
         }

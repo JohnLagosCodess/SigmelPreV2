@@ -349,6 +349,17 @@ class PronunciamientoOrigenController extends Controller
             $nombre_entidad = null;
         }
 
+        $copia_afiliado = $request->copia_afiliado;
+        $copia_empleador = $request->copia_empleador;
+        $copia_eps = $request->copia_eps;
+        $copia_afp = $request->copia_afp;
+        $copia_arl = $request->copia_arl;
+        $junta_regional = $request->junta_regional;
+        $junta_nacional = $request->junta_nacional;
+
+        $agregar_copias_comu = $copia_afiliado.','.$copia_empleador.','.$copia_eps.','.$copia_afp.','.$copia_arl.','.$junta_regional.','.$junta_nacional;
+        $radicado = $request->n_radicado;
+
         //valida la acción del botón
         if ($request->bandera_pronuncia_guardar_actualizar == 'Guardar') {
         
@@ -419,6 +430,8 @@ class PronunciamientoOrigenController extends Controller
                 'Forma_envio' => '0',
                 'Elaboro' => $request->elaboro,
                 'Reviso' => '0',
+                'Agregar_copia' => $agregar_copias_comu,
+                'JRCI_copia' => $request->junta_regional_cual,
                 'Anexos' => $request->n_anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
@@ -621,6 +634,17 @@ class PronunciamientoOrigenController extends Controller
                 } 
             }
             
+            $datos_info_comunicado_eventos = [
+                'Agregar_copia' => $agregar_copias_comu,
+                'Nombre_usuario' => $nombre_usuario,
+                'JRCI_copia' => $request->junta_regional_cual,
+                'F_registro' => $date,
+            ];   
+                
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([                
+                ['N_radicado',$radicado]
+            ])->update($datos_info_comunicado_eventos);
 
             // Actualizacion del profesional calificador
             $datos_profesional_calificador = [

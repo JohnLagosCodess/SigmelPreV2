@@ -972,6 +972,7 @@ class DeterminacionOrigenATEL extends Controller
             $cual = null;
         }
         $jnci = $request->jnci;
+        $agregar_copias_comu = $empleador.','.$eps.','.$afp.','.$arl.','.$jrci.','.$jnci;
         $anexos = $request->anexos;
         $elaboro = $request->elaboro;
         $reviso = $request->reviso;
@@ -1049,6 +1050,8 @@ class DeterminacionOrigenATEL extends Controller
                 'Forma_envio' => '0',
                 'Elaboro' => $elaboro,
                 'Reviso' => $reviso,
+                'Agregar_copia' => $agregar_copias_comu,
+                'JRCI_copia' => $cual,
                 'Anexos' => $anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
@@ -1104,7 +1107,19 @@ class DeterminacionOrigenATEL extends Controller
             ->where([
                 ['ID_evento',$Id_Evento_dto_atel],
                 ['Id_Asignacion',$Id_Asignacion_dto_atel]
-            ])->update($datos_correspondencia);       
+            ])->update($datos_correspondencia);
+            
+            $datos_info_comunicado_eventos = [
+                'Agregar_copia' => $agregar_copias_comu,
+                'JRCI_copia' => $cual,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];   
+                
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([                
+                ['N_radicado',$radicado]
+            ])->update($datos_info_comunicado_eventos);
     
             $mensajes = array(
                 "parametro" => 'actualizar_correspondencia',
