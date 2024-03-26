@@ -476,7 +476,7 @@
                                             <label for="junta_regional_cual">¿Cuál?<span style="color: red;">(*)</span></label>
                                             <select class="junta_regional_cual custom-select" name="junta_regional_cual" id="junta_regional_cual">
                                                 @if (!empty($info_pronuncia[0]->Junta_regional_cual)  && $info_pronuncia[0]->Copia_junta_regional <>'undefined')
-                                                    <option value="{{$info_pronuncia[0]->Junta_regional_cual}}" selected>{{$info_pronuncia[0]->Ciudad_Junta}}</option>
+                                                    <option value="{{$info_pronuncia[0]->Junta_regional_cual}}" selected>{{$info_pronuncia[0]->Junta_regional_cual}}</option>
                                                  @else
                                                     <option value="">Seleccione una opción</option>
                                                  @endif

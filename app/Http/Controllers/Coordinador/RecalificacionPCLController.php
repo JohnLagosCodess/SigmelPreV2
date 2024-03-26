@@ -4481,6 +4481,7 @@ class RecalificacionPCLController extends Controller
             $cual = null;
         }
         $jnci = $request->jnci;
+        $agregar_copias_comu = $empleador.','.$eps.','.$afp.','.$arl.','.$jrci.','.$jnci;
         $anexos = $request->anexos;
         $elaboro = $request->elaboro;
         $reviso = $request->reviso;
@@ -4560,6 +4561,8 @@ class RecalificacionPCLController extends Controller
                 'Forma_envio' => '0',
                 'Elaboro' => $elaboro,
                 'Reviso' => $reviso,
+                'Agregar_copia' => $agregar_copias_comu,
+                'JRCI_copia' => $cual,
                 'Anexos' => $anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
@@ -4619,7 +4622,19 @@ class RecalificacionPCLController extends Controller
             ->where([
                 ['ID_evento',$Id_EventoDecreto],
                 ['Id_Asignacion',$Id_Asignacion_Dcreto]
-            ])->update($datos_correspondencia);       
+            ])->update($datos_correspondencia);   
+            
+            $datos_info_comunicado_eventos = [
+                'Agregar_copia' => $agregar_copias_comu,
+                'JRCI_copia' => $cual,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];   
+                
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([                
+                ['N_radicado',$radicado]
+            ])->update($datos_info_comunicado_eventos); 
     
             $mensajes = array(
                 "parametro" => 'actualizar_correspondencia',

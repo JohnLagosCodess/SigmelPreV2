@@ -843,6 +843,7 @@ class AdicionDxDTO extends Controller
             $cual = null;
         }
         $jnci = $request->jnci;
+        $agregar_copias_comu = $empleador.','.$eps.','.$afp.','.$arl.','.$jrci.','.$jnci;
         $anexos = $request->anexos;
         $elaboro = $request->elaboro;
         $reviso = $request->reviso;
@@ -918,6 +919,8 @@ class AdicionDxDTO extends Controller
                 'Forma_envio' => '0',
                 'Elaboro' => $elaboro,
                 'Reviso' => $reviso,
+                'Agregar_copia' => $agregar_copias_comu,
+                'JRCI_copia' => $cual,
                 'Anexos' => $anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
@@ -974,6 +977,18 @@ class AdicionDxDTO extends Controller
                 ['ID_evento',$Id_Evento],
                 ['Id_Asignacion',$Id_Asignacion_adicion_dx]
             ])->update($datos_correspondencia);       
+
+            $datos_info_comunicado_eventos = [
+                'Agregar_copia' => $agregar_copias_comu,
+                'JRCI_copia' => $cual,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];   
+                
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([                
+                ['N_radicado',$radicado]
+            ])->update($datos_info_comunicado_eventos);
     
             $mensajes = array(
                 "parametro" => 'actualizar_correspondencia',

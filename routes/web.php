@@ -816,7 +816,7 @@ Route::post('/DescargarProformasJuntas', [CalificacionJuntasController::class, '
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 
-
+Route::get('/Sigmel/ReportesNotificaciones', [CalificacionJuntasController::class, 'show'])->name('reporteNotificaciones');
 
 Route::get('/Sigmel/pruebas', [ProbandoController::class, 'index']);
 Route::get('/Sigmel/proformas', [ProbandoController::class, 'mostrarProformas']);

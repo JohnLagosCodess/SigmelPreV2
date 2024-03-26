@@ -47,7 +47,7 @@ return new class extends Migration
             $table->string('Copia_arl', 4)->nullable();
             $table->string('Copia_junta_regional', 10)->nullable();
             $table->string('Copia_junta_nacional', 10)->nullable();
-            $table->integer('Junta_regional_cual')->nullable();
+            $table->text('Junta_regional_cual')->nullable();
             $table->string('N_anexos', 20)->nullable();
             $table->string('Elaboro_pronuncia', 100)->nullable();
             $table->string('Reviso_pronuncia', 100)->nullable();
