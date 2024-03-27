@@ -408,15 +408,64 @@ class PronunciamientoPCLController extends Controller
         } else {
             $copia_afiliado = $request->copia_afiliado;            
         }
-        
-        $copia_empleador = $request->copia_empleador;
-        $copia_eps = $request->copia_eps;
-        $copia_afp = $request->copia_afp;
-        $copia_arl = $request->copia_arl;
-        $junta_regional = $request->junta_regional;
-        $junta_nacional = $request->junta_nacional;
+        if ($request->copia_empleador == 'undefined') {
+            $copia_empleador = null;                        
+        } else {
+            $copia_empleador = $request->copia_empleador;            
+        }
+        if ($request->copia_eps == 'undefined') {
+            $copia_eps = null;                        
+        } else {         
+            $copia_eps = $request->copia_eps;
+        }
+        if ($request->copia_afp == 'undefined') {
+            $copia_afp = null;                        
+        } else {         
+            $copia_afp = $request->copia_afp;
+        }
+        if ($request->copia_afp == 'undefined') {
+            $copia_afp = null;                        
+        } else {         
+            $copia_afp = $request->copia_afp;
+        }
+        if ($request->copia_arl == 'undefined') {
+            $copia_arl = null;                        
+        } else {         
+            $copia_arl = $request->copia_arl;
+        }
+        if ($request->junta_regional == 'undefined') {
+            $junta_regional = null;                        
+        } else {         
+            $junta_regional = $request->junta_regional;
+        }
+        if ($junta_regional == null) {
+            $cual =  null;
+        } else {
+            $cual =  $request->junta_regional_cual;
+        }        
+        if ($request->junta_nacional == 'undefined') {
+            $junta_nacional = null;                        
+        } else {         
+            $junta_nacional = $request->junta_nacional;
+        }
 
-        $agregar_copias_comu = $copia_afiliado.','.$copia_empleador.','.$copia_eps.','.$copia_afp.','.$copia_arl.','.$junta_regional.','.$junta_nacional;
+        // Agrupa las variables en un array
+        $variables = array($copia_afiliado, $copia_empleador, $copia_eps, $copia_afp, $copia_arl, $junta_regional, $junta_nacional);
+
+        // Filtra los elementos nulos del array
+        $variables_filtradas = array_filter($variables, function($valor) {
+            return $valor !== null;
+        });
+
+        // Verifica si el array resultante está vacío
+        if (!empty($variables_filtradas)) {
+            // Si hay elementos en el array, los concatenamos con comas
+            $agregar_copias_comu = implode(',', $variables_filtradas);
+        } else {
+            // Si el array está vacío, asignamos una cadena vacía
+            $agregar_copias_comu = '';
+        }
+        
         $radicado = $request->n_radicado;
 
         //valida la acción del botón
@@ -457,7 +506,7 @@ class PronunciamientoPCLController extends Controller
                 'Copia_arl' => $copia_arl,
                 'Copia_junta_regional' => $junta_regional,
                 'Copia_junta_nacional' => $junta_nacional,
-                'Junta_regional_cual' => $request->junta_regional_cual,
+                'Junta_regional_cual' => $cual,
                 'N_anexos' => $request->n_anexos,
                 'Elaboro_pronuncia' => $request->elaboro,
                 'Reviso_pronuncia' => $request->reviso,
@@ -533,14 +582,14 @@ class PronunciamientoPCLController extends Controller
                 'Destinatario_principal' => $destinatario_principal,
                 'Tipo_entidad' => $tipo_entidad,
                 'Nombre_entidad' => $nombre_entidad,
-                'Copia_afiliado' => $request->copia_afiliado,
-                'Copia_empleador' => $request->copia_empleador,
-                'Copia_eps' => $request->copia_eps,
-                'Copia_afp' => $request->copia_afp,
-                'Copia_arl' => $request->copia_arl,
-                'Copia_junta_regional' => $request->junta_regional,
-                'Copia_junta_nacional' => $request->junta_nacional,
-                'Junta_regional_cual' => $request->junta_regional_cual,
+                'Copia_afiliado' => $copia_afiliado,
+                'Copia_empleador' => $copia_empleador,
+                'Copia_eps' => $copia_eps,
+                'Copia_afp' => $copia_afp,
+                'Copia_arl' => $copia_arl,
+                'Copia_junta_regional' => $junta_regional,
+                'Copia_junta_nacional' => $junta_nacional,
+                'Junta_regional_cual' => $cual,
                 'N_anexos' => $request->n_anexos,
                 'Elaboro_pronuncia' => $request->elaboro,
                 'Reviso_pronuncia' => $request->reviso,
@@ -613,14 +662,14 @@ class PronunciamientoPCLController extends Controller
                 'Destinatario_principal' => $destinatario_principal,
                 'Tipo_entidad' => $tipo_entidad,
                 'Nombre_entidad' => $nombre_entidad,
-                'Copia_afiliado' => $request->copia_afiliado,
-                'Copia_empleador' => $request->copia_empleador,
-                'Copia_eps' => $request->copia_eps,
-                'Copia_afp' => $request->copia_afp,
-                'Copia_arl' => $request->copia_arl,
-                'Copia_junta_regional' => $request->junta_regional,
-                'Copia_junta_nacional' => $request->junta_nacional,
-                'Junta_regional_cual' => $request->junta_regional_cual,
+                'Copia_afiliado' => $copia_afiliado,
+                'Copia_empleador' => $copia_empleador,
+                'Copia_eps' => $copia_eps,
+                'Copia_afp' => $copia_afp,
+                'Copia_arl' => $copia_arl,
+                'Copia_junta_regional' => $junta_regional,
+                'Copia_junta_nacional' => $junta_nacional,
+                'Junta_regional_cual' => $cual,
                 'N_anexos' => $request->n_anexos,
                 'Elaboro_pronuncia' => $request->elaboro,
                 'Reviso_pronuncia' => $request->reviso,
@@ -665,14 +714,14 @@ class PronunciamientoPCLController extends Controller
                 'Destinatario_principal' => $destinatario_principal,
                 'Tipo_entidad' => $tipo_entidad,
                 'Nombre_entidad' => $nombre_entidad,
-                'Copia_afiliado' => $request->copia_afiliado,
-                'Copia_empleador' => $request->copia_empleador,
-                'Copia_eps' => $request->copia_eps,
-                'Copia_afp' => $request->copia_afp,
-                'Copia_arl' => $request->copia_arl,
-                'Copia_junta_regional' => $request->junta_regional,
-                'Copia_junta_nacional' => $request->junta_nacional,
-                'Junta_regional_cual' => $request->junta_regional_cual,
+                'Copia_afiliado' => $copia_afiliado,
+                'Copia_empleador' => $copia_empleador,
+                'Copia_eps' => $copia_eps,
+                'Copia_afp' => $copia_afp,
+                'Copia_arl' => $copia_arl,
+                'Copia_junta_regional' => $junta_regional,
+                'Copia_junta_nacional' => $junta_nacional,
+                'Junta_regional_cual' => $cual,
                 'N_anexos' => $request->n_anexos,
                 'Elaboro_pronuncia' => $request->elaboro,
                 'Reviso_pronuncia' => $request->reviso,
