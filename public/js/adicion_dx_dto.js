@@ -1367,7 +1367,7 @@ $(document).ready(function(){
             'radicado':radicado,
             'bandera_correspondecia_guardar_actualizar':bandera_correspondecia_guardar_actualizar
         }
-
+        // console.log(datos_correspondecia);
         $.ajax({    
             type:'POST',
             url:'/guardarcorrespondenciaADX',
