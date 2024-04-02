@@ -90,7 +90,7 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="id_evento" class="col-form-label">ID evento <span style="color:red;">(*)</span></label>
-                                                    <input type="number" class="id_evento form-control" name="id_evento" id="id_evento" required>
+                                                    <input type="text" class="id_evento form-control" name="id_evento" id="id_evento" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">

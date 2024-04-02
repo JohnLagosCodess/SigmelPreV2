@@ -1645,7 +1645,7 @@ $(document).ready(function(){
                     }, 6000);
                 }else{}
                 // Si ya se cargaron todos los documentos obligatorios habilita el botón de guardar y elimina el mensaje amarillo
-                if (response.todos_obligatorios == "Si") {
+                /* if (response.todos_obligatorios == "Si") {
                     $('.mensaje_confirmacion_cargar_evento').addClass('d-none');
                     $('#btn_guardar_evento').removeClass('d-none');
                     toastr['success']('Documentos obligatorios cargados satisfactoriamente.');
@@ -1654,7 +1654,7 @@ $(document).ready(function(){
                     toastr.options.timeOut = 1000;
                     toastr.options.fadeOut = 250;
                     toastr.options.fadeIn = 250;
-                }
+                } */
             }         
         });
     });
@@ -1682,7 +1682,7 @@ $(document).ready(function(){
                         } else {
                             $(".no_ejecutar_parametrica_mod_nuevo").addClass('d-none');
                             clearInterval(validar_mod_nuevo);
-                            // $('#btn_guardar_evento').removeClass('d-none');
+                            $('#btn_guardar_evento').removeClass('d-none');
                         }
                     }
                 

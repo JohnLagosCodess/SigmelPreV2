@@ -173,7 +173,11 @@ class BandejaJuntasController extends Controller
 
         $BandejaJuntasTotal = $request->BandejaJuntasTotal;
         $newId_rol = $request->newId_rol; 
-        $newId_user = $request->newId_user;           
+        $newId_user = $request->newId_user;
+        
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $year = date("Y");
 
         if($BandejaJuntasTotal == 'CargaBandejaJuntas'){
 
@@ -183,12 +187,14 @@ class BandejaJuntasController extends Controller
                     ['Nombre_proceso_actual', '=', 'Juntas'],
                     ['Id_profesional', '=', $newId_user]
                 ])
+                ->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
                 ->get();
             }else{
                 $bandejaJuntas = cndatos_bandeja_eventos::on('sigmel_gestiones')
                 ->where([
                     ['Nombre_proceso_actual', '=', 'Juntas']
                 ])
+                ->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
                 ->get();
 
             }

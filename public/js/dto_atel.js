@@ -1648,6 +1648,13 @@ $(document).ready(function(){
         $("#div_correspondecia").removeClass('d-none');
     }
 
+    // Desabilitar los botones si ya esta visado
+    var visar_servicio = $("#visar_servicio").val();
+    if (visar_servicio!== '') {
+        $("#EditarDTOATEL").prop('disabled', true);
+    }
+
+
     // Validar cual de los oficios esta marcado
 
     // var oficio_origencorres = $('#oficio_origen');

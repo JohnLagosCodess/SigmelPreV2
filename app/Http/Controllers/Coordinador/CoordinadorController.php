@@ -182,7 +182,11 @@ class CoordinadorController extends Controller
 
         $BandejaPClTotal = $request->BandejaPClTotal;
         $newId_rol = $request->newId_rol; 
-        $newId_user = $request->newId_user;             
+        $newId_user = $request->newId_user;
+        
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $year = date("Y");
 
         if($BandejaPClTotal == 'CargaBandejaPCl'){
             // Consultar la vista de mysql, traer eventos acorde al proceso
@@ -192,12 +196,14 @@ class CoordinadorController extends Controller
                     ['Nombre_proceso_actual', '=', 'Calificación PCL'],
                     ['Id_profesional', '=', $newId_user]
                 ])
+                ->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
                 ->get();  
             }else{
                 $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
                 ->where([
                     ['Nombre_proceso_actual', '=', 'Calificación PCL'],
                 ])
+                ->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
                 ->get();  
             }
             // $ID_evento_bandeja = $bandejaPCL[0]->ID_evento;
