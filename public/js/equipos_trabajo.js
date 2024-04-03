@@ -124,7 +124,7 @@ $(document).ready(function(){
 
         var id_proceso = $(this).data("id_proceso");
         var id_equipo_trabajo = $(this).data("id_equipo_trabajo");
-
+        var id_lider_trabajo = $(this).data("id_lider");
         // CARGUE LISTADO DE PROCESOS
         let datos_listado_proceso_edicion = {
             '_token': token,
@@ -165,7 +165,7 @@ $(document).ready(function(){
                     // $('#editar_listado_lider_'+id_proceso).append('<option value="" selected>Seleccione</option>');
                     let claves = Object.keys(data);
                     for (let i = 0; i < claves.length; i++) {
-                        if (data[claves[i]]["id"] == $(this).data("id_lider")) {
+                        if (data[claves[i]]["id"] == id_lider_trabajo) {
                             $('#editar_listado_lider_'+id_proceso).append('<option value="'+data[claves[i]]["id"]+'" selected>'+data[claves[i]]["name"]+' ('+data[claves[i]]["email"]+')</option>');
                         } else {
                             $('#editar_listado_lider_'+id_proceso).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["name"]+' ('+data[claves[i]]["email"]+')</option>');

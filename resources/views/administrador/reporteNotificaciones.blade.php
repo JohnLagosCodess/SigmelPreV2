@@ -48,14 +48,14 @@
                             {{-- Validaciones --}}
                             <div class="col-12">
                                 <div class="resultado_validacion alert mt-1 d-none" id="llenar_mensaje_validacion" role="alert">
-                                    <strong ></strong>
+                                    <strong></strong>
                                 </div>
                             </div>
 
                             {{-- Nro de registros --}}
                             <div class="row d-none" id="div_info_numero_registros">
                                 <div class="col 12">
-                                    <label>Se encontraron <span>####</span> registros.</label>
+                                    <label>Se encontraron <span id="total_registros_reporte_notificaciones"></span> registros.</label>
                                 </div>
                             </div>
 
@@ -90,29 +90,6 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="vaciar_tabla_reporte_notificaciones">
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>2024-03-25</td>
-                                                    <td>ABC123</td>
-                                                    <td>123456</td>
-                                                    <td>001</td>
-                                                    <td>Proceso A</td>
-                                                    <td>Servicio X</td>
-                                                    <td>Revisión</td>
-                                                    <td>Pendiente</td>
-                                                    <td>OIP-789</td>
-                                                    <td>Cliente</td>
-                                                    <td>Juan Pérez</td>
-                                                    <td>Calle 123</td>
-                                                    <td>555-1234</td>
-                                                    <td>Departamento 1</td>
-                                                    <td>Ciudad A</td>
-                                                    <td>10</td>
-                                                    <td>Email</td>
-                                                    <td>juan@example.com</td>
-                                                    <td>Archivo1.pdf</td>
-                                                    <td>Archivo2.pdf</td>
-                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>

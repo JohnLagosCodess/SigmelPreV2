@@ -4500,7 +4500,7 @@ class AdministradorController extends Controller
 
         /* Validación N° 1: TAMAÑO DEL ARCHIVO */
         $reglas_validacion_tamano_documento = array(
-            'listadodocumento' => 'max:10000'
+            'listadodocumento' => 'max:10000000000000000'
         );
 
         $ejecutar_validador_tamano_documento = Validator::make($request->all(), $reglas_validacion_tamano_documento);
@@ -4509,7 +4509,7 @@ class AdministradorController extends Controller
 
             $mensajes = array(
                 "parametro" => 'fallo',
-                "mensaje" => 'El tamaño máximo permitido para cargar este documento es de 10 Megas.'
+                "mensaje" => 'El tamaño máximo permitido para cargar este documento es de 50 Megas.'
             );
 
             // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
@@ -4554,7 +4554,7 @@ class AdministradorController extends Controller
         
         /* Validación N° 4: TIPO DE DOCUMENTO */
         $reglas_validacion_tipo_documento = array(
-            'listadodocumento' => 'mimes:pdf,xls,xlsx,doc,docx,jpeg,png'
+            'listadodocumento' => 'mimes:pdf,xls,xlsx,doc,docx,jpeg,png,zip'
         );
 
         $ejecutar_validador_tipo_documento = Validator::make($request->all(), $reglas_validacion_tipo_documento);
@@ -4562,7 +4562,7 @@ class AdministradorController extends Controller
         if ($ejecutar_validador_tipo_documento->fails()) {
             $mensajes = array(
                 "parametro" => 'fallo',
-                "mensaje" => 'El tipo de documento debe ser de alguna de estas extensiones: pdf, xls, xlsx, doc, docx, jpeg, png.'
+                "mensaje" => 'El tipo de documento debe ser de alguna de estas extensiones: pdf, xls, xlsx, doc, docx, jpeg, png, zip.'
             );
 
             // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
@@ -4734,7 +4734,7 @@ class AdministradorController extends Controller
     public function DescargarDocumentos(Request $request, $nombreArchivo, $id_evento)
     {
         // Validar la extensión del archivo
-        $extensionesPermitidas = ['pdf', 'xls', 'xlsx', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+        $extensionesPermitidas = ['pdf', 'xls', 'xlsx', 'doc', 'docx', 'jpg', 'jpeg', 'png','zip'];
         $extensionArchivo = pathinfo($nombreArchivo, PATHINFO_EXTENSION);
 
         if (!in_array($extensionArchivo, $extensionesPermitidas)) {

@@ -3585,7 +3585,7 @@ class CalificacionPCLController extends Controller
         'sicie.Oficio_pcl', 'sicie.Oficio_incapacidad', 'sicie.Destinatario_principal', 'sicie.Otro_destinatario', 'sicie.Tipo_destinatario', 
         'sicie.Nombre_dest_principal', 'sie.Nombre_entidad', 'sicie.Nombre_destinatario','sicie.Nit_cc', 'sicie.Direccion_destinatario', 
         'sicie.Telefono_destinatario', 'sicie.Email_destinatario', 'sicie.Departamento_destinatario', 'sicie.Ciudad_destinatario', 
-        'sicie.Asunto', 'sicie.Cuerpo_comunicado', 'sicie.Copia_empleador', 'sicie.Copia_eps', 'sicie.Copia_afp', 'sicie.Copia_arl', 
+        'sicie.Asunto', 'sicie.Cuerpo_comunicado', 'sicie.Copia_afiliado', 'sicie.Copia_empleador', 'sicie.Copia_eps', 'sicie.Copia_afp', 'sicie.Copia_arl', 
         'sicie.Copia_jr', 'sicie.Cual_jr', 'sicie.Copia_jn', 'sicie.Anexos', 'sicie.Elaboro', 'sicie.Reviso', 'sicie.Firmar', 'sicie.Ciudad', 
         'sicie.F_correspondecia', 'sicie.N_radicado', 'sicie.Nombre_usuario', 'sicie.F_registro')        
         ->where([
@@ -5668,6 +5668,7 @@ class CalificacionPCLController extends Controller
             $ciudad_destinatario = $request->ciudad_destinatario;
         }
         $Asunto = $request->Asunto;
+        $afiliado = $request->afiliado;
         $cuerpo_comunicado = $request->cuerpo_comunicado;
         $empleador = $request->empleador;
         $eps = $request->eps;
@@ -5731,6 +5732,7 @@ class CalificacionPCLController extends Controller
                 'Ciudad_destinatario' => $ciudad_destinatario,
                 'Asunto' => $Asunto,
                 'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Copia_afiliado' => $afiliado,
                 'Copia_empleador' => $empleador,
                 'Copia_eps' => $eps,
                 'Copia_afp' => $afp,
@@ -5814,6 +5816,7 @@ class CalificacionPCLController extends Controller
                 'Ciudad_destinatario' => $ciudad_destinatario,
                 'Asunto' => $Asunto,
                 'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Copia_afiliado' => $afiliado,
                 'Copia_empleador' => $empleador,
                 'Copia_eps' => $eps,
                 'Copia_afp' => $afp,
@@ -7361,6 +7364,7 @@ class CalificacionPCLController extends Controller
         $F_correspondecia = $array_datos_comite_inter[0]->F_correspondecia;        
         $Anexos_correspondecia = $array_datos_comite_inter[0]->Anexos;
         $Elaboro_correspondecia = $array_datos_comite_inter[0]->Elaboro;
+        $Copia_afiliado_correspondencia = $array_datos_comite_inter[0]->Copia_afiliado;
         $Copia_empleador_correspondecia = $array_datos_comite_inter[0]->Copia_empleador;
         $Copia_eps_correspondecia = $array_datos_comite_inter[0]->Copia_eps;
         $Copia_afp_correspondecia = $array_datos_comite_inter[0]->Copia_afp;
@@ -7433,6 +7437,18 @@ class CalificacionPCLController extends Controller
         //     $NroIden_afiliado_noti = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
         //     $Email_afiliado_noti = '';
         // }
+
+        if (!empty($Copia_afiliado_correspondencia) && $Copia_afiliado_correspondencia == 'Afiliado') {
+            $Nombre_afiliado = $array_datos_info_afiliado[0]->Nombre_afiliado;
+            $Direccion_afiliado = $array_datos_info_afiliado[0]->Direccion;
+            $Telefono_afiliado = $array_datos_info_afiliado[0]->Telefono_contacto;
+            $Ciudad_departamento_afiliado = $array_datos_info_afiliado[0]->Nombre_municipio.'-'.$array_datos_info_afiliado[0]->Nombre_departamento;
+        } else {
+            $Nombre_afiliado = '';
+            $Direccion_afiliado = '';
+            $Telefono_afiliado = '';
+            $Ciudad_departamento_afiliado = '';
+        }
 
         if(!empty($Copia_eps_correspondecia) && $Copia_eps_correspondecia == 'EPS'){
             $Nombre_eps = $array_datos_info_afiliado[0]->Entidad_eps;
@@ -7708,6 +7724,7 @@ class CalificacionPCLController extends Controller
                 'Direccion_empresa_noti' => $Direccion_empresa_noti,
                 'Telefono_empresa_noti' => $Telefono_empresa_noti,
                 'Ciudad_departamento_empresa_noti' => $Ciudad_departamento_empresa_noti,
+                'Copia_afiliado_correspondencia' => $Copia_afiliado_correspondencia,
                 'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
                 'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
                 'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
@@ -7716,6 +7733,10 @@ class CalificacionPCLController extends Controller
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
                 'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
                 'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
+                'Nombre_afiliado_copia' => $Nombre_afiliado,
+                'Direccion_afiliado_copia' => $Direccion_afiliado,
+                'Telefono_afiliado_copia' => $Telefono_afiliado,
+                'Ciudad_departamento_afiliado_copia' => $Ciudad_departamento_afiliado,
                 'Nombre_eps' => $Nombre_eps,
                 'Direccion_eps' => $Direccion_eps,
                 'Telefono_eps' => $Telefono_eps,
@@ -7820,6 +7841,7 @@ class CalificacionPCLController extends Controller
                 'Direccion_empresa_noti' => $Direccion_empresa_noti,
                 'Telefono_empresa_noti' => $Telefono_empresa_noti,
                 'Ciudad_departamento_empresa_noti' => $Ciudad_departamento_empresa_noti,
+                'Copia_afiliado_correspondencia' => $Copia_afiliado_correspondencia,
                 'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
                 'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
                 'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
@@ -7828,6 +7850,10 @@ class CalificacionPCLController extends Controller
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
                 'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
                 'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
+                'Nombre_afiliado_copia' => $Nombre_afiliado,
+                'Direccion_afiliado_copia' => $Direccion_afiliado,
+                'Telefono_afiliado_copia' => $Telefono_afiliado,
+                'Ciudad_departamento_afiliado_copia' => $Ciudad_departamento_afiliado,
                 'Nombre_eps' => $Nombre_eps,
                 'Direccion_eps' => $Direccion_eps,
                 'Telefono_eps' => $Telefono_eps,

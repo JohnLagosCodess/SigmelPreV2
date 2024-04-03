@@ -254,7 +254,7 @@
                 </tr>
                 <tr>
                     <td>
-                        SUSTENTACIÓN: {{$Sustenta_cali}}
+                        SUSTENTACIÓN: <?php echo $Sustenta_cali; ?>
                     </td>                                   
                 </tr>
             </tbody>
