@@ -81,9 +81,13 @@
         <form id="form_proser_bandejaOrigen" method="POST">
             @csrf
             <div class="row contenedor_casos_origen">
-                <div class="col-12">                                           
-                    &nbsp; <label for="nro_registros" class="col-form-label" id="num_registroslabel">Se encontraron <span id="num_registros"></span> registros</label>
-                    <div class="card-body" id="contenedorTable">
+                <div class="col-12">
+                    <div class="alert mt-1 alert-info d-none" id="mensaje_importante" role="alert">
+                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> <span id="iniciando_bandeja">Cargando resultados de la Bandeja ...</span>
+                        <span id="bandeja_iniciada" class="d-none">Se encontraron <b><span id="alerta_num_registros"></span></b> registros, esto tardará un tiempo en cargar los resultados. Por favor espere.</span>
+                    </div>
+                    &nbsp; <label for="nro_registros" class="col-form-label d-none" id="num_registroslabel">Se encontraron <span id="num_registros"></span> registros</label>
+                    <div class="card-body d-none" id="contenedorTable">
                         <div class="table table-responsive">
                             <table id="Bandeja_Origen" class="table table-striped table-bordered" style="width:100%">
                                 <thead>
@@ -206,7 +210,7 @@
             setTimeout(() => {
                 $('#btn_filtro_bandeja').removeClass('d-none');
                 $('#mostrar-barra').css("display","none");                
-            }, 2000);
+            }, 5000);
         }
 
         $('#btn_bandeja').click(function(){

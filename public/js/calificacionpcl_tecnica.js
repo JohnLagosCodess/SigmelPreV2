@@ -3117,7 +3117,9 @@ $(document).ready(function(){
         } else {
             var cuerpo_comunicadoPcl = cuerpo_comunicado;
         }
-        var empleador = $('input[name="empleador"]:checked').val();;        
+
+        var afiliado = $('input[name="afiliado"]:checked').val();
+        var empleador = $('input[name="empleador"]:checked').val();    
         var eps = $('input[name="eps"]:checked').val();
         var afp = $('input[name="afp"]:checked').val();
         var arl = $('input[name="arl"]:checked').val();
@@ -3159,6 +3161,7 @@ $(document).ready(function(){
             'ciudad_destinatario': ciudad_destinatario,
             'Asunto':Asunto,
             'cuerpo_comunicado':cuerpo_comunicadoPcl,
+            'afiliado': afiliado,
             'empleador':empleador,
             'eps':eps,
             'afp':afp,

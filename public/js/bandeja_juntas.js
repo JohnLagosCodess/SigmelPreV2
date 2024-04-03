@@ -173,57 +173,124 @@ $(document).ready(function () {
         }
     }, 500);
 
-    //captura de data sin Filtros        
-    let datos_sin_filtro = {            
-        '_token': token,
-        'BandejaJuntasTotal': "CargaBandejaJuntas",
-        'newId_rol': $("#newId_rol").val(),
-        'newId_user': $("#newId_user").val(),
-    };
-
-    $.ajax({
-        type:'POST',
-        url:'/sinfiltrosBandejaJuntas',
-        data: datos_sin_filtro,
-        success:function(data) {
-            $('#num_registros').empty();
-            $('#num_registros').append(data.length);
-
-            var actualizarBandeja = '';
-            var modulocalificacionJuntas = '';
-
-            for (let i = 0; i < data.length; i++) {
-
-                if (data[i]['Id_Asignacion'] != '') {
-                    actualizarBandeja='<input class="checkbox-class" name="actualizaBandejaJuntas" id="actualizar_id_asignacion_'+data[i]['Id_Asignacion']+'" type="checkbox" value="'+data[i]["Id_Asignacion"]+'">';
-                    data[i]['actualizarproser'] = actualizarBandeja;
-                }else{
-                    data[i]['actualizarproser'] = ""; 
-                }               
+    // cargue de datos sin filtros
+    $("#mensaje_importante").removeClass('d-none');
+    $('#Bandeja_Juntas thead tr').clone(true).addClass('filters').appendTo('#Bandeja_Juntas thead');
+    var lista_eventos_juntas = $('#Bandeja_Juntas').DataTable({            
+        orderCellsTop: true,
+        fixedHeader: true,
+        scrollY: 350,
+        scrollX: true,
+        initComplete: function () {
+            var api = this.api();
+                // For each column
+            api.columns().eq(0).each(function (colIdx) {
+                // Set the header cell to contain the input element
+                var cell_1 = $('.filters th').eq(
+                    $(api.column(colIdx).header()).index()
+                );
                 
-                if (data[i]['Id_Asignacion'] != ''){
+                // console.log(cell_1[0].cellIndex);
 
-                    modulocalificacionJuntas = '<form id="form_modulo_calificacion_Juntas_'+data[i]["Id_Asignacion"]+'" action="" method="POST">'+
-                                '<input type="hidden" name="_token" value="'+token+'">'+
-                                '<input class="btn btn-sm text-info" id="modulo_califi_Juntas_'+data[i]["Id_Asignacion"]+'" value="Modulo Juntas" type="submit" style="font-weight: bold; padding-left: inherit;">'+ 
-                                '<input type="hidden" name="newIdAsignacion" value="'+data[i]["Id_Asignacion"]+'">'+
-                                '<input type="hidden" name="newIdEvento" id="newIdEvento" value="'+data[i]["ID_evento"]+'">'+
-                                '<input type="hidden" name="Id_Servicio" id="Id_Servicio" value="'+data[i]["Id_Servicio"]+'">'+
-                                '</form>';
-                    data[i]['moduloJuntas'] = modulocalificacionJuntas;
+                if(cell_1[0].cellIndex != 35){
+
+                    var cell = $('.filters th').eq(
+                        $(api.column(colIdx).header()).index()
+                    );
                     
-                }else{
-                    data[i]['moduloJuntas'] = ""; 
-                } 
-            }
+                    var title = $(cell).text();
+                    
+                    if (title === 'Detalle  ') {
+                        $(cell).append('<input type="checkbox" class="principal" id="toggleButton" />');                            
 
-            $.each(data, function(index, value){
-                capturar_informacion_bandejaJuntas(data, index, value)                  
-            })
-            
+                         // Selecciona los elementos repetidos (en este caso, elementos con la clase "repetido")
+                        var elementosRepetidos = $(".principal");
+
+                        // Verifica que haya más de un elemento repetido antes de eliminarlos
+                        if (elementosRepetidos.length > 1) {
+                            // Selecciona los dos primeros elementos repetidos utilizando "slice(0, 2)"
+                            var elementosEliminar = elementosRepetidos.slice(0, 1);
+
+                            // Elimina los elementos seleccionados del DOM
+                            elementosEliminar.remove();
+                        }                            
+                        
+                    }else{
+                        $(cell).html('<input type="text" placeholder="' + title + '" />');
+                        $('input',$('.filters th').eq($(api.column(colIdx).header()).index())).off('keyup change')
+                        .on('change', function (e) {
+                            // Get the search value
+                            $(this).attr('title', $(this).val());
+                            var regexr = '({search})'; //$(this).parents('th').find('select').val();
+                            // Search the column for that value
+                            api
+                                .column(colIdx)
+                                .search(
+                                    this.value != ''
+                                        ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                        : '',
+                                    this.value != '',
+                                    this.value == ''
+                                )
+                                .draw();
+                        })
+                        .on('keyup', function (e) {
+                            e.stopPropagation();
+                            var cursorPosition = this.selectionStart;
+                            $(this).trigger('change');
+                            $(this)
+                                .focus()[0]
+                                .setSelectionRange(cursorPosition, cursorPosition);
+                        });
+                    }
+                    
+                }
+
+            });
+        },
+        dom: 'Bfrtip',                      
+        buttons:{
+            dom:{
+                buttons:{
+                    className: 'btn'
+                }
+            },
+            buttons:[
+                {
+                    extend:"excel",
+                    title: 'Bandeja Juntas',
+                    text:'Exportar datos',
+                    className: 'btn btn-success',
+                    "excelStyles": [                      // estilos de excel
+                                                
+                    ],
+                    //Limitar columnas para el reporte
+                    exportOptions: {
+                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35]
+                    }  
+                }
+            ]
+        }, 
+        "destroy": true,
+        "pageLength": 20,
+        "order": [[5, 'desc']],            
+        "language":{                
+            "search": "Buscar",
+            "lengthMenu": "Mostrar _MENU_ resgistros",
+            "info": "Mostrando registros _START_ a _END_ de un total de _TOTAL_ registros",
+            "paginate": {
+                "previous": "Anterior",
+                "next": "Siguiente",
+                "first": "Primero",
+                "last": "Último"
+            },
+            "zeroRecords": "No se encontraron resultados",
+            "emptyTable": "No se encontró información",
+            "infoEmpty": "No se encontró información",
         }
-        
-    });
+    });  
+
+    cargarDatosBandejaJuntas(lista_eventos_juntas, "sin_filtros", null, null, null);
 
     //Captura id Checkbox para extraer su value
     var arrayIdCheckActualizar = [];
@@ -245,110 +312,9 @@ $(document).ready(function () {
         var consultar_f_desde = $('#consultar_f_desde').val();
         var consultar_f_hasta = $('#consultar_f_hasta').val();
         var consultar_g_dias = $('#consultar_g_dias').val();
-        let token = $('input[name=_token]').val();
-        if(consultar_f_desde == "" && consultar_f_hasta == "" && consultar_g_dias == ""){                        
-            $('.resultado_validacion').addClass('d-none');
-            $('.resultado_validacion2').removeClass('d-none');
-            $('#body_listado_casos_juntas').empty();
-            $('#contenedorTable').addClass('d-none');
-            $('#contenedor_selectores').addClass('d-none');
-            $('#num_registros2').removeClass('d-none');            
-            $('#num_registroslabel').addClass('d-none');
-            //$('#body_listado_casos_juntas').empty();
-            $('#btn_expor_datos').addClass('d-none');
-            $('#btn_guardar').addClass('d-none');
-            $('#btn_bandeja').removeClass('d-none');
-        }
-        else{
-            
-            var datos_filtro = {
-                '_token': $('input[name=_token]').val(),
-                'consultar_f_desde': consultar_f_desde,
-                'consultar_f_hasta': consultar_f_hasta,
-                'consultar_g_dias': consultar_g_dias,
-                'newId_rol': $("#newId_rol").val(),
-                'newId_user': $("#newId_user").val(),
-            }
 
-            $.ajax({
-                type:'POST',
-                url:'/filtrosBandejaJuntas',
-                data: datos_filtro,
-                success:function(data){
-                    //console.log();
-                    if(data.parametro == "sin_datos"){
-                        // No se encuentra datos
-                        $('.resultado_validacion2').addClass('d-none');
-                        $('#llenar_mensaje_validacion').empty();
-                        $('.resultado_validacion').removeClass('d-none');
-                        $('.resultado_validacion').addClass('alert-danger');
-                        $('#llenar_mensaje_validacion').append(data.mensajes);                        
-                        $('#body_listado_casos_juntas').empty();
-                        $('#contenedorTable').addClass('d-none');
-                        $('#contenedor_selectores').addClass('d-none');
-                        $('#num_registroslabel').removeClass('d-none');
-                        $('#num_registros2').addClass('d-none');   
-                        $('#num_registros').empty();
-                        $('#num_registros').append(data.registros);
-                        $('#btn_expor_datos').addClass('d-none');
-                        $('#btn_guardar').addClass('d-none');
-                        $('#btn_bandeja').removeClass('d-none');
-                    }else{
-                        $('.resultado_validacion2').addClass('d-none');
-                        $('#num_registros2').addClass('d-none');
-                        $('.resultado_validacion').addClass('d-none');
-                        $('#num_registroslabel').removeClass('d-none');
-                        $('#num_registros').empty();
-                        $('#num_registros').append(data.length);
-                        $('#contenedorTable').removeClass('d-none');
-                        $('#contenedor_selectores').removeClass('d-none');
-                        $('#btn_expor_datos').removeClass('d-none');
-                        $('#btn_guardar').removeClass('d-none');
-                        $('#btn_bandeja').removeClass('d-none');
-
-                        var actualizarBandeja = '';
-                        var modulocalificacionJuntas = '';
-
-                        for (let i = 0; i < data.length; i++) {
-
-                            if (data[i]['Id_Asignacion'] != '') {
-                                actualizarBandeja='<input class="checkbox-class" name="actualizaBandejaJuntas" id="actualizar_id_asignacion_'+data[i]['Id_Asignacion']+'" type="checkbox" value="'+data[i]["Id_Asignacion"]+'">';
-                                data[i]['actualizarproser'] = actualizarBandeja;
-                            }else{
-                                data[i]['actualizarproser'] = ""; 
-                            }               
-                            
-                            if (data[i]['Id_Asignacion'] != ''){
-            
-                                modulocalificacionJuntas = '<form id="form_modulo_calificacion_Juntas_'+data[i]["Id_Asignacion"]+'" action="" method="POST">'+
-                                            '<input type="hidden" name="_token" value="'+token+'">'+
-                                            '<input class="btn btn-sm text-info" id="modulo_califi_Juntas_'+data[i]["Id_Asignacion"]+'" value="Modulo Juntas" type="submit" style="font-weight: bold; padding-left: inherit;">'+ 
-                                            '<input type="hidden" name="newIdAsignacion" value="'+data[i]["Id_Asignacion"]+'">'+
-                                            '<input type="hidden" name="newIdEvento" id="newIdEvento" value="'+data[i]["ID_evento"]+'">'+
-                                            '<input type="hidden" name="Id_Servicio" id="Id_Servicio" value="'+data[i]["Id_Servicio"]+'">'+
-                                            '</form>';
-                                data[i]['moduloJuntas'] = modulocalificacionJuntas;
-                                
-                            }else{
-                                data[i]['moduloJuntas'] = ""; 
-                            }  
-                        }
-
-                        $.each(data, function(index, value) {
-                            capturar_informacion_bandejaJuntas(data, index, value)
-                        })
-                    }
-                }
-            });
-    
-        }
-        setTimeout(() => {
-            var botonFiltrar = $('#contenedorTable').parents();
-            var contendorBotoFiltrar = botonFiltrar[1].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[0].classList[0];
-            //console.log(contendorBotoFiltrar);
-            $('.'+contendorBotoFiltrar).addClass('d-none');
-        }, 3000);
-
+        cargarDatosBandejaJuntas(lista_eventos_juntas, "con_filtros", consultar_f_desde, consultar_f_hasta, consultar_g_dias);
+        
     })
 
     //Dimensionar o ajustar columnas de la tabla
@@ -361,7 +327,7 @@ $(document).ready(function () {
     }); 
 
     //Datatable Bandeja Juntas
-    $('#Bandeja_Juntas thead tr').clone(true).addClass('filters').appendTo('#Bandeja_Juntas thead');
+    /* $('#Bandeja_Juntas thead tr').clone(true).addClass('filters').appendTo('#Bandeja_Juntas thead');
     function capturar_informacion_bandejaJuntas(response, index, value) {        
         $('#Bandeja_Juntas').DataTable({            
             orderCellsTop: true,
@@ -521,7 +487,7 @@ $(document).ready(function () {
                 "infoEmpty": "No se encontró información",
             }
         });        
-    }
+    } */
 
     //Seteo de todos los checkbox
     $(document).on('change', "#toggleButton", function () {         
@@ -550,19 +516,19 @@ $(document).ready(function () {
     }) 
 
     //Ocultar boton del datatable
-    setTimeout(() => {
+    /* setTimeout(() => {
         var botonFiltrar = $('#contenedorTable').parents();
         var contendorBotoFiltrar = botonFiltrar[1].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[0].classList[0];
         //console.log(contendorBotoFiltrar);
         $('.'+contendorBotoFiltrar).addClass('d-none');
-    }, 2000);
+    }, 2000); */
 
     $('#btn_expor_datos').click(function () {
-        var infobtnExcel = $(this).parents();
-        var selectorbtnExcel = infobtnExcel[3].children[0].childNodes[3].childNodes[1].childNodes[1].childNodes[0].childNodes[0].classList[0];
-        //console.log(selectorbtnExcel);
-        $('.'+selectorbtnExcel).click();
-
+        // var infobtnExcel = $(this).parents();
+        // var selectorbtnExcel = infobtnExcel[3].children[0].childNodes[3].childNodes[1].childNodes[1].childNodes[0].childNodes[0].classList[0];
+        // //console.log(selectorbtnExcel);
+        // $('.'+selectorbtnExcel).click();
+        $('.dt-button').click();
     });
 
     //Asignar ruta del formulario de modulo calificacion Juntas
@@ -648,3 +614,255 @@ $(document).ready(function () {
     });
 
 });
+
+function renderizarRegistros(data, inicio, fin, bandejaJuntasTable) {
+
+    for (let a = inicio; a < fin; a++) {
+
+        var datos = [
+            data[a].actualizarproser+data[a].moduloJuntas,
+            data[a].Nombre_Cliente,
+            data[a].Nombre_afiliado,
+            data[a].Nro_identificacion,
+            data[a].Nombre_servicio,
+            data[a].Nombre_estado,
+            data[a].Accion,
+            data[a].Nombre_profesional,
+            data[a].Nombre_evento,
+            data[a].ID_evento,
+            data[a].F_evento,
+            data[a].F_radicacion,
+            data[a].Tiempo_de_gestion,
+            data[a].Dias_transcurridos_desde_el_evento,
+            data[a].Empresa,
+            data[a].Nombre_proceso_actual,
+            data[a].Nombre_proceso_anterior,
+            data[a].Fecha_asignacion_al_proceso,
+            data[a].Asignado_por,
+            data[a].F_alerta,
+            data[a].Fecha_alerta,
+            data[a].Enfermedad_heredada,
+            data[a].Parte_controvierte_primera_califi,
+            data[a].Tipo_controversia_primera_califi,
+            data[a].Termino_controversia_primera_califi,
+            data[a].Junta_regional_califi_invalidez,
+            data[a].N_dictamen_Jrci,
+            data[a].F_radicado_entrada_dictamen_Jrci,
+            data[a].F_asignacion_pronuncia_junta,
+            data[a].Decision_dictamen_jrci,
+            data[a].N_acta_ejecutoria_emitida_Jrci,
+            data[a].N_radicado_de_recurso_Jrci,
+            data[a].Termino_controversia_propia_Jrci,
+            data[a].Parte_controversia_ante_Jrci,
+            data[a].Tipo_controversia_por_otra_Jrci,
+            data[a].F_accion,
+        ];
+        
+        bandejaJuntasTable.row.add(datos).draw(false).node();
+        datos = [];
+    }
+}
+
+function cargarDatosBandejaJuntas(bandejaJuntasTable, tipo_consulta, consultar_f_desde, consultar_f_hasta, consultar_g_dias){
+    var token = $('input[name=_token]').val();
+    $(".dt-buttons").addClass('d-none');
+
+    if (tipo_consulta == "sin_filtros") {
+        //captura de data sin Filtros        
+        let datos_sin_filtro = {            
+            '_token': token,
+            'BandejaJuntasTotal': "CargaBandejaJuntas",
+            'newId_rol': $("#newId_rol").val(),
+            'newId_user': $("#newId_user").val(),
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/sinfiltrosBandejaJuntas',
+            data: datos_sin_filtro,
+            success:function(data) {
+
+                $("#iniciando_bandeja").addClass('d-none');
+                $("#bandeja_iniciada").removeClass('d-none');
+                $('#alerta_num_registros').empty();
+                $('#alerta_num_registros').append(data.length);
+
+                $('#num_registros').empty();
+                $('#num_registros').append(data.length);
+
+                var actualizarBandeja = '';
+                var modulocalificacionJuntas = '';
+
+                for (let i = 0; i < data.length; i++) {
+
+                    if (data[i]['Id_Asignacion'] != '') {
+                        actualizarBandeja='<input class="checkbox-class" name="actualizaBandejaJuntas" id="actualizar_id_asignacion_'+data[i]['Id_Asignacion']+'" type="checkbox" value="'+data[i]["Id_Asignacion"]+'">';
+                        data[i]['actualizarproser'] = actualizarBandeja;
+                    }else{
+                        data[i]['actualizarproser'] = ""; 
+                    }               
+                    
+                    if (data[i]['Id_Asignacion'] != ''){
+
+                        modulocalificacionJuntas = '<form id="form_modulo_calificacion_Juntas_'+data[i]["Id_Asignacion"]+'" action="" method="POST">'+
+                                    '<input type="hidden" name="_token" value="'+token+'">'+
+                                    '<input class="btn btn-sm text-info" id="modulo_califi_Juntas_'+data[i]["Id_Asignacion"]+'" value="Modulo Juntas" type="submit" style="font-weight: bold; padding-left: inherit;">'+ 
+                                    '<input type="hidden" name="newIdAsignacion" value="'+data[i]["Id_Asignacion"]+'">'+
+                                    '<input type="hidden" name="newIdEvento" id="newIdEvento" value="'+data[i]["ID_evento"]+'">'+
+                                    '<input type="hidden" name="Id_Servicio" id="Id_Servicio" value="'+data[i]["Id_Servicio"]+'">'+
+                                    '</form>';
+                        data[i]['moduloJuntas'] = modulocalificacionJuntas;
+                        
+                    }else{
+                        data[i]['moduloJuntas'] = ""; 
+                    } 
+                }
+
+                var inicio = 0;
+                var fin = Math.min(100, data.length);
+                function renderizarSiguienteBloque() {
+                    if (inicio < data.length) {
+                        renderizarRegistros(data, inicio, fin, bandejaJuntasTable);
+                        inicio = fin;
+                        fin += Math.min(fin + 100, data.length) - fin;
+                        
+                        if (inicio >= data.length) {
+                            $('#num_registroslabel').removeClass('d-none');
+                            $('#contenedorTable').removeClass('d-none');
+                            $('#mensaje_importante').addClass('d-none');
+                            $("#bandeja_iniciada").addClass('d-none');
+                        } else {
+                            setTimeout(renderizarSiguienteBloque, 2000); // Pausa de 2 segundos
+                        }
+                        
+                    }
+                }
+    
+                renderizarSiguienteBloque();
+                
+            }
+            
+        });
+    } else {
+        
+        if(consultar_f_desde == "" && consultar_f_hasta == "" && consultar_g_dias == ""){                        
+            $('.resultado_validacion').addClass('d-none');
+            $('.resultado_validacion2').removeClass('d-none');
+            $('#body_listado_casos_juntas').empty();
+            $('#contenedorTable').addClass('d-none');
+            $('#contenedor_selectores').addClass('d-none');
+            $('#num_registros2').removeClass('d-none');            
+            $('#num_registroslabel').addClass('d-none');
+            //$('#body_listado_casos_juntas').empty();
+            $('#btn_expor_datos').addClass('d-none');
+            $('#btn_guardar').addClass('d-none');
+            $('#btn_bandeja').removeClass('d-none');
+        }
+        else{
+            
+            var datos_filtro = {
+                '_token': $('input[name=_token]').val(),
+                'consultar_f_desde': consultar_f_desde,
+                'consultar_f_hasta': consultar_f_hasta,
+                'consultar_g_dias': consultar_g_dias,
+                'newId_rol': $("#newId_rol").val(),
+                'newId_user': $("#newId_user").val(),
+            }
+
+            $.ajax({
+                type:'POST',
+                url:'/filtrosBandejaJuntas',
+                data: datos_filtro,
+                success:function(data){
+                    //console.log();
+                    if(data.parametro == "sin_datos"){
+                        // No se encuentra datos
+                        $('.resultado_validacion2').addClass('d-none');
+                        $('#llenar_mensaje_validacion').empty();
+                        $('.resultado_validacion').removeClass('d-none');
+                        $('.resultado_validacion').addClass('alert-danger');
+                        $('#llenar_mensaje_validacion').append(data.mensajes);                        
+                        $('#body_listado_casos_juntas').empty();
+                        $('#contenedorTable').addClass('d-none');
+                        $('#contenedor_selectores').addClass('d-none');
+                        $('#num_registroslabel').removeClass('d-none');
+                        $('#num_registros2').addClass('d-none');   
+                        $('#num_registros').empty();
+                        $('#num_registros').append(data.registros);
+                        $('#btn_expor_datos').addClass('d-none');
+                        $('#btn_guardar').addClass('d-none');
+                        $('#btn_bandeja').removeClass('d-none');
+                    }else{
+
+                        $("#mensaje_importante").removeClass('d-none');
+                        $("#iniciando_bandeja").addClass('d-none');
+                        $("#bandeja_iniciada").removeClass('d-none');
+                        $('#alerta_num_registros').empty();
+                        $('#alerta_num_registros').append(data.length);
+
+                        $('.resultado_validacion2').addClass('d-none');
+                        $('#num_registros2').addClass('d-none');
+                        $('.resultado_validacion').addClass('d-none');
+                        $('#num_registroslabel').removeClass('d-none');
+                        $('#num_registros').empty();
+                        $('#num_registros').append(data.length);
+                        $('#contenedorTable').removeClass('d-none');
+                        $('#contenedor_selectores').removeClass('d-none');
+                        $('#btn_expor_datos').removeClass('d-none');
+                        $('#btn_guardar').removeClass('d-none');
+                        $('#btn_bandeja').removeClass('d-none');
+
+                        var actualizarBandeja = '';
+                        var modulocalificacionJuntas = '';
+
+                        for (let i = 0; i < data.length; i++) {
+
+                            if (data[i]['Id_Asignacion'] != '') {
+                                actualizarBandeja='<input class="checkbox-class" name="actualizaBandejaJuntas" id="actualizar_id_asignacion_'+data[i]['Id_Asignacion']+'" type="checkbox" value="'+data[i]["Id_Asignacion"]+'">';
+                                data[i]['actualizarproser'] = actualizarBandeja;
+                            }else{
+                                data[i]['actualizarproser'] = ""; 
+                            }               
+                            
+                            if (data[i]['Id_Asignacion'] != ''){
+            
+                                modulocalificacionJuntas = '<form id="form_modulo_calificacion_Juntas_'+data[i]["Id_Asignacion"]+'" action="" method="POST">'+
+                                            '<input type="hidden" name="_token" value="'+token+'">'+
+                                            '<input class="btn btn-sm text-info" id="modulo_califi_Juntas_'+data[i]["Id_Asignacion"]+'" value="Modulo Juntas" type="submit" style="font-weight: bold; padding-left: inherit;">'+ 
+                                            '<input type="hidden" name="newIdAsignacion" value="'+data[i]["Id_Asignacion"]+'">'+
+                                            '<input type="hidden" name="newIdEvento" id="newIdEvento" value="'+data[i]["ID_evento"]+'">'+
+                                            '<input type="hidden" name="Id_Servicio" id="Id_Servicio" value="'+data[i]["Id_Servicio"]+'">'+
+                                            '</form>';
+                                data[i]['moduloJuntas'] = modulocalificacionJuntas;
+                                
+                            }else{
+                                data[i]['moduloJuntas'] = ""; 
+                            }  
+                        }
+
+                        var inicio = 0;
+                        var fin = Math.min(100, data.length);
+                        bandejaJuntasTable.clear();
+                        function renderizarSiguienteBloque() {
+                            if (inicio < data.length) {
+                                renderizarRegistros(data, inicio, fin, bandejaJuntasTable);
+                                inicio = fin;
+                                fin += Math.min(fin + 100, data.length) - fin;
+                    
+                                if (inicio >= data.length) {
+                                    $('#num_registroslabel').removeClass('d-none');
+                                    $('#contenedorTable').removeClass('d-none');
+                                    $('#mensaje_importante').addClass('d-none');
+                                    $("#bandeja_iniciada").addClass('d-none');
+                                } else {
+                                    setTimeout(renderizarSiguienteBloque, 2000); // Pausa de 2 segundos
+                                }
+                            }
+                        }
+                        renderizarSiguienteBloque();
+                    }
+                }
+            });
+        }
+    }
+}

@@ -192,7 +192,11 @@ class BandejaOrigenController extends Controller
 
         $BandejaOrigenTotal = $request->BandejaOrigenTotal;
         $newId_rol = $request->newId_rol; 
-        $newId_user = $request->newId_user;     
+        $newId_user = $request->newId_user;
+
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $year = date("Y");
 
         if($BandejaOrigenTotal == 'CargaBandejaOrigen'){
 
@@ -203,12 +207,15 @@ class BandejaOrigenController extends Controller
                     ['Nombre_proceso_actual', '=', 'Origen'],
                     ['Id_profesional', '=', $newId_user]
                 ])
+                ->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
                 ->get();
             }else{
                 $bandejaOrigen = cndatos_bandeja_eventos::on('sigmel_gestiones')
                 ->where([
-                    ['Nombre_proceso_actual', '=', 'Origen']
+                    ['Nombre_proceso_actual', '=', 'Origen'],
+                    // ['Nombre_estado', '<>', 'Gestionado']
                 ])
+                ->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
                 ->get();
             }
             // $ID_evento_bandeja = $bandejaOrigen[0]->ID_evento;
@@ -352,6 +359,9 @@ class BandejaOrigenController extends Controller
             //     }
             // }
 
+            /* echo "<pre>";
+            print_r($bandejaOrigen);
+            echo "</pre>"; */
             $arraybandejaOrigen = json_decode(json_encode($bandejaOrigen, true));                                                 
             return response()->json($arraybandejaOrigen);                
 

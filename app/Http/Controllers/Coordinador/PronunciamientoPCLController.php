@@ -775,7 +775,8 @@ class PronunciamientoPCLController extends Controller
         $T_origen = $info_pronunciamiento[0]->T_origen;
         $Porcentaje_pcl = $info_pronunciamiento[0]->Porcentaje_pcl;
         $Fecha_estruturacion = $info_pronunciamiento[0]->Fecha_estruturacion;
-        $Sustenta_cali = $info_pronunciamiento[0]->Sustenta_cali;
+        // $Sustenta_cali = $info_pronunciamiento[0]->Sustenta_cali;
+        $Sustenta_cali = $request->Sustenta_cali;
         $N_anexos = $info_pronunciamiento[0]->N_anexos;
         $Elaboro_pronuncia = $info_pronunciamiento[0]->Elaboro_pronuncia;
                 

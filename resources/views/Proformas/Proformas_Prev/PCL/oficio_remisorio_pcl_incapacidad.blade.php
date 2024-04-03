@@ -245,14 +245,24 @@
         </section>          
         <section class="fuente_todo_texto">
             <table class="tabla1" style="text-align: justify;">                              
-                @if (empty($Copia_empleador_correspondecia) && empty($Copia_eps_correspondecia) && empty($Copia_afp_correspondecia) && empty($Copia_arl_correspondecia))
+                @if (empty($Copia_afiliado_correspondencia) && empty($Copia_empleador_correspondecia) && empty($Copia_eps_correspondecia) && empty($Copia_afp_correspondecia) && empty($Copia_arl_correspondecia))
                     <tr>
                         <td><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
                     </tr>
                 @else
                     <tr>
                         <td class="justificado"><span class="negrita">Copia:</span></td>                            
-                    </tr>  
+                    </tr>
+                    <?php 
+                        if (!empty($Copia_afiliado_correspondencia)) { ?>
+                            <tr>
+                                <td>
+                                    <span class="negrita">Afiliado: </span><?php echo $Nombre_afiliado_copia.' - '.$Direccion_afiliado_copia.', Teléfono: '.$Telefono_afiliado_copia.', '.$Ciudad_departamento_afiliado_copia;?>
+                                </td>
+                            </tr>
+                        <?php       
+                        }
+                    ?>  
                     <?php 
                         if (!empty($Copia_empleador_correspondecia)) { ?>
                             <tr>

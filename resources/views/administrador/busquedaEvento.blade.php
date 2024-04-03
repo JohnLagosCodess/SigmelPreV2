@@ -51,9 +51,9 @@
                                 <div class="form-group">
                                     <label for="id_evento" class="col-form-label">ID evento</label>
                                     @if (session()->get('num_id_evento'))
-                                        <input type="number" class="id_evento form-control" name="consultar_id_evento" id="consultar_id_evento" value="{{session()->get('num_id_evento')}}">
+                                        <input type="text" class="id_evento form-control" name="consultar_id_evento" id="consultar_id_evento" value="{{session()->get('num_id_evento')}}">
                                     @else
-                                        <input type="number" class="id_evento form-control" name="consultar_id_evento" id="consultar_id_evento">
+                                        <input type="text" class="id_evento form-control" name="consultar_id_evento" id="consultar_id_evento">
                                     @endif
                                 </div>
                             </div>

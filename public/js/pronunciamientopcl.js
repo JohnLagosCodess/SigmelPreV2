@@ -754,6 +754,7 @@ $(document).ready(function(){
         var Asignacion_Pronuncia_corre = $('#Asignacion_Pronuncia').val();        
         var Nombre_afiliado_corre = $('#nombre_afiliado').val();
         var Iden_afiliado_corre = $('#identificacion').val();
+        var Sustenta_cali = $('#sustenta_cali').val();
         var copia_afiliado = $('#copia_afiliado').filter(":checked").val();
         var copia_empleador = $('#copia_empleador').filter(":checked").val();
         var copia_eps = $('#copia_eps').filter(":checked").val();
@@ -769,6 +770,7 @@ $(document).ready(function(){
             'Asignacion_Pronuncia_corre': Asignacion_Pronuncia_corre,
             'Nombre_afiliado_corre':Nombre_afiliado_corre,
             'Iden_afiliado_corre':Iden_afiliado_corre,
+            'Sustenta_cali': Sustenta_cali,
             'copia_afiliado':copia_afiliado,
             'copia_empleador':copia_empleador,
             'copia_eps':copia_eps,
