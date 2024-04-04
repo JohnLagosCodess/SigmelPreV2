@@ -248,9 +248,9 @@
                                         <div class="form-group">
                                             <label for="porcentaje_pcl">%PCL<span style="color: red;">(*)</span></label>
                                             @if (!empty($info_pronuncia[0]->Porcentaje_pcl))
-                                                <input type="number" class="form-control" id="porcentaje_pcl" name="porcentaje_pcl" value="{{$info_pronuncia[0]->Porcentaje_pcl}}" required>
+                                                <input type="text" class="form-control" id="porcentaje_pcl" name="porcentaje_pcl" value="{{$info_pronuncia[0]->Porcentaje_pcl}}" required>
                                             @else
-                                                <input type="number" class="form-control" id="porcentaje_pcl" name="porcentaje_pcl" required/>
+                                                <input type="text" class="form-control" id="porcentaje_pcl" name="porcentaje_pcl" required/>
                                             @endif
                                         </div>
                                     </div>

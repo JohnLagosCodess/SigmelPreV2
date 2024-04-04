@@ -361,10 +361,10 @@ $(document).ready(function(){
     }
 
     /* VALIDACIÓN MOSTRAR RANGO PCL */
-    var opt_rango_pcl= 0;
     $("#porcentaje_pcl").on("input", function(){
-        opt_rango_pcl = parseInt($(this).val());
-        $("#porcentaje_pcl").val(opt_rango_pcl);
+        opt_rango_pcl = $(this).val();
+        //console.log(opt_rango_pcl);
+        //$("#porcentaje_pcl").val(opt_rango_pcl);
         iniciarIntervalo_rangoPcl();
     });
     function iniciarIntervalo_rangoPcl() {
@@ -373,13 +373,13 @@ $(document).ready(function(){
         intervaloRango = setInterval(() => {
             if(opt_rango_pcl=='isNaN'){
                 resul_rango = '0';
-            }else if(opt_rango_pcl < 15){
+            }else if(opt_rango_pcl < "14,99"){
                 resul_rango = 'Entre 1 y 14,99%';
-            } else if (opt_rango_pcl >= 15 && opt_rango_pcl < 30){
+            } else if (opt_rango_pcl >= "14,99" && opt_rango_pcl < "29,99"){
                 resul_rango = 'Entre 15 y 29,99%';
-            } else if (opt_rango_pcl >= 30 && opt_rango_pcl < 50){
+            } else if (opt_rango_pcl >= "29,99" && opt_rango_pcl < "49,99"){
                 resul_rango = 'Entre 30 y 49,99%';
-            } else if (opt_rango_pcl >= 50){
+            } else if (opt_rango_pcl >= "49,99"){
                 resul_rango = 'Mayor o igual 50%';
             }else{
                 resul_rango = '0';
