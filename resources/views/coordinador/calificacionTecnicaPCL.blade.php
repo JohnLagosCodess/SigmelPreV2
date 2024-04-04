@@ -6910,11 +6910,11 @@
                                         <div class="form-group">
                                             <label for="f_evento_pericial">Fecha de evento<span style="color: red;">(*)</span></label>
                                             @if (!empty($array_dictamen_pericial[0]->F_evento) && $array_dictamen_pericial[0]->F_evento !== '0000-00-00')                                                
-                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_dictamen_pericial[0]->F_evento}}" max="{{now()->format('Y-m-d')}}" required>                                                                                                
+                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_dictamen_pericial[0]->F_evento}}" max="{{now()->format('Y-m-d')}}">                                                                                                
                                             @elseif(!empty($array_tipo_fecha_evento[0]->F_evento))
-                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_tipo_fecha_evento[0]->F_evento}}" max="{{now()->format('Y-m-d')}}" required>                                                                                                
+                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_tipo_fecha_evento[0]->F_evento}}" max="{{now()->format('Y-m-d')}}">                                                                                                
                                             @else
-                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" max="{{now()->format('Y-m-d')}}" required>                                                
+                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" max="{{now()->format('Y-m-d')}}">                                                
                                             @endif                                        
                                         </div>
                                     </div>
@@ -7351,6 +7351,18 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label for="tipo_clasificacion">Copia a partes interesadas</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                @if (!empty($array_comite_interdisciplinario[0]->Copia_empleador))
+                                                    <input class="custom-control-input" type="checkbox" id="afiliado" name="afiliado" value="Afiliado" checked>
+                                                @else
+                                                    <input class="custom-control-input" type="checkbox" id="afiliado" name="afiliado" value="Afiliado">
+                                                @endif
+                                                <label for="afiliado" class="custom-control-label">Afiliado</label>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-3">

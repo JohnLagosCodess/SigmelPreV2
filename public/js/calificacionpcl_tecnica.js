@@ -3119,7 +3119,7 @@ $(document).ready(function(){
         }
 
         var afiliado = $('input[name="afiliado"]:checked').val();
-        var empleador = $('input[name="empleador"]:checked').val();    
+        var empleador = $('input[name="empleador"]:checked').val();   
         var eps = $('input[name="eps"]:checked').val();
         var afp = $('input[name="afp"]:checked').val();
         var arl = $('input[name="arl"]:checked').val();

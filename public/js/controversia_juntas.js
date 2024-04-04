@@ -1178,13 +1178,21 @@ $(document).ready(function(){
     $("#firmeza_reposicion_jrci").click(function(){
         if ($(this).is(":checked")) {
             $("#row_repo_dictamen").removeClass('d-none');
+            $("#div_rev_recur_repo").removeClass('d-none');
             //$('#parte_contro_ante_jrci').prop('required', true);
         }else{
             $("#row_repo_dictamen").addClass('d-none');
+            $("#div_rev_recur_repo").addClass('d-none');
             //$('#parte_contro_ante_jrci').prop('required', false);
             //$("#f_transferencia_enfermedad").val("");
         }
     });
+
+    //Mantener Habilitado Revisión ante recurso de reposición de la Junta Regional despues de marcar Reposición del Dictamen por parte de la JRCI
+    
+    if ($('#firmeza_reposicion_jrci').prop('checked')) {
+        $("#div_rev_recur_repo").removeClass('d-none');        
+    }
 
     // Mostrar Registrar Acta Ejecutoria emitida por JRCI
     $("#firmeza_acta_ejecutoria_jrci").click(function(){
@@ -1342,44 +1350,44 @@ $(document).ready(function(){
     //Mostrar o Ocultar la seccion de Firmeza o controversia por otra parte interesada del Dictamen Junta Regional de Calificación de Invalidez (JRCI) 
     // si los Pronunciamiento ante Dictamen de JRCI estan checked
 
-    var radioacuerdo_revision_jrci = $('#acuerdo_revision_jrci');
-    var radiodesacuerdo_revision_jrci = $('#desacuerdo_revision_jrci');
-    var radiosilecion_revision_jrci = $('#silecion_revision_jrci');
-    var radioinformativo_revision_jrci = $('#informativo_revision_jrci');
+    // var radioacuerdo_revision_jrci = $('#acuerdo_revision_jrci');
+    // var radiodesacuerdo_revision_jrci = $('#desacuerdo_revision_jrci');
+    // var radiosilecion_revision_jrci = $('#silecion_revision_jrci');
+    // var radioinformativo_revision_jrci = $('#informativo_revision_jrci');
 
 
-    radioacuerdo_revision_jrci.change(function () {
-        $('#div_Firmeza_controversiaJRCI').removeClass('d-none');
-    })
+    // radioacuerdo_revision_jrci.change(function () {
+    //     $('#div_Firmeza_controversiaJRCI').removeClass('d-none');
+    // })
 
-    radiodesacuerdo_revision_jrci.change(function () {
-        $('#div_Firmeza_controversiaJRCI').removeClass('d-none');
-    })
+    // radiodesacuerdo_revision_jrci.change(function () {
+    //     $('#div_Firmeza_controversiaJRCI').removeClass('d-none');
+    // })
 
-    radiosilecion_revision_jrci.change(function () {
-        $('#div_Firmeza_controversiaJRCI').removeClass('d-none');
-    })
+    // radiosilecion_revision_jrci.change(function () {
+    //     $('#div_Firmeza_controversiaJRCI').removeClass('d-none');
+    // })
 
-    radioinformativo_revision_jrci.change(function () {
-        $('#div_Firmeza_controversiaJRCI').removeClass('d-none');
-    })
+    // radioinformativo_revision_jrci.change(function () {
+    //     $('#div_Firmeza_controversiaJRCI').removeClass('d-none');
+    // })
 
 
-    if (radioacuerdo_revision_jrci.prop('checked')) {
-        $('#div_Firmeza_controversiaJRCI').removeClass('d-none');        
-    }
+    // if (radioacuerdo_revision_jrci.prop('checked')) {
+    //     $('#div_Firmeza_controversiaJRCI').removeClass('d-none');        
+    // }
 
-    if (radiodesacuerdo_revision_jrci.prop('checked')) {
-        $('#div_Firmeza_controversiaJRCI').removeClass('d-none');        
-    }
+    // if (radiodesacuerdo_revision_jrci.prop('checked')) {
+    //     $('#div_Firmeza_controversiaJRCI').removeClass('d-none');        
+    // }
 
-    if (radiosilecion_revision_jrci.prop('checked')) {
-        $('#div_Firmeza_controversiaJRCI').removeClass('d-none');        
-    }
+    // if (radiosilecion_revision_jrci.prop('checked')) {
+    //     $('#div_Firmeza_controversiaJRCI').removeClass('d-none');        
+    // }
 
-    if (radioinformativo_revision_jrci.prop('checked')) {
-        $('#div_Firmeza_controversiaJRCI').removeClass('d-none');        
-    }
+    // if (radioinformativo_revision_jrci.prop('checked')) {
+    //     $('#div_Firmeza_controversiaJRCI').removeClass('d-none');        
+    // }
 
     // Guardar Datos Dictamen Controvertido
     $('#form_guardarControvertido').submit(function (e) {

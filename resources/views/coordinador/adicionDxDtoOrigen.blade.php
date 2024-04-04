@@ -852,6 +852,7 @@
                 <div class="card-header text-center" style="border: 1.5px solid black;">
                     <h5>Comité Interdisciplinario</h5>
                     <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
+                    <input type="hidden" id="visar_servicio"  value="<?php echo (!empty($array_comite_interdisciplinario[0]->Visar));?>">
                 </div>
                 <form id="form_comite_interdisciplinario" action="POST">                            
                     <div class="card-body">

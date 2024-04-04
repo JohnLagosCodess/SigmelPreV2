@@ -225,8 +225,8 @@ $(document).ready(function(){
             let IdJunta = $('select[name=junta_regional_cual]').val();
             let primercali = Object.keys(data);
             for (let i = 0; i < primercali.length; i++) {
-                if (data[primercali[i]]['Id_juntaR'] != IdJunta) {  
-                    $('#junta_regional_cual').append('<option value="'+data[primercali[i]]["Id_juntaR"]+'">'+data[primercali[i]]["Ciudad_Junta"]+'</option>');
+                if (data[primercali[i]]['Ciudad_Junta'] != IdJunta) {  
+                    $('#junta_regional_cual').append('<option value="'+data[primercali[i]]["Ciudad_Junta"]+'">'+data[primercali[i]]["Ciudad_Junta"]+'</option>');
                 }
             }
         }
@@ -749,6 +749,8 @@ $(document).ready(function(){
         }else if(desicion_proforma_di_acuerdo_pr.prop('checked')){
             var desicion_proforma = 'proforma_desacuerdo';
         }
+        var fecha = $("#fecha_correspon").val();
+        var nro_radicado = $("#n_radicado").val();
         var Id_Evento_pronuncia_corre = $('#Id_Evento_pronuncia').val();
         var Id_Proceso_pronuncia_corre = $('#Id_Proceso_pronuncia').val();
         var Asignacion_Pronuncia_corre = $('#Asignacion_Pronuncia').val();        
@@ -765,6 +767,8 @@ $(document).ready(function(){
         let token = $("input[name='_token']").val();
         var datos_proforma_pro = {
             '_token': token,
+            'fecha': fecha,
+            'nro_radicado': nro_radicado,
             'Id_Evento_pronuncia_corre': Id_Evento_pronuncia_corre,
             'Id_Proceso_pronuncia_corre': Id_Proceso_pronuncia_corre,
             'Asignacion_Pronuncia_corre': Asignacion_Pronuncia_corre,
@@ -779,7 +783,7 @@ $(document).ready(function(){
             'Firma_corre':firmar,
             'desicion_proforma':desicion_proforma,
         };
-
+        
         $.ajax({
             type:'POST',
             url:'/generarPdfProformaspro',

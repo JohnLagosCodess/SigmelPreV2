@@ -101,7 +101,7 @@ $(document).ready(function(){
             success:function(data) {
                 $("#nombre_calificador").empty();
                 let IdEntidad = $('select[name=nombre_calificador]').val();
-                console.log(IdEntidad);
+                // console.log(IdEntidad);
                 $('#nit_calificador,#dir_calificador,#mail_calificador,#telefono_calificador,#depar_calificador,#ciudad_calificador').val(""); //Vaciar Campos
                 $('#nombre_calificador').append('<option value="" selected>Seleccione</option>');
                 let nombrecalifi = Object.keys(data);
@@ -220,8 +220,8 @@ $(document).ready(function(){
             let IdJunta = $('select[name=junta_regional_cual]').val();
             let primercali = Object.keys(data);
             for (let i = 0; i < primercali.length; i++) {
-                if (data[primercali[i]]['Id_juntaR'] != IdJunta) {  
-                    $('#junta_regional_cual').append('<option value="'+data[primercali[i]]["Id_juntaR"]+'">'+data[primercali[i]]["Ciudad_Junta"]+'</option>');
+                if (data[primercali[i]]['Ciudad_Junta'] != IdJunta) {  
+                    $('#junta_regional_cual').append('<option value="'+data[primercali[i]]["Ciudad_Junta"]+'">'+data[primercali[i]]["Ciudad_Junta"]+'</option>');
                 }
             }
         }

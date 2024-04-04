@@ -85,7 +85,7 @@
                     <div class="alert mt-1 alert-info d-none" id="mensaje_importante" role="alert">
                         <i class="fas fa-info-circle"></i> <strong>Importante:</strong> <span id="iniciando_bandeja">Cargando resultados de la Bandeja ...</span>
                         <span id="bandeja_iniciada" class="d-none">Se encontraron <b><span id="alerta_num_registros"></span></b> registros, esto tardará un tiempo en cargar los resultados. Por favor espere.</span>
-                    </div>
+                    </div>                                        
                     &nbsp; <label for="nro_registros" class="col-form-label d-none" id="num_registroslabel">Se encontraron <span id="num_registros"></span> registros</label>
                     <div class="card-body d-none" id="contenedorTable">
                         <div class="table table-responsive">

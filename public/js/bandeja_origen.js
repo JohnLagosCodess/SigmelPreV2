@@ -294,7 +294,10 @@ $(document).ready(function () {
     });
 
     cargarDatosBandejaOrigen(lista_eventos_origen, "sin_filtros", null, null, null);
-    
+
+    //captura de data sin Filtros        
+   
+
     //Captura id Checkbox para extraer su value
     var arrayIdCheckActualizar = [];
     $(document).on('change', "input[id^='actualizar_id_asignacion_']", function(){
@@ -312,13 +315,12 @@ $(document).ready(function () {
     //Llenado del formulario para captura de data para dataTable
     $('#form_filtro_bandejaOrigen').submit(function (e) {
         e.preventDefault();
-        
         var consultar_f_desde = $('#consultar_f_desde').val();
         var consultar_f_hasta = $('#consultar_f_hasta').val();
         var consultar_g_dias = $('#consultar_g_dias').val();
-
-        cargarDatosBandejaOrigen(lista_eventos_origen, "con_filtros", consultar_f_desde, consultar_f_hasta, consultar_g_dias);
         
+        cargarDatosBandejaOrigen(lista_eventos_origen, "con_filtros", consultar_f_desde, consultar_f_hasta, consultar_g_dias);
+
     });
 
     //Dimensionar o ajustar columnas de la tabla
@@ -331,162 +333,159 @@ $(document).ready(function () {
     }); 
 
     //Datatable Bandeja Origen
-    // $('#Bandeja_Origen thead tr').clone(true).addClass('filters').appendTo('#Bandeja_Origen thead');
-    // function capturar_informacion_bandejaOrigen(response, index, value) {        
-    //     $('#Bandeja_Origen').DataTable({            
-    //         orderCellsTop: true,
-    //         fixedHeader: true,
-    //         scrollY: 350,
-    //         scrollX: true,
-    //         initComplete: function () {
-    //             var api = this.api();
-    //                 // For each column
-    //             api.columns().eq(0).each(function (colIdx) {
-    //                 // Set the header cell to contain the input element
-    //                 var cell_1 = $('.filters th').eq(
-    //                     $(api.column(colIdx).header()).index()
-    //                 );
+    /* $('#Bandeja_Origen thead tr').clone(true).addClass('filters').appendTo('#Bandeja_Origen thead');
+    function capturar_informacion_bandejaOrigen(response, index, value) {        
+        $('#Bandeja_Origen').DataTable({            
+            orderCellsTop: true,
+            fixedHeader: true,
+            scrollY: 350,
+            scrollX: true,
+            initComplete: function () {
+                var api = this.api();
+                    // For each column
+                api.columns().eq(0).each(function (colIdx) {
+                    // Set the header cell to contain the input element
+                    var cell_1 = $('.filters th').eq(
+                        $(api.column(colIdx).header()).index()
+                    );
                     
-    //                 // console.log(cell_1[0].cellIndex);
+                    // console.log(cell_1[0].cellIndex);
 
-    //                 if(cell_1[0].cellIndex != 29){
+                if(cell_1[0].cellIndex != 29){
 
-    //                     var cell = $('.filters th').eq(
-    //                         $(api.column(colIdx).header()).index()
-    //                     );
+                    var cell = $('.filters th').eq(
+                        $(api.column(colIdx).header()).index()
+                    );
+                    
+                    var title = $(cell).text();
+                    
+                    if (title === 'Detalle  ') {
+                        $(cell).append('<input type="checkbox" class="principal" id="toggleButton" />');                            
+
+                         // Selecciona los elementos repetidos (en este caso, elementos con la clase "repetido")
+                        var elementosRepetidos = $(".principal");
+
+                        // Verifica que haya más de un elemento repetido antes de eliminarlos
+                        if (elementosRepetidos.length > 1) {
+                            // Selecciona los dos primeros elementos repetidos utilizando "slice(0, 2)"
+                            var elementosEliminar = elementosRepetidos.slice(0, 1);
+
+                            // Elimina los elementos seleccionados del DOM
+                            elementosEliminar.remove();
+                        }                            
                         
-    //                     var title = $(cell).text();
-                        
-    //                     if (title === 'Detalle  ') {
-    //                         $(cell).append('<input type="checkbox" class="principal" id="toggleButton" />');                            
+                    }else{
+                        $(cell).html('<input type="text" placeholder="' + title + '" />');
+                        $('input',$('.filters th').eq($(api.column(colIdx).header()).index())).off('keyup change')
+                        .on('change', function (e) {
+                            // Get the search value
+                            $(this).attr('title', $(this).val());
+                            var regexr = '({search})'; //$(this).parents('th').find('select').val();
+                            // Search the column for that value
+                            api
+                                .column(colIdx)
+                                .search(
+                                    this.value != ''
+                                        ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                        : '',
+                                    this.value != '',
+                                    this.value == ''
+                                )
+                                .draw();
+                        })
+                        .on('keyup', function (e) {
+                            e.stopPropagation();
+                            var cursorPosition = this.selectionStart;
+                            $(this).trigger('change');
+                            $(this)
+                                .focus()[0]
+                                .setSelectionRange(cursorPosition, cursorPosition);
+                        });
+                    }
+                    
+                }
 
-    //                          // Selecciona los elementos repetidos (en este caso, elementos con la clase "repetido")
-    //                         var elementosRepetidos = $(".principal");
-
-    //                         // Verifica que haya más de un elemento repetido antes de eliminarlos
-    //                         if (elementosRepetidos.length > 1) {
-    //                             // Selecciona los dos primeros elementos repetidos utilizando "slice(0, 2)"
-    //                             var elementosEliminar = elementosRepetidos.slice(0, 1);
-
-    //                             // Elimina los elementos seleccionados del DOM
-    //                             elementosEliminar.remove();
-    //                         }                            
-                            
-    //                     }else{
-    //                         $(cell).html('<input type="text" placeholder="' + title + '" />');
-    //                         $('input',$('.filters th').eq($(api.column(colIdx).header()).index())).off('keyup change')
-    //                         .on('change', function (e) {
-    //                             // Get the search value
-    //                             $(this).attr('title', $(this).val());
-    //                             var regexr = '({search})'; //$(this).parents('th').find('select').val();
-    //                             // Search the column for that value
-    //                             api
-    //                                 .column(colIdx)
-    //                                 .search(
-    //                                     this.value != ''
-    //                                         ? regexr.replace('{search}', '(((' + this.value + ')))')
-    //                                         : '',
-    //                                     this.value != '',
-    //                                     this.value == ''
-    //                                 )
-    //                                 .draw();
-    //                         })
-    //                         .on('keyup', function (e) {
-    //                             e.stopPropagation();
-    //                             var cursorPosition = this.selectionStart;
-    //                             $(this).trigger('change');
-    //                             $(this)
-    //                                 .focus()[0]
-    //                                 .setSelectionRange(cursorPosition, cursorPosition);
-    //                         });
-    //                     }
-                        
-    //                 }
-
-    //             });
-    //         },
-    //         dom: 'Bfrtip',                      
-    //         buttons:{
-    //             dom:{
-    //                 buttons:{
-    //                     className: 'btn'
-    //                 }
-    //             },
-    //             buttons:[
-    //                 {
-    //                     extend:"excel",
-    //                     title: 'Bandeja Origen',
-    //                     text:'Exportar datos',
-    //                     className: 'btn btn-success',
-    //                     "excelStyles": [                      // estilos de excel
+                });
+            },
+            dom: 'Bfrtip',                      
+            buttons:{
+                dom:{
+                    buttons:{
+                        className: 'btn'
+                    }
+                },
+                buttons:[
+                    {
+                        extend:"excel",
+                        title: 'Bandeja Origen',
+                        text:'Exportar datos',
+                        className: 'btn btn-success',
+                        "excelStyles": [                      // estilos de excel
                                                     
-    //                     ],
-    //                     //Limitar columnas para el reporte
-    //                     exportOptions: {
-    //                         columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28]
-    //                     }  
-    //                 }
-    //             ]
-    //         }, 
-    //         "deferRender": true,
-    //         "destroy": true,
-    //         "data": response,
-    //         //"pageLength": 100,
-    //         "paging": false,
-    //         "order": [[5, 'desc']],            
-    //         "columns":[
-    //             {
-    //                 data: null,
-    //                 render: function (data, type, row) {
-    //                     return data.actualizarproser+data.moduloOrigen;
-    //                 }
-    //             },
-    //             {"data":"Nombre_Cliente"},
-    //             {"data":"Nombre_afiliado"},
-    //             {"data":"Nro_identificacion"},
-    //             {"data":"Nombre_servicio"},
-    //             {"data":"Nombre_estado"},
-    //             {"data":"Accion"},
-    //             {"data":"Nombre_profesional"},
-    //             {"data":"Nombre_evento"},
-    //             {"data":"ID_evento"},
-    //             {"data":"F_evento"},
-    //             {"data":"F_radicacion"},
-    //             {"data":"Tiempo_de_gestion"},
-    //             {"data":"Dias_transcurridos_desde_el_evento"},
-    //             {"data":"Empresa"},
-    //             {"data":"Nombre_proceso_actual"},
-    //             {"data":"Nombre_proceso_anterior"},
-    //             {"data":"Fecha_asignacion_al_proceso"},
-    //             {"data":"Asignado_por"},
-    //             {"data":"F_alerta"},
-    //             {"data":"Fecha_alerta"},
-    //             {"data":"F_solicitud_documento"},
-    //             {"data":"Fecha_primer_seguimiento"},
-    //             {"data":"Fecha_segundo_seguimiento"},
-    //             {"data":"Fecha_tercera_seguimiento"},
-    //             {"data":"F_recepcion_documento"},
-    //             {"data":"Fecha_asignacion_dto"},
-    //             {"data":"Fecha_devolucion_comite"},
-    //             {"data":"F_accion"},
-    //         ],
-    //         "language":{                
-    //             "search": "Buscar",
-    //             "lengthMenu": "Mostrar _MENU_ resgistros",
-    //             "info": "Mostrando registros _START_ a _END_ de un total de _TOTAL_ registros",
-    //             "paginate": {
-    //                 "previous": "Anterior",
-    //                 "next": "Siguiente",
-    //                 "first": "Primero",
-    //                 "last": "Último"
-    //             },
-    //             "zeroRecords": "No se encontraron resultados",
-    //             "emptyTable": "No se encontró información",
-    //             "infoEmpty": "No se encontró información",
-    //         }
-    //     });        
-    // };
-
+                        ],
+                        //Limitar columnas para el reporte
+                        exportOptions: {
+                            columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28]
+                        }  
+                    }
+                ]
+            }, 
+            "destroy": true,
+            "data": response,
+            "pageLength": 20,
+            "order": [[5, 'desc']],            
+            "columns":[
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return data.actualizarproser+data.moduloOrigen;
+                    }
+                },
+                {"data":"Nombre_Cliente"},
+                {"data":"Nombre_afiliado"},
+                {"data":"Nro_identificacion"},
+                {"data":"Nombre_servicio"},
+                {"data":"Nombre_estado"},
+                {"data":"Accion"},
+                {"data":"Nombre_profesional"},
+                {"data":"Nombre_evento"},
+                {"data":"ID_evento"},
+                {"data":"F_evento"},
+                {"data":"F_radicacion"},
+                {"data":"Tiempo_de_gestion"},
+                {"data":"Dias_transcurridos_desde_el_evento"},
+                {"data":"Empresa"},
+                {"data":"Nombre_proceso_actual"},
+                {"data":"Nombre_proceso_anterior"},
+                {"data":"Fecha_asignacion_al_proceso"},
+                {"data":"Asignado_por"},
+                {"data":"F_alerta"},
+                {"data":"Fecha_alerta"},
+                {"data":"F_solicitud_documento"},
+                {"data":"Fecha_primer_seguimiento"},
+                {"data":"Fecha_segundo_seguimiento"},
+                {"data":"Fecha_tercera_seguimiento"},
+                {"data":"F_recepcion_documento"},
+                {"data":"Fecha_asignacion_dto"},
+                {"data":"Fecha_devolucion_comite"},
+                {"data":"F_accion"},
+            ],
+            "language":{                
+                "search": "Buscar",
+                "lengthMenu": "Mostrar _MENU_ resgistros",
+                "info": "Mostrando registros _START_ a _END_ de un total de _TOTAL_ registros",
+                "paginate": {
+                    "previous": "Anterior",
+                    "next": "Siguiente",
+                    "first": "Primero",
+                    "last": "Último"
+                },
+                "zeroRecords": "No se encontraron resultados",
+                "emptyTable": "No se encontró información",
+                "infoEmpty": "No se encontró información",
+            }
+        });        
+    } */
 
     //Seteo de todos los checkbox
     $(document).on('change', "#toggleButton", function () {         
@@ -514,14 +513,21 @@ $(document).ready(function () {
         }
     })  
 
+    //Ocultar boton del datatable
+
+    /* setTimeout(() => {
+        var botonFiltrar = $('#contenedorTable').parents();
+        var contendorBotoFiltrar = botonFiltrar[1].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[0].classList[0];
+        //console.log(contendorBotoFiltrar);
+        $('.'+contendorBotoFiltrar).addClass('d-none');
+    }, 2000); */
 
     $('#btn_expor_datos').click(function () {
-       /*  var infobtnExcel = $(this).parents();
-        var selectorbtnExcel = infobtnExcel[3].children[0].childNodes[3].childNodes[1].childNodes[1].childNodes[0].childNodes[0].classList[0];
-        //console.log(selectorbtnExcel);
-        $('.'+selectorbtnExcel).click(); */
+        // var infobtnExcel = $(this).parents();
+        // var selectorbtnExcel = infobtnExcel[3].children[0].childNodes[3].childNodes[1].childNodes[1].childNodes[0].childNodes[0].classList[0];
+        // //console.log(selectorbtnExcel);
+        // $('.'+selectorbtnExcel).click();
         $('.dt-button').click();
-
     });
 
     //Asignar ruta del formulario de modulo calificacion Origen

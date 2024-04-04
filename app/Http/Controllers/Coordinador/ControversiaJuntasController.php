@@ -20,6 +20,7 @@ use App\Models\sigmel_lista_regional_juntas;
 use App\Models\sigmel_lista_solicitantes;
 use App\Models\sigmel_clientes;
 use App\Models\sigmel_informacion_firmas_clientes;
+use App\Models\sigmel_registro_descarga_documentos;
 
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
@@ -1519,6 +1520,31 @@ class ControversiaJuntasController extends Controller
             $cual = null;
         }
         $jnci = $request->jnci;
+        // $agregar_copias_comu = $afiliado.','.$empleador.','.$eps.','.$afp.','.$arl.','.$jrci.','.$jnci;
+
+        $variables_llenas = array();
+
+        if (!empty($empleador)) {
+            $variables_llenas[] = $empleador;
+        }
+        if (!empty($eps)) {
+            $variables_llenas[] = $eps;
+        }
+        if (!empty($afp)) {
+            $variables_llenas[] = $afp;
+        }
+        if (!empty($arl)) {
+            $variables_llenas[] = $arl;
+        }
+        if (!empty($jrci)) {
+            $variables_llenas[] = $jrci;
+        }
+        if (!empty($jnci)) {
+            $variables_llenas[] = $jnci;
+        }
+
+        $agregar_copias_comu = implode(',', $variables_llenas);
+        
         $anexos = $request->anexos;
         $elaboro = $request->elaboro;
         $reviso = $request->reviso;
@@ -1597,6 +1623,8 @@ class ControversiaJuntasController extends Controller
                 'Forma_envio' => '0',
                 'Elaboro' => $elaboro,
                 'Reviso' => $reviso,
+                'Agregar_copia' => $agregar_copias_comu,
+                'JRCI_copia' => $cual,
                 'Anexos' => $anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
@@ -1651,7 +1679,19 @@ class ControversiaJuntasController extends Controller
             ->where([
                 ['ID_evento',$newId_evento],
                 ['Id_Asignacion',$newId_asignacion]
-            ])->update($datos_correspondencia);       
+            ])->update($datos_correspondencia); 
+            
+            $datos_info_comunicado_eventos = [
+                'Agregar_copia' => $agregar_copias_comu,
+                'JRCI_copia' => $cual,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];   
+                
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([                
+                ['N_radicado',$radicado]
+            ])->update($datos_info_comunicado_eventos); 
     
             $mensajes = array(
                 "parametro" => 'actualizar_correspondencia',
@@ -2197,7 +2237,11 @@ class ControversiaJuntasController extends Controller
             ->where([['sile.Nro_identificacion', $num_identificacion],['sile.ID_evento', $id_evento]])
             ->get();
 
-            $nombre_empleador = $datos_empleador[0]->Empresa;
+            if (preg_match("/&/", $datos_empleador[0]->Empresa)) {
+                $nombre_empleador = htmlspecialchars(preg_replace('/&/', '&amp;', $datos_empleador[0]->Empresa));
+            } else {
+                $nombre_empleador = $datos_empleador[0]->Empresa;
+            }
             $direccion_empleador = $datos_empleador[0]->Direccion;
             $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
             $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
@@ -2553,6 +2597,42 @@ class ControversiaJuntasController extends Controller
         $writer = new Word2007($phpWord);
         $nombre_docx = "JUN_DESACUERDO_{$id_asignacion}_{$num_identificacion}_{$nro_radicado}.docx";
         $writer->save(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
+
+        /* Inserción del registro de que fue descargado */
+
+        // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
+        $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
+        ->select('sice.F_comunicado')
+        ->where([
+            ['sice.N_radicado', $nro_radicado]
+        ])
+        ->get();
+
+        $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
+
+        // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+        $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+        ->select('Nombre_documento')
+        ->where([
+            ['Nombre_documento', $nombre_docx],
+        ])->get();
+        
+        if(count($verficar_documento) == 0){
+            $info_descarga_documento = [
+                'Id_Asignacion' => $id_asignacion,
+                'Id_proceso' => $id_proceso,
+                'Id_servicio' => $id_servicio,
+                'ID_evento' => $id_evento,
+                'Nombre_documento' => $nombre_docx,
+                'N_radicado_documento' => $nro_radicado,
+                'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                'F_descarga_documento' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+            ];
+            
+            sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+        }
+
         return response()->download(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
     }
 
@@ -3012,6 +3092,41 @@ class ControversiaJuntasController extends Controller
         $output = $pdf->output();
         //Guardar el PDF en un archivo
         file_put_contents(public_path("Documentos_Eventos/{$id_evento}/{$nombre_pdf}"), $output);
+
+        /* Inserción del registro de que fue descargado */
+
+        // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
+        $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
+        ->select('sice.F_comunicado')
+        ->where([
+            ['sice.N_radicado', $nro_radicado]
+        ])
+        ->get();
+
+        $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
+
+        // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+        $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+        ->select('Nombre_documento')
+        ->where([
+            ['Nombre_documento', $nombre_pdf],
+        ])->get();
+        
+        if(count($verficar_documento) == 0){
+            $info_descarga_documento = [
+                'Id_Asignacion' => $id_asignacion,
+                'Id_proceso' => $id_proceso,
+                'Id_servicio' => $id_servicio,
+                'ID_evento' => $id_evento,
+                'Nombre_documento' => $nombre_pdf,
+                'N_radicado_documento' => $nro_radicado,
+                'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                'F_descarga_documento' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+            ];
+            
+            sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+        }
 
         // return $dompdf->stream($nombre_pdf);
         return $pdf->download($nombre_pdf);

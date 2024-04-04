@@ -174,7 +174,6 @@ $(document).ready(function () {
         }
     }, 500);
 
-    
     // cargue de datos sin filtros
     $("#mensaje_importante").removeClass('d-none');
     $('#Bandeja_Pcl thead tr').clone(true).addClass('filters').appendTo('#Bandeja_Pcl thead');
@@ -294,10 +293,9 @@ $(document).ready(function () {
     
     cargarDatosBandejaPcl (lista_eventos_pcl, "sin_filtros", null, null, null);
 
+        
     //Captura id Checkbox para extraer su value
     var arrayIdCheckActualizar = [];    
-    //console.log('array inicial');
-    //console.log(arrayIdCheckActualizar);
         
     $(document).on('change', "input[id^='actualizar_id_asignacion_']", function(){
         var IdCheckActualizar = $(this).val();
@@ -317,9 +315,10 @@ $(document).ready(function () {
         var consultar_f_desde = $('#consultar_f_desde').val();
         var consultar_f_hasta = $('#consultar_f_hasta').val();
         var consultar_g_dias = $('#consultar_g_dias').val();
-        
+       
         cargarDatosBandejaPcl(lista_eventos_pcl, "con_filtros", consultar_f_desde, consultar_f_hasta, consultar_g_dias);
-    });
+
+    })
 
     //Dimensionar o ajustar columnas de la tabla
     var dimensionartable = 0;    
@@ -510,17 +509,19 @@ $(document).ready(function () {
     })        
 
     //Ocultar boton del datatable
-    /* setTimeout(() => {
-        var botonFiltrar = $('#contenedorTable').parents();
-        var contendorBotoFiltrar = botonFiltrar[1].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[0].classList[0];
-        //console.log(contendorBotoFiltrar);
-        $('.'+contendorBotoFiltrar).addClass('d-none');
-    }, 2000); */
+    // setTimeout(() => {
+    //     var botonFiltrar = $('#contenedorTable').parents();
+    //     var contendorBotoFiltrar = botonFiltrar[1].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[0].classList[0];
+    //     //console.log(contendorBotoFiltrar);
+    //     $('.'+contendorBotoFiltrar).addClass('d-none');
+    // }, 2000);
         
     $('#btn_expor_datos').click(function () {
         // var infobtnExcel = $(this).parents();
         // var selectorbtnExcel = infobtnExcel[3].children[0].childNodes[3].childNodes[1].childNodes[1].childNodes[0].childNodes[0].classList[0];
         // //console.log(selectorbtnExcel);
+        // $('.'+selectorbtnExcel).click();
+
         $('.dt-button').click();
     });
 
@@ -717,6 +718,7 @@ function cargarDatosBandejaPcl(bandejaPclTable, tipo_consulta, consultar_f_desde
                         } else {
                             setTimeout(renderizarSiguienteBloque, 2000); // Pausa de 2 segundos
                         }
+                        
                     }
                 }
     

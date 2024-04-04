@@ -26,6 +26,8 @@ use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_accion_eventos;
+use App\Models\sigmel_registro_descarga_documentos;
+
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
 use PhpOffice\PhpWord\Shared\Html;
@@ -47,7 +49,7 @@ class PronunciamientoOrigenController extends Controller
         //Traer info informacion pronunciamiento
         // sigmel_informacion_pronunciamiento_eventos
         $info_pronuncia= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_pronunciamiento_eventos as pr')
-        ->select('pr.ID_evento','pr.Id_primer_calificador','c.Tipo_Entidad','pr.Id_nombre_calificador','e.Nombre_entidad'
+        ->select('pr.ID_evento','pr.Id_Asignacion', 'Id_proceso', 'pr.Id_primer_calificador','c.Tipo_Entidad','pr.Id_nombre_calificador','e.Nombre_entidad'
         ,'pr.Nit_calificador','pr.Dir_calificador','pr.Email_calificador','pr.Telefono_calificador','pr.Depar_calificador','pr.Ciudad_calificador'
         ,'pr.Id_tipo_pronunciamiento','p.Nombre_parametro as Tpronuncia','pr.Id_tipo_evento','ti.Nombre_evento','pr.Id_tipo_origen','or.Nombre_parametro as T_origen'
         ,'pr.Fecha_evento','pr.Dictamen_calificador','pr.Fecha_calificador','pr.Fecha_estruturacion','pr.Porcentaje_pcl','pr.Rango_pcl'
@@ -347,6 +349,71 @@ class PronunciamientoOrigenController extends Controller
             $nombre_entidad = null;
         }
 
+        if ($request->copia_afiliado == 'undefined') {
+            $copia_afiliado = null;            
+        } else {
+            $copia_afiliado = $request->copia_afiliado;            
+        }
+        if ($request->copia_empleador == 'undefined') {
+            $copia_empleador = null;                        
+        } else {
+            $copia_empleador = $request->copia_empleador;            
+        }
+        if ($request->copia_eps == 'undefined') {
+            $copia_eps = null;                        
+        } else {         
+            $copia_eps = $request->copia_eps;
+        }
+        if ($request->copia_afp == 'undefined') {
+            $copia_afp = null;                        
+        } else {         
+            $copia_afp = $request->copia_afp;
+        }
+        if ($request->copia_afp == 'undefined') {
+            $copia_afp = null;                        
+        } else {         
+            $copia_afp = $request->copia_afp;
+        }
+        if ($request->copia_arl == 'undefined') {
+            $copia_arl = null;                        
+        } else {         
+            $copia_arl = $request->copia_arl;
+        }
+        if ($request->junta_regional == 'undefined') {
+            $junta_regional = null;                        
+        } else {         
+            $junta_regional = $request->junta_regional;
+        }
+        if ($junta_regional == null) {
+            $cual =  null;
+        } else {
+            $cual =  $request->junta_regional_cual;
+        }        
+        if ($request->junta_nacional == 'undefined') {
+            $junta_nacional = null;                        
+        } else {         
+            $junta_nacional = $request->junta_nacional;
+        }
+
+        // Agrupa las variables en un array
+        $variables = array($copia_afiliado, $copia_empleador, $copia_eps, $copia_afp, $copia_arl, $junta_regional, $junta_nacional);
+
+        // Filtra los elementos nulos del array
+        $variables_filtradas = array_filter($variables, function($valor) {
+            return $valor !== null;
+        });
+
+        // Verifica si el array resultante está vacío
+        if (!empty($variables_filtradas)) {
+            // Si hay elementos en el array, los concatenamos con comas
+            $agregar_copias_comu = implode(',', $variables_filtradas);
+        } else {
+            // Si el array está vacío, asignamos una cadena vacía
+            $agregar_copias_comu = '';
+        }
+
+        $radicado = $request->n_radicado;
+
         //valida la acción del botón
         if ($request->bandera_pronuncia_guardar_actualizar == 'Guardar') {
         
@@ -375,14 +442,14 @@ class PronunciamientoOrigenController extends Controller
                 'Destinatario_principal' => $destinatario_principal,
                 'Tipo_entidad' => $tipo_entidad,
                 'Nombre_entidad' => $nombre_entidad,
-                'Copia_afiliado' => $request->copia_afiliado,
-                'Copia_empleador' => $request->copia_empleador,
-                'Copia_eps' => $request->copia_eps,
-                'Copia_afp' => $request->copia_afp,
-                'Copia_arl' => $request->copia_arl,
-                'Copia_junta_regional' => $request->junta_regional,
-                'Copia_junta_nacional' => $request->junta_nacional,
-                'Junta_regional_cual' => $request->junta_regional_cual,
+                'Copia_afiliado' => $copia_afiliado,
+                'Copia_empleador' => $copia_empleador,
+                'Copia_eps' => $copia_eps,
+                'Copia_afp' => $copia_afp,
+                'Copia_arl' => $copia_arl,
+                'Copia_junta_regional' => $junta_regional,
+                'Copia_junta_nacional' => $junta_nacional,
+                'Junta_regional_cual' => $cual,
                 'N_anexos' => $request->n_anexos,
                 'Elaboro_pronuncia' => $request->elaboro,
                 'Reviso_pronuncia' => $request->reviso,
@@ -417,6 +484,8 @@ class PronunciamientoOrigenController extends Controller
                 'Forma_envio' => '0',
                 'Elaboro' => $request->elaboro,
                 'Reviso' => '0',
+                'Agregar_copia' => $agregar_copias_comu,
+                'JRCI_copia' => $cual,
                 'Anexos' => $request->n_anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
@@ -454,14 +523,14 @@ class PronunciamientoOrigenController extends Controller
                 'Destinatario_principal' => $destinatario_principal,
                 'Tipo_entidad' => $tipo_entidad,
                 'Nombre_entidad' => $nombre_entidad,
-                'Copia_afiliado' => $request->copia_afiliado,
-                'Copia_empleador' => $request->copia_empleador,
-                'Copia_eps' => $request->copia_eps,
-                'Copia_afp' => $request->copia_afp,
-                'Copia_arl' => $request->copia_arl,
-                'Copia_junta_regional' => $request->junta_regional,
-                'Copia_junta_nacional' => $request->junta_nacional,
-                'Junta_regional_cual' => $request->junta_regional_cual,
+                'Copia_afiliado' => $copia_afiliado,
+                'Copia_empleador' => $copia_empleador,
+                'Copia_eps' => $copia_eps,
+                'Copia_afp' => $copia_afp,
+                'Copia_arl' => $copia_arl,
+                'Copia_junta_regional' => $junta_regional,
+                'Copia_junta_nacional' => $junta_nacional,
+                'Junta_regional_cual' => $cual,
                 'N_anexos' => $request->n_anexos,
                 'Elaboro_pronuncia' => $request->elaboro,
                 'Reviso_pronuncia' => $request->reviso,
@@ -538,14 +607,14 @@ class PronunciamientoOrigenController extends Controller
                 'Destinatario_principal' => $destinatario_principal,
                 'Tipo_entidad' => $tipo_entidad,
                 'Nombre_entidad' => $nombre_entidad,
-                'Copia_afiliado' => $request->copia_afiliado,
-                'Copia_empleador' => $request->copia_empleador,
-                'Copia_eps' => $request->copia_eps,
-                'Copia_afp' => $request->copia_afp,
-                'Copia_arl' => $request->copia_arl,
-                'Copia_junta_regional' => $request->junta_regional,
-                'Copia_junta_nacional' => $request->junta_nacional,
-                'Junta_regional_cual' => $request->junta_regional_cual,
+                'Copia_afiliado' => $copia_afiliado,
+                'Copia_empleador' => $copia_empleador,
+                'Copia_eps' => $copia_eps,
+                'Copia_afp' => $copia_afp,
+                'Copia_arl' => $copia_arl,
+                'Copia_junta_regional' => $junta_regional,
+                'Copia_junta_nacional' => $junta_nacional,
+                'Junta_regional_cual' => $cual,
                 'N_anexos' => $request->n_anexos,
                 'Elaboro_pronuncia' => $request->elaboro,
                 'Reviso_pronuncia' => $request->reviso,
@@ -590,14 +659,14 @@ class PronunciamientoOrigenController extends Controller
                 'Destinatario_principal' => $destinatario_principal,
                 'Tipo_entidad' => $tipo_entidad,
                 'Nombre_entidad' => $nombre_entidad,
-                'Copia_afiliado' => $request->copia_afiliado,
-                'Copia_empleador' => $request->copia_empleador,
-                'Copia_eps' => $request->copia_eps,
-                'Copia_afp' => $request->copia_afp,
-                'Copia_arl' => $request->copia_arl,
-                'Copia_junta_regional' => $request->junta_regional,
-                'Copia_junta_nacional' => $request->junta_nacional,
-                'Junta_regional_cual' => $request->junta_regional_cual,
+                'Copia_afiliado' => $copia_afiliado,
+                'Copia_empleador' => $copia_empleador,
+                'Copia_eps' => $copia_eps,
+                'Copia_afp' => $copia_afp,
+                'Copia_arl' => $copia_arl,
+                'Copia_junta_regional' => $junta_regional,
+                'Copia_junta_nacional' => $junta_nacional,
+                'Junta_regional_cual' => $cual,
                 'N_anexos' => $request->n_anexos,
                 'Elaboro_pronuncia' => $request->elaboro,
                 'Reviso_pronuncia' => $request->reviso,
@@ -619,6 +688,17 @@ class PronunciamientoOrigenController extends Controller
                 } 
             }
             
+            $datos_info_comunicado_eventos = [
+                'Agregar_copia' => $agregar_copias_comu,
+                'Nombre_usuario' => $nombre_usuario,
+                'JRCI_copia' => $cual,
+                'F_registro' => $date,
+            ];   
+                
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([                
+                ['N_radicado',$radicado]
+            ])->update($datos_info_comunicado_eventos);
 
             // Actualizacion del profesional calificador
             $datos_profesional_calificador = [
@@ -649,6 +729,64 @@ class PronunciamientoOrigenController extends Controller
 
 
     }
+
+    //Ver Documento Pronuncia
+    public function VerDocumentoPronunciamiento(Request $request){
+        $Idevento=$request->Id_evento;
+        $nomarchivo=$request->nom_archivo;
+        $Id_Asignacion = $request->Id_Asignacion;
+        $Id_proceso = $request->Id_proceso;
+        $Fecha_correspondencia = $request->Fecha_correspondencia;
+        $N_radicado = $request->N_radicado;
+
+        $rutaDocumento = $Idevento. '/' .$nomarchivo;
+        $urlDocumentoPr = public_path('Documentos_Eventos/' .$rutaDocumento);
+        if (file_exists($urlDocumentoPr)) {
+
+            $time = time();
+            $date = date("Y-m-d", $time);
+            /* Inserción del registro de que fue descargado */
+            // Extraemos el id del servicio asociado
+            $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+            ->select('siae.Id_servicio')
+            ->where([
+                ['siae.Id_Asignacion', $Id_Asignacion],
+                ['siae.ID_evento', $Idevento],
+                ['siae.Id_proceso', $Id_proceso],
+            ])->get();
+
+            $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+            // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+            $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Nombre_documento', $nomarchivo],
+            ])->get();
+            
+            if(count($verficar_documento) == 0){
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $Id_Asignacion,
+                    'Id_proceso' => $Id_proceso,
+                    'Id_servicio' => $Id_servicio,
+                    'ID_evento' => $Idevento,
+                    'Nombre_documento' => $nomarchivo,
+                    'N_radicado_documento' => $N_radicado,
+                    'F_elaboracion_correspondencia' => $Fecha_correspondencia,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => Auth::user()->name,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }
+    
+            return response()->download($urlDocumentoPr,$nomarchivo);
+        } else {
+            return response()->json([
+                'message' => 'El archivo no existe.',
+            ], 404);
+        }
+    }  
 
     /* Descargue de proforma de Acuerdo o Desacuerdo */
     public function DescargarProformaPronunciamiento(Request $request){
@@ -824,7 +962,11 @@ class PronunciamientoOrigenController extends Controller
             ->where([['sile.Nro_identificacion', $num_identificacion],['sile.ID_evento', $nro_siniestro]])
             ->get();
 
-            $nombre_empleador = $datos_empleador[0]->Empresa;
+            if (preg_match("/&/", $datos_empleador[0]->Empresa)) {
+                $nombre_empleador = htmlspecialchars(preg_replace('/&/', '&amp;', $datos_empleador[0]->Empresa));
+            } else {
+                $nombre_empleador = $datos_empleador[0]->Empresa;
+            }
             $direccion_empleador = $datos_empleador[0]->Direccion;
             $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
             $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
@@ -1067,7 +1209,42 @@ class PronunciamientoOrigenController extends Controller
             $output = $pdf->output();
             //Guardar el PDF en un archivo
             file_put_contents(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_pdf}"), $output);
-    
+
+            /* Inserción del registro de que fue descargado */
+            // Extraemos el id del servicio asociado
+            $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+            ->select('siae.Id_servicio')
+            ->where([
+                ['siae.Id_Asignacion', $Id_Asignacion_consulta_dx],
+                ['siae.ID_evento', $nro_siniestro],
+                ['siae.Id_proceso', $Id_Proceso_consulta_dx],
+            ])->get();
+
+            $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+            // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+            $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Nombre_documento', $nombre_pdf],
+            ])->get();
+            
+            if(count($verficar_documento) == 0){
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $Id_Asignacion_consulta_dx,
+                    'Id_proceso' => $Id_Proceso_consulta_dx,
+                    'Id_servicio' => $Id_servicio,
+                    'ID_evento' => $nro_siniestro,
+                    'Nombre_documento' => $nombre_pdf,
+                    'N_radicado_documento' => $nro_radicado,
+                    'F_elaboracion_correspondencia' => $fecha,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => Auth::user()->name,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }
+
             return $pdf->download($nombre_pdf); 
         }
          else {
@@ -1294,6 +1471,42 @@ class PronunciamientoOrigenController extends Controller
             $writer = new Word2007($phpWord);
             $nombre_docx = "ORI_DESACUERDO_{$Id_Asignacion_consulta_dx}_{$num_identificacion}.docx";
             $writer->save(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));
+
+            /* Inserción del registro de que fue descargado */
+            // Extraemos el id del servicio asociado
+            $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+            ->select('siae.Id_servicio')
+            ->where([
+                ['siae.Id_Asignacion', $Id_Asignacion_consulta_dx],
+                ['siae.ID_evento', $nro_siniestro],
+                ['siae.Id_proceso', $Id_Proceso_consulta_dx],
+            ])->get();
+
+            $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+            // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+            $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Nombre_documento', $nombre_docx],
+            ])->get();
+            
+            if(count($verficar_documento) == 0){
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $Id_Asignacion_consulta_dx,
+                    'Id_proceso' => $Id_Proceso_consulta_dx,
+                    'Id_servicio' => $Id_servicio,
+                    'ID_evento' => $nro_siniestro,
+                    'Nombre_documento' => $nombre_docx,
+                    'N_radicado_documento' => $nro_radicado,
+                    'F_elaboracion_correspondencia' => $fecha,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => Auth::user()->name,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }
+
             return response()->download(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));
 
         }

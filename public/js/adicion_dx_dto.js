@@ -1010,6 +1010,12 @@ $(document).ready(function(){
         $("#div_correspondecia").removeClass('d-none');
     }
 
+    // Desabilitar los botones si ya esta visado
+    var visar_servicio = $("#visar_servicio").val();
+    if (visar_servicio!== '') {
+         $("#EditarDTOATEL").prop('disabled', true);
+    }
+
     // Validar cual de los oficios esta marcado
 
     /* var oficiopclcorres = $('#oficiopcl');
@@ -1367,7 +1373,7 @@ $(document).ready(function(){
             'radicado':radicado,
             'bandera_correspondecia_guardar_actualizar':bandera_correspondecia_guardar_actualizar
         }
-
+        // console.log(datos_correspondecia);
         $.ajax({    
             type:'POST',
             url:'/guardarcorrespondenciaADX',

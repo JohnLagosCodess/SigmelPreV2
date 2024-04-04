@@ -59,6 +59,7 @@ use App\Models\sigmel_informacion_acciones;
 use App\Models\sigmel_informacion_agudeza_visualre_eventos;
 use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
 use App\Models\sigmel_informacion_historial_accion_eventos;
+use App\Models\sigmel_registro_descarga_documentos;
 use App\Models\sigmel_lista_causal_devoluciones;
 use Psy\Readline\Hoa\Console;
 use Svg\Tag\Rect;
@@ -1744,9 +1745,45 @@ class CalificacionPCLController extends Controller
             // Creación y guardado del pdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Arl/Origen_Atel/solicitud_pruebas', $data);
-            $nombre_pdf = "ORI_SOL_DOC_{$Id_Asignacion}_{$N_identificacion}.pdf";
+            $nombre_pdf = "ORI_SOL_DOC_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
             $output = $pdf->output();
             file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
+
+            /* Inserción del registro de que fue descargado */
+            // Extraemos el id del servicio asociado
+            $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+            ->select('siae.Id_servicio')
+            ->where([
+                ['siae.Id_Asignacion', $Id_Asignacion],
+                ['siae.ID_evento', $ID_evento],
+                ['siae.Id_proceso', $Id_proceso],
+            ])->get();
+
+            $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+            // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+            $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Nombre_documento', $nombre_pdf],
+            ])->get();
+            
+            if(count($verficar_documento) == 0){
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $Id_Asignacion,
+                    'Id_proceso' => $Id_proceso,
+                    'Id_servicio' => $Id_servicio,
+                    'ID_evento' => $ID_evento,
+                    'Nombre_documento' => $nombre_pdf,
+                    'N_radicado_documento' => $N_radicado,
+                    'F_elaboracion_correspondencia' => $F_comunicado,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }
+
             return $pdf->download($nombre_pdf);
 
         }
@@ -1955,9 +1992,45 @@ class CalificacionPCLController extends Controller
             // Creación y guardado del pdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/solicitud_documentos_pcl', $data);
-            $nombre_pdf = "PCL_SOL_DOC_{$Id_Asignacion}_{$N_identificacion}.pdf";
+            $nombre_pdf = "PCL_SOL_DOC_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
             $output = $pdf->output();
             file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
+
+            /* Inserción del registro de que fue descargado */
+            // Extraemos el id del servicio asociado
+            $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+            ->select('siae.Id_servicio')
+            ->where([
+                ['siae.Id_Asignacion', $Id_Asignacion],
+                ['siae.ID_evento', $ID_evento],
+                ['siae.Id_proceso', $Id_proceso],
+            ])->get();
+
+            $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+            // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+            $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Nombre_documento', $nombre_pdf],
+            ])->get();
+            
+            if(count($verficar_documento) == 0){
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $Id_Asignacion,
+                    'Id_proceso' => $Id_proceso,
+                    'Id_servicio' => $Id_servicio,
+                    'ID_evento' => $ID_evento,
+                    'Nombre_documento' => $nombre_pdf,
+                    'N_radicado_documento' => $N_radicado,
+                    'F_elaboracion_correspondencia' => $F_comunicado,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }
+
             return $pdf->download($nombre_pdf);
 
         }
@@ -2166,9 +2239,45 @@ class CalificacionPCLController extends Controller
             // Creación y guardado del pdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_formato_b_revisionPension', $data);
-            $nombre_pdf = "PCL_OFICIO_{$Id_Asignacion}_{$N_identificacion}.pdf";
+            $nombre_pdf = "PCL_OFICIO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
             $output = $pdf->output();
             file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
+
+            /* Inserción del registro de que fue descargado */
+            // Extraemos el id del servicio asociado
+            $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+            ->select('siae.Id_servicio')
+            ->where([
+                ['siae.Id_Asignacion', $Id_Asignacion],
+                ['siae.ID_evento', $ID_evento],
+                ['siae.Id_proceso', $Id_proceso],
+            ])->get();
+
+            $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+            // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+            $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Nombre_documento', $nombre_pdf],
+            ])->get();
+            
+            if(count($verficar_documento) == 0){
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $Id_Asignacion,
+                    'Id_proceso' => $Id_proceso,
+                    'Id_servicio' => $Id_servicio,
+                    'ID_evento' => $ID_evento,
+                    'Nombre_documento' => $nombre_pdf,
+                    'N_radicado_documento' => $N_radicado,
+                    'F_elaboracion_correspondencia' => $F_comunicado,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }
+
             return $pdf->download($nombre_pdf);
 
         }
@@ -2377,9 +2486,45 @@ class CalificacionPCLController extends Controller
             // Creación y guardado del pdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/solicitud_documentos_revpen', $data);
-            $nombre_pdf = "PCL_OFICIO_{$Id_Asignacion}_{$N_identificacion}.pdf";
+            $nombre_pdf = "PCL_OFICIO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
             $output = $pdf->output();
             file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
+
+            /* Inserción del registro de que fue descargado */
+            // Extraemos el id del servicio asociado
+            $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+            ->select('siae.Id_servicio')
+            ->where([
+                ['siae.Id_Asignacion', $Id_Asignacion],
+                ['siae.ID_evento', $ID_evento],
+                ['siae.Id_proceso', $Id_proceso],
+            ])->get();
+
+            $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+            // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+            $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Nombre_documento', $nombre_pdf],
+            ])->get();
+            
+            if(count($verficar_documento) == 0){
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $Id_Asignacion,
+                    'Id_proceso' => $Id_proceso,
+                    'Id_servicio' => $Id_servicio,
+                    'ID_evento' => $ID_evento,
+                    'Nombre_documento' => $nombre_pdf,
+                    'N_radicado_documento' => $N_radicado,
+                    'F_elaboracion_correspondencia' => $F_comunicado,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }
+
             return $pdf->download($nombre_pdf);
 
         }
@@ -2644,9 +2789,45 @@ class CalificacionPCLController extends Controller
             // Creación y guardado del pdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_no_recalificacion', $data);
-            $nombre_pdf = "PCL_OFICIO_{$Id_Asignacion}_{$N_identificacion}.pdf";
+            $nombre_pdf = "PCL_OFICIO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
             $output = $pdf->output();
             file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
+
+            /* Inserción del registro de que fue descargado */
+            // Extraemos el id del servicio asociado
+            $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+            ->select('siae.Id_servicio')
+            ->where([
+                ['siae.Id_Asignacion', $Id_Asignacion],
+                ['siae.ID_evento', $ID_evento],
+                ['siae.Id_proceso', $Id_proceso],
+            ])->get();
+
+            $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+            // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+            $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Nombre_documento', $nombre_pdf],
+            ])->get();
+            
+            if(count($verficar_documento) == 0){
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $Id_Asignacion,
+                    'Id_proceso' => $Id_proceso,
+                    'Id_servicio' => $Id_servicio,
+                    'ID_evento' => $ID_evento,
+                    'Nombre_documento' => $nombre_pdf,
+                    'N_radicado_documento' => $N_radicado,
+                    'F_elaboracion_correspondencia' => $F_comunicado,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }
+
             return $pdf->download($nombre_pdf);
 
         }
@@ -2833,7 +3014,43 @@ class CalificacionPCLController extends Controller
             // Crear una instancia de Dompdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/coordinador/comunicadoPdf', $data);
-            $fileName = 'Comunicado_'.$N_radicado.'.pdf';
+            $fileName = 'Comunicado_'.$Id_comunicado.'_'.$N_radicado.'.pdf';
+
+            /* Inserción del registro de que fue descargado */
+            // Extraemos el id del servicio asociado
+            $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+            ->select('siae.Id_servicio')
+            ->where([
+                ['siae.Id_Asignacion', $Id_Asignacion],
+                ['siae.ID_evento', $ID_evento],
+                ['siae.Id_proceso', $Id_proceso],
+            ])->get();
+
+            $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+            // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+            $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Nombre_documento', $fileName],
+            ])->get();
+            
+            if(count($verficar_documento) == 0){
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $Id_Asignacion,
+                    'Id_proceso' => $Id_proceso,
+                    'Id_servicio' => $Id_servicio,
+                    'ID_evento' => $ID_evento,
+                    'Nombre_documento' => $fileName,
+                    'N_radicado_documento' => $N_radicado,
+                    'F_elaboracion_correspondencia' => $F_comunicado,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }
+
             return $pdf->download($fileName);      
         }
 
@@ -3368,7 +3585,7 @@ class CalificacionPCLController extends Controller
         'sicie.Oficio_pcl', 'sicie.Oficio_incapacidad', 'sicie.Destinatario_principal', 'sicie.Otro_destinatario', 'sicie.Tipo_destinatario', 
         'sicie.Nombre_dest_principal', 'sie.Nombre_entidad', 'sicie.Nombre_destinatario','sicie.Nit_cc', 'sicie.Direccion_destinatario', 
         'sicie.Telefono_destinatario', 'sicie.Email_destinatario', 'sicie.Departamento_destinatario', 'sicie.Ciudad_destinatario', 
-        'sicie.Asunto', 'sicie.Cuerpo_comunicado', 'sicie.Copia_afiliado','sicie.Copia_empleador', 'sicie.Copia_eps', 'sicie.Copia_afp', 'sicie.Copia_arl', 
+        'sicie.Asunto', 'sicie.Cuerpo_comunicado', 'sicie.Copia_afiliado', 'sicie.Copia_empleador', 'sicie.Copia_eps', 'sicie.Copia_afp', 'sicie.Copia_arl', 
         'sicie.Copia_jr', 'sicie.Cual_jr', 'sicie.Copia_jn', 'sicie.Anexos', 'sicie.Elaboro', 'sicie.Reviso', 'sicie.Firmar', 'sicie.Ciudad', 
         'sicie.F_correspondecia', 'sicie.N_radicado', 'sicie.Nombre_usuario', 'sicie.F_registro')        
         ->where([
@@ -5451,6 +5668,7 @@ class CalificacionPCLController extends Controller
             $ciudad_destinatario = $request->ciudad_destinatario;
         }
         $Asunto = $request->Asunto;
+        $afiliado = $request->afiliado;
         $cuerpo_comunicado = $request->cuerpo_comunicado;
         $afiliado = $request->afiliado;
         $empleador = $request->empleador;
@@ -5462,7 +5680,32 @@ class CalificacionPCLController extends Controller
         if($cual == ''){
             $cual = null;
         }
-        $jnci = $request->jnci;
+        $jnci = $request->jnci;        
+        // $agregar_copias_comu = $empleador.','.$eps.','.$afp.','.$arl.','.$jrci.','.$jnci;
+
+        $variables_llenas = array();
+
+        if (!empty($empleador)) {
+            $variables_llenas[] = $empleador;
+        }
+        if (!empty($eps)) {
+            $variables_llenas[] = $eps;
+        }
+        if (!empty($afp)) {
+            $variables_llenas[] = $afp;
+        }
+        if (!empty($arl)) {
+            $variables_llenas[] = $arl;
+        }
+        if (!empty($jrci)) {
+            $variables_llenas[] = $jrci;
+        }
+        if (!empty($jnci)) {
+            $variables_llenas[] = $jnci;
+        }
+
+        $agregar_copias_comu = implode(',', $variables_llenas);
+        
         $anexos = $request->anexos;
         $elaboro = $request->elaboro;
         $reviso = $request->reviso;
@@ -5539,6 +5782,8 @@ class CalificacionPCLController extends Controller
                 'Forma_envio' => '0',
                 'Elaboro' => $elaboro,
                 'Reviso' => $reviso,
+                'Agregar_copia' => $agregar_copias_comu,
+                'JRCI_copia' => $cual,
                 'Anexos' => $anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
@@ -5595,7 +5840,19 @@ class CalificacionPCLController extends Controller
             ->where([
                 ['ID_evento',$Id_EventoDecreto],
                 ['Id_Asignacion',$Id_Asignacion_Dcreto]
-            ])->update($datos_correspondencia);       
+            ])->update($datos_correspondencia); 
+
+            $datos_info_comunicado_eventos = [
+                'Agregar_copia' => $agregar_copias_comu,
+                'JRCI_copia' => $cual,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];   
+                
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([                
+                ['N_radicado',$radicado]
+            ])->update($datos_info_comunicado_eventos); 
     
             $mensajes = array(
                 "parametro" => 'actualizar_correspondencia',
@@ -6576,6 +6833,51 @@ class CalificacionPCLController extends Controller
         $output = $pdf->output();
         //Guardar el PDF en un archivo
         file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni}/{$nombre_pdf}"), $output);
+
+        /* Inserción del registro de que fue descargado */
+        // Extraemos el id del servicio asociado
+        $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+        ->select('siae.Id_servicio')
+        ->where([
+            ['siae.Id_Asignacion', $Id_Asignacion_comuni],
+            ['siae.ID_evento', $ID_Evento_comuni],
+            ['siae.Id_proceso', $Id_Proceso_comuni],
+        ])->get();
+
+        $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+        // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
+        $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
+        ->select('sice.F_comunicado')
+        ->where([
+            ['sice.N_radicado', $Radicado_comuni]
+        ])
+        ->get();
+
+        $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
+
+        // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+        $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+        ->select('Nombre_documento')
+        ->where([
+            ['Nombre_documento', $nombre_pdf],
+        ])->get();
+        
+        if(count($verficar_documento) == 0){
+            $info_descarga_documento = [
+                'Id_Asignacion' => $Id_Asignacion_comuni,
+                'Id_proceso' => $Id_Proceso_comuni,
+                'Id_servicio' => $Id_servicio,
+                'ID_evento' => $ID_Evento_comuni,
+                'Nombre_documento' => $nombre_pdf,
+                'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                'F_descarga_documento' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+            ];
+            
+            sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+        }
+
         return $pdf->download($nombre_pdf);
     }
     // Generar PDF del Dictamen de PCL 917
@@ -6936,6 +7238,51 @@ class CalificacionPCLController extends Controller
         $output = $pdf->output();
         //Guardar el PDF en un archivo
         file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni}/{$nombre_pdf}"), $output);
+
+        /* Inserción del registro de que fue descargado */
+        // Extraemos el id del servicio asociado
+        $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+        ->select('siae.Id_servicio')
+        ->where([
+            ['siae.Id_Asignacion', $Id_Asignacion_comuni],
+            ['siae.ID_evento', $ID_Evento_comuni],
+            ['siae.Id_proceso', $Id_Proceso_comuni],
+        ])->get();
+
+        $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+        // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
+        $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
+        ->select('sice.F_comunicado')
+        ->where([
+            ['sice.N_radicado', $Radicado_comuni]
+        ])
+        ->get();
+
+        $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
+
+        // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+        $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+        ->select('Nombre_documento')
+        ->where([
+            ['Nombre_documento', $nombre_pdf],
+        ])->get();
+        
+        if(count($verficar_documento) == 0){
+            $info_descarga_documento = [
+                'Id_Asignacion' => $Id_Asignacion_comuni,
+                'Id_proceso' => $Id_Proceso_comuni,
+                'Id_servicio' => $Id_servicio,
+                'ID_evento' => $ID_Evento_comuni,
+                'Nombre_documento' => $nombre_pdf,
+                'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                'F_descarga_documento' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+            ];
+            
+            sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+        }
+
         return $pdf->download($nombre_pdf);
     }
     // Generar PDF de Notificacion numerica para el decreto 1507 y 917
@@ -7103,7 +7450,7 @@ class CalificacionPCLController extends Controller
             $Telefono_afiliado = '';
             $Ciudad_departamento_afiliado = '';
         }
-        
+
         if(!empty($Copia_eps_correspondecia) && $Copia_eps_correspondecia == 'EPS'){
             $Nombre_eps = $array_datos_info_afiliado[0]->Entidad_eps;
             $Direccion_eps = $array_datos_info_afiliado[0]->Direccion_eps;
@@ -7418,6 +7765,51 @@ class CalificacionPCLController extends Controller
             $output = $pdf->output();
             //Guardar el PDF en un archivo
             file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni_comite}/{$nombre_pdf}"), $output);
+
+            /* Inserción del registro de que fue descargado */
+            // Extraemos el id del servicio asociado
+            $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+            ->select('siae.Id_servicio')
+            ->where([
+                ['siae.Id_Asignacion', $Id_Asignacion_comuni_comite],
+                ['siae.ID_evento', $ID_Evento_comuni_comite],
+                ['siae.Id_proceso', $Id_Proceso_comuni_comite],
+            ])->get();
+
+            $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+            // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
+            $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
+            ->select('sice.F_comunicado')
+            ->where([
+                ['sice.N_radicado', $Radicado_comuni_comite]
+            ])
+            ->get();
+
+            $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
+
+            // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+            $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Nombre_documento', $nombre_pdf],
+            ])->get();
+            
+            if(count($verficar_documento) == 0){
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                    'Id_proceso' => $Id_Proceso_comuni_comite,
+                    'Id_servicio' => $Id_servicio,
+                    'ID_evento' => $ID_Evento_comuni_comite,
+                    'Nombre_documento' => $nombre_pdf,
+                    'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }
+
             return $pdf->download($nombre_pdf);
         } else {
             $data = [
@@ -7490,6 +7882,51 @@ class CalificacionPCLController extends Controller
             $output = $pdf->output();
             //Guardar el PDF en un archivo
             file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni_comite}/{$nombre_pdf}"), $output);
+
+            /* Inserción del registro de que fue descargado */
+            // Extraemos el id del servicio asociado
+            $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+            ->select('siae.Id_servicio')
+            ->where([
+                ['siae.Id_Asignacion', $Id_Asignacion_comuni_comite],
+                ['siae.ID_evento', $ID_Evento_comuni_comite],
+                ['siae.Id_proceso', $Id_Proceso_comuni_comite],
+            ])->get();
+
+            $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+            // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
+            $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
+            ->select('sice.F_comunicado')
+            ->where([
+                ['sice.N_radicado', $Radicado_comuni_comite]
+            ])
+            ->get();
+
+            $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
+
+            // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+            $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Nombre_documento', $nombre_pdf],
+            ])->get();
+            
+            if(count($verficar_documento) == 0){
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                    'Id_proceso' => $Id_Proceso_comuni_comite,
+                    'Id_servicio' => $Id_servicio,
+                    'ID_evento' => $ID_Evento_comuni_comite,
+                    'Nombre_documento' => $nombre_pdf,
+                    'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }
+
             return $pdf->download($nombre_pdf);
         }
                 
@@ -8033,6 +8470,51 @@ class CalificacionPCLController extends Controller
         $output = $pdf->output();
         //Guardar el PDF en un archivo
         file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni}/{$nombre_pdf}"), $output);
+
+        /* Inserción del registro de que fue descargado */
+        // Extraemos el id del servicio asociado
+        $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+        ->select('siae.Id_servicio')
+        ->where([
+            ['siae.Id_Asignacion', $Id_Asignacion_comuni],
+            ['siae.ID_evento', $ID_Evento_comuni],
+            ['siae.Id_proceso', $Id_Proceso_comuni],
+        ])->get();
+
+        $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+        // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
+        $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
+        ->select('sice.F_comunicado')
+        ->where([
+            ['sice.N_radicado', $Radicado_comuni]
+        ])
+        ->get();
+
+        $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
+
+        // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+        $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+        ->select('Nombre_documento')
+        ->where([
+            ['Nombre_documento', $nombre_pdf],
+        ])->get();
+        
+        if(count($verficar_documento) == 0){
+            $info_descarga_documento = [
+                'Id_Asignacion' => $Id_Asignacion_comuni,
+                'Id_proceso' => $Id_Proceso_comuni,
+                'Id_servicio' => $Id_servicio,
+                'ID_evento' => $ID_Evento_comuni,
+                'Nombre_documento' => $nombre_pdf,
+                'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                'F_descarga_documento' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+            ];
+            
+            sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+        }
+
         return $pdf->download($nombre_pdf);   
     }
     // Generar PDF de Notificacion Cero
@@ -8363,6 +8845,51 @@ class CalificacionPCLController extends Controller
         $output = $pdf->output();
         //Guardar el PDF en un archivo
         file_put_contents(public_path("Documentos_Eventos/{$ID_Evento_comuni_comite}/{$nombre_pdf}"), $output);
+
+        /* Inserción del registro de que fue descargado */
+        // Extraemos el id del servicio asociado
+        $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+        ->select('siae.Id_servicio')
+        ->where([
+            ['siae.Id_Asignacion', $Id_Asignacion_comuni_comite],
+            ['siae.ID_evento', $ID_Evento_comuni_comite],
+            ['siae.Id_proceso', $Id_Proceso_comuni_comite],
+        ])->get();
+
+        $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+        // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
+        $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
+        ->select('sice.F_comunicado')
+        ->where([
+            ['sice.N_radicado', $Radicado_comuni_comite]
+        ])
+        ->get();
+
+        $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
+
+        // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+        $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+        ->select('Nombre_documento')
+        ->where([
+            ['Nombre_documento', $nombre_pdf],
+        ])->get();
+        
+        if(count($verficar_documento) == 0){
+            $info_descarga_documento = [
+                'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                'Id_proceso' => $Id_Proceso_comuni_comite,
+                'Id_servicio' => $Id_servicio,
+                'ID_evento' => $ID_Evento_comuni_comite,
+                'Nombre_documento' => $nombre_pdf,
+                'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                'F_descarga_documento' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+            ];
+            
+            sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+        }
+
         return $pdf->download($nombre_pdf);
     }
 }

@@ -2614,6 +2614,14 @@ $(document).ready(function(){
                     document.querySelector("#email_destinatario_editar").disabled = true;
                     document.querySelector("#departamento_destinatario_editar").disabled = true;
                     document.querySelector("#ciudad_destinatario_editar").disabled = true;
+
+                    if ($("#input_jrci_seleccionado_editar").val() != '') {
+                        $("#div_input_jrci_editar").addClass("d-none");
+                        $("#input_jrci_seleccionado_editar").val('');
+                    } else {
+                        $("#div_select_jrci_editar").addClass("d-none");
+                        $("#jrci_califi_invalidez_comunicado_editar").val('');
+                    }
                 }
                 else if (destino == 'Afiliado') {
                     $('#afiliado_comunicado_editar').prop('checked', true);                    
@@ -2624,6 +2632,14 @@ $(document).ready(function(){
                     document.querySelector("#email_destinatario_editar").disabled = true;
                     document.querySelector("#departamento_destinatario_editar").disabled = true;
                     document.querySelector("#ciudad_destinatario_editar").disabled = true;
+
+                    if ($("#input_jrci_seleccionado_editar").val() != '') {
+                        $("#div_input_jrci_editar").addClass("d-none");
+                        $("#input_jrci_seleccionado_editar").val('');
+                    } else {
+                        $("#div_select_jrci_editar").addClass("d-none");
+                        $("#jrci_califi_invalidez_comunicado_editar").val('');
+                    }
                 }
                 else if(destino == 'Empresa'){
                     $('#empresa_comunicado_editar').prop('checked', true);
@@ -2634,6 +2650,68 @@ $(document).ready(function(){
                     document.querySelector("#email_destinatario_editar").disabled = true;
                     document.querySelector("#departamento_destinatario_editar").disabled = true;
                     document.querySelector("#ciudad_destinatario_editar").disabled = true;
+
+                    if ($("#input_jrci_seleccionado_editar").val() != '') {
+                        $("#div_input_jrci_editar").addClass("d-none");
+                        $("#input_jrci_seleccionado_editar").val('');
+                    } else {
+                        $("#div_select_jrci_editar").addClass("d-none");
+                        $("#jrci_califi_invalidez_comunicado_editar").val('');
+                    }
+                }
+                else if(destino == 'Eps'){
+                    $('#eps_comunicado_editar').prop('checked', true);
+                    document.querySelector("#nombre_destinatario_editar").disabled = true;
+                    document.querySelector("#nic_cc_editar").disabled = true;
+                    document.querySelector("#direccion_destinatario_editar").disabled = true;
+                    document.querySelector("#telefono_destinatario_editar").disabled = true;
+                    document.querySelector("#email_destinatario_editar").disabled = true;
+                    document.querySelector("#departamento_destinatario_editar").disabled = true;
+                    document.querySelector("#ciudad_destinatario_editar").disabled = true;
+
+                    if ($("#input_jrci_seleccionado_editar").val() != '') {
+                        $("#div_input_jrci_editar").addClass("d-none");
+                        $("#input_jrci_seleccionado_editar").val('');
+                    } else {
+                        $("#div_select_jrci_editar").addClass("d-none");
+                        $("#jrci_califi_invalidez_comunicado_editar").val('');
+                    }
+                }
+                else if(destino == 'Afp'){
+                    $('#afp_comunicado_editar').prop('checked', true);
+                    document.querySelector("#nombre_destinatario_editar").disabled = true;
+                    document.querySelector("#nic_cc_editar").disabled = true;
+                    document.querySelector("#direccion_destinatario_editar").disabled = true;
+                    document.querySelector("#telefono_destinatario_editar").disabled = true;
+                    document.querySelector("#email_destinatario_editar").disabled = true;
+                    document.querySelector("#departamento_destinatario_editar").disabled = true;
+                    document.querySelector("#ciudad_destinatario_editar").disabled = true;
+
+                    if ($("#input_jrci_seleccionado_editar").val() != '') {
+                        $("#div_input_jrci_editar").addClass("d-none");
+                        $("#input_jrci_seleccionado_editar").val('');
+                    } else {
+                        $("#div_select_jrci_editar").addClass("d-none");
+                        $("#jrci_califi_invalidez_comunicado_editar").val('');
+                    }
+                }
+                else if(destino == 'Arl'){
+                    $('#arl_comunicado_editar').prop('checked', true);
+                    document.querySelector("#nombre_destinatario_editar").disabled = true;
+                    document.querySelector("#nic_cc_editar").disabled = true;
+                    document.querySelector("#direccion_destinatario_editar").disabled = true;
+                    document.querySelector("#telefono_destinatario_editar").disabled = true;
+                    document.querySelector("#email_destinatario_editar").disabled = true;
+                    document.querySelector("#departamento_destinatario_editar").disabled = true;
+                    document.querySelector("#ciudad_destinatario_editar").disabled = true;
+
+                    if ($("#input_jrci_seleccionado_editar").val() != '') {
+                        $("#div_input_jrci_editar").addClass("d-none");
+                        $("#input_jrci_seleccionado_editar").val('');
+                    } else {
+                        $("#div_select_jrci_editar").addClass("d-none");
+                        $("#jrci_califi_invalidez_comunicado_editar").val('');
+                    }
                 }
                 else if(destino == 'Otro'){
                     $('#Otro_editar').prop('checked', true);
@@ -2644,6 +2722,14 @@ $(document).ready(function(){
                     document.querySelector("#email_destinatario_editar").disabled = false;
                     document.querySelector("#departamento_destinatario_editar").disabled = false;
                     document.querySelector("#ciudad_destinatario_editar").disabled = false;
+
+                    if ($("#input_jrci_seleccionado_editar").val() != '') {
+                        $("#div_input_jrci_editar").addClass("d-none");
+                        $("#input_jrci_seleccionado_editar").val('');
+                    } else {
+                        $("#div_select_jrci_editar").addClass("d-none");
+                        $("#jrci_califi_invalidez_comunicado_editar").val('');
+                    }
                 }
 
                 var reviso_editar = $('#reviso_editar');
@@ -2871,7 +2957,7 @@ $(document).ready(function(){
             // mostrar mensaje(s) importante(s)
             $("#mensaje_asunto_editar").addClass('d-none');
             $("#rellenar_asunto_editar").html('');
-            $("#mensaje_cuerpo_editar").addClassClass('d-none');
+            $("#mensaje_cuerpo_editar").addClass('d-none');
             $("#rellenar_cuerpo_editar").html('');
 
             // botones proforma ADJUNTAR OFICIO AL AFILIADO

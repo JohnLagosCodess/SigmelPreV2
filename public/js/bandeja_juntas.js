@@ -173,7 +173,7 @@ $(document).ready(function () {
         }
     }, 500);
 
-    // cargue de datos sin filtros
+    /// cargue de datos sin filtros
     $("#mensaje_importante").removeClass('d-none');
     $('#Bandeja_Juntas thead tr').clone(true).addClass('filters').appendTo('#Bandeja_Juntas thead');
     var lista_eventos_juntas = $('#Bandeja_Juntas').DataTable({            
@@ -312,9 +312,9 @@ $(document).ready(function () {
         var consultar_f_desde = $('#consultar_f_desde').val();
         var consultar_f_hasta = $('#consultar_f_hasta').val();
         var consultar_g_dias = $('#consultar_g_dias').val();
-
-        cargarDatosBandejaJuntas(lista_eventos_juntas, "con_filtros", consultar_f_desde, consultar_f_hasta, consultar_g_dias);
         
+        cargarDatosBandejaJuntas(lista_eventos_juntas, "con_filtros", consultar_f_desde, consultar_f_hasta, consultar_g_dias);
+
     })
 
     //Dimensionar o ajustar columnas de la tabla
@@ -516,12 +516,12 @@ $(document).ready(function () {
     }) 
 
     //Ocultar boton del datatable
-    /* setTimeout(() => {
-        var botonFiltrar = $('#contenedorTable').parents();
-        var contendorBotoFiltrar = botonFiltrar[1].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[0].classList[0];
-        //console.log(contendorBotoFiltrar);
-        $('.'+contendorBotoFiltrar).addClass('d-none');
-    }, 2000); */
+    // setTimeout(() => {
+    //     var botonFiltrar = $('#contenedorTable').parents();
+    //     var contendorBotoFiltrar = botonFiltrar[1].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[0].classList[0];
+    //     //console.log(contendorBotoFiltrar);
+    //     $('.'+contendorBotoFiltrar).addClass('d-none');
+    // }, 2000);
 
     $('#btn_expor_datos').click(function () {
         // var infobtnExcel = $(this).parents();

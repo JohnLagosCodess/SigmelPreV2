@@ -488,7 +488,7 @@
                                             <label for="junta_regional_cual">¿Cuál?<span style="color: red;">(*)</span></label>
                                             <select class="junta_regional_cual custom-select" name="junta_regional_cual" id="junta_regional_cual">
                                                 @if (!empty($info_pronuncia[0]->Junta_regional_cual))
-                                                    <option value="{{$info_pronuncia[0]->Junta_regional_cual}}" selected>{{$info_pronuncia[0]->Ciudad_Junta}}</option>
+                                                    <option value="{{$info_pronuncia[0]->Junta_regional_cual}}" selected>{{$info_pronuncia[0]->Junta_regional_cual}}</option>
                                                  @else
                                                     <option value="">Seleccione una opción</option>
                                                  @endif
@@ -584,7 +584,7 @@
                                     <label for="n_radicado">Cargue Documento Pronunciamiento:</label>
                                     @if (!empty($info_pronuncia[0]->Archivo_pronuncia) && $info_pronuncia[0]->Archivo_pronuncia <>'N/A')
                                         <input hidden="hidden" type="text" name="nom_archivo" id="nom_archivo" value="{{$info_pronuncia[0]->Archivo_pronuncia}}">
-                                        <a href="{{route('VerDocumentoPronuncia', ['Id_evento' => $info_pronuncia[0]->ID_evento,'nom_archivo' => $info_pronuncia[0]->Archivo_pronuncia])}}">Ver documento ya cargado</a>
+                                        <a href="{{route('VerDocumentoPronuncia', ['Id_evento' => $info_pronuncia[0]->ID_evento,'nom_archivo' => $info_pronuncia[0]->Archivo_pronuncia, 'Id_Asignacion'=> $info_pronuncia[0]->Id_Asignacion,'Id_proceso'=> $info_pronuncia[0]->Id_proceso, 'Fecha_correspondencia'=> $info_pronuncia[0]->Fecha_correspondencia, 'N_radicado'=> $info_pronuncia[0]->N_radicado])}}">Ver documento ya cargado</a>
                                     @endif
                                     <input type="file" class="form-control select-doc" name="DocPronuncia" id="DocPronuncia" aria-describedby="Carguedocumentos" aria-label="Upload"/>
                                 </div>

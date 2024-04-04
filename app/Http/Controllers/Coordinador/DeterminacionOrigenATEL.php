@@ -28,6 +28,7 @@ use App\Models\sigmel_lista_solicitantes;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_accion_eventos;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Models\sigmel_registro_descarga_documentos;
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -971,6 +972,31 @@ class DeterminacionOrigenATEL extends Controller
             $cual = null;
         }
         $jnci = $request->jnci;
+        // $agregar_copias_comu = $empleador.','.$eps.','.$afp.','.$arl.','.$jrci.','.$jnci;
+
+        $variables_llenas = array();
+
+        if (!empty($empleador)) {
+            $variables_llenas[] = $empleador;
+        }
+        if (!empty($eps)) {
+            $variables_llenas[] = $eps;
+        }
+        if (!empty($afp)) {
+            $variables_llenas[] = $afp;
+        }
+        if (!empty($arl)) {
+            $variables_llenas[] = $arl;
+        }
+        if (!empty($jrci)) {
+            $variables_llenas[] = $jrci;
+        }
+        if (!empty($jnci)) {
+            $variables_llenas[] = $jnci;
+        }
+
+        $agregar_copias_comu = implode(',', $variables_llenas);
+        
         $anexos = $request->anexos;
         $elaboro = $request->elaboro;
         $reviso = $request->reviso;
@@ -1048,6 +1074,8 @@ class DeterminacionOrigenATEL extends Controller
                 'Forma_envio' => '0',
                 'Elaboro' => $elaboro,
                 'Reviso' => $reviso,
+                'Agregar_copia' => $agregar_copias_comu,
+                'JRCI_copia' => $cual,
                 'Anexos' => $anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
@@ -1103,7 +1131,19 @@ class DeterminacionOrigenATEL extends Controller
             ->where([
                 ['ID_evento',$Id_Evento_dto_atel],
                 ['Id_Asignacion',$Id_Asignacion_dto_atel]
-            ])->update($datos_correspondencia);       
+            ])->update($datos_correspondencia);
+            
+            $datos_info_comunicado_eventos = [
+                'Agregar_copia' => $agregar_copias_comu,
+                'JRCI_copia' => $cual,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];   
+                
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([                
+                ['N_radicado',$radicado]
+            ])->update($datos_info_comunicado_eventos);
     
             $mensajes = array(
                 "parametro" => 'actualizar_correspondencia',
@@ -1282,6 +1322,57 @@ class DeterminacionOrigenATEL extends Controller
         $output = $pdf->output();
         //Guardar el PDF en un archivo
         file_put_contents(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_pdf}"), $output);
+
+        /* Inserción del registro de que fue descargado */
+        // Extraemos el id del servicio asociado
+        $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+        ->select('siae.Id_servicio')
+        ->where([
+            ['siae.Id_Asignacion', $Id_Asignacion],
+            ['siae.ID_evento', $nro_siniestro],
+            ['siae.Id_proceso', $Id_Proceso],
+        ])->get();
+
+        $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+
+        // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
+        $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
+        ->select('sice.F_comunicado', 'sice.N_radicado')
+        ->where([
+            ['sice.ID_evento', $nro_siniestro],
+            ['sice.Id_Asignacion', $Id_Asignacion],
+            ['sice.Id_proceso', $Id_Proceso],
+            ['sice.T_documento', 'N/A'],
+            ['sice.Ciudad', 'N/A'],
+        ])
+        ->get();
+        
+        $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
+        $N_radicado_documento = $dato_f_elaboracion_correspondencia[0]->N_radicado;
+
+        // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+        $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+        ->select('Nombre_documento')
+        ->where([
+            ['Nombre_documento', $nombre_pdf],
+        ])->get();
+        
+        if(count($verficar_documento) == 0){
+            $info_descarga_documento = [
+                'Id_Asignacion' => $Id_Asignacion,
+                'Id_proceso' => $Id_Proceso,
+                'Id_servicio' => $Id_servicio,
+                'ID_evento' => $nro_siniestro,
+                'Nombre_documento' => $nombre_pdf,
+                'N_radicado_documento' => $N_radicado_documento,
+                'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                'F_descarga_documento' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+            ];
+            
+            sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+        }
+
 
         // return $dompdf->stream($nombre_pdf);
         return $pdf->download($nombre_pdf); 
@@ -1644,6 +1735,56 @@ class DeterminacionOrigenATEL extends Controller
         $output = $pdf->output();
         //Guardar el PDF en un archivo
         file_put_contents(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_pdf}"), $output);
+
+        /* Inserción del registro de que fue descargado */
+        // Extraemos el id del proceso y servicio asociado
+        $dato_id_servicio_proceso = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+        ->select('siae.Id_proceso','siae.Id_servicio')
+        ->where([
+            ['siae.Id_Asignacion', $Id_asignacion],
+            ['siae.ID_evento', $nro_siniestro],
+        ])->get();
+
+        $Id_Proceso = $dato_id_servicio_proceso[0]->Id_proceso;
+        $Id_servicio = $dato_id_servicio_proceso[0]->Id_servicio;
+
+        // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
+        $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
+        ->select('sice.F_comunicado', 'sice.N_radicado')
+        ->where([
+            ['sice.ID_evento', $nro_siniestro],
+            ['sice.Id_Asignacion', $Id_asignacion],
+            ['sice.Id_proceso', $Id_Proceso],
+            ['sice.T_documento', 'N/A'],
+            ['sice.Ciudad', '!=', 'N/A'],
+        ])
+        ->get();
+
+        $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
+        $N_radicado_documento = $dato_f_elaboracion_correspondencia[0]->N_radicado;
+
+        // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+        $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+        ->select('Nombre_documento')
+        ->where([
+            ['Nombre_documento', $nombre_pdf],
+        ])->get();
+        
+        if(count($verficar_documento) == 0){
+            $info_descarga_documento = [
+                'Id_Asignacion' => $Id_asignacion,
+                'Id_proceso' => $Id_Proceso,
+                'Id_servicio' => $Id_servicio,
+                'ID_evento' => $nro_siniestro,
+                'Nombre_documento' => $nombre_pdf,
+                'N_radicado_documento' => $N_radicado_documento,
+                'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                'F_descarga_documento' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+            ];
+            
+            sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+        }
 
         // return $dompdf->stream($nombre_pdf);
         return $pdf->download($nombre_pdf); 

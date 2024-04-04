@@ -252,7 +252,7 @@
                 @else
                     <tr>
                         <td class="justificado"><span class="negrita">Copia:</span></td>                            
-                    </tr>
+                    </tr> 
                     <?php 
                         if (!empty($Copia_afiliado_correspondencia)) { ?>
                             <tr>
@@ -262,7 +262,7 @@
                             </tr>
                         <?php       
                         }
-                    ?>  
+                    ?> 
                     <?php 
                         if (!empty($Copia_empleador_correspondecia)) { ?>
                             <tr>

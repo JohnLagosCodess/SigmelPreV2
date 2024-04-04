@@ -30,6 +30,7 @@ use App\Http\Controllers\Profesional\ProfesionalController;
 use App\Http\Controllers\Comite\ComiteController;
 use App\Http\Controllers\Analista\AnalistaController;
 use App\Http\Controllers\Consulta\ConsultaController;
+use App\Http\Controllers\Administrador\ReporteNotificacionesController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -545,6 +546,7 @@ Route::post('/guardarInfoServiPronuncia', [PronunciamientoPCLController::class, 
 // Ver documento Pronunciamiento
 //Route::get('/VerDocumentoPronuncia', [PronunciamientoPCLController::class, 'VerDocumentoPronuncia']);
 Route::get('/VerDocumentoPronuncia', [PronunciamientoPCLController::class, 'VerDocumentoPronuncia'])->name('VerDocumentoPronuncia');
+Route::get('/VerDocumentoPronunciamiento', [PronunciamientoOrigenController::class, 'VerDocumentoPronunciamiento'])->name('VerDocumentoPronunciamiento');
 // Generar pdf pronunciamiento pcl acuerdo y desacuerdo
 Route::post('/generarPdfProformaspro', [PronunciamientoPCLController::class, 'generarPdfProformaPro']);
 
@@ -812,10 +814,18 @@ Route::post('/DescargarProformaRecursoReposicion', [ControversiaJuntasController
 // Proforma: ADJUNTAR OFICIO AL AFILIADO (JUNTAS)
 Route::post('/DescargarProformasJuntas', [CalificacionJuntasController::class, 'DescargarProformasJuntas'])->name('DescargarProformasJuntas');
 
+// Creación Vista Módulo reportes de notificaciones
+// 04/03/2024 Vista Reportes Notificaciones
+Route::get('/Sigmel/ReportesNotificaciones', [ReporteNotificacionesController::class, 'show'])->name('reporteNotificaciones');
+// Acción: Consulta de Reporte de Notificaciones
+Route::post('/consultaReporteNotificaciones', [ReporteNotificacionesController::class, 'consultaReporteNotificaciones']);
+// Acción: Generar zip de Reporte de Notificaciones
+Route::post('/generarZipReporteNotificaciones', [ReporteNotificacionesController::class, 'generarZipReporteNotificaciones']);
+// Acción: Eliminaar zip de Reporte de Notificaciones
+Route::post('/eliminarZipReporteNotificaciones', [ReporteNotificacionesController::class, 'eliminarZipReporteNotificaciones']);
+
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
-
-
 
 
 Route::get('/Sigmel/pruebas', [ProbandoController::class, 'index']);
