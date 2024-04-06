@@ -64,7 +64,7 @@ class ReporteNotificacionesController extends Controller
             'Estado', 'No_OIP', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion', 'Telefono', 'Departamento', 'Ciudad',
             'Folios_entregados', 'Medio_Notificacion', 'Correo_electronico', 'Archivo_1', 'Archivo_2')
             ->get();
-            $array_reporte_notificaciones = json_decode(json_encode($reporte_notificaciones, true)); 
+            $array_reporte_notificaciones = json_decode(json_encode($reporte_notificaciones, true));
             return response()->json($array_reporte_notificaciones);
         }
         else if (!empty($fecha_desde) && !empty($fecha_hasta)){

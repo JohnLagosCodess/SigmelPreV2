@@ -1769,19 +1769,51 @@ class CalificacionPCLController extends Controller
             ])->get();
             
             if(count($verficar_documento) == 0){
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $Id_Asignacion,
-                    'Id_proceso' => $Id_proceso,
-                    'Id_servicio' => $Id_servicio,
-                    'ID_evento' => $ID_evento,
-                    'Nombre_documento' => $nombre_pdf,
-                    'N_radicado_documento' => $N_radicado,
-                    'F_elaboracion_correspondencia' => $F_comunicado,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
-                
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                // Se valida si antes de insertar la info del doc de origen ya hay un documento de tipo otro
+                $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado}.pdf";
+                $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->where([
+                    ['Nombre_documento', $nombre_docu_otro],
+                ])->get();
+
+                // Si no existe info del documento de tipo otro, inserta la info del documento de origen
+                // De lo contrario hace una actualización de la info
+                if (count($verificar_docu_otro) == 0) {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                }else{
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_Asignacion', $Id_Asignacion],
+                        ['N_radicado_documento', $N_radicado],
+                        ['ID_evento', $ID_evento]
+                    ])
+                    ->update($info_descarga_documento);
+                }
             }
 
             return $pdf->download($nombre_pdf);
@@ -2016,19 +2048,57 @@ class CalificacionPCLController extends Controller
             ])->get();
             
             if(count($verficar_documento) == 0){
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $Id_Asignacion,
-                    'Id_proceso' => $Id_proceso,
-                    'Id_servicio' => $Id_servicio,
-                    'ID_evento' => $ID_evento,
-                    'Nombre_documento' => $nombre_pdf,
-                    'N_radicado_documento' => $N_radicado,
-                    'F_elaboracion_correspondencia' => $F_comunicado,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
-                
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+
+                // Se valida si antes de insertar la info del doc de Documento_Revision_pension ya hay un documento de tipo otro
+                // Formato B, Revision Pensión
+                $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado}.pdf";
+                $nombre_docu_formatoB = "PCL_OFICIO_FB_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                $nombre_docu_solicitud_revision = "PCL_OFICIO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                $nombre_docu_no_recalificacion = "PCL_OFICIO_RE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+
+                $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->whereIN('Nombre_documento', [$nombre_docu_otro, $nombre_docu_formatoB, 
+                    $nombre_docu_solicitud_revision, $nombre_docu_no_recalificacion]
+                )->get();
+
+                // Si no existe info del documento de solicitud pcl, tipo otro, Formato B, Revision Pensión
+                // inserta la info del documento de Documento_Revision_pension, De lo contrario hace una actualización de la info
+                if (count($verificar_docu_otro) == 0) {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                }else{
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_Asignacion', $Id_Asignacion],
+                        ['N_radicado_documento', $N_radicado],
+                        ['ID_evento', $ID_evento]
+                    ])
+                    ->update($info_descarga_documento);
+                }
             }
 
             return $pdf->download($nombre_pdf);
@@ -2239,7 +2309,7 @@ class CalificacionPCLController extends Controller
             // Creación y guardado del pdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_formato_b_revisionPension', $data);
-            $nombre_pdf = "PCL_OFICIO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+            $nombre_pdf = "PCL_OFICIO_FB_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
             $output = $pdf->output();
             file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
 
@@ -2263,19 +2333,55 @@ class CalificacionPCLController extends Controller
             ])->get();
             
             if(count($verficar_documento) == 0){
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $Id_Asignacion,
-                    'Id_proceso' => $Id_proceso,
-                    'Id_servicio' => $Id_servicio,
-                    'ID_evento' => $ID_evento,
-                    'Nombre_documento' => $nombre_pdf,
-                    'N_radicado_documento' => $N_radicado,
-                    'F_elaboracion_correspondencia' => $F_comunicado,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
-                
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+
+                // Se valida si antes de insertar la info del doc de Formato_B_Revision_pension ya hay un documento de solicitud pcl
+                // tipo otro y/o Formato B
+                $nombre_docu_solicitud_pcl = "PCL_SOL_DOC_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado}.pdf";
+                $nombre_docu_solicitud_revision = "PCL_OFICIO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+
+                $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->whereIN('Nombre_documento', [$nombre_docu_solicitud_pcl, $nombre_docu_otro, $nombre_docu_solicitud_revision]
+                )->get();
+
+                // Si no existe info del documento de solicitud pcl, tipo otro, Formato B 
+                // inserta la info del documento de Formato_B_Revision_pension, De lo contrario hace una actualización de la info
+                if (count($verificar_docu_otro) == 0) {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                }else{
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_Asignacion', $Id_Asignacion],
+                        ['N_radicado_documento', $N_radicado],
+                        ['ID_evento', $ID_evento]
+                    ])
+                    ->update($info_descarga_documento);
+                }
             }
 
             return $pdf->download($nombre_pdf);
@@ -2486,7 +2592,7 @@ class CalificacionPCLController extends Controller
             // Creación y guardado del pdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/solicitud_documentos_revpen', $data);
-            $nombre_pdf = "PCL_OFICIO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+            $nombre_pdf = "PCL_OFICIO_RE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
             $output = $pdf->output();
             file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
 
@@ -2510,19 +2616,55 @@ class CalificacionPCLController extends Controller
             ])->get();
             
             if(count($verficar_documento) == 0){
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $Id_Asignacion,
-                    'Id_proceso' => $Id_proceso,
-                    'Id_servicio' => $Id_servicio,
-                    'ID_evento' => $ID_evento,
-                    'Nombre_documento' => $nombre_pdf,
-                    'N_radicado_documento' => $N_radicado,
-                    'F_elaboracion_correspondencia' => $F_comunicado,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
-                
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+
+                // Se valida si antes de insertar la info del doc de Documento_Revision_pension ya hay un documento de solicitud pcl
+                // tipo otro  y/o Formato B
+                $nombre_docu_solicitud_pcl = "PCL_SOL_DOC_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado}.pdf";
+                $nombre_docu_formatoB = "PCL_OFICIO_FB_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+
+                $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->whereIN('Nombre_documento', [$nombre_docu_solicitud_pcl, $nombre_docu_otro, $nombre_docu_formatoB]
+                )->get();
+
+                // Si no existe info del documento de solicitud pcl, tipo otro,, Formato B 
+                // inserta la info del documento de Documento_Revision_pension, De lo contrario hace una actualización de la info
+                if (count($verificar_docu_otro) == 0) {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                }else{
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_Asignacion', $Id_Asignacion],
+                        ['N_radicado_documento', $N_radicado],
+                        ['ID_evento', $ID_evento]
+                    ])
+                    ->update($info_descarga_documento);
+                }
             }
 
             return $pdf->download($nombre_pdf);
@@ -2789,7 +2931,7 @@ class CalificacionPCLController extends Controller
             // Creación y guardado del pdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_no_recalificacion', $data);
-            $nombre_pdf = "PCL_OFICIO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+            $nombre_pdf = "PCL_OFICIO_RE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
             $output = $pdf->output();
             file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
 
@@ -2813,19 +2955,55 @@ class CalificacionPCLController extends Controller
             ])->get();
             
             if(count($verficar_documento) == 0){
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $Id_Asignacion,
-                    'Id_proceso' => $Id_proceso,
-                    'Id_servicio' => $Id_servicio,
-                    'ID_evento' => $ID_evento,
-                    'Nombre_documento' => $nombre_pdf,
-                    'N_radicado_documento' => $N_radicado,
-                    'F_elaboracion_correspondencia' => $F_comunicado,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
-                
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+
+
+                // Se valida si antes de insertar la info del doc de Documento_Revision_pension ya hay un documento de solicitud pcl
+                // tipo otro
+                $nombre_docu_solicitud_pcl = "PCL_SOL_DOC_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado}.pdf";
+
+                $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->whereIN('Nombre_documento', [$nombre_docu_solicitud_pcl, $nombre_docu_otro]
+                )->get();
+
+                // Si no existe info del documento de solicitud pcl, tipo otro,
+                // inserta la info del documento de Documento_Revision_pension, De lo contrario hace una actualización de la info
+                if (count($verificar_docu_otro) == 0) {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                } else {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_Asignacion', $Id_Asignacion],
+                        ['N_radicado_documento', $N_radicado],
+                        ['ID_evento', $ID_evento]
+                    ])
+                    ->update($info_descarga_documento);
+                }
             }
 
             return $pdf->download($nombre_pdf);
@@ -3032,7 +3210,11 @@ class CalificacionPCLController extends Controller
             $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
             ->select('Nombre_documento')
             ->where([
-                ['Nombre_documento', $fileName],
+                ['Id_Asignacion', $Id_Asignacion],
+                ['Id_proceso', $Id_proceso],
+                ['Id_servicio', $Id_servicio],
+                ['ID_evento', $ID_evento],
+                ['N_radicado_documento', $N_radicado]
             ])->get();
             
             if(count($verficar_documento) == 0){
@@ -3049,6 +3231,26 @@ class CalificacionPCLController extends Controller
                 ];
                 
                 sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }else{
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $Id_Asignacion,
+                    'Id_proceso' => $Id_proceso,
+                    'Id_servicio' => $Id_servicio,
+                    'ID_evento' => $ID_evento,
+                    'Nombre_documento' => $fileName,
+                    'N_radicado_documento' => $N_radicado,
+                    'F_elaboracion_correspondencia' => $F_comunicado,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->where([
+                    ['Id_Asignacion', $Id_Asignacion],
+                    ['N_radicado_documento', $N_radicado],
+                    ['ID_evento', $ID_evento]
+                ])
+                ->update($info_descarga_documento);
             }
 
             return $pdf->download($fileName);      
