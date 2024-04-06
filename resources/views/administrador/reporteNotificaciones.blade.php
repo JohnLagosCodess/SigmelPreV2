@@ -26,14 +26,14 @@
                                 <div class="row">
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label for="" class="col-form-label">Fecha Desde</label>
-                                            <input type="date" class="form-control" name="fecha_desde" id="fecha_desde" max="{{ date('Y-m-d') }}">
+                                            <label for="" class="col-form-label">Fecha Desde <span style="color: red;">(*)</span></label>
+                                            <input type="date" class="form-control" name="fecha_desde" id="fecha_desde" max="{{ date('Y-m-d') }}" required>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label for="" class="col-form-label">Fecha Hasta</label>
-                                            <input type="date" class="form-control" name="fecha_hasta" id="fecha_hasta" max="{{ date('Y-m-d') }}">
+                                            <label for="" class="col-form-label">Fecha Hasta <span style="color: red;">(*)</span></label>
+                                            <input type="date" class="form-control" name="fecha_hasta" id="fecha_hasta" max="{{ date('Y-m-d') }}" required>
                                         </div>
                                     </div>
                                     <div class="col-4">
