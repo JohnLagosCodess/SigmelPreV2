@@ -626,13 +626,13 @@ $(document).ready(function(){
             }
             if(opt_sumaTotal_pcl_jrci_emitido=='isNaN'){
                 rango_pcl_jrci_emitido = '0';
-            }else if(opt_sumaTotal_pcl_jrci_emitido < 15){
+            }else if(opt_sumaTotal_pcl_jrci_emitido < "14,99"){
                 rango_pcl_jrci_emitido = 'Entre 1 y 14,99%';
-            } else if (opt_sumaTotal_pcl_jrci_emitido >= 15 && opt_sumaTotal_pcl_jrci_emitido < 30){
+            } else if (opt_sumaTotal_pcl_jrci_emitido >= "14,99" && opt_sumaTotal_pcl_jrci_emitido < "29,99"){
                 rango_pcl_jrci_emitido = 'Entre 15 y 29,99%';
-            } else if (opt_sumaTotal_pcl_jrci_emitido >= 30 && opt_sumaTotal_pcl_jrci_emitido < 50){
+            } else if (opt_sumaTotal_pcl_jrci_emitido >= "29,99" && opt_sumaTotal_pcl_jrci_emitido < "49,99"){
                 rango_pcl_jrci_emitido = 'Entre 30 y 49,99%';
-            } else if (opt_sumaTotal_pcl_jrci_emitido >= 50){
+            } else if (opt_sumaTotal_pcl_jrci_emitido >= "49,99"){
                 rango_pcl_jrci_emitido = 'Mayor o igual 50%';
             }else{
                 rango_pcl_jrci_emitido = '0';

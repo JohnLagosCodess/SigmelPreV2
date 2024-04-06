@@ -207,7 +207,7 @@ class BandejaOrigenController extends Controller
                     ['Nombre_proceso_actual', '=', 'Origen'],
                     ['Id_profesional', '=', $newId_user]
                 ])
-                ->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
+                //->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
                 ->get();
             }else{
                 $bandejaOrigen = cndatos_bandeja_eventos::on('sigmel_gestiones')

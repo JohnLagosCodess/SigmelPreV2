@@ -3347,18 +3347,21 @@ $(document).ready(function(){
             "caso, podrás iniciar tu solicitud pensional a través de a página web www.porvenir.com.co o llamando a la línea de atención al cliente "+
             "de Porvenir 018000510800, con el fin de solicitar una cita para la radicación de la documentación.</p>"+
             "<p>En caso de que no te encuentres de acuerdo con la calificación emitida por Seguros de Vida Alfa S.A., cuentas con diez (10) días "+
-            "hábiles siguientes a partir de la fecha de recibida la notificación para manifestar tu inconformidad frente a resultado. Esta "
-            "manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de "+
-            "los siguientes aspectos te encuentras en desacuerdo: </p>"+
-            "<p>- Pérdida de capacidad laboral</p>"+
-            "<p>- Origen</p>"+
-            "<p>- Fecha de estructuración</p>"+
-            "<p>La carta debe ser remitida por medio de correo certificado a la dirección Carrera 10 # 18-36, piso 4 edificio José María Córdoba en "+
-            "Bogotá o a inconformidad@segurosalfa.com.co. Ten presente que el comunicado debe venir firmado por ti, relacionando los datos de "+
-            "localizaci ón. Posterior a la revisión de tu carta, procederemos a remitir tu expediente a la respectiva Junta Regional de "+
-            "Calificación de Invalidez para obtener una segunda calificación.</p>"+
-            "<p>Una vez realizada la solicitud, a más tardar en (15) quince días hábiles recibirás por parte de Seguros de Vida Alfa S.A. una "+
-            "comunicación donde te informaremos el estado del proceso.</p>";
+            "hábiles siguientes a partir de la fecha de recibida la notificación para manifestar tu inconformidad frente a resultado. Esta manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de los siguientes aspectos te encuentras en desacuerdo: <br><br>- Pérdida de capacidad laboral <br> - Origen <br>  - Fecha de estructuración <br><br> La carta debe ser remitida por medio de correo certificado a la dirección Carrera 10 # 18-36, piso 4 edificio José María Córdoba en "+
+            "Bogotá o a inconformidad@segurosalfa.com.co. <br><br> Ten presente que el comunicado debe venir firmado por ti, relacionando los datos de <br> localizaci ón. Posterior a la revisión de tu carta, procederemos a remitir tu expediente a la respectiva Junta Regional de Calificación de Invalidez para obtener una segunda calificación. <br><br> Una vez realizada la solicitud, a más tardar en (15) quince días hábiles recibirás por parte de Seguros de Vida Alfa S.A. una comunicación donde te informaremos el estado del proceso. "
+            //"manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de"+
+            //"los siguientes aspectos te encuentras en desacuerdo: </p>"+
+            //"<p>- Pérdida de capacidad laboral</p>"+
+            //"<p>- Origen</p>"+
+            //"<p>- Fecha de estructuración</p>"+
+            //"<p>La carta debe ser remitida por medio de correo certificado a la dirección Carrera 10 # 18-36, piso 4 edificio José María Córdoba en "+
+            //"Bogotá o a inconformidad@segurosalfa.com.co. Ten presente que el comunicado debe venir firmado por ti, relacionando los datos de "+
+            //"localizaci ón. Posterior a la revisión de tu carta, procederemos a remitir tu expediente a la respectiva Junta Regional de "+
+            //"Calificación de Invalidez para obtener una segunda calificación.</p>"+
+            //"<p>Una vez realizada la solicitud, a más tardar en (15) quince días hábiles recibirás por parte de Seguros de Vida Alfa S.A. una "+
+            //"comunicación donde te informaremos el estado del proceso.</p>"
+            ;
+            //console.log(texto_insertar);
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
         }else{
             $("#Asunto").val("");
