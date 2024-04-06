@@ -46,7 +46,7 @@ class ControversiaJuntasController extends Controller
         'j.N_radicado_entrada_contro','j.Contro_origen','j.Contro_pcl','j.Contro_diagnostico','j.Contro_f_estructura','j.Contro_m_califi',
         'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','sie.Nombre_entidad as JrciNombre',
         'j.Origen_controversia','pa4.Nombre_parametro as OrigenContro','j.Manual_de_califi','d.Nombre_decreto','j.Total_deficiencia','j.Total_rol_ocupacional','j.Total_discapacidad',
-        'j.Total_minusvalia','j.Porcentaje_pcl','j.Rango_pcl','j.F_estructuracion_contro','j.N_pago_jnci_contro','j.F_pago_jnci_contro','j.F_radica_pago_jnci_contro','j.N_dictamen_jrci_emitido'
+        'j.Total_minusvalia','j.Porcentaje_pcl','j.Rango_pcl','j.F_estructuracion_contro','j.N_pago_jnci_contro','j.F_pago_jnci_contro','j.F_radica_pago_jnci_contro','j.F_envio_jrci','j.N_dictamen_jrci_emitido'
         ,'j.F_dictamen_jrci_emitido','j.Origen_jrci_emitido','pa5.Nombre_parametro as OrigenEmitidoJrci','j.Manual_de_califi_jrci_emitido','d1.Nombre_decreto as Nombre_decretoJrci','j.Total_deficiencia_jrci_emitido',
         'j.Total_rol_ocupacional_jrci_emitido','j.Total_discapacidad_jrci_emitido','j.Total_minusvalia_jrci_emitido','j.Porcentaje_pcl_jrci_emitido','j.Rango_pcl_jrci_emitido',
         'j.F_estructuracion_contro_jrci_emitido','j.Resumen_dictamen_jrci','j.F_noti_dictamen_jrci','j.F_radica_dictamen_jrci','j.F_maxima_recurso_jrci','j.Decision_dictamen_jrci',
@@ -61,7 +61,7 @@ class ControversiaJuntasController extends Controller
         ,'j.F_acta_ejecutoria_emitida_jrci','j.F_firmeza_dictamen_jrci','j.Dictamen_firme_jrci','j.N_dictamen_jnci_emitido','j.F_dictamen_jnci_emitido','j.Origen_jnci_emitido','pa10.Nombre_parametro as NombreOrigen'
         ,'j.Manual_de_califi_jnci_emitido','pa11.Nombre_parametro as Nombre_decretoJnci','j.Total_deficiencia_jnci_emitido','j.Total_rol_ocupacional_jnci_emitido','j.Total_discapacidad_jnci_emitido'
         ,'j.Total_minusvalia_jnci_emitido','j.Porcentaje_pcl_jnci_emitido','j.Rango_pcl_jnci_emitido','j.F_estructuracion_contro_jnci_emitido','j.Resumen_dictamen_jnci','j.Sustentacion_dictamen_jnci'
-        ,'j.F_sustenta_ante_jnci','j.F_noti_ante_jnci','j.F_radica_dictamen_jnci')
+        ,'j.F_sustenta_ante_jnci','j.F_noti_ante_jnci','j.F_radica_dictamen_jnci','j.F_envio_jnci')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa', 'j.Primer_calificador', '=', 'pa.Id_Parametro','j.')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa2', 'j.Parte_controvierte_califi', '=', 'pa2.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'j.Jrci_califi_invalidez', '=', 'sie.Id_Entidad')
@@ -497,6 +497,7 @@ class ControversiaJuntasController extends Controller
                 'N_pago_jnci_contro' => $request->n_pago_jnci_contro,
                 'F_pago_jnci_contro' => $request->f_pago_jnci_contro,
                 'F_radica_pago_jnci_contro' => $request->f_radica_pago_jnci_contro,
+                'F_envio_jrci' => $request->f_envio_jrci,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -526,6 +527,7 @@ class ControversiaJuntasController extends Controller
                 'N_pago_jnci_contro' => $request->n_pago_jnci_contro,
                 'F_pago_jnci_contro' => $request->f_pago_jnci_contro,
                 'F_radica_pago_jnci_contro' => $request->f_radica_pago_jnci_contro,
+                'F_envio_jrci' => $request->f_envio_jrci,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -1339,7 +1341,8 @@ class ControversiaJuntasController extends Controller
                 'F_estructuracion_contro_jnci_emitido' => $request->f_estructuracion_contro_jnci_emitido,
                 'Resumen_dictamen_jnci' => $request->resumen_dictamen_jnci,
                 'Sustentacion_dictamen_jnci' => $request->sustentacion_dictamen_jnci,
-                'F_radica_dictamen_jnci' => $request->f_radica_dictamen_jnci,  
+                'F_radica_dictamen_jnci' => $request->f_radica_dictamen_jnci,
+                'F_envio_jnci' => $request->f_envio_jnci,
                 'F_noti_ante_jnci' => $request->f_noti_ante_jnci,  
                 'F_sustenta_ante_jnci' => $request->f_sustenta_ante_jnci,
                 'Nombre_usuario' => $nombre_usuario,
@@ -1373,6 +1376,7 @@ class ControversiaJuntasController extends Controller
                 'Resumen_dictamen_jnci' => $request->resumen_dictamen_jnci,
                 'Sustentacion_dictamen_jnci' => $request->sustentacion_dictamen_jnci,
                 'F_radica_dictamen_jnci' => $request->f_radica_dictamen_jnci,  
+                'F_envio_jnci' => $request->f_envio_jnci,
                 'F_noti_ante_jnci' => $request->f_noti_ante_jnci,  
                 'F_sustenta_ante_jnci' => $request->f_sustenta_ante_jnci,
                 'Nombre_usuario' => $nombre_usuario,
@@ -1718,7 +1722,7 @@ class ControversiaJuntasController extends Controller
             'j.N_radicado_entrada_contro','j.Contro_origen','j.Contro_pcl','j.Contro_diagnostico','j.Contro_f_estructura','j.Contro_m_califi',
             'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','sie.Nombre_entidad as JrciNombre',
             'j.Origen_controversia','pa4.Nombre_parametro as OrigenContro','j.Manual_de_califi','d.Nombre_decreto','j.Total_deficiencia','j.Total_rol_ocupacional','j.Total_discapacidad',
-            'j.Total_minusvalia','j.Porcentaje_pcl','j.Rango_pcl','j.F_estructuracion_contro','j.N_pago_jnci_contro','j.F_pago_jnci_contro','j.F_radica_pago_jnci_contro','j.N_dictamen_jrci_emitido'
+            'j.Total_minusvalia','j.Porcentaje_pcl','j.Rango_pcl','j.F_estructuracion_contro','j.N_pago_jnci_contro','j.F_pago_jnci_contro','j.F_radica_pago_jnci_contro','j.F_envio_jrci','j.N_dictamen_jrci_emitido'
             ,'j.F_dictamen_jrci_emitido','j.Origen_jrci_emitido','pa5.Nombre_parametro as OrigenEmitidoJrci','j.Manual_de_califi_jrci_emitido','d1.Nombre_decreto as Nombre_decretoJrci','j.Total_deficiencia_jrci_emitido',
             'j.Total_rol_ocupacional_jrci_emitido','j.Total_discapacidad_jrci_emitido','j.Total_minusvalia_jrci_emitido','j.Porcentaje_pcl_jrci_emitido','j.Rango_pcl_jrci_emitido',
             'j.F_estructuracion_contro_jrci_emitido','j.Resumen_dictamen_jrci','j.F_noti_dictamen_jrci','j.F_radica_dictamen_jrci','j.F_maxima_recurso_jrci','j.Decision_dictamen_jrci',
@@ -1733,7 +1737,7 @@ class ControversiaJuntasController extends Controller
             ,'j.F_acta_ejecutoria_emitida_jrci','j.F_firmeza_dictamen_jrci','j.Dictamen_firme_jrci','j.N_dictamen_jnci_emitido','j.F_dictamen_jnci_emitido','j.Origen_jnci_emitido','pa10.Nombre_parametro as NombreOrigen'
             ,'j.Manual_de_califi_jnci_emitido','pa11.Nombre_parametro as Nombre_decretoJnci','j.Total_deficiencia_jnci_emitido','j.Total_rol_ocupacional_jnci_emitido','j.Total_discapacidad_jnci_emitido'
             ,'j.Total_minusvalia_jnci_emitido','j.Porcentaje_pcl_jnci_emitido','j.Rango_pcl_jnci_emitido','j.F_estructuracion_contro_jnci_emitido','j.Resumen_dictamen_jnci','j.Sustentacion_dictamen_jnci'
-            ,'j.F_sustenta_ante_jnci','j.F_noti_ante_jnci','j.F_radica_dictamen_jnci')
+            ,'j.F_sustenta_ante_jnci','j.F_noti_ante_jnci','j.F_radica_dictamen_jnci','j.F_envio_jnci')
             ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa', 'j.Primer_calificador', '=', 'pa.Id_Parametro','j.')
             ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa2', 'j.Parte_controvierte_califi', '=', 'pa2.Id_Parametro')
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'j.Jrci_califi_invalidez', '=', 'sie.Id_Entidad')

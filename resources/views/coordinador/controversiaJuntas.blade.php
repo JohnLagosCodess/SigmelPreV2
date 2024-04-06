@@ -326,6 +326,13 @@
                                                 <input type="date" class="form-control" name="f_radica_pago_jnci_contro" id="f_radica_pago_jnci_contro" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_radica_pago_jnci_contro)) { echo $arrayinfo_controvertido[0]->F_radica_pago_jnci_contro;} ?>">
                                             </div>
                                         </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <br>
+                                                <label for="f_envio_jrci">Fecha de envío a (JRCI)</label>
+                                                <input type="date" class="form-control" name="f_envio_jrci" id="f_envio_jrci" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_envio_jrci)) { echo $arrayinfo_controvertido[0]->F_envio_jrci;} ?>">
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-6">
@@ -1350,6 +1357,13 @@
                                                 <br>
                                                 <label for="f_radica_dictamen_jnci">Fecha de Radicado entrada Dictamen (JNCI)</label>
                                                 <input type="date" class="form-control" name="f_radica_dictamen_jnci" id="f_radica_dictamen_jnci" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_radica_dictamen_jnci)) { echo $arrayinfo_controvertido[0]->F_radica_dictamen_jnci;} ?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <br>
+                                                <label for="f_envio_jnci">Fecha envió (JNCI)</label>
+                                                <input type="date" class="form-control" name="f_envio_jnci" id="f_envio_jnci" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_envio_jnci)) { echo $arrayinfo_controvertido[0]->F_envio_jnci;} ?>">
                                             </div>
                                         </div>
                                     </div>

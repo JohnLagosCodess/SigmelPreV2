@@ -1438,6 +1438,7 @@ $(document).ready(function(){
             'n_pago_jnci_contro': $('#n_pago_jnci_contro').val(),
             'f_pago_jnci_contro': $('#f_pago_jnci_contro').val(),
             'f_radica_pago_jnci_contro': $('#f_radica_pago_jnci_contro').val(),
+            'f_envio_jrci': $('#f_envio_jrci').val(),
             'Motivo_calificacion_controvertido': datos_finales_motivo_calificacion,
         }
         document.querySelector("#guardar_datos_controvertido_j").disabled = true;
@@ -2229,6 +2230,7 @@ $(document).ready(function(){
             'f_sustenta_ante_jnci': $('#f_sustenta_ante_jnci').val(),
             'f_noti_ante_jnci': $('#f_noti_ante_jnci').val(),
             'f_radica_dictamen_jnci': $('#f_radica_dictamen_jnci').val(),
+            'f_envio_jnci': $('#f_envio_jnci').val(),
             'Motivo_calificacion_emitido': datos_finales_motivo_calificacion,
         }
         document.querySelector("#guardar_datos_emitido_jnci").disabled = true;
