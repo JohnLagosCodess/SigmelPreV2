@@ -1096,7 +1096,7 @@
             <tr>
                 <td colspan="9" class="titulo_labels">Sustentación de la Fecha de estructuración:</td>
                 <td colspan="3" class="titulo_labels">FECHA ACCIDENTE / ENFERMEDAD</td>
-                <td colspan="5" class="dato_dinamico"> {{$F_evento_dpF}}</td>
+                <td colspan="5" class="dato_dinamico"> <?php if($F_evento_dpF<>'31-12-1969'){ echo $F_evento_dpF;}?></td>
             </tr>
             <tr>
                 <td colspan="9" class="dato_dinamico">{{$Sustentacion_F_estructuracion_dp}}</td>
@@ -1107,7 +1107,7 @@
                 <td colspan="17" class="centrar_dato_labels"><b>Detalle de la calificación</b></td>
             </tr>
             <tr>
-                <td colspan="17" class="dato_dinamico">{{$Detalle_calificacion_dp}}</td>
+                <td colspan="17" class="dato_dinamico"><?php echo nl2br($Detalle_calificacion_dp); ?></td>
             </tr>
             <tr>
                 <td colspan="4" class="left_titulo_labels">Alto costo / Catastrófica:</td>
