@@ -7997,19 +7997,53 @@ class CalificacionPCLController extends Controller
             ])->get();
             
             if(count($verficar_documento) == 0){
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $Id_Asignacion_comuni_comite,
-                    'Id_proceso' => $Id_Proceso_comuni_comite,
-                    'Id_servicio' => $Id_servicio,
-                    'ID_evento' => $ID_Evento_comuni_comite,
-                    'Nombre_documento' => $nombre_pdf,
-                    'N_radicado_documento' => $Radicado_comuni_comite,
-                    'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
+                // Se valida si antes de insertar la info del doc de origen ya hay un documento de tipo otro
+                $nombre_docu_pcl_ica = "PCL_OFICIO_INC_{$Id_Asignacion_comuni_comite}_{$NroIden_afiliado_noti}.pdf";
+                $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->where([
+                    ['Nombre_documento', $nombre_docu_pcl_ica],
+                ])->get();
+
+                // Si no existe info del documento de Oficio pcl incapacidad, inserta la info del documento de Oficio pcl
+                // De lo contrario hace una actualización de la info
+                if (count($verificar_docu_otro) == 0) {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                        'Id_proceso' => $Id_Proceso_comuni_comite,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_Evento_comuni_comite,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $Radicado_comuni_comite,
+                        'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);                    
+                } else {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                        'Id_proceso' => $Id_Proceso_comuni_comite,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_Evento_comuni_comite,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $Radicado_comuni_comite,
+                        'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_Asignacion', $Id_Asignacion_comuni_comite],
+                        ['N_radicado_documento', $Radicado_comuni_comite],
+                        ['ID_evento', $ID_Evento_comuni_comite]
+                    ])
+                    ->update($info_descarga_documento);                   
+                    
+                }
                 
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
             }
 
             return $pdf->download($nombre_pdf);
@@ -8079,7 +8113,7 @@ class CalificacionPCLController extends Controller
             // Crear una instancia de Dompdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_remisorio_pcl_incapacidad', $data);            
-            $nombre_pdf = 'PCL_OFICIO_'.$Id_Asignacion_comuni_comite.'_'.$NroIden_afiliado_noti.'.pdf';    
+            $nombre_pdf = 'PCL_OFICIO_INC_'.$Id_Asignacion_comuni_comite.'_'.$NroIden_afiliado_noti.'.pdf';
             //Obtener el contenido del PDF
             $output = $pdf->output();
             //Guardar el PDF en un archivo
@@ -8115,19 +8149,53 @@ class CalificacionPCLController extends Controller
             ])->get();
             
             if(count($verficar_documento) == 0){
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $Id_Asignacion_comuni_comite,
-                    'Id_proceso' => $Id_Proceso_comuni_comite,
-                    'Id_servicio' => $Id_servicio,
-                    'ID_evento' => $ID_Evento_comuni_comite,
-                    'Nombre_documento' => $nombre_pdf,
-                    'N_radicado_documento' => $Radicado_comuni_comite,
-                    'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
+                // Se valida si antes de insertar la info del doc de origen ya hay un documento de tipo otro
+                $nombre_docu_pcl_ica = "PCL_OFICIO_{$Id_Asignacion_comuni_comite}_{$NroIden_afiliado_noti}.pdf";
+                $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->where([
+                    ['Nombre_documento', $nombre_docu_pcl_ica],
+                ])->get();
+
+                // Si no existe info del documento de Oficio pcl incapacidad, inserta la info del documento de Oficio pcl
+                // De lo contrario hace una actualización de la info
+                if (count($verificar_docu_otro) == 0) {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                        'Id_proceso' => $Id_Proceso_comuni_comite,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_Evento_comuni_comite,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $Radicado_comuni_comite,
+                        'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                    
+                } else {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                        'Id_proceso' => $Id_Proceso_comuni_comite,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_Evento_comuni_comite,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $Radicado_comuni_comite,
+                        'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_Asignacion', $Id_Asignacion_comuni_comite],
+                        ['N_radicado_documento', $Radicado_comuni_comite],
+                        ['ID_evento', $ID_Evento_comuni_comite]
+                    ])
+                    ->update($info_descarga_documento);
+                }
                 
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
             }
 
             return $pdf->download($nombre_pdf);
