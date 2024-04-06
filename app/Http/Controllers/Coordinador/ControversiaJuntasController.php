@@ -2015,6 +2015,7 @@ class ControversiaJuntasController extends Controller
 
     }
 
+    /* Proforma Desacuerdo */
     public function DescargarProformaRecursoReposicion(Request $request){
         $time = time();
         $date = date("Y-m-d", $time);
@@ -2622,24 +2623,59 @@ class ControversiaJuntasController extends Controller
         ])->get();
         
         if(count($verficar_documento) == 0){
-            $info_descarga_documento = [
-                'Id_Asignacion' => $id_asignacion,
-                'Id_proceso' => $id_proceso,
-                'Id_servicio' => $id_servicio,
-                'ID_evento' => $id_evento,
-                'Nombre_documento' => $nombre_docx,
-                'N_radicado_documento' => $nro_radicado,
-                'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                'F_descarga_documento' => $date,
-                'Nombre_usuario' => $nombre_usuario,
-            ];
-            
-            sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+
+            // Se valida si antes de insertar la info del doc de desacuerdo ya hay un doc de acuerdo
+            $nombre_docu_acuerdo = "JUN_ACUERDO_{$id_asignacion}_{$num_identificacion}_{$nro_radicado}.pdf";
+            $verificar_docu_acuerdo = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Nombre_documento', $nombre_docu_acuerdo],
+            ])->get();
+
+            // Si no existe info del documento de acuerdo, inserta la info del documento de desacuerdo
+            // De lo contrario hace una actualización de la info
+            if (count($verificar_docu_acuerdo) == 0) {
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $id_asignacion,
+                    'Id_proceso' => $id_proceso,
+                    'Id_servicio' => $id_servicio,
+                    'ID_evento' => $id_evento,
+                    'Nombre_documento' => $nombre_docx,
+                    'N_radicado_documento' => $nro_radicado,
+                    'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }else{
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $id_asignacion,
+                    'Id_proceso' => $id_proceso,
+                    'Id_servicio' => $id_servicio,
+                    'ID_evento' => $id_evento,
+                    'Nombre_documento' => $nombre_docx,
+                    'N_radicado_documento' => $nro_radicado,
+                    'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->where([
+                    ['Id_Asignacion', $id_asignacion],
+                    ['N_radicado_documento', $nro_radicado],
+                    ['ID_evento' => $id_evento],
+                ])
+                ->update($info_descarga_documento);
+            }
+
         }
 
         return response()->download(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
     }
 
+    /* Proforma Acuerdo */
     public function DescargarProformaPronunDictaAcuerdo(Request $request){
         $time = time();
         $date = date("Y-m-d", $time);
@@ -3117,19 +3153,52 @@ class ControversiaJuntasController extends Controller
         ])->get();
         
         if(count($verficar_documento) == 0){
-            $info_descarga_documento = [
-                'Id_Asignacion' => $id_asignacion,
-                'Id_proceso' => $id_proceso,
-                'Id_servicio' => $id_servicio,
-                'ID_evento' => $id_evento,
-                'Nombre_documento' => $nombre_pdf,
-                'N_radicado_documento' => $nro_radicado,
-                'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                'F_descarga_documento' => $date,
-                'Nombre_usuario' => $nombre_usuario,
-            ];
-            
-            sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+
+            // Se valida si antes de insertar la info del doc de acuerdo ya hay un doc de desacuerdo
+            $nombre_docu_desacuerdo = "JUN_DESACUERDO_{$id_asignacion}_{$num_identificacion}_{$nro_radicado}.docx";
+            $verificar_docu_desacuerdo = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Nombre_documento', $nombre_docu_desacuerdo],
+            ])->get();
+
+            // Si no existe info del documento de desacuerdo, inserta la info del documento de acuerdo
+            // De lo contrario hace una actualización de la info
+            if (count($verificar_docu_desacuerdo) == 0) {
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $id_asignacion,
+                    'Id_proceso' => $id_proceso,
+                    'Id_servicio' => $id_servicio,
+                    'ID_evento' => $id_evento,
+                    'Nombre_documento' => $nombre_pdf,
+                    'N_radicado_documento' => $nro_radicado,
+                    'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }else{
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $id_asignacion,
+                    'Id_proceso' => $id_proceso,
+                    'Id_servicio' => $id_servicio,
+                    'ID_evento' => $id_evento,
+                    'Nombre_documento' => $nombre_pdf,
+                    'N_radicado_documento' => $nro_radicado,
+                    'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->where([
+                    ['Id_Asignacion', $id_asignacion],
+                    ['N_radicado_documento', $nro_radicado],
+                    ['ID_evento', $id_evento]
+                ])
+                ->update($info_descarga_documento);
+            }
         }
 
         // return $dompdf->stream($nombre_pdf);

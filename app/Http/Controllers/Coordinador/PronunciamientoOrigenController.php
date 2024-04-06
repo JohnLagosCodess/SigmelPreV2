@@ -1572,10 +1572,6 @@ class PronunciamientoOrigenController extends Controller
                     ])
                     ->update($info_descarga_documento);
                 }
-
-
-
-
             }
 
             return response()->download(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));

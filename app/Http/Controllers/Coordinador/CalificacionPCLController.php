@@ -2053,8 +2053,8 @@ class CalificacionPCLController extends Controller
                 // Formato B, Revision Pensión
                 $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado}.pdf";
                 $nombre_docu_formatoB = "PCL_OFICIO_FB_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
-                $nombre_docu_solicitud_revision = "PCL_OFICIO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
-                $nombre_docu_no_recalificacion = "PCL_OFICIO_RE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                $nombre_docu_solicitud_revision = "PCL_OFICIO_REV_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                $nombre_docu_no_recalificacion = "PCL_OFICIO_REC_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
 
                 $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
                 ->select('Nombre_documento')
@@ -2338,7 +2338,7 @@ class CalificacionPCLController extends Controller
                 // tipo otro y/o Formato B
                 $nombre_docu_solicitud_pcl = "PCL_SOL_DOC_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
                 $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado}.pdf";
-                $nombre_docu_solicitud_revision = "PCL_OFICIO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                $nombre_docu_solicitud_revision = "PCL_OFICIO_REV_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
 
                 $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
                 ->select('Nombre_documento')
@@ -2592,7 +2592,7 @@ class CalificacionPCLController extends Controller
             // Creación y guardado del pdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/solicitud_documentos_revpen', $data);
-            $nombre_pdf = "PCL_OFICIO_RE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+            $nombre_pdf = "PCL_OFICIO_REV_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
             $output = $pdf->output();
             file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
 
@@ -2931,7 +2931,7 @@ class CalificacionPCLController extends Controller
             // Creación y guardado del pdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_no_recalificacion', $data);
-            $nombre_pdf = "PCL_OFICIO_RE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+            $nombre_pdf = "PCL_OFICIO_REC_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
             $output = $pdf->output();
             file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
 
@@ -3255,7 +3255,6 @@ class CalificacionPCLController extends Controller
 
             return $pdf->download($fileName);      
         }
-
     }
 
     public function historialAcciones(Request $request){
