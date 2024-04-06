@@ -2241,7 +2241,11 @@ class ControversiaJuntasController extends Controller
             ->where([['sile.Nro_identificacion', $num_identificacion],['sile.ID_evento', $id_evento]])
             ->get();
 
-            $nombre_empleador = $datos_empleador[0]->Empresa;
+            if (preg_match("/&/", $datos_empleador[0]->Empresa)) {
+                $nombre_empleador = htmlspecialchars(preg_replace('/&/', '&amp;', $datos_empleador[0]->Empresa));
+            } else {
+                $nombre_empleador = $datos_empleador[0]->Empresa;
+            }
             $direccion_empleador = $datos_empleador[0]->Direccion;
             $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
             $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;

@@ -344,6 +344,11 @@ $(document).ready(function () {
         Maximo2Decimales(inputId);
     });
 
+    $(document).on('keyup', "input[id^='porcentaje_pcl']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
     /* TODO LO CORRESPONDIENTE A LA PARAMETRIZACION */
     $(document).on('keyup', "input[id^='tiempo_alerta_origen_atel_']", function(){
         var inputId = this.id;
