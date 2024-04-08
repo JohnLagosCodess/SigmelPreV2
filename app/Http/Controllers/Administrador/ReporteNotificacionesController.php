@@ -59,18 +59,18 @@ class ReporteNotificacionesController extends Controller
         }
         elseif (empty($fecha_desde) && empty($fecha_hasta)) {
             
-            /* $reporte_notificaciones = cndatos_reporte_notificaciones_v5s::on('sigmel_gestiones')
+            $reporte_notificaciones = cndatos_reporte_notificaciones_v5s::on('sigmel_gestiones')
             ->select('Fecha_envio', 'No_identificacion', 'No_guia_asignado', 'Orden_impresion', 'Proceso', 'Servicio', 'Ultima_Accion',
             'Estado', 'No_OIP', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion', 'Telefono', 'Departamento', 'Ciudad',
             'Folios_entregados', 'Medio_Notificacion', 'Correo_electronico', 'Archivo_1', 'Archivo_2')
             ->get();
             $array_reporte_notificaciones = json_decode(json_encode($reporte_notificaciones, true));
-            return response()->json($array_reporte_notificaciones); */
-            $mensajes = array(
-                "parametro" => 'falta_un_parametro',
-                "mensaje" => 'Debe seleccionar las dos fechas para realizar la consulta.'
-            );
-            return json_decode(json_encode($mensajes, true));
+            return response()->json($array_reporte_notificaciones);
+            // $mensajes = array(
+            //     "parametro" => 'falta_un_parametro',
+            //     "mensaje" => 'Debe seleccionar las dos fechas para realizar la consulta.'
+            // );
+            // return json_decode(json_encode($mensajes, true));
         }
         else if (!empty($fecha_desde) && !empty($fecha_hasta)){
             $reporte_notificaciones = cndatos_reporte_notificaciones_v5s::on('sigmel_gestiones')
@@ -123,7 +123,7 @@ class ReporteNotificacionesController extends Controller
         }
         elseif (empty($fecha_desde) && empty($fecha_hasta)) {
 
-            /* // Extraemos los documentos de la columna Archivo 1
+            // Extraemos los documentos de la columna Archivo 1
             $documentos_archivo_1 = cndatos_reporte_notificaciones_v5s::on('sigmel_gestiones')
             ->select('ID_evento','Archivo_1')
             ->get();
@@ -175,12 +175,12 @@ class ReporteNotificacionesController extends Controller
             // Devolver la URL del archivo zip en la respuesta Ajax
             $urlArchivoComprimido = asset($nombreArchivoComprimido);
 
-            return response()->json(['url' => $urlArchivoComprimido, 'nom_archivo' => $nombreArchivoComprimido]); */
-            $mensajes = array(
-                "parametro" => 'error',
-                "mensaje" => 'Debe seleccionar las dos fechas para generar el zip.'
-            );
-            return json_decode(json_encode($mensajes, true));
+            return response()->json(['url' => $urlArchivoComprimido, 'nom_archivo' => $nombreArchivoComprimido]);
+            // $mensajes = array(
+            //     "parametro" => 'error',
+            //     "mensaje" => 'Debe seleccionar las dos fechas para generar el zip.'
+            // );
+            // return json_decode(json_encode($mensajes, true));
         }
         else if (!empty($fecha_desde) && !empty($fecha_hasta)){
             // Extraemos los documentos de la columna Archivo 1

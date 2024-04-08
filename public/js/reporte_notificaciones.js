@@ -86,6 +86,16 @@ $(document).ready(function () {
 
     /* Funcionalidad para descargar el archivo .zip */
     $('#btn_generar_zip_reporte_notificaciones').click(function () {
+
+        // Mostrando mensajes
+        $('.resultado_validacion').removeClass('d-none');
+        $('.resultado_validacion').addClass('alert-info');
+        var string_texto = '<span>Generando Archivo .zip. Por favor espere ... </span>';
+        $('#llenar_mensaje_validacion').append(string_texto);
+
+        // Deshabilitar el botón del zip para que no den clic muchas veces
+        $("#btn_generar_zip_reporte_notificaciones").prop('disabled', true);
+        
         /* Captura de variables del formulario */
         var fecha_desde = $('#fecha_desde').val();
         var fecha_hasta = $('#fecha_hasta').val();
@@ -115,6 +125,13 @@ $(document).ready(function () {
                 }else{
                     // Descarga del Archivo
                     window.location.href = data.url;
+                    // Eliminando mensajes
+                    $('.resultado_validacion').addClass('d-none');
+                    $('.resultado_validacion').removeClass('alert-info');
+                    $('#llenar_mensaje_validacion').append('');
+
+                    // habilitar el botón del zip nuevamente
+                    $("#btn_generar_zip_reporte_notificaciones").prop('disabled', false);
 
                     // Eliminar el archivo después de un tiempo de espera (por ejemplo, 10 segundos)
                     setTimeout(function() {
