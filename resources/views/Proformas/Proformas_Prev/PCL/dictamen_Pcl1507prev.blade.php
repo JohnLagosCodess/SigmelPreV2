@@ -577,19 +577,19 @@
                 </tr>
          
             @endif
-            <tr>
-                <td colspan="17" class="titulo_tablas">Deficiencia por Alteraciones del Sistema Auditivo</td>
-            </tr>      
-            <tr>
-                <td colspan="3" class="centrar_titulo_labels">Nombre de deficiencia</td>
-                <td colspan="1" class="centrar_titulo_labels">No. Tabla</td>
-                <td colspan="3" class="centrar_titulo_labels">Deficiencia Monoaural Izquierda</td>
-                <td colspan="3" class="centrar_titulo_labels">Deficiencia Monoaural Derecha</td>
-                <td colspan="3" class="centrar_titulo_labels">Deficiencia Binaural</td>
-                <td colspan="2" class="centrar_titulo_labels">Adicion por Tinnitus</td>
-                <td colspan="2" class="centrar_titulo_labels">Deficiencia</td>
-            </tr>            
             @if (count($array_deficiencia_auditiva) > 0)
+                <tr>
+                    <td colspan="17" class="titulo_tablas">Deficiencia por Alteraciones del Sistema Auditivo</td>
+                </tr>      
+                <tr>
+                    <td colspan="3" class="centrar_titulo_labels">Nombre de deficiencia</td>
+                    <td colspan="1" class="centrar_titulo_labels">No. Tabla</td>
+                    <td colspan="3" class="centrar_titulo_labels">Deficiencia Monoaural Izquierda</td>
+                    <td colspan="3" class="centrar_titulo_labels">Deficiencia Monoaural Derecha</td>
+                    <td colspan="3" class="centrar_titulo_labels">Deficiencia Binaural</td>
+                    <td colspan="2" class="centrar_titulo_labels">Adicion por Tinnitus</td>
+                    <td colspan="2" class="centrar_titulo_labels">Deficiencia</td>
+                </tr>            
                 <?php $cumple_condicion++; ?>
                 <?php $rowspan_total += count($array_deficiencia_auditiva); ?>
                 @foreach ($array_deficiencia_auditiva as $index => $deficiencias_auditiva)
@@ -603,39 +603,29 @@
                         <td colspan="2" class="centrar_dato_dinamico">{{ $deficiencias_auditiva->Adicion_tinnitus }}</td>
                         <td colspan="2" class="centrar_dato_dinamico">{{ $deficiencias_auditiva->Deficiencia }}</td>
                     </tr>                                        
-                @endforeach   
-            @else                
-                <tr>
-                    <td colspan="3" class="dato_dinamico"></td>
-                    <td colspan="1" class="centrar_dato_dinamico"></td>
-                    <td colspan="3" class="centrar_dato_dinamico"></td>
-                    <td colspan="3" class="centrar_dato_dinamico"></td>
-                    <td colspan="3" class="centrar_dato_dinamico"></td>
-                    <td colspan="2" class="centrar_dato_dinamico"></td>
-                    <td colspan="2" class="centrar_dato_dinamico"></td>
-                </tr> 
+                @endforeach               
             @endif  
-            <tr>
-                <td colspan="17" class="titulo_tablas">Deficiencias por Alteraciones del Sistema Visual</td>
-            </tr> 
-            <tr>
-                <td colspan="3" class="centrar_titulo_labels">Nombre de deficiencia</td>
-                <td colspan="1" class="centrar_titulo_labels">No. Tabla</td>
-                <td colspan="1" class="centrar_titulo_labels">AOI</td>
-                <td colspan="1" class="centrar_titulo_labels">AOD</td>
-                <td colspan="1" class="centrar_titulo_labels">AAO</td>
-                <td colspan="1" class="centrar_titulo_labels">PAVF</td>
-                <td colspan="1" class="centrar_titulo_labels">DAV</td>
-                <td colspan="1" class="centrar_titulo_labels">CVOI</td>
-                <td colspan="1" class="centrar_titulo_labels">CVOD</td>
-                <td colspan="1" class="centrar_titulo_labels">CVAO</td>
-                <td colspan="1" class="centrar_titulo_labels">CVF</td>
-                <td colspan="1" class="centrar_titulo_labels">DCV</td>
-                <td colspan="1" class="centrar_titulo_labels">DSV</td>
-                <td colspan="2" class="centrar_titulo_labels">Deficiencia</td>
-            </tr>
-            
             @if (count($array_deficiencia_visual) > 0)
+                <tr>
+                    <td colspan="17" class="titulo_tablas">Deficiencias por Alteraciones del Sistema Visual</td>
+                </tr> 
+                <tr>
+                    <td colspan="3" class="centrar_titulo_labels">Nombre de deficiencia</td>
+                    <td colspan="1" class="centrar_titulo_labels">No. Tabla</td>
+                    <td colspan="1" class="centrar_titulo_labels">AOI</td>
+                    <td colspan="1" class="centrar_titulo_labels">AOD</td>
+                    <td colspan="1" class="centrar_titulo_labels">AAO</td>
+                    <td colspan="1" class="centrar_titulo_labels">PAVF</td>
+                    <td colspan="1" class="centrar_titulo_labels">DAV</td>
+                    <td colspan="1" class="centrar_titulo_labels">CVOI</td>
+                    <td colspan="1" class="centrar_titulo_labels">CVOD</td>
+                    <td colspan="1" class="centrar_titulo_labels">CVAO</td>
+                    <td colspan="1" class="centrar_titulo_labels">CVF</td>
+                    <td colspan="1" class="centrar_titulo_labels">DCV</td>
+                    <td colspan="1" class="centrar_titulo_labels">DSV</td>
+                    <td colspan="2" class="centrar_titulo_labels">Deficiencia</td>
+                </tr>
+            
                 <?php $cumple_condicion++; ?>
                 <?php $rowspan_total += count($array_deficiencia_visual); ?>
                 @foreach ($array_deficiencia_visual as $index => $deficiencias_visual)
@@ -678,24 +668,7 @@
                         <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_visual->DSV_re }}</td>
                         <td colspan="2" class="centrar_dato_dinamico">{{ $deficiencias_visual->Deficiencia_re }}</td>
                     </tr>                   
-                @endforeach 
-            @else
-                <tr>
-                    <td colspan="3" class="dato_dinamico"></td>
-                    <td colspan="1" class="centrar_dato_dinamico"></td>
-                    <td colspan="1" class="centrar_dato_dinamico"></td>
-                    <td colspan="1" class="centrar_dato_dinamico"></td>
-                    <td colspan="1" class="centrar_dato_dinamico"></td>
-                    <td colspan="1" class="centrar_dato_dinamico"></td>
-                    <td colspan="1" class="centrar_dato_dinamico"></td>
-                    <td colspan="1" class="centrar_dato_dinamico"></td>
-                    <td colspan="1" class="centrar_dato_dinamico"></td>
-                    <td colspan="1" class="centrar_dato_dinamico"></td>
-                    <td colspan="1" class="centrar_dato_dinamico"></td>
-                    <td colspan="1" class="centrar_dato_dinamico"></td>
-                    <td colspan="1" class="centrar_dato_dinamico"></td>
-                    <td colspan="2" class="centrar_dato_dinamico"></td>
-                </tr> 
+                @endforeach             
             @endif                                           
             <tr>
                 <td colspan="6" class="explicacionFB sinborder"><b>CFP:</b> Clase Factor principal</td>
