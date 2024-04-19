@@ -1695,13 +1695,29 @@ $(document).ready(function(){
 
     /* CALCULAR EDAD ACORDE A LA FECHA DE NACIMIENTO */
     $('#fecha_nacimiento').change(function(){
-        var fecha_capturada = $(this).val();
-        var anio_extraido = fecha_capturada.substring(0,4);
-        var anio_actual = new Date().getFullYear();
-        
-        var edad_calculada = anio_actual - anio_extraido;
+        // Obtener la fecha de nacimiento desde el input
+        var fecha_nacimiento = new Date($(this).val());
 
-        if (edad_calculada > 0) {
+        // Obtener el año, mes y día de la fecha de nacimiento
+        var anio_nacimiento = fecha_nacimiento.getFullYear();
+        var mes_nacimiento = fecha_nacimiento.getMonth();
+        var dia_nacimiento = fecha_nacimiento.getDate();
+
+        // Obtener la fecha actual
+        var fecha_actual = new Date();
+        var anio_actual = fecha_actual.getFullYear();
+        var mes_actual = fecha_actual.getMonth();
+        var dia_actual = fecha_actual.getDate();
+
+        // Calcular la edad
+        var edad_calculada = anio_actual - anio_nacimiento;
+
+        // Verificar si el cumpleaños ya pasó este año
+        if (mes_actual < mes_nacimiento || (mes_actual === mes_nacimiento && dia_actual < dia_nacimiento)) {
+            edad_calculada--;
+        }
+
+        if (edad_calculada > 0 && !isNaN(edad_calculada)) {
             $('#edad').val(edad_calculada);
         }
     });
