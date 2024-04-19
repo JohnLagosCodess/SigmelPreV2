@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_deficiencias_alteraciones_eventos', function (Blueprint $table) {
             $table->increments('Id_Deficiencia');
-            $table->string('ID_evento', 10);
+            $table->string('ID_evento', 20);
             $table->integer('Id_Asignacion');
             $table->integer('Id_proceso');
             $table->integer('Id_tabla')->nullable();
@@ -27,8 +27,11 @@ return new class extends Migration
             $table->enum('MSD', ['Si','No', 'N/A'])->nullable();
             $table->text('Tabla1999')->nullable();
             $table->text('Titulo_tabla1999')->nullable();
+            $table->text('Dominancia')->nullable();
             $table->text('Deficiencia')->nullable();
+            $table->text('Total_deficiencia')->nullable();
             $table->enum('Estado', ['Activo','Inactivo'])->default('Activo')->nullable();
+            $table->enum('Estado_Recalificacion', ['Activo','Inactivo'])->default('Activo')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

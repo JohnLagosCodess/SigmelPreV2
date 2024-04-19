@@ -481,6 +481,12 @@ $(document).ready(function () {
         Maximo2Decimales(inputId);
     });
 
+    $(document).on("input", '[id^="resultado_Deficiencia_"]', function() {
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+    
+
     /* Input que permita registrar en formato contabilidad */
     $(".soloContabilidad").on({
         "focus": function(event) {
