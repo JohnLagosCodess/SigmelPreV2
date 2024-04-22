@@ -46,6 +46,7 @@ class sigmel_informacion_comite_interdisciplinario_eventos extends Model
         'Copia_eps',
         'Copia_afp',
         'Copia_arl',
+        'Copia_afp_conocimiento',
         'Copia_jr',
         'Cual_jr',
         'Copia_jn',

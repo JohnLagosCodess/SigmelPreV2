@@ -895,6 +895,7 @@ $(document).ready(function(){
         localStorage.removeItem("#guardar_datos_tabla");
         document.querySelector("#clicGuardado").click();
     }
+
     // Captura de datos segun la opcion seleccionada en destinatario principal
     // En la modal de generar comunicado
     $('input[type="radio"]').change(function(){
@@ -942,6 +943,14 @@ $(document).ready(function(){
                     ciudadafiliado.empty();
                     ciudadafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_municipio_afiliado+'">'+data.array_datos_destinatarios[0].Nombre_municipio_afiliado+'</option>')
                     document.querySelector("#ciudad_destinatario").disabled = true;
+
+                    // Seleccción de la forma de envío acorde a la selección del afiliado
+                    if (data.info_medio_noti[0].Medio_notificacion == "Físico") {
+                        $('#forma_envio').val('46').trigger('change.select2');
+                    }else{
+                        $('#forma_envio').val('47').trigger('change.select2');
+                    }
+
                     var nombre_usuario = $('#elaboro');
                     nombre_usuario.val(data.nombreusuario);
                     var nombre_usuario2 = $('#elaboro2');
@@ -953,6 +962,7 @@ $(document).ready(function(){
                     for (let i = 0; i < revisolider.length; i++) {
                         reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                     }
+                    $("#reviso").prop("selectedIndex", 1);
                 }else if(data.destinatarioPrincipal == 'Empresa'){      
                     //console.log(data.array_datos_destinatarios);
                     var Nombre_afiliado = $('#nombre_destinatario');
@@ -978,6 +988,14 @@ $(document).ready(function(){
                     ciudadafiliado.empty();
                     ciudadafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_municipio_empresa+'">'+data.array_datos_destinatarios[0].Nombre_municipio_empresa+'</option>')
                     document.querySelector("#ciudad_destinatario").disabled = true;
+
+                    // Seleccción de la forma de envío acorde a la selección del empleador
+                    if (data.info_medio_noti[0].Medio_notificacion == "Físico") {
+                        $('#forma_envio').val('46').trigger('change.select2');
+                    }else{
+                        $('#forma_envio').val('47').trigger('change.select2');
+                    }
+
                     var nombre_usuario = $('#elaboro');
                     nombre_usuario.val(data.nombreusuario);
                     var nombre_usuario2 = $('#elaboro2');
@@ -989,6 +1007,7 @@ $(document).ready(function(){
                     for (let i = 0; i < revisolider.length; i++) {
                         reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                     }
+                    $("#reviso").prop("selectedIndex", 1);
                 }else if(data.destinatarioPrincipal == 'Otro'){
                     //console.log(data.destinatarioPrincipal);
                     document.querySelector("#nombre_destinatario").disabled = false;
@@ -1058,6 +1077,7 @@ $(document).ready(function(){
                     for (let i = 0; i < revisolider.length; i++) {
                         reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                     }
+                    $("#reviso").prop("selectedIndex", 1);
                 }
 
             }        
@@ -1113,11 +1133,45 @@ $(document).ready(function(){
             $("#asunto").val("SOLICITUD DE PRUEBAS");
             var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.</p><p>Con el fin de establecer la determinación de origen del accidente reportado, está entidad solicita se anexen los siguientes documentos</p><p>{{$pruebas_solicitadas}}</p><p>Lo anterior con fundamento en lo establecido en la Decreto 1072 de 2015 art. 2.2.5.1.29, 2.2.5.1.28 (integración jurídica y análoga.)</p><p>El aporte documental deberá realizarse en un tiempo menor de 30 días hábiles siguientes al recibido de ésta comunicación escrita;&nbsp; La información solicitada es en cumplimiento de lo establecido en la Resolución 1401 de 2007 por la cual se reglamenta la investigación de incidentes y accidentes de trabajo. Lo anterior con fundamento en lo establecido en el Dec.2463 de 2001, parágrafo 1, Res.0156 de 2005 art.3, y Dec.1295 de 1994, art.12: “Toda enfermedad o patología, accidente o muerte, que no hayan sido clasificados o calificados como de origen profesional, se consideran de origen Común”.</p><p>La omisión del aporte documental y de requisitos mínimos para la calificación tendría como consecuencia la generación de concepto desfavorable o de origen común refiriendo el fundamento de dicha decisión.</p>";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
+            
+            // Auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado').click();
+
+            // Habilitación etiqueta
+            $("#btn_insertar_pruebas").prop('disabled', false);
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática de las copias a partes interesadas: Eps
+            $("#copia_eps").prop('checked', true);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado").prop('checked', true);
+
         }else{
+
+            // Quitar auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado').prop('checked', false);
+
             $("#insertar_mensaje_importante").addClass('d-none');
             $("#btn_insertar_pruebas").prop('disabled', true);
             $("#asunto").val("");
             $('#cuerpo_comunicado').summernote('code', '');
+
+            // Deshabilitación etiqueta
+            $("#btn_insertar_pruebas").prop('disabled', true);
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Eps
+            $("#copia_eps").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado").prop('checked', false);
         }
     });
 
@@ -1644,6 +1698,7 @@ $(document).ready(function(){
                         /* var forma_envio_editar = $('#forma_envio_editar');
                         forma_envio_editar.empty();
                         forma_envio_editar.append('<option value="'+data.hitorialAgregarComunicado[0].Forma_envio+'" selected>'+data.hitorialAgregarComunicado[0].Nombre_forma_envio+'</option>'); */
+
                         // Listado de forma de editar de generar comunicado
                         let datos_lista_forma_envios = {
                             '_token':token,        
@@ -1656,7 +1711,7 @@ $(document).ready(function(){
                             success:function(data){
                                 //console.log(data);
                                 $('#forma_envio_editar').empty();
-                                forma_envio_editar.append('<option value="" selected>Seleccione una opción</option>');
+                                forma_envio_editar.append('<option value="">Seleccione una opción</option>');
                                 let NobreFormaEnvio = $('select[name=forma_envio_act]').val();
                                 let formaenviogenerarcomunicado = Object.keys(data);
                                 for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
@@ -1666,18 +1721,28 @@ $(document).ready(function(){
                                 }
                             }
                         });
+
+                        // Seleccción de la forma de envío acorde a la selección del afiliado
+                        setTimeout(() => {
+                            if (data.info_medio_noti[0].Medio_notificacion == "Físico") {
+                                $('#forma_envio_editar').val('46').trigger('change.select2');
+                            }else{
+                                $('#forma_envio_editar').val('47').trigger('change.select2');
+                            }
+                        }, 400);
+
                         var nombre_usuario = $('#elaboro_editar');
                         nombre_usuario.val(data.nombreusuario);
                         var nombre_usuario2 = $('#elaboro2_editar');
                         nombre_usuario2.val(data.nombreusuario);
-                        var reviso = $('#reviso_editar');
-                        reviso.empty();
-                        reviso.append('<option value="" selected>Seleccione una opción</option>');
-                        let revisolider = Object.keys(data.array_datos_lider);
-                        for (let i = 0; i < revisolider.length; i++) {
-                            reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
-                        }
-                    }else if(data.destinatarioPrincipal == 'Empresa'){      
+                        // var reviso = $('#reviso_editar');
+                        // reviso.empty();
+                        // reviso.append('<option value="" selected>Seleccione una opción</option>');
+                        // let revisolider = Object.keys(data.array_datos_lider);
+                        // for (let i = 0; i < revisolider.length; i++) {
+                        //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                        // }
+                    }else if(data.destinatarioPrincipal == 'Empresa'){
                         //console.log(data.array_datos_destinatarios);
                         var Nombre_afiliado = $('#nombre_destinatario_editar');
                         Nombre_afiliado.val(data.array_datos_destinatarios[0].Nombre_empresa);
@@ -1714,6 +1779,7 @@ $(document).ready(function(){
                             '_token':token,        
                             'parametro':"lista_forma_envio"
                         }
+
                         $.ajax({
                             type:'POST',
                             url:'/selectoresModuloCalificacionPCL',
@@ -1721,7 +1787,7 @@ $(document).ready(function(){
                             success:function(data){
                                 //console.log(data);
                                 $('#forma_envio_editar').empty();
-                                forma_envio_editar.append('<option value="" selected>Seleccione una opción</option>');
+                                forma_envio_editar.append('<option value="">Seleccione una opción</option>');
                                 let NobreFormaEnvio = $('select[name=forma_envio_act]').val();
                                 let formaenviogenerarcomunicado = Object.keys(data);
                                 for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
@@ -1731,17 +1797,28 @@ $(document).ready(function(){
                                 }
                             }
                         });
+
+                        
+                        // Seleccción de la forma de envío acorde a la selección del empleador
+                        setTimeout(() => {
+                            if (data.info_medio_noti[0].Medio_notificacion == "Físico") {
+                                $('#forma_envio_editar').val('46').trigger('change.select2');
+                            }else{
+                                $('#forma_envio_editar').val('47').trigger('change.select2');
+                            }
+                        }, 400);
+
                         var nombre_usuario = $('#elaboro_editar');
                         nombre_usuario.val(data.nombreusuario);
                         var nombre_usuario2 = $('#elaboro2_editar');
                         nombre_usuario2.val(data.nombreusuario);
-                        var reviso = $('#reviso_editar');
-                        reviso.empty();
-                        reviso.append('<option value="" selected>Seleccione una opción</option>');
-                        let revisolider = Object.keys(data.array_datos_lider);
-                        for (let i = 0; i < revisolider.length; i++) {
-                            reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
-                        }
+                        // var reviso = $('#reviso_editar');
+                        // reviso.empty();
+                        // reviso.append('<option value="" selected>Seleccione una opción</option>');
+                        // let revisolider = Object.keys(data.array_datos_lider);
+                        // for (let i = 0; i < revisolider.length; i++) {
+                        //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                        // }
                     }else if(data.destinatarioPrincipal == 'Otro'){
                         //console.log(data.destinatarioPrincipal);
                         document.querySelector("#nombre_destinatario_editar").disabled = false;
@@ -1834,13 +1911,13 @@ $(document).ready(function(){
                         nombre_usuario.val(data.nombreusuario);
                         var nombre_usuario2 = $('#elaboro2_editar');
                         nombre_usuario2.val(data.nombreusuario);
-                        var reviso = $('#reviso_editar');
-                        reviso.empty();
-                        reviso.append('<option value="" selected>Seleccione una opción</option>');
-                        let revisolider = Object.keys(data.array_datos_lider);
-                        for (let i = 0; i < revisolider.length; i++) {
-                            reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
-                        }
+                        // var reviso = $('#reviso_editar');
+                        // reviso.empty();
+                        // reviso.append('<option value="" selected>Seleccione una opción</option>');
+                        // let revisolider = Object.keys(data.array_datos_lider);
+                        // for (let i = 0; i < revisolider.length; i++) {
+                        //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                        // }
                     }
     
                 }        
@@ -1871,15 +1948,48 @@ $(document).ready(function(){
         
         if (opc_seleccionada == "Documento_Origen") {
             $("#insertar_mensaje_importante_editar").removeClass('d-none');
-            $("#btn_insertar_pruebas_editar").prop('disabled', false);
             $("#asunto_editar").val("SOLICITUD DE PRUEBAS");
             var texto_insertar = "<p>Reciba usted un cordial saludo de Seguros de Vida Alfa S.A.</p><p>Con el fin de establecer la determinación de origen del accidente reportado, está entidad solicita se anexen los siguientes documentos</p><p>{{$pruebas_solicitadas}}</p><p>Lo anterior con fundamento en lo establecido en la Decreto 1072 de 2015 art. 2.2.5.1.29, 2.2.5.1.28 (integración jurídica y análoga.)</p><p>El aporte documental deberá realizarse en un tiempo menor de 30 días hábiles siguientes al recibido de ésta comunicación escrita;&nbsp; La información solicitada es en cumplimiento de lo establecido en la Resolución 1401 de 2007 por la cual se reglamenta la investigación de incidentes y accidentes de trabajo. Lo anterior con fundamento en lo establecido en el Dec.2463 de 2001, parágrafo 1, Res.0156 de 2005 art.3, y Dec.1295 de 1994, art.12: “Toda enfermedad o patología, accidente o muerte, que no hayan sido clasificados o calificados como de origen profesional, se consideran de origen Común”.</p><p>La omisión del aporte documental y de requisitos mínimos para la calificación tendría como consecuencia la generación de concepto desfavorable o de origen común refiriendo el fundamento de dicha decisión.</p>";
             $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
+
+            // Auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado_editar').click();
+
+            // Habilitación etiqueta
+            $("#btn_insertar_pruebas_editar").prop('disabled', true);
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos_editar").val(seteo_nro_anexos);
+
+            // Selección automática de las copias a partes interesadas: Eps
+            $("#edit_copia_eps").prop('checked', true);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado_editar").prop('checked', true);
+
         }else{
+
+            // Quitar auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado_editar').prop('checked', false);
+
             $("#insertar_mensaje_importante_editar").addClass('d-none');
             $("#btn_insertar_pruebas_editar").prop('disabled', true);
             $("#asunto_editar").val("");
             $('#cuerpo_comunicado_editar').summernote('code', '');
+
+            // Deshabilitación etiqueta
+            $("#btn_insertar_pruebas_editar").prop('disabled', true);
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos_editar").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Eps
+            $("#edit_copia_eps").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado_editar").prop('checked', false);
         }
     });
 
@@ -2178,6 +2288,22 @@ $(document).ready(function(){
         $("#Pdf").prop('disabled', false);
 
 
+    }
+
+    // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:
+    // inhabilita los campos nro anexos, asunto, etiquetas, cuerpo comunicado, firmar
+    if (idRol != 6) {
+        $("#anexos").prop('readonly', true);
+        $("#anexos_editar").prop('readonly', true);
+        $("#asunto").prop('readonly', true);
+        $("#asunto_editar").prop('readonly', true);
+
+        $("#btn_insertar_pruebas").prop('disabled', true);
+        $("#btn_insertar_pruebas_editar").prop('disabled', true);
+
+        $(".note-editable").attr("contenteditable", false);
+        $("#firmarcomunicado").prop('disabled', true);
+        $("#firmarcomunicado_editar").prop('disabled', true);
     }
 
 

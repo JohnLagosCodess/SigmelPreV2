@@ -307,6 +307,7 @@ $(document).ready(function(){
                     $('#reviso').append('<option value="'+data[nombreRevisoPcl[i]]['name']+'">'+data[nombreRevisoPcl[i]]['name']+'</option>');
                 }
             }
+            $("#reviso").prop("selectedIndex", 1);
         }
     });
 
@@ -3654,6 +3655,13 @@ $(document).ready(function(){
         var empleador = $('input[name="empleador"]:checked').val();;        
         var eps = $('input[name="eps"]:checked').val();
         var afp = $('input[name="afp"]:checked').val();
+
+        // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+        var afp_conocimiento = '';
+        if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+            afp_conocimiento = $('input[name="afp_conocimiento"]:checked').val();
+        }
+
         var arl = $('input[name="arl"]:checked').val();
         var jrci = $('input[name="jrci"]:checked').val();   
             
@@ -3699,6 +3707,7 @@ $(document).ready(function(){
             'empleador':empleador,
             'eps':eps,
             'afp':afp,
+            'afp_conocimiento': afp_conocimiento,
             'arl':arl,
             'jrci':jrci,
             'cual':cual,
@@ -3856,6 +3865,7 @@ $(document).ready(function(){
     $('.note-editing-area').css("background", "white");
     $('.note-editor').css("border", "1px solid black");
 
+    var entidad_conocimiento = $("#entidad_conocimiento").val();
     // Retornar el texto por defecto en el asunto y cuerpo del comunicado
 
     var oficioremisoriopcl = $('#oficiopcl');
@@ -3886,10 +3896,59 @@ $(document).ready(function(){
             "<p>Una vez realizada la solicitud, a más tardar en (15) quince días hábiles recibirás por parte de Seguros de Vida Alfa S.A. una "+
             "comunicación donde te informaremos el estado del proceso.</p>";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
+
+            // Habilitación etiquetas
+            $("#btn_insertar_Nombre_afiliado").prop('disabled', false);
+            $("#btn_insertar_porPcl").prop('disabled', false);
+            $("#btn_insertar_F_estructuracion").prop('disabled', false);
+            $("#btn_insertar_Origen").prop('disabled', false);
+
+            // Selección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#empleador").prop('checked', true);
+            $("#eps").prop('checked', true);
+            $("#arl").prop('checked', true);
+            $("#afp").prop('checked', true);
+            
+            // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+            if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+                $("#afp_conocimiento").prop('checked', true);
+            }
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 1;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', true);
+
         }else{
             $("#Asunto").val("");
             var texto_insertar = "";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
+
+            // Deshabilitación etiquetas
+            $("#btn_insertar_Nombre_afiliado").prop('disabled', true);
+            $("#btn_insertar_porPcl").prop('disabled', true);
+            $("#btn_insertar_F_estructuracion").prop('disabled', true);
+            $("#btn_insertar_Origen").prop('disabled', true);
+
+            // Deselección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#empleador").prop('checked', false);
+            $("#eps").prop('checked', false);
+            $("#arl").prop('checked', false);
+            $("#afp").prop('checked', false);
+            
+            // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+            if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+                $("#afp_conocimiento").prop('checked', false);
+            }
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática del checkbox firmar
+            $("#firmar").prop('checked', false);
         }       
     });
 
@@ -3924,10 +3983,59 @@ $(document).ready(function(){
             "apela: origen, pérdida de capacidad laboral y/o fecha de estructuración. Remitirla a la Cra 10 N° 18 - 36 Piso 4 Edificio José María "+
             "Córdoba en Bogotá, al fax 7435333 ext.14440 0 al correo electrónico: inconformidad@segurosalfa.com.co.</p>";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
+
+            // Habilitación etiquetas
+            $("#btn_insertar_Nombre_afiliado").prop('disabled', false);
+            $("#btn_insertar_porPcl").prop('disabled', false);
+            $("#btn_insertar_F_estructuracion").prop('disabled', false);
+            $("#btn_insertar_Origen").prop('disabled', false);
+
+            // Selección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#empleador").prop('checked', true);
+            $("#eps").prop('checked', true);
+            $("#arl").prop('checked', true);
+            $("#afp").prop('checked', true);
+            
+            // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+            if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+                $("#afp_conocimiento").prop('checked', true);
+            }
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 1;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', true);
+
         }else{
             $("#Asunto").val("");
             var texto_insertar = "";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
+
+            // Deshabilitación etiquetas
+            $("#btn_insertar_Nombre_afiliado").prop('disabled', true);
+            $("#btn_insertar_porPcl").prop('disabled', true);
+            $("#btn_insertar_F_estructuracion").prop('disabled', true);
+            $("#btn_insertar_Origen").prop('disabled', true);
+
+            // Deselección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#empleador").prop('checked', false);
+            $("#eps").prop('checked', false);
+            $("#arl").prop('checked', false);
+            $("#afp").prop('checked', false);
+            
+            // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+            if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+                $("#afp_conocimiento").prop('checked', false);
+            }
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática del checkbox firmar
+            $("#firmar").prop('checked', false);
         }        
     });
     
@@ -3999,18 +4107,66 @@ $(document).ready(function(){
             "<p>Una vez realizada la solicitud, a más tardar en (15) quince días hábiles recibirás por parte de Seguros de Vida Alfa S.A. una "+
             "comunicación donde te informaremos el estado del proceso.</p>";
             $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
-            $('#btn_insertar_Nombre_afiliado').removeClass('d-none')
-            $('#btn_insertar_porPcl').removeClass('d-none')
-            $('#btn_insertar_F_estructuracion').removeClass('d-none')
-            $('#btn_insertar_Origen').removeClass('d-none')
+            $('#btn_insertar_Nombre_afiliado').removeClass('d-none');
+            $('#btn_insertar_porPcl').removeClass('d-none');
+            $('#btn_insertar_F_estructuracion').removeClass('d-none');
+            $('#btn_insertar_Origen').removeClass('d-none');
+
+            // Habilitación etiquetas
+            $("#btn_insertar_Nombre_afiliado").prop('disabled', false);
+            $("#btn_insertar_porPcl").prop('disabled', false);
+            $("#btn_insertar_F_estructuracion").prop('disabled', false);
+            $("#btn_insertar_Origen").prop('disabled', false);
+
+            // Selección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#empleador").prop('checked', true);
+            $("#eps").prop('checked', true);
+            $("#arl").prop('checked', true);
+            $("#afp").prop('checked', true);
+            
+            // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+            if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+                $("#afp_conocimiento").prop('checked', true);
+            }
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 1;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', true);
+
         }else{
             $("#Asunto").val("");
             var texto_insertar = "";
             $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
-            $('#btn_insertar_Nombre_afiliado').addClass('d-none')
-            $('#btn_insertar_porPcl').addClass('d-none')
-            $('#btn_insertar_F_estructuracion').addClass('d-none')
-            $('#btn_insertar_Origen').addClass('d-none')
+            $('#btn_insertar_Nombre_afiliado').addClass('d-none');
+            $('#btn_insertar_porPcl').addClass('d-none');
+            $('#btn_insertar_F_estructuracion').addClass('d-none');
+            $('#btn_insertar_Origen').addClass('d-none');
+            // Deshabilitación etiquetas
+            $("#btn_insertar_Nombre_afiliado").prop('disabled', true);
+            $("#btn_insertar_porPcl").prop('disabled', true);
+            $("#btn_insertar_F_estructuracion").prop('disabled', true);
+            $("#btn_insertar_Origen").prop('disabled', true);
+
+            // Deselección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#empleador").prop('checked', false);
+            $("#eps").prop('checked', false);
+            $("#arl").prop('checked', false);
+            $("#afp").prop('checked', false);
+            
+            // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+            if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+                $("#afp_conocimiento").prop('checked', false);
+            }
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática del checkbox firmar
+            $("#firmar").prop('checked', false);
         }       
     });
 
@@ -4045,47 +4201,110 @@ $(document).ready(function(){
             "apela: origen, pérdida de capacidad laboral y/o fecha de estructuración. Remitirla a la Cra 10 N° 18 - 36 Piso 4 Edificio José María "+
             "Córdoba en Bogotá, al fax 7435333 ext.14440 0 al correo electrónico: inconformidad@segurosalfa.com.co.</p>";
             $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
-            $('#btn_insertar_Nombre_afiliado').removeClass('d-none')
-            $('#btn_insertar_porPcl').removeClass('d-none')
-            $('#btn_insertar_F_estructuracion').removeClass('d-none')
-            $('#btn_insertar_Origen').removeClass('d-none')
+            $('#btn_insertar_Nombre_afiliado').removeClass('d-none');
+            $('#btn_insertar_porPcl').removeClass('d-none');
+            $('#btn_insertar_F_estructuracion').removeClass('d-none');
+            $('#btn_insertar_Origen').removeClass('d-none');
+
+            // Habilitación etiquetas
+            $("#btn_insertar_Nombre_afiliado").prop('disabled', false);
+            $("#btn_insertar_porPcl").prop('disabled', false);
+            $("#btn_insertar_F_estructuracion").prop('disabled', false);
+            $("#btn_insertar_Origen").prop('disabled', false);
+
+            // Selección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#empleador").prop('checked', true);
+            $("#eps").prop('checked', true);
+            $("#arl").prop('checked', true);
+            $("#afp").prop('checked', true);
+            
+            // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+            if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+                $("#afp_conocimiento").prop('checked', true);
+            }
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 1;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', true);
         }else{
             $("#Asunto").val("");
             var texto_insertar = "";
             $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
-            $('#btn_insertar_Nombre_afiliado').addClass('d-none')
-            $('#btn_insertar_porPcl').addClass('d-none')
-            $('#btn_insertar_F_estructuracion').addClass('d-none')
-            $('#btn_insertar_Origen').addClass('d-none')
+            $('#btn_insertar_Nombre_afiliado').addClass('d-none');
+            $('#btn_insertar_porPcl').addClass('d-none');
+            $('#btn_insertar_F_estructuracion').addClass('d-none');
+            $('#btn_insertar_Origen').addClass('d-none');
+
+            // Deshabilitación etiquetas
+            $("#btn_insertar_Nombre_afiliado").prop('disabled', true);
+            $("#btn_insertar_porPcl").prop('disabled', true);
+            $("#btn_insertar_F_estructuracion").prop('disabled', true);
+            $("#btn_insertar_Origen").prop('disabled', true);
+
+            // Deselección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#empleador").prop('checked', false);
+            $("#eps").prop('checked', false);
+            $("#arl").prop('checked', false);
+            $("#afp").prop('checked', false);
+            
+            // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+            if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+                $("#afp_conocimiento").prop('checked', false);
+            }
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática del checkbox firmar
+            $("#firmar").prop('checked', false);
         }        
     });
 
-    var oficioformatob = $('#formatob');
-    oficioformatob.change(function(){
-        if ($(this).prop('checked')) {
-            $("#Asunto").val("NOTIFICACIÓN RESULTADO REVISIÓN PENSIONAL");
-            var texto_insertar = "<p>Reciba un cordial saludo, </p>"+
-           "<p>Agradecemos la respuesta que hemos recibido a nuestra solicitud de actualización de historia clínica con "+ 
-           "el fin de revisar sus condiciones de salud.</p>"+
-           "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida "+
-           "Alfa S.A., hemos definido que Usted actualmente mantiene las condiciones para continuar con el beneficio "+
-           "de pensión por invalidez sobre el cual esta compañía Aseguradora ha venido pagando la mesada pensional "+
-           "en virtud del contrato de Renta Vitalicia Inmediata suscrito por encargo de la Administradora de Fondos de "+
-           "Pensiones Porvenir S.A.</p>"+
-           "<p>En forma sucinta la revisión de invalidez, se fundamenta en: {{$Detalle_calificacion_Fbdp}}</p>"+
-           "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras l íneas de atención al "+
-           "cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes, de"+
-           "8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a "+
-           "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
-            $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar); 
-            $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
-        }else{
-            $("#Asunto").val("");
-            var texto_insertar = "";
-            $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
-            $('#btn_insertar_Detalle_calificacion').addClass('d-none');
-        }         
-    });
+    // var oficioformatob = $('#formatob');
+    // oficioformatob.change(function(){
+    //     if ($(this).prop('checked')) {
+    //         $("#Asunto").val("NOTIFICACIÓN RESULTADO REVISIÓN PENSIONAL");
+    //         var texto_insertar = "<p>Reciba un cordial saludo, </p>"+
+    //        "<p>Agradecemos la respuesta que hemos recibido a nuestra solicitud de actualización de historia clínica con "+ 
+    //        "el fin de revisar sus condiciones de salud.</p>"+
+    //        "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida "+
+    //        "Alfa S.A., hemos definido que Usted actualmente mantiene las condiciones para continuar con el beneficio "+
+    //        "de pensión por invalidez sobre el cual esta compañía Aseguradora ha venido pagando la mesada pensional "+
+    //        "en virtud del contrato de Renta Vitalicia Inmediata suscrito por encargo de la Administradora de Fondos de "+
+    //        "Pensiones Porvenir S.A.</p>"+
+    //        "<p>En forma sucinta la revisión de invalidez, se fundamenta en: {{$Detalle_calificacion_Fbdp}}</p>"+
+    //        "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras l íneas de atención al "+
+    //        "cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes, de"+
+    //        "8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a "+
+    //        "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
+    //         $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar); 
+    //         $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+
+    //         // Seteo automático del nro de anexos:
+    //         var seteo_nro_anexos = 0;
+    //         $("#anexos").val(seteo_nro_anexos);
+
+    //         // Selección automática del checkbox firmar
+    //         $("#firmar").prop('checked', true);
+
+    //     }else{
+    //         $("#Asunto").val("");
+    //         var texto_insertar = "";
+    //         $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
+    //         $('#btn_insertar_Detalle_calificacion').addClass('d-none');
+
+    //         // Seteo automático del nro de anexos:
+    //         var seteo_nro_anexos = 0;
+    //         $("#anexos").val(seteo_nro_anexos);
+
+    //         // Selección automática del checkbox firmar
+    //         $("#firmar").prop('checked', false);
+    //     }         
+    // });
 
     var oficioformatoc = $('#formatoc');
     oficioformatoc.change(function(){
@@ -4106,6 +4325,13 @@ $(document).ready(function(){
             $('#btn_insertar_F_estructuracion').removeClass('d-none')
             $('#btn_insertar_Origen').removeClass('d-none') 
             $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 1;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', true);
         }else{
             $("#Asunto").val("");
             var texto_insertar = "";
@@ -4114,6 +4340,13 @@ $(document).ready(function(){
             $('#btn_insertar_F_estructuracion').addClass('d-none')
             $('#btn_insertar_Origen').addClass('d-none') 
             $('#btn_insertar_Detalle_calificacion').addClass('d-none');
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', false);
         }         
     });
 
@@ -4141,11 +4374,26 @@ $(document).ready(function(){
            "escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
             $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
             $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 1;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', true);
+
         }else{
             $("#Asunto").val("");
             var texto_insertar = "";
             $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
             $('#btn_insertar_Detalle_calificacion').addClass('d-none');
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', false);
         }         
     });
 
@@ -4168,6 +4416,19 @@ $(document).ready(function(){
             $('#btn_insertar_F_estructuracion').removeClass('d-none')
             $('#btn_insertar_Origen').removeClass('d-none') 
             $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+
+            // Selección automática de las copias a partes interesadas: Empleador, Eps, Arl
+            $("#empleador").prop('checked', true);
+            $("#eps").prop('checked', true);
+            $("#arl").prop('checked', true);
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 1;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', true);
+
         }else{
             $("#Asunto").val("");
             var texto_insertar = "";
@@ -4176,6 +4437,18 @@ $(document).ready(function(){
             $('#btn_insertar_F_estructuracion').addClass('d-none')
             $('#btn_insertar_Origen').addClass('d-none') 
             $('#btn_insertar_Detalle_calificacion').addClass('d-none');
+
+            // Deselección automática de las copias a partes interesadas: Empleador, Eps, Arl
+            $("#empleador").prop('checked', false);
+            $("#eps").prop('checked', false);
+            $("#arl").prop('checked', false);
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', false);
         }         
     });
 
@@ -4228,6 +4501,21 @@ $(document).ready(function(){
         $("#div_correspondecia").addClass('d-none');
         $("label[for='editar_correspondencia']").addClass('d-none');
     }
+
+    // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:
+    // inhabilita los campos nro anexos, asunto, etiquetas, cuerpo comunicado, firmar
+    if (idRol != 6) {
+        $("#anexos").prop('readonly', true);
+        $("#Asunto").prop('readonly', true);
+        $("#btn_insertar_Nombre_afiliado").prop('disabled', true);
+        $("#btn_insertar_porPcl").prop('disabled', true);
+        $("#btn_insertar_F_estructuracion").prop('disabled', true);
+        $("#btn_insertar_Origen").prop('disabled', true);
+        $("#btn_insertar_Detalle_calificacion").prop('disabled', true);
+        $(".note-editable").attr("contenteditable", false);
+        $("#firmar").prop('disabled', true);
+    }
+
     
 });
 // Examenes Interconsultas

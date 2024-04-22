@@ -974,17 +974,27 @@ $(document).ready(function(){
                             }
                         });
                         // $('#forma_envio_editar').prop('required', true);
+
+                        // Seleccción de la forma de envío acorde a la selección del afiliado
+                        setTimeout(() => {
+                            if (data.info_medio_noti[0].Medio_notificacion == "Físico") {
+                                $('#forma_envio_editar').val('46').trigger('change.select2');
+                            }else{
+                                $('#forma_envio_editar').val('47').trigger('change.select2');
+                            }
+                        }, 400);
+
                         var nombre_usuario = $('#elaboro_editar');
                         nombre_usuario.val(data.nombreusuario);
                         var nombre_usuario2 = $('#elaboro2_editar');
                         nombre_usuario2.val(data.nombreusuario);
-                        var reviso = $('#reviso_editar');
-                        reviso.empty();
-                        reviso.append('<option value="">Seleccione una opción</option>');                        
-                        let revisolider = Object.keys(data.array_datos_lider);
-                        for (let i = 0; i < revisolider.length; i++) {
-                            reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
-                        }
+                        // var reviso = $('#reviso_editar');
+                        // reviso.empty();
+                        // reviso.append('<option value="">Seleccione una opción</option>');                        
+                        // let revisolider = Object.keys(data.array_datos_lider);
+                        // for (let i = 0; i < revisolider.length; i++) {
+                        //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                        // }
                         // reviso.prop('required', true);
                     }else if(data.destinatarioPrincipal == 'Empresa'){      
                         //console.log(data.array_datos_destinatarios);
@@ -1040,17 +1050,27 @@ $(document).ready(function(){
                                 }
                             }
                         });
+
+                        // Seleccción de la forma de envío acorde a la selección del empleador
+                        setTimeout(() => {
+                            if (data.info_medio_noti[0].Medio_notificacion == "Físico") {
+                                $('#forma_envio_editar').val('46').trigger('change.select2');
+                            }else{
+                                $('#forma_envio_editar').val('47').trigger('change.select2');
+                            }
+                        }, 400);
+
                         var nombre_usuario = $('#elaboro_editar');
                         nombre_usuario.val(data.nombreusuario);
                         var nombre_usuario2 = $('#elaboro2_editar');
                         nombre_usuario2.val(data.nombreusuario);
-                        var reviso = $('#reviso_editar');
-                        reviso.empty();
-                        reviso.append('<option value="" selected>Seleccione una opción</option>');
-                        let revisolider = Object.keys(data.array_datos_lider);
-                        for (let i = 0; i < revisolider.length; i++) {
-                            reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
-                        }
+                        // var reviso = $('#reviso_editar');
+                        // reviso.empty();
+                        // reviso.append('<option value="" selected>Seleccione una opción</option>');
+                        // let revisolider = Object.keys(data.array_datos_lider);
+                        // for (let i = 0; i < revisolider.length; i++) {
+                        //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                        // }
                     }else if(data.destinatarioPrincipal == 'Otro'){
                         //console.log(data.destinatarioPrincipal);
                         document.querySelector("#nombre_destinatario_editar").disabled = false;
@@ -1142,13 +1162,13 @@ $(document).ready(function(){
                         nombre_usuario.val(data.nombreusuario);
                         var nombre_usuario2 = $('#elaboro2_editar');
                         nombre_usuario2.val(data.nombreusuario);
-                        var reviso = $('#reviso_editar');
-                        reviso.empty();
-                        reviso.append('<option value="" selected>Seleccione una opción</option>');
-                        let revisolider = Object.keys(data.array_datos_lider);
-                        for (let i = 0; i < revisolider.length; i++) {
-                            reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
-                        }
+                        // var reviso = $('#reviso_editar');
+                        // reviso.empty();
+                        // reviso.append('<option value="" selected>Seleccione una opción</option>');
+                        // let revisolider = Object.keys(data.array_datos_lider);
+                        // for (let i = 0; i < revisolider.length; i++) {
+                        //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                        // }
                     }
     
                 }        
@@ -1193,6 +1213,20 @@ $(document).ready(function(){
             "70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o "+
             "escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose Maria Cordoba, Bogota D.C.</p>";
             $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
+
+            // Auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado_editar').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos_editar").val(seteo_nro_anexos);
+
+            // Selección automática de las copias a partes interesadas: Eps
+            $("#edit_copia_eps").prop('checked', true);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado_editar").prop('checked', true);
+
         }else if (opc_seleccionada == "Formato_B_Revision_pension") {
             $("#asunto_editar").val("NOTIFICACIÓN RESULTADO REVISIÓN PENSIONAL");
             var texto_insertar = "<p>Reciba un cordial saludo, </p>"+
@@ -1240,6 +1274,20 @@ $(document).ready(function(){
             'escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose Maria Cordoba, Bogota D.C.</p>';
             $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
             // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+
+            // Auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado_editar').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos_editar").val(seteo_nro_anexos);
+
+            // Selección automática de las copias a partes interesadas: Eps
+            $("#edit_copia_eps").prop('checked', true);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado_editar").prop('checked', true);
+
         }else if (opc_seleccionada == "Documento_No_Recalificacion") {
             $("#asunto_editar").val("RESPUESTA A SOLICITUD DE RECALIFICACIÓN");
             var texto_insertar = '<p>Reciba un cordial saludo, </p>'+
@@ -1263,14 +1311,40 @@ $(document).ready(function(){
             $('#btn_insertar_porPcl_editar').removeClass('d-none')
             $('#btn_insertar_F_estructuracion_editar').removeClass('d-none')
             // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+
+            // Auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado_editar').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos_editar").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Eps
+            $("#edit_copia_eps").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado_editar").prop('checked', true);
         }
         else{
             $("#asunto_editar").val("");
             $('#cuerpo_comunicado_editar').summernote('code', '');
-            $('#btn_insertar_Origen_editar').addClass('d-none')
-            $('#btn_insertar_nombreCIE10_editar').addClass('d-none')
-            $('#btn_insertar_porPcl_editar').addClass('d-none')
-            $('#btn_insertar_F_estructuracion_editar').addClass('d-none')
+            $('#btn_insertar_Origen_editar').addClass('d-none');
+            $('#btn_insertar_nombreCIE10_editar').addClass('d-none');
+            $('#btn_insertar_porPcl_editar').addClass('d-none');
+            $('#btn_insertar_F_estructuracion_editar').addClass('d-none');
+
+            // Quitar auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado_editar').prop('checked', false);
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos_editar").val(seteo_nro_anexos);
+
+            // Selección automática de las copias a partes interesadas: Eps
+            $("#edit_copia_eps").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado_editar").prop('checked', false);
 
         }
     });  
@@ -1618,6 +1692,14 @@ $(document).ready(function(){
                     ciudadafiliado.empty();
                     ciudadafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_municipio_afiliado+'">'+data.array_datos_destinatarios[0].Nombre_municipio_afiliado+'</option>')
                     document.querySelector("#ciudad_destinatario").disabled = true;
+
+                    // Seleccción de la forma de envío acorde a la selección del afiliado
+                    if (data.info_medio_noti[0].Medio_notificacion == "Físico") {
+                        $('#forma_envio').val('46').trigger('change.select2');
+                    }else{
+                        $('#forma_envio').val('47').trigger('change.select2');
+                    }
+
                     var nombre_usuario = $('#elaboro');
                     nombre_usuario.val(data.nombreusuario);
                     var nombre_usuario2 = $('#elaboro2');
@@ -1629,6 +1711,7 @@ $(document).ready(function(){
                     for (let i = 0; i < revisolider.length; i++) {
                         reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                     }
+                    $("#reviso").prop("selectedIndex", 1);
                 }else if(data.destinatarioPrincipal == 'Empresa'){      
                     //console.log(data.array_datos_destinatarios);
                     var Nombre_afiliado = $('#nombre_destinatario');
@@ -1654,6 +1737,14 @@ $(document).ready(function(){
                     ciudadafiliado.empty();
                     ciudadafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_municipio_empresa+'">'+data.array_datos_destinatarios[0].Nombre_municipio_empresa+'</option>')
                     document.querySelector("#ciudad_destinatario").disabled = true;
+
+                    // Seleccción de la forma de envío acorde a la selección del empleador
+                    if (data.info_medio_noti[0].Medio_notificacion == "Físico") {
+                        $('#forma_envio').val('46').trigger('change.select2');
+                    }else{
+                        $('#forma_envio').val('47').trigger('change.select2');
+                    }
+
                     var nombre_usuario = $('#elaboro');
                     nombre_usuario.val(data.nombreusuario);
                     var nombre_usuario2 = $('#elaboro2');
@@ -1665,6 +1756,7 @@ $(document).ready(function(){
                     for (let i = 0; i < revisolider.length; i++) {
                         reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                     }
+                    $("#reviso").prop("selectedIndex", 1);
                 }else if(data.destinatarioPrincipal == 'Otro'){
                     //console.log(data.destinatarioPrincipal);
                     document.querySelector("#nombre_destinatario").disabled = false;
@@ -1734,6 +1826,8 @@ $(document).ready(function(){
                     for (let i = 0; i < revisolider.length; i++) {
                         reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                     }
+
+                    $("#reviso").prop("selectedIndex", 1);
                 }
 
             }        
@@ -1772,7 +1866,7 @@ $(document).ready(function(){
     /* Funcionalidad radio buttons Solicitud documentos Origen y Otro documento */
     $("[name='tipo_documento_descarga_califi']").on("change", function(){
         var opc_seleccionada = $(this).val();
-        
+            
         if (opc_seleccionada == "Documento_PCL") {
             $("#asunto").val("SOLICITUD DE DOCUMENTOS PARA CALIFICACIÓN DE PÉRDIDA DE LA CAPACIDAD LABORAL");
             var texto_insertar = "<p>En Seguros de Vida Alfa S.A. siempre buscamos la protección y satisfacción de nuestros clientes. De acuerdo a tu solicitud de "+
@@ -1790,6 +1884,20 @@ $(document).ready(function(){
             "escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
             // $('#btn_insertar_Detalle_calificacion').addClass('d-none');
+
+            // Auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática de las copias a partes interesadas: Eps
+            $("#copia_eps").prop('checked', true);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado").prop('checked', true);
+
         }else if (opc_seleccionada == "Formato_B_Revision_pension") {
             $("#asunto").val("NOTIFICACIÓN RESULTADO REVISIÓN PENSIONAL");
             var texto_insertar = "<p>Reciba un cordial saludo, </p>"+
@@ -1838,6 +1946,20 @@ $(document).ready(function(){
             'escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>';
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
             // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+
+            // Auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática de las copias a partes interesadas: Eps
+            $("#copia_eps").prop('checked', true);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado").prop('checked', true);
+
         }else if (opc_seleccionada == "Documento_No_Recalificacion") {
             $("#asunto").val("RESPUESTA A SOLICITUD DE RECALIFICACIÓN");
             var texto_insertar = '<p>Reciba un cordial saludo, </p>'+
@@ -1857,19 +1979,46 @@ $(document).ready(function(){
             '<p>Esperamos de esta forma haber dado respuesta a su requerimiento y reiteramos nuestra voluntad de servicio. </p>';            
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
             // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
-            $('#btn_insertar_Origen').removeClass('d-none')
-            $('#btn_insertar_nombreCIE10').removeClass('d-none')
-            $('#btn_insertar_porPcl').removeClass('d-none')
-            $('#btn_insertar_F_estructuracion').removeClass('d-none')
+            $('#btn_insertar_Origen').removeClass('d-none');
+            $('#btn_insertar_nombreCIE10').removeClass('d-none');
+            $('#btn_insertar_porPcl').removeClass('d-none');
+            $('#btn_insertar_F_estructuracion').removeClass('d-none');
+
+            // Auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Eps
+            $("#copia_eps").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado").prop('checked', true);
         }        
         else{
             $("#asunto").val("");
             $('#cuerpo_comunicado').summernote('code', '');
             // $('#btn_insertar_Detalle_calificacion').addClass('d-none');
-            $('#btn_insertar_Origen').addClass('d-none')
-            $('#btn_insertar_nombreCIE10').addClass('d-none')
-            $('#btn_insertar_porPcl').addClass('d-none')
-            $('#btn_insertar_F_estructuracion').addClass('d-none')
+            $('#btn_insertar_Origen').addClass('d-none');
+            $('#btn_insertar_nombreCIE10').addClass('d-none');
+            $('#btn_insertar_porPcl').addClass('d-none');
+            $('#btn_insertar_F_estructuracion').addClass('d-none');
+
+            // Quitar auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado').prop('checked', false);
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Eps
+            $("#copia_eps").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado").prop('checked', false);
+
         }
     });
 
@@ -2201,7 +2350,29 @@ $(document).ready(function(){
         $("#Pdf").prop('disabled', false);
 
     }
-     
+    
+    // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:
+    // inhabilita los campos nro anexos, asunto, etiquetas, cuerpo comunicado, firmar
+    if (idRol != 6) {
+        $("#anexos").prop('readonly', true);
+        $("#anexos_editar").prop('readonly', true);
+        $("#asunto").prop('readonly', true);
+        $("#asunto_editar").prop('readonly', true);
+
+        $('#btn_insertar_Origen').prop('disabled', true);
+        $('#btn_insertar_nombreCIE10').prop('disabled', true);
+        $('#btn_insertar_porPcl').prop('disabled', true);
+        $('#btn_insertar_F_estructuracion').prop('disabled', true);
+
+        $('#btn_insertar_Origen_editar').prop('disabled', true);
+        $('#btn_insertar_nombreCIE10_editar').prop('disabled', true);
+        $('#btn_insertar_porPcl_editar').prop('disabled', true);
+        $('#btn_insertar_F_estructuracion_editar').prop('disabled', true);
+        
+        $(".note-editable").attr("contenteditable", false);
+        $("#firmarcomunicado").prop('disabled', true);
+        $("#firmarcomunicado_editar").prop('disabled', true);
+    }
 });
 
 var copia = 1;

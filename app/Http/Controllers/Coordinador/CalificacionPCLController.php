@@ -1134,12 +1134,19 @@ class CalificacionPCLController extends Controller
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
                 ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+
+                // Traer opción seleccionada del campo Medio de notificación del la información del afiliado/beneficiario
+                $info_medio_noti = DB::table(getDatabaseName('sigmel_gestiones'). 'sigmel_informacion_afiliado_eventos as siae')
+                ->select('siae.Medio_notificacion')
+                ->where([['siae.ID_evento', $newIdEvento]])
+                ->get();
                 
                 return response()->json([
                     'nombreusuario' => $nombreusuario,
                     'destinatarioPrincipal' => $destinatarioPrincipal,
                     'array_datos_destinatarios' => $array_datos_destinatarios,
-                    'array_datos_lider' => $array_datos_lider
+                    'array_datos_lider' => $array_datos_lider,
+                    'info_medio_noti' => $info_medio_noti
                 ]);
             break;
             case ($destinatarioPrincipal == 'Empresa'):                
@@ -1147,13 +1154,20 @@ class CalificacionPCLController extends Controller
                 $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
-                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();
+
+                // Traer opción seleccionada del campo Medio de notificación del la información del afiliado/beneficiario
+                $info_medio_noti = DB::table(getDatabaseName('sigmel_gestiones'). 'sigmel_informacion_laboral_eventos as sile')
+                ->select('sile.Medio_notificacion')
+                ->where([['sile.ID_evento', $newIdEvento]])
+                ->get();
+                
                 return response()->json([
                     'nombreusuario' => $nombreusuario,
                     'destinatarioPrincipal' => $destinatarioPrincipal,
                     'array_datos_destinatarios' => $array_datos_destinatarios,                    
-                    'array_datos_lider' => $array_datos_lider
-
+                    'array_datos_lider' => $array_datos_lider,
+                    'info_medio_noti' => $info_medio_noti
                 ]);
             break;
             case ($destinatarioPrincipal == 'Otro'):  
@@ -3811,7 +3825,7 @@ class CalificacionPCLController extends Controller
         'sicie.Nombre_dest_principal', 'sie.Nombre_entidad', 'sicie.Nombre_destinatario','sicie.Nit_cc', 'sicie.Direccion_destinatario', 
         'sicie.Telefono_destinatario', 'sicie.Email_destinatario', 'sicie.Departamento_destinatario', 'sicie.Ciudad_destinatario', 
         'sicie.Asunto', 'sicie.Cuerpo_comunicado', 'sicie.Copia_afiliado', 'sicie.Copia_empleador', 'sicie.Copia_eps', 'sicie.Copia_afp', 'sicie.Copia_arl', 
-        'sicie.Copia_jr', 'sicie.Cual_jr', 'sicie.Copia_jn', 'sicie.Anexos', 'sicie.Elaboro', 'sicie.Reviso', 'sicie.Firmar', 'sicie.Ciudad', 
+        'sicie.Copia_afp_conocimiento', 'sicie.Copia_jr', 'sicie.Cual_jr', 'sicie.Copia_jn', 'sicie.Anexos', 'sicie.Elaboro', 'sicie.Reviso', 'sicie.Firmar', 'sicie.Ciudad', 
         'sicie.F_correspondecia', 'sicie.N_radicado', 'sicie.Nombre_usuario', 'sicie.F_registro')        
         ->where([
             ['ID_evento',$Id_evento_calitec],
@@ -3878,7 +3892,18 @@ class CalificacionPCLController extends Controller
         $array_comunicados_comite_inter = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$Id_evento_calitec], ['Id_Asignacion',$Id_asignacion_calitec]])->get();  
 
-        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo','array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinario', 'consecutivo', 'array_dictamen_pericial', 'array_comunicados_correspondencia', 'array_comunicados_comite_inter'));
+        /* Traer datos de la AFP de Conocimiento */
+        $info_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp_entidad_conocimiento', '=', 'sie.Id_Entidad')
+        ->select('siae.Entidad_conocimiento')
+        ->where([['siae.ID_evento', $Id_evento_calitec]])
+        ->get();
+
+        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 
+        'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo',
+        'array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 
+        'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinario', 'consecutivo', 'array_dictamen_pericial', 
+        'array_comunicados_correspondencia', 'array_comunicados_comite_inter', 'info_afp_conocimiento'));
     }
 
     public function cargueListadoSelectoresCalifcacionTecnicaPcl(Request $request){
@@ -5898,6 +5923,7 @@ class CalificacionPCLController extends Controller
         $empleador = $request->empleador;
         $eps = $request->eps;
         $afp = $request->afp;
+        $afp_conocimiento = $request->afp_conocimiento;
         $arl = $request->arl;
         $jrci = $request->jrci;        
         $cual = $request->cual;
@@ -5917,6 +5943,9 @@ class CalificacionPCLController extends Controller
         }
         if (!empty($afp)) {
             $variables_llenas[] = $afp;
+        }
+        if (!empty($afp_conocimiento)) {
+            $variables_llenas[] = $afp_conocimiento;
         }
         if (!empty($arl)) {
             $variables_llenas[] = $arl;
@@ -5962,6 +5991,7 @@ class CalificacionPCLController extends Controller
                 'Copia_eps' => $eps,
                 'Copia_afp' => $afp,
                 'Copia_arl' => $arl,
+                'Copia_afp_conocimiento' => $afp_conocimiento,
                 'Copia_jr' => $jrci,
                 'Cual_jr' => $cual,
                 'Copia_jn' => $jnci,
@@ -6046,6 +6076,7 @@ class CalificacionPCLController extends Controller
                 'Copia_eps' => $eps,
                 'Copia_afp' => $afp,
                 'Copia_arl' => $arl,
+                'Copia_afp_conocimiento' => $afp_conocimiento,
                 'Copia_jr' => $jrci,
                 'Cual_jr' => $cual,
                 'Copia_jn' => $jnci,
@@ -7599,6 +7630,7 @@ class CalificacionPCLController extends Controller
         $Copia_empleador_correspondecia = $array_datos_comite_inter[0]->Copia_empleador;
         $Copia_eps_correspondecia = $array_datos_comite_inter[0]->Copia_eps;
         $Copia_afp_correspondecia = $array_datos_comite_inter[0]->Copia_afp;
+        $Copia_afp_conocimiento_correspondencia = $array_datos_comite_inter[0]->Copia_afp_conocimiento;
         $Copia_arl_correspondecia = $array_datos_comite_inter[0]->Copia_arl;
         $Oficio_pcl = $array_datos_comite_inter[0]->Oficio_pcl;
 
@@ -7704,6 +7736,44 @@ class CalificacionPCLController extends Controller
             $Telefono_afp = '';
             $Ciudad_departamento_afp = '';
         }
+
+        if (!empty($Copia_afp_conocimiento_correspondencia) && $Copia_afp_conocimiento_correspondencia == "AFP_Conocimiento") {
+            $dato_id_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->select('siae.Entidad_conocimiento','siae.Id_afp_entidad_conocimiento')
+            ->where([['siae.ID_evento', $ID_Evento_comuni_comite]])
+            ->get();
+
+            $si_entidad_conocimiento = $dato_id_afp_conocimiento[0]->Entidad_conocimiento;
+            $id_afp_conocimiento = $dato_id_afp_conocimiento[0]->Id_afp_entidad_conocimiento;
+
+            if ($si_entidad_conocimiento == "Si") {
+                $datos_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                ->where([['sie.Id_Entidad', $id_afp_conocimiento]])
+                ->get();
+    
+                $Nombre_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_entidad;
+                $Direccion_afp_conocimiento = $datos_afp_conocimiento[0]->Direccion;
+                $Telefonos_afp_conocimiento = $datos_afp_conocimiento[0]->Telefonos;
+                $Ciudad_departamento_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_ciudad.'-'.$datos_afp_conocimiento[0]->Nombre_departamento;
+            } else {
+                $Copia_afp_conocimiento_correspondencia = '';
+
+                $Nombre_afp_conocimiento = '';
+                $Direccion_afp_conocimiento = '';
+                $Telefonos_afp_conocimiento = '';
+                $Ciudad_departamento_afp_conocimiento = '';
+            }
+
+        } else {
+            $Nombre_afp_conocimiento = '';
+            $Direccion_afp_conocimiento = '';
+            $Telefonos_afp_conocimiento = '';
+            $Ciudad_departamento_afp_conocimiento = '';
+        }
+        
 
         if(!empty($Copia_arl_correspondecia) && $Copia_arl_correspondecia == 'ARL'){
             $Nombre_arl = $array_datos_info_afiliado[0]->Entidad_arl;
@@ -7959,6 +8029,7 @@ class CalificacionPCLController extends Controller
                 'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
                 'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
                 'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
+                'Copia_afp_conocimiento_correspondencia' => $Copia_afp_conocimiento_correspondencia,
                 'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
                 'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
@@ -7976,6 +8047,10 @@ class CalificacionPCLController extends Controller
                 'Direccion_afp' => $Direccion_afp,
                 'Telefono_afp' => $Telefono_afp,
                 'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
+                'Nombre_afp_conocimiento' => $Nombre_afp_conocimiento,
+                'Direccion_afp_conocimiento' => $Direccion_afp_conocimiento,
+                'Telefonos_afp_conocimiento' => $Telefonos_afp_conocimiento,
+                'Ciudad_departamento_afp_conocimiento' => $Ciudad_departamento_afp_conocimiento,
                 'Nombre_arl' => $Nombre_arl,
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
@@ -8111,6 +8186,7 @@ class CalificacionPCLController extends Controller
                 'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
                 'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
                 'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
+                'Copia_afp_conocimiento_correspondencia' => $Copia_afp_conocimiento_correspondencia,
                 'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
                 'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
@@ -8128,6 +8204,10 @@ class CalificacionPCLController extends Controller
                 'Direccion_afp' => $Direccion_afp,
                 'Telefono_afp' => $Telefono_afp,
                 'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
+                'Nombre_afp_conocimiento' => $Nombre_afp_conocimiento,
+                'Direccion_afp_conocimiento' => $Direccion_afp_conocimiento,
+                'Telefonos_afp_conocimiento' => $Telefonos_afp_conocimiento,
+                'Ciudad_departamento_afp_conocimiento' => $Ciudad_departamento_afp_conocimiento,
                 'Nombre_arl' => $Nombre_arl,
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
