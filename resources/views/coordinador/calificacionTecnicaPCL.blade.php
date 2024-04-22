@@ -152,7 +152,7 @@
                                         <div class="form-group">
                                             <label for="motivo_solicitud">Motivo Solicitud<span style="color: red;">(*)</span></label>
                                             <select class="custom-select motivo_solicitud" name="motivo_solicitud" id="motivo_solicitud" style="width: 100%;" required>
-                                                @if ($motivo_solicitud_actual[0]->Id_motivo_solicitud > 0)
+                                                @if (!empty($motivo_solicitud_actual[0]->Id_motivo_solicitud))
                                                     <option value="{{$motivo_solicitud_actual[0]->Id_motivo_solicitud}}" selected>{{$motivo_solicitud_actual[0]->Nombre_solicitud}}</option>
                                                 @else
                                                     <option value="">Seleccione una opción</option>
@@ -165,13 +165,13 @@
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="nombre_apoderado">Nombre apoderado</label>
-                                            <input type="text" class="form-control" name="nombre_apoderado" id="nombre_apoderado" value="{{$datos_apoderado_actual[0]->Nombre_apoderado}}" disabled>
+                                            <input type="text" class="form-control" name="nombre_apoderado" id="nombre_apoderado" value="<?php if (!empty($datos_apoderado_actual[0]->Nombre_apoderado)) {echo $datos_apoderado_actual[0]->Nombre_apoderado; } ?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="identificacion_apoderado">N° identificación apoderado</label>
-                                            <input type="text" class="form-control" name="identificacion_apoderado" id="identificacion_apoderado" value="{{$datos_apoderado_actual[0]->Nro_identificacion_apoderado}}" disabled>
+                                            <input type="text" class="form-control" name="identificacion_apoderado" id="identificacion_apoderado" value="<?php if (!empty($datos_apoderado_actual[0]->Nro_identificacion_apoderado)) {echo $datos_apoderado_actual[0]->Nro_identificacion_apoderado; } ?>" disabled>
                                         </div>
                                     </div>
                                 </div>
@@ -319,7 +319,7 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="dominancia">Dominancia</label>
-                                            <input type="text" class="form-control" name="dominancia" id="dominancia" value="{{$motivo_solicitud_actual[0]->Nombre_dominancia}}" disabled>
+                                            <input type="text" class="form-control" name="dominancia" id="dominancia" value="<?php if(!empty($motivo_solicitud_actual[0]->Nombre_dominancia)){echo $motivo_solicitud_actual[0]->Nombre_dominancia;}?>" disabled>
                                         </div>
                                     </div>
                                 </div>
