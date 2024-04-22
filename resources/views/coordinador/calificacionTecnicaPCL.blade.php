@@ -521,7 +521,7 @@
                                                         <tr class="fila_deficiencias_{{$deficiencias_ateraciones->Id_Deficiencia}}" id="datos_deficiencias">
                                                             <td>{{$deficiencias_ateraciones->Ident_tabla}}</td>
                                                             <td>{{$deficiencias_ateraciones->Nombre_tabla}}</td>
-                                                            <td>{{$deficiencias_ateraciones->Deficiencia}}</td>
+                                                            <td>{{$deficiencias_ateraciones->Total_deficiencia}}</td>
                                                             <td>
                                                                 <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_deficiencias_decretocero_{{$deficiencias_ateraciones->Id_Deficiencia}}" data-id_fila_quitar="{{$deficiencias_ateraciones->Id_Deficiencia}}" data-clase_fila="fila_deficiencias_{{$deficiencias_ateraciones->Id_Deficiencia}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
                                                             </td>
@@ -575,7 +575,7 @@
                                                         <tr class="fila_deficiencias3_{{$deficiencias_ateraciones->Id_Deficiencia}}" id="datos_deficiencias3">
                                                             <td>{{$deficiencias_ateraciones->Tabla1999}}</td>
                                                             <td>{{$deficiencias_ateraciones->Titulo_tabla1999}}</td>
-                                                            <td>{{$deficiencias_ateraciones->Deficiencia}}</td>
+                                                            <td>{{$deficiencias_ateraciones->Total_deficiencia}}</td>
                                                             <td>
                                                                 <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_deficiencias_decreto3_{{$deficiencias_ateraciones->Id_Deficiencia}}" data-id_fila_quitar="{{$deficiencias_ateraciones->Id_Deficiencia}}" data-clase_fila="fila_deficiencias3_{{$deficiencias_ateraciones->Id_Deficiencia}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
                                                             </td>
@@ -615,7 +615,9 @@
                                                             <th style="width: 140px !important;">Clase final</th>
                                                             {{-- <th style="width: 140px !important;">DX principal</th> --}}
                                                             <th style="width: 140px !important;">MSD</th>
+                                                            <th style="width: 140px !important;">Dominancia</th>
                                                             <th style="width: 140px !important;">Deficiencia</th>
+                                                            <th style="width: 140px !important;">% Total Deficiencia (F.Balthazar,sin ponderar)</th>                                                            
                                                             <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_deficiencia_porfactor"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                         </tr>
                                                     </thead>
@@ -640,7 +642,9 @@
                                                                     @endif
                                                                 </td> --}}
                                                                 <td>{{$deficiencias_ateraciones->MSD}}</td>
+                                                                <td>{{$deficiencias_ateraciones->Dominancia}}</td>
                                                                 <td>{{$deficiencias_ateraciones->Deficiencia}}</td>
+                                                                <td>{{$deficiencias_ateraciones->Total_deficiencia}}</td>
                                                                 <td>
                                                                     <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_deficiencia_alteraciones{{$deficiencias_ateraciones->Id_Deficiencia}}" data-id_fila_quitar="{{$deficiencias_ateraciones->Id_Deficiencia}}" data-clase_fila="fila_deficienaAlteracion_{{$deficiencias_ateraciones->Id_Deficiencia}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
                                                                 </td>
@@ -680,7 +684,9 @@
                                                             <th style="width: 140px !important;">Clase final</th>
                                                             {{-- <th style="width: 140px !important;">DX principal</th> --}}
                                                             <th style="width: 140px !important;">MSD</th>
+                                                            <th style="width: 140px !important;">Dominancia</th>
                                                             <th style="width: 140px !important;">Deficiencia</th>
+                                                            <th style="width: 140px !important;">% Total Deficiencia (F.Balthazar,sin ponderar)</th>                                                            
                                                             <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_deficiencia_porfactor"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                         </tr>
                                                     </thead>
@@ -705,7 +711,9 @@
                                                                     @endif
                                                                 </td> --}}
                                                                 <td>{{$deficiencias_ateraciones->MSD}}</td>
+                                                                <td>{{$deficiencias_ateraciones->Dominancia}}</td>
                                                                 <td>{{$deficiencias_ateraciones->Deficiencia}}</td>
+                                                                <td>{{$deficiencias_ateraciones->Total_deficiencia}}</td>
                                                                 <td>
                                                                     <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_deficiencia_alteraciones{{$deficiencias_ateraciones->Id_Deficiencia}}" data-id_fila_quitar="{{$deficiencias_ateraciones->Id_Deficiencia}}" data-clase_fila="fila_deficienaAlteracion_{{$deficiencias_ateraciones->Id_Deficiencia}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
                                                                 </td>

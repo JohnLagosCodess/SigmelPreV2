@@ -3440,8 +3440,11 @@ class CalificacionPCLController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
         ->select('sidae.Id_Deficiencia', 'sidae.ID_evento', 'sidae.Id_Asignacion', 'sidae.Id_proceso', 'sidae.Id_tabla',
         'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.CFM1', 'sidae.CFM2', 'sidae.FU', 'sidae.CAT', 'sidae.Clase_Final', 
-        'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
-        ->where([['sidae.ID_evento',$Id_evento_calitec], ['sidae.Id_Asignacion',$Id_asignacion_calitec], ['sidae.Estado', '=', 'Activo']])->get();         
+        'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Dominancia', 'sidae.Deficiencia', 
+        'sidae.Total_deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
+        ->where([['sidae.ID_evento',$Id_evento_calitec], ['sidae.Id_Asignacion',$Id_asignacion_calitec], ['sidae.Estado', '=', 'Activo']])
+        ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+        ->get();         
         
         $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
         ->where([
@@ -3483,15 +3486,23 @@ class CalificacionPCLController extends Controller
 
         if(count($array_datos_calificacionPclTecnica) > 0){
             $Id_servicio_balt = $array_datos_calificacionPclTecnica[0]->Id_Servicio;
-        }                
+        } 
+        // Validacion de Deficiencias solo en tabla Auditiva                
         $array_datos_deficiencicas50 = DB::select('CALL psrbalthazaraudpcldef(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        // Validacion de Deficiencias solo en tabla Visual
         $array_datos_deficiencicas50_1 = DB::select('CALL psrbalthazarvispcldef(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        // Validacion de Deficiencias solo en tabla Alteraciones del sistema
         $array_datos_deficiencicas50_2 = DB::select('CALL psrbalthazardefpcl(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        // Validacion de Deficiencias solo en tablas Auditiva y Alteraciones del sistema
         $array_datos_deficiencicas50_3 = DB::select('CALL psrbalthazaraudpcl(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        // Validacion de Deficiencias solo en tablas Visual y Alteraciones del sistema
         $array_datos_deficiencicas50_4 = DB::select('CALL psrbalthazarvispcl(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        // Validacion de Deficiencias solo en tablas Auditiva y Visual
         $array_datos_deficiencicas50_5 = DB::select('CALL psrbalthazaraudvispcl(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        // Validacion de Deficiencias solo en tablas Alteraciones del sistema, Auditiva y Visual 
         $array_datos_deficiencicas50_6 = DB::select('CALL psrbalthazarpcl(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
 
+        // Calculo Suma combinada y total 50% Deficiencia solo en tabla Auditiva  
         if(!empty($array_datos_deficiencicas50)  && empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
             $array_Deficiencias50 = $array_datos_deficiencicas50[0]->deficiencias;
             $deficiencias = explode(",", $array_Deficiencias50);
@@ -3523,7 +3534,9 @@ class CalificacionPCLController extends Controller
                 $TotalDeficiencia50 = $value * 50 / 100;
             }
             
-        }elseif(empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
+        }
+        // Calculo Suma combinada y total 50% Deficiencia solo en tabla Visual
+        elseif(empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
             $array_Deficiencias50 = $array_datos_deficiencicas50_1[0]->deficiencias;
             $deficiencias = explode(",", $array_Deficiencias50);
             //print_r($deficiencias);            
@@ -3543,7 +3556,9 @@ class CalificacionPCLController extends Controller
                 $TotalDeficiencia50 = $value * 50 / 100;
             }
             
-        }elseif(empty($array_datos_deficiencicas50)  && empty($array_datos_deficiencicas50_1) && !empty($array_datos_deficiencicas50_2)){
+        }
+        // Calculo Suma combinada y total 50% Deficiencia solo en tabla Alteraciones del sistema
+        elseif(empty($array_datos_deficiencicas50)  && empty($array_datos_deficiencicas50_1) && !empty($array_datos_deficiencicas50_2)){
             $array_Deficiencias50 = $array_datos_deficiencicas50_2[0]->deficiencias;
             $deficiencias = explode(",", $array_Deficiencias50);
             //print_r($deficiencias);    
@@ -3587,7 +3602,9 @@ class CalificacionPCLController extends Controller
                 $TotalDeficiencia50 = $value * 50 / 100;
             }
             
-        }elseif(!empty($array_datos_deficiencicas50_3) && empty($array_datos_deficiencicas50_1)) {
+        }
+        // Calculo Suma combinada y total 50% Deficiencia solo en tablas Auditiva y Alteraciones del sistema
+        elseif(!empty($array_datos_deficiencicas50_3) && empty($array_datos_deficiencicas50_1)) {
             $array_Deficiencias50 = $array_datos_deficiencicas50_3[0]->deficiencias;
             $deficiencias = explode(",", $array_Deficiencias50);
             //print_r($deficiencias);            
@@ -3646,7 +3663,9 @@ class CalificacionPCLController extends Controller
                 $TotalDeficiencia50 = $value * 50 / 100;
             }
             
-        }elseif(!empty($array_datos_deficiencicas50_4) && empty($array_datos_deficiencicas50)){
+        }
+        // Calculo Suma combinada y total 50% Deficiencia solo en tablas Visual y Alteraciones del sistema
+        elseif(!empty($array_datos_deficiencicas50_4) && empty($array_datos_deficiencicas50)){
             $array_Deficiencias50 = $array_datos_deficiencicas50_4[0]->deficiencias;
             $deficiencias = explode(",", $array_Deficiencias50);
             //print_r($deficiencias);  
@@ -3691,7 +3710,9 @@ class CalificacionPCLController extends Controller
             }
             
             
-        }elseif(!empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
+        }
+        // Calculo Suma combinada y total 50% Deficiencia solo en tablas Auditiva y Visual
+        elseif(!empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
             $array_Deficiencias50 = $array_datos_deficiencicas50_5[0]->deficiencias;
             $deficiencias = explode(",", $array_Deficiencias50);
             //print_r($deficiencias);            
@@ -3724,7 +3745,9 @@ class CalificacionPCLController extends Controller
                 $TotalDeficiencia50 = $value * 50 / 100;
             }
             
-        }elseif(!empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && !empty($array_datos_deficiencicas50_2)) {
+        }
+        // Calculo Suma combinada y total 50% Deficiencia solo en tablas Alteraciones del sistema, Auditiva y Visual
+        elseif(!empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && !empty($array_datos_deficiencicas50_2)) {
             $array_Deficiencias50 = $array_datos_deficiencicas50_6[0]->deficiencias;
             $deficiencias = explode(",", $array_Deficiencias50);
             //print_r($deficiencias);            
@@ -3783,7 +3806,8 @@ class CalificacionPCLController extends Controller
                 $TotalDeficiencia50 = $value * 50 / 100;
             }
             
-        }else{
+        }
+        else{
             $deficiencias = 0;
             $TotalDeficiencia50 =0;
         }
@@ -5014,7 +5038,7 @@ class CalificacionPCLController extends Controller
         // Creación de array con los campos de la tabla: sigmel_informacion_deficiencias_alteraciones_eventos
         
         $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Id_tabla', 'FP', 'CFM1', 'CFM2', 'FU',	'CAT', 'Clase_Final', 
-        'MSD', 'Deficiencia', 'Estado_Recalificacion', 'Nombre_usuario','F_registro'];
+        'MSD', 'Dominancia', 'Deficiencia', 'Total_deficiencia', 'Estado_Recalificacion', 'Nombre_usuario','F_registro'];
         
         // Combinación de los campos de la tabla con los datos
         $array_datos_con_keys = [];
@@ -6401,7 +6425,7 @@ class CalificacionPCLController extends Controller
 
         // Creación de array con los campos de la tabla: sigmel_informacion_deficiencias_alteraciones_eventos
         
-        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Id_tabla', 'Deficiencia', 
+        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Id_tabla', 'Total_deficiencia', 
         'Estado_Recalificacion', 'Nombre_usuario','F_registro'];
         
         // Combinación de los campos de la tabla con los datos
@@ -6479,7 +6503,7 @@ class CalificacionPCLController extends Controller
 
         // Creación de array con los campos de la tabla: sigmel_informacion_deficiencias_alteraciones_eventos
         
-        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Tabla1999', 'Titulo_tabla1999', 'Deficiencia', 
+        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Tabla1999', 'Titulo_tabla1999', 'Total_deficiencia', 
         'Estado_Recalificacion', 'Nombre_usuario','F_registro'];
         
         // Combinación de los campos de la tabla con los datos
@@ -6911,8 +6935,10 @@ class CalificacionPCLController extends Controller
         $array_deficiencias_alteraciones = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
         ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
         ->select('sidae.Id_tabla', 'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.FU', 'sidae.CFM1', 'sidae.CFM2', 
-        'sidae.Clase_Final', 'sidae.Deficiencia', 'sidae.CAT', 'sidae.MSD')
-        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['sidae.Estado','Activo']])->get();  
+        'sidae.Clase_Final', 'sidae.Dominancia', 'sidae.Deficiencia', 'sidae.Total_deficiencia', 'sidae.CAT', 'sidae.MSD')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['sidae.Estado','Activo']])
+        ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+        ->get();  
         
         $Suma_combinada_fc = $array_datos_info_dictamen[0]->Suma_combinada;
 
@@ -7351,8 +7377,10 @@ class CalificacionPCLController extends Controller
         ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['side.Estado', 'Activo']])->get();  
 
         $array_deficiencias_alteraciones = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')        
-        ->select('sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Deficiencia')
-        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['sidae.Estado', 'Activo']])->get();  
+        ->select('sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Total_deficiencia')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['sidae.Estado', 'Activo']])
+        ->orderByRaw("CAST(sidae.Deficiencia AS UNSIGNED) DESC")
+        ->get();  
         
         $Suma_combinada_fc = $array_datos_info_dictamen[0]->Suma_combinada;        
 
@@ -8674,7 +8702,7 @@ class CalificacionPCLController extends Controller
         $array_deficiencias_alteraciones = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
         ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
         ->select('sidae.Id_tabla', 'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.FU', 'sidae.CFM1', 'sidae.CFM2', 
-        'sidae.Clase_Final', 'sidae.Deficiencia', 'sidae.CAT', 'sidae.MSD')
+        'sidae.Clase_Final', 'sidae.Total_deficiencia', 'sidae.CAT', 'sidae.MSD')
         ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['sidae.Estado', 'Activo']])->get();  
         
         $Suma_combinada_fc = $array_datos_info_dictamen[0]->Suma_combinada;

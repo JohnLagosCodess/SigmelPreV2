@@ -26,8 +26,11 @@ class sigmel_informacion_deficiencias_alteraciones_eventos extends Model
         'Clase_Final',
         'Dx_Principal',
         'MSD',
+        'Dominancia',
         'Deficiencia',
+        'Total_deficiencia',
         'Estado',
+        'Estado_Recalificacion',
         'Nombre_usuario',
         'F_registro',
     ];
