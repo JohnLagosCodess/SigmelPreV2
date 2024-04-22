@@ -226,11 +226,22 @@
                         <td class="justificado"><span class="negrita">Copia:</span></td>                            
                     </tr>
                     <?php 
-                        $Afiliado = 'Afiliado';
+                        $Beneficiario = 'Beneficiario';
                         $Empleador = 'Empleador';
                         $EPS = 'EPS';
                         $AFP = 'AFP';
+                        $AFP_Conocimiento = 'AFP_Conocimiento';
                         $ARL = 'ARL';
+                    ?>
+                    <?php 
+                        if (isset($Agregar_copia[$Beneficiario])) { ?>
+                            <tr>
+                                <td>
+                                    <span class="negrita">Beneficiario: </span><?=$Agregar_copia['Beneficiario'];?>
+                                </td>
+                            </tr>
+                        <?php       
+                        }
                     ?>
                     <?php 
                         if (isset($Agregar_copia[$Empleador])) { ?>
@@ -257,6 +268,16 @@
                             <tr>
                                 <td class="copias">
                                     <span class="negrita">AFP: </span><?=$Agregar_copia['AFP'];?>
+                                </td>
+                            </tr>
+                        <?php       
+                        }
+                    ?>
+                    <?php 
+                        if (isset($Agregar_copia[$AFP_Conocimiento])) { ?>
+                            <tr>
+                                <td class="copias">
+                                    <span class="negrita">AFP Conocimiento: </span><?=$Agregar_copia['AFP_Conocimiento'];?>
                                 </td>
                             </tr>
                         <?php       

@@ -258,13 +258,29 @@ class DeterminacionOrigenATEL extends Controller
         }
 
         $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$Id_evento_dto_atel], ['Id_Asignacion',$Id_asignacion_dto_atel], ['T_documento','N/A']])->get();  
+        ->where([['ID_evento',$Id_evento_dto_atel], ['Id_Asignacion',$Id_asignacion_dto_atel], ['T_documento','N/A']])->get();
+
+        /* Nombre Afp */
+        $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
+        ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad')
+        ->where([['Id_Entidad', $array_datos_calificacion_origen[0]->Id_afp]])
+        ->get();
+
+        /* Traer datos de la AFP de Conocimiento */
+        $info_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp_entidad_conocimiento', '=', 'sie.Id_Entidad')
+        ->select('siae.Entidad_conocimiento')
+        ->where([['siae.ID_evento', $Id_evento_dto_atel]])
+        ->get();
 
         return view('coordinador.determinacionOrigenATEL', compact('user', 'array_datos_calificacion_origen', 
         'motivo_solicitud_actual', 'datos_apoderado_actual', 
         'array_datos_info_laboral', 'listado_documentos_solicitados', 
         'dato_articulo_12', 'array_datos_diagnostico_motcalifi',
-        'array_datos_examenes_interconsultas', 'array_datos_historico_laboral', 'datos_bd_DTO_ATEL', 'nombre_del_evento_guardado','array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia'));
+        'array_datos_examenes_interconsultas', 'array_datos_historico_laboral', 'datos_bd_DTO_ATEL', 
+        'nombre_del_evento_guardado','array_comite_interdisciplinario', 'consecutivo', 
+        'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento'));
     }
 
     public function cargueListadoSelectoresDTOATEL(Request $request){
@@ -503,7 +519,8 @@ class DeterminacionOrigenATEL extends Controller
             $array_datos_reviso =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
             ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
             ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
-            ->where([['sgt.Id_proceso_equipo', '=', $request->idProcesoLider]])->get();
+            ->where([['sgt.Id_proceso_equipo', '=', $request->idProcesoLider]])
+            ->get();
 
             $informacion_datos_reviso = json_decode(json_encode($array_datos_reviso, true));
             return response()->json($informacion_datos_reviso);
@@ -962,9 +979,11 @@ class DeterminacionOrigenATEL extends Controller
         }
         $Asunto = $request->Asunto;
         $cuerpo_comunicado = $request->cuerpo_comunicado;
+        $beneficiario = $request->beneficiario;
         $empleador = $request->empleador;
         $eps = $request->eps;
         $afp = $request->afp;
+        $afp_conocimiento = $request->afp_conocimiento;
         $arl = $request->arl;
         $jrci = $request->jrci;        
         $cual = $request->cual;
@@ -976,6 +995,9 @@ class DeterminacionOrigenATEL extends Controller
 
         $variables_llenas = array();
 
+        if (!empty($beneficiario)) {
+            $variables_llenas[] = $beneficiario;
+        }
         if (!empty($empleador)) {
             $variables_llenas[] = $empleador;
         }
@@ -984,6 +1006,9 @@ class DeterminacionOrigenATEL extends Controller
         }
         if (!empty($afp)) {
             $variables_llenas[] = $afp;
+        }
+        if (!empty($afp_conocimiento)) {
+            $variables_llenas[] = $afp_conocimiento;
         }
         if (!empty($arl)) {
             $variables_llenas[] = $arl;
@@ -1026,10 +1051,12 @@ class DeterminacionOrigenATEL extends Controller
                 'Ciudad_destinatario' => $ciudad_destinatario,
                 'Asunto' => $Asunto,
                 'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Copia_afiliado' => $beneficiario,
                 'Copia_empleador' => $empleador,
                 'Copia_eps' => $eps,
                 'Copia_afp' => $afp,
                 'Copia_arl' => $arl,
+                'Copia_afp_conocimiento' => $afp_conocimiento,
                 'Copia_jr' => $jrci,
                 'Cual_jr' => $cual,
                 'Copia_jn' => $jnci,
@@ -1109,10 +1136,12 @@ class DeterminacionOrigenATEL extends Controller
                 'Ciudad_destinatario' => $ciudad_destinatario,
                 'Asunto' => $Asunto,
                 'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Copia_afiliado' => $beneficiario,
                 'Copia_empleador' => $empleador,
                 'Copia_eps' => $eps,
                 'Copia_afp' => $afp,
                 'Copia_arl' => $arl,
+                'Copia_afp_conocimiento' => $afp_conocimiento,
                 'Copia_jr' => $jrci,
                 'Cual_jr' => $cual,
                 'Copia_jn' => $jnci,
@@ -1403,12 +1432,15 @@ class DeterminacionOrigenATEL extends Controller
         $nombre_afiliado = $request->nombre_afiliado;
         $direccion_afiliado = $request->direccion_afiliado;
         $telefono_afiliado = $request->telefono_afiliado;
+        $ciudad_afiliado = $request->ciudad_afiliado;
         $Id_asignacion = $request->Id_asignacion;
         $Id_cliente_firma = $request->Id_cliente_firma;
         $origen = "<b>".$request->origen."</b>";
+        $copia_beneficiario = $request->copia_beneficiario;
         $copia_empleador = $request->copia_empleador;
         $copia_eps = $request->copia_eps;
         $copia_afp = $request->copia_afp;
+        $copia_afp_conocimiento = $request->copia_afp_conocimiento;
         $copia_arl = $request->copia_arl;
         $firmar = $request->firmar;
         $anexos = $request->anexos;
@@ -1517,36 +1549,31 @@ class DeterminacionOrigenATEL extends Controller
                 break;
             }
         } 
-        // En caso de que no: la info del destinatario principal se saca del afiliado
+        // En caso de que no: la info del destinatario principal se saca de la AFP
         else {
-            $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-            ->select('sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
-            ->where([['siae.ID_evento','=', $nro_siniestro]])
-            ->get();
-
-            $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
-
             $nombre_destinatario_principal = $nombre_afiliado;
             $direccion_destinatario_principal = $direccion_afiliado;
             $telefono_destinatario_principal = $telefono_afiliado;
-            $ciudad_destinatario_principal = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
+            $ciudad_destinatario_principal = $ciudad_afiliado;
         }
         
         $ramo = "Previsionales";
         
         /* Copias Interesadas */
         // Validamos si los checkbox esta marcados
+        $final_copia_beneficiario = isset($copia_beneficiario) ? 'Beneficiario' : '';
         $final_copia_empleador = isset($copia_empleador) ? 'Empleador' : '';
         $final_copia_eps = isset($copia_eps) ? 'EPS' : '';
         $final_copia_afp = isset($copia_afp) ? 'AFP' : '';
+        $final_copia_afp_conocimiento = isset($copia_afp_conocimiento) ? 'AFP_Conocimiento' : '';
         $final_copia_arl = isset($copia_arl) ? 'ARL' : '';
 
         $total_copias = array_filter(array(
+            'copia_beneficiario' => $final_copia_beneficiario,
             'copia_empleador' => $final_copia_empleador,
             'copia_eps' => $final_copia_eps,
             'copia_afp' => $final_copia_afp,
+            'copia_afp_conocimiento' => $final_copia_afp_conocimiento,
             'copia_arl' => $final_copia_arl,
         )); 
 
@@ -1556,6 +1583,24 @@ class DeterminacionOrigenATEL extends Controller
         extract($total_copias);
         
         $Agregar_copias = [];
+        if (isset($copia_beneficiario)) {
+            // $nro_siniestro 
+            $datos_beneficiario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento_benefi', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio_benefi', '=', 'sldm2.Id_municipios')
+            ->select('siae.Nombre_afiliado_benefi', 'siae.Direccion_benefi', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+            ->where([['siae.ID_evento', $nro_siniestro ]])
+            ->get();
+
+            $nombre_beneficiario = $datos_beneficiario[0]->Nombre_afiliado_benefi;
+            $direccion_beneficiario = $datos_beneficiario[0]->Direccion_benefi;
+            $departamento_beneficiario = $datos_beneficiario[0]->Nombre_departamento;
+            $ciudad_beneficiario = $datos_beneficiario[0]->Nombre_ciudad;
+
+
+            $Agregar_copias['Beneficiario'] = $nombre_beneficiario."; ".$direccion_beneficiario."; ".$departamento_beneficiario."; ".$ciudad_beneficiario.".";
+        }
+
         if(isset($copia_empleador)){
 
             $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
@@ -1618,6 +1663,47 @@ class DeterminacionOrigenATEL extends Controller
             $municipio_afp = $datos_afp[0]->Nombre_municipio;
 
             $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$telefonos_afp."; ".$ciudad_afp." - ".$municipio_afp;
+        }
+
+        if (isset($copia_afp_conocimiento)) {
+            $dato_id_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->select('siae.Entidad_conocimiento', 'siae.Id_afp_entidad_conocimiento')
+            ->where([['siae.ID_evento', $nro_siniestro]])
+            ->get();
+
+            if (count($dato_id_afp_conocimiento) > 0) {
+
+                $si_entidad_conocimiento = $dato_id_afp_conocimiento[0]->Entidad_conocimiento;
+
+                if ($si_entidad_conocimiento == "Si") {
+                    $id_afp_conocimiento = $dato_id_afp_conocimiento[0]->Id_afp_entidad_conocimiento;
+    
+                    $datos_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                    ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+                    ->where([['sie.Id_Entidad', $id_afp_conocimiento]])
+                    ->get();
+    
+                    $nombre_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_entidad;
+                    $direccion_afp_conocimiento = $datos_afp_conocimiento[0]->Direccion;
+                    if ($datos_afp_conocimiento[0]->Otros_Telefonos != "") {
+                        $telefonos_afp_conocimiento = $datos_afp_conocimiento[0]->Telefonos.",".$datos_afp_conocimiento[0]->Otros_Telefonos;
+                    } else {
+                        $telefonos_afp_conocimiento = $datos_afp_conocimiento[0]->Telefonos;
+                    }
+                    $ciudad_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_ciudad;
+                    $municipio_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_municipio;
+    
+                    $Agregar_copias['AFP_Conocimiento'] = $nombre_afp_conocimiento."; ".$direccion_afp_conocimiento."; ".$telefonos_afp_conocimiento."; ".$ciudad_afp_conocimiento." - ".$municipio_afp_conocimiento;
+                } else {
+                    // $Agregar_copias['AFP_Conocimiento'] = '';
+                }
+
+            } else {
+                // $Agregar_copias['AFP_Conocimiento'] = '';
+            }
+            
         }
 
         if(isset($copia_arl)){

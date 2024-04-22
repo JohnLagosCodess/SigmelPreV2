@@ -1032,15 +1032,15 @@
                                 <div class="row text-center">                                  
                                     <label for="destinatario_principal_act" style="margin-left: 7px;">Destinatario Principal: <span style="color: red;">(*)</span></label>                                        
                                     <div class="col-3">
-                                        <label for="afiliado_comunicado_act"><strong>Afiliado</strong></label>
+                                        <label for="afiliado_comunicado_editar"><strong>Afiliado</strong></label>
                                         <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="afiliado_comunicado_editar" value="Afiliado" style="margin-left: revert;" required>
                                     </div>
                                     <div class="col-3">
-                                        <label for="empresa_comunicado"><strong>Empleador</strong></label>
+                                        <label for="empresa_comunicado_editar"><strong>Empleador</strong></label>
                                         <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="empresa_comunicado_editar" value="Empresa" style="margin-left: revert;" required>
                                     </div>
                                     <div class="col-3">
-                                        <label for="Otro"><strong>Otro</strong></label>
+                                        <label for="Otro_editar"><strong>Otro</strong></label>
                                         <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="Otro_editar" value="Otro" style="margin-left: revert;" required>
                                     </div>
                                 </div>                                                                                                                     

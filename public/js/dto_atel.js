@@ -544,7 +544,7 @@ $(document).ready(function(){
         'parametro':"lista_reviso",
         'idProcesoLider':idProcesoLider
     };
-
+    
     $.ajax({
         type:'POST',
         url:'/cargueListadoSelectoresDTOATEL',
@@ -558,6 +558,7 @@ $(document).ready(function(){
                     $('#reviso').append('<option value="'+data[nombreRevisoPcl[i]]['name']+'">'+data[nombreRevisoPcl[i]]['name']+'</option>');
                 }
             }
+            $("#reviso").prop("selectedIndex", 1);
         }
     });
 
@@ -1685,16 +1686,62 @@ $(document).ready(function(){
 
 
     // Funcionalidad para introducir el texto predeterminado para la proforma Notificación DML ORIGEN
+    var entidad_conocimiento = $("#entidad_conocimiento").val();
     $('#oficio_origen').change(function(){
         if ($(this).prop('checked')) {
-         var asunto_insertar = "CONCEPTO SOBRE PRESUNTO ORIGEN EVENTO";
-         var texto_insertar = '<p>Respetados Señores</p><p>En atención a la solicitud de emisión de concepto sobre el presunto origen de la contingencia, le informamos que una vez estudiada la documentación del paciente por el comité intedisciplinario de calificación de pérdida de la capacidad laboral y origen de Seguros de Vida ALFA S.A., experto en la materia, se considera que el presunto origen de la muerte del Señor(a) {{$nombre_afiliado}}, es con ocasión de un {{$origen_evento}}.</p><p>Para los efectos, se adjuntó el concepto que sustenta lo manifestado.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestra líneas de atención, al cliente en Bogotá (601) 3077032 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co»; o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>';
+            var asunto_insertar = "CONCEPTO SOBRE PRESUNTO ORIGEN EVENTO";
+            var texto_insertar = '<p>Respetados Señores</p><p>En atención a la solicitud de emisión de concepto sobre el presunto origen de la contingencia, le informamos que una vez estudiada la documentación del paciente por el comité intedisciplinario de calificación de pérdida de la capacidad laboral y origen de Seguros de Vida ALFA S.A., experto en la materia, se considera que el presunto origen de la muerte del Señor(a) {{$nombre_afiliado}}, es con ocasión de un {{$origen_evento}}.</p><p>Para los efectos, se adjuntó el concepto que sustenta lo manifestado.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestra líneas de atención, al cliente en Bogotá (601) 3077032 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co»; o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>';
 
-         $("#Asunto").val(asunto_insertar);
-         $("#cuerpo_comunicado").summernote('code', texto_insertar);
+            $("#Asunto").val(asunto_insertar);
+            $("#cuerpo_comunicado").summernote('code', texto_insertar);
+
+            // Habilitación etiquetas
+            $("#btn_insertar_nombre_afiliado").prop('disabled', false);
+            $("#btn_insertar_origen_evento").prop('disabled', false);
+
+            // Selección automática de las copias a partes interesadas: Benficiario, Empleador, EPS, ARL
+            $("#beneficiario").prop('checked', true);
+            $("#empleador").prop('checked', true);
+            $("#eps").prop('checked', true);
+            $("#arl").prop('checked', true);
+
+            // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+            if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+                $("#afp_conocimiento").prop('checked', true);
+            }
+        
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 1;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', true);
+
         }else{
             $("#Asunto").val('');
             $("#cuerpo_comunicado").summernote('code', '');
+
+            // deshabilitación etiquetas
+            $("#btn_insertar_nombre_afiliado").prop('disabled', true);
+            $("#btn_insertar_origen_evento").prop('disabled', true);
+
+            // Deselección automática de las copias a partes interesadas: Benficiario, Empleador, EPS, ARL
+            $("#beneficiario").prop('checked', false);
+            $("#empleador").prop('checked', false);
+            $("#eps").prop('checked', false);
+            $("#arl").prop('checked', false);
+
+            // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+            if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+                $("#afp_conocimiento").prop('checked', false);
+            }
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática del checkbox firmar
+            $("#firmar").prop('checked', false);
         }
     });
 
@@ -1952,11 +1999,19 @@ $(document).ready(function(){
         }        
         var Asunto = $('#Asunto').val();
         var cuerpo_comunicado = $('#cuerpo_comunicado').val();
-        var empleador = $('input[name="empleador"]:checked').val();;        
+        var beneficiario = $('input[name="beneficiario"]:checked').val();
+        var empleador = $('input[name="empleador"]:checked').val();
         var eps = $('input[name="eps"]:checked').val();
         var afp = $('input[name="afp"]:checked').val();
+
+        // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+        var afp_conocimiento = '';
+        if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+            afp_conocimiento = $('input[name="afp_conocimiento"]:checked').val();
+        }
+
         var arl = $('input[name="arl"]:checked').val();
-        var jrci = $('input[name="jrci"]:checked').val();   
+        var jrci = $('input[name="jrci"]:checked').val();
             
         if (jrci == undefined) {
             var cual = '';                        
@@ -1994,9 +2049,11 @@ $(document).ready(function(){
             'ciudad_destinatario': ciudad_destinatario,
             'Asunto':Asunto,
             'cuerpo_comunicado':cuerpo_comunicado,
+            'beneficiario': beneficiario,
             'empleador':empleador,
             'eps':eps,
             'afp':afp,
+            'afp_conocimiento': afp_conocimiento,
             'arl':arl,
             'jrci':jrci,
             'cual':cual,
@@ -2010,7 +2067,7 @@ $(document).ready(function(){
             'radicado':radicado,
             'bandera_correspondecia_guardar_actualizar':bandera_correspondecia_guardar_actualizar
         }
-
+        
         $.ajax({    
             type:'POST',
             url:'/guardarcorrespondenciaDTO',
@@ -2133,13 +2190,23 @@ $(document).ready(function(){
         var nombre_afiliado = $("#nombre_afiliado_"+tupla_comunicado).val();
         var direccion_afiliado = $("#direccion_afiliado_"+tupla_comunicado).val();
         var telefono_afiliado = $("#telefono_afiliado_"+tupla_comunicado).val();
+        var ciudad_afiliado = $("#ciudad_afiliado_"+tupla_comunicado).val();
         var Id_asignacion = $("#Id_Asignacion_consulta_"+tupla_comunicado).val();
         var Id_cliente_firma = $('#Id_cliente_firma_'+tupla_comunicado).val();
         var origen = $("#origen_dto_atel option:selected").text();
         //checkbox de Copias de partes interesadas
+        var copia_beneficiario = $('#beneficiario').filter(":checked").val();
         var copia_empleador = $('#empleador').filter(":checked").val();
         var copia_eps = $('#eps').filter(":checked").val();
         var copia_afp = $('#afp').filter(":checked").val();
+
+        // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+        var copia_afp_conocimiento = '';
+        if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+            copia_afp_conocimiento = $('#afp_conocimiento').filter(":checked").val();
+        }
+
+
         var copia_arl = $('#arl').filter(":checked").val();
         var firmar = $('#firmar').filter(":checked").val();
         var anexos = $('#anexos').val();
@@ -2158,12 +2225,15 @@ $(document).ready(function(){
             'nombre_afiliado': nombre_afiliado,
             'direccion_afiliado': direccion_afiliado,
             'telefono_afiliado': telefono_afiliado,
+            'ciudad_afiliado': ciudad_afiliado,
             'Id_asignacion': Id_asignacion,
             'Id_cliente_firma': Id_cliente_firma,
             'origen': origen,
+            'copia_beneficiario': copia_beneficiario,
             'copia_empleador': copia_empleador,
             'copia_eps': copia_eps,
             'copia_afp': copia_afp,
+            'copia_afp_conocimiento': copia_afp_conocimiento,
             'copia_arl': copia_arl,
             'firmar': firmar,
             'anexos': anexos
@@ -2205,6 +2275,17 @@ $(document).ready(function(){
         $("#div_comite_interdisciplinario").addClass('d-none');
         $("#div_correspondecia").addClass('d-none');
         $("label[for='editar_correspondencia']").addClass('d-none');
+    }
+
+    // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:
+    // inhabilita los campos nro anexos, asunto, etiquetas, cuerpo comunicado, firmar
+    if (idRol != 6) {
+        $("#anexos").prop('readonly', true);
+        $("#Asunto").prop('readonly', true);
+        $("#btn_insertar_nombre_afiliado").prop('disabled', true);
+        $("#btn_insertar_origen_evento").prop('disabled', true);
+        $(".note-editable").attr("contenteditable", false);
+        $("#firmar").prop('disabled', true);
     }
 
 });

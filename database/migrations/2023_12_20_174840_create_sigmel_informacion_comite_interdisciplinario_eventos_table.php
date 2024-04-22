@@ -45,6 +45,7 @@ return new class extends Migration
             $table->text('Copia_eps')->nullable();
             $table->text('Copia_afp')->nullable();
             $table->text('Copia_arl')->nullable();
+            $table->text('Copia_afp_conocimiento')->nullable();
             $table->text('Copia_jr')->nullable();
             $table->text('Cual_jr')->nullable();
             $table->text('Copia_jn')->nullable();

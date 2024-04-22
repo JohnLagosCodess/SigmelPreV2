@@ -223,6 +223,12 @@ class RecalificacionPCLController extends Controller
         // traer todos los datos del evento segun el id de asignacion
         $array_datos_RecalificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($Id_asignacion_recali));
 
+        /* Traer datos de la AFP de Conocimiento */
+        $info_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
+        ->select('siae.Entidad_conocimiento')
+        ->where([['siae.ID_evento', $Id_evento_recali]])
+        ->get();
+
         // Condicional IF para Recalificacion sobre Recalificacion y Else para Recalifacion sobre Calificacion tecnica
 
         if ($eventoAsigancionMin_Recalifi != $Id_asignacion_recali && !empty($eventoAsigancionMin_Recalifi)) { 
@@ -1020,7 +1026,7 @@ class RecalificacionPCLController extends Controller
                     $array_comunicados_comite_interre = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
                     ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali]])->get();  
                     
-                    return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'eventoAsigancion_Recalifi', 'eventoAsigancion_Recalifi_estadoDecreto', 'validar_estado_decreto', 'eventoAsigancion_RecalifiPCL', 'datos_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre'));
+                    return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'eventoAsigancion_Recalifi', 'eventoAsigancion_Recalifi_estadoDecreto', 'validar_estado_decreto', 'eventoAsigancion_RecalifiPCL', 'datos_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento'));
                     
                 }
             }
@@ -1030,8 +1036,8 @@ class RecalificacionPCLController extends Controller
                 return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'validar_estado_decreto', 'validar_evento_CalifiTecnica', 'array_datos_idasignacion_decretos', 'validar_evento_Recali'));                
             } else {
                 if(empty($validar_evento_CalifiTecnica[0]->Id_servicio)){                    
-                    return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'validar_estado_decreto', 'validar_evento_CalifiTecnica', 'validar_evento_Recali'));                
-                }elseif (!empty($validar_evento_CalifiTecnica[0]->Id_servicio)) {                    
+                    return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'validar_estado_decreto', 'validar_evento_CalifiTecnica', 'validar_evento_Recali'));
+                }elseif (!empty($validar_evento_CalifiTecnica[0]->Id_servicio)) {                 
                     if (count($validar_evento_CalifiTecnica) == 1) {                
                         // $array_datos_motivo_solicitud = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_pericial_eventos as sipe')
                         // ->leftJoin('sigmel_gestiones.sigmel_lista_motivo_solicitudes as slms', 'slms.Id_Solicitud', '=', 'sipe.Id_motivo_solicitud')
@@ -1819,7 +1825,7 @@ class RecalificacionPCLController extends Controller
                         $array_comunicados_comite_interre = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
                         ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali]])->get();  
                         
-                        return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'validar_estado_decreto', 'datos_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre'));
+                        return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'validar_estado_decreto', 'datos_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento'));
     
                     }
                 }                
@@ -4475,6 +4481,7 @@ class RecalificacionPCLController extends Controller
         $empleador = $request->empleador;
         $eps = $request->eps;
         $afp = $request->afp;
+        $afp_conocimiento = $request->afp_conocimiento;
         $arl = $request->arl;
         $jrci = $request->jrci;        
         $cual = $request->cual;
@@ -4493,6 +4500,9 @@ class RecalificacionPCLController extends Controller
         }
         if (!empty($afp)) {
             $variables_llenas[] = $afp;
+        }
+        if (!empty($afp_conocimiento)) {
+            $variables_llenas[] = $afp_conocimiento;
         }
         if (!empty($arl)) {
             $variables_llenas[] = $arl;
@@ -4541,6 +4551,7 @@ class RecalificacionPCLController extends Controller
                 'Copia_eps' => $eps,
                 'Copia_afp' => $afp,
                 'Copia_arl' => $arl,
+                'Copia_afp_conocimiento' => $afp_conocimiento,
                 'Copia_jr' => $jrci,
                 'Cual_jr' => $cual,
                 'Copia_jn' => $jnci,
@@ -4628,6 +4639,7 @@ class RecalificacionPCLController extends Controller
                 'Copia_eps' => $eps,
                 'Copia_afp' => $afp,
                 'Copia_arl' => $arl,
+                'Copia_afp_conocimiento' => $afp_conocimiento,
                 'Copia_jr' => $jrci,
                 'Cual_jr' => $cual,
                 'Copia_jn' => $jnci,
@@ -6019,6 +6031,7 @@ class RecalificacionPCLController extends Controller
         $Copia_empleador_correspondecia = $array_datos_comite_inter[0]->Copia_empleador;
         $Copia_eps_correspondecia = $array_datos_comite_inter[0]->Copia_eps;
         $Copia_afp_correspondecia = $array_datos_comite_inter[0]->Copia_afp;
+        $Copia_afp_conocimiento_correspondencia = $array_datos_comite_inter[0]->Copia_afp_conocimiento;
         $Copia_arl_correspondecia = $array_datos_comite_inter[0]->Copia_arl;
         $Oficio_pcl = $array_datos_comite_inter[0]->Oficio_pcl;
         $Oficio_incapacidad = $array_datos_comite_inter[0]->Oficio_incapacidad;
@@ -6115,6 +6128,43 @@ class RecalificacionPCLController extends Controller
             $Direccion_afp = '';
             $Telefono_afp = '';
             $Ciudad_departamento_afp = '';
+        }
+
+        if (!empty($Copia_afp_conocimiento_correspondencia) && $Copia_afp_conocimiento_correspondencia == "AFP_Conocimiento") {
+            $dato_id_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->select('siae.Entidad_conocimiento','siae.Id_afp_entidad_conocimiento')
+            ->where([['siae.ID_evento', $ID_Evento_comuni_comite]])
+            ->get();
+
+            $si_entidad_conocimiento = $dato_id_afp_conocimiento[0]->Entidad_conocimiento;
+            $id_afp_conocimiento = $dato_id_afp_conocimiento[0]->Id_afp_entidad_conocimiento;
+
+            if ($si_entidad_conocimiento == "Si") {
+                $datos_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                ->where([['sie.Id_Entidad', $id_afp_conocimiento]])
+                ->get();
+    
+                $Nombre_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_entidad;
+                $Direccion_afp_conocimiento = $datos_afp_conocimiento[0]->Direccion;
+                $Telefonos_afp_conocimiento = $datos_afp_conocimiento[0]->Telefonos;
+                $Ciudad_departamento_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_ciudad.'-'.$datos_afp_conocimiento[0]->Nombre_departamento;
+            } else {
+                $Copia_afp_conocimiento_correspondencia = '';
+
+                $Nombre_afp_conocimiento = '';
+                $Direccion_afp_conocimiento = '';
+                $Telefonos_afp_conocimiento = '';
+                $Ciudad_departamento_afp_conocimiento = '';
+            }
+
+        } else {
+            $Nombre_afp_conocimiento = '';
+            $Direccion_afp_conocimiento = '';
+            $Telefonos_afp_conocimiento = '';
+            $Ciudad_departamento_afp_conocimiento = '';
         }
 
         if(!empty($Copia_arl_correspondecia) && $Copia_arl_correspondecia == 'ARL'){
@@ -6433,6 +6483,7 @@ class RecalificacionPCLController extends Controller
                 'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
                 'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
                 'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
+                'Copia_afp_conocimiento_correspondencia' => $Copia_afp_conocimiento_correspondencia,
                 'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
                 'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
@@ -6446,6 +6497,10 @@ class RecalificacionPCLController extends Controller
                 'Direccion_afp' => $Direccion_afp,
                 'Telefono_afp' => $Telefono_afp,
                 'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
+                'Nombre_afp_conocimiento' => $Nombre_afp_conocimiento,
+                'Direccion_afp_conocimiento' => $Direccion_afp_conocimiento,
+                'Telefonos_afp_conocimiento' => $Telefonos_afp_conocimiento,
+                'Ciudad_departamento_afp_conocimiento' => $Ciudad_departamento_afp_conocimiento,
                 'Nombre_arl' => $Nombre_arl,
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
@@ -6584,6 +6639,7 @@ class RecalificacionPCLController extends Controller
                 'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
                 'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
                 'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
+                'Copia_afp_conocimiento_correspondencia' => $Copia_afp_conocimiento_correspondencia,
                 'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
                 'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
@@ -6597,6 +6653,10 @@ class RecalificacionPCLController extends Controller
                 'Direccion_afp' => $Direccion_afp,
                 'Telefono_afp' => $Telefono_afp,
                 'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
+                'Nombre_afp_conocimiento' => $Nombre_afp_conocimiento,
+                'Direccion_afp_conocimiento' => $Direccion_afp_conocimiento,
+                'Telefonos_afp_conocimiento' => $Telefonos_afp_conocimiento,
+                'Ciudad_departamento_afp_conocimiento' => $Ciudad_departamento_afp_conocimiento,
                 'Nombre_arl' => $Nombre_arl,
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,

@@ -500,20 +500,20 @@ $(document).ready(function(){
     });
     function iniciarIntervalo_pPCL() {
         intervalo = setInterval(() => {
-            opt_sumaTotal_pcl = Number(total_deficiencia) + Number(total_rol_ocupacional)+ Number(total_discapacidad)+ Number(total_minusvalia);
-
-            if (!isNaN(opt_sumaTotal_pcl)){
-                $('#porcentaje_pcl').val(redondearNumero(opt_sumaTotal_pcl) );
+            var opt_sumaTotal_pcl = parseFloat(total_deficiencia) + parseFloat(total_rol_ocupacional) + parseFloat(total_discapacidad) + parseFloat(total_minusvalia);
+            var sumaTotal_pcl = opt_sumaTotal_pcl.toFixed(2);
+            if (!isNaN(sumaTotal_pcl)){
+                $('#porcentaje_pcl').val(sumaTotal_pcl);
             }
-            if(opt_sumaTotal_pcl=='isNaN'){
+            if(sumaTotal_pcl=='isNaN'){
                 rango_pcl = '0';
-            }else if(opt_sumaTotal_pcl < 15){
+            }else if(sumaTotal_pcl < "14.99"){
                 rango_pcl = 'Entre 1 y 14,99%';
-            } else if (opt_sumaTotal_pcl >= 15 && opt_sumaTotal_pcl < 30){
+            } else if (sumaTotal_pcl >= "14.99" && sumaTotal_pcl < "29.99"){
                 rango_pcl = 'Entre 15 y 29,99%';
-            } else if (opt_sumaTotal_pcl >= 30 && opt_sumaTotal_pcl < 50){
+            } else if (sumaTotal_pcl >= "29.99" && sumaTotal_pcl < "49.99"){
                 rango_pcl = 'Entre 30 y 49,99%';
-            } else if (opt_sumaTotal_pcl >= 50){
+            } else if (sumaTotal_pcl >= "49.99"){
                 rango_pcl = 'Mayor o igual 50%';
             }else{
                 rango_pcl = '0';
@@ -619,20 +619,21 @@ $(document).ready(function(){
     });
     function iniciarIntervalo_pPCL_jrci_emitido() {
         intervalo = setInterval(() => {
-            opt_sumaTotal_pcl_jrci_emitido = Number(total_deficiencia_jrci_emitido) + Number(total_rol_ocupacional_jrci_emitido) + Number(total_discapacidad_jrci_emitido)+ Number(total_minusvalia_jrci_emitido);
-
-            if (!isNaN(opt_sumaTotal_pcl_jrci_emitido)){
-                $('#porcentaje_pcl_jrci_emitido').val(redondearNumero(opt_sumaTotal_pcl_jrci_emitido) );
+            opt_sumaTotal_pcl_jrci_emitido = parseFloat(total_deficiencia_jrci_emitido) + parseFloat(total_rol_ocupacional_jrci_emitido) + parseFloat(total_discapacidad_jrci_emitido)+ parseFloat(total_minusvalia_jrci_emitido);
+            var sumaTotal_pcl_jrci = opt_sumaTotal_pcl_jrci_emitido.toFixed(2);
+            if (!isNaN(sumaTotal_pcl_jrci)){
+                $('#porcentaje_pcl_jrci_emitido').val(sumaTotal_pcl_jrci);
             }
-            if(opt_sumaTotal_pcl_jrci_emitido=='isNaN'){
+            console.log(sumaTotal_pcl_jrci);
+            if(sumaTotal_pcl_jrci=='isNaN'){
                 rango_pcl_jrci_emitido = '0';
-            }else if(opt_sumaTotal_pcl_jrci_emitido < "14,99"){
+            }else if(sumaTotal_pcl_jrci < "14,99"){
                 rango_pcl_jrci_emitido = 'Entre 1 y 14,99%';
-            } else if (opt_sumaTotal_pcl_jrci_emitido >= "14,99" && opt_sumaTotal_pcl_jrci_emitido < "29,99"){
+            } else if (sumaTotal_pcl_jrci >= "14,99" && sumaTotal_pcl_jrci < "29,99"){
                 rango_pcl_jrci_emitido = 'Entre 15 y 29,99%';
-            } else if (opt_sumaTotal_pcl_jrci_emitido >= "29,99" && opt_sumaTotal_pcl_jrci_emitido < "49,99"){
+            } else if (sumaTotal_pcl_jrci >= "29,99" && sumaTotal_pcl_jrci < "49,99"){
                 rango_pcl_jrci_emitido = 'Entre 30 y 49,99%';
-            } else if (opt_sumaTotal_pcl_jrci_emitido >= "49,99"){
+            } else if (sumaTotal_pcl_jrci >= "49,99"){
                 rango_pcl_jrci_emitido = 'Mayor o igual 50%';
             }else{
                 rango_pcl_jrci_emitido = '0';
@@ -738,20 +739,20 @@ $(document).ready(function(){
     });
     function iniciarIntervalo_pPCL_jrci_reposicion() {
         intervalo = setInterval(() => {
-            opt_sumaTotal_pcl_jrci_reposicion = Number(total_deficiencia_reposicion_jrci) + Number(total_rol_reposicion_jrci) + Number(total_discapacidad_reposicion_jrci)+ Number(total_minusvalia_reposicion_jrci);
-
-            if (!isNaN(opt_sumaTotal_pcl_jrci_reposicion)){
-                $('#porcentaje_pcl_reposicion_jrci').val(redondearNumero(opt_sumaTotal_pcl_jrci_reposicion) );
+            opt_sumaTotal_pcl_jrci_reposicion = parseFloat(total_deficiencia_reposicion_jrci) + parseFloat(total_rol_reposicion_jrci) + parseFloat(total_discapacidad_reposicion_jrci)+ parseFloat(total_minusvalia_reposicion_jrci);
+            var sumaTotal_pcl_jrci_reposicion = opt_sumaTotal_pcl_jrci_reposicion.toFixed(2);
+            if (!isNaN(sumaTotal_pcl_jrci_reposicion)){
+                $('#porcentaje_pcl_reposicion_jrci').val(sumaTotal_pcl_jrci_reposicion);
             }
-            if(opt_sumaTotal_pcl_jrci_reposicion=='isNaN'){
+            if(sumaTotal_pcl_jrci_reposicion=='isNaN'){
                 rango_pcl_reposicion_jrci = '0';
-            }else if(opt_sumaTotal_pcl_jrci_reposicion < 15){
+            }else if(sumaTotal_pcl_jrci_reposicion < 15){
                 rango_pcl_reposicion_jrci = 'Entre 1 y 14,99%';
-            } else if (opt_sumaTotal_pcl_jrci_reposicion >= 15 && opt_sumaTotal_pcl_jrci_reposicion < 30){
+            } else if (sumaTotal_pcl_jrci_reposicion >= 15 && sumaTotal_pcl_jrci_reposicion < 30){
                 rango_pcl_reposicion_jrci = 'Entre 15 y 29,99%';
-            } else if (opt_sumaTotal_pcl_jrci_reposicion >= 30 && opt_sumaTotal_pcl_jrci_reposicion < 50){
+            } else if (sumaTotal_pcl_jrci_reposicion >= 30 && sumaTotal_pcl_jrci_reposicion < 50){
                 rango_pcl_reposicion_jrci = 'Entre 30 y 49,99%';
-            } else if (opt_sumaTotal_pcl_jrci_reposicion >= 50){
+            } else if (sumaTotal_pcl_jrci_reposicion >= 50){
                 rango_pcl_reposicion_jrci = 'Mayor o igual 50%';
             }else{
                 rango_pcl_reposicion_jrci = '0';
@@ -858,19 +859,20 @@ $(document).ready(function(){
     });
     function iniciarIntervalo_pPCL_jnci_emitido() {
         intervalo = setInterval(() => {
-            opt_sumaTotal_pcl_jnci_emitido = Number(total_deficiencia_jnci_emitido) + Number(total_rol_ocupacional_jnci_emitido) + Number(total_discapacidad_jnci_emitido)+ Number(total_minusvalia_jnci_emitido);
-            if (!isNaN(opt_sumaTotal_pcl_jnci_emitido)){
-                $('#porcentaje_pcl_jnci_emitido').val(redondearNumero(opt_sumaTotal_pcl_jnci_emitido) );
+            opt_sumaTotal_pcl_jnci_emitido = parseFloat(total_deficiencia_jnci_emitido) + parseFloat(total_rol_ocupacional_jnci_emitido) + parseFloat(total_discapacidad_jnci_emitido)+ parseFloat(total_minusvalia_jnci_emitido);
+            var sumaTotal_pcl_jnci_emitido = opt_sumaTotal_pcl_jnci_emitido.toFixed(2);
+            if (!isNaN(sumaTotal_pcl_jnci_emitido)){
+                $('#porcentaje_pcl_jnci_emitido').val(redondearNumero(sumaTotal_pcl_jnci_emitido) );
             }
-            if(opt_sumaTotal_pcl_jnci_emitido=='isNaN'){
+            if(sumaTotal_pcl_jnci_emitido=='isNaN'){
                 rango_pcl_jnci_emitido = '0';
-            }else if(opt_sumaTotal_pcl_jnci_emitido < 15){
+            }else if(sumaTotal_pcl_jnci_emitido < 15){
                 rango_pcl_jnci_emitido = 'Entre 1 y 14,99%';
-            } else if (opt_sumaTotal_pcl_jnci_emitido >= 15 && opt_sumaTotal_pcl_jnci_emitido < 30){
+            } else if (sumaTotal_pcl_jnci_emitido >= 15 && sumaTotal_pcl_jnci_emitido < 30){
                 rango_pcl_jnci_emitido = 'Entre 15 y 29,99%';
-            } else if (opt_sumaTotal_pcl_jnci_emitido >= 30 && opt_sumaTotal_pcl_jnci_emitido < 50){
+            } else if (sumaTotal_pcl_jnci_emitido >= 30 && sumaTotal_pcl_jnci_emitido < 50){
                 rango_pcl_jnci_emitido = 'Entre 30 y 49,99%';
-            } else if (opt_sumaTotal_pcl_jnci_emitido >= 50){
+            } else if (sumaTotal_pcl_jnci_emitido >= 50){
                 rango_pcl_jnci_emitido = 'Mayor o igual 50%';
             }else{
                 rango_pcl_jnci_emitido = '0';

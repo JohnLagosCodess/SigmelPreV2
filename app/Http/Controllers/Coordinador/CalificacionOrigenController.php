@@ -998,13 +998,20 @@ class CalificacionOrigenController extends Controller
                 $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
-                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();
+
+                // Traer opción seleccionada del campo Medio de notificación del la información del afiliado/beneficiario
+                $info_medio_noti = DB::table(getDatabaseName('sigmel_gestiones'). 'sigmel_informacion_afiliado_eventos as siae')
+                ->select('siae.Medio_notificacion')
+                ->where([['siae.ID_evento', $newIdEvento]])
+                ->get();
                 
                 return response()->json([
                     'nombreusuario' => $nombreusuario,
                     'destinatarioPrincipal' => $destinatarioPrincipal,
                     'array_datos_destinatarios' => $array_datos_destinatarios,
-                    'array_datos_lider' => $array_datos_lider
+                    'array_datos_lider' => $array_datos_lider,
+                    'info_medio_noti' => $info_medio_noti
                 ]);
             break;
             case ($destinatarioPrincipal == 'Empresa'):                
@@ -1012,13 +1019,20 @@ class CalificacionOrigenController extends Controller
                 $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
-                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();
+
+                // Traer opción seleccionada del campo Medio de notificación del la información del afiliado/beneficiario
+                $info_medio_noti = DB::table(getDatabaseName('sigmel_gestiones'). 'sigmel_informacion_laboral_eventos as sile')
+                ->select('sile.Medio_notificacion')
+                ->where([['sile.ID_evento', $newIdEvento]])
+                ->get();
+
                 return response()->json([
                     'nombreusuario' => $nombreusuario,
                     'destinatarioPrincipal' => $destinatarioPrincipal,
                     'array_datos_destinatarios' => $array_datos_destinatarios,                    
-                    'array_datos_lider' => $array_datos_lider
-
+                    'array_datos_lider' => $array_datos_lider,
+                    'info_medio_noti' => $info_medio_noti
                 ]);
             break;
             case ($destinatarioPrincipal == 'Otro'):  
