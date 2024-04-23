@@ -3430,6 +3430,18 @@ class AdministradorController extends Controller
 
             sleep(2);
 
+            $idEvento = $request->id_evento;
+            $path = public_path('Documentos_Eventos/' . $idEvento);
+
+            // Verificar si el directorio ya existe
+            if (!File::exists($path)) {
+                $mode = 0777; // Permiso deseado para el directorio
+
+                // Crear el directorio con los permisos especificados
+                File::makeDirectory($path, $mode, true, true);
+                
+            } 
+
             return back()->with('mensaje_confirmacion_nuevo_evento', 'Evento creado correctamente');
         }
         

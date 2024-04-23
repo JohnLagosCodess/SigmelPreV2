@@ -1096,7 +1096,7 @@ class PronunciamientoPCLController extends Controller
             $footer_dato_5 = "";
         }
 
-        if ($desicion_proforma == 'proforma_acuerdo') {    
+        if ($desicion_proforma == 'proforma_acuerdo') {
             $data = [
                 'codigoQR' => $codigoQR,
                 'logo_header' => $logo_header,
@@ -1138,7 +1138,7 @@ class PronunciamientoPCLController extends Controller
             // Crear una instancia de Dompdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_pro_acuerdo', $data);            
-            $nombre_pdf = "PCL_ACUERDO_{$Asignacion_Pronuncia_corre}_{$Iden_afiliado_corre}.pdf";    
+            $nombre_pdf = "PCL_ACUERDO_{$Asignacion_Pronuncia_corre}_{$Iden_afiliado_corre}.pdf";
             //Obtener el contenido del PDF
             $output = $pdf->output();
             //Guardar el PDF en un archivo
@@ -1164,19 +1164,52 @@ class PronunciamientoPCLController extends Controller
             ])->get();
             
             if(count($verficar_documento) == 0){
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $Asignacion_Pronuncia_corre,
-                    'Id_proceso' => $Id_Proceso_pronuncia_corre,
-                    'Id_servicio' => $Id_servicio,
-                    'ID_evento' => $Id_Evento_pronuncia_corre,
-                    'Nombre_documento' => $nombre_pdf,
-                    'N_radicado_documento' => $nro_radicado,
-                    'F_elaboracion_correspondencia' => $fecha,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
-                
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+
+                // Se valida si antes de insertar la info del doc de acuerdo ya hay un doc de desacuerdo
+                $nombre_docu_desacuerdo = "PCL_DESACUERDO_{$Asignacion_Pronuncia_corre}_{$Iden_afiliado_corre}.docx";
+                $verificar_docu_desacuerdo = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->where([
+                    ['Nombre_documento', $nombre_docu_desacuerdo],
+                ])->get();
+
+                // Si no existe info del documento de desacuerdo, inserta la info del documento de acuerdo
+                // De lo contrario hace una actualización de la info
+                if (count($verificar_docu_desacuerdo) == 0) {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Asignacion_Pronuncia_corre,
+                        'Id_proceso' => $Id_Proceso_pronuncia_corre,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $Id_Evento_pronuncia_corre,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $nro_radicado,
+                        'F_elaboracion_correspondencia' => $fecha,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                }else{
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Asignacion_Pronuncia_corre,
+                        'Id_proceso' => $Id_Proceso_pronuncia_corre,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $Id_Evento_pronuncia_corre,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $nro_radicado,
+                        'F_elaboracion_correspondencia' => $fecha,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_Asignacion', $Asignacion_Pronuncia_corre],
+                        ['N_radicado_documento', $nro_radicado],
+                        ['ID_evento', $Id_Evento_pronuncia_corre]
+                    ])
+                    ->update($info_descarga_documento);
+                }
+
             }
 
             return $pdf->download($nombre_pdf);   
@@ -1397,19 +1430,53 @@ class PronunciamientoPCLController extends Controller
             ])->get();
             
             if(count($verficar_documento) == 0){
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $Asignacion_Pronuncia_corre,
-                    'Id_proceso' => $Id_Proceso_pronuncia_corre,
-                    'Id_servicio' => $Id_servicio,
-                    'ID_evento' => $Id_Evento_pronuncia_corre,
-                    'Nombre_documento' => $nombre_docx,
-                    'N_radicado_documento' => $nro_radicado,
-                    'F_elaboracion_correspondencia' => $fecha,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
-                
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+
+                // Se valida si antes de insertar la info del doc de desacuerdo ya hay un doc de acuerdo
+                $nombre_docu_acuerdo = "PCL_ACUERDO_{$Asignacion_Pronuncia_corre}_{$Iden_afiliado_corre}.pdf";
+                $verificar_docu_acuerdo = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->where([
+                    ['Nombre_documento', $nombre_docu_acuerdo],
+                ])->get();
+
+                // Si no existe info del documento de acuerdo, inserta la info del documento de desacuerdo
+                // De lo contrario hace una actualización de la info
+                if (count($verificar_docu_acuerdo) == 0) {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Asignacion_Pronuncia_corre,
+                        'Id_proceso' => $Id_Proceso_pronuncia_corre,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $Id_Evento_pronuncia_corre,
+                        'Nombre_documento' => $nombre_docx,
+                        'N_radicado_documento' => $nro_radicado,
+                        'F_elaboracion_correspondencia' => $fecha,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                }else{
+
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Asignacion_Pronuncia_corre,
+                        'Id_proceso' => $Id_Proceso_pronuncia_corre,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $Id_Evento_pronuncia_corre,
+                        'Nombre_documento' => $nombre_docx,
+                        'N_radicado_documento' => $nro_radicado,
+                        'F_elaboracion_correspondencia' => $fecha,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_Asignacion', $Asignacion_Pronuncia_corre],
+                        ['N_radicado_documento', $nro_radicado],
+                        ['ID_evento', $Id_Evento_pronuncia_corre]
+                    ])
+                    ->update($info_descarga_documento);
+                }
+
             }
 
             return response()->download(public_path("Documentos_Eventos/{$Id_Evento_pronuncia_corre}/{$nombre_docx}"));

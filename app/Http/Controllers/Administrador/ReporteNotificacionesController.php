@@ -59,13 +59,18 @@ class ReporteNotificacionesController extends Controller
         }
         elseif (empty($fecha_desde) && empty($fecha_hasta)) {
             
-            $reporte_notificaciones = cndatos_reporte_notificaciones_v5s::on('sigmel_gestiones')
-            ->select('Fecha_envio', 'No_identificacion', 'No_guia_asignado', 'Orden_impresion', 'Proceso', 'Servicio', 'Ultima_Accion',
-            'Estado', 'No_OIP', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion', 'Telefono', 'Departamento', 'Ciudad',
-            'Folios_entregados', 'Medio_Notificacion', 'Correo_electronico', 'Archivo_1', 'Archivo_2')
-            ->get();
-            $array_reporte_notificaciones = json_decode(json_encode($reporte_notificaciones, true)); 
-            return response()->json($array_reporte_notificaciones);
+            // $reporte_notificaciones = cndatos_reporte_notificaciones_v5s::on('sigmel_gestiones')
+            // ->select('Fecha_envio', 'No_identificacion', 'No_guia_asignado', 'Orden_impresion', 'Proceso', 'Servicio', 'Ultima_Accion',
+            // 'Estado', 'No_OIP', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion', 'Telefono', 'Departamento', 'Ciudad',
+            // 'Folios_entregados', 'Medio_Notificacion', 'Correo_electronico', 'Archivo_1', 'Archivo_2')
+            // ->get();
+            // $array_reporte_notificaciones = json_decode(json_encode($reporte_notificaciones, true));
+            // return response()->json($array_reporte_notificaciones);
+            $mensajes = array(
+                "parametro" => 'falta_un_parametro',
+                "mensaje" => 'Debe seleccionar las dos fechas para realizar la consulta.'
+            );
+            return json_decode(json_encode($mensajes, true));
         }
         else if (!empty($fecha_desde) && !empty($fecha_hasta)){
             $reporte_notificaciones = cndatos_reporte_notificaciones_v5s::on('sigmel_gestiones')
@@ -73,6 +78,7 @@ class ReporteNotificacionesController extends Controller
             'Estado', 'No_OIP', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion', 'Telefono', 'Departamento', 'Ciudad',
             'Folios_entregados', 'Medio_Notificacion', 'Correo_electronico', 'Archivo_1', 'Archivo_2')
             ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+            ->orderBy('ID_evento', 'desc')
             ->get();
             $array_reporte_notificaciones = json_decode(json_encode($reporte_notificaciones, true)); 
             return response()->json($array_reporte_notificaciones);
@@ -117,116 +123,146 @@ class ReporteNotificacionesController extends Controller
         }
         elseif (empty($fecha_desde) && empty($fecha_hasta)) {
 
-            // Extraemos los documentos de la columna Archivo 1
-            $documentos_archivo_1 = cndatos_reporte_notificaciones_v5s::on('sigmel_gestiones')
-            ->select('ID_evento','Archivo_1')
-            ->get();
-            $array_documentos_archivo_1 = json_decode(json_encode($documentos_archivo_1, true)); 
+            // // Extraemos los documentos de la columna Archivo 1
+            // $documentos_archivo_1 = cndatos_reporte_notificaciones_v5s::on('sigmel_gestiones')
+            // ->select('ID_evento','Archivo_1')
+            // ->get();
+            // $array_documentos_archivo_1 = json_decode(json_encode($documentos_archivo_1, true)); 
             
-            // Extraemos los documentos de la columna Archivo 2
-            $documentos_archivo_2 = cndatos_reporte_notificaciones_v5s::on('sigmel_gestiones')
-            ->select('ID_evento','Archivo_2')
-            ->get();
-            $array_documentos_archivo_2 = json_decode(json_encode($documentos_archivo_2, true)); 
+            // // Extraemos los documentos de la columna Archivo 2
+            // $documentos_archivo_2 = cndatos_reporte_notificaciones_v5s::on('sigmel_gestiones')
+            // ->select('ID_evento','Archivo_2')
+            // ->get();
+            // $array_documentos_archivo_2 = json_decode(json_encode($documentos_archivo_2, true)); 
 
-            // Ruta donde se guardará el archivo comprimido
-            $rutaArchivoComprimido = storage_path('app/'.$date.' Correspondencia SIGMEL.zip');
+            // // Ruta donde se guardará el archivo comprimido
+            // $rutaArchivoComprimido = storage_path('app/'.$date.' Correspondencia SIGMEL.zip');
 
-            // Crear un nuevo archivo zip
-            $zip = new ZipArchive;
-            if ($zip->open($rutaArchivoComprimido, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
-                // Agregar cada archivo 1 al archivo zip
-                foreach ($array_documentos_archivo_1 as $archivo) {
-                    if ($archivo->Archivo_1 <> "") {
-                        $rutaArchivo = "Documentos_Eventos/{$archivo->ID_evento}/{$archivo->Archivo_1}";
-                        // $rutaArchivo = public_path('Documentos_Eventos/') . $archivo;
-                        if (file_exists($rutaArchivo)) {
-                            $zip->addFile($rutaArchivo, $archivo->Archivo_1);
-                        }
-                    }
-                }
-                sleep(2);
+            // // Crear un nuevo archivo zip
+            // $zip = new ZipArchive;
+            // if ($zip->open($rutaArchivoComprimido, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+            //     // Agregar cada archivo 1 al archivo zip
+            //     foreach ($array_documentos_archivo_1 as $archivo) {
+            //         if ($archivo->Archivo_1 <> "") {
+            //             $rutaArchivo = "Documentos_Eventos/{$archivo->ID_evento}/{$archivo->Archivo_1}";
+            //             // $rutaArchivo = public_path('Documentos_Eventos/') . $archivo;
+            //             if (file_exists($rutaArchivo)) {
+            //                 $zip->addFile($rutaArchivo, $archivo->Archivo_1);
+            //             }
+            //         }
+            //     }
+            //     sleep(2);
 
-                // Agregar cada archivo 2 al archivo zip
-                foreach ($array_documentos_archivo_2 as $archivo2) {
-                    if ($archivo2->Archivo_2 <> "") {
-                        $rutaArchivo = "Documentos_Eventos/{$archivo2->ID_evento}/{$archivo2->Archivo_2}";
-                        // $rutaArchivo = public_path('Documentos_Eventos/') . $archivo;
-                        if (file_exists($rutaArchivo)) {
-                            $zip->addFile($rutaArchivo, $archivo2->Archivo_2);
-                        }
-                    }
-                }
-                // Cerrar el archivo zip
-                $zip->close();
-            }
+            //     // Agregar cada archivo 2 al archivo zip
+            //     foreach ($array_documentos_archivo_2 as $archivo2) {
+            //         if ($archivo2->Archivo_2 <> "") {
+            //             $rutaArchivo = "Documentos_Eventos/{$archivo2->ID_evento}/{$archivo2->Archivo_2}";
+            //             // $rutaArchivo = public_path('Documentos_Eventos/') . $archivo;
+            //             if (file_exists($rutaArchivo)) {
+            //                 $zip->addFile($rutaArchivo, $archivo2->Archivo_2);
+            //             }
+            //         }
+            //     }
+            //     // Cerrar el archivo zip
+            //     $zip->close();
+            // }
 
-            // Mover el archivo zip al directorio público
-            $nombreArchivoComprimido = $date.' Correspondencia SIGMEL.zip';
-            $ubicacionDestino = public_path($nombreArchivoComprimido);
-            File::move($rutaArchivoComprimido, $ubicacionDestino);
+            // // Mover el archivo zip al directorio público
+            // $nombreArchivoComprimido = $date.' Correspondencia SIGMEL.zip';
+            // $ubicacionDestino = public_path($nombreArchivoComprimido);
+            // File::move($rutaArchivoComprimido, $ubicacionDestino);
 
-            // Devolver la URL del archivo zip en la respuesta Ajax
-            $urlArchivoComprimido = asset($nombreArchivoComprimido);
+            // // Devolver la URL del archivo zip en la respuesta Ajax
+            // $urlArchivoComprimido = asset($nombreArchivoComprimido);
 
-            return response()->json(['url' => $urlArchivoComprimido, 'nom_archivo' => $nombreArchivoComprimido]);
+            // return response()->json(['url' => $urlArchivoComprimido, 'nom_archivo' => $nombreArchivoComprimido]);
+            $mensajes = array(
+                "parametro" => 'error',
+                "mensaje" => 'Debe seleccionar las dos fechas para generar el zip.'
+            );
+            return json_decode(json_encode($mensajes, true));
         }
         else if (!empty($fecha_desde) && !empty($fecha_hasta)){
             // Extraemos los documentos de la columna Archivo 1
-            $documentos_archivo_1 = cndatos_reporte_notificaciones_v5s::on('sigmel_gestiones')
-            ->select('ID_evento','Archivo_1')
-            ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+            // $documentos_archivo_1 = cndatos_reporte_notificaciones_v5s::on('sigmel_gestiones')
+            // ->select('ID_evento','Archivo_1')
+            // ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+            // ->get();
+            // $array_documentos_archivo_1 = json_decode(json_encode($documentos_archivo_1, true)); 
+            
+            // Extraemos los documentos de la columna Archivo 2
+            // $documentos_archivo_2 = cndatos_reporte_notificaciones_v5s::on('sigmel_gestiones')
+            // ->select('ID_evento','Archivo_2')
+            // ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+            // ->get();
+            // $array_documentos_archivo_2 = json_decode(json_encode($documentos_archivo_2, true)); 
+
+            $documentos_archivo_1 = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+            ->select('ID_evento','Nombre_documento as Archivo_1')
+            ->whereBetween('F_elaboracion_correspondencia', [$fecha_desde , $fecha_hasta])
             ->get();
             $array_documentos_archivo_1 = json_decode(json_encode($documentos_archivo_1, true)); 
             
-            // Extraemos los documentos de la columna Archivo 2
-            $documentos_archivo_2 = cndatos_reporte_notificaciones_v5s::on('sigmel_gestiones')
-            ->select('ID_evento','Archivo_2')
-            ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
-            ->get();
-            $array_documentos_archivo_2 = json_decode(json_encode($documentos_archivo_2, true)); 
-
             // Ruta donde se guardará el archivo comprimido
             $rutaArchivoComprimido = storage_path('app/'.$date.' Correspondencia SIGMEL.zip');
 
-            // Crear un nuevo archivo zip
-            $zip = new ZipArchive;
-            if ($zip->open($rutaArchivoComprimido, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
-                // Agregar cada archivo 1 al archivo zip
-                foreach ($array_documentos_archivo_1 as $archivo) {
-                    if ($archivo->Archivo_1 <> "") {
-                        $rutaArchivo = "Documentos_Eventos/{$archivo->ID_evento}/{$archivo->Archivo_1}";
-                        // $rutaArchivo = public_path('Documentos_Eventos/') . $archivo;
-                        if (file_exists($rutaArchivo)) {
-                            $zip->addFile($rutaArchivo, $archivo->Archivo_1);
+            if(count($array_documentos_archivo_1) == 0){
+                $mensajes = array(
+                    "parametro" => 'error',
+                    "mensaje" => 'El archivo .zip no se pudo descargar, debido a que no existen documentos generados por el sistema.'
+                );
+                return json_decode(json_encode($mensajes, true));
+            }else{
+                // Crear un nuevo archivo zip
+                $zip = new ZipArchive;
+                if ($zip->open($rutaArchivoComprimido, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+    
+                     foreach ($array_documentos_archivo_1 as $archivo) {
+                        
+                        if ($archivo->Archivo_1 <> "") {
+                            $rutaArchivo = "Documentos_Eventos/{$archivo->ID_evento}/{$archivo->Archivo_1}";
+                            // $rutaArchivo = public_path('Documentos_Eventos/') . $archivo;
+                            if (file_exists($rutaArchivo)) {
+                                $zip->addFile($rutaArchivo, $archivo->Archivo_1);
+                            }
                         }
                     }
+    
+                    // Agregar cada archivo 1 al archivo zip
+                    // foreach ($array_documentos_archivo_1 as $archivo) {
+                    //     if ($archivo->Archivo_1 <> "") {
+                    //         $rutaArchivo = "Documentos_Eventos/{$archivo->ID_evento}/{$archivo->Archivo_1}";
+                    //         // $rutaArchivo = public_path('Documentos_Eventos/') . $archivo;
+                    //         if (file_exists($rutaArchivo)) {
+                    //             $zip->addFile($rutaArchivo, $archivo->Archivo_1);
+                    //         }
+                    //     }
+                    // }
+                    // sleep(2);
+    
+                    // Agregar cada archivo 2 al archivo zip
+                    // foreach ($array_documentos_archivo_2 as $archivo2) {
+                    //     if ($archivo2->Archivo_2 <> "") {
+                    //         $rutaArchivo = "Documentos_Eventos/{$archivo2->ID_evento}/{$archivo2->Archivo_2}";
+                    //         // $rutaArchivo = public_path('Documentos_Eventos/') . $archivo;
+                    //         if (file_exists($rutaArchivo)) {
+                    //             $zip->addFile($rutaArchivo, $archivo2->Archivo_2);
+                    //         }
+                    //     }
+                    // }
+                    // Cerrar el archivo zip
+                    $zip->close();
                 }
-                sleep(2);
-
-                // Agregar cada archivo 2 al archivo zip
-                foreach ($array_documentos_archivo_2 as $archivo2) {
-                    if ($archivo2->Archivo_2 <> "") {
-                        $rutaArchivo = "Documentos_Eventos/{$archivo2->ID_evento}/{$archivo2->Archivo_2}";
-                        // $rutaArchivo = public_path('Documentos_Eventos/') . $archivo;
-                        if (file_exists($rutaArchivo)) {
-                            $zip->addFile($rutaArchivo, $archivo2->Archivo_2);
-                        }
-                    }
-                }
-                // Cerrar el archivo zip
-                $zip->close();
+    
+                // Mover el archivo zip al directorio público
+                $nombreArchivoComprimido = $date.' Correspondencia SIGMEL.zip';
+                $ubicacionDestino = public_path($nombreArchivoComprimido);
+                File::move($rutaArchivoComprimido, $ubicacionDestino);
+    
+                // Devolver la URL del archivo zip en la respuesta Ajax
+                $urlArchivoComprimido = asset($nombreArchivoComprimido);
+                return response()->json(['url' => $urlArchivoComprimido, 'nom_archivo' => $nombreArchivoComprimido]);
             }
-
-            // Mover el archivo zip al directorio público
-            $nombreArchivoComprimido = $date.' Correspondencia SIGMEL.zip';
-            $ubicacionDestino = public_path($nombreArchivoComprimido);
-            File::move($rutaArchivoComprimido, $ubicacionDestino);
-
-            // Devolver la URL del archivo zip en la respuesta Ajax
-            $urlArchivoComprimido = asset($nombreArchivoComprimido);
-
-            return response()->json(['url' => $urlArchivoComprimido, 'nom_archivo' => $nombreArchivoComprimido]);
         }
         else{
             $mensajes = array(

@@ -1134,12 +1134,19 @@ class CalificacionPCLController extends Controller
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
                 ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+
+                // Traer opción seleccionada del campo Medio de notificación del la información del afiliado/beneficiario
+                $info_medio_noti = DB::table(getDatabaseName('sigmel_gestiones'). 'sigmel_informacion_afiliado_eventos as siae')
+                ->select('siae.Medio_notificacion')
+                ->where([['siae.ID_evento', $newIdEvento]])
+                ->get();
                 
                 return response()->json([
                     'nombreusuario' => $nombreusuario,
                     'destinatarioPrincipal' => $destinatarioPrincipal,
                     'array_datos_destinatarios' => $array_datos_destinatarios,
-                    'array_datos_lider' => $array_datos_lider
+                    'array_datos_lider' => $array_datos_lider,
+                    'info_medio_noti' => $info_medio_noti
                 ]);
             break;
             case ($destinatarioPrincipal == 'Empresa'):                
@@ -1147,13 +1154,20 @@ class CalificacionPCLController extends Controller
                 $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
-                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();
+
+                // Traer opción seleccionada del campo Medio de notificación del la información del afiliado/beneficiario
+                $info_medio_noti = DB::table(getDatabaseName('sigmel_gestiones'). 'sigmel_informacion_laboral_eventos as sile')
+                ->select('sile.Medio_notificacion')
+                ->where([['sile.ID_evento', $newIdEvento]])
+                ->get();
+                
                 return response()->json([
                     'nombreusuario' => $nombreusuario,
                     'destinatarioPrincipal' => $destinatarioPrincipal,
                     'array_datos_destinatarios' => $array_datos_destinatarios,                    
-                    'array_datos_lider' => $array_datos_lider
-
+                    'array_datos_lider' => $array_datos_lider,
+                    'info_medio_noti' => $info_medio_noti
                 ]);
             break;
             case ($destinatarioPrincipal == 'Otro'):  
@@ -1769,19 +1783,51 @@ class CalificacionPCLController extends Controller
             ])->get();
             
             if(count($verficar_documento) == 0){
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $Id_Asignacion,
-                    'Id_proceso' => $Id_proceso,
-                    'Id_servicio' => $Id_servicio,
-                    'ID_evento' => $ID_evento,
-                    'Nombre_documento' => $nombre_pdf,
-                    'N_radicado_documento' => $N_radicado,
-                    'F_elaboracion_correspondencia' => $F_comunicado,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
-                
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                // Se valida si antes de insertar la info del doc de origen ya hay un documento de tipo otro
+                $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado}.pdf";
+                $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->where([
+                    ['Nombre_documento', $nombre_docu_otro],
+                ])->get();
+
+                // Si no existe info del documento de tipo otro, inserta la info del documento de origen
+                // De lo contrario hace una actualización de la info
+                if (count($verificar_docu_otro) == 0) {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                }else{
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_Asignacion', $Id_Asignacion],
+                        ['N_radicado_documento', $N_radicado],
+                        ['ID_evento', $ID_evento]
+                    ])
+                    ->update($info_descarga_documento);
+                }
             }
 
             return $pdf->download($nombre_pdf);
@@ -2016,19 +2062,57 @@ class CalificacionPCLController extends Controller
             ])->get();
             
             if(count($verficar_documento) == 0){
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $Id_Asignacion,
-                    'Id_proceso' => $Id_proceso,
-                    'Id_servicio' => $Id_servicio,
-                    'ID_evento' => $ID_evento,
-                    'Nombre_documento' => $nombre_pdf,
-                    'N_radicado_documento' => $N_radicado,
-                    'F_elaboracion_correspondencia' => $F_comunicado,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
-                
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+
+                // Se valida si antes de insertar la info del doc de Documento_Revision_pension ya hay un documento de tipo otro
+                // Formato B, Revision Pensión
+                $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado}.pdf";
+                $nombre_docu_formatoB = "PCL_OFICIO_FB_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                $nombre_docu_solicitud_revision = "PCL_OFICIO_REV_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                $nombre_docu_no_recalificacion = "PCL_OFICIO_REC_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+
+                $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->whereIN('Nombre_documento', [$nombre_docu_otro, $nombre_docu_formatoB, 
+                    $nombre_docu_solicitud_revision, $nombre_docu_no_recalificacion]
+                )->get();
+
+                // Si no existe info del documento de solicitud pcl, tipo otro, Formato B, Revision Pensión
+                // inserta la info del documento de Documento_Revision_pension, De lo contrario hace una actualización de la info
+                if (count($verificar_docu_otro) == 0) {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                }else{
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_Asignacion', $Id_Asignacion],
+                        ['N_radicado_documento', $N_radicado],
+                        ['ID_evento', $ID_evento]
+                    ])
+                    ->update($info_descarga_documento);
+                }
             }
 
             return $pdf->download($nombre_pdf);
@@ -2239,7 +2323,7 @@ class CalificacionPCLController extends Controller
             // Creación y guardado del pdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_formato_b_revisionPension', $data);
-            $nombre_pdf = "PCL_OFICIO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+            $nombre_pdf = "PCL_OFICIO_FB_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
             $output = $pdf->output();
             file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
 
@@ -2263,19 +2347,55 @@ class CalificacionPCLController extends Controller
             ])->get();
             
             if(count($verficar_documento) == 0){
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $Id_Asignacion,
-                    'Id_proceso' => $Id_proceso,
-                    'Id_servicio' => $Id_servicio,
-                    'ID_evento' => $ID_evento,
-                    'Nombre_documento' => $nombre_pdf,
-                    'N_radicado_documento' => $N_radicado,
-                    'F_elaboracion_correspondencia' => $F_comunicado,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
-                
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+
+                // Se valida si antes de insertar la info del doc de Formato_B_Revision_pension ya hay un documento de solicitud pcl
+                // tipo otro y/o Formato B
+                $nombre_docu_solicitud_pcl = "PCL_SOL_DOC_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado}.pdf";
+                $nombre_docu_solicitud_revision = "PCL_OFICIO_REV_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+
+                $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->whereIN('Nombre_documento', [$nombre_docu_solicitud_pcl, $nombre_docu_otro, $nombre_docu_solicitud_revision]
+                )->get();
+
+                // Si no existe info del documento de solicitud pcl, tipo otro, Formato B 
+                // inserta la info del documento de Formato_B_Revision_pension, De lo contrario hace una actualización de la info
+                if (count($verificar_docu_otro) == 0) {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                }else{
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_Asignacion', $Id_Asignacion],
+                        ['N_radicado_documento', $N_radicado],
+                        ['ID_evento', $ID_evento]
+                    ])
+                    ->update($info_descarga_documento);
+                }
             }
 
             return $pdf->download($nombre_pdf);
@@ -2486,7 +2606,7 @@ class CalificacionPCLController extends Controller
             // Creación y guardado del pdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/solicitud_documentos_revpen', $data);
-            $nombre_pdf = "PCL_OFICIO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+            $nombre_pdf = "PCL_OFICIO_REV_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
             $output = $pdf->output();
             file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
 
@@ -2510,19 +2630,55 @@ class CalificacionPCLController extends Controller
             ])->get();
             
             if(count($verficar_documento) == 0){
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $Id_Asignacion,
-                    'Id_proceso' => $Id_proceso,
-                    'Id_servicio' => $Id_servicio,
-                    'ID_evento' => $ID_evento,
-                    'Nombre_documento' => $nombre_pdf,
-                    'N_radicado_documento' => $N_radicado,
-                    'F_elaboracion_correspondencia' => $F_comunicado,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
-                
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+
+                // Se valida si antes de insertar la info del doc de Documento_Revision_pension ya hay un documento de solicitud pcl
+                // tipo otro  y/o Formato B
+                $nombre_docu_solicitud_pcl = "PCL_SOL_DOC_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado}.pdf";
+                $nombre_docu_formatoB = "PCL_OFICIO_FB_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+
+                $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->whereIN('Nombre_documento', [$nombre_docu_solicitud_pcl, $nombre_docu_otro, $nombre_docu_formatoB]
+                )->get();
+
+                // Si no existe info del documento de solicitud pcl, tipo otro,, Formato B 
+                // inserta la info del documento de Documento_Revision_pension, De lo contrario hace una actualización de la info
+                if (count($verificar_docu_otro) == 0) {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                }else{
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_Asignacion', $Id_Asignacion],
+                        ['N_radicado_documento', $N_radicado],
+                        ['ID_evento', $ID_evento]
+                    ])
+                    ->update($info_descarga_documento);
+                }
             }
 
             return $pdf->download($nombre_pdf);
@@ -2789,7 +2945,7 @@ class CalificacionPCLController extends Controller
             // Creación y guardado del pdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_no_recalificacion', $data);
-            $nombre_pdf = "PCL_OFICIO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+            $nombre_pdf = "PCL_OFICIO_REC_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
             $output = $pdf->output();
             file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
 
@@ -2813,19 +2969,55 @@ class CalificacionPCLController extends Controller
             ])->get();
             
             if(count($verficar_documento) == 0){
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $Id_Asignacion,
-                    'Id_proceso' => $Id_proceso,
-                    'Id_servicio' => $Id_servicio,
-                    'ID_evento' => $ID_evento,
-                    'Nombre_documento' => $nombre_pdf,
-                    'N_radicado_documento' => $N_radicado,
-                    'F_elaboracion_correspondencia' => $F_comunicado,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
-                
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+
+
+                // Se valida si antes de insertar la info del doc de Documento_Revision_pension ya hay un documento de solicitud pcl
+                // tipo otro
+                $nombre_docu_solicitud_pcl = "PCL_SOL_DOC_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado}.pdf";
+
+                $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->whereIN('Nombre_documento', [$nombre_docu_solicitud_pcl, $nombre_docu_otro]
+                )->get();
+
+                // Si no existe info del documento de solicitud pcl, tipo otro,
+                // inserta la info del documento de Documento_Revision_pension, De lo contrario hace una actualización de la info
+                if (count($verificar_docu_otro) == 0) {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                } else {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion,
+                        'Id_proceso' => $Id_proceso,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_evento,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $N_radicado,
+                        'F_elaboracion_correspondencia' => $F_comunicado,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_Asignacion', $Id_Asignacion],
+                        ['N_radicado_documento', $N_radicado],
+                        ['ID_evento', $ID_evento]
+                    ])
+                    ->update($info_descarga_documento);
+                }
             }
 
             return $pdf->download($nombre_pdf);
@@ -3032,7 +3224,11 @@ class CalificacionPCLController extends Controller
             $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
             ->select('Nombre_documento')
             ->where([
-                ['Nombre_documento', $fileName],
+                ['Id_Asignacion', $Id_Asignacion],
+                ['Id_proceso', $Id_proceso],
+                ['Id_servicio', $Id_servicio],
+                ['ID_evento', $ID_evento],
+                ['N_radicado_documento', $N_radicado]
             ])->get();
             
             if(count($verficar_documento) == 0){
@@ -3049,11 +3245,30 @@ class CalificacionPCLController extends Controller
                 ];
                 
                 sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+            }else{
+                $info_descarga_documento = [
+                    'Id_Asignacion' => $Id_Asignacion,
+                    'Id_proceso' => $Id_proceso,
+                    'Id_servicio' => $Id_servicio,
+                    'ID_evento' => $ID_evento,
+                    'Nombre_documento' => $fileName,
+                    'N_radicado_documento' => $N_radicado,
+                    'F_elaboracion_correspondencia' => $F_comunicado,
+                    'F_descarga_documento' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                ];
+                
+                sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->where([
+                    ['Id_Asignacion', $Id_Asignacion],
+                    ['N_radicado_documento', $N_radicado],
+                    ['ID_evento', $ID_evento]
+                ])
+                ->update($info_descarga_documento);
             }
 
             return $pdf->download($fileName);      
         }
-
     }
 
     public function historialAcciones(Request $request){
@@ -3225,8 +3440,11 @@ class CalificacionPCLController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
         ->select('sidae.Id_Deficiencia', 'sidae.ID_evento', 'sidae.Id_Asignacion', 'sidae.Id_proceso', 'sidae.Id_tabla',
         'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.CFM1', 'sidae.CFM2', 'sidae.FU', 'sidae.CAT', 'sidae.Clase_Final', 
-        'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
-        ->where([['sidae.ID_evento',$Id_evento_calitec], ['sidae.Id_Asignacion',$Id_asignacion_calitec], ['sidae.Estado', '=', 'Activo']])->get();         
+        'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Dominancia', 'sidae.Deficiencia', 
+        'sidae.Total_deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
+        ->where([['sidae.ID_evento',$Id_evento_calitec], ['sidae.Id_Asignacion',$Id_asignacion_calitec], ['sidae.Estado', '=', 'Activo']])
+        ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+        ->get();         
         
         $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
         ->where([
@@ -3268,15 +3486,23 @@ class CalificacionPCLController extends Controller
 
         if(count($array_datos_calificacionPclTecnica) > 0){
             $Id_servicio_balt = $array_datos_calificacionPclTecnica[0]->Id_Servicio;
-        }                
+        } 
+        // Validacion de Deficiencias solo en tabla Auditiva                
         $array_datos_deficiencicas50 = DB::select('CALL psrbalthazaraudpcldef(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        // Validacion de Deficiencias solo en tabla Visual
         $array_datos_deficiencicas50_1 = DB::select('CALL psrbalthazarvispcldef(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        // Validacion de Deficiencias solo en tabla Alteraciones del sistema
         $array_datos_deficiencicas50_2 = DB::select('CALL psrbalthazardefpcl(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        // Validacion de Deficiencias solo en tablas Auditiva y Alteraciones del sistema
         $array_datos_deficiencicas50_3 = DB::select('CALL psrbalthazaraudpcl(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        // Validacion de Deficiencias solo en tablas Visual y Alteraciones del sistema
         $array_datos_deficiencicas50_4 = DB::select('CALL psrbalthazarvispcl(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        // Validacion de Deficiencias solo en tablas Auditiva y Visual
         $array_datos_deficiencicas50_5 = DB::select('CALL psrbalthazaraudvispcl(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
+        // Validacion de Deficiencias solo en tablas Alteraciones del sistema, Auditiva y Visual 
         $array_datos_deficiencicas50_6 = DB::select('CALL psrbalthazarpcl(?,?,?)', array($Id_evento_calitec,$Id_asignacion_calitec,$Id_servicio_balt));
 
+        // Calculo Suma combinada y total 50% Deficiencia solo en tabla Auditiva  
         if(!empty($array_datos_deficiencicas50)  && empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
             $array_Deficiencias50 = $array_datos_deficiencicas50[0]->deficiencias;
             $deficiencias = explode(",", $array_Deficiencias50);
@@ -3308,7 +3534,9 @@ class CalificacionPCLController extends Controller
                 $TotalDeficiencia50 = $value * 50 / 100;
             }
             
-        }elseif(empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
+        }
+        // Calculo Suma combinada y total 50% Deficiencia solo en tabla Visual
+        elseif(empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
             $array_Deficiencias50 = $array_datos_deficiencicas50_1[0]->deficiencias;
             $deficiencias = explode(",", $array_Deficiencias50);
             //print_r($deficiencias);            
@@ -3328,7 +3556,9 @@ class CalificacionPCLController extends Controller
                 $TotalDeficiencia50 = $value * 50 / 100;
             }
             
-        }elseif(empty($array_datos_deficiencicas50)  && empty($array_datos_deficiencicas50_1) && !empty($array_datos_deficiencicas50_2)){
+        }
+        // Calculo Suma combinada y total 50% Deficiencia solo en tabla Alteraciones del sistema
+        elseif(empty($array_datos_deficiencicas50)  && empty($array_datos_deficiencicas50_1) && !empty($array_datos_deficiencicas50_2)){
             $array_Deficiencias50 = $array_datos_deficiencicas50_2[0]->deficiencias;
             $deficiencias = explode(",", $array_Deficiencias50);
             //print_r($deficiencias);    
@@ -3372,7 +3602,9 @@ class CalificacionPCLController extends Controller
                 $TotalDeficiencia50 = $value * 50 / 100;
             }
             
-        }elseif(!empty($array_datos_deficiencicas50_3) && empty($array_datos_deficiencicas50_1)) {
+        }
+        // Calculo Suma combinada y total 50% Deficiencia solo en tablas Auditiva y Alteraciones del sistema
+        elseif(!empty($array_datos_deficiencicas50_3) && empty($array_datos_deficiencicas50_1)) {
             $array_Deficiencias50 = $array_datos_deficiencicas50_3[0]->deficiencias;
             $deficiencias = explode(",", $array_Deficiencias50);
             //print_r($deficiencias);            
@@ -3431,7 +3663,9 @@ class CalificacionPCLController extends Controller
                 $TotalDeficiencia50 = $value * 50 / 100;
             }
             
-        }elseif(!empty($array_datos_deficiencicas50_4) && empty($array_datos_deficiencicas50)){
+        }
+        // Calculo Suma combinada y total 50% Deficiencia solo en tablas Visual y Alteraciones del sistema
+        elseif(!empty($array_datos_deficiencicas50_4) && empty($array_datos_deficiencicas50)){
             $array_Deficiencias50 = $array_datos_deficiencicas50_4[0]->deficiencias;
             $deficiencias = explode(",", $array_Deficiencias50);
             //print_r($deficiencias);  
@@ -3476,7 +3710,9 @@ class CalificacionPCLController extends Controller
             }
             
             
-        }elseif(!empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
+        }
+        // Calculo Suma combinada y total 50% Deficiencia solo en tablas Auditiva y Visual
+        elseif(!empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && empty($array_datos_deficiencicas50_2)){
             $array_Deficiencias50 = $array_datos_deficiencicas50_5[0]->deficiencias;
             $deficiencias = explode(",", $array_Deficiencias50);
             //print_r($deficiencias);            
@@ -3509,7 +3745,9 @@ class CalificacionPCLController extends Controller
                 $TotalDeficiencia50 = $value * 50 / 100;
             }
             
-        }elseif(!empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && !empty($array_datos_deficiencicas50_2)) {
+        }
+        // Calculo Suma combinada y total 50% Deficiencia solo en tablas Alteraciones del sistema, Auditiva y Visual
+        elseif(!empty($array_datos_deficiencicas50)  && !empty($array_datos_deficiencicas50_1) && !empty($array_datos_deficiencicas50_2)) {
             $array_Deficiencias50 = $array_datos_deficiencicas50_6[0]->deficiencias;
             $deficiencias = explode(",", $array_Deficiencias50);
             //print_r($deficiencias);            
@@ -3568,7 +3806,8 @@ class CalificacionPCLController extends Controller
                 $TotalDeficiencia50 = $value * 50 / 100;
             }
             
-        }else{
+        }
+        else{
             $deficiencias = 0;
             $TotalDeficiencia50 =0;
         }
@@ -3586,7 +3825,7 @@ class CalificacionPCLController extends Controller
         'sicie.Nombre_dest_principal', 'sie.Nombre_entidad', 'sicie.Nombre_destinatario','sicie.Nit_cc', 'sicie.Direccion_destinatario', 
         'sicie.Telefono_destinatario', 'sicie.Email_destinatario', 'sicie.Departamento_destinatario', 'sicie.Ciudad_destinatario', 
         'sicie.Asunto', 'sicie.Cuerpo_comunicado', 'sicie.Copia_afiliado', 'sicie.Copia_empleador', 'sicie.Copia_eps', 'sicie.Copia_afp', 'sicie.Copia_arl', 
-        'sicie.Copia_jr', 'sicie.Cual_jr', 'sicie.Copia_jn', 'sicie.Anexos', 'sicie.Elaboro', 'sicie.Reviso', 'sicie.Firmar', 'sicie.Ciudad', 
+        'sicie.Copia_afp_conocimiento', 'sicie.Copia_jr', 'sicie.Cual_jr', 'sicie.Copia_jn', 'sicie.Anexos', 'sicie.Elaboro', 'sicie.Reviso', 'sicie.Firmar', 'sicie.Ciudad', 
         'sicie.F_correspondecia', 'sicie.N_radicado', 'sicie.Nombre_usuario', 'sicie.F_registro')        
         ->where([
             ['ID_evento',$Id_evento_calitec],
@@ -3653,7 +3892,18 @@ class CalificacionPCLController extends Controller
         $array_comunicados_comite_inter = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$Id_evento_calitec], ['Id_Asignacion',$Id_asignacion_calitec]])->get();  
 
-        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo','array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinario', 'consecutivo', 'array_dictamen_pericial', 'array_comunicados_correspondencia', 'array_comunicados_comite_inter'));
+        /* Traer datos de la AFP de Conocimiento */
+        $info_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp_entidad_conocimiento', '=', 'sie.Id_Entidad')
+        ->select('siae.Entidad_conocimiento')
+        ->where([['siae.ID_evento', $Id_evento_calitec]])
+        ->get();
+
+        return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 
+        'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo',
+        'array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 
+        'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinario', 'consecutivo', 'array_dictamen_pericial', 
+        'array_comunicados_correspondencia', 'array_comunicados_comite_inter', 'info_afp_conocimiento'));
     }
 
     public function cargueListadoSelectoresCalifcacionTecnicaPcl(Request $request){
@@ -4788,7 +5038,7 @@ class CalificacionPCLController extends Controller
         // Creación de array con los campos de la tabla: sigmel_informacion_deficiencias_alteraciones_eventos
         
         $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Id_tabla', 'FP', 'CFM1', 'CFM2', 'FU',	'CAT', 'Clase_Final', 
-        'MSD', 'Deficiencia', 'Estado_Recalificacion', 'Nombre_usuario','F_registro'];
+        'MSD', 'Dominancia', 'Deficiencia', 'Total_deficiencia', 'Estado_Recalificacion', 'Nombre_usuario','F_registro'];
         
         // Combinación de los campos de la tabla con los datos
         $array_datos_con_keys = [];
@@ -5674,6 +5924,7 @@ class CalificacionPCLController extends Controller
         $empleador = $request->empleador;
         $eps = $request->eps;
         $afp = $request->afp;
+        $afp_conocimiento = $request->afp_conocimiento;
         $arl = $request->arl;
         $jrci = $request->jrci;        
         $cual = $request->cual;
@@ -5693,6 +5944,9 @@ class CalificacionPCLController extends Controller
         }
         if (!empty($afp)) {
             $variables_llenas[] = $afp;
+        }
+        if (!empty($afp_conocimiento)) {
+            $variables_llenas[] = $afp_conocimiento;
         }
         if (!empty($arl)) {
             $variables_llenas[] = $arl;
@@ -5738,6 +5992,7 @@ class CalificacionPCLController extends Controller
                 'Copia_eps' => $eps,
                 'Copia_afp' => $afp,
                 'Copia_arl' => $arl,
+                'Copia_afp_conocimiento' => $afp_conocimiento,
                 'Copia_jr' => $jrci,
                 'Cual_jr' => $cual,
                 'Copia_jn' => $jnci,
@@ -5822,6 +6077,7 @@ class CalificacionPCLController extends Controller
                 'Copia_eps' => $eps,
                 'Copia_afp' => $afp,
                 'Copia_arl' => $arl,
+                'Copia_afp_conocimiento' => $afp_conocimiento,
                 'Copia_jr' => $jrci,
                 'Cual_jr' => $cual,
                 'Copia_jn' => $jnci,
@@ -6170,7 +6426,7 @@ class CalificacionPCLController extends Controller
 
         // Creación de array con los campos de la tabla: sigmel_informacion_deficiencias_alteraciones_eventos
         
-        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Id_tabla', 'Deficiencia', 
+        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Id_tabla', 'Total_deficiencia', 
         'Estado_Recalificacion', 'Nombre_usuario','F_registro'];
         
         // Combinación de los campos de la tabla con los datos
@@ -6248,7 +6504,7 @@ class CalificacionPCLController extends Controller
 
         // Creación de array con los campos de la tabla: sigmel_informacion_deficiencias_alteraciones_eventos
         
-        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Tabla1999', 'Titulo_tabla1999', 'Deficiencia', 
+        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Tabla1999', 'Titulo_tabla1999', 'Total_deficiencia', 
         'Estado_Recalificacion', 'Nombre_usuario','F_registro'];
         
         // Combinación de los campos de la tabla con los datos
@@ -6680,8 +6936,10 @@ class CalificacionPCLController extends Controller
         $array_deficiencias_alteraciones = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
         ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
         ->select('sidae.Id_tabla', 'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.FU', 'sidae.CFM1', 'sidae.CFM2', 
-        'sidae.Clase_Final', 'sidae.Deficiencia', 'sidae.CAT', 'sidae.MSD')
-        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['sidae.Estado','Activo']])->get();  
+        'sidae.Clase_Final', 'sidae.Dominancia', 'sidae.Deficiencia', 'sidae.Total_deficiencia', 'sidae.CAT', 'sidae.MSD')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['sidae.Estado','Activo']])
+        ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+        ->get();  
         
         $Suma_combinada_fc = $array_datos_info_dictamen[0]->Suma_combinada;
 
@@ -6870,6 +7128,7 @@ class CalificacionPCLController extends Controller
                 'Id_servicio' => $Id_servicio,
                 'ID_evento' => $ID_Evento_comuni,
                 'Nombre_documento' => $nombre_pdf,
+                'N_radicado_documento' => $Radicado_comuni,
                 'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
                 'F_descarga_documento' => $date,
                 'Nombre_usuario' => $nombre_usuario,
@@ -7119,8 +7378,10 @@ class CalificacionPCLController extends Controller
         ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['side.Estado', 'Activo']])->get();  
 
         $array_deficiencias_alteraciones = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')        
-        ->select('sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Deficiencia')
-        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['sidae.Estado', 'Activo']])->get();  
+        ->select('sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Total_deficiencia')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['sidae.Estado', 'Activo']])
+        ->orderByRaw("CAST(sidae.Deficiencia AS UNSIGNED) DESC")
+        ->get();  
         
         $Suma_combinada_fc = $array_datos_info_dictamen[0]->Suma_combinada;        
 
@@ -7275,6 +7536,7 @@ class CalificacionPCLController extends Controller
                 'Id_servicio' => $Id_servicio,
                 'ID_evento' => $ID_Evento_comuni,
                 'Nombre_documento' => $nombre_pdf,
+                'N_radicado_documento' => $Radicado_comuni,
                 'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
                 'F_descarga_documento' => $date,
                 'Nombre_usuario' => $nombre_usuario,
@@ -7369,6 +7631,7 @@ class CalificacionPCLController extends Controller
         $Copia_empleador_correspondecia = $array_datos_comite_inter[0]->Copia_empleador;
         $Copia_eps_correspondecia = $array_datos_comite_inter[0]->Copia_eps;
         $Copia_afp_correspondecia = $array_datos_comite_inter[0]->Copia_afp;
+        $Copia_afp_conocimiento_correspondencia = $array_datos_comite_inter[0]->Copia_afp_conocimiento;
         $Copia_arl_correspondecia = $array_datos_comite_inter[0]->Copia_arl;
         $Oficio_pcl = $array_datos_comite_inter[0]->Oficio_pcl;
 
@@ -7474,6 +7737,44 @@ class CalificacionPCLController extends Controller
             $Telefono_afp = '';
             $Ciudad_departamento_afp = '';
         }
+
+        if (!empty($Copia_afp_conocimiento_correspondencia) && $Copia_afp_conocimiento_correspondencia == "AFP_Conocimiento") {
+            $dato_id_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->select('siae.Entidad_conocimiento','siae.Id_afp_entidad_conocimiento')
+            ->where([['siae.ID_evento', $ID_Evento_comuni_comite]])
+            ->get();
+
+            $si_entidad_conocimiento = $dato_id_afp_conocimiento[0]->Entidad_conocimiento;
+            $id_afp_conocimiento = $dato_id_afp_conocimiento[0]->Id_afp_entidad_conocimiento;
+
+            if ($si_entidad_conocimiento == "Si") {
+                $datos_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                ->where([['sie.Id_Entidad', $id_afp_conocimiento]])
+                ->get();
+    
+                $Nombre_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_entidad;
+                $Direccion_afp_conocimiento = $datos_afp_conocimiento[0]->Direccion;
+                $Telefonos_afp_conocimiento = $datos_afp_conocimiento[0]->Telefonos;
+                $Ciudad_departamento_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_ciudad.'-'.$datos_afp_conocimiento[0]->Nombre_departamento;
+            } else {
+                $Copia_afp_conocimiento_correspondencia = '';
+
+                $Nombre_afp_conocimiento = '';
+                $Direccion_afp_conocimiento = '';
+                $Telefonos_afp_conocimiento = '';
+                $Ciudad_departamento_afp_conocimiento = '';
+            }
+
+        } else {
+            $Nombre_afp_conocimiento = '';
+            $Direccion_afp_conocimiento = '';
+            $Telefonos_afp_conocimiento = '';
+            $Ciudad_departamento_afp_conocimiento = '';
+        }
+        
 
         if(!empty($Copia_arl_correspondecia) && $Copia_arl_correspondecia == 'ARL'){
             $Nombre_arl = $array_datos_info_afiliado[0]->Entidad_arl;
@@ -7729,6 +8030,7 @@ class CalificacionPCLController extends Controller
                 'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
                 'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
                 'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
+                'Copia_afp_conocimiento_correspondencia' => $Copia_afp_conocimiento_correspondencia,
                 'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
                 'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
@@ -7746,6 +8048,10 @@ class CalificacionPCLController extends Controller
                 'Direccion_afp' => $Direccion_afp,
                 'Telefono_afp' => $Telefono_afp,
                 'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
+                'Nombre_afp_conocimiento' => $Nombre_afp_conocimiento,
+                'Direccion_afp_conocimiento' => $Direccion_afp_conocimiento,
+                'Telefonos_afp_conocimiento' => $Telefonos_afp_conocimiento,
+                'Ciudad_departamento_afp_conocimiento' => $Ciudad_departamento_afp_conocimiento,
                 'Nombre_arl' => $Nombre_arl,
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
@@ -7796,18 +8102,53 @@ class CalificacionPCLController extends Controller
             ])->get();
             
             if(count($verficar_documento) == 0){
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $Id_Asignacion_comuni_comite,
-                    'Id_proceso' => $Id_Proceso_comuni_comite,
-                    'Id_servicio' => $Id_servicio,
-                    'ID_evento' => $ID_Evento_comuni_comite,
-                    'Nombre_documento' => $nombre_pdf,
-                    'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
+                // Se valida si antes de insertar la info del doc de origen ya hay un documento de tipo otro
+                $nombre_docu_pcl_ica = "PCL_OFICIO_INC_{$Id_Asignacion_comuni_comite}_{$NroIden_afiliado_noti}.pdf";
+                $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->where([
+                    ['Nombre_documento', $nombre_docu_pcl_ica],
+                ])->get();
+
+                // Si no existe info del documento de Oficio pcl incapacidad, inserta la info del documento de Oficio pcl
+                // De lo contrario hace una actualización de la info
+                if (count($verificar_docu_otro) == 0) {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                        'Id_proceso' => $Id_Proceso_comuni_comite,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_Evento_comuni_comite,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $Radicado_comuni_comite,
+                        'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);                    
+                } else {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                        'Id_proceso' => $Id_Proceso_comuni_comite,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_Evento_comuni_comite,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $Radicado_comuni_comite,
+                        'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_Asignacion', $Id_Asignacion_comuni_comite],
+                        ['N_radicado_documento', $Radicado_comuni_comite],
+                        ['ID_evento', $ID_Evento_comuni_comite]
+                    ])
+                    ->update($info_descarga_documento);                   
+                    
+                }
                 
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
             }
 
             return $pdf->download($nombre_pdf);
@@ -7847,6 +8188,7 @@ class CalificacionPCLController extends Controller
                 'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
                 'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
                 'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
+                'Copia_afp_conocimiento_correspondencia' => $Copia_afp_conocimiento_correspondencia,
                 'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
                 'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
@@ -7864,6 +8206,10 @@ class CalificacionPCLController extends Controller
                 'Direccion_afp' => $Direccion_afp,
                 'Telefono_afp' => $Telefono_afp,
                 'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
+                'Nombre_afp_conocimiento' => $Nombre_afp_conocimiento,
+                'Direccion_afp_conocimiento' => $Direccion_afp_conocimiento,
+                'Telefonos_afp_conocimiento' => $Telefonos_afp_conocimiento,
+                'Ciudad_departamento_afp_conocimiento' => $Ciudad_departamento_afp_conocimiento,
                 'Nombre_arl' => $Nombre_arl,
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
@@ -7877,7 +8223,7 @@ class CalificacionPCLController extends Controller
             // Crear una instancia de Dompdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_remisorio_pcl_incapacidad', $data);            
-            $nombre_pdf = 'PCL_OFICIO_'.$Id_Asignacion_comuni_comite.'_'.$NroIden_afiliado_noti.'.pdf';    
+            $nombre_pdf = 'PCL_OFICIO_INC_'.$Id_Asignacion_comuni_comite.'_'.$NroIden_afiliado_noti.'.pdf';
             //Obtener el contenido del PDF
             $output = $pdf->output();
             //Guardar el PDF en un archivo
@@ -7913,18 +8259,53 @@ class CalificacionPCLController extends Controller
             ])->get();
             
             if(count($verficar_documento) == 0){
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $Id_Asignacion_comuni_comite,
-                    'Id_proceso' => $Id_Proceso_comuni_comite,
-                    'Id_servicio' => $Id_servicio,
-                    'ID_evento' => $ID_Evento_comuni_comite,
-                    'Nombre_documento' => $nombre_pdf,
-                    'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
+                // Se valida si antes de insertar la info del doc de origen ya hay un documento de tipo otro
+                $nombre_docu_pcl_ica = "PCL_OFICIO_{$Id_Asignacion_comuni_comite}_{$NroIden_afiliado_noti}.pdf";
+                $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                ->select('Nombre_documento')
+                ->where([
+                    ['Nombre_documento', $nombre_docu_pcl_ica],
+                ])->get();
+
+                // Si no existe info del documento de Oficio pcl incapacidad, inserta la info del documento de Oficio pcl
+                // De lo contrario hace una actualización de la info
+                if (count($verificar_docu_otro) == 0) {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                        'Id_proceso' => $Id_Proceso_comuni_comite,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_Evento_comuni_comite,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $Radicado_comuni_comite,
+                        'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                    
+                } else {
+                    $info_descarga_documento = [
+                        'Id_Asignacion' => $Id_Asignacion_comuni_comite,
+                        'Id_proceso' => $Id_Proceso_comuni_comite,
+                        'Id_servicio' => $Id_servicio,
+                        'ID_evento' => $ID_Evento_comuni_comite,
+                        'Nombre_documento' => $nombre_pdf,
+                        'N_radicado_documento' => $Radicado_comuni_comite,
+                        'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                        'F_descarga_documento' => $date,
+                        'Nombre_usuario' => $nombre_usuario,
+                    ];
+                    
+                    sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_Asignacion', $Id_Asignacion_comuni_comite],
+                        ['N_radicado_documento', $Radicado_comuni_comite],
+                        ['ID_evento', $ID_Evento_comuni_comite]
+                    ])
+                    ->update($info_descarga_documento);
+                }
                 
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
             }
 
             return $pdf->download($nombre_pdf);
@@ -8323,7 +8704,7 @@ class CalificacionPCLController extends Controller
         $array_deficiencias_alteraciones = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
         ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
         ->select('sidae.Id_tabla', 'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.FU', 'sidae.CFM1', 'sidae.CFM2', 
-        'sidae.Clase_Final', 'sidae.Deficiencia', 'sidae.CAT', 'sidae.MSD')
+        'sidae.Clase_Final', 'sidae.Total_deficiencia', 'sidae.CAT', 'sidae.MSD')
         ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['sidae.Estado', 'Activo']])->get();  
         
         $Suma_combinada_fc = $array_datos_info_dictamen[0]->Suma_combinada;
@@ -8507,6 +8888,7 @@ class CalificacionPCLController extends Controller
                 'Id_servicio' => $Id_servicio,
                 'ID_evento' => $ID_Evento_comuni,
                 'Nombre_documento' => $nombre_pdf,
+                'N_radicado_documento' => $Radicado_comuni,
                 'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
                 'F_descarga_documento' => $date,
                 'Nombre_usuario' => $nombre_usuario,
@@ -8882,6 +9264,7 @@ class CalificacionPCLController extends Controller
                 'Id_servicio' => $Id_servicio,
                 'ID_evento' => $ID_Evento_comuni_comite,
                 'Nombre_documento' => $nombre_pdf,
+                'N_radicado_documento' => $Radicado_comuni_comite,
                 'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
                 'F_descarga_documento' => $date,
                 'Nombre_usuario' => $nombre_usuario,

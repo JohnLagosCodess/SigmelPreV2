@@ -152,7 +152,7 @@
                                         <div class="form-group">
                                             <label for="motivo_solicitud">Motivo Solicitud<span style="color: red;">(*)</span></label>
                                             <select class="custom-select motivo_solicitud" name="motivo_solicitud" id="motivo_solicitud" style="width: 100%;" required>
-                                                @if ($motivo_solicitud_actual[0]->Id_motivo_solicitud > 0)
+                                                @if (!empty($motivo_solicitud_actual[0]->Id_motivo_solicitud))
                                                     <option value="{{$motivo_solicitud_actual[0]->Id_motivo_solicitud}}" selected>{{$motivo_solicitud_actual[0]->Nombre_solicitud}}</option>
                                                 @else
                                                     <option value="">Seleccione una opción</option>
@@ -165,13 +165,13 @@
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="nombre_apoderado">Nombre apoderado</label>
-                                            <input type="text" class="form-control" name="nombre_apoderado" id="nombre_apoderado" value="{{$datos_apoderado_actual[0]->Nombre_apoderado}}" disabled>
+                                            <input type="text" class="form-control" name="nombre_apoderado" id="nombre_apoderado" value="<?php if (!empty($datos_apoderado_actual[0]->Nombre_apoderado)) {echo $datos_apoderado_actual[0]->Nombre_apoderado; } ?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="identificacion_apoderado">N° identificación apoderado</label>
-                                            <input type="text" class="form-control" name="identificacion_apoderado" id="identificacion_apoderado" value="{{$datos_apoderado_actual[0]->Nro_identificacion_apoderado}}" disabled>
+                                            <input type="text" class="form-control" name="identificacion_apoderado" id="identificacion_apoderado" value="<?php if (!empty($datos_apoderado_actual[0]->Nro_identificacion_apoderado)) {echo $datos_apoderado_actual[0]->Nro_identificacion_apoderado; } ?>" disabled>
                                         </div>
                                     </div>
                                 </div>
@@ -319,7 +319,7 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="dominancia">Dominancia</label>
-                                            <input type="text" class="form-control" name="dominancia" id="dominancia" value="{{$motivo_solicitud_actual[0]->Nombre_dominancia}}" disabled>
+                                            <input type="text" class="form-control" name="dominancia" id="dominancia" value="<?php if(!empty($motivo_solicitud_actual[0]->Nombre_dominancia)){echo $motivo_solicitud_actual[0]->Nombre_dominancia;}?>" disabled>
                                         </div>
                                     </div>
                                 </div>
@@ -521,7 +521,7 @@
                                                         <tr class="fila_deficiencias_{{$deficiencias_ateraciones->Id_Deficiencia}}" id="datos_deficiencias">
                                                             <td>{{$deficiencias_ateraciones->Ident_tabla}}</td>
                                                             <td>{{$deficiencias_ateraciones->Nombre_tabla}}</td>
-                                                            <td>{{$deficiencias_ateraciones->Deficiencia}}</td>
+                                                            <td>{{$deficiencias_ateraciones->Total_deficiencia}}</td>
                                                             <td>
                                                                 <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_deficiencias_decretocero_{{$deficiencias_ateraciones->Id_Deficiencia}}" data-id_fila_quitar="{{$deficiencias_ateraciones->Id_Deficiencia}}" data-clase_fila="fila_deficiencias_{{$deficiencias_ateraciones->Id_Deficiencia}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
                                                             </td>
@@ -575,7 +575,7 @@
                                                         <tr class="fila_deficiencias3_{{$deficiencias_ateraciones->Id_Deficiencia}}" id="datos_deficiencias3">
                                                             <td>{{$deficiencias_ateraciones->Tabla1999}}</td>
                                                             <td>{{$deficiencias_ateraciones->Titulo_tabla1999}}</td>
-                                                            <td>{{$deficiencias_ateraciones->Deficiencia}}</td>
+                                                            <td>{{$deficiencias_ateraciones->Total_deficiencia}}</td>
                                                             <td>
                                                                 <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_deficiencias_decreto3_{{$deficiencias_ateraciones->Id_Deficiencia}}" data-id_fila_quitar="{{$deficiencias_ateraciones->Id_Deficiencia}}" data-clase_fila="fila_deficiencias3_{{$deficiencias_ateraciones->Id_Deficiencia}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
                                                             </td>
@@ -615,7 +615,9 @@
                                                             <th style="width: 140px !important;">Clase final</th>
                                                             {{-- <th style="width: 140px !important;">DX principal</th> --}}
                                                             <th style="width: 140px !important;">MSD</th>
+                                                            <th style="width: 140px !important;">Dominancia</th>
                                                             <th style="width: 140px !important;">Deficiencia</th>
+                                                            <th style="width: 140px !important;">% Total Deficiencia (F.Balthazar,sin ponderar)</th>                                                            
                                                             <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_deficiencia_porfactor"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                         </tr>
                                                     </thead>
@@ -640,7 +642,9 @@
                                                                     @endif
                                                                 </td> --}}
                                                                 <td>{{$deficiencias_ateraciones->MSD}}</td>
+                                                                <td>{{$deficiencias_ateraciones->Dominancia}}</td>
                                                                 <td>{{$deficiencias_ateraciones->Deficiencia}}</td>
+                                                                <td>{{$deficiencias_ateraciones->Total_deficiencia}}</td>
                                                                 <td>
                                                                     <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_deficiencia_alteraciones{{$deficiencias_ateraciones->Id_Deficiencia}}" data-id_fila_quitar="{{$deficiencias_ateraciones->Id_Deficiencia}}" data-clase_fila="fila_deficienaAlteracion_{{$deficiencias_ateraciones->Id_Deficiencia}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
                                                                 </td>
@@ -680,7 +684,9 @@
                                                             <th style="width: 140px !important;">Clase final</th>
                                                             {{-- <th style="width: 140px !important;">DX principal</th> --}}
                                                             <th style="width: 140px !important;">MSD</th>
+                                                            <th style="width: 140px !important;">Dominancia</th>
                                                             <th style="width: 140px !important;">Deficiencia</th>
+                                                            <th style="width: 140px !important;">% Total Deficiencia (F.Balthazar,sin ponderar)</th>                                                            
                                                             <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_deficiencia_porfactor"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                         </tr>
                                                     </thead>
@@ -705,7 +711,9 @@
                                                                     @endif
                                                                 </td> --}}
                                                                 <td>{{$deficiencias_ateraciones->MSD}}</td>
+                                                                <td>{{$deficiencias_ateraciones->Dominancia}}</td>
                                                                 <td>{{$deficiencias_ateraciones->Deficiencia}}</td>
+                                                                <td>{{$deficiencias_ateraciones->Total_deficiencia}}</td>
                                                                 <td>
                                                                     <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_deficiencia_alteraciones{{$deficiencias_ateraciones->Id_Deficiencia}}" data-id_fila_quitar="{{$deficiencias_ateraciones->Id_Deficiencia}}" data-clase_fila="fila_deficienaAlteracion_{{$deficiencias_ateraciones->Id_Deficiencia}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
                                                                 </td>
@@ -7368,7 +7376,7 @@
                                     <div class="col-3">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
-                                                @if (!empty($array_comite_interdisciplinario[0]->Copia_empleador))
+                                                @if (!empty($array_comite_interdisciplinario[0]->Copia_afiliado))
                                                     <input class="custom-control-input" type="checkbox" id="afiliado" name="afiliado" value="Afiliado" checked>
                                                 @else
                                                     <input class="custom-control-input" type="checkbox" id="afiliado" name="afiliado" value="Afiliado">
@@ -7412,7 +7420,22 @@
                                                 <label for="afp" class="custom-control-label">AFP</label>
                                             </div>
                                         </div>
-                                    </div>   
+                                    </div>
+                                    <input type="hidden" name="entidad_conocimiento" id="entidad_conocimiento" value="<?php if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento)){echo $info_afp_conocimiento[0]->Entidad_conocimiento;}?>">
+                                    @if (!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si")
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    @if (!empty($array_comite_interdisciplinario[0]->Copia_afp_conocimiento))
+                                                        <input class="dependencia_justificacion custom-control-input" type="checkbox" id="afp_conocimiento" name="afp_conocimiento" value="AFP_Conocimiento" checked>
+                                                    @else
+                                                        <input class="custom-control-input" type="checkbox" id="afp_conocimiento" name="afp_conocimiento" value="AFP_Conocimiento">                                                    
+                                                    @endif
+                                                    <label for="afp_conocimiento" class="custom-control-label">AFP Conocimiento</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
                                     <div class="col-3">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">

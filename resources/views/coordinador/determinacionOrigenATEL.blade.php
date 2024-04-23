@@ -980,7 +980,8 @@
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="destinatario_principal">Destinatario Principal</label>                                            
-                                    <input type="text" class="form-control" name="destinatario_principal" id="destinatario_principal" value="{{$array_datos_calificacion_origen[0]->Nombre_afiliado}}" disabled>
+                                    {{-- <input type="text" class="form-control" name="destinatario_principal" id="destinatario_principal" value="{{$array_datos_calificacion_origen[0]->Nombre_afiliado}}" disabled> --}}
+                                    <input type="text" class="form-control" name="destinatario_principal" id="destinatario_principal" value="{{$afp_afiliado[0]->Nombre_entidad}}" disabled>
                                 </div>
                             </div>
                             <div class="col-3">
@@ -1125,7 +1126,19 @@
                                 <div class="form-group">
                                     <label for="tipo_clasificacion">Copia a partes interesadas</label>
                                 </div>
-                            </div>  
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        @if (!empty($array_comite_interdisciplinario[0]->Copia_afiliado))
+                                            <input class="dependencia_justificacion custom-control-input" type="checkbox" id="beneficiario" name="beneficiario" value="Beneficiario" checked>
+                                        @else
+                                            <input class="custom-control-input" type="checkbox" id="beneficiario" name="beneficiario" value="Beneficiario">                                                    
+                                        @endif
+                                        <label for="beneficiario" class="custom-control-label">Beneficiario</label>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
@@ -1161,7 +1174,22 @@
                                         <label for="afp" class="custom-control-label">AFP</label>
                                     </div>
                                 </div>
-                            </div>   
+                            </div>
+                            <input type="hidden" name="entidad_conocimiento" id="entidad_conocimiento" value="<?php if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento)){echo $info_afp_conocimiento[0]->Entidad_conocimiento;}?>">
+                            @if (!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si")
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox">
+                                            @if (!empty($array_comite_interdisciplinario[0]->Copia_afp_conocimiento))
+                                                <input class="dependencia_justificacion custom-control-input" type="checkbox" id="afp_conocimiento" name="afp_conocimiento" value="AFP_Conocimiento" checked>
+                                            @else
+                                                <input class="custom-control-input" type="checkbox" id="afp_conocimiento" name="afp_conocimiento" value="AFP_Conocimiento">                                                    
+                                            @endif
+                                            <label for="afp_conocimiento" class="custom-control-label">AFP Conocimiento</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                             <div class="col-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
@@ -1408,11 +1436,13 @@
                                                                     {{-- Siniestro --}}
                                                                     <input type="text" name="nro_siniestro_{{$comunicados->Id_Comunicado}}" id="nro_siniestro_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->ID_evento)){echo $array_datos_calificacion_origen[0]->ID_evento;} ?>">
                                                                     {{-- Nombre afiliado --}}
-                                                                    <input type="text" name="nombre_afiliado_{{$comunicados->Id_Comunicado}}" id="nombre_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nombre_afiliado)){echo $array_datos_calificacion_origen[0]->Nombre_afiliado;}?>">
+                                                                    <input type="text" name="nombre_afiliado_{{$comunicados->Id_Comunicado}}" id="nombre_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($afp_afiliado[0]->Nombre_entidad)){echo $afp_afiliado[0]->Nombre_entidad;}?>">
                                                                     {{-- Dirección afliado --}}
-                                                                    <input type="text" name="direccion_afiliado_{{$comunicados->Id_Comunicado}}" id="direccion_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Direccion)){echo $array_datos_calificacion_origen[0]->Direccion;}?>">
+                                                                    <input type="text" name="direccion_afiliado_{{$comunicados->Id_Comunicado}}" id="direccion_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($afp_afiliado[0]->Direccion)){echo $afp_afiliado[0]->Direccion;}?>">
                                                                     {{-- Telefono afiliado --}}
-                                                                    <input type="text" name="telefono_afiliado_{{$comunicados->Id_Comunicado}}" id="telefono_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Telefono_contacto)){echo $array_datos_calificacion_origen[0]->Telefono_contacto;}?>">
+                                                                    <input type="text" name="telefono_afiliado_{{$comunicados->Id_Comunicado}}" id="telefono_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($afp_afiliado[0]->Telefonos)){echo $afp_afiliado[0]->Telefonos;}?>">
+                                                                    {{-- Ciudad afiliado --}}
+                                                                    <input type="text" name="ciudad_afiliado_{{$comunicados->Id_Comunicado}}" id="ciudad_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($afp_afiliado[0]->Nombre_ciudad)){echo $afp_afiliado[0]->Nombre_ciudad;}?>">
                                                                     {{-- Id asignacion --}}
                                                                     <input type="text" name="Id_Asignacion_consulta_{{$comunicados->Id_Comunicado}}" id="Id_Asignacion_consulta_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_Asignacion)){echo $array_datos_calificacion_origen[0]->Id_Asignacion;}?>">
                                                                     {{-- Id del cliente para consultar el nombre del cliente --}}

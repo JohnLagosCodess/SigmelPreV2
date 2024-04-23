@@ -37,6 +37,8 @@ return new class extends Migration
             $table->integer('Id_eps')->nullable();
             $table->integer('Id_afp')->nullable();
             $table->integer('Id_arl')->nullable();
+            $table->enum('Entidad_conocimiento', ['Si', 'No'])->nullable();
+            $table->integer('Id_afp_entidad_conocimiento')->nullable();
             $table->enum('Activo', ['Si', 'No']);
             $table->string('Nombre_afiliado_benefi', 100)->nullable();
             $table->integer('Tipo_documento_benefi')->nullable();

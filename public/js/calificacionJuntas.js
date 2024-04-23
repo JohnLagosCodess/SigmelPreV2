@@ -477,13 +477,15 @@ $(document).ready(function(){
             }
         })        
         // location.reload();
-    }) 
+    });
+
     /* Obtener el ID del evento a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id evento */
     $("input[id^='listadodocumento_']").click(function(){
         let idobtenido = $('#newId_evento').val();
         //console.log(idobtenido);
         $("input[id^='EventoID_']").val(idobtenido);
     });
+
     /* Envío de Información del Documento a Cargar */
     $("form[id^='formulario_documento_']").submit(function(e){
 
@@ -540,7 +542,8 @@ $(document).ready(function(){
 
             }         
         });
-    }); 
+    });
+
     /* VALIDACIÓN MOSTRAR ENFERMEDAD HEREDADA  */ 
     var opt_tipo_evento;
     $("#Tipo_evento_juntas").change(function(){
@@ -568,6 +571,7 @@ $(document).ready(function(){
         }, 500);
 
     }
+    
     /* VALIDACIÓN MOSTRAR FECHA ENFERMEDAD */
     $("#enfermedad_heredada").click(function(){
         if ($(this).is(":checked")) {

@@ -307,6 +307,7 @@ $(document).ready(function(){
                     $('#reviso').append('<option value="'+data[nombreRevisoPcl[i]]['name']+'">'+data[nombreRevisoPcl[i]]['name']+'</option>');
                 }
             }
+            $("#reviso").prop("selectedIndex", 1);
         }
     });
 
@@ -3122,6 +3123,13 @@ $(document).ready(function(){
         var empleador = $('input[name="empleador"]:checked').val();   
         var eps = $('input[name="eps"]:checked').val();
         var afp = $('input[name="afp"]:checked').val();
+
+        // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+        var afp_conocimiento = '';
+        if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+            afp_conocimiento = $('input[name="afp_conocimiento"]:checked').val();
+        }
+
         var arl = $('input[name="arl"]:checked').val();
         var jrci = $('input[name="jrci"]:checked').val();   
             
@@ -3165,6 +3173,7 @@ $(document).ready(function(){
             'empleador':empleador,
             'eps':eps,
             'afp':afp,
+            'afp_conocimiento': afp_conocimiento,
             'arl':arl,
             'jrci':jrci,
             'cual':cual,
@@ -3330,6 +3339,7 @@ $(document).ready(function(){
     $('.note-editing-area').css("background", "white");
     $('.note-editor').css("border", "1px solid black");    
 
+    var entidad_conocimiento = $("#entidad_conocimiento").val();
     // Retornar el texto por defecto en el asunto y cuerpo del comunicado
 
     var oficioremisoriopcl = $('#oficiopcl');
@@ -3347,23 +3357,75 @@ $(document).ready(function(){
             "caso, podrás iniciar tu solicitud pensional a través de a página web www.porvenir.com.co o llamando a la línea de atención al cliente "+
             "de Porvenir 018000510800, con el fin de solicitar una cita para la radicación de la documentación.</p>"+
             "<p>En caso de que no te encuentres de acuerdo con la calificación emitida por Seguros de Vida Alfa S.A., cuentas con diez (10) días "+
-            "hábiles siguientes a partir de la fecha de recibida la notificación para manifestar tu inconformidad frente a resultado. Esta "
-            "manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de "+
-            "los siguientes aspectos te encuentras en desacuerdo: </p>"+
-            "<p>- Pérdida de capacidad laboral</p>"+
-            "<p>- Origen</p>"+
-            "<p>- Fecha de estructuración</p>"+
-            "<p>La carta debe ser remitida por medio de correo certificado a la dirección Carrera 10 # 18-36, piso 4 edificio José María Córdoba en "+
-            "Bogotá o a inconformidad@segurosalfa.com.co. Ten presente que el comunicado debe venir firmado por ti, relacionando los datos de "+
-            "localizaci ón. Posterior a la revisión de tu carta, procederemos a remitir tu expediente a la respectiva Junta Regional de "+
-            "Calificación de Invalidez para obtener una segunda calificación.</p>"+
-            "<p>Una vez realizada la solicitud, a más tardar en (15) quince días hábiles recibirás por parte de Seguros de Vida Alfa S.A. una "+
-            "comunicación donde te informaremos el estado del proceso.</p>";
+            "hábiles siguientes a partir de la fecha de recibida la notificación para manifestar tu inconformidad frente a resultado. Esta manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de los siguientes aspectos te encuentras en desacuerdo: <br><br>- Pérdida de capacidad laboral <br> - Origen <br>  - Fecha de estructuración <br><br> La carta debe ser remitida por medio de correo certificado a la dirección Carrera 10 # 18-36, piso 4 edificio José María Córdoba en "+
+            "Bogotá o a inconformidad@segurosalfa.com.co. <br><br> Ten presente que el comunicado debe venir firmado por ti, relacionando los datos de <br> localizaci ón. Posterior a la revisión de tu carta, procederemos a remitir tu expediente a la respectiva Junta Regional de Calificación de Invalidez para obtener una segunda calificación. <br><br> Una vez realizada la solicitud, a más tardar en (15) quince días hábiles recibirás por parte de Seguros de Vida Alfa S.A. una comunicación donde te informaremos el estado del proceso. "
+            //"manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de"+
+            //"los siguientes aspectos te encuentras en desacuerdo: </p>"+
+            //"<p>- Pérdida de capacidad laboral</p>"+
+            //"<p>- Origen</p>"+
+            //"<p>- Fecha de estructuración</p>"+
+            //"<p>La carta debe ser remitida por medio de correo certificado a la dirección Carrera 10 # 18-36, piso 4 edificio José María Córdoba en "+
+            //"Bogotá o a inconformidad@segurosalfa.com.co. Ten presente que el comunicado debe venir firmado por ti, relacionando los datos de "+
+            //"localizaci ón. Posterior a la revisión de tu carta, procederemos a remitir tu expediente a la respectiva Junta Regional de "+
+            //"Calificación de Invalidez para obtener una segunda calificación.</p>"+
+            //"<p>Una vez realizada la solicitud, a más tardar en (15) quince días hábiles recibirás por parte de Seguros de Vida Alfa S.A. una "+
+            //"comunicación donde te informaremos el estado del proceso.</p>"
+            ;
+            //console.log(texto_insertar);
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
+
+            // Habilitación etiquetas
+            $("#btn_insertar_Nombre_afiliado").prop('disabled', false);
+            $("#btn_insertar_porPcl").prop('disabled', false);
+            $("#btn_insertar_F_estructuracion").prop('disabled', false);
+            $("#btn_insertar_Origen").prop('disabled', false);
+
+            // Selección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#empleador").prop('checked', true);
+            $("#eps").prop('checked', true);
+            $("#arl").prop('checked', true);
+            $("#afp").prop('checked', true);
+            
+            // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+            if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+                $("#afp_conocimiento").prop('checked', true);
+            }
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 1;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', true);
+
         }else{
             $("#Asunto").val("");
             var texto_insertar = "";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
+
+            // Deshabilitación etiquetas
+            $("#btn_insertar_Nombre_afiliado").prop('disabled', true);
+            $("#btn_insertar_porPcl").prop('disabled', true);
+            $("#btn_insertar_F_estructuracion").prop('disabled', true);
+            $("#btn_insertar_Origen").prop('disabled', true);
+
+            // Deselección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#empleador").prop('checked', false);
+            $("#eps").prop('checked', false);
+            $("#arl").prop('checked', false);
+            $("#afp").prop('checked', false);
+            
+            // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+            if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+                $("#afp_conocimiento").prop('checked', false);
+            }
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática del checkbox firmar
+            $("#firmar").prop('checked', false);
         }       
     });
 
@@ -3398,10 +3460,59 @@ $(document).ready(function(){
             "apela: origen, pérdida de capacidad laboral y/o fecha de estructuración. Remitirla a la Cra 10 N° 18 - 36 Piso 4 Edificio José María "+
             "Córdoba en Bogotá, al fax 7435333 ext.14440 0 al correo electrónico: inconformidad@segurosalfa.com.co.</p>";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
+
+            // Habilitación etiquetas
+            $("#btn_insertar_Nombre_afiliado").prop('disabled', false);
+            $("#btn_insertar_porPcl").prop('disabled', false);
+            $("#btn_insertar_F_estructuracion").prop('disabled', false);
+            $("#btn_insertar_Origen").prop('disabled', false);
+
+            // Selección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#empleador").prop('checked', true);
+            $("#eps").prop('checked', true);
+            $("#arl").prop('checked', true);
+            $("#afp").prop('checked', true);
+            
+            // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+            if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+                $("#afp_conocimiento").prop('checked', true);
+            }
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 1;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', true);
+
         }else{
             $("#Asunto").val("");
             var texto_insertar = "";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
+
+            // Deshabilitación etiquetas
+            $("#btn_insertar_Nombre_afiliado").prop('disabled', true);
+            $("#btn_insertar_porPcl").prop('disabled', true);
+            $("#btn_insertar_F_estructuracion").prop('disabled', true);
+            $("#btn_insertar_Origen").prop('disabled', true);
+
+            // Deselección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#empleador").prop('checked', false);
+            $("#eps").prop('checked', false);
+            $("#arl").prop('checked', false);
+            $("#afp").prop('checked', false);
+            
+            // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+            if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+                $("#afp_conocimiento").prop('checked', false);
+            }
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática del checkbox firmar
+            $("#firmar").prop('checked', false);
         }        
     });
     
@@ -3494,6 +3605,19 @@ $(document).ready(function(){
         $("#div_comite_interdisciplinario").addClass('d-none');
         $("#div_correspondecia").addClass('d-none');
         $("label[for='editar_correspondencia']").addClass('d-none');
+    }
+
+    // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:
+    // inhabilita los campos nro anexos, asunto, etiquetas, cuerpo comunicado, firmar
+    if (idRol != 6) {
+        $("#anexos").prop('readonly', true);
+        $("#Asunto").prop('readonly', true);
+        $("#btn_insertar_Nombre_afiliado").prop('disabled', true);
+        $("#btn_insertar_porPcl").prop('disabled', true);
+        $("#btn_insertar_F_estructuracion").prop('disabled', true);
+        $("#btn_insertar_Origen").prop('disabled', true);
+        $(".note-editable").attr("contenteditable", false);
+        $("#firmar").prop('disabled', true);
     }
 
 });

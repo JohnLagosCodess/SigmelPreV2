@@ -344,6 +344,11 @@ $(document).ready(function () {
         Maximo2Decimales(inputId);
     });
 
+    $(document).on('keyup', "input[id^='porcentaje_pcl']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
     /* TODO LO CORRESPONDIENTE A LA PARAMETRIZACION */
     $(document).on('keyup', "input[id^='tiempo_alerta_origen_atel_']", function(){
         var inputId = this.id;
@@ -475,6 +480,12 @@ $(document).ready(function () {
         var inputId = this.id;
         Maximo2Decimales(inputId);
     });
+
+    $(document).on("input", '[id^="resultado_Deficiencia_"]', function() {
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+    
 
     /* Input que permita registrar en formato contabilidad */
     $(".soloContabilidad").on({

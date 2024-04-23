@@ -196,7 +196,7 @@ class CoordinadorController extends Controller
                     ['Nombre_proceso_actual', '=', 'Calificación PCL'],
                     ['Id_profesional', '=', $newId_user]
                 ])
-                ->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
+                //->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
                 ->get();  
             }else{
                 $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')

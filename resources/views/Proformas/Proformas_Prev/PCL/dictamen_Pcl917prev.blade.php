@@ -146,6 +146,17 @@
             font-size: 11px !important;
         }
 
+        .dato_dinamico_font{
+            font-family: sans-serif;
+            text-align: justify;
+            font-size: 11px !important;  
+            padding-left: 2px;          
+        }
+
+        .border_section{
+            border: 1px solid #000;
+        }
+
         .centrar_dato_dinamico{
             text-align: center;
             font-size: 11px !important;
@@ -187,7 +198,8 @@
         }
 
         #footer .page:after { content: counter(page, upper-decimal); }   
-        #content { margin-top: 10px; }         
+        #content { margin-top: 10px; }    
+        .content2 { padding-left: 1.5px; padding-right: 1.5px; }                     
     </style>    
 </head>
 <body>
@@ -380,67 +392,48 @@
             <tr>
                 <td colspan="17" class="titulo_tablas">5. RELACIÓN DE DOCUMENTOS/EXAMEN FÍSICO(Descripción)</td>
             </tr>
-            <tr>
-                <td colspan="2" class="centrar_titulo_labels">Fecha:</td>
-                <td colspan="4" class="centrar_titulo_labels">Nombre del documento</td>
-                <td colspan="11" class="centrar_titulo_labels">Descripción</td>
-            </tr>
+        </table>                
+        <div class="content2">
             @if (count($array_datos_relacion_examentes) > 0)
                 @foreach ($array_datos_relacion_examentes as $examenes_interconsultas)
-                    <tr>
-                        <td colspan="2" class="dato_dinamico"><?php echo date('d/m/Y', strtotime($examenes_interconsultas->F_examen_interconsulta))?></td>
-                        <td colspan="4" class="dato_dinamico"><?php echo $examenes_interconsultas->Nombre_examen_interconsulta?></td>
-                        <td colspan="11" class="dato_dinamico"><?php echo $examenes_interconsultas->Descripcion_resultado?></td>
-                    </tr>                
-                @endforeach                
-            @else
-                <tr>
-                    <td colspan="2" class="dato_dinamico"></td>
-                    <td colspan="4" class="dato_dinamico"></td>
-                    <td colspan="11" class="dato_dinamico"></td>
-                </tr> 
-            @endif
+                    <section class="border_section">
+                        <div class="dato_dinamico_font"><b>Fecha:</b> <?php echo date('d/m/Y', strtotime($examenes_interconsultas->F_examen_interconsulta))?> - <b>Nombre del documento:</b> <?php echo $examenes_interconsultas->Nombre_examen_interconsulta?></div>
+                        <div class="dato_dinamico_font"><b>Descripción:</b></div>
+                        <div class="dato_dinamico_font"><?php echo $examenes_interconsultas->Descripcion_resultado?></div>
+                    </section>                    
+                @endforeach                            
+            @endif            
+        </div>
+        <table class="tabla_dictamen">                        
             <tr>
                 <td colspan="17" class="titulo_tablas">6. FUNDAMENTOS PARA LA CALIFICACIÓN DE LA PERDIDA DE LA CAPACIDAD LABORAL Y OCUPACIONAL - LIBROS I, II Y III</td>
             </tr>
-            <tr>
-                <td colspan="5" class="titulo_labels">Descripción de la enfermedad Actual:</td>
-                <td colspan="12" class="dato_dinamico">{{$Descripcion_enfermedad_actual}}</td>
-            </tr>
-            <tr>
-                <td colspan="17"></td>
-            </tr>
+        </table>         
+        <div class="content2">
+            <section class="border_section">
+                <div class="dato_dinamico_font"><b>Descripción de la enfermedad Actual:</b></div>
+                <div class="dato_dinamico_font">{{$Descripcion_enfermedad_actual}}</div>
+            </section>
+        </div> 
+        <table class="tabla_dictamen">    
             <tr>
                 <td colspan="17" class="titulo_tablas">LIBRO I CLASIFICACIÓN / VALORACIÓN DE LAS DEFICIENCIAS</td>
             </tr>
-            <tr>
-                <td colspan="1" class="centrar_titulo_labels">No.</td>
-                <td colspan="2" class="centrar_titulo_labels">Código CIE 10</td>
-                <td colspan="3" class="centrar_titulo_labels">Diagnóstico</td>
-                <td colspan="1" class="centrar_titulo_labels">Origen</td>
-                <td colspan="10" class="centrar_titulo_labels">Deficiencia(s) motivo de calificación / condiciones de salud</td>
-            </tr>            
+        </table>                 
+        <div class="content2">       
             <?php $conteo_diagnostico = 0; ?>
             @if (count($array_diagnosticos_fc) > 0)
                 @foreach ($array_diagnosticos_fc as $diagnosticos_fc)
                     <?php $conteo_diagnostico = $conteo_diagnostico + 1;?>
-                    <tr>
-                        <td colspan="1" class="dato_dinamico"><?php echo $conteo_diagnostico?></td>
-                        <td colspan="2" class="dato_dinamico"><?php echo $diagnosticos_fc->Codigo_cie10?></td>
-                        <td colspan="3" class="dato_dinamico"><?php echo $diagnosticos_fc->Nombre_CIE10?></td>
-                        <td colspan="1" class="dato_dinamico"><?php echo $diagnosticos_fc->Nombre_origen?></td>
-                        <td colspan="10" class="dato_dinamico"><?php echo $diagnosticos_fc->Deficiencia_motivo_califi_condiciones?></td>
-                    </tr>                
+                    <section class="border_section">
+                        <div class="dato_dinamico_font"><b>No.</b> <?php echo $conteo_diagnostico?> - <b>Origen:</b> <?php echo $diagnosticos_fc->Nombre_origen?> - <b>Código CIE 10:</b> <?php echo $diagnosticos_fc->Codigo_cie10?> - <b>Diagnóstico:</b> <?php echo $diagnosticos_fc->Nombre_CIE10?></div>    
+                        <div class="dato_dinamico_font"><b>Deficiencia(s) motivo de calificación / condiciones de salud:</b></div>
+                        <div class="dato_dinamico_font"><?php echo $diagnosticos_fc->Deficiencia_motivo_califi_condiciones?></div>                                                                         
+                    </section>
                 @endforeach                
-            @else
-                <tr>
-                    <td colspan="1" class="dato_dinamico"></td>
-                    <td colspan="2" class="dato_dinamico"></td>
-                    <td colspan="3" class="dato_dinamico"></td>
-                    <td colspan="1" class="dato_dinamico"></td>
-                    <td colspan="10" class="dato_dinamico"></td>
-                </tr> 
             @endif
+        </div>
+        <table class="tabla_dictamen">                           
             <tr>
                 <td colspan="17"></td>
             </tr>            
@@ -462,7 +455,7 @@
                         <td colspan="1" class="centrar_dato_dinamico">{{ $conteo_deficiencias }}</td>
                         <td colspan="12" class="dato_dinamico">{{ $deficiencias_fc->Titulo_tabla1999 }}</td>
                         <td colspan="2" class="centrar_dato_dinamico">{{ $deficiencias_fc->Tabla1999 }}</td>
-                        <td colspan="2" class="centrar_dato_dinamico">{{ $deficiencias_fc->Deficiencia }}</td>                       
+                        <td colspan="2" class="centrar_dato_dinamico">{{ $deficiencias_fc->Total_deficiencia }}</td>                       
                     </tr>
                 @endforeach  
             @else
@@ -1094,21 +1087,25 @@
                 <td colspan="5" class="dato_dinamico"> {{$Tipo_evento_dp}}</td>
             </tr>
             <tr>
-                <td colspan="9" class="titulo_labels">Sustentación de la Fecha de estructuración:</td>
-                <td colspan="3" class="titulo_labels">FECHA ACCIDENTE / ENFERMEDAD</td>
-                <td colspan="5" class="dato_dinamico"> {{$F_evento_dpF}}</td>
-            </tr>
-            <tr>
-                <td colspan="9" class="dato_dinamico">{{$Sustentacion_F_estructuracion_dp}}</td>
+                <td colspan="5" class="titulo_labels">FECHA ACCIDENTE / ENFERMEDAD</td>
+                <td colspan="4" class="dato_dinamico"> <?php if($F_evento_dpF<>'31-12-1969'){ echo $F_evento_dpF;}?></td>
                 <td colspan="3" class="titulo_labels">ORIGEN</td>
                 <td colspan="5" class="dato_dinamico"> {{$Origen_dp}}</td>
             </tr>
-            <tr>
-                <td colspan="17" class="centrar_dato_labels"><b>Detalle de la calificación</b></td>
-            </tr>
-            <tr>
-                <td colspan="17" class="dato_dinamico">{{$Detalle_calificacion_dp}}</td>
-            </tr>
+        </table>                                                                              
+        <div class="content2">
+            <section class="border_section">
+                <div class="dato_dinamico_font"><b>Sustentación de la Fecha de estructuración:</b></div>
+                <div class="dato_dinamico_font">{{$Sustentacion_F_estructuracion_dp}}</div>
+            </section>
+        </div>
+        <div class="content2">
+            <section class="border_section">
+                <div class="dato_dinamico_font"><b>Detalle de la calificación:</b></div>
+                <div class="dato_dinamico_font"><?php echo nl2br($Detalle_calificacion_dp); ?></div>
+            </section>
+        </div>
+        <table class="tabla_dictamen">
             <tr>
                 <td colspan="4" class="left_titulo_labels">Alto costo / Catastrófica:</td>
                 <td colspan="5" class="dato_dinamico"><?php if ($Enfermedad_catastrofica_dp == 'Enfermedad Catastrófica'){echo 'SI';}else{echo 'NO';}?></td>
