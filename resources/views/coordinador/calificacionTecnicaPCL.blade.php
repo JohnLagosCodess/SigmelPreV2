@@ -654,6 +654,12 @@
                                                 </table>
                                             </div><br>
                                             <x-adminlte-button class="mr-auto d-none" id="guardar_datos_deficiencia_alteraciones" theme="info" label="Guardar"/>
+                                            <div class="text-center d-none" id="mostrar_barra_guardar_deficiencias">                                
+                                                <button class="btn btn-info" type="button" disabled>
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                    Guardando Deficiencia por alteraciones por favor espere...
+                                                </button>
+                                            </div>
                                             <br>
                                         </div>
                                     </div>
@@ -723,6 +729,12 @@
                                                 </table>
                                             </div><br>
                                             <x-adminlte-button class="mr-auto d-none" id="guardar_datos_deficiencia_alteraciones" theme="info" label="Guardar"/>
+                                            <div class="text-center d-none" id="mostrar_barra_guardar_deficiencias">                                
+                                                <button class="btn btn-info" type="button" disabled>
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                    Guardando Deficiencia por alteraciones por favor espere...
+                                                </button>   
+                                            </div>
                                             <br>
                                         </div>
                                     </div>
