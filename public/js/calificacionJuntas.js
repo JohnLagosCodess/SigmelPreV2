@@ -551,6 +551,7 @@ $(document).ready(function(){
         $("#Tipo_evento_juntas").val(opt_tipo_evento);
         iniciarIntervalo_tEvento();
     });
+
     // Función para validar items a mostrar
     function iniciarIntervalo_tEvento() {
         intervalo = setInterval(() => {
@@ -1230,6 +1231,14 @@ $(document).ready(function(){
                         ciudadafiliado.empty();
                         ciudadafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_municipios+'">'+data.array_datos_destinatarios[0].Nombre_ciudad+'</option>')
                         document.querySelector("#ciudad_destinatario").disabled = true;
+
+                        // Seleccción de la forma de envío acorde a la selección de la JRCI
+                        if (data.array_datos_destinatarios[0].Id_Medio_Noti == 81) {
+                            $('#forma_envio').val('46').trigger('change.select2');
+                        }else{
+                            $('#forma_envio').val('47').trigger('change.select2');
+                        }
+
                         var nombre_usuario = $('#elaboro');
                         nombre_usuario.val(data.nombreusuario);
                         var nombre_usuario2 = $('#elaboro2');
@@ -1241,6 +1250,7 @@ $(document).ready(function(){
                         for (let i = 0; i < revisolider.length; i++) {
                             reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                         }
+                        $("#reviso").prop("selectedIndex", 1);
                     } 
                     // si no, el mismo selector de jrci
                     else {
@@ -1254,6 +1264,7 @@ $(document).ready(function(){
                             data: datos_lista_juntas_invalidez,
                             success:function(data) {
                                 // let IdJuntaInvalidez = $('select[name=jrci_califi_invalidez]').val();
+                                $('#jrci_califi_invalidez_comunicado').empty();
                                 $('#jrci_califi_invalidez_comunicado').append('<option>Seleccione una opción</option>');
                                 let juntajrci = Object.keys(data);
                                 for (let i = 0; i < juntajrci.length; i++) {
@@ -1261,11 +1272,78 @@ $(document).ready(function(){
                                     // }
                                     $('#jrci_califi_invalidez_comunicado').append('<option value="'+data[juntajrci[i]]["Id_Parametro"]+'">'+data[juntajrci[i]]["Nombre_parametro"]+'</option>');
                                 }
+
+                                // Se autoselecciona la jrci
+                                $('#jrci_califi_invalidez_comunicado').prop("selectedIndex", 1);
+                                var seleccion_automatica_jrci = $('#jrci_califi_invalidez_comunicado').val();
+
+                                var identificacion_comunicado_afiliado = $('#identificacion_comunicado').val();
+                                var newId_evento = $('#newId_evento').val();
+                                var newId_asignacion = $('#newId_asignacion').val();
+                                var Id_proceso = $('#Id_proceso').val();
+                                var datos_destinarioPrincipal ={
+                                    '_token':token,
+                                    'destinatarioPrincipal': "JRCI_comunicado",
+                                    'identificacion_comunicado_afiliado':identificacion_comunicado_afiliado,
+                                    'newId_evento': newId_evento,
+                                    'newId_asignacion': newId_asignacion,
+                                    'Id_proceso': Id_proceso,
+                                    'id_jrci': seleccion_automatica_jrci
+                                };
+                                $.ajax({
+                                    type:'POST',
+                                    url:'/captuarDestinatarioJuntas',
+                                    data: datos_destinarioPrincipal,
+                                    success: function(data){
+                                        var Nombre_afiliado = $('#nombre_destinatario');
+                                        Nombre_afiliado.val(data.array_datos_destinatarios[0].Nombre_entidad);
+                                        document.querySelector("#nombre_destinatario").disabled = true;
+                                        var nitccafiliado = $('#nic_cc');
+                                        nitccafiliado.val(data.array_datos_destinatarios[0].Nit_entidad);
+                                        document.querySelector("#nic_cc").disabled = true;
+                                        var direccionafiliado = $('#direccion_destinatario');
+                                        direccionafiliado.val(data.array_datos_destinatarios[0].Direccion);
+                                        document.querySelector("#direccion_destinatario").disabled = true;
+                                        var telefonoafiliado = $('#telefono_destinatario');
+                                        telefonoafiliado.val(data.array_datos_destinatarios[0].Telefonos);
+                                        document.querySelector("#telefono_destinatario").disabled = true;
+                                        var emailafiliado = $('#email_destinatario');
+                                        emailafiliado.val(data.array_datos_destinatarios[0].Emails);
+                                        document.querySelector("#email_destinatario").disabled = true;
+                                        var departamentoafiliado = $('#departamento_destinatario');
+                                        departamentoafiliado.empty();
+                                        departamentoafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_departamento+'" selected>'+data.array_datos_destinatarios[0].Nombre_departamento+'</option>');
+                                        document.querySelector("#departamento_destinatario").disabled = true;
+                                        var ciudadafiliado =$('#ciudad_destinatario');
+                                        ciudadafiliado.empty();
+                                        ciudadafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_municipios+'">'+data.array_datos_destinatarios[0].Nombre_ciudad+'</option>')
+                                        document.querySelector("#ciudad_destinatario").disabled = true;
+
+                                        // Seleccción de la forma de envío acorde a la selección de la JRCI
+                                        if (data.array_datos_destinatarios[0].Id_Medio_Noti == 81) {
+                                            $('#forma_envio').val('46').trigger('change.select2');
+                                        }else{
+                                            $('#forma_envio').val('47').trigger('change.select2');
+                                        }
+
+                                        var nombre_usuario = $('#elaboro');
+                                        nombre_usuario.val(data.nombreusuario);
+                                        var nombre_usuario2 = $('#elaboro2');
+                                        nombre_usuario2.val(data.nombreusuario);
+                                        var reviso = $('#reviso');
+                                        reviso.empty();
+                                        reviso.append('<option value="" selected>Seleccione una opción</option>');
+                                        let revisolider = Object.keys(data.array_datos_lider);
+                                        for (let i = 0; i < revisolider.length; i++) {
+                                            reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                                        }
+                                        $("#reviso").prop("selectedIndex", 1);
+                                    }
+                                });
                             }
                         });
 
                         $('#jrci_califi_invalidez_comunicado').change(function(){
-
                             var identificacion_comunicado_afiliado = $('#identificacion_comunicado').val();
                             var newId_evento = $('#newId_evento').val();
                             var newId_asignacion = $('#newId_asignacion').val();
@@ -1307,6 +1385,14 @@ $(document).ready(function(){
                                     ciudadafiliado.empty();
                                     ciudadafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_municipios+'">'+data.array_datos_destinatarios[0].Nombre_ciudad+'</option>')
                                     document.querySelector("#ciudad_destinatario").disabled = true;
+
+                                    // Seleccción de la forma de envío acorde a la selección de la JRCI
+                                    if (data.array_datos_destinatarios[0].Id_Medio_Noti == 81) {
+                                        $('#forma_envio').val('46').trigger('change.select2');
+                                    }else{
+                                        $('#forma_envio').val('47').trigger('change.select2');
+                                    }
+
                                     var nombre_usuario = $('#elaboro');
                                     nombre_usuario.val(data.nombreusuario);
                                     var nombre_usuario2 = $('#elaboro2');
@@ -1318,6 +1404,7 @@ $(document).ready(function(){
                                     for (let i = 0; i < revisolider.length; i++) {
                                         reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                                     }
+                                    $("#reviso").prop("selectedIndex", 1);
                                 }
                             });
                         });
@@ -1346,6 +1433,14 @@ $(document).ready(function(){
                     ciudadafiliado.empty();
                     ciudadafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_municipios+'">'+data.array_datos_destinatarios[0].Nombre_ciudad+'</option>')
                     document.querySelector("#ciudad_destinatario").disabled = true;
+
+                    // Seleccción de la forma de envío acorde a la selección de la JNCI
+                    if (data.array_datos_destinatarios[0].Id_Medio_Noti == 81) {
+                        $('#forma_envio').val('46').trigger('change.select2');
+                    }else{
+                        $('#forma_envio').val('47').trigger('change.select2');
+                    }
+
                     var nombre_usuario = $('#elaboro');
                     nombre_usuario.val(data.nombreusuario);
                     var nombre_usuario2 = $('#elaboro2');
@@ -1357,6 +1452,7 @@ $(document).ready(function(){
                     for (let i = 0; i < revisolider.length; i++) {
                         reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                     }
+                    $("#reviso").prop("selectedIndex", 1);
                     // Evalua el selector de Junta Regional de Calificación de Invalidez JRCI para ver si tiene un valor seleccionado.
                     var jrci_seleccionado = $("#jrci_califi_invalidez").val();
                     // Si existe, debe eliminar la info un input con el nombre de la jrci seleccioanda
@@ -1395,6 +1491,14 @@ $(document).ready(function(){
                     ciudadafiliado.empty();
                     ciudadafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_municipio_afiliado+'">'+data.array_datos_destinatarios[0].Nombre_municipio_afiliado+'</option>')
                     document.querySelector("#ciudad_destinatario").disabled = true;
+
+                    // Seleccción de la forma de envío acorde a la selección del afiliado
+                    if (data.info_medio_noti[0].Medio_notificacion == "Físico") {
+                        $('#forma_envio').val('46').trigger('change.select2');
+                    }else{
+                        $('#forma_envio').val('47').trigger('change.select2');
+                    }
+
                     var nombre_usuario = $('#elaboro');
                     nombre_usuario.val(data.nombreusuario);
                     var nombre_usuario2 = $('#elaboro2');
@@ -1406,6 +1510,7 @@ $(document).ready(function(){
                     for (let i = 0; i < revisolider.length; i++) {
                         reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                     }
+                    $("#reviso").prop("selectedIndex", 1);
                     // Evalua el selector de Junta Regional de Calificación de Invalidez JRCI para ver si tiene un valor seleccionado.
                     var jrci_seleccionado = $("#jrci_califi_invalidez").val();
                     // Si existe, debe eliminar la info un input con el nombre de la jrci seleccioanda
@@ -1418,7 +1523,7 @@ $(document).ready(function(){
                         $("#div_select_jrci").addClass('d-none');
                         $('#jrci_califi_invalidez_comunicado').empty();  
                     }
-                }else if(data.destinatarioPrincipal == 'Empresa'){      
+                }else if(data.destinatarioPrincipal == 'Empresa'){
                     //console.log(data.array_datos_destinatarios);
                     var Nombre_afiliado = $('#nombre_destinatario');
                     Nombre_afiliado.val(data.array_datos_destinatarios[0].Nombre_empresa);
@@ -1443,6 +1548,14 @@ $(document).ready(function(){
                     ciudadafiliado.empty();
                     ciudadafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_municipio_empresa+'">'+data.array_datos_destinatarios[0].Nombre_municipio_empresa+'</option>')
                     document.querySelector("#ciudad_destinatario").disabled = true;
+
+                    // Seleccción de la forma de envío acorde a la selección del empleador
+                    if (data.info_medio_noti[0].Medio_notificacion == "Físico") {
+                        $('#forma_envio').val('46').trigger('change.select2');
+                    }else{
+                        $('#forma_envio').val('47').trigger('change.select2');
+                    }
+
                     var nombre_usuario = $('#elaboro');
                     nombre_usuario.val(data.nombreusuario);
                     var nombre_usuario2 = $('#elaboro2');
@@ -1454,6 +1567,7 @@ $(document).ready(function(){
                     for (let i = 0; i < revisolider.length; i++) {
                         reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                     }
+                    $("#reviso").prop("selectedIndex", 1);
                     // Evalua el selector de Junta Regional de Calificación de Invalidez JRCI para ver si tiene un valor seleccionado.
                     var jrci_seleccionado = $("#jrci_califi_invalidez").val();
                     // Si existe, debe eliminar la info un input con el nombre de la jrci seleccioanda
@@ -1492,6 +1606,14 @@ $(document).ready(function(){
                     ciudadafiliado.empty();
                     ciudadafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_municipios+'">'+data.array_datos_destinatarios[0].Nombre_ciudad+'</option>')
                     document.querySelector("#ciudad_destinatario").disabled = true;
+
+                    // Seleccción de la forma de envío acorde a la selección de la EPS
+                    if (data.array_datos_destinatarios[0].Id_Medio_Noti == 81) {
+                        $('#forma_envio').val('46').trigger('change.select2');
+                    }else{
+                        $('#forma_envio').val('47').trigger('change.select2');
+                    }
+
                     var nombre_usuario = $('#elaboro');
                     nombre_usuario.val(data.nombreusuario);
                     var nombre_usuario2 = $('#elaboro2');
@@ -1503,6 +1625,7 @@ $(document).ready(function(){
                     for (let i = 0; i < revisolider.length; i++) {
                         reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                     }
+                    $("#reviso").prop("selectedIndex", 1);
                     // Evalua el selector de Junta Regional de Calificación de Invalidez JRCI para ver si tiene un valor seleccionado.
                     var jrci_seleccionado = $("#jrci_califi_invalidez").val();
                     // Si existe, debe eliminar la info un input con el nombre de la jrci seleccioanda
@@ -1541,6 +1664,14 @@ $(document).ready(function(){
                     ciudadafiliado.empty();
                     ciudadafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_municipios+'">'+data.array_datos_destinatarios[0].Nombre_ciudad+'</option>')
                     document.querySelector("#ciudad_destinatario").disabled = true;
+
+                    // Seleccción de la forma de envío acorde a la selección de la AFP
+                    if (data.array_datos_destinatarios[0].Id_Medio_Noti == 81) {
+                        $('#forma_envio').val('46').trigger('change.select2');
+                    }else{
+                        $('#forma_envio').val('47').trigger('change.select2');
+                    }
+
                     var nombre_usuario = $('#elaboro');
                     nombre_usuario.val(data.nombreusuario);
                     var nombre_usuario2 = $('#elaboro2');
@@ -1552,6 +1683,7 @@ $(document).ready(function(){
                     for (let i = 0; i < revisolider.length; i++) {
                         reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                     }
+                    $("#reviso").prop("selectedIndex", 1);
                     // Evalua el selector de Junta Regional de Calificación de Invalidez JRCI para ver si tiene un valor seleccionado.
                     var jrci_seleccionado = $("#jrci_califi_invalidez").val();
                     // Si existe, debe eliminar la info un input con el nombre de la jrci seleccioanda
@@ -1590,6 +1722,14 @@ $(document).ready(function(){
                     ciudadafiliado.empty();
                     ciudadafiliado.append('<option value="'+data.array_datos_destinatarios[0].Id_municipios+'">'+data.array_datos_destinatarios[0].Nombre_ciudad+'</option>')
                     document.querySelector("#ciudad_destinatario").disabled = true;
+
+                    // Seleccción de la forma de envío acorde a la selección de la EPS
+                    if (data.array_datos_destinatarios[0].Id_Medio_Noti == 81) {
+                        $('#forma_envio').val('46').trigger('change.select2');
+                    }else{
+                        $('#forma_envio').val('47').trigger('change.select2');
+                    }
+
                     var nombre_usuario = $('#elaboro');
                     nombre_usuario.val(data.nombreusuario);
                     var nombre_usuario2 = $('#elaboro2');
@@ -1601,6 +1741,7 @@ $(document).ready(function(){
                     for (let i = 0; i < revisolider.length; i++) {
                         reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                     }
+                    $("#reviso").prop("selectedIndex", 1);
                     // Evalua el selector de Junta Regional de Calificación de Invalidez JRCI para ver si tiene un valor seleccionado.
                     var jrci_seleccionado = $("#jrci_califi_invalidez").val();
                     // Si existe, debe eliminar la info un input con el nombre de la jrci seleccioanda
@@ -1683,6 +1824,7 @@ $(document).ready(function(){
                     for (let i = 0; i < revisolider.length; i++) {
                         reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                     }
+                    $("#reviso").prop("selectedIndex", 1);
 
                     // Evalua el selector de Junta Regional de Calificación de Invalidez JRCI para ver si tiene un valor seleccionado.
                     var jrci_seleccionado = $("#jrci_califi_invalidez").val();
@@ -1891,6 +2033,19 @@ $(document).ready(function(){
             var texto_insertar = "<p>Cordial saludo:</p><p>Dando respuesta a inconformidad presentada frente a calificación de la Pérdida de la Capacidad Laboral emitida por esta aseguradora, dentro de los términos estipulados en la normatividad vigente, se informa: que hoy los documentos concernientes a su caso han sido enviados a la {{$nombre_junta}}, la cual, le citará a la valoración correspondiente.</p><p>Recuerde por favor, que las Juntas Regionales de Calificación de Invalidez son entidades independientes y autónomas de las compañías de seguros, cuyos procesos y procedimientos son ajenos a nuestra entidad, por lo tanto, cualquier requerimiento ante la misma debe ser tratado directamente con la Junta Regional de Calificación de Invalidez.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicio al cliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
 
+            // Auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Afiliado
+            $("#copia_afiliado").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado").prop('checked', true);
+            
         }else if(opc_seleccionada == "Oficio_Juntas_JRCI"){
             // Esta proforma no tiene botones para insertar en el asunto y/o cuerpo del comunicado
 
@@ -1923,6 +2078,19 @@ $(document).ready(function(){
 
             $("#asunto").val('');
             $('#cuerpo_comunicado').summernote('code', '');
+
+            // Auto selección de la opción JRCI (Destinatario Principal)
+            $('#jrci_comunicado').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Afiliado
+            $("#copia_afiliado").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado").prop('checked', true);
 
         }else if(opc_seleccionada == "Remision_Expediente_JRCI"){
 
@@ -1957,6 +2125,19 @@ $(document).ready(function(){
             $("#asunto").val("REMISIÓN DE EXPEDIENTE PARA TRÁMITE DE CONTROVERSIA");
             var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>En aras de tramitar el recurso y/o controversia presentada en tiempo por la parte interesada contra el dictamen de calificación de PÉRDIDA DE CAPACIDAD LABORAL, remitimos el expediente del afiliado con la documentación exigida por el artículo 30 del Decreto 1352 de 2013 (historia clínica, constancia de notificación, dictamen médico laboral, controversia, etc.) para su valoración.</p><p>Según lo dispone el artículo 20 del mismo decreto, el valor de los honorarios corresponde a un (1) salario mínimo mensual legal vigente, el cual fue cancelado por esta aseguradora. Para los efectos, adjuntamos orden de pago de honorarios No {{$nro_orden_pago}}.</p><p>Finalmente, indicamos que la fecha de notificación del dictamen lo fue el {{$fecha_notificacion_afiliado}} y la dedicación del desacuerdo el {{$fecha_radicacion_controversia_primera_calificacion}}, razón por la cual es procedente tramitar el recurso.</p><p>Los datos del afiliado son los siguientes:</p><table class='tabla_cuerpo_remision_expediente'><tbody><tr><td class='bg'><b>TIPO Y No. DE IDENTIFICACIÓN</b></td><td><p>{{$tipo_documento_afiliado}}{{$documento_afiliado}}<br></p></td></tr><tr><td class='bg'><b>NOMBRE COMPLETO</b></td><td><p>{{$nombre_afiliado}}<br></p></td></tr><tr><td class='bg'><b>EVENTO</b></td><td><p>{{$fecha_estructuracion}} {{$tipo_evento}}<br></p></td></tr><tr><td class='bg'><b>DIAGNÓSTICO</b></td><td><p>{{$nombres_cie10}}<br></p></td></tr><tr><td class='bg'><b>CONTROVERSIA POR</b></td><td><p>{{$tipo_controversia_primera_calificacion}}<br></p></td></tr><tr><td class='bg'><b>DIRECCIÓN Y TELÉFONO DEL ASEGURADO</b></td><td><p>{{$direccion_afiliado}} {{$telefono_afiliado}}<br></p></td></tr><tr><td class='bg'><b>OBSERVACIONES</b></td><td><br></td></tr></tbody></table><p>En virtud de lo señalado en el Artículo 2 del Decreto 1352 de 2013 que establece:</p><p>Artículo 2. Personas interesadas. Para efectos del presente decreto, se entenderá como personas interesadas en el dictamen y de obligatoria notificación o comunicación como mínimo las siguientes:</p><ul><li><span style=''>La persona objeto de dictamen o sus beneficiarios en caso de muerte.</span></li><li><span style=''>La Entidad Promotora de Salud.</span></li><li><span style=''>La Administradora de Riesgos Laborales.</span></li><li><span style=''>La Administradora del Fondo de Pensiones o Administradora de Régimen de Prima Media.</span></li><li><span style=''>El Empleador.</span></li><li><span style=''>La Compañía de Seguro que asuma el riesgo de invalidez, sobrevivencia y muerte. (Subrayado fuera del texto original).</span></li></ul><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicio al cliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
+
+            // Auto selección de la opción JRCI (Destinatario Principal)
+            $('#jrci_comunicado').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Afiliado
+            $("#copia_afiliado").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado").prop('checked', true);
 
         }else if(opc_seleccionada == "Devolucion_Expediente_JRCI"){
             // mostrar mensaje(s) importante(s)
@@ -1998,6 +2179,19 @@ $(document).ready(function(){
             ";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
 
+            // Auto selección de la opción JRCI (Destinatario Principal)
+            $('#jrci_comunicado').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática de las copias a partes interesadas: Afiliado
+            $("#copia_afiliado").prop('checked', true);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado").prop('checked', true);
+
         }else if(opc_seleccionada == "Solicitud_Dictamen_JRCI"){
             // mostrar mensaje(s) importante(s)
             $("#mensaje_asunto").addClass('d-none');
@@ -2036,6 +2230,19 @@ $(document).ready(function(){
             ";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
 
+            // Auto selección de la opción JRCI (Destinatario Principal)
+            $('#jrci_comunicado').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Afiliado
+            $("#copia_afiliado").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado").prop('checked', true);
+
         }else{
             // mostrar mensaje(s) importante(s)
             $("#mensaje_asunto").addClass('d-none');
@@ -2066,6 +2273,19 @@ $(document).ready(function(){
 
             $("#asunto").val('');
             $('#cuerpo_comunicado').summernote('code', '');
+
+            // Quitar auto selección de la opción JRCI (Destinatario Principal)
+            $('#jrci_comunicado').prop('checked', false);
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Afiliado
+            $("#copia_afiliado").prop('checked', false);
+
+            // Deselección automática del checkbox firmar
+            $("#firmarcomunicado").prop('checked', false);
 
         }
     });
@@ -3170,17 +3390,27 @@ $(document).ready(function(){
                                     }
                                 }
                             });
+
+                            // Seleccción de la forma de envío acorde a la selección de la JRCI
+                            setTimeout(() => {
+                                if (data.array_datos_destinatarios[0].Id_Medio_Noti == 81) {
+                                    $('#forma_envio_editar').val('46').trigger('change.select2');
+                                }else{
+                                    $('#forma_envio_editar').val('47').trigger('change.select2');
+                                }
+                            }, 400);
+
                             var nombre_usuario = $('#elaboro_editar');
                             nombre_usuario.val(data.nombreusuario);
                             var nombre_usuario2 = $('#elaboro2_editar');
                             nombre_usuario2.val(data.nombreusuario);
-                            var reviso = $('#reviso_editar');
-                            reviso.empty();
-                            reviso.append('<option value="" selected>Seleccione una opción</option>');
-                            let revisolider = Object.keys(data.array_datos_lider);
-                            for (let i = 0; i < revisolider.length; i++) {
-                                reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
-                            }
+                            // var reviso = $('#reviso_editar');
+                            // reviso.empty();
+                            // reviso.append('<option value="" selected>Seleccione una opción</option>');
+                            // let revisolider = Object.keys(data.array_datos_lider);
+                            // for (let i = 0; i < revisolider.length; i++) {
+                            //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                            // }
                         }
                         // si no, el mismo selector de jrci
                         else{
@@ -3192,11 +3422,108 @@ $(document).ready(function(){
                                 url:'/selectoresJuntas',
                                 data: datos_lista_juntas_invalidez,
                                 success:function(data) {
+                                    $('#jrci_califi_invalidez_comunicado_editar').empty();
                                     $('#jrci_califi_invalidez_comunicado_editar').append('<option>Seleccione una opción</option>');
                                     let juntajrci = Object.keys(data);
                                     for (let i = 0; i < juntajrci.length; i++) {
                                         $('#jrci_califi_invalidez_comunicado_editar').append('<option value="'+data[juntajrci[i]]["Id_Parametro"]+'">'+data[juntajrci[i]]["Nombre_parametro"]+'</option>');
                                     }
+                                    
+                                    // Selección automática jrci
+                                    $('#jrci_califi_invalidez_comunicado_editar').prop("selectedIndex", 1);
+                                    var seleccion_automatica_jrci_editar = $('#jrci_califi_invalidez_comunicado_editar').val();
+
+                                    var identificacion_comunicado_afiliado = $('#identificacion_comunicado_editar').val();
+                                    var datos_destinarioPrincipal ={
+                                        '_token':token,
+                                        'destinatarioPrincipal': "JRCI_comunicado",
+                                        'identificacion_comunicado_afiliado':identificacion_comunicado_afiliado,
+                                        'newId_evento': id_evento,
+                                        'newId_asignacion': id_asignacion,
+                                        'Id_proceso': id_proceso,
+                                        'id_jrci': seleccion_automatica_jrci_editar
+                                    };
+                                    $.ajax({
+                                        type:'POST',
+                                        url:'/captuarDestinatarioJuntas',
+                                        data: datos_destinarioPrincipal,
+                                        success: function(data){
+                                            var Nombre_afiliado = $('#nombre_destinatario_editar');
+                                            Nombre_afiliado.val(data.array_datos_destinatarios[0].Nombre_entidad);
+                                            document.querySelector("#nombre_destinatario_editar").disabled = true;
+                                            document.getElementById('nombre_destinatario_editar2').value=data.array_datos_destinatarios[0].Nombre_entidad;  
+                                            var nitccafiliado = $('#nic_cc_editar');
+                                            nitccafiliado.val(data.array_datos_destinatarios[0].Nit_entidad);
+                                            document.querySelector("#nic_cc_editar").disabled = true;
+                                            document.getElementById('nic_cc_editar2').value=data.array_datos_destinatarios[0].Nit_entidad;        
+                                            var direccionafiliado = $('#direccion_destinatario_editar');
+                                            direccionafiliado.val(data.array_datos_destinatarios[0].Direccion);
+                                            document.querySelector("#direccion_destinatario_editar").disabled = true;
+                                            document.getElementById('direccion_destinatario_editar2').value=data.array_datos_destinatarios[0].Direccion;        
+                                            var telefonoafiliado = $('#telefono_destinatario_editar');
+                                            telefonoafiliado.val(data.array_datos_destinatarios[0].Telefonos);
+                                            document.querySelector("#telefono_destinatario_editar").disabled = true;
+                                            document.getElementById('telefono_destinatario_editar2').value=data.array_datos_destinatarios[0].Telefonos;        
+                                            var emailafiliado = $('#email_destinatario_editar');
+                                            emailafiliado.val(data.array_datos_destinatarios[0].Emails);
+                                            document.querySelector("#email_destinatario_editar").disabled = true;
+                                            document.getElementById('email_destinatario_editar2').value=data.array_datos_destinatarios[0].Emails;
+                                            var departamento_destinatario_editar = $('#departamento_destinatario_editar');
+                                            departamento_destinatario_editar.empty();
+                                            departamento_destinatario_editar.append('<option value="'+data.array_datos_destinatarios[0].Id_departamento+'" selected>'+data.array_datos_destinatarios[0].Nombre_departamento+'</option>');
+                                            document.querySelector("#departamento_destinatario_editar").disabled = true;
+                                            $("#departamento_pdf").val(data.array_datos_destinatarios[0].Id_departamento);
+                                            var ciudad_destinatario_editar =$('#ciudad_destinatario_editar');
+                                            ciudad_destinatario_editar.empty();
+                                            ciudad_destinatario_editar.append('<option value="'+data.array_datos_destinatarios[0].Id_municipios+'">'+data.array_datos_destinatarios[0].Nombre_ciudad+'</option>')
+                                            document.querySelector("#ciudad_destinatario_editar").disabled = true;
+                                            $("#ciudad_pdf").val(data.array_datos_destinatarios[0].Id_municipios);
+                                        
+                                            let datos_lista_forma_envios = {
+                                                '_token':token,        
+                                                'parametro':"lista_forma_envio"
+                                            }
+                                            $.ajax({
+                                                type:'POST',
+                                                url:'/selectoresModuloCalificacionPCL',
+                                                data:datos_lista_forma_envios,
+                                                success:function(data){
+                                                    //console.log(data);
+                                                    $('#forma_envio_editar').empty();
+                                                    forma_envio_editar.append('<option value="" selected>Seleccione una opción</option>');
+                                                    let NobreFormaEnvio = $('select[name=forma_envio_act]').val();
+                                                    let formaenviogenerarcomunicado = Object.keys(data);
+                                                    for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
+                                                        if (data[formaenviogenerarcomunicado[i]]['Id_Parametro'] != NobreFormaEnvio) {
+                                                            $('#forma_envio_editar').append('<option value="'+data[formaenviogenerarcomunicado[i]]['Id_Parametro']+'">'+data[formaenviogenerarcomunicado[i]]['Nombre_parametro']+'</option>');
+                                                        }                
+                                                    }
+                                                }
+                                            });
+
+                                            // Seleccción de la forma de envío acorde a la selección de la JRCI
+                                            setTimeout(() => {
+                                                if (data.array_datos_destinatarios[0].Id_Medio_Noti == 81) {
+                                                    $('#forma_envio_editar').val('46').trigger('change.select2');
+                                                }else{
+                                                    $('#forma_envio_editar').val('47').trigger('change.select2');
+                                                }
+                                            }, 400);
+
+                                            var nombre_usuario = $('#elaboro_editar');
+                                            nombre_usuario.val(data.nombreusuario);
+                                            var nombre_usuario2 = $('#elaboro2_editar');
+                                            nombre_usuario2.val(data.nombreusuario);
+                                            // var reviso = $('#reviso_editar');
+                                            // reviso.empty();
+                                            // reviso.append('<option value="" selected>Seleccione una opción</option>');
+                                            // let revisolider = Object.keys(data.array_datos_lider);
+                                            // for (let i = 0; i < revisolider.length; i++) {
+                                            //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                                            // }
+                                        }
+                                    });
+
                                 }
                             });
 
@@ -3272,17 +3599,27 @@ $(document).ready(function(){
                                                 }
                                             }
                                         });
+
+                                        // Seleccción de la forma de envío acorde a la selección de la JRCI
+                                        setTimeout(() => {
+                                            if (data.array_datos_destinatarios[0].Id_Medio_Noti == 81) {
+                                                $('#forma_envio_editar').val('46').trigger('change.select2');
+                                            }else{
+                                                $('#forma_envio_editar').val('47').trigger('change.select2');
+                                            }
+                                        }, 400);
+
                                         var nombre_usuario = $('#elaboro_editar');
                                         nombre_usuario.val(data.nombreusuario);
                                         var nombre_usuario2 = $('#elaboro2_editar');
                                         nombre_usuario2.val(data.nombreusuario);
-                                        var reviso = $('#reviso_editar');
-                                        reviso.empty();
-                                        reviso.append('<option value="" selected>Seleccione una opción</option>');
-                                        let revisolider = Object.keys(data.array_datos_lider);
-                                        for (let i = 0; i < revisolider.length; i++) {
-                                            reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
-                                        }
+                                        // var reviso = $('#reviso_editar');
+                                        // reviso.empty();
+                                        // reviso.append('<option value="" selected>Seleccione una opción</option>');
+                                        // let revisolider = Object.keys(data.array_datos_lider);
+                                        // for (let i = 0; i < revisolider.length; i++) {
+                                        //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                                        // }
                                     }
                                 });
                             });
@@ -3340,17 +3677,27 @@ $(document).ready(function(){
                                 }
                             }
                         });
+
+                        // Seleccción de la forma de envío acorde a la selección de la JNCI
+                        setTimeout(() => {
+                            if (data.array_datos_destinatarios[0].Id_Medio_Noti == 81) {
+                                $('#forma_envio_editar').val('46').trigger('change.select2');
+                            }else{
+                                $('#forma_envio_editar').val('47').trigger('change.select2');
+                            }
+                        }, 400);
+
                         var nombre_usuario = $('#elaboro_editar');
                         nombre_usuario.val(data.nombreusuario);
                         var nombre_usuario2 = $('#elaboro2_editar');
                         nombre_usuario2.val(data.nombreusuario);
-                        var reviso = $('#reviso_editar');
-                        reviso.empty();
-                        reviso.append('<option value="" selected>Seleccione una opción</option>');
-                        let revisolider = Object.keys(data.array_datos_lider);
-                        for (let i = 0; i < revisolider.length; i++) {
-                            reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
-                        }
+                        // var reviso = $('#reviso_editar');
+                        // reviso.empty();
+                        // reviso.append('<option value="" selected>Seleccione una opción</option>');
+                        // let revisolider = Object.keys(data.array_datos_lider);
+                        // for (let i = 0; i < revisolider.length; i++) {
+                        //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                        // }
 
                         // Evalua el selector de Junta Regional de Calificación de Invalidez JRCI para ver si tiene un valor seleccionado.
                         var jrci_seleccionado = $("#jrci_califi_invalidez").val();
@@ -3418,17 +3765,27 @@ $(document).ready(function(){
                                 }
                             }
                         });
+
+                        // Seleccción de la forma de envío acorde a la selección del afiliado
+                        setTimeout(() => {
+                            if (data.info_medio_noti[0].Medio_notificacion == "Físico") {
+                                $('#forma_envio_editar').val('46').trigger('change.select2');
+                            }else{
+                                $('#forma_envio_editar').val('47').trigger('change.select2');
+                            }
+                        }, 400);
+
                         var nombre_usuario = $('#elaboro_editar');
                         nombre_usuario.val(data.nombreusuario);
                         var nombre_usuario2 = $('#elaboro2_editar');
                         nombre_usuario2.val(data.nombreusuario);
-                        var reviso = $('#reviso_editar');
-                        reviso.empty();
-                        reviso.append('<option value="" selected>Seleccione una opción</option>');
-                        let revisolider = Object.keys(data.array_datos_lider);
-                        for (let i = 0; i < revisolider.length; i++) {
-                            reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
-                        }
+                        // var reviso = $('#reviso_editar');
+                        // reviso.empty();
+                        // reviso.append('<option value="" selected>Seleccione una opción</option>');
+                        // let revisolider = Object.keys(data.array_datos_lider);
+                        // for (let i = 0; i < revisolider.length; i++) {
+                        //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                        // }
                         // Evalua el selector de Junta Regional de Calificación de Invalidez JRCI para ver si tiene un valor seleccionado.
                         var jrci_seleccionado = $("#jrci_califi_invalidez").val();
                         // Si existe, debe eliminar la info un input con el nombre de la jrci seleccioanda
@@ -3441,7 +3798,7 @@ $(document).ready(function(){
                             $("#div_select_jrci_editar").addClass('d-none');
                             $('#jrci_califi_invalidez_comunicado_editar').empty();  
                         }
-                    }else if(data.destinatarioPrincipal == 'Empresa'){      
+                    }else if(data.destinatarioPrincipal == 'Empresa'){
                         //console.log(data.array_datos_destinatarios);
                         var Nombre_afiliado = $('#nombre_destinatario_editar');
                         Nombre_afiliado.val(data.array_datos_destinatarios[0].Nombre_empresa);
@@ -3495,17 +3852,27 @@ $(document).ready(function(){
                                 }
                             }
                         });
+
+                        // Seleccción de la forma de envío acorde a la selección del empleador
+                        setTimeout(() => {
+                            if (data.info_medio_noti[0].Medio_notificacion == "Físico") {
+                                $('#forma_envio_editar').val('46').trigger('change.select2');
+                            }else{
+                                $('#forma_envio_editar').val('47').trigger('change.select2');
+                            }
+                        }, 400);
+
                         var nombre_usuario = $('#elaboro_editar');
                         nombre_usuario.val(data.nombreusuario);
                         var nombre_usuario2 = $('#elaboro2_editar');
                         nombre_usuario2.val(data.nombreusuario);
-                        var reviso = $('#reviso_editar');
-                        reviso.empty();
-                        reviso.append('<option value="" selected>Seleccione una opción</option>');
-                        let revisolider = Object.keys(data.array_datos_lider);
-                        for (let i = 0; i < revisolider.length; i++) {
-                            reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
-                        }
+                        // var reviso = $('#reviso_editar');
+                        // reviso.empty();
+                        // reviso.append('<option value="" selected>Seleccione una opción</option>');
+                        // let revisolider = Object.keys(data.array_datos_lider);
+                        // for (let i = 0; i < revisolider.length; i++) {
+                        //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                        // }
                         // Evalua el selector de Junta Regional de Calificación de Invalidez JRCI para ver si tiene un valor seleccionado.
                         var jrci_seleccionado = $("#jrci_califi_invalidez").val();
                         // Si existe, debe eliminar la info un input con el nombre de la jrci seleccioanda
@@ -3571,17 +3938,27 @@ $(document).ready(function(){
                                 }
                             }
                         });
+
+                        // Seleccción de la forma de envío acorde a la selección de la EPS
+                        setTimeout(() => {
+                            if (data.array_datos_destinatarios[0].Id_Medio_Noti == 81) {
+                                $('#forma_envio_editar').val('46').trigger('change.select2');
+                            }else{
+                                $('#forma_envio_editar').val('47').trigger('change.select2');
+                            }
+                        }, 400);
+
                         var nombre_usuario = $('#elaboro_editar');
                         nombre_usuario.val(data.nombreusuario);
                         var nombre_usuario2 = $('#elaboro2_editar');
                         nombre_usuario2.val(data.nombreusuario);
-                        var reviso = $('#reviso_editar');
-                        reviso.empty();
-                        reviso.append('<option value="" selected>Seleccione una opción</option>');
-                        let revisolider = Object.keys(data.array_datos_lider);
-                        for (let i = 0; i < revisolider.length; i++) {
-                            reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
-                        }
+                        // var reviso = $('#reviso_editar');
+                        // reviso.empty();
+                        // reviso.append('<option value="" selected>Seleccione una opción</option>');
+                        // let revisolider = Object.keys(data.array_datos_lider);
+                        // for (let i = 0; i < revisolider.length; i++) {
+                        //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                        // }
 
                         // Evalua el selector de Junta Regional de Calificación de Invalidez JRCI para ver si tiene un valor seleccionado.
                         var jrci_seleccionado = $("#jrci_califi_invalidez").val();
@@ -3648,17 +4025,27 @@ $(document).ready(function(){
                                 }
                             }
                         });
+
+                        // Seleccción de la forma de envío acorde a la selección de la AFP
+                        setTimeout(() => {
+                            if (data.array_datos_destinatarios[0].Id_Medio_Noti == 81) {
+                                $('#forma_envio_editar').val('46').trigger('change.select2');
+                            }else{
+                                $('#forma_envio_editar').val('47').trigger('change.select2');
+                            }
+                        }, 400);
+
                         var nombre_usuario = $('#elaboro_editar');
                         nombre_usuario.val(data.nombreusuario);
                         var nombre_usuario2 = $('#elaboro2_editar');
                         nombre_usuario2.val(data.nombreusuario);
-                        var reviso = $('#reviso_editar');
-                        reviso.empty();
-                        reviso.append('<option value="" selected>Seleccione una opción</option>');
-                        let revisolider = Object.keys(data.array_datos_lider);
-                        for (let i = 0; i < revisolider.length; i++) {
-                            reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
-                        }
+                        // var reviso = $('#reviso_editar');
+                        // reviso.empty();
+                        // reviso.append('<option value="" selected>Seleccione una opción</option>');
+                        // let revisolider = Object.keys(data.array_datos_lider);
+                        // for (let i = 0; i < revisolider.length; i++) {
+                        //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                        // }
 
                         // Evalua el selector de Junta Regional de Calificación de Invalidez JRCI para ver si tiene un valor seleccionado.
                         var jrci_seleccionado = $("#jrci_califi_invalidez").val();
@@ -3725,17 +4112,27 @@ $(document).ready(function(){
                                 }
                             }
                         });
+
+                        // Seleccción de la forma de envío acorde a la selección de la ARL
+                        setTimeout(() => {
+                            if (data.array_datos_destinatarios[0].Id_Medio_Noti == 81) {
+                                $('#forma_envio_editar').val('46').trigger('change.select2');
+                            }else{
+                                $('#forma_envio_editar').val('47').trigger('change.select2');
+                            }
+                        }, 400);
+
                         var nombre_usuario = $('#elaboro_editar');
                         nombre_usuario.val(data.nombreusuario);
                         var nombre_usuario2 = $('#elaboro2_editar');
                         nombre_usuario2.val(data.nombreusuario);
-                        var reviso = $('#reviso_editar');
-                        reviso.empty();
-                        reviso.append('<option value="" selected>Seleccione una opción</option>');
-                        let revisolider = Object.keys(data.array_datos_lider);
-                        for (let i = 0; i < revisolider.length; i++) {
-                            reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
-                        }
+                        // var reviso = $('#reviso_editar');
+                        // reviso.empty();
+                        // reviso.append('<option value="" selected>Seleccione una opción</option>');
+                        // let revisolider = Object.keys(data.array_datos_lider);
+                        // for (let i = 0; i < revisolider.length; i++) {
+                        //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                        // }
 
                         // Evalua el selector de Junta Regional de Calificación de Invalidez JRCI para ver si tiene un valor seleccionado.
                         var jrci_seleccionado = $("#jrci_califi_invalidez").val();
@@ -3841,13 +4238,13 @@ $(document).ready(function(){
                         nombre_usuario.val(data.nombreusuario);
                         var nombre_usuario2 = $('#elaboro2_editar');
                         nombre_usuario2.val(data.nombreusuario);
-                        var reviso = $('#reviso_editar');
-                        reviso.empty();
-                        reviso.append('<option value="" selected>Seleccione una opción</option>');
-                        let revisolider = Object.keys(data.array_datos_lider);
-                        for (let i = 0; i < revisolider.length; i++) {
-                            reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
-                        }
+                        // var reviso = $('#reviso_editar');
+                        // reviso.empty();
+                        // reviso.append('<option value="" selected>Seleccione una opción</option>');
+                        // let revisolider = Object.keys(data.array_datos_lider);
+                        // for (let i = 0; i < revisolider.length; i++) {
+                        //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
+                        // }
 
                         // Evalua el selector de Junta Regional de Calificación de Invalidez JRCI para ver si tiene un valor seleccionado.
                         var jrci_seleccionado = $("#jrci_califi_invalidez").val();
@@ -4020,6 +4417,19 @@ $(document).ready(function(){
             $("#formato_descarga").html('');
             $("#formato_descarga").html('PDF');
 
+            // Auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado_editar').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos_editar").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Afiliado
+            $("#edit_copia_afiliado").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado_editar").prop('checked', true);
+
         }else if(opc_seleccionada == "Oficio_Juntas_JRCI"){
             // Esta proforma no tiene botones para insertar en el asunto y/o cuerpo del comunicado
 
@@ -4057,6 +4467,19 @@ $(document).ready(function(){
             $("#formato_descarga").html('');
             $("#formato_descarga").html('PDF');
 
+            // Auto selección de la opción JRCI (Destinatario Principal)
+            $('#jrci_comunicado_editar').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos_editar").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Afiliado
+            $("#edit_copia_afiliado").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado_editar").prop('checked', true);
+
         }else if(opc_seleccionada == "Remision_Expediente_JRCI"){
             // mostrar mensaje(s) importante(s)
             $("#mensaje_asunto_editar").addClass('d-none');
@@ -4093,6 +4516,19 @@ $(document).ready(function(){
             $("#Pdf").val("Pdf");
             $("#formato_descarga").html('');
             $("#formato_descarga").html('PDF');
+
+            // Auto selección de la opción JRCI (Destinatario Principal)
+            $('#jrci_comunicado_editar').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos_editar").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Afiliado
+            $("#edit_copia_afiliado").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado_editar").prop('checked', true);
 
         }else if(opc_seleccionada == "Devolucion_Expediente_JRCI"){
             // mostrar mensaje(s) importante(s)
@@ -4138,6 +4574,19 @@ $(document).ready(function(){
             $("#Pdf").val("Word");
             $("#formato_descarga").html('');
             $("#formato_descarga").html('Word');
+
+            // Auto selección de la opción JRCI (Destinatario Principal)
+            $('#jrci_comunicado_editar').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos_editar").val(seteo_nro_anexos);
+
+            // Selección automática de las copias a partes interesadas: Afiliado
+            $("#edit_copia_afiliado").prop('checked', true);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado_editar").prop('checked', true);
             
         }else if(opc_seleccionada == "Solicitud_Dictamen_JRCI"){
 
@@ -4181,6 +4630,19 @@ $(document).ready(function(){
             $("#Pdf").val("Word");
             $("#formato_descarga").html('');
             $("#formato_descarga").html('Word');
+
+            // Auto selección de la opción JRCI (Destinatario Principal)
+            $('#jrci_comunicado_editar').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos_editar").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Afiliado
+            $("#edit_copia_afiliado").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado_editar").prop('checked', true);
     
         }else{
             // mostrar mensaje(s) importante(s)
@@ -4216,6 +4678,19 @@ $(document).ready(function(){
             $("#Pdf").val("Pdf");
             $("#formato_descarga").html('');
             $("#formato_descarga").html('PDF');
+
+            // Quitar auto selección de la opción JRCI (Destinatario Principal)
+            $('#jrci_comunicado_editar').prop('checked', false);
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos_editar").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Afiliado
+            $("#edit_copia_afiliado").prop('checked', false);
+
+            // Deselección automática del checkbox firmar
+            $("#firmarcomunicado_editar").prop('checked', false);
 
         }
     });
@@ -4341,10 +4816,10 @@ $(document).ready(function(){
 
         if(jrci_comunicado){
             radiojrci_comunicado = jrci_comunicado;
-            if($('#input_jrci_seleccionado_editar').val() != ""){
-                JRCI_Destinatario = $('#input_jrci_seleccionado_editar').val();
-            }else{
+            if($('#jrci_califi_invalidez_comunicado_editar').val() != ""){
                 JRCI_Destinatario = $("#jrci_califi_invalidez_comunicado_editar").val();
+            }else{
+                JRCI_Destinatario = $('#input_jrci_seleccionado_editar').val();
             }
         }else if(jnci_comunicado){
             radiojnci_comunicado = jnci_comunicado;
@@ -4658,6 +5133,53 @@ $(document).ready(function(){
         });
         // Deshabilitar el botón Actualizar y Activar el botón Pdf en los comunicados
         $("#Pdf").prop('disabled', false);
+    };
+
+    /* Códigos para el tema del rol administrador (modelo a seguir) */
+    // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:
+    // inhabilita los campos nro anexos, asunto, etiquetas, cuerpo comunicado, firmar
+    if (idRol != 6) {
+        $("#asunto").prop('readonly', true);
+        $("#asunto_editar").prop('readonly', true);
+        $("#anexos").prop('readonly', true);
+        $("#anexos_editar").prop('readonly', true);
+        $(".note-editable").attr("contenteditable", false);
+
+        $("#btn_insertar_nombre_junta_regional_asunto").prop('disabled', true);
+        $("#btn_insertar_nombre_junta_regional").prop('disabled', true);
+        $("#btn_insertar_nro_orden_pago").prop('disabled', true);
+        $("#btn_insertar_fecha_notifi_afiliado").prop('disabled', true);
+        $("#btn_insertar_fecha_radi_contro_pri_cali").prop('disabled', true);
+        $("#btn_insertar_tipo_doc_afiliado").prop('disabled', true);
+        $("#btn_insertar_documento_afiliado").prop('disabled', true);
+        $("#btn_insertar_nombre_afiliado").prop('disabled', true);
+        $("#btn_insertar_fecha_estructuracion").prop('disabled', true);
+        $("#btn_insertar_tipo_evento").prop('disabled', true);
+        $("#btn_insertar_nombres_cie10").prop('disabled', true);
+        $("#btn_insertar_tipo_controversia_pri_cali").prop('disabled', true);
+        $("#btn_insertar_direccion_afiliado").prop('disabled', true);
+        $("#btn_insertar_telefono_afiliado").prop('disabled', true);
+        $("#btn_insertar_correo_solicitud_info").prop('disabled', true);
+
+        $("#btn_insertar_nombre_junta_regional_asunto_editar").prop('disabled', true);
+        $("#btn_insertar_nombre_junta_regional_editar").prop('disabled', true);
+        $("#btn_insertar_nro_orden_pago_editar").prop('disabled', true);
+        $("#btn_insertar_fecha_notifi_afiliado_editar").prop('disabled', true);
+        $("#btn_insertar_fecha_radi_contro_pri_cali_editar").prop('disabled', true);
+        $("#btn_insertar_tipo_doc_afiliado_editar").prop('disabled', true);
+        $("#btn_insertar_documento_afiliado_editar").prop('disabled', true);
+        $("#btn_insertar_nombre_afiliado_editar").prop('disabled', true);
+        $("#btn_insertar_fecha_estructuracion_editar").prop('disabled', true);
+        $("#btn_insertar_tipo_evento_editar").prop('disabled', true);
+        $("#btn_insertar_nombres_cie10_editar").prop('disabled', true);
+        $("#btn_insertar_tipo_controversia_pri_cali_editar").prop('disabled', true);
+        $("#btn_insertar_direccion_afiliado_editar").prop('disabled', true);
+        $("#btn_insertar_telefono_afiliado_editar").prop('disabled', true);
+        $("#btn_insertar_correo_solicitud_info_editar").prop('disabled', true);
+        
+        
+        $("#firmarcomunicado").prop('disabled', true);
+        $("#firmarcomunicado_editar").prop('disabled', true);
     }
   
 

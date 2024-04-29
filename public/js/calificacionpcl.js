@@ -1243,6 +1243,17 @@ $(document).ready(function(){
             "8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a "+
             "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
             $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
+
+            // Auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado_editar').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos_editar").val(seteo_nro_anexos);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado_editar").prop('checked', true);
+
         }else if (opc_seleccionada == "Documento_Revision_pension") {
             $("#asunto_editar").val("Servicio del Proceso de PCL  Revision Pension");
             var texto_insertar = '<p>Reciba un cordial saludo por parte de Seguros de Vida Alfa S.A.</p>'+
@@ -1915,6 +1926,17 @@ $(document).ready(function(){
             "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
             // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+
+            // Auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado").prop('checked', true);
+            
         }else if (opc_seleccionada == "Documento_Revision_pension") {
             $("#asunto").val("Servicio del Proceso de PCL  Revision Pension");
             var texto_insertar = '<p>Reciba un cordial saludo por parte de Seguros de Vida Alfa S.A.</p>'+

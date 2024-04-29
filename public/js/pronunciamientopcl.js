@@ -424,6 +424,7 @@ $(document).ready(function(){
                         $('#reviso').append('<option value="'+data[lidergru[i]]["name"]+'">'+data[lidergru[i]]["name"]+'</option>');
                     }
                 }
+                $("#reviso").prop("selectedIndex", 1);
             }
         });
         intervaloCo = setInterval(() => {
@@ -543,11 +544,22 @@ $(document).ready(function(){
             $('#sustenta_cali').summernote('code', texto_insertar);
             $('#proformas_pro_pcl').removeClass('d-none');
             $('#proformas_pro_pcl').val('PDF');
-            $('#btn_insertar_Nombre_afiliado').addClass('d-none')
-            $('#btn_insertar_nombreCIE10').addClass('d-none')
+            $('#btn_insertar_Nombre_afiliado').addClass('d-none');
+            $('#btn_insertar_nombreCIE10').addClass('d-none');
             // $('#btn_insertar_Origen').addClass('d-none')
-            $('#btn_insertar_porPcl').addClass('d-none')
-            $('#btn_insertar_F_estructuracion').addClass('d-none')
+            $('#btn_insertar_porPcl').addClass('d-none');
+            $('#btn_insertar_F_estructuracion').addClass('d-none');
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#n_anexos").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Afiliado
+            $("#copia_afiliado").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', true);
+
         }else if (opc_seleccionada == 'Desacuerdo') {
             $('#asunto_cali').val('RECURSO DE REPOSICIÓN EN SUBSIDIO DE APELACIÓN FRENTE A DICTAMEN N°');
             var texto_insertar = "<p>Respetados Señores, </p>"+
@@ -571,22 +583,42 @@ $(document).ready(function(){
             $('#sustenta_cali').summernote('code', texto_insertar);
             $('#proformas_pro_pcl').removeClass('d-none');
             $('#proformas_pro_pcl').val('WORD');
-            $('#btn_insertar_Nombre_afiliado').removeClass('d-none')
-            $('#btn_insertar_nombreCIE10').removeClass('d-none')
+            $('#btn_insertar_Nombre_afiliado').removeClass('d-none');
+            $('#btn_insertar_nombreCIE10').removeClass('d-none');
             // $('#btn_insertar_Origen').removeClass('d-none')
-            $('#btn_insertar_porPcl').removeClass('d-none')
-            $('#btn_insertar_F_estructuracion').removeClass('d-none')
+            $('#btn_insertar_porPcl').removeClass('d-none');
+            $('#btn_insertar_F_estructuracion').removeClass('d-none');
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#n_anexos").val(seteo_nro_anexos);
+
+            // Selección automática de las copias a partes interesadas: Afiliado
+            $("#copia_afiliado").prop('checked', true);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', false);
         }
         else{
             $('#asunto_cali').val('');
             var texto_insertar = "";
             $('#sustenta_cali').summernote('code', texto_insertar);
             $('#proformas_pro_pcl').addClass('d-none');
-            $('#btn_insertar_Nombre_afiliado').addClass('d-none')
-            $('#btn_insertar_nombreCIE10').addClass('d-none')
+            $('#btn_insertar_Nombre_afiliado').addClass('d-none');
+            $('#btn_insertar_nombreCIE10').addClass('d-none');
             // $('#btn_insertar_Origen').addClass('d-none')
-            $('#btn_insertar_porPcl').addClass('d-none')
-            $('#btn_insertar_F_estructuracion').addClass('d-none')
+            $('#btn_insertar_porPcl').addClass('d-none');
+            $('#btn_insertar_F_estructuracion').addClass('d-none');
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#n_anexos").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Afiliado
+            $("#copia_afiliado").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', false);
         }
     });
 
@@ -864,6 +896,22 @@ $(document).ready(function(){
         $("#div_msg_alerta").addClass('d-none');
         $("#ActualizarPronuncia").addClass('d-none');
         $("#GuardarPronuncia").addClass('d-none');
+    };
+
+    /* Códigos para el tema del rol administrador (modelo a seguir) */
+    // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:
+    // inhabilita los campos nro anexos, asunto, etiquetas, cuerpo comunicado, firmar
+    if (idRol != 6) {
+        $("#n_anexos").prop('readonly', true);
+        $("#asunto_cali").prop('readonly', true);
+        $(".note-editable").attr("contenteditable", false);
+
+        $("#btn_insertar_Nombre_afiliado").prop('disabled', true);
+        $("#btn_insertar_nombreCIE10").prop('disabled', true);
+        $("#btn_insertar_porPcl").prop('disabled', true);
+        $("#sustenta_cali").prop('disabled', true);
+        
+        $("#firmar").prop('disabled', true);
     }
 });
 

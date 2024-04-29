@@ -865,22 +865,34 @@ class PronunciamientoOrigenController extends Controller
                 $ciudad_destinatario = "";
             }
         }else{
-            // Si es No, la informacion del destinatario principal se saca del afiliado
+            /* Si es No, la info del destinatario principal se saca dependiendo de las
+            siguientes validaciones */
+
+            // si la proforma es un Acuerdo : Destinatario Principal es la AFP del Afiliado
+            // si la proforma es un Desacuerdo: Destinatario Principal es el primer califcador.
+
             if ($bandera_tipo_proforma == "proforma_acuerdo") {
+                // $datos = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                // ->select('siae.Nombre_afiliado', 'siae.Direccion', 'siae.Telefono_contacto', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
+                // ->where([['siae.ID_evento','=', $nro_siniestro]])
+                // ->get();
+
                 $datos = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
-                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-                ->select('siae.Nombre_afiliado', 'siae.Direccion', 'siae.Telefono_contacto', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
+                ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
+                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad')
                 ->where([['siae.ID_evento','=', $nro_siniestro]])
                 ->get();
 
                 $array_datos = json_decode(json_encode($datos), true);
     
                 if (count($array_datos) > 0) {
-                    $nombre_destinatario = $array_datos[0]["Nombre_afiliado"];
+                    $nombre_destinatario = $array_datos[0]["Nombre_entidad"];
                     $direccion_destinatario = $array_datos[0]["Direccion"];
-                    $telefono_destinatario = $array_datos[0]["Telefono_contacto"];
-                    $ciudad_destinatario = $array_datos[0]["Nombre_municipio"];
+                    $telefono_destinatario = $array_datos[0]["Telefonos"];
+                    $ciudad_destinatario = $array_datos[0]["Nombre_ciudad"];
                 } else {
                     $nombre_destinatario = "";
                     $direccion_destinatario = "";
