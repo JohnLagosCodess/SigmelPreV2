@@ -134,9 +134,11 @@
                                     <th>Servicio</th>
                                     <th>Estado</th>
                                     <th>Resultado</th>
+                                    <th>Última acción</th>
                                     <th>Fecha de acción</th>
                                     <th>Fecha de dictamen</th>
                                     <th>Fecha de Notificación</th>
+                                    <th>Profesional actual</th>
                                     <th>Detalle</th>
                                 </tr>
                             </thead>
@@ -168,5 +170,15 @@
     </div>
 @stop
 @section('js')
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.templates.min.js"></script>
+    
     <script src="/js/consultar_eventos.js"></script>
 @stop
