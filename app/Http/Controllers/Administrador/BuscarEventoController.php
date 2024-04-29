@@ -421,7 +421,7 @@ class BuscarEventoController extends Controller
                             $posicionPclReviFiltrado = array_values($posicionPclReviFiltrado);
                             //Combinar el array object con el array 
                             foreach ($array_informacion_eventos as $key2 => $item2) {
-                                foreach ($posicionPclRevi as $item1) {
+                                foreach ($posicionPclReviFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
                                     if ($item1['Id_Asignacion'] == $item2->Id_Asignacion) {
                                         // Agregar el elemento a la posición correspondiente

@@ -761,30 +761,33 @@
     $(document).ready(function(){
         $('#btn_guardar_evento').click(function(){
             var si_cliente = $('#cliente').val();
-            var si_tipo_cliente = $('#tipo_cliente').val();
-            var si_tipo_evento = $('#tipo_evento').val();
-            var si_id_evento= $('#id_evento').val();
-            var si_fecha_evento = $('#fecha_evento').val();
+            var si_tipo_cliente = $('#tipo_cliente').val();            
+            var si_id_evento= $('#id_evento').val();            
             var si_fecha_radicacion = $('#fecha_radicacion').val();
             var si_nro_identificacion = $('#nro_identificacion').val();
+            var si_tipo_afiliado = $('#tipo_afiliado').val();
             var si_tipo_documento = $('#tipo_documento').val();
             var si_nombre_afiliado = $('#nombre_afiliado').val();
             var si_direccion_info_afiliado = $('#direccion_info_afiliado').val();
             var si_fecha_nacimiento = $('#fecha_nacimiento').val();
-            var si_telefono = $('#telefono').val();
+            var si_departamento_info_afiliado = $('#departamento_info_afiliado').val();
+            var si_municipio_info_afiliado = $('#municipio_info_afiliado').val();
+            var si_eps = $('#eps').val();
+            var si_afp = $('#afp').val();
+            var si_arl_info_afiliado = $('#arl_info_afiliado').val();
             var si_activo = $('#activo').val();
-            var si_empresa = $('#empresa').val();
-            var si_nit_cc = $('#nit_cc').val();
+            var si_medio_notificacion_afiliado = $('#medio_notificacion_afiliado').val();
             var si_proceso = $('#proceso').val();
             var si_servicio = $('#servicio').val();
             var si_accion = $('#accion').val();
 
-            /*if (si_cliente != '' && si_tipo_cliente != '' && si_tipo_evento !='' && si_id_evento != '' && si_fecha_evento != '' &&
-            si_fecha_radicacion != '' && si_nro_identificacion != '' && si_tipo_documento != '' && si_nombre_afiliado != '' &&
-            si_direccion_info_afiliado != '' && si_fecha_nacimiento != '' && si_telefono != '' && si_activo != '' && 
-            si_empresa != '' && si_nit_cc != '' && si_proceso != '' && si_servicio != '' && si_accion != '') {*/
-            if(si_cliente != '' && si_tipo_cliente != '' && si_tipo_evento !='' && si_id_evento != ''  &&
-            si_fecha_radicacion != '' && si_nro_identificacion != '' && si_tipo_documento != '' && si_nombre_afiliado != ''){   
+            if (si_cliente != '' && si_tipo_cliente != '' && si_id_evento != '' &&
+            si_fecha_radicacion != '' && si_nro_identificacion != '' && si_tipo_afiliado != '' && si_tipo_documento != '' && si_nombre_afiliado != '' &&
+            si_direccion_info_afiliado != '' && si_fecha_nacimiento != '' && si_departamento_info_afiliado != '' && si_municipio_info_afiliado != '' 
+            && si_eps != '' && si_afp != '' && si_arl_info_afiliado != '' && si_activo != '' && si_medio_notificacion_afiliado != '' 
+            && si_proceso != '' && si_servicio != '' && si_accion != '') {
+                /*if(si_cliente != '' && si_tipo_cliente != '' && si_tipo_evento !='' && si_id_evento != ''  &&
+                si_fecha_radicacion != '' && si_nro_identificacion != '' && si_tipo_documento != '' && si_nombre_afiliado != ''){   */
                 $('#btn_borrar').addClass('d-none');
                 $('#btn_guardar_evento').addClass('d-none');
                 $('#mostrar_barra_creacion_evento').css("display","block");
