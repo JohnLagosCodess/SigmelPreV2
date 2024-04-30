@@ -503,6 +503,21 @@
                                                         </select>
                                                     </div>
                                                 </div>
+                                                <div class="col-3">
+                                                    <div class="form-group">
+                                                        @if (!empty($array_datos_info_afiliados[0]->Entidad_conocimiento) && $array_datos_info_afiliados[0]->Entidad_conocimiento == 'Si')
+                                                            <input class="form-contol scalesR" type="checkbox" id="entidad_conocimiento" name="entidad_conocimiento" value="Si" checked>                                                            
+                                                        @else
+                                                            <input class="form-contol scalesR" type="checkbox" id="entidad_conocimiento" name="entidad_conocimiento" value="Si">                                                            
+                                                        @endif
+                                                        <label for="entidad_conocimiento" class="col-form-label">Entidad de Conocimiento (AFP)</label>
+                                                        <div id="div_afp_conocimiento" class="d-none">
+                                                            <select class="afp_conocimiento custom-select" name="afp_conocimiento" id="afp_conocimiento">
+                                                                <option value="{{$array_datos_info_afiliados[0]->Id_afp_entidad_conocimiento}}">{{$array_datos_info_afiliados[0]->Nombre_afp_conocimiento}}</option>
+                                                            </select>                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="col-3 columna_identificacion_afi_beni d-none">
                                                     <div class="form-group">
                                                         <label for="afi_nro_identificacion" class="col-form-label">N° de identificación afiliado<span style="color:red;">(*)</span></label>

@@ -362,6 +362,15 @@
                                                         <select class="medio_notificacion_afiliado custom-select" name="medio_notificacion_afiliado" id="medio_notificacion_afiliado" required></select>
                                                     </div>
                                                 </div>
+                                                <div class="col-3">
+                                                    <div class="form-group">
+                                                        <input class="form-contol scalesR" type="checkbox" id="entidad_conocimiento" name="entidad_conocimiento" value="Si">
+                                                        <label for="entidad_conocimiento" class="col-form-label">Entidad de Conocimiento (AFP)</label>
+                                                        <div id="div_afp_conocimiento" class="d-none">
+                                                            <select class="afp_conocimiento custom-select" name="afp_conocimiento" id="afp_conocimiento"></select>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="col-3 columna_identificacion_afi_beni d-none">
                                                     <div class="form-group">
                                                         <label for="afi_nro_identificacion" class="col-form-label">N° de identificación afiliado<span style="color:red;">(*)</span></label>
@@ -584,7 +593,7 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="medio_notificacion_laboral" class="col-form-label si_medio_noti">Medio de Notificación</label>
-                                                    <label for="medio_notificacion_laboral" class="col-form-label no_medio_noti">Medio de Notificación</label>
+                                                    {{-- <label for="medio_notificacion_laboral" class="col-form-label no_medio_noti">Medio de Notificación</label> --}}
                                                     <select class="medio_notificacion_laboral custom-select" name="medio_notificacion_laboral" id="medio_notificacion_laboral"></select>
                                                 </div>
                                             </div>
