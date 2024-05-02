@@ -24,8 +24,10 @@ class sigmel_informacion_agudeza_auditiva_eventos extends Model
         'Deficiencia_monoaural_derecha',
         'Deficiencia_binaural',
         'Adicion_tinnitus',
+        'Dx_Principal',
         'Deficiencia',
         'Estado',
+        'Estado_Recalificacion',
         'Nombre_usuario',
         'F_registro',
     ];

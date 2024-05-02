@@ -359,6 +359,21 @@ $(document).ready(function(){
                 $('#f_finalizacion_contrato').val(data_cliente[0]["F_finalizacion_contrato"]);
                 $('#nro_consecutivo_dictamen').val(data_cliente[0]["Nro_consecutivo_dictamen"]);
 
+                // Captura consecutivo Evento
+                let consecutivo_evento = {
+                    '_token': token,
+                    'parametro' : "Nro_consecutivo_evento"                    
+                };
+
+                $.ajax({
+                    type:'POST',
+                    url:'/ConsecutivoIdEvento',
+                    data:consecutivo_evento,
+                    success:function(dataEvento){
+                        $('#nro_consecutivo_evento').val(dataEvento[0]["Numero_orden"]);                        
+                    }
+                }); 
+
                 //Listado de departamento
                 let datos_lista_departamento_cliente = {
                     '_token': token,

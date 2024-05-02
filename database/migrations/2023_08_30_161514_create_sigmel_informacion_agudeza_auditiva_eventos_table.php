@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_agudeza_auditiva_eventos', function (Blueprint $table) {
             $table->increments('Id_Agudeza_auditiva');
-            $table->string('ID_evento', 10);
+            $table->string('ID_evento', 15);
             $table->integer('Id_Asignacion');
             $table->integer('Id_proceso');
             $table->integer('Oido_Izquierdo');
@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('Dx_Principal',2)->nullable();
             $table->integer('Deficiencia');
             $table->enum('Estado', ['Activo','Inactivo'])->default('Activo')->nullable();
+            $table->enum('Estado_Recalificacion', ['Activo','Inactivo'])->default('Activo')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });
