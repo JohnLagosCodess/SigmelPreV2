@@ -48,6 +48,7 @@ class sigmel_informacion_pronunciamiento_eventos extends Model
         'Reviso_pronuncia',
         'Ciudad_correspon',
         'N_radicado',
+        'N_siniestro',
         'Firmar',
         'Fecha_correspondencia',
         'Archivo_pronuncia'

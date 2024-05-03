@@ -24,6 +24,7 @@ class sigmel_informacion_adiciones_dx_eventos extends Model
         'Sustentacion_Adicion_Dx',
         'Origen',
         'N_radicado',
+        'N_siniestro',
         'Nombre_usuario',
         'F_registro'
     ];

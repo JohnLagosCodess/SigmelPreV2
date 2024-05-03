@@ -729,6 +729,7 @@ $(document).ready(function(){
         formData.append('fecha_evento', $('#fecha_evento').val());
         formData.append('dictamen_calificador', $('#dictamen_calificador').val());
         formData.append('fecha_calificador', $('#fecha_calificador').val());
+        formData.append('n_siniestro', $('#n_siniestro').val());
         formData.append('decision_pr', $("[id^='di_']").filter(":checked").val());
         formData.append('asunto_cali', $('#asunto_cali').val());
         formData.append('sustenta_cali', $('#sustenta_cali').val());

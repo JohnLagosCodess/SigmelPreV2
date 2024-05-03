@@ -1594,6 +1594,7 @@ $(document).ready(function(){
             'newId_evento': $('#newId_evento').val(),
             'newId_asignacion': $('#newId_asignacion').val(),
             'Id_proceso': $('#Id_proceso').val(),
+            'n_siniestro': $('#n_siniestro').val(),
             'origen_controversia': $('#origen_controversia').val(),
             'manual_de_califi': $('#manual_de_califi').val(),
             'total_deficiencia': $('#total_deficiencia').val(),

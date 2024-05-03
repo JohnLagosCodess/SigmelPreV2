@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_dto_atel_eventos', function (Blueprint $table) {
             $table->increments('Id_Dto_ATEL');
-            $table->string('ID_evento', 10)->nullable();
+            $table->string('ID_evento', 15)->nullable();
             $table->integer('Id_Asignacion');
             $table->integer('Id_proceso');
             $table->enum('Activo', ['Si','No'])->nullable();
@@ -38,7 +38,8 @@ return new class extends Migration
             $table->text('Otros_relacion_documentos')->nullable();
             $table->text('Sustentacion');
             $table->integer('Origen');
-            $table->text('N_radicado')->nullable();            
+            $table->text('N_radicado')->nullable();    
+            $table->text('N_siniestro')->nullable();            
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

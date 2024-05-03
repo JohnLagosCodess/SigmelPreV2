@@ -711,6 +711,7 @@ $(document).ready(function(){
         formData.append('fecha_evento', $('#fecha_evento').val());
         formData.append('dictamen_calificador', $('#dictamen_calificador').val());
         formData.append('fecha_calificador', $('#fecha_calificador').val());
+        formData.append('n_siniestro', $('#n_siniestro').val());
         formData.append('fecha_estruturacion', $('#fecha_estruturacion').val());
         formData.append('porcentaje_pcl', $('#porcentaje_pcl').val());
         formData.append('rango_pcl', $('#rango_pcl').val());
