@@ -898,6 +898,7 @@ class BuscarEventoController extends Controller
                         }
                         
                     }
+
                     // Resultado Calificacion Tecnica Pcl
                     $posicionPclCali = [];
                     foreach ($resultArrayEventos as $element) {
@@ -951,6 +952,7 @@ class BuscarEventoController extends Controller
                             }                            
                         }                        
                     }
+
                     // Resultado Recalificacion Pcl
                     $posicionPclReca = [];
                     foreach ($resultArrayEventos as $element) {
@@ -1007,7 +1009,8 @@ class BuscarEventoController extends Controller
                             }
                         }                    
                         
-                    }                    
+                    }
+
                     // Resultado Revision Pension Pcl
                     $posicionPclRevi = [];
                     foreach ($resultArrayEventos as $element) {
@@ -1061,6 +1064,7 @@ class BuscarEventoController extends Controller
                             }                            
                         }                        
                     }
+
                     // Resultado Pronunciamiento Pcl
                     $posicionPclPron = [];
                     foreach ($resultArrayEventos as $element) {
@@ -1114,6 +1118,7 @@ class BuscarEventoController extends Controller
                             }                            
                         }                        
                     }
+
                     // Resultado Controversia Origen Juntas
                     $posicionJuntasConOri = [];
                     foreach ($resultArrayEventos as $element) {
@@ -1243,6 +1248,7 @@ class BuscarEventoController extends Controller
                             
                         }
                     }
+                    
                     // Resultado Controversia Pcl Juntas
                     $posicionJuntasConPcl = [];
                     foreach ($resultArrayEventos as $element) {

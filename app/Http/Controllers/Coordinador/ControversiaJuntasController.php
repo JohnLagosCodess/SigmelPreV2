@@ -2156,50 +2156,50 @@ class ControversiaJuntasController extends Controller
             }
         }else{
             // Datos Junta regional
-            // $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
-            // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
-            // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-            // ->select('sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
-            // ->where([['sie.Id_Entidad', $id_Jrci_califi_invalidez]])->get();
+            $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+            ->select('sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+            ->where([['sie.Id_Entidad', $id_Jrci_califi_invalidez]])->get();
 
-            // $array_datos_junta_regional = json_decode(json_encode($datos_junta_regional), true);
+            $array_datos_junta_regional = json_decode(json_encode($datos_junta_regional), true);
 
-            // if(count($array_datos_junta_regional)>0){
-            //     $nombre_junta = $request->nombre_junta_regional;
-            //     $direccion_junta = $array_datos_junta_regional[0]["Direccion"];
-            //     $telefono_junta = $array_datos_junta_regional[0]["Telefonos"];
-            //     $departamento_junta = $array_datos_junta_regional[0]["Nombre_departamento"];
-            //     $ciudad_junta = $array_datos_junta_regional[0]["Nombre_ciudad"];
-            // }else{
+            if(count($array_datos_junta_regional)>0){
+                $nombre_junta = $request->nombre_junta_regional;
+                $direccion_junta = $array_datos_junta_regional[0]["Direccion"];
+                $telefono_junta = $array_datos_junta_regional[0]["Telefonos"];
+                $departamento_junta = $array_datos_junta_regional[0]["Nombre_departamento"];
+                $ciudad_junta = $array_datos_junta_regional[0]["Nombre_ciudad"];
+            }else {
+                $nombre_junta = "";
+                $direccion_junta = "";
+                $telefono_junta = "";
+                $ciudad_junta = "";
+                $departamento_junta = "";
+            }
+
+            // $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+            // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            // ->select('siae.Nombre_afiliado','siae.Direccion','siae.Telefono_contacto','sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
+            // ->where([['siae.ID_evento','=', $id_evento]])
+            // ->get();
+
+            // $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
+
+            // if (count($array_datos_municipio_ciudad_afiliado) > 0) {
+            //     $nombre_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_afiliado"];;
+            //     $direccion_junta = $array_datos_municipio_ciudad_afiliado[0]["Direccion"];
+            //     $telefono_junta = $array_datos_municipio_ciudad_afiliado[0]["Telefono_contacto"];
+            //     $ciudad_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
+            //     $departamento_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
+            // } else {
             //     $nombre_junta = "";
             //     $direccion_junta = "";
             //     $telefono_junta = "";
             //     $departamento_junta = "";
             //     $ciudad_junta = "";
             // }
-
-            $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-            ->select('siae.Nombre_afiliado','siae.Direccion','siae.Telefono_contacto','sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
-            ->where([['siae.ID_evento','=', $id_evento]])
-            ->get();
-
-            $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
-
-            if (count($array_datos_municipio_ciudad_afiliado) > 0) {
-                $nombre_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_afiliado"];;
-                $direccion_junta = $array_datos_municipio_ciudad_afiliado[0]["Direccion"];
-                $telefono_junta = $array_datos_municipio_ciudad_afiliado[0]["Telefono_contacto"];
-                $ciudad_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
-                $departamento_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
-            } else {
-                $nombre_junta = "";
-                $direccion_junta = "";
-                $telefono_junta = "";
-                $departamento_junta = "";
-                $ciudad_junta = "";
-            }
             
         }
 
@@ -2821,44 +2821,50 @@ class ControversiaJuntasController extends Controller
             }
         }else{
             // Datos Junta regional
-            // $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
-            // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
-            // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-            // ->select('sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
-            // ->where([['sie.Id_Entidad', $id_Jrci_califi_invalidez]])->get();
+            $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+            ->select('sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+            ->where([['sie.Id_Entidad', $id_Jrci_califi_invalidez]])->get();
 
-            // $array_datos_junta_regional = json_decode(json_encode($datos_junta_regional), true);
+            $array_datos_junta_regional = json_decode(json_encode($datos_junta_regional), true);
 
-            // if(count($array_datos_junta_regional)>0){
-            //     $nombre_junta = $request->nombre_junta_regional;
-            //     $direccion_junta = $array_datos_junta_regional[0]["Direccion"];
-            //     $telefono_junta = $array_datos_junta_regional[0]["Telefonos"];
-            //     $departamento_junta = $array_datos_junta_regional[0]["Nombre_departamento"];
-            //     $ciudad_junta = $array_datos_junta_regional[0]["Nombre_ciudad"];
-            // }
-
-            $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
-                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-                    ->select('siae.Nombre_afiliado','siae.Direccion','siae.Telefono_contacto','sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
-                    ->where([['siae.ID_evento','=', $id_evento]])
-                    ->get();
-        
-            $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
-
-            if (count($array_datos_municipio_ciudad_afiliado) > 0) {
-                $nombre_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_afiliado"];;
-                $direccion_junta = $array_datos_municipio_ciudad_afiliado[0]["Direccion"];
-                $telefono_junta = $array_datos_municipio_ciudad_afiliado[0]["Telefono_contacto"];
-                $ciudad_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
-                $departamento_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
-            } else {
-                $nombre_junta = "";
-                $direccion_junta = "";
-                $telefono_junta = "";
-                $ciudad_junta = "";
-                $departamento_junta = "";
+            if(count($array_datos_junta_regional)>0){
+                $nombre_junta = $request->nombre_junta_regional;
+                $direccion_junta = $array_datos_junta_regional[0]["Direccion"];
+                $telefono_junta = $array_datos_junta_regional[0]["Telefonos"];
+                $ciudad_junta = $array_datos_junta_regional[0]["Nombre_ciudad"];
+                $departamento_junta = $array_datos_junta_regional[0]["Nombre_departamento"];
+            }else {
+                    $nombre_junta = "";
+                    $direccion_junta = "";
+                    $telefono_junta = "";
+                    $ciudad_junta = "";
+                    $departamento_junta = "";
             }
+
+            // $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            //         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+            //         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            //         ->select('siae.Nombre_afiliado','siae.Direccion','siae.Telefono_contacto','sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
+            //         ->where([['siae.ID_evento','=', $id_evento]])
+            //         ->get();
+        
+            // $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
+
+            // if (count($array_datos_municipio_ciudad_afiliado) > 0) {
+            //     $nombre_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_afiliado"];;
+            //     $direccion_junta = $array_datos_municipio_ciudad_afiliado[0]["Direccion"];
+            //     $telefono_junta = $array_datos_municipio_ciudad_afiliado[0]["Telefono_contacto"];
+            //     $ciudad_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
+            //     $departamento_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
+            // } else {
+            //     $nombre_junta = "";
+            //     $direccion_junta = "";
+            //     $telefono_junta = "";
+            //     $ciudad_junta = "";
+            //     $departamento_junta = "";
+            // }
             
         }
 

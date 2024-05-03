@@ -1123,13 +1123,20 @@ class CalificacionJuntasController extends Controller
                 $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
-                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();
+
+                // Traer opción seleccionada del campo Medio de notificación del la información del afiliado/beneficiario
+                $info_medio_noti = DB::table(getDatabaseName('sigmel_gestiones'). 'sigmel_informacion_afiliado_eventos as siae')
+                ->select('siae.Medio_notificacion')
+                ->where([['siae.ID_evento', $newIdEvento]])
+                ->get();
                 
                 return response()->json([
                     'nombreusuario' => $nombreusuario,
                     'destinatarioPrincipal' => $destinatarioPrincipal,
                     'array_datos_destinatarios' => $array_datos_destinatarios,
-                    'array_datos_lider' => $array_datos_lider
+                    'array_datos_lider' => $array_datos_lider,
+                    'info_medio_noti' => $info_medio_noti
                 ]);
             break;
             case ($destinatarioPrincipal == 'Empresa'):                
@@ -1137,13 +1144,20 @@ class CalificacionJuntasController extends Controller
                 $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
-                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();
+
+                // Traer opción seleccionada del campo Medio de notificación del la información del afiliado/beneficiario
+                $info_medio_noti = DB::table(getDatabaseName('sigmel_gestiones'). 'sigmel_informacion_laboral_eventos as sile')
+                ->select('sile.Medio_notificacion')
+                ->where([['sile.ID_evento', $newIdEvento]])
+                ->get();
+
                 return response()->json([
                     'nombreusuario' => $nombreusuario,
                     'destinatarioPrincipal' => $destinatarioPrincipal,
                     'array_datos_destinatarios' => $array_datos_destinatarios,                    
-                    'array_datos_lider' => $array_datos_lider
-
+                    'array_datos_lider' => $array_datos_lider,
+                    'info_medio_noti' => $info_medio_noti
                 ]);
             break;
             case ($destinatarioPrincipal == 'EPS_comunicado'):
@@ -1168,7 +1182,8 @@ class CalificacionJuntasController extends Controller
                     'sldm.Id_departamento',
                     'sldm.Nombre_departamento',
                     'sldm1.Id_municipios',
-                    'sldm1.Nombre_municipio as Nombre_ciudad'
+                    'sldm1.Nombre_municipio as Nombre_ciudad',
+                    'sie.Id_Medio_Noti'
                 )->where([
                     ['sie.Id_Entidad', $id_eps]
                 ])->get();
@@ -1176,13 +1191,13 @@ class CalificacionJuntasController extends Controller
                 $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
-                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();  
+                ->where([['sgt.Id_proceso_equipo', '=', $Id_proceso]])->get();
+
                 return response()->json([
                     'nombreusuario' => $nombreusuario,
                     'destinatarioPrincipal' => $destinatarioPrincipal,
                     'array_datos_destinatarios' => $array_datos_destinatarios,                    
                     'array_datos_lider' => $array_datos_lider
-
                 ]);
             break;
             case ($destinatarioPrincipal == 'AFP_comunicado'):
@@ -1207,7 +1222,8 @@ class CalificacionJuntasController extends Controller
                     'sldm.Id_departamento',
                     'sldm.Nombre_departamento',
                     'sldm1.Id_municipios',
-                    'sldm1.Nombre_municipio as Nombre_ciudad'
+                    'sldm1.Nombre_municipio as Nombre_ciudad',
+                    'sie.Id_Medio_Noti'
                 )->where([
                     ['sie.Id_Entidad', $id_afp]
                 ])->get();
@@ -1221,7 +1237,6 @@ class CalificacionJuntasController extends Controller
                     'destinatarioPrincipal' => $destinatarioPrincipal,
                     'array_datos_destinatarios' => $array_datos_destinatarios,                    
                     'array_datos_lider' => $array_datos_lider
-
                 ]);
             break;
             case ($destinatarioPrincipal == 'ARL_comunicado'):
@@ -1246,7 +1261,8 @@ class CalificacionJuntasController extends Controller
                     'sldm.Id_departamento',
                     'sldm.Nombre_departamento',
                     'sldm1.Id_municipios',
-                    'sldm1.Nombre_municipio as Nombre_ciudad'
+                    'sldm1.Nombre_municipio as Nombre_ciudad',
+                    'sie.Id_Medio_Noti'
                 )->where([
                     ['sie.Id_Entidad', $id_arl]
                 ])->get();
@@ -1260,7 +1276,6 @@ class CalificacionJuntasController extends Controller
                     'destinatarioPrincipal' => $destinatarioPrincipal,
                     'array_datos_destinatarios' => $array_datos_destinatarios,                    
                     'array_datos_lider' => $array_datos_lider
-
                 ]);
             break;
             case ($destinatarioPrincipal == 'JRCI_comunicado'):
@@ -1276,7 +1291,8 @@ class CalificacionJuntasController extends Controller
                     'sldm.Id_departamento',
                     'sldm.Nombre_departamento',
                     'sldm1.Id_municipios',
-                    'sldm1.Nombre_municipio as Nombre_ciudad'
+                    'sldm1.Nombre_municipio as Nombre_ciudad',
+                    'sie.Id_Medio_Noti'
                 )->where([
                     ['sie.Id_Entidad', $request->id_jrci]
                 ])->get();
@@ -1290,7 +1306,6 @@ class CalificacionJuntasController extends Controller
                     'destinatarioPrincipal' => $destinatarioPrincipal,
                     'array_datos_destinatarios' => $array_datos_destinatarios,                    
                     'array_datos_lider' => $array_datos_lider
-
                 ]);
             break;
             case ($destinatarioPrincipal == 'JNCI_comunicado'):
@@ -1306,7 +1321,8 @@ class CalificacionJuntasController extends Controller
                     'sldm.Id_departamento',
                     'sldm.Nombre_departamento',
                     'sldm1.Id_municipios',
-                    'sldm1.Nombre_municipio as Nombre_ciudad'
+                    'sldm1.Nombre_municipio as Nombre_ciudad',
+                    'sie.Id_Medio_Noti'
                 )->where([
                     ['sie.IdTipo_entidad', 5]
                 ])->limit(1)->get();
@@ -1320,7 +1336,6 @@ class CalificacionJuntasController extends Controller
                     'destinatarioPrincipal' => $destinatarioPrincipal,
                     'array_datos_destinatarios' => $array_datos_destinatarios,                    
                     'array_datos_lider' => $array_datos_lider
-
                 ]);
             break;
             case ($destinatarioPrincipal == 'Otro'):  
@@ -2478,16 +2493,29 @@ class CalificacionJuntasController extends Controller
                 }
 
                 // Datos Junta regional
-                $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
-                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
-                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-                ->select('sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
-                ->where([['sie.Id_Entidad', $Id_junta_act]])->get();
+                if ($Id_junta_act != "") {
+                    $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                    ->select('sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                    ->where([['sie.Id_Entidad', $Id_junta_act]])->get();
+                } else {
+                    $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                    ->select('sie.Nombre_entidad','sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                    ->where([['sie.Id_Entidad', $request->jrci_califi_invalidez_comunicado_editar]])->get();
+                }
+                
 
                 $array_datos_junta_regional = json_decode(json_encode($datos_junta_regional), true);
 
                 if(count($array_datos_junta_regional)>0){
-                    $nombre_junta = $request->Nombre_junta_act;
+                    if ($Id_junta_act != "") {
+                        $nombre_junta = $request->Nombre_junta_act;
+                    }else{
+                        $nombre_junta = $array_datos_junta_regional[0]["Nombre_entidad"];
+                    }
                     $direccion_junta = $array_datos_junta_regional[0]["Direccion"];
                     $telefono_junta = $array_datos_junta_regional[0]["Telefonos"];
                     $departamento_junta = $array_datos_junta_regional[0]["Nombre_departamento"];
@@ -3056,16 +3084,28 @@ class CalificacionJuntasController extends Controller
                 }
                 
                 // Datos Junta regional
-                $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
-                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
-                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-                ->select('sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
-                ->where([['sie.Id_Entidad', $Id_junta_act]])->get();
+                if ($Id_junta_act != "") {
+                    $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                    ->select('sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                    ->where([['sie.Id_Entidad', $Id_junta_act]])->get();
+                }else{
+                    $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                    ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                    ->where([['sie.Id_Entidad', $request->jrci_califi_invalidez_comunicado_editar]])->get();
+                }
 
                 $array_datos_junta_regional = json_decode(json_encode($datos_junta_regional), true);
 
                 if(count($array_datos_junta_regional)>0){
-                    $nombre_junta = $request->Nombre_junta_act;
+                    if ($Id_junta_act != "") {
+                        $nombre_junta = $request->Nombre_junta_act;
+                    }else{
+                        $nombre_junta = $array_datos_junta_regional[0]["Nombre_entidad"];
+                    }
                     $direccion_junta = $array_datos_junta_regional[0]["Direccion"];
                     $telefono_junta = $array_datos_junta_regional[0]["Telefonos"];
                     $departamento_junta = $array_datos_junta_regional[0]["Nombre_departamento"];
@@ -3464,8 +3504,10 @@ class CalificacionJuntasController extends Controller
                         // Quitamos el style y agregamos los atributos width y height
                         $patronstyle = '/<img[^>]+style="width:\s*([\d.]+)px;\s*height:\s*([\d.]+)px[^"]*"[^>]*>/';
                         preg_match($patronstyle, $Firma_cliente, $coincidencias);
-                        $width = $coincidencias[1]; // Valor de width
-                        $height = $coincidencias[2]; // Valor de height
+                        //$width = $coincidencias[1]; // Valor de width
+                        //$height = $coincidencias[2]; // Valor de height
+                        $width = 150; // Valor de width
+                        $height = 80; // Valor de height
                     
                         $nuevoStyle = 'width="'.$width.'" height="'.$height.'"';
                         $htmlModificado = reemplazarStyleImg($Firma_cliente, $nuevoStyle);
@@ -3668,16 +3710,28 @@ class CalificacionJuntasController extends Controller
                 }
 
                 // Datos Junta regional
-                $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
-                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
-                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-                ->select('sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad', 'sie.Emails', 'sie.Otros_Emails')
-                ->where([['sie.Id_Entidad', $Id_junta_act]])->get();
+                if ($Id_junta_act != "") {
+                    $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                    ->select('sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad', 'sie.Emails', 'sie.Otros_Emails')
+                    ->where([['sie.Id_Entidad', $Id_junta_act]])->get();
+                }else{
+                    $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                    ->select('sie.Nombre_entidad','sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad', 'sie.Emails', 'sie.Otros_Emails')
+                    ->where([['sie.Id_Entidad', $request->jrci_califi_invalidez_comunicado_editar]])->get();
+                }
 
                 $array_datos_junta_regional = json_decode(json_encode($datos_junta_regional), true);
 
                 if(count($array_datos_junta_regional)>0){
-                    $nombre_junta = $request->Nombre_junta_act;
+                    if ($Id_junta_act != "") {
+                        $nombre_junta = $request->Nombre_junta_act;
+                    }else{
+                        $nombre_junta = $array_datos_junta_regional[0]["Nombre_entidad"];
+                    }
                     $direccion_junta = $array_datos_junta_regional[0]["Direccion"];
                     $telefono_junta = $array_datos_junta_regional[0]["Telefonos"];
                     $departamento_junta = $array_datos_junta_regional[0]["Nombre_departamento"];
@@ -4277,7 +4331,6 @@ class CalificacionJuntasController extends Controller
                     }
 
                     return response()->download(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
-
             break;
             
             default:

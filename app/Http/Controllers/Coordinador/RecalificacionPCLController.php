@@ -338,7 +338,7 @@ class RecalificacionPCLController extends Controller
                         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
                         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
                         ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Monto_indemnizacion', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
-                        'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+                        'side.F_evento', 'side.F_estructuracion', 'side.N_siniestro', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
                         'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
                         'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia')
                         ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion', $eventoAsigancion_Recalifi]])->get();
@@ -423,7 +423,7 @@ class RecalificacionPCLController extends Controller
                         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
                         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
                         ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
-                        'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+                        'side.F_evento', 'side.F_estructuracion', 'side.N_siniestro', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
                         'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
                         'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia')
                         ->where([['side.ID_evento',$Id_evento_recali]])->get();
@@ -1040,7 +1040,7 @@ class RecalificacionPCLController extends Controller
                     ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
                     ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Monto_indemnizacion', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
-                    'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+                    'side.F_evento', 'side.F_estructuracion', 'side.N_siniestro', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
                     'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
                     'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.Estado_decreto',
                     'side.N_radicado')
@@ -1164,7 +1164,7 @@ class RecalificacionPCLController extends Controller
                             ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
                             ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
                             ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Monto_indemnizacion', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
-                            'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+                            'side.F_evento', 'side.F_estructuracion', 'side.N_siniestro', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
                             'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
                             'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia')
                             ->where([['side.ID_evento',$Id_evento_recali]], ['side.Id_Asignacion',$validar_estado_decreto[0]->Id_Asignacion_decreto])->get();  
@@ -1251,7 +1251,7 @@ class RecalificacionPCLController extends Controller
                             ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
                             ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
                             ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Monto_indemnizacion', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
-                            'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+                            'side.F_evento', 'side.F_estructuracion', 'side.N_siniestro', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
                             'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
                             'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia')
                             ->where([['side.ID_evento',$Id_evento_recali]])->get();
@@ -1868,7 +1868,7 @@ class RecalificacionPCLController extends Controller
                         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
                         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
                         ->select('side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Monto_indemnizacion', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
-                        'side.F_evento', 'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+                        'side.F_evento', 'side.F_estructuracion', 'side.N_siniestro', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
                         'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
                         'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.Estado_decreto',
                         'side.N_radicado')
@@ -3087,42 +3087,97 @@ class RecalificacionPCLController extends Controller
         // CAPTURA DE DATOS DE LA DEFICIENCIA 
         $array_datos = $request->datos_finales_deficiencias_alteraciones;
 
-        // Iteración para extraer los datos de la tabla y adicionar los datos de Id evento, Id asignacion y Id proceso
-        $array_datos_organizados = [];
-
-        foreach ($array_datos as $subarray_datos) {
-
-            array_unshift($subarray_datos, $request->Id_proceso);
-            array_unshift($subarray_datos, $request->Id_Asignacion);
-            array_unshift($subarray_datos, $request->Id_evento);
-
-            $subarray_datos[] = $Estado;
-            $subarray_datos[] = $nombre_usuario;
-            $subarray_datos[] = $date;
-
-            array_push($array_datos_organizados, $subarray_datos);
-        }
-
-        // Creación de array con los campos de la tabla: sigmel_informacion_deficiencias_alteraciones_eventos
+        foreach ($array_datos as $subarray) {
+            $cantidad_elementos = count($subarray);
         
-        $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Id_tabla', 'FP', 'CFM1', 'CFM2', 'FU',	'CAT', 'Clase_Final', 
-        'MSD', 'Dominancia', 'Deficiencia', 'Total_deficiencia', 'Estado', 'Nombre_usuario','F_registro'];
+            // Verificar la cantidad de elementos en el subarray
+            if ($cantidad_elementos == 10) {
+                // Iteración para extraer los datos de la tabla y adicionar los datos de Id evento, Id asignacion y Id proceso
+                $array_datos_organizados = [];
         
-        // Combinación de los campos de la tabla con los datos
-        $array_datos_con_keys = [];
-        foreach ($array_datos_organizados as $subarray_datos_organizados) {
-            array_push($array_datos_con_keys, array_combine($array_keys_tabla, $subarray_datos_organizados));
-        }
+                // foreach ($array_datos as $subarray_datos) {
+        
+                    array_unshift($subarray, $request->Id_proceso);
+                    array_unshift($subarray, $request->Id_Asignacion);
+                    array_unshift($subarray, $request->Id_evento);
+        
+                    $subarray[] = $Estado;
+                    $subarray[] = $nombre_usuario;
+                    $subarray[] = $date;
+        
+                    array_push($array_datos_organizados, $subarray);
+                // }
+        
+                // Creación de array con los campos de la tabla: sigmel_informacion_deficiencias_alteraciones_eventos
+                
+                $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Id_tabla', 'FP', 'CFM1', 'CFM2', 'FU',	'CAT', 
+                'MSD', 'Dominancia', 'Deficiencia', 'Total_deficiencia', 'Estado', 'Nombre_usuario','F_registro'];
+                
+                // Combinación de los campos de la tabla con los datos
+                $array_datos_con_keys = [];
+                foreach ($array_datos_organizados as $subarray_datos_organizados) {
+                    array_push($array_datos_con_keys, array_combine($array_keys_tabla, $subarray_datos_organizados));
+                }
+        
+                // Inserción de la información
+                foreach ($array_datos_con_keys as $insertar) {
+                    sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')->insert($insertar);
+                }        
+                           
+                sleep(2);
 
-        // Inserción de la información
-        foreach ($array_datos_con_keys as $insertar) {
-            sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')->insert($insertar);
+                $mensajes = array(
+                    "parametro" => 'inserto_informacion_deficiencias',
+                    "mensaje" => 'Deficiencia guardada satisfactoriamente.'
+                );
+            } 
+            elseif ($cantidad_elementos == 11) {
+                // Iteración para extraer los datos de la tabla y adicionar los datos de Id evento, Id asignacion y Id proceso
+                $array_datos_organizados = [];
+        
+                // foreach ($array_datos as $subarray_datos) {
+        
+                    array_unshift($subarray, $request->Id_proceso);
+                    array_unshift($subarray, $request->Id_Asignacion);
+                    array_unshift($subarray, $request->Id_evento);
+        
+                    $subarray[] = $Estado;
+                    $subarray[] = $nombre_usuario;
+                    $subarray[] = $date;
+        
+                    array_push($array_datos_organizados, $subarray);
+                // }
+        
+                // Creación de array con los campos de la tabla: sigmel_informacion_deficiencias_alteraciones_eventos
+                
+                $array_keys_tabla = ['ID_evento','Id_Asignacion','Id_proceso', 'Id_tabla', 'FP', 'CFM1', 'CFM2', 'FU',	'CAT', 'Clase_Final', 
+                'MSD', 'Dominancia', 'Deficiencia', 'Total_deficiencia', 'Estado', 'Nombre_usuario','F_registro'];
+                
+                // Combinación de los campos de la tabla con los datos
+                $array_datos_con_keys = [];
+                foreach ($array_datos_organizados as $subarray_datos_organizados) {
+                    array_push($array_datos_con_keys, array_combine($array_keys_tabla, $subarray_datos_organizados));
+                }
+        
+                // Inserción de la información
+                foreach ($array_datos_con_keys as $insertar) {
+                    sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')->insert($insertar);
+                }
+                sleep(2);
+                
+                $mensajes = array(
+                    "parametro" => 'inserto_informacion_deficiencias',
+                    "mensaje" => 'Deficiencia guardada satisfactoriamente.'
+                );
+            }
+            else{
+                sleep(2);
+                $mensajes = array(
+                    "parametro" => 'inserto_informacion_deficiencias',
+                    "mensaje" => 'Deficiencia NO guardada.'
+                );
+            }             
         }
-
-        $mensajes = array(
-            "parametro" => 'inserto_informacion_deficiencias',
-            "mensaje" => 'Deficiencia guardada satisfactoriamente.'
-        );
 
         return json_decode(json_encode($mensajes, true));
     }
@@ -4765,7 +4820,8 @@ class RecalificacionPCLController extends Controller
         $tipo_evento = $request->tipo_evento;        
         $tipo_origen = $request->tipo_origen;  
         $f_evento_pericial = $request->f_evento_pericial;
-        $f_estructura_pericial = $request->f_estructura_pericial;      
+        $f_estructura_pericial = $request->f_estructura_pericial;
+        $n_siniestro = $request->n_siniestro;
         $sustenta_fecha = $request->sustenta_fecha;        
         $detalle_califi = $request->detalle_califi;        
         $enfermedad_catastrofica = $request->enfermedad_catastrofica;        
@@ -4794,6 +4850,7 @@ class RecalificacionPCLController extends Controller
                     'Origen' => $tipo_origen,
                     'F_evento' => $f_evento_pericial,
                     'F_estructuracion' => $f_estructura_pericial,
+                    'N_siniestro' => $n_siniestro,
                     'Sustentacion_F_estructuracion' => $sustenta_fecha,
                     'Detalle_calificacion' => $detalle_califi,
                     'Enfermedad_catastrofica' => $enfermedad_catastrofica,
@@ -4863,6 +4920,7 @@ class RecalificacionPCLController extends Controller
                     'Origen' => $tipo_origen,
                     'F_evento' => $f_evento_pericial,
                     'F_estructuracion' => $f_estructura_pericial,
+                    'N_siniestro' => $n_siniestro,
                     'Sustentacion_F_estructuracion' => $sustenta_fecha,
                     'Detalle_calificacion' => $detalle_califi,
                     'Enfermedad_catastrofica' => $enfermedad_catastrofica,
@@ -4938,6 +4996,7 @@ class RecalificacionPCLController extends Controller
                     'Origen' => $tipo_origen,
                     'F_evento' => $f_evento_pericial,
                     'F_estructuracion' => $f_estructura_pericial,
+                    'N_siniestro' => $n_siniestro,
                     'Sustentacion_F_estructuracion' => $sustenta_fecha,
                     'Detalle_calificacion' => $detalle_califi,
                     'Enfermedad_catastrofica' => $enfermedad_catastrofica,
@@ -4976,6 +5035,7 @@ class RecalificacionPCLController extends Controller
                     'Origen' => $tipo_origen,
                     'F_evento' => $f_evento_pericial,
                     'F_estructuracion' => $f_estructura_pericial,
+                    'N_siniestro' => $n_siniestro,
                     'Sustentacion_F_estructuracion' => $sustenta_fecha,
                     'Detalle_calificacion' => $detalle_califi,
                     'Enfermedad_catastrofica' => $enfermedad_catastrofica,

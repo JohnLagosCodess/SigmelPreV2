@@ -322,6 +322,12 @@
                                             <input type="number" class="form-control" name="nro_consecutivo_dictamen" id="nro_consecutivo_dictamen" disabled>
                                         </div>
                                     </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="nro_consecutivo_evento">N° Consecutivo ID evento<span style="color:red;">(*)</span></label>
+                                            <input type="number" class="form-control" name="nro_consecutivo_evento" id="nro_consecutivo_evento" disabled>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-striped table-bordered" width="100%">

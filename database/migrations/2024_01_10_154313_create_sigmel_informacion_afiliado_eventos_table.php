@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_afiliado_eventos', function (Blueprint $table) {
             $table->increments('Id_Afiliado');
-            $table->string('ID_evento', 10);
+            $table->string('ID_evento', 15);
             $table->string('Nombre_afiliado', 100);
             $table->integer('Tipo_documento');
             $table->string('Nro_identificacion', 25);

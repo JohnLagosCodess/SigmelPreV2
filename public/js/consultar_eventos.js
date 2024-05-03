@@ -1,6 +1,7 @@
 $(document).ready(function () {
     var idRol = $("#id_rol").val();            
     $('#form_consultar_evento').submit(function(e){
+        $(".dt-buttons").addClass('d-none');
         e.preventDefault();
 
         /* Captura de variables de formulario de consulta de evento */
@@ -20,7 +21,7 @@ $(document).ready(function () {
                 url:'/consultaInformacionEvento',
                 data: datos_consulta_evento,
                 success:function(data) {                    
-                    // console.log();
+                    // console.log(data);
                     if (data.parametro == "sin_datos") {
                         /* Mostrar contenedor mensaje de que no hay información */
                         $('.resultado_validacion').removeClass('d-none');
@@ -281,7 +282,7 @@ $(document).ready(function () {
                                                      
                         ],
                         exportOptions: {
-                            columns: [ 0,1,2,3,4,5,6,7,8,9,10,11,12]
+                            columns: [ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]
                         }
                     }
                 ]
@@ -301,9 +302,11 @@ $(document).ready(function () {
                 {"data":"Nombre_servicio"},
                 {"data":"Nombre_estado"},
                 {"data":"Resultado"},
+                {"data":"Accion"},
                 {"data":"F_accion"},
                 {"data":"F_dictamen"},
                 {"data":"F_notificacion"},
+                {"data":"Nombre_profesional"},
                 {
                     data: null,
                     render: function (data, type, row) {
@@ -331,12 +334,13 @@ $(document).ready(function () {
 
     /* GENERAR DESCARGA DE DATOS EN EXCEL */
     $('#btn_expor_datos').click(function () {
-        var infobtnExcel = $(this).parents();
-        var selectorbtnExcel = infobtnExcel[4].childNodes[13].childNodes[1].childNodes[5].childNodes[1].childNodes[1].childNodes[0].childNodes[0].classList[0];
-        console.log(selectorbtnExcel);
-        $('.'+selectorbtnExcel).click();
-
+        // var infobtnExcel = $(this).parents();
+        // var selectorbtnExcel = infobtnExcel[4].childNodes[13].childNodes[1].childNodes[5].childNodes[1].childNodes[1].childNodes[0].childNodes[0].classList[0];
+        // console.log(selectorbtnExcel);
+        // $('.'+selectorbtnExcel).click();
         //console.log(selectorbtnExcel);
+
+        $('.dt-button').click();
     });
     
     /* Asignar ruta del formulario de edicion de evento antes de dar clic en el botón para ir al Evento */

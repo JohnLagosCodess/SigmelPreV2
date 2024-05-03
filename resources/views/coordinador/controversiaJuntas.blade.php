@@ -1444,6 +1444,17 @@
                             </div>
                             <form id="form_correspondencia" action="POST">
                                 <div class="card-body">
+                                    <?php if(empty($arrayinfo_controvertido[0]->JrciNombre)):?>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="alert alert-danger" role="alert">
+                                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> No puede guardar esta correspondencia debido a que
+                                                    el destinatario principal está vacío. Por favor diríjase al módulo principal de juntas, ventana Gestión de controversia - Seguimiento,
+                                                    sección Información de la controversia y seleccione la Junta Regional de Calificación de Invalidez (JRCI).
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endif ?>
                                     <div class="row">
                                         <div class="col-3">
                                             <div class="form-group">
@@ -1764,8 +1775,10 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <input type="submit" id="GuardarCorrespondencia" name="GuardarCorrespondencia" class="btn btn-info" value="Guardar">                                                
-                                                <input hidden="hidden" type="text" id="bandera_correspondecia_guardar_actualizar" value="Guardar">
+                                                <?php if(!empty($arrayinfo_controvertido[0]->JrciNombre)):?>
+                                                    <input type="submit" id="GuardarCorrespondencia" name="GuardarCorrespondencia" class="btn btn-info" value="Guardar">                                                
+                                                    <input hidden="hidden" type="text" id="bandera_correspondecia_guardar_actualizar" value="Guardar">
+                                                <?php endif ?>
                                                 {{-- @if (count($array_comunicados_correspondencia) > 0) --}}
                                                     {{-- <button class="btn btn-info" id="generar_proforma_recurso_reposicion_pcl">Word</button> --}}
                                                 {{-- @endif --}}

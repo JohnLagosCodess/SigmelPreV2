@@ -654,6 +654,12 @@
                                                 </table>
                                             </div><br>
                                             <x-adminlte-button class="mr-auto d-none" id="guardar_datos_deficiencia_alteraciones" theme="info" label="Guardar"/>
+                                            <div class="text-center d-none" id="mostrar_barra_guardar_deficiencias">                                
+                                                <button class="btn btn-info" type="button" disabled>
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                    Guardando Deficiencia por alteraciones por favor espere...
+                                                </button>
+                                            </div>
                                             <br>
                                         </div>
                                     </div>
@@ -723,6 +729,12 @@
                                                 </table>
                                             </div><br>
                                             <x-adminlte-button class="mr-auto d-none" id="guardar_datos_deficiencia_alteraciones" theme="info" label="Guardar"/>
+                                            <div class="text-center d-none" id="mostrar_barra_guardar_deficiencias">                                
+                                                <button class="btn btn-info" type="button" disabled>
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                    Guardando Deficiencia por alteraciones por favor espere...
+                                                </button>   
+                                            </div>
                                             <br>
                                         </div>
                                     </div>
@@ -6933,6 +6945,16 @@
                                                 <input type="date" class="f_estructura_pericial form-control" id="f_estructura_pericial" name="f_estructura_pericial" value="{{$array_dictamen_pericial[0]->F_estructuracion}}" max="{{now()->format('Y-m-d')}}" required>                                                
                                             @else                                               
                                                 <input type="date" class="f_estructura_pericial form-control" id="f_estructura_pericial" name="f_estructura_pericial" max="{{now()->format('Y-m-d')}}" required>                                                
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="n_siniestro">N° de Siniestro</label>                                            
+                                            @if (!empty($array_dictamen_pericial[0]->N_siniestro))                                                
+                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="{{$array_dictamen_pericial[0]->N_siniestro}}">                                                
+                                            @else                                               
+                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro">                                                
                                             @endif
                                         </div>
                                     </div>

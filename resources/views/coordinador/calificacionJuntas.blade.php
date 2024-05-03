@@ -619,13 +619,13 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="f_contro_primer_califi">Fecha de controversia primera calificación<br><span style="color: red;">(*)</span></label>
+                                                <label for="f_contro_primer_califi">Fecha de controversia primera calificación<br> <span style="color: red;">(*)</span></label>
                                                 <input type="date" class="form-control" name="f_contro_primer_califi" id="f_contro_primer_califi" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_primer_califi)) { echo $arrayinfo_controvertido[0]->F_contro_primer_califi;} ?>" required>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="f_contro_radi_califi">Fecha de radicación controversia primera calificación<span style="color: red;">(*)</span></label>
+                                                <label for="f_contro_radi_califi">Fecha de radicación controversia primera calificación <span style="color: red;">(*)</span></label>
                                                 <input type="date" class="form-control" name="f_contro_radi_califi" id="f_contro_radi_califi" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_radi_califi)) { echo $arrayinfo_controvertido[0]->F_contro_radi_califi;} ?>" required>
                                             </div>
                                         </div>
@@ -637,8 +637,8 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="jrci_califi_invalidez">Junta Regional de Calificación de Invalidez (JRCI)</label>
-                                                <select class="custom-select jrci_califi_invalidez" name="jrci_califi_invalidez" id="jrci_califi_invalidez" style="width: 100%;">
+                                                <label for="jrci_califi_invalidez">Junta Regional de Calificación de Invalidez (JRCI) <span style="color: red;">(*)</span></label>
+                                                <select class="custom-select jrci_califi_invalidez" name="jrci_califi_invalidez" id="jrci_califi_invalidez" style="width: 100%;" required>
                                                     @if (!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez))
                                                         <option value="{{$arrayinfo_controvertido[0]->Jrci_califi_invalidez}}" selected>{{$arrayinfo_controvertido[0]->JrciNombre}}</option>
                                                     @else
@@ -1266,8 +1266,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                        <input class="custom-control-input" type="checkbox" id="copia_jnci" name="copia_jnci" value="JNCI">
-                                                        <label for="copia_jnci" class="custom-control-label">Junta Nacional de Calificación de Invalidez</label>                 
+                                                    <input class="custom-control-input" type="checkbox" id="copia_jnci" name="copia_jnci" value="JNCI">
+                                                    <label for="copia_jnci" class="custom-control-label">Junta Nacional de Calificación de Invalidez</label>                 
                                                 </div>
                                             </div>
                                         </div>
@@ -1278,8 +1278,8 @@
                                                 <label for="ciudad_comunicado">Ciudad <span style="color: red;">(*)</span></label>
                                                 <input class="form-control" type="text" name="ciudad_comunicado" id="ciudad" value="Bogotá D.C" required>
                                                 <input hidden="hidden" type="text" class="form-control" name="Id_evento" id="Id_evento" value="{{$array_datos_calificacionJuntas[0]->ID_evento}}">
-                                                    <input hidden="hidden" type="text" class="form-control" name="Id_asignacion" id="Id_asignacion" value="{{$array_datos_calificacionJuntas[0]->Id_Asignacion}}">
-                                                    <input hidden="hidden" type="text" class="form-control" name="Id_procesos" id="Id_procesos" value="{{$array_datos_calificacionJuntas[0]->Id_proceso}}">
+                                                <input hidden="hidden" type="text" class="form-control" name="Id_asignacion" id="Id_asignacion" value="{{$array_datos_calificacionJuntas[0]->Id_Asignacion}}">
+                                                <input hidden="hidden" type="text" class="form-control" name="Id_procesos" id="Id_procesos" value="{{$array_datos_calificacionJuntas[0]->Id_proceso}}">
                                             </div>
                                         </div>
                                         <div class="col-4">

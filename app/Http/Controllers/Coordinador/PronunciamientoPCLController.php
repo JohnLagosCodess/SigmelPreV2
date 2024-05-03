@@ -866,6 +866,13 @@ class PronunciamientoPCLController extends Controller
         $N_radicado = $info_pronunciamiento[0]->N_radicado;
         $Destinatario_principal = $info_pronunciamiento[0]->Destinatario_principal;
         $Decision = $info_pronunciamiento[0]->Decision;
+        
+        // Destinatario Principal si y Decision Acuerdo: Se saca la informacion de la entidad
+        // Destinatario Principal no y Decision Acuerdo: Se saca la informacion del afiliado
+        // Destinatario Principal si y Decision Desacuerdo: Se saca la informacion de la entidad.
+        // Destinatario Principal no y Decision Desacuerdo: Se saca la informacion del Calificador.
+
+
         if ($Destinatario_principal == 'Si' && $Decision == 'Acuerdo') {
             $Nombre_entidades = $info_pronunciamiento[0]->Nombre_entidades;       
             $Direccion_enti = $info_pronunciamiento[0]->Direccion;
@@ -873,11 +880,35 @@ class PronunciamientoPCLController extends Controller
             $Nombre_ciudad_enti = $info_pronunciamiento[0]->Nombre_ciudad;
             $Nombre_departamento_enti = $info_pronunciamiento[0]->Nombre_departamento;            
         } elseif($Destinatario_principal == 'No' && $Decision == 'Acuerdo') {
-            $Nombre_entidades = $Nombre_afiliado_corre;       
-            $Direccion_enti = $Direccion;
-            $Telefonos_enti = $Telefono_contacto;
-            $Nombre_ciudad_enti = $Nombre_municipio;
-            $Nombre_departamento_enti = $Nombre_departamento; 
+            // $Nombre_entidades = $Nombre_afiliado_corre;       
+            // $Direccion_enti = $Direccion;
+            // $Telefonos_enti = $Telefono_contacto;
+            // $Nombre_ciudad_enti = $Nombre_municipio;
+            // $Nombre_departamento_enti = $Nombre_departamento;
+
+            $datos = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Departamento', '=', 'sldm1.Id_departamento')
+            ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm1.Nombre_departamento')
+            ->where([['siae.ID_evento','=', $Id_Evento_pronuncia_corre]])
+            ->get();
+
+            $array_datos = json_decode(json_encode($datos), true);
+            if (count($array_datos) > 0) {
+                $Nombre_entidades = $array_datos[0]["Nombre_entidad"];;       
+                $Direccion_enti = $array_datos[0]["Direccion"];
+                $Telefonos_enti = $array_datos[0]["Telefonos"];
+                $Nombre_ciudad_enti = $array_datos[0]["Nombre_ciudad"];
+                $Nombre_departamento_enti = $array_datos[0]["Nombre_departamento"];
+            }else{
+                $Nombre_entidades = "";       
+                $Direccion_enti = "";
+                $Telefonos_enti = "";
+                $Nombre_ciudad_enti = "";
+                $Nombre_departamento_enti = "";
+            }
+
         }elseif($Destinatario_principal == 'Si' && $Decision == 'Desacuerdo') {
             $Entidad_calificador = $info_pronunciamiento[0]->Nombre_entidades;       
             $Dir_calificador = $info_pronunciamiento[0]->Direccion;

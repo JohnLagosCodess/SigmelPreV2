@@ -442,6 +442,14 @@ $(document).ready(function(){
         $("#btn_insertar_tipo_doc").prop('disabled', true);
         $("#btn_insertar_nro_identificacion").prop('disabled', true);
         $("#btn_insertar_cie10_nombrecie10").prop('disabled', true);
+
+        // Seteo automático del nro de anexos:
+        var seteo_nro_anexos = 0;
+        $("#n_anexos").val(seteo_nro_anexos);
+
+        // Selección automática del checkbox firmar
+        $("#firmar").prop('checked', true);
+
     }else if(opt_predeterminada == "Desacuerdo") {
         $("#mostrar_mensaje_importante").removeClass('d-none');
         $("#mostrar_mensaje_importante1").removeClass('d-none');
@@ -452,6 +460,17 @@ $(document).ready(function(){
         $("#btn_insertar_tipo_doc").prop('disabled', false);
         $("#btn_insertar_nro_identificacion").prop('disabled', false);
         $("#btn_insertar_cie10_nombrecie10").prop('disabled', false);
+
+        // Seteo automático del nro de anexos:
+        var seteo_nro_anexos = 0;
+        $("#n_anexos").val(seteo_nro_anexos);
+
+        // Selección automática de las copias a partes interesadas: Afiliado
+        $("#copia_afiliado").prop('checked', true);
+
+        // Selección automática del checkbox firmar
+        $("#firmar").prop('checked', false);
+
     }else if(opt_predeterminada == "Silencio"){
         $("#mostrar_mensaje_importante").addClass('d-none');
         $("#mostrar_mensaje_importante1").addClass('d-none');
@@ -462,6 +481,16 @@ $(document).ready(function(){
         $("#btn_insertar_tipo_doc").prop('disabled', true);
         $("#btn_insertar_nro_identificacion").prop('disabled', true);
         $("#btn_insertar_cie10_nombrecie10").prop('disabled', true);
+
+        // Seteo automático del nro de anexos:
+        var seteo_nro_anexos = 0;
+        $("#n_anexos").val(seteo_nro_anexos);
+
+        // Selección automática de las copias a partes interesadas: Afiliado
+        $("#copia_afiliado").prop('checked', false);
+
+        // Selección automática del checkbox firmar
+        $("#firmar").prop('checked', false);
     }
 
     /* VALIDACIÓN MOSTRAR ITEM DE CORRESPONDECIA */
@@ -486,6 +515,16 @@ $(document).ready(function(){
             
             $("#asunto_cali").val("CONCEPTO MÉDICO DE DICTAMEN ORIGEN");
             $('#sustenta_cali').summernote('code', '');
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#n_anexos").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Afiliado
+            $("#copia_afiliado").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', true);
             
         } else if(opt_correspondencia == "Desacuerdo") {
 
@@ -503,6 +542,16 @@ $(document).ready(function(){
             var texto_insertar = "<p>Respetados Señores,</p><p>Yo, HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. Aseguradora que expidió el seguro previsional a la AFP PORVENIR S.A., debidamente facultado para ello, en atención al dictamen de la referencia, estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN ante la Junta, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de ORIGEN dictaminada al afiliado {{$nombre_afiliado}} {{$tipo_documento}} {{$nro_identificacion}}, donde califican los diagnósticos: {{$cie10_nombrecie10_origencie10}}.</p><p>1. (Descripción de recurso)</p><p>Por lo anterior, presentamos el recurso de reposición en subsidio de apelación, contra el origen de la patología de {{$cie10_nombrecie10_origencie10}}, con el fin que la Junta dictamine el origen de la patología del paciente dando aplicación a la Ley 1562 de 2012 y Decreto 1477 de 2014 como normatividad vigente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación, e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Recibiré notificaciones en la Carrera 10 # 18 – 36 Edificio Córdoba Piso 4, en la ciudad de Bogotá, D.C.</p><p>Cualquier Información adicional con gusto le será suministrada,</p>";
             $('#sustenta_cali').summernote('code', texto_insertar);
 
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#n_anexos").val(seteo_nro_anexos);
+
+            // Selección automática de las copias a partes interesadas: Afiliado
+            $("#copia_afiliado").prop('checked', true);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', false);
+
         }else if(opt_correspondencia == "Silencio"){
             $("#mostrar_mensaje_importante").addClass('d-none');
             $("#mostrar_mensaje_importante1").addClass('d-none');
@@ -516,6 +565,16 @@ $(document).ready(function(){
             
             $("#asunto_cali").val('');
             $('#sustenta_cali').summernote('code', '');
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#n_anexos").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Afiliado
+            $("#copia_afiliado").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', false);
         }
     });
     
@@ -547,8 +606,10 @@ $(document).ready(function(){
                          $('#reviso').append('<option value="'+data[lidergru[i]]["name"]+'">'+data[lidergru[i]]["name"]+'</option>');
                      }
                  }
+                 $("#reviso").prop("selectedIndex", 1);
              }
          });
+
          intervaloCo = setInterval(() => {
              switch (opt_correspondencia) {
                  case "Acuerdo":
@@ -850,8 +911,6 @@ $(document).ready(function(){
             'fecha_dictamen_pri_cali': fecha_dictamen_pri_cali
         }
         
-        
-        
         $.ajax({    
             type:'POST',
             url:'/DescargarProformaPronunciamiento',
@@ -881,7 +940,12 @@ $(document).ready(function(){
             },
             error: function (error) {
                 // Manejar casos de error
-                console.error('Error al descargar el PDF:', error);
+
+                if (bandera_tipo_proforma == "proforma_acuerdo") {
+                    console.error('Error al descargar el PDF:', error);
+                } else {
+                    console.error('Error al descargar el WORD:', error);
+                }
             }       
         });
         
@@ -899,6 +963,24 @@ $(document).ready(function(){
         $("#div_msg_alerta").addClass('d-none');
         $("#ActualizarPronuncia").addClass('d-none');
         $("#GuardarPronuncia").addClass('d-none');
+    };
+
+    /* Códigos para el tema del rol administrador (modelo a seguir) */
+    // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:
+    // inhabilita los campos nro anexos, asunto, etiquetas, cuerpo comunicado, firmar
+    if (idRol != 6) {
+        $("#n_anexos").prop('readonly', true);
+        $("#asunto_cali").prop('readonly', true);
+        $(".note-editable").attr("contenteditable", false);
+
+        $("#btn_insertar_nro_dictamen_pri_cali").prop('disabled', true);
+        $("#btn_insertar_fecha_dictamen_pri_cali").prop('disabled', true);
+        $("#btn_insertar_nombre_afiliado").prop('disabled', true);
+        $("#btn_insertar_tipo_doc").prop('disabled', true);
+        $("#btn_insertar_nro_identificacion").prop('disabled', true);
+        $("#btn_insertar_cie10_nombrecie10").prop('disabled', true);
+        
+        $("#firmar").prop('disabled', true);
     }
 
 });

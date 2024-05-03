@@ -297,6 +297,34 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                             placeholder: "Seleccione",
                             allowClear: false
                         });
+
+                        /* INSERTAR CAMPOS DE CLASE Y DEFICIENCIAS PARA LAS TABLAS ABIERTAS  13.2A hasta  la 13.7*/
+                        if (id_tabla_seleccionado == 89 || id_tabla_seleccionado == 90 || id_tabla_seleccionado == 91 || id_tabla_seleccionado == 92 || id_tabla_seleccionado == 93 || 
+                            id_tabla_seleccionado == 94 || id_tabla_seleccionado == 95 || id_tabla_seleccionado == 96 || id_tabla_seleccionado == 97){
+                            let dominancias_sumas = 0.00;                  
+                            $("#ClaseFinal_fila_alteraciones_"+num_consecutivo_alteraciones).empty();            
+                            $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+                            $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+                            $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+                            $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancias_sumas.toFixed(2));
+                            $("#ClaseFinal_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input type="text" class="form-control" id="resultado_ClaseFinal_'+num_consecutivo_alteraciones+'">');
+                              
+                            setInterval(() => {
+                                var valueresultado_FU = $("#guardar_FU_fila_"+num_consecutivo_alteraciones).val();   
+                                // console.log(valueresultado_FU);
+                                $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+                                $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                                                                                        
+                                let resultados_deficiencias = parseFloat(valueresultado_FU);
+                                if (isNaN(resultados_deficiencias)) {
+                                    $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancias_sumas.toFixed(2));
+                                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancias_sumas.toFixed(2));                                  
+                                } else {
+                                    $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultados_deficiencias.toFixed(2));
+                                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultados_deficiencias.toFixed(2));                    
+                                }                                                                        
+                            }, 250);
+                            
+                        };
                     break;
                 }
             }
@@ -369,6 +397,7 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                         $(".resultado_MSD_"+num_consecutivo_alteraciones).prop('disabled', true);
                         $(".resultado_MSD_"+num_consecutivo_alteraciones).change(ValidarMSD);
                         let MSD_checkeds = $("#resultado_MSD_"+num_consecutivo_alteraciones);
+                        // IF TABLA 12.2 Y ELSE TABLAS 14
                         if (id_tabla_seleccionado == 65) {
                             // let deficiencia_resultado = $('#Deficiencia_fila_alteraciones_'+num_consecutivo_alteraciones).text();
                             $(".resultado_FU_"+num_consecutivo_alteraciones).change(function(){
@@ -470,10 +499,10 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
             }
         });        
        
-        /* INSERTAR CAMPOS DE CLASE Y DEFICIENCIAS PARA LAS TABLAS ABIERTAS */
+        /* INSERTAR CAMPOS DE CLASE Y DEFICIENCIAS PARA LAS TABLAS 14.1 hasta la 14.5 y 14.7 ABIERTAS */
         if (id_tabla_seleccionado == 100 || id_tabla_seleccionado == 101 || id_tabla_seleccionado == 102 || id_tabla_seleccionado == 103 || 
             id_tabla_seleccionado == 104 || id_tabla_seleccionado == 105 || id_tabla_seleccionado == 106 || id_tabla_seleccionado == 107 || 
-            id_tabla_seleccionado == 108 || id_tabla_seleccionado == 109 
+            id_tabla_seleccionado == 109 
             ) {
             $("#ClaseFinal_fila_alteraciones_"+num_consecutivo_alteraciones).empty();            
             $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
@@ -483,11 +512,148 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
             $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input type="number" class="form-control" id="resultado_Deficiencia_'+num_consecutivo_alteraciones+'">');
         };
 
+        /* INSERTAR CAMPOS DE CLASE Y DEFICIENCIAS PARA LA TABLAS 14.6  ABIERTAS */
+        if (id_tabla_seleccionado == 108) {
+            $("#ClaseFinal_fila_alteraciones_"+num_consecutivo_alteraciones).empty();            
+            $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+            $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+            $("#ClaseFinal_fila_alteraciones_"+num_consecutivo_alteraciones).append('N/A');
+            $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input type="number" class="form-control" id="resultado_Deficiencia_'+num_consecutivo_alteraciones+'">');
+        };
+
+        /* INSERTAR CAMPOS DE CLASE Y DEFICIENCIAS PARA LA TABLA ABIERTAS 6.3 */
+        if (id_tabla_seleccionado == 37) {
+            let dominancias_sumas = 0.00;                
+            $("#ClaseFinal_fila_alteraciones_"+num_consecutivo_alteraciones).empty();            
+            $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+            $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+            $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancias_sumas.toFixed(2));
+            $("#ClaseFinal_fila_alteraciones_"+num_consecutivo_alteraciones).append('<select id="resultado_Clase_'+num_consecutivo_alteraciones+'" class="custom-select resultado_Clase_'+num_consecutivo_alteraciones+'" data-fila_pertenece="'+num_consecutivo_alteraciones+'">');
+
+            var selectTabla6_3 = $("#resultado_Clase_"+num_consecutivo_alteraciones);
+            
+            // nuevas Opciones
+            var nuevasOpciones = [
+                { value: '', text: 'Seleccione' },
+                { value: 'A', text: 'A' },
+                { value: 'AB', text: 'AB' },
+                { value: 'B', text: 'B' },
+            ];
+            // Obtener las opciones existentes (si las hay)
+            var opcionesExist = selectTabla6_3.children('option');
+
+            // Filtrar las nuevas opciones para incluir solo las que no existen aún
+            var nuevasOpcionesFiltradas = nuevasOpciones.filter(function (nuevaOpcion) {
+                return !opcionesExist.filter(function () {
+                return this.value === nuevaOpcion.value;
+                }).length;
+            });
+
+            // Agregar solo las nuevas opciones al select
+            nuevasOpcionesFiltradas.forEach(function (nuevaOpcion) {
+                selectTabla6_3.append('<option value="' + nuevaOpcion.value + '">' + nuevaOpcion.text + '</option>');
+            }); 
+
+            /* SELECT 2 LISTADO CAT */  
+            $(".resultado_Clase_"+num_consecutivo_alteraciones).select2({
+                width: '100px',
+                placeholder: "Seleccione",
+                allowClear: false
+            });
+
+            var value_selectTabla6_3 = $("#resultado_Clase_"+num_consecutivo_alteraciones);
+            let value_Tabla6_3_A = 25.00;
+            let value_Tabla6_3_B = 50.00;
+            value_selectTabla6_3.change(function (){
+                value_Tabla6_3 = $(this).val();
+                $("#resultado_Deficiencia_"+num_consecutivo_alteraciones).empty();
+                $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                
+                clearInterval(intervalo_B);                 
+                // console.log(value_Tabla6_3);
+                if (value_Tabla6_3 == 'A') {
+                    $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+                    $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(value_Tabla6_3_A.toFixed(2));                                                    
+                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                                                                                        
+                    let resultados_deficiencias = parseFloat($("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).text());
+                    // console.log(resultados_deficiencias);                                            
+                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultados_deficiencias.toFixed(2));                                        
+                }else if(value_Tabla6_3 == 'AB'){
+                    $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+                    $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(value_Tabla6_3_B.toFixed(2));                                                    
+                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                                                                                        
+                    let resultados_deficiencias = parseFloat($("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).text());
+                    // console.log(resultados_deficiencias);                    
+                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultados_deficiencias.toFixed(2));                    
+                    
+                } 
+                
+                if(value_Tabla6_3 == 'B'){
+                    $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input type="number" class="form-control" id="resultado_Deficiencia_'+num_consecutivo_alteraciones+'">');                                                    
+                    $("#resultado_Deficiencia_"+num_consecutivo_alteraciones).empty();                                                                                                                                               
+                    var intervalo_B = setInterval(() => {
+                        $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                                                                                        
+                        let resultados_deficiencias = parseFloat($("#resultado_Deficiencia_"+num_consecutivo_alteraciones).val());
+                        if (isNaN(resultados_deficiencias)) {
+                            $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancias_sumas.toFixed(2));                                  
+                        } else {
+                            $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultados_deficiencias.toFixed(2));                    
+                        } 
+                    }, 250);
+                }                    
+                
+            })
+            
+        };
+
+        /* INSERTAR CAMPOS DE CLASE Y DEFICIENCIAS PARA LA TABLA ABIERTAS 12.10 */
+        if (id_tabla_seleccionado == 75) {
+            let dominancias_sumas = 0.00;                
+            $("#ClaseFinal_fila_alteraciones_"+num_consecutivo_alteraciones).empty();            
+            $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+            $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+            $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancias_sumas.toFixed(2));
+            $("#ClaseFinal_fila_alteraciones_"+num_consecutivo_alteraciones).append('');
+            $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input type="number" class="form-control" id="resultado_Deficiencia_'+num_consecutivo_alteraciones+'">');            
+            setInterval(() => {
+                $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                                                                                        
+                let resultados_deficiencias = parseFloat($("#resultado_Deficiencia_"+num_consecutivo_alteraciones).val());
+                if (isNaN(resultados_deficiencias)) {
+                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancias_sumas.toFixed(2));                                  
+                } else {
+                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultados_deficiencias.toFixed(2));                    
+                } 
+            }, 250);
+        };
+
+        /* INSERTAR CAMPOS DE CLASE Y DEFICIENCIAS PARA LA TABLA 14.14 ABIERTAS */
+        if (id_tabla_seleccionado == 116) {
+            let dominancias_sumas = 0.00;                
+            $("#ClaseFinal_fila_alteraciones_"+num_consecutivo_alteraciones).empty();            
+            $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+            $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+            $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancias_sumas.toFixed(2));
+            $("#ClaseFinal_fila_alteraciones_"+num_consecutivo_alteraciones).append('N/A');
+            $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input type="number" class="form-control" id="resultado_Deficiencia_'+num_consecutivo_alteraciones+'">');            
+            setInterval(() => {
+                $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                                                                                        
+                let resultados_deficiencias = parseFloat($("#resultado_Deficiencia_"+num_consecutivo_alteraciones).val());
+                if (isNaN(resultados_deficiencias)) {
+                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancias_sumas.toFixed(2));                                  
+                } else {
+                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultados_deficiencias.toFixed(2));                    
+                } 
+            }, 250);
+        };
+
         /* INSERTAR CAMPOS DE CLASE Y DEFICIENCIAS PARA LAS TABLAS ABIERTAS */
-        if (id_tabla_seleccionado == 37 ||id_tabla_seleccionado == 58 || id_tabla_seleccionado == 59 || id_tabla_seleccionado == 61 || id_tabla_seleccionado == 75 ||
-            id_tabla_seleccionado == 76 || id_tabla_seleccionado == 77 || id_tabla_seleccionado == 78 || id_tabla_seleccionado == 79 || id_tabla_seleccionado == 80 ||
-            id_tabla_seleccionado == 81 || id_tabla_seleccionado == 82 || id_tabla_seleccionado == 99 || id_tabla_seleccionado == 110 || id_tabla_seleccionado == 111 ||
-            id_tabla_seleccionado == 112 || id_tabla_seleccionado == 113 || id_tabla_seleccionado == 114 || id_tabla_seleccionado == 115 || id_tabla_seleccionado == 116
+        if (id_tabla_seleccionado == 58 || id_tabla_seleccionado == 59 || id_tabla_seleccionado == 61 || id_tabla_seleccionado == 76 || id_tabla_seleccionado == 77 || 
+            id_tabla_seleccionado == 78 || id_tabla_seleccionado == 79 || id_tabla_seleccionado == 80 || id_tabla_seleccionado == 81 || id_tabla_seleccionado == 82 || 
+            id_tabla_seleccionado == 99 || id_tabla_seleccionado == 110 || id_tabla_seleccionado == 111 || id_tabla_seleccionado == 112 || id_tabla_seleccionado == 113 || 
+            id_tabla_seleccionado == 114 || id_tabla_seleccionado == 115 || id_tabla_seleccionado == 128
             ) {
             let dominancias_sumas = 0.00;                
             $("#ClaseFinal_fila_alteraciones_"+num_consecutivo_alteraciones).empty();            
@@ -1532,34 +1698,43 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
 
             // Calculo clase final
             var clase_final_tabla_4_9;
-            if (valor_FU_tabla_4_9 == 20) {
-                clase_final_tabla_4_9 = "1A";
-            }else{
-                clase_final_tabla_4_9 = "1B";
+            if (valor_FU_tabla_4_9 == 20 || valor_FU_tabla_4_9 == 30) {
+                clase_final_tabla_4_9 = "";
             }
 
-            let datos_consulta_deficiencia_tabla_4_9 = {
-                '_token': token,
-                'columna': clase_final_tabla_4_9,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_4_9,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_4_9);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_4_9]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_4_9]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-            }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_4_9);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_4_9 = parseFloat(valor_FU_tabla_4_9);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_4_9.toFixed(2));
+            let suma_total_deficiencias_4_9 = parseFloat(valor_FU_tabla_4_9) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_4_9.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_4_9 = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_4_9,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_4_9,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_4_9);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_4_9]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_4_9]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
         
@@ -1597,14 +1772,10 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             // Calculo de la Clase Final
             var clase_final_tabla_4_10;
             
-            // SI el FP y los FM=4, se asigna el mayor valor de deficiencia
-            // Si uno de los FM=4 se toma el valor más alto dentro de la clase
+            // Si los FM=4 se toma el valor más alto dentro de la clase
 
-            if (parseInt(valor_FP_tabla_4_10) == 4 && parseInt(valor_CFM1_tabla_4_10) == 4 && parseInt(valor_CFM2_tabla_4_10) == 4) {
-                clase_final_tabla_4_10 = "4C"; 
-            }else if(parseInt(valor_FP_tabla_4_10) == 4 || parseInt(valor_CFM1_tabla_4_10) == 4 || parseInt(valor_CFM2_tabla_4_10) == 4){
-                clase_final_tabla_4_10 = valor_FP_tabla_4_10+"C"; 
-                //clase_final_tabla_4_10 = "4C"; 
+            if (parseInt(valor_CFM1_tabla_4_10) == 4 && parseInt(valor_CFM2_tabla_4_10) == 4) {
+                clase_final_tabla_4_10 = valor_FP_tabla_4_10+"C";                 
             }
             else{
                 clase_final_tabla_4_10 = valor_FP_tabla_4_10+literal_tabla_4_10;
@@ -1801,7 +1972,7 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
         case "Tabla 5.2B":
             // deficiencia
             var valor_FU_tabla_5_2B = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
-            var valor_CAT_tabla_5_2B = parseInt($("#guardar_CAT_fila_"+id_fila_insertar_dato).val());
+            var valor_CAT_tabla_5_2B = parseInt($("#resultado_CAT_"+id_fila_insertar_dato).val());
 
             // Calculo clase final
             var clase_final_tabla_5_2B;
@@ -1858,34 +2029,43 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
 
             // Calculo clase final
             var clase_final_tabla_5_3;
-            if (valor_FU_tabla_5_3 == 20) {
-                clase_final_tabla_5_3 = "1A";
-            }else{
-                clase_final_tabla_5_3 = "1B";
+            if (valor_FU_tabla_5_3 == 20 || valor_FU_tabla_5_3 == 30) {
+                clase_final_tabla_5_3 = "";
             }
 
-            let datos_consulta_deficiencia_tabla_5_3 = {
-                '_token': token,
-                'columna': clase_final_tabla_5_3,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_5_3,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_5_3);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_5_3]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_5_3]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_5_3);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_5_3 = parseFloat(valor_FU_tabla_5_3);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_5_3.toFixed(2));
+            let suma_total_deficiencias_5_3 = parseFloat(valor_FU_tabla_5_3) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_5_3.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_5_3 = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_5_3,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_5_3,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_5_3);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_5_3]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_5_3]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -2272,6 +2452,8 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             var clase_final_tabla_5_11B;
             if (valor_FU_tabla_5_11B == 11) {
                 clase_final_tabla_5_11B = "2A";
+            }else if(valor_FU_tabla_5_11B == 25) {
+                clase_final_tabla_5_11B = "2C";
             }else{
                 clase_final_tabla_5_11B = "3A";
             }
@@ -2556,10 +2738,12 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             // calculo deficiencia
             if (!isNaN(ajuste_tabla_7_2) && literal_tabla_7_2 != undefined) {
                 $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                if ((parseInt(valor_FP_tabla_7_2) == 4) && (parseInt(valor_CFM1_tabla_7_2) == 3) && (parseInt(valor_FU_tabla_7_2) == 80)) {
+                if ((parseInt(valor_FP_tabla_7_2) == 4) && (parseInt(valor_CFM1_tabla_7_2) == 3) && (parseInt(valor_FU_tabla_7_2) == 80) || 
+                    (parseInt(valor_FP_tabla_7_2) == 4) && (parseInt(valor_CFM1_tabla_7_2) == 4) && (parseInt(valor_FU_tabla_7_2) == 80)) {
                     clase_final_tabla_7_2 = "4B";    
                     $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_2);
-                }else if((parseInt(valor_FP_tabla_7_2) == 4) && (parseInt(valor_CFM1_tabla_7_2) == 4) && (parseInt(valor_FU_tabla_7_2) == 90)){
+                }else if((parseInt(valor_FP_tabla_7_2) == 4) && (parseInt(valor_CFM1_tabla_7_2) == 3) && (parseInt(valor_FU_tabla_7_2) == 90) ||
+                    (parseInt(valor_FP_tabla_7_2) == 4) && (parseInt(valor_CFM1_tabla_7_2) == 4) && (parseInt(valor_FU_tabla_7_2) == 90)){
                     clase_final_tabla_7_2 = "4C";      
                     $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_2);
                 }else{
@@ -2729,10 +2913,12 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             // calculo deficiencia
             if (!isNaN(ajuste_tabla_7_3) && literal_tabla_7_3 != undefined) {
                 $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                if ((parseInt(valor_FP_tabla_7_3) == 4) && (parseInt(valor_CFM1_tabla_7_3) == 3) && (parseInt(valor_FU_tabla_7_3) == 70)) {
+                if ((parseInt(valor_FP_tabla_7_3) == 4) && (parseInt(valor_CFM1_tabla_7_3) == 3) && (parseInt(valor_FU_tabla_7_3) == 70) ||
+                    (parseInt(valor_FP_tabla_7_3) == 4) && (parseInt(valor_CFM1_tabla_7_3) == 4) && (parseInt(valor_FU_tabla_7_3) == 70)) {
                     clase_final_tabla_7_3 = "4B";    
                     $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_3);
-                }else if((parseInt(valor_FP_tabla_7_3) == 4) && (parseInt(valor_CFM1_tabla_7_3) == 4) && (parseInt(valor_FU_tabla_7_3) == 80)){
+                }else if((parseInt(valor_FP_tabla_7_3) == 4) && (parseInt(valor_CFM1_tabla_7_3) == 4) && (parseInt(valor_FU_tabla_7_3) == 80) ||
+                    (parseInt(valor_FP_tabla_7_3) == 4) && (parseInt(valor_CFM1_tabla_7_3) == 3) && (parseInt(valor_FU_tabla_7_3) == 80)){
                     clase_final_tabla_7_3 = "4C";      
                     $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_3);
                 }else{
@@ -2901,10 +3087,16 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             // calculo deficiencia
             if (!isNaN(ajuste_tabla_7_4) && literal_tabla_7_4 != undefined) {
                 $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                if ((parseInt(valor_FP_tabla_7_4) == 4) && (parseInt(valor_CFM1_tabla_7_4) == 3) && (parseInt(valor_FU_tabla_7_4) == 90)) {
+                if ((parseInt(valor_FP_tabla_7_4) == 4) && (parseInt(valor_CFM1_tabla_7_4) == 3) && (parseInt(valor_FU_tabla_7_4) == 80)||
+                    (parseInt(valor_FP_tabla_7_4) == 4) && (parseInt(valor_CFM1_tabla_7_4) == 4) && (parseInt(valor_FU_tabla_7_4) == 80)) {
+                    clase_final_tabla_7_4 = "4A";    
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_4);
+                }else if((parseInt(valor_FP_tabla_7_4) == 4) && (parseInt(valor_CFM1_tabla_7_4) == 3) && (parseInt(valor_FU_tabla_7_4) == 90)||
+                    (parseInt(valor_FP_tabla_7_4) == 4) && (parseInt(valor_CFM1_tabla_7_4) == 4) && (parseInt(valor_FU_tabla_7_4) == 90)) {
                     clase_final_tabla_7_4 = "4B";    
                     $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_4);
-                }else if((parseInt(valor_FP_tabla_7_4) == 4) && (parseInt(valor_CFM1_tabla_7_4) == 4) && (parseInt(valor_FU_tabla_7_4) == 100)){
+                }else if((parseInt(valor_FP_tabla_7_4) == 4) && (parseInt(valor_CFM1_tabla_7_4) == 3) && (parseInt(valor_FU_tabla_7_4) == 100)||
+                    (parseInt(valor_FP_tabla_7_4) == 4) && (parseInt(valor_CFM1_tabla_7_4) == 4) && (parseInt(valor_FU_tabla_7_4) == 100)){
                     clase_final_tabla_7_4 = "4C";      
                     $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_4);
                 }else{
@@ -3071,10 +3263,16 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             // calculo deficiencia
             if (!isNaN(ajuste_tabla_7_5) && literal_tabla_7_5 != undefined) {
                 $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                if ((parseInt(valor_FP_tabla_7_5) == 4) && (parseInt(valor_CFM1_tabla_7_5) == 3) && (parseInt(valor_FU_tabla_7_5) == 55)) {
+                if ((parseInt(valor_FP_tabla_7_5) == 4) && (parseInt(valor_CFM1_tabla_7_5) == 3) && (parseInt(valor_FU_tabla_7_5) == 45)||
+                    (parseInt(valor_FP_tabla_7_5) == 4) && (parseInt(valor_CFM1_tabla_7_5) == 4) && (parseInt(valor_FU_tabla_7_5) == 45)) {
+                    clase_final_tabla_7_5 = "4A";    
+                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_5);
+                }else if((parseInt(valor_FP_tabla_7_5) == 4) && (parseInt(valor_CFM1_tabla_7_5) == 3) && (parseInt(valor_FU_tabla_7_5) == 55)||
+                    (parseInt(valor_FP_tabla_7_5) == 4) && (parseInt(valor_CFM1_tabla_7_5) == 4) && (parseInt(valor_FU_tabla_7_5) == 55)) {
                     clase_final_tabla_7_5 = "4B";    
                     $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_5);
-                }else if((parseInt(valor_FP_tabla_7_5) == 4) && (parseInt(valor_CFM1_tabla_7_5) == 4) && (parseInt(valor_FU_tabla_7_5) == 65)){
+                }else if((parseInt(valor_FP_tabla_7_5) == 4) && (parseInt(valor_CFM1_tabla_7_5) == 3) && (parseInt(valor_FU_tabla_7_5) == 65)||
+                    (parseInt(valor_FP_tabla_7_5) == 4) && (parseInt(valor_CFM1_tabla_7_5) == 4) && (parseInt(valor_FU_tabla_7_5) == 65)){
                     clase_final_tabla_7_5 = "4C";      
                     $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_5);
                 }else{
@@ -3242,13 +3440,14 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             // calculo deficiencia
             if (!isNaN(ajuste_tabla_7_6) && literal_tabla_7_6 != undefined) {
                 $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                if ((parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 3) && (parseInt(valor_CFM2_tabla_7_6) == 3) && (parseInt(valor_FU_tabla_7_6) == 45)) {
-                    clase_final_tabla_7_6 = "3A";    
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_6);
-                }else if ((parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 3) && (parseInt(valor_CFM2_tabla_7_6) == 3) && (parseInt(valor_FU_tabla_7_6) == 55)) {
+                if ((parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 2) && (parseInt(valor_CFM2_tabla_7_6) == 3) && (parseInt(valor_FU_tabla_7_6) == 55)||
+                    (parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 3) && (parseInt(valor_CFM2_tabla_7_6) == 2) && (parseInt(valor_FU_tabla_7_6) == 55)||
+                    (parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 3) && (parseInt(valor_CFM2_tabla_7_6) == 3) && (parseInt(valor_FU_tabla_7_6) == 55)) {
                     clase_final_tabla_7_6 = "3B";    
                     $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_6);
-                }else if((parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 3) && (parseInt(valor_CFM2_tabla_7_6) == 3) && (parseInt(valor_FU_tabla_7_6) == 65)){
+                }else if((parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 2) && (parseInt(valor_CFM2_tabla_7_6) == 3) && (parseInt(valor_FU_tabla_7_6) == 65)||
+                        (parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 3) && (parseInt(valor_CFM2_tabla_7_6) == 2) && (parseInt(valor_FU_tabla_7_6) == 65)||
+                        (parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 3) && (parseInt(valor_CFM2_tabla_7_6) == 3) && (parseInt(valor_FU_tabla_7_6) == 65)){
                     clase_final_tabla_7_6 = "3C";      
                     $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_7_6);
                 }else{
@@ -3264,8 +3463,7 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
                     $("#resultado_FU_"+id_fila_insertar_dato).prop("disabled", false);  
                     // nuevas Opciones
                     var nuevasOpciones = [
-                        { value: '', text: 'Seleccione' },
-                        { value: '45', text: '45' },
+                        { value: '', text: 'Seleccione' },                        
                         { value: '55', text: '55' },
                         { value: '65', text: '65' },
                     ];
@@ -4144,34 +4342,43 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
 
             // Calculo clase final
             var clase_final_tabla_10_1;
-            if (valor_FU_tabla_10_1 == 3) {
-                clase_final_tabla_10_1 = "1A";
-            }else{
-                clase_final_tabla_10_1 = "1B";
+            if (valor_FU_tabla_10_1 == 3 || valor_FU_tabla_10_1 == 6) {
+                clase_final_tabla_10_1 = "";
             }
 
-            let datos_consulta_deficiencia_tabla_10_1 = {
-                '_token': token,
-                'columna': clase_final_tabla_10_1,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_10_1,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_10_1);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_10_1]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_10_1]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_10_1);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_10_1 = parseFloat(valor_FU_tabla_10_1);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_10_1.toFixed(2));
+            let suma_total_deficiencias_10_1 = parseFloat(valor_FU_tabla_10_1) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_10_1.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_10_1 = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_10_1,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_10_1,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_10_1);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_10_1]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_10_1]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
         break;
 
         case "Tabla 10.2":
@@ -4180,34 +4387,43 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
 
             // Calculo clase final
             var clase_final_tabla_10_2;
-            if (valor_FU_tabla_10_2 == 3) {
-                clase_final_tabla_10_2 = "1A";
-            }else{
-                clase_final_tabla_10_2 = "1B";
+            if (valor_FU_tabla_10_2 == 3 || valor_FU_tabla_10_2 == 6) {
+                clase_final_tabla_10_2 = "";
             }
 
-            let datos_consulta_deficiencia_tabla_10_2 = {
-                '_token': token,
-                'columna': clase_final_tabla_10_2,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_10_2,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_10_2);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_10_2]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_10_2]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_10_2);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_10_2 = parseFloat(valor_FU_tabla_10_2);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_10_2.toFixed(2));
+            let suma_total_deficiencias_10_2 = parseFloat(valor_FU_tabla_10_2) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_10_2.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_10_2 = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_10_2,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_10_2,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_10_2);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_10_2]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_10_2]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -4267,39 +4483,43 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             // Calculo clase final
             var clase_final_tabla_11_4;
 
-            if (valor_FU_tabla_11_4 == 8) {
-                clase_final_tabla_11_4 = "1A";
-            }else if (valor_FU_tabla_11_4 == 15) {
-                clase_final_tabla_11_4 = "1B";
-            }else if (valor_FU_tabla_11_4 == 18) {
-                clase_final_tabla_11_4 = "1C";
+            if (valor_FU_tabla_11_4 == 8 || valor_FU_tabla_11_4 ==  15 || valor_FU_tabla_11_4 == 18 || valor_FU_tabla_11_4 == 23) {
+                clase_final_tabla_11_4 = "";
             }
-            else if (valor_FU_tabla_11_4 == 23) {
-                clase_final_tabla_11_4 = "1D";
-            };
 
-            let datos_consulta_deficiencia_tabla_11_4 = {
-                '_token': token,
-                'columna': clase_final_tabla_11_4,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_11_4,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_11_4);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_11_4]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_11_4]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_11_4);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_11_4 = parseFloat(valor_FU_tabla_11_4);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_11_4.toFixed(2));
+            let suma_total_deficiencias_11_4 = parseFloat(valor_FU_tabla_11_4) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_11_4.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_11_4 = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_11_4,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_11_4,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_11_4);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_11_4]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_11_4]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -4310,44 +4530,44 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             // Calculo clase final
             var clase_final_tabla_11_5;
 
-            if (valor_FU_tabla_11_5 == 5) {
-                clase_final_tabla_11_5 = "1A";
-            }else if (valor_FU_tabla_11_5 == 7) {
-                clase_final_tabla_11_5 = "1B";
-            }else if (valor_FU_tabla_11_5 == 10) {
-                clase_final_tabla_11_5 = "1C";
-            }else if (valor_FU_tabla_11_5 == 15) {
-                clase_final_tabla_11_5 = "1D";
-            }else if (valor_FU_tabla_11_5 == 20) {
-                clase_final_tabla_11_5 = "1E";
-            }else if (valor_FU_tabla_11_5 == 23) {
-                clase_final_tabla_11_5 = "2A";
-            }else if (valor_FU_tabla_11_5 == 30) {
-                clase_final_tabla_11_5 = "2B";
+            if (valor_FU_tabla_11_5 == 5 || valor_FU_tabla_11_5 == 7 || valor_FU_tabla_11_5 == 10 || valor_FU_tabla_11_5 == 15 ||
+                valor_FU_tabla_11_5 == 20 || valor_FU_tabla_11_5 == 23 || valor_FU_tabla_11_5 == 30) {
+                clase_final_tabla_11_5 = "";
             }
 
-            let datos_consulta_deficiencia_tabla_11_5 = {
-                '_token': token,
-                'columna': clase_final_tabla_11_5,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_11_5,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_11_5);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_11_5]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_11_5]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_11_5);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_11_5 = parseFloat(valor_FU_tabla_11_5);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_11_5.toFixed(2));
+            let suma_total_deficiencias_11_5 = parseFloat(valor_FU_tabla_11_5) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_11_5.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_11_5 = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_11_5,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_11_5,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_11_5);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_11_5]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_11_5]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -4359,37 +4579,48 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             var clase_final_tabla_12_1;
             
             if (valor_FU_tabla_12_1 == 25) {
-                clase_final_tabla_12_1 = "1A";
+                clase_final_tabla_12_1 = "1";
             }else if (valor_FU_tabla_12_1 == 50) {
-                clase_final_tabla_12_1 = "1B";
+                clase_final_tabla_12_1 = "2";
             }else if (valor_FU_tabla_12_1 == 75) {
-                clase_final_tabla_12_1 = "1C";
+                clase_final_tabla_12_1 = "3";
             }else if (valor_FU_tabla_12_1 == 100) {
-                clase_final_tabla_12_1 = "1D";
+                clase_final_tabla_12_1 = "4";
             }
 
-            let datos_consulta_deficiencia_tabla_12_1 = {
-                '_token': token,
-                'columna': clase_final_tabla_12_1,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_12_1,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_1);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_12_1]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_1]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_1);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_12_1 = parseFloat(valor_FU_tabla_12_1);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_1.toFixed(2));
+            let suma_total_deficiencias_12_1 = parseFloat(valor_FU_tabla_12_1) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_12_1.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_12_1 = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_12_1,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_12_1,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_1);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_12_1]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_1]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -4401,21 +4632,21 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             var clase_final_tabla_12_2;
 
             if (valor_FU_tabla_12_2 == 20 || valor_FU_tabla_12_2 == 25) {
-                clase_final_tabla_12_2 = "1A";
+                clase_final_tabla_12_2 = "1";
             }else if (valor_FU_tabla_12_2 == 40 || valor_FU_tabla_12_2 == 45) {
-                clase_final_tabla_12_2 = "2A";
+                clase_final_tabla_12_2 = "2";
             }else if (valor_FU_tabla_12_2 == 50 || valor_FU_tabla_12_2 == 55) {
-                clase_final_tabla_12_2 = "3A";
+                clase_final_tabla_12_2 = "3";
             }else if (valor_FU_tabla_12_2 == 60 || valor_FU_tabla_12_2 == 65) {
-                clase_final_tabla_12_2 = "4A";
+                clase_final_tabla_12_2 = "4";
             }
 
             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
 
             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_2);                    
-            let deficiencias = parseFloat(valor_FU_tabla_12_2);
-            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            let deficiencias_12_2 = parseFloat(valor_FU_tabla_12_2);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_2.toFixed(2));
 
             // let datos_consulta_deficiencia_tabla_12_2 = {
             //     '_token': token,
@@ -4446,37 +4677,48 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             var clase_final_tabla_12_3;
             
             if (valor_FU_tabla_12_3 == 10) {
-                clase_final_tabla_12_3 = "1A";
+                clase_final_tabla_12_3 = "1";
             }else if (valor_FU_tabla_12_3 == 20) {
-                clase_final_tabla_12_3 = "1B";
+                clase_final_tabla_12_3 = "2";
             }else if (valor_FU_tabla_12_3 == 35) {
-                clase_final_tabla_12_3 = "1C";
+                clase_final_tabla_12_3 = "3";
             }else if (valor_FU_tabla_12_3 == 50) {
-                clase_final_tabla_12_3 = "1D";
+                clase_final_tabla_12_3 = "4";
             }
 
-            let datos_consulta_deficiencia_tabla_12_3 = {
-                '_token': token,
-                'columna': clase_final_tabla_12_3,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_12_3,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_3);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_12_3]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_3]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_3);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_12_3 = parseFloat(valor_FU_tabla_12_3);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_3.toFixed(2));
+            let suma_total_deficiencias_12_3 = parseFloat(valor_FU_tabla_12_3) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_12_3.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_12_3 = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_12_3,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_12_3,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_3);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_12_3]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_3]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -4488,37 +4730,48 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             var clase_final_tabla_12_4A;
             	
             if (valor_FU_tabla_12_4A == 10) {
-                clase_final_tabla_12_4A = "1A";
+                clase_final_tabla_12_4A = "1";
             }else if (valor_FU_tabla_12_4A == 15) {
-                clase_final_tabla_12_4A = "1B";
+                clase_final_tabla_12_4A = "2";
             }else if (valor_FU_tabla_12_4A == 20) {
-                clase_final_tabla_12_4A = "1C";
+                clase_final_tabla_12_4A = "3";
             }else if (valor_FU_tabla_12_4A == 25) {
-                clase_final_tabla_12_4A = "1D";
+                clase_final_tabla_12_4A = "4";
             }
 
-            let datos_consulta_deficiencia_tabla_12_4A = {
-                '_token': token,
-                'columna': clase_final_tabla_12_4A,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_12_4A,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_4A);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_12_4A]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_4A]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_4A);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_12_4A = parseFloat(valor_FU_tabla_12_4A);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_4A.toFixed(2));
+            let suma_total_deficiencias_12_4A = parseFloat(valor_FU_tabla_12_4A) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_12_4A.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_12_4A = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_12_4A,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_12_4A,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_4A);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_12_4A]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_4A]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -4530,37 +4783,48 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             var clase_final_tabla_12_4B;
             
             if (valor_FU_tabla_12_4B == 5) {
-                clase_final_tabla_12_4B = "1A";
+                clase_final_tabla_12_4B = "1";
             }else if (valor_FU_tabla_12_4B == 10) {
-                clase_final_tabla_12_4B = "1B";
+                clase_final_tabla_12_4B = "2";
             }else if (valor_FU_tabla_12_4B == 15) {
-                clase_final_tabla_12_4B = "1C";
+                clase_final_tabla_12_4B = "3";
             }else if (valor_FU_tabla_12_4B == 20) {
-                clase_final_tabla_12_4B = "1D";
+                clase_final_tabla_12_4B = "4";
             }
 
-            let datos_consulta_deficiencia_tabla_12_4B = {
-                '_token': token,
-                'columna': clase_final_tabla_12_4B,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_12_4B,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_4B);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_12_4B]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_4B]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_4B);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_12_4B = parseFloat(valor_FU_tabla_12_4B);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_4B.toFixed(2));
+            let suma_total_deficiencias_12_4B = parseFloat(valor_FU_tabla_12_4B) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_12_4B.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_12_4B = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_12_4B,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_12_4B,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_4B);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_12_4B]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_4B]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -4572,48 +4836,57 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             var clase_final_tabla_12_4C;
             
             if (valor_FU_tabla_12_4C == 5) {
-                clase_final_tabla_12_4C = "1A";
+                clase_final_tabla_12_4C = "1";
             }else if (valor_FU_tabla_12_4C == 10) {
-                clase_final_tabla_12_4C = "1B";
+                clase_final_tabla_12_4C = "2";
             }else if (valor_FU_tabla_12_4C == 15) {
-                clase_final_tabla_12_4C = "1C";
-            }else if (valor_FU_tabla_12_4C == 0) {
-                clase_final_tabla_12_4C = "NADA";
+                clase_final_tabla_12_4C = "3";
             }
 
-            if (clase_final_tabla_12_4C == "NADA") {
-                $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                let calculo_final = 0.00;
-                $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(calculo_final.toFixed(2));
-                $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(calculo_final.toFixed(2));
-                $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(calculo_final.toFixed(2));
-            }else{
-                let datos_consulta_deficiencia_tabla_12_4C = {
-                    '_token': token,
-                    'columna': clase_final_tabla_12_4C,
-                    'Id_tabla': id_tabla
-                };
-                $.ajax({
-                    url: "/consultaValorDeficiencia",
-                    type: "post",
-                    data: datos_consulta_deficiencia_tabla_12_4C,
-                    success:function(response){
-                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                        $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                        $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                        $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_4C);
-                        $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                        let deficiencias = parseFloat(response[0][clase_final_tabla_12_4C]);
-                        $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                        let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_4C]) + dominancia_suma;
-                        $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                    }         
-                });
-            }
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_4C);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_12_C = parseFloat(valor_FU_tabla_12_4C);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_C.toFixed(2));
+            let suma_total_deficiencias_12_C = parseFloat(valor_FU_tabla_12_4C) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_12_C.toFixed(2));
+
+            // if (clase_final_tabla_12_4C == "NADA") {
+            //     $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //     $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //     $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //     $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //     let calculo_final = 0.00;
+            //     $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(calculo_final.toFixed(2));
+            //     $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(calculo_final.toFixed(2));
+            //     $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(calculo_final.toFixed(2));
+            // }else{
+            //     let datos_consulta_deficiencia_tabla_12_4C = {
+            //         '_token': token,
+            //         'columna': clase_final_tabla_12_4C,
+            //         'Id_tabla': id_tabla
+            //     };
+            //     $.ajax({
+            //         url: "/consultaValorDeficiencia",
+            //         type: "post",
+            //         data: datos_consulta_deficiencia_tabla_12_4C,
+            //         success:function(response){
+            //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_4C);
+            //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //             let deficiencias = parseFloat(response[0][clase_final_tabla_12_4C]);
+            //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //             let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_4C]) + dominancia_suma;
+            //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //         }         
+            //     });
+            // }
 
         break;
 
@@ -4625,39 +4898,50 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             var clase_final_tabla_12_4D;
             
             if (valor_FU_tabla_12_4D == 10) {
-                clase_final_tabla_12_4D = "1A";
+                clase_final_tabla_12_4D = "1";
             }else if (valor_FU_tabla_12_4D == 20) {
-                clase_final_tabla_12_4D = "1B";
+                clase_final_tabla_12_4D = "2";
             }else if (valor_FU_tabla_12_4D == 40) {
-                clase_final_tabla_12_4D = "1C";
+                clase_final_tabla_12_4D = "3";
             }else if (valor_FU_tabla_12_4D == 60) {
-                clase_final_tabla_12_4D = "1D";
+                clase_final_tabla_12_4D = "4";
             }else if (valor_FU_tabla_12_4D == 80) {
-                clase_final_tabla_12_4D = "1E";
+                clase_final_tabla_12_4D = "5";                
             }
 
-            let datos_consulta_deficiencia_tabla_12_4D = {
-                '_token': token,
-                'columna': clase_final_tabla_12_4D,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_12_4D,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_4D);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_12_4D]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_4D]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_4D);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_12_4D = parseFloat(valor_FU_tabla_12_4D);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_4D.toFixed(2));
+            let suma_total_deficiencias_12_4D = parseFloat(valor_FU_tabla_12_4D) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_12_4D.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_12_4D = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_12_4D,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_12_4D,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_4D);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_12_4D]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_4D]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -4669,35 +4953,46 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             var clase_final_tabla_12_5;
             
             if (valor_FU_tabla_12_5 == 10) {
-                clase_final_tabla_12_5 = "1A";
+                clase_final_tabla_12_5 = "1";
             }else if (valor_FU_tabla_12_5 == 15) {
-                clase_final_tabla_12_5 = "1B";
+                clase_final_tabla_12_5 = "2";
             }else if (valor_FU_tabla_12_5 == 20) {
-                clase_final_tabla_12_5 = "1C";
+                clase_final_tabla_12_5 = "3";
             }
 
-            let datos_consulta_deficiencia_tabla_12_5 = {
-                '_token': token,
-                'columna': clase_final_tabla_12_5,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_12_5,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_5);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_12_5]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_5]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_5);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_12_5 = parseFloat(valor_FU_tabla_12_5);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_5.toFixed(2));
+            let suma_total_deficiencias_12_5 = parseFloat(valor_FU_tabla_12_5) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_12_5.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_12_5 = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_12_5,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_12_5,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_5);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_12_5]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_5]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -4709,37 +5004,48 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             var clase_final_tabla_12_6;
             
             if (valor_FU_tabla_12_6 == 2) {
-                clase_final_tabla_12_6 = "1A";
+                clase_final_tabla_12_6 = "1";
             }else if (valor_FU_tabla_12_6 == 3) {
-                clase_final_tabla_12_6 = "1B";
+                clase_final_tabla_12_6 = "2";
             }else if (valor_FU_tabla_12_6 == 4) {
-                clase_final_tabla_12_6 = "1C";
+                clase_final_tabla_12_6 = "3";
             }else if (valor_FU_tabla_12_6 == 5) {
-                clase_final_tabla_12_6 = "1D";
+                clase_final_tabla_12_6 = "4";
             }
 
-            let datos_consulta_deficiencia_tabla_12_6 = {
-                '_token': token,
-                'columna': clase_final_tabla_12_6,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_12_6,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_6);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_12_6]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_6]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_6);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_12_6 = parseFloat(valor_FU_tabla_12_6);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_6.toFixed(2));
+            let suma_total_deficiencias_12_6 = parseFloat(valor_FU_tabla_12_6) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_12_6.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_12_6 = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_12_6,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_12_6,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_6);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_12_6]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_6]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -4751,35 +5057,46 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             var clase_final_tabla_12_7;
             // 		
             if (valor_FU_tabla_12_7 == 1) {
-                clase_final_tabla_12_7 = "1A";
+                clase_final_tabla_12_7 = "1";
             }else if (valor_FU_tabla_12_7 == 5) {
-                clase_final_tabla_12_7 = "1B";
+                clase_final_tabla_12_7 = "2";
             }else if (valor_FU_tabla_12_7 == 10) {
-                clase_final_tabla_12_7 = "1C";
+                clase_final_tabla_12_7 = "3";
             }
 
-            let datos_consulta_deficiencia_tabla_12_7 = {
-                '_token': token,
-                'columna': clase_final_tabla_12_7,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_12_7,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_7);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_12_7]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_7]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_7);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_12_7 = parseFloat(valor_FU_tabla_12_7);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_7.toFixed(2));
+            let suma_total_deficiencias_12_7 = parseFloat(valor_FU_tabla_12_7) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_12_7.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_12_7 = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_12_7,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_12_7,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_7);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_12_7]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_7]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -4791,35 +5108,46 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             var clase_final_tabla_12_8;
             // 		
             if (valor_FU_tabla_12_8 == 1) {
-                clase_final_tabla_12_8 = "1A";
+                clase_final_tabla_12_8 = "1";
             }else if (valor_FU_tabla_12_8 == 5) {
-                clase_final_tabla_12_8 = "1B";
+                clase_final_tabla_12_8 = "2";
             }else if (valor_FU_tabla_12_8 == 10) {
-                clase_final_tabla_12_8 = "1C";
+                clase_final_tabla_12_8 = "3";
             }
 
-            let datos_consulta_deficiencia_tabla_12_8 = {
-                '_token': token,
-                'columna': clase_final_tabla_12_8,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_12_8,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_8);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_12_8]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_8]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_8);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_12_8 = parseFloat(valor_FU_tabla_12_8);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_8.toFixed(2));
+            let suma_total_deficiencias_12_8 = parseFloat(valor_FU_tabla_12_8) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_12_8.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_12_8 = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_12_8,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_12_8,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_8);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_12_8]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_8]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -4928,34 +5256,43 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             // Calculo clase final
             var clase_final_tabla_12_20A;
 
-            if (valor_FU_tabla_12_20A == 1) {
-                clase_final_tabla_12_20A = "1A";
-            }else if (valor_FU_tabla_12_20A == 3) {
-                clase_final_tabla_12_20A = "1B";
+            if (valor_FU_tabla_12_20A == 1 || valor_FU_tabla_12_20A == 3) {
+                clase_final_tabla_12_20A = "";
             }
 
-            let datos_consulta_deficiencia_tabla_12_20A = {
-                '_token': token,
-                'columna': clase_final_tabla_12_20A,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_12_20A,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_20A);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_12_20A]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_20A]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_20A);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_12_20A = parseFloat(valor_FU_tabla_12_20A);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_20A.toFixed(2));
+            let suma_total_deficiencias_12_20A = parseFloat(valor_FU_tabla_12_20A) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_12_20A.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_12_20A = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_12_20A,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_12_20A,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_20A);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_12_20A]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_20A]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -4966,38 +5303,43 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             // Calculo clase final
             var clase_final_tabla_12_20B;
 
-            if (valor_FU_tabla_12_20B == 5) {
-                clase_final_tabla_12_20B = "1A";
-            }else if (valor_FU_tabla_12_20B == 10) {
-                clase_final_tabla_12_20B = "1B";
-            }else if (valor_FU_tabla_12_20B == 35) {
-                clase_final_tabla_12_20B = "1C";
-            }else if (valor_FU_tabla_12_20B == 45) {
-                clase_final_tabla_12_20B = "1D";
+            if (valor_FU_tabla_12_20B == 5 || valor_FU_tabla_12_20B == 10 || valor_FU_tabla_12_20B == 35 || valor_FU_tabla_12_20B == 45) {
+                clase_final_tabla_12_20B = "";
             }
 
-            let datos_consulta_deficiencia_tabla_12_20B = {
-                '_token': token,
-                'columna': clase_final_tabla_12_20B,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_12_20B,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_20B);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_12_20B]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_20B]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_20B);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_12_20B = parseFloat(valor_FU_tabla_12_20B);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_20B.toFixed(2));
+            let suma_total_deficiencias_12_20B = parseFloat(valor_FU_tabla_12_20B) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_12_20B.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_12_20B = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_12_20B,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_12_20B,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_20B);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_12_20B]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_20B]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -5009,33 +5351,43 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             var clase_final_tabla_12_20C;
             	
 
-            if (valor_FU_tabla_12_20C == 15) {
-                clase_final_tabla_12_20C = "1A";
-            }else if (valor_FU_tabla_12_20C == 45) {
-                clase_final_tabla_12_20C = "1B";
+            if (valor_FU_tabla_12_20C == 15 || valor_FU_tabla_12_20C == 45) {
+                clase_final_tabla_12_20C = "";
             }
-            let datos_consulta_deficiencia_tabla_12_20C = {
-                '_token': token,
-                'columna': clase_final_tabla_12_20C,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_12_20C,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_20C);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_12_20C]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_20C]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_20C);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_12_20C = parseFloat(valor_FU_tabla_12_20C);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_20C.toFixed(2));
+            let suma_total_deficiencias_12_20C = parseFloat(valor_FU_tabla_12_20C) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_12_20C.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_12_20C = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_12_20C,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_12_20C,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_20C);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_12_20C]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_20C]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -5046,400 +5398,409 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             // Calculo clase final
             var clase_final_tabla_12_20D;
 
-            if (valor_FU_tabla_12_20D == 5) {
-                clase_final_tabla_12_20D = "1A";
-            }else if (valor_FU_tabla_12_20D == 7) {
-                clase_final_tabla_12_20D = "1B";
+            if (valor_FU_tabla_12_20D == 5 || valor_FU_tabla_12_20D == 7) {
+                clase_final_tabla_12_20D = "";
             }
 
-            let datos_consulta_deficiencia_tabla_12_20D = {
-                '_token': token,
-                'columna': clase_final_tabla_12_20D,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_12_20D,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_20D);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_12_20D]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_20D]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_20D);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_12_20D = parseFloat(valor_FU_tabla_12_20D);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_20D.toFixed(2));
+            let suma_total_deficiencias_12_20D = parseFloat(valor_FU_tabla_12_20D) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_12_20D.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_12_20D = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_12_20D,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_12_20D,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_20D);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_12_20D]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_12_20D]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
-        case "Tabla 13.2A":
-            // deficiencia
-            var valor_FU_tabla_13_2A = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+        // case "Tabla 13.2A":
+        //     // deficiencia
+        //     var valor_FU_tabla_13_2A = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
 
-            // Calculo clase final
-            var clase_final_tabla_13_2A;
+        //     // Calculo clase final
+        //     var clase_final_tabla_13_2A;
 
-            if (valor_FU_tabla_13_2A == 20) {
-                clase_final_tabla_13_2A = "1A";
-            }else if (valor_FU_tabla_13_2A == 40) {
-                clase_final_tabla_13_2A = "1B";
-            }else if (valor_FU_tabla_13_2A == 60) {
-                clase_final_tabla_13_2A = "1C";
-            }else if (valor_FU_tabla_13_2A == 80) {
-                clase_final_tabla_13_2A = "1D";
-            }else if (valor_FU_tabla_13_2A == 100) {
-                clase_final_tabla_13_2A = "1E";
-            }
+        //     if (valor_FU_tabla_13_2A == 20) {
+        //         clase_final_tabla_13_2A = "1A";
+        //     }else if (valor_FU_tabla_13_2A == 40) {
+        //         clase_final_tabla_13_2A = "1B";
+        //     }else if (valor_FU_tabla_13_2A == 60) {
+        //         clase_final_tabla_13_2A = "1C";
+        //     }else if (valor_FU_tabla_13_2A == 80) {
+        //         clase_final_tabla_13_2A = "1D";
+        //     }else if (valor_FU_tabla_13_2A == 100) {
+        //         clase_final_tabla_13_2A = "1E";
+        //     }
 
-            let datos_consulta_deficiencia_tabla_13_2A = {
-                '_token': token,
-                'columna': clase_final_tabla_13_2A,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_13_2A,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_2A);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_13_2A]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_2A]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+        //     let datos_consulta_deficiencia_tabla_13_2A = {
+        //         '_token': token,
+        //         'columna': clase_final_tabla_13_2A,
+        //         'Id_tabla': id_tabla
+        //     };
+        //     $.ajax({
+        //         url: "/consultaValorDeficiencia",
+        //         type: "post",
+        //         data: datos_consulta_deficiencia_tabla_13_2A,
+        //         success:function(response){
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_2A);
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+        //             let deficiencias = parseFloat(response[0][clase_final_tabla_13_2A]);
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+        //             let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_2A]) + dominancia_suma;
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+        //         }         
+        //     });
 
-        break;
+        // break;
 
-        case "Tabla 13.2B":
-            // deficiencia
-            var valor_FU_tabla_13_2B = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+        // case "Tabla 13.2B":
+        //     // deficiencia
+        //     var valor_FU_tabla_13_2B = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
 
-            // Calculo clase final
-            var clase_final_tabla_13_2B;
+        //     // Calculo clase final
+        //     var clase_final_tabla_13_2B;
 
-            if (valor_FU_tabla_13_2B == 20) {
-                clase_final_tabla_13_2B = "1A";
-            }else if (valor_FU_tabla_13_2B == 40) {
-                clase_final_tabla_13_2B = "1B";
-            }else if (valor_FU_tabla_13_2B == 60) {
-                clase_final_tabla_13_2B = "1C";
-            }else if (valor_FU_tabla_13_2B == 80) {
-                clase_final_tabla_13_2B = "1D";
-            }else if (valor_FU_tabla_13_2B == 100) {
-                clase_final_tabla_13_2B = "1E";
-            }
+        //     if (valor_FU_tabla_13_2B == 20) {
+        //         clase_final_tabla_13_2B = "1A";
+        //     }else if (valor_FU_tabla_13_2B == 40) {
+        //         clase_final_tabla_13_2B = "1B";
+        //     }else if (valor_FU_tabla_13_2B == 60) {
+        //         clase_final_tabla_13_2B = "1C";
+        //     }else if (valor_FU_tabla_13_2B == 80) {
+        //         clase_final_tabla_13_2B = "1D";
+        //     }else if (valor_FU_tabla_13_2B == 100) {
+        //         clase_final_tabla_13_2B = "1E";
+        //     }
 
-            let datos_consulta_deficiencia_tabla_13_2B = {
-                '_token': token,
-                'columna': clase_final_tabla_13_2B,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_13_2B,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_2B);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_13_2B]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_2B]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+        //     let datos_consulta_deficiencia_tabla_13_2B = {
+        //         '_token': token,
+        //         'columna': clase_final_tabla_13_2B,
+        //         'Id_tabla': id_tabla
+        //     };
+        //     $.ajax({
+        //         url: "/consultaValorDeficiencia",
+        //         type: "post",
+        //         data: datos_consulta_deficiencia_tabla_13_2B,
+        //         success:function(response){
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_2B);
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+        //             let deficiencias = parseFloat(response[0][clase_final_tabla_13_2B]);
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+        //             let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_2B]) + dominancia_suma;
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+        //         }         
+        //     });
 
-        break;
+        // break;
 
-        case "Tabla 13.3A":
-            // deficiencia
-            var valor_FU_tabla_13_3A = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+        // case "Tabla 13.3A":
+        //     // deficiencia
+        //     var valor_FU_tabla_13_3A = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
 
-            // Calculo clase final
-            var clase_final_tabla_13_3A;
+        //     // Calculo clase final
+        //     var clase_final_tabla_13_3A;
 
-            if (valor_FU_tabla_13_3A == 20) {
-                clase_final_tabla_13_3A = "1A";
-            }else if (valor_FU_tabla_13_3A == 40) {
-                clase_final_tabla_13_3A = "1B";
-            }
+        //     if (valor_FU_tabla_13_3A == 20) {
+        //         clase_final_tabla_13_3A = "1A";
+        //     }else if (valor_FU_tabla_13_3A == 40) {
+        //         clase_final_tabla_13_3A = "1B";
+        //     }
 
-            let datos_consulta_deficiencia_tabla_13_3A = {
-                '_token': token,
-                'columna': clase_final_tabla_13_3A,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_13_3A,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_3A);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_13_3A]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_3A]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+        //     let datos_consulta_deficiencia_tabla_13_3A = {
+        //         '_token': token,
+        //         'columna': clase_final_tabla_13_3A,
+        //         'Id_tabla': id_tabla
+        //     };
+        //     $.ajax({
+        //         url: "/consultaValorDeficiencia",
+        //         type: "post",
+        //         data: datos_consulta_deficiencia_tabla_13_3A,
+        //         success:function(response){
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_3A);
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+        //             let deficiencias = parseFloat(response[0][clase_final_tabla_13_3A]);
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+        //             let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_3A]) + dominancia_suma;
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+        //         }         
+        //     });
 
-        break;
+        // break;
 
-        case "Tabla 13.3B":
-            // deficiencia
-            var valor_FU_tabla_13_3B = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+        // case "Tabla 13.3B":
+        //     // deficiencia
+        //     var valor_FU_tabla_13_3B = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
 
-            // Calculo clase final
-            var clase_final_tabla_13_3B;
+        //     // Calculo clase final
+        //     var clase_final_tabla_13_3B;
 
-            if (valor_FU_tabla_13_3B == 20) {
-                clase_final_tabla_13_3B = "1A";
-            }else if (valor_FU_tabla_13_3B == 40) {
-                clase_final_tabla_13_3B = "1B";
-            }
+        //     if (valor_FU_tabla_13_3B == 20) {
+        //         clase_final_tabla_13_3B = "1A";
+        //     }else if (valor_FU_tabla_13_3B == 40) {
+        //         clase_final_tabla_13_3B = "1B";
+        //     }
 
-            let datos_consulta_deficiencia_tabla_13_3B = {
-                '_token': token,
-                'columna': clase_final_tabla_13_3B,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_13_3B,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_3B);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_13_3B]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_3B]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+        //     let datos_consulta_deficiencia_tabla_13_3B = {
+        //         '_token': token,
+        //         'columna': clase_final_tabla_13_3B,
+        //         'Id_tabla': id_tabla
+        //     };
+        //     $.ajax({
+        //         url: "/consultaValorDeficiencia",
+        //         type: "post",
+        //         data: datos_consulta_deficiencia_tabla_13_3B,
+        //         success:function(response){
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_3B);
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+        //             let deficiencias = parseFloat(response[0][clase_final_tabla_13_3B]);
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+        //             let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_3B]) + dominancia_suma;
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+        //         }         
+        //     });
 
-        break;
+        // break;
 
-        case "Tabla 13.4A":
-            // deficiencia
-            var valor_FU_tabla_13_4A = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+        // case "Tabla 13.4A":
+        //     // deficiencia
+        //     var valor_FU_tabla_13_4A = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
 
-            // Calculo clase final
-            var clase_final_tabla_13_4A;
+        //     // Calculo clase final
+        //     var clase_final_tabla_13_4A;
 
-            if (valor_FU_tabla_13_4A == 20) {
-                clase_final_tabla_13_4A = "1A";
-            }else if (valor_FU_tabla_13_4A == 40) {
-                clase_final_tabla_13_4A = "1B";
-            }
+        //     if (valor_FU_tabla_13_4A == 20) {
+        //         clase_final_tabla_13_4A = "1A";
+        //     }else if (valor_FU_tabla_13_4A == 40) {
+        //         clase_final_tabla_13_4A = "1B";
+        //     }
 
-            let datos_consulta_deficiencia_tabla_13_4A = {
-                '_token': token,
-                'columna': clase_final_tabla_13_4A,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_13_4A,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_4A);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_13_4A]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_4A]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+        //     let datos_consulta_deficiencia_tabla_13_4A = {
+        //         '_token': token,
+        //         'columna': clase_final_tabla_13_4A,
+        //         'Id_tabla': id_tabla
+        //     };
+        //     $.ajax({
+        //         url: "/consultaValorDeficiencia",
+        //         type: "post",
+        //         data: datos_consulta_deficiencia_tabla_13_4A,
+        //         success:function(response){
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_4A);
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+        //             let deficiencias = parseFloat(response[0][clase_final_tabla_13_4A]);
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+        //             let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_4A]) + dominancia_suma;
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+        //         }         
+        //     });
 
-        break;
+        // break;
 
-        case "Tabla 13.4B":
-            // deficiencia
-            var valor_FU_tabla_13_4B = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+        // case "Tabla 13.4B":
+        //     // deficiencia
+        //     var valor_FU_tabla_13_4B = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
 
-            // Calculo clase final
-            var clase_final_tabla_13_4B;
+        //     // Calculo clase final
+        //     var clase_final_tabla_13_4B;
 
-            if (valor_FU_tabla_13_4B == 20) {
-                clase_final_tabla_13_4B = "1A";
-            }else if (valor_FU_tabla_13_4B == 40) {
-                clase_final_tabla_13_4B = "1B";
-            }
+        //     if (valor_FU_tabla_13_4B == 20) {
+        //         clase_final_tabla_13_4B = "1A";
+        //     }else if (valor_FU_tabla_13_4B == 40) {
+        //         clase_final_tabla_13_4B = "1B";
+        //     }
 
-            let datos_consulta_deficiencia_tabla_13_4B = {
-                '_token': token,
-                'columna': clase_final_tabla_13_4B,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_13_4B,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_4B);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_13_4B]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_4B]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+        //     let datos_consulta_deficiencia_tabla_13_4B = {
+        //         '_token': token,
+        //         'columna': clase_final_tabla_13_4B,
+        //         'Id_tabla': id_tabla
+        //     };
+        //     $.ajax({
+        //         url: "/consultaValorDeficiencia",
+        //         type: "post",
+        //         data: datos_consulta_deficiencia_tabla_13_4B,
+        //         success:function(response){
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_4B);
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+        //             let deficiencias = parseFloat(response[0][clase_final_tabla_13_4B]);
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+        //             let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_4B]) + dominancia_suma;
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+        //         }         
+        //     });
 
-        break;
+        // break;
 
-        case "Tabla 13.5":
-            // deficiencia
-            var valor_FU_tabla_13_5 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+        // case "Tabla 13.5":
+        //     // deficiencia
+        //     var valor_FU_tabla_13_5 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
 
-            // Calculo clase final
-            var clase_final_tabla_13_5;
+        //     // Calculo clase final
+        //     var clase_final_tabla_13_5;
 
-            if (valor_FU_tabla_13_5 == 20) {
-                clase_final_tabla_13_5 = "1A";
-            }else if (valor_FU_tabla_13_5 == 40) {
-                clase_final_tabla_13_5 = "1B";
-            }
+        //     if (valor_FU_tabla_13_5 == 20) {
+        //         clase_final_tabla_13_5 = "1A";
+        //     }else if (valor_FU_tabla_13_5 == 40) {
+        //         clase_final_tabla_13_5 = "1B";
+        //     }
 
-            let datos_consulta_deficiencia_tabla_13_5 = {
-                '_token': token,
-                'columna': clase_final_tabla_13_5,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_13_5,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_5);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_13_5]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_5]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+        //     let datos_consulta_deficiencia_tabla_13_5 = {
+        //         '_token': token,
+        //         'columna': clase_final_tabla_13_5,
+        //         'Id_tabla': id_tabla
+        //     };
+        //     $.ajax({
+        //         url: "/consultaValorDeficiencia",
+        //         type: "post",
+        //         data: datos_consulta_deficiencia_tabla_13_5,
+        //         success:function(response){
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_5);
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+        //             let deficiencias = parseFloat(response[0][clase_final_tabla_13_5]);
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+        //             let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_5]) + dominancia_suma;
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+        //         }         
+        //     });
 
-        break;
+        // break;
 
-        case "Tabla 13.6":
-            // deficiencia
-            var valor_FU_tabla_13_6 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+        // case "Tabla 13.6":
+        //     // deficiencia
+        //     var valor_FU_tabla_13_6 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
 
-            // Calculo clase final
-            var clase_final_tabla_13_6;
+        //     // Calculo clase final
+        //     var clase_final_tabla_13_6;
 
-            if (valor_FU_tabla_13_6 == 20) {
-                clase_final_tabla_13_6 = "1A";
-            }else if (valor_FU_tabla_13_6 == 40) {
-                clase_final_tabla_13_6 = "1B";
-            }else if (valor_FU_tabla_13_6 == 70) {
-                clase_final_tabla_13_6 = "1C";
-            }else if (valor_FU_tabla_13_6 == 90) {
-                clase_final_tabla_13_6 = "1D";
-            }else if (valor_FU_tabla_13_6 == 100) {
-                clase_final_tabla_13_6 = "1E";
-            }
+        //     if (valor_FU_tabla_13_6 == 20) {
+        //         clase_final_tabla_13_6 = "1A";
+        //     }else if (valor_FU_tabla_13_6 == 40) {
+        //         clase_final_tabla_13_6 = "1B";
+        //     }else if (valor_FU_tabla_13_6 == 70) {
+        //         clase_final_tabla_13_6 = "1C";
+        //     }else if (valor_FU_tabla_13_6 == 90) {
+        //         clase_final_tabla_13_6 = "1D";
+        //     }else if (valor_FU_tabla_13_6 == 100) {
+        //         clase_final_tabla_13_6 = "1E";
+        //     }
 
-            let datos_consulta_deficiencia_tabla_13_6 = {
-                '_token': token,
-                'columna': clase_final_tabla_13_6,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_13_6,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_6);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_13_6]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_6]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+        //     let datos_consulta_deficiencia_tabla_13_6 = {
+        //         '_token': token,
+        //         'columna': clase_final_tabla_13_6,
+        //         'Id_tabla': id_tabla
+        //     };
+        //     $.ajax({
+        //         url: "/consultaValorDeficiencia",
+        //         type: "post",
+        //         data: datos_consulta_deficiencia_tabla_13_6,
+        //         success:function(response){
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_6);
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+        //             let deficiencias = parseFloat(response[0][clase_final_tabla_13_6]);
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+        //             let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_6]) + dominancia_suma;
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+        //         }         
+        //     });
 
-        break;
+        // break;
 
-        case "Tabla 13.7":
-            // deficiencia
-            var valor_FU_tabla_13_7 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
+        // case "Tabla 13.7":
+        //     // deficiencia
+        //     var valor_FU_tabla_13_7 = parseInt($("#guardar_FU_fila_"+id_fila_insertar_dato).val());
 
-            // Calculo clase final
-            var clase_final_tabla_13_7;
+        //     // Calculo clase final
+        //     var clase_final_tabla_13_7;
             			
-            if (valor_FU_tabla_13_7 == 20) {
-                clase_final_tabla_13_7 = "1A";
-            }else if (valor_FU_tabla_13_7 == 40) {
-                clase_final_tabla_13_7 = "1B";
-            }else if (valor_FU_tabla_13_7 == 60) {
-                clase_final_tabla_13_7 = "1C";
-            }else if (valor_FU_tabla_13_7 == 70) {
-                clase_final_tabla_13_7 = "1D";
-            }
+        //     if (valor_FU_tabla_13_7 == 20) {
+        //         clase_final_tabla_13_7 = "1A";
+        //     }else if (valor_FU_tabla_13_7 == 40) {
+        //         clase_final_tabla_13_7 = "1B";
+        //     }else if (valor_FU_tabla_13_7 == 60) {
+        //         clase_final_tabla_13_7 = "1C";
+        //     }else if (valor_FU_tabla_13_7 == 70) {
+        //         clase_final_tabla_13_7 = "1D";
+        //     }
 
-            let datos_consulta_deficiencia_tabla_13_7 = {
-                '_token': token,
-                'columna': clase_final_tabla_13_7,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_13_7,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_7);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_13_7]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_7]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+        //     let datos_consulta_deficiencia_tabla_13_7 = {
+        //         '_token': token,
+        //         'columna': clase_final_tabla_13_7,
+        //         'Id_tabla': id_tabla
+        //     };
+        //     $.ajax({
+        //         url: "/consultaValorDeficiencia",
+        //         type: "post",
+        //         data: datos_consulta_deficiencia_tabla_13_7,
+        //         success:function(response){
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+        //             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_7);
+        //             $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+        //             let deficiencias = parseFloat(response[0][clase_final_tabla_13_7]);
+        //             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+        //             let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_7]) + dominancia_suma;
+        //             $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+        //         }         
+        //     });
 
-        break;
+        // break;
 
         case "Tabla 13.8":
             // deficiencia
@@ -5449,31 +5810,42 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             var clase_final_tabla_13_8;
             			
             if (valor_FU_tabla_13_8 == 20) {
-                clase_final_tabla_13_8 = "1A";
+                clase_final_tabla_13_8 = "Única";
             }
 
-            let datos_consulta_deficiencia_tabla_13_8 = {
-                '_token': token,
-                'columna': clase_final_tabla_13_8,
-                'Id_tabla': id_tabla
-            };
-            $.ajax({
-                url: "/consultaValorDeficiencia",
-                type: "post",
-                data: datos_consulta_deficiencia_tabla_13_8,
-                success:function(response){
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
-                    $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_8);
-                    $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
-                    let deficiencias = parseFloat(response[0][clase_final_tabla_13_8]);
-                    $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
-                    let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_8]) + dominancia_suma;
-                    $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
-                }         
-            });
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_8);
+            $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            let deficiencias_13_8 = parseFloat(valor_FU_tabla_13_8);
+            $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_13_8.toFixed(2));
+            let suma_total_deficiencias_13_8 = parseFloat(valor_FU_tabla_13_8) + dominancia_suma;
+            $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias_13_8.toFixed(2));
+
+            // let datos_consulta_deficiencia_tabla_13_8 = {
+            //     '_token': token,
+            //     'columna': clase_final_tabla_13_8,
+            //     'Id_tabla': id_tabla
+            // };
+            // $.ajax({
+            //     url: "/consultaValorDeficiencia",
+            //     type: "post",
+            //     data: datos_consulta_deficiencia_tabla_13_8,
+            //     success:function(response){
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
+            //         $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_13_8);
+            //         $("#Dominancia_fila_alteraciones_"+id_fila_insertar_dato).append(dominancia_suma.toFixed(2));
+            //         let deficiencias = parseFloat(response[0][clase_final_tabla_13_8]);
+            //         $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias.toFixed(2));
+            //         let suma_total_deficiencias = parseFloat(response[0][clase_final_tabla_13_8]) + dominancia_suma;
+            //         $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(suma_total_deficiencias.toFixed(2));
+            //     }         
+            // });
 
         break;
 
@@ -6109,6 +6481,8 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
 /* FUNCIONALIDAD PARA RECOPILAR LOS DATOS POR CADA FILA DE LA TABLA */
 $(document).ready(function(){
     $('#guardar_datos_deficiencia_alteraciones').click(function(){
+        $("#guardar_datos_deficiencia_alteraciones").prop('disabled', true);
+        $("#mostrar_barra_guardar_deficiencias").removeClass('d-none');
         let token = $("input[name='_token']").val();
         var guardar_datos_alteraciones = [];
         var datos_finales_deficiencias_alteraciones = [];
@@ -6215,6 +6589,8 @@ $(document).ready(function(){
                     $('#resultado_insercion_deficiencia').addClass('alert-success');
                     $('#resultado_insercion_deficiencia').append('<strong>'+response.mensaje+'</strong>');
                     setTimeout(() => {
+                        $("#guardar_datos_deficiencia_alteraciones").prop('disabled', false);
+                        $("#mostrar_barra_guardar_deficiencias").addClass('d-none');   
                         $('#resultado_insercion_deficiencia').addClass('d-none');
                         $('#resultado_insercion_deficiencia').removeClass('alert-success');
                         $('#resultado_insercion_deficiencia').empty();
