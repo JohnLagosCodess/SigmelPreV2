@@ -48,7 +48,7 @@
                             @foreach ($listado_equipos_trabajo as $editar_info_equipo)
                                 <tr>
                                     <td>
-                                        <a href="javascript:void(0);" id="btn_modal_edicion_equipo_{{$editar_info_equipo->id}}" data-id_proceso="{{$editar_info_equipo->Id_proceso}}" data-id_lider="{{$editar_info_equipo->lider}}" data-id_equipo_trabajo="{{$editar_info_equipo->id}}" data-toggle="modal" data-target="#modalEdicionEquipo_{{$editar_info_equipo->id}}"><i class="fa fa-pen text-primary"></i></a>
+                                        <a href="javascript:void(0);" id="btn_modal_edicion_equipo_{{$editar_info_equipo->id}}" data-id_proceso="{{$editar_info_equipo->Id_proceso}}" data-id_lider="{{$editar_info_equipo->lider}}" data-id_equipo_trabajo="{{$editar_info_equipo->id}}" data-id_accion="{{$editar_info_equipo->Accion}}" data-toggle="modal" data-target="#modalEdicionEquipo_{{$editar_info_equipo->id}}"><i class="fa fa-pen text-primary"></i></a>
                                         <x-adminlte-modal id="modalEdicionEquipo_{{$editar_info_equipo->id}}" title="Formulario para editar Equipo de Trabajo: {{$editar_info_equipo->Nombre_equipo}}" theme="info" icon="fa fa-pen" size='xl' scrollable="yes" disable-animations>
                                             <div class="row">
                                                 <div class="col-12">
@@ -60,10 +60,10 @@
                                                             <input type="text" name="id_equipo_trabajo" value="{{$editar_info_equipo->id}}">
                                                         </div>
                                                         <div class="row">
-                                                            <div class="col-3">
+                                                            <div class="col-2">
                                                                 <div class="form-group">
                                                                     <label  class="col-form-label">Proceso <span style="color:red;">(*)</span></label>
-                                                                    <select class="editar_proceso custom-select" name="editar_proceso" id="editar_proceso_{{$editar_info_equipo->Id_proceso}}" style="width:100%;" requierd></select>
+                                                                    <select class="editar_proceso_{{$editar_info_equipo->Id_proceso}} custom-select" name="editar_proceso" id="editar_proceso_{{$editar_info_equipo->Id_proceso}}" style="width:100%;" requierd></select>
                                                                 </div>
                                                             </div>
                                                             <div class="col-3">
@@ -75,15 +75,21 @@
                                                             <div class="col-3">
                                                                 <div class="form-group">
                                                                     <label for="editar_listado_lider" class="col-form-label">Lider del equipo de trabajo <span style="color:red;">(*)</span></label>
-                                                                    <select class="editar_listado_lider custom-select" id="editar_listado_lider_{{$editar_info_equipo->Id_proceso}}" name="editar_listado_lider" style="width:100%;" required>
+                                                                    <select class="editar_listado_lider_{{$editar_info_equipo->Id_proceso}} custom-select" id="editar_listado_lider_{{$editar_info_equipo->Id_proceso}}" name="editar_listado_lider" style="width:100%;" required>
                                                                     </select>
                                                                     <strong class="mensaje_no_hay_usuarios_edicion text-danger text-sm d-none" role="alert">No hay usuarios relacionados al proceso seleccionado.</strong>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-3">
+                                                            <div class="col-2">
+                                                                <div class="form-group">
+                                                                    <label for="listado_acciones_editar" class="col-form-label">Acción <span style="color:red;">(*)</span></label>
+                                                                    <select id="listado_acciones_editar_{{$editar_info_equipo->Id_proceso}}" name="listado_acciones_editar" class="listado_acciones_editar_{{$editar_info_equipo->Id_proceso}} custom-select" required></select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-2">
                                                                 <div class="form-group">
                                                                     <label for="editar_estado_equipo" class="col-form-label">Status <span style="color:red;">(*)</span></label>
-                                                                    <select id="editar_estado_equipo" class="editar_estado_equipo custom-select" name="editar_estado_equipo" required>
+                                                                    <select id="editar_estado_equipo" class="editar_estado_equipo_{{$editar_info_equipo->Id_proceso}} custom-select" name="editar_estado_equipo" required>
                                                                         @if ($editar_info_equipo->estado == 'activo')
                                                                             <option value="activo" selected>Activo</option> 
                                                                             <option value="inactivo">Inactivo</option>

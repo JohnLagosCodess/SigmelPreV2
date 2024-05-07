@@ -168,12 +168,49 @@ class CoordinadorController extends Controller
         // listado de profesionales para el proceso pcl
         if ($parametro == 'lista_profesional_pcl') {
             
-            $listado_profesional_pcl = DB::table('users')->select('id', 'name')
-            ->where('estado', 'Activo')
-            ->whereRaw("FIND_IN_SET(2, id_procesos_usuario) > 0")->get();
+            $id_proceso = $request->Id_proceso;
+            $id_servicio = $request->Id_servicio;
+            $id_accion = $request->Id_accion;
 
-            $info_listado_profesional_PCL = json_decode(json_encode($listado_profesional_pcl, true));
-            return response()->json($info_listado_profesional_PCL);
+            /* Extraemos el equippo de trabajo y el profesional asignado configurados en la paramétrica */
+            $info_equipo_prof_asig = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Equipo_trabajo', 'sipc.Profesional_asignado')
+            ->where([
+                // ['sipc.Id_cliente', '=', $id_cliente],
+                ['sipc.Id_proceso', '=', $id_proceso],
+                ['sipc.Servicio_asociado', '=', $id_servicio],
+                ['sipc.Accion_ejecutar', '=', $id_accion]
+            ])->get();
+
+            /* Si el profesional asignado está configurado entonces el listado de profesionales
+            se cargará con los usuarios que pertenecen al equipo de trabajo configurado en la paramétrica */
+            if($info_equipo_prof_asig[0]->Profesional_asignado <> ""){
+                $listado_profesionales = DB::table('users as u')
+                ->leftJoin('sigmel_gestiones.sigmel_usuarios_grupos_trabajos as sugt', 'u.id', '=', 'sugt.id_usuarios_asignados')
+                ->select('u.id', 'u.name')
+                ->where([['sugt.id_equipo_trabajo', $info_equipo_prof_asig[0]->Equipo_trabajo]])
+                ->get();
+
+                $info_listado_profesionales = json_decode(json_encode($listado_profesionales, true));
+                return response()->json([
+                    'info_listado_profesionales' => $info_listado_profesionales,
+                    'Profesional_asignado' => $info_equipo_prof_asig[0]->Profesional_asignado
+                ]);
+            }else{
+                
+                $listado_profesional_pcl = DB::table('users')->select('id', 'name')
+                ->where('estado', 'Activo')
+                ->whereRaw("FIND_IN_SET(2, id_procesos_usuario) > 0")->get();
+    
+                $info_listado_profesional_PCL = json_decode(json_encode($listado_profesional_pcl, true));
+                // return response()->json($info_listado_profesional_PCL);
+
+                return response()->json([
+                    'info_listado_profesionales' => $info_listado_profesional_PCL,
+                    'Profesional_asignado' => ''
+                ]);
+
+            }
         }
         
     }

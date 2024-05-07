@@ -104,16 +104,29 @@ $(document).ready(function(){
 
     /* TODO LO REFERENTE A LA EDICIÓN DEL EQUIPO DE TRABAJO */
 
-    /* INICIALIZACIÓN DEL SELECT2 DE LISTADO PROCESOS */
-    $(".editar_proceso").select2({
-        placeholder: "Seleccione una opción",
+    $(".listado_acciones").select2({
+        placeholder: "Listado Acciones",
         allowClear: false
     });
 
-    /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE LIDERES PARA EDICIÓN  */
-    $(".editar_listado_lider").select2({
-        placeholder: "Listado Usuarios",
-        allowClear: false
+    // CARGUE LISTADO DE ACCIONES
+    let datos_listado_acciones = {
+        '_token': token,
+        'parametro' : "listado_acciones_equipo_trabajo"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargarselectores',
+        data: datos_listado_acciones,
+        success:function(data) {
+            //console.log(data);
+            $('#listado_acciones').empty();
+            $('#listado_acciones').append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $('#listado_acciones').append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Accion"]+'</option>');
+            }
+        }
     });
 
     /* FUNCIONES ASOCIADAS AL BOTÓN QUE HABILITA EL MODAL */
@@ -125,6 +138,34 @@ $(document).ready(function(){
         var id_proceso = $(this).data("id_proceso");
         var id_equipo_trabajo = $(this).data("id_equipo_trabajo");
         var id_lider_trabajo = $(this).data("id_lider");
+        var id_accion = $(this).data("id_accion");
+
+        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO PROCESOS */
+        $(".editar_proceso_"+id_proceso).select2({
+            placeholder: "Seleccione una opción",
+            allowClear: false
+        });
+
+        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE LIDERES PARA EDICIÓN  */
+        $(".editar_listado_lider_"+id_proceso).select2({
+            placeholder: "Listado Usuarios",
+            allowClear: false
+        });
+
+        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE ACCIONES PARA EDICIÓN  */
+        $(".listado_acciones_editar_"+id_proceso).select2({
+            placeholder: "Listado Acciones",
+            allowClear: false,
+            width: '100%'
+        });
+
+        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE STATUS PARA EDICIÓN  */
+        $(".editar_estado_equipo_"+id_proceso).select2({
+            placeholder: "Estado",
+            allowClear: false,
+            width: '100%'
+        });
+
         // CARGUE LISTADO DE PROCESOS
         let datos_listado_proceso_edicion = {
             '_token': token,
@@ -215,6 +256,31 @@ $(document).ready(function(){
             });
         });
 
+        /* CARGA DEL LISTADO DE ACCIÓN PARA EDICIÓN */
+        var datos_listado_acciones = {
+            '_token': token,
+            'parametro' : "listado_acciones_equipo_trabajo_edicion"
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_listado_acciones,
+            success:function(data) {
+                // console.log(data);
+                $('#listado_acciones_editar_'+id_proceso).empty();
+                $('#listado_acciones_editar_'+id_proceso).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    if (data[claves[i]]["Id_Accion"] == id_accion) {
+                        $('#listado_acciones_editar_'+id_proceso).append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Accion"]+'</option>');
+                    } else {
+                        $('#listado_acciones_editar_'+id_proceso).append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                    }
+                }
+            }
+        });
+
         /* TRAER EL LISTADO DE USUARIOS ASIGNADOS Y NO ASIGNADOS DEL EQUIPO DE TRABAJO SELECCIONADO */
         if ($('#editar_listado_usuarios_equipo_'+id_equipo_trabajo).length >0) {
             var datos_usuarios_asignados = {
@@ -298,7 +364,6 @@ $(document).ready(function(){
                 }
             }         
         });
-
 
     });
 

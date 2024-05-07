@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_accion_eventos', function (Blueprint $table) {
             $table->increments('Id_Accion');
-            $table->string('ID_evento',10);
+            $table->string('ID_evento',20);
             $table->integer('Id_Asignacion');
             $table->integer('Id_proceso');
             $table->string('Modalidad_calificacion',25)->nullable();
@@ -22,8 +22,9 @@ return new class extends Migration
             $table->string('Accion',40);
             $table->date('F_Alerta')->nullable();
             $table->string('Enviar',40);
+            $table->text('Estado_Facturacion')->nullable();
             $table->string('Causal_devolucion_comite',40)->nullable();
-            $table->date('F_devolucion_comite')->nullable();
+            $table->datetime('F_devolucion_comite')->nullable();
             $table->text('Descripcion_accion')->nullable();
             $table->datetime('F_recepcion_doc_origen')->nullable();
             $table->datetime('F_asignacion_dto')->nullable();

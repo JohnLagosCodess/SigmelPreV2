@@ -133,6 +133,7 @@ class AdministradorController extends Controller
                     'nombre' => $request->nombre_equipo_trabajo,
                     'Id_proceso_equipo' => $request->proceso,
                     'lider' => $request->listado_lider,
+                    'Accion' => $request->listado_acciones,
                     'estado' => $request->estado_equipo,
                     'descripcion' => $request->descripcion_equipo_trabajo,
                     'created_at' => $date
@@ -183,7 +184,7 @@ class AdministradorController extends Controller
         $listado_equipos_trabajo = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_grupos_trabajos as sgt')
         ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slps', 'sgt.Id_proceso_equipo', '=', 'slps.Id_proceso')
         ->leftJoin('sigmel_sys.users as u', 'sgt.lider', '=', 'u.id')
-        ->select("sgt.id", "slps.Id_proceso", "slps.Nombre_proceso", "sgt.nombre as Nombre_equipo", "sgt.lider", "u.name as Nombre_lider", "u.email as Correo_lider", "sgt.estado", "sgt.descripcion","sgt.created_at")
+        ->select("sgt.id", "slps.Id_proceso", "slps.Nombre_proceso", "sgt.nombre as Nombre_equipo", "sgt.lider", "u.name as Nombre_lider", "u.email as Correo_lider", "sgt.Accion", "sgt.estado", "sgt.descripcion","sgt.created_at")
         ->groupBy("sgt.id")
         ->get();
         
@@ -314,6 +315,7 @@ class AdministradorController extends Controller
                 'Id_proceso_equipo' => $request->editar_proceso,
                 'nombre' => $request->editar_nombre_equipo_trabajo,
                 'lider' => $request->editar_listado_lider,
+                'Accion' => $request->listado_acciones_editar,
                 'estado' => $request->editar_estado_equipo,
                 'descripcion' => $descripcion_final,
                 'updated_at' => $date
@@ -2148,6 +2150,32 @@ class AdministradorController extends Controller
             return response()->json(($info_listado_proceso));
         }
 
+        /* LISTADO DE TODAS LAS ACCIONES PARA LA CREACIÓN DE UN EQUIPO DE TRABAJO */
+        if ($parametro == "listado_acciones_equipo_trabajo") {
+            $listado_acciones = sigmel_informacion_acciones::on('sigmel_gestiones')
+            ->select('Id_Accion', 'Accion')
+            ->where([
+                ['Status_accion', '=', 'Activo']
+            ])
+            ->get();
+        
+            $info_listado_acciones = json_decode(json_encode($listado_acciones, true));
+            return response()->json(($info_listado_acciones));
+        }
+
+        /* LISTADO DE TODAS LAS ACCIONES PARA LA CREACIÓN DE UN EQUIPO DE TRABAJO */
+        if ($parametro == "listado_acciones_equipo_trabajo_edicion") {
+            $listado_acciones = sigmel_informacion_acciones::on('sigmel_gestiones')
+            ->select('Id_Accion', 'Accion')
+            ->where([
+                ['Status_accion', '=', 'Activo']
+            ])
+            ->get();
+        
+            $info_listado_acciones = json_decode(json_encode($listado_acciones, true));
+            return response()->json(($info_listado_acciones));
+        }
+
         /* LISTADO SERVICIOS */
         if ($parametro == 'listado_servicios') {
             // 
@@ -2187,6 +2215,59 @@ class AdministradorController extends Controller
 
             $info_lista_profesional_proceso = json_decode(json_encode($lista_profesional_proceso, true));
             return response()->json($info_lista_profesional_proceso);
+        }
+
+        // listado de profesionales segun la acción a realizar
+        if ($parametro == 'lista_profesional_accion') {
+            if ($request->Id_cliente == "") {
+                $array_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
+                ->select('Cliente')->where('ID_evento', $request->nro_evento)->first();
+
+                $id_cliente = $array_id_cliente["Cliente"];
+            } else {
+                $id_cliente = $request->Id_cliente;
+            }
+            
+            $id_proceso = $request->Id_proceso;
+            $id_servicio = $request->Id_servicio;
+            $id_accion = $request->Id_accion;
+
+            /* Extraemos el equippo de trabajo y el profesional asignado configurados en la paramétrica */
+            $info_equipo_prof_asig = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Equipo_trabajo', 'sipc.Profesional_asignado')
+            ->where([
+                ['sipc.Id_cliente', '=', $id_cliente],
+                ['sipc.Id_proceso', '=', $id_proceso],
+                ['sipc.Servicio_asociado', '=', $id_servicio],
+                ['sipc.Accion_ejecutar', '=', $id_accion]
+            ])->get();
+
+            /* Si el profesional asignado está configurado entonces el listado de profesionales
+            se cargará con los usuarios que pertenecen al equipo de trabajo configurado en la paramétrica */
+            if($info_equipo_prof_asig[0]->Profesional_asignado <> ""){
+                $listado_profesionales = DB::table('users as u')
+                ->leftJoin('sigmel_gestiones.sigmel_usuarios_grupos_trabajos as sugt', 'u.id', '=', 'sugt.id_usuarios_asignados')
+                ->select('u.id', 'u.name')
+                ->where([['sugt.id_equipo_trabajo', $info_equipo_prof_asig[0]->Equipo_trabajo]])
+                ->get();
+
+                $info_listado_profesionales = json_decode(json_encode($listado_profesionales, true));
+                return response()->json([
+                    'info_listado_profesionales' => $info_listado_profesionales,
+                    'Profesional_asignado' => $info_equipo_prof_asig[0]->Profesional_asignado
+                ]);
+            }else{
+                $lista_profesional_proceso = DB::table('users')->select('id', 'name')
+                ->where('estado', 'Activo')
+                ->whereRaw("FIND_IN_SET($id_proceso, id_procesos_usuario) > 0")->get();
+
+                $info_lista_profesional_proceso = json_decode(json_encode($lista_profesional_proceso, true));
+                // return response()->json($info_lista_profesional_proceso);
+                return response()->json([
+                    'info_listado_profesionales' => $info_lista_profesional_proceso,
+                    'Profesional_asignado' => ''
+                ]);
+            }
         }
 
         /* LISTADO ACCION */
@@ -2831,7 +2912,7 @@ class AdministradorController extends Controller
             $id_cliente = $array_id_cliente["Cliente"];
 
             $casilla_mod_principal = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
-            ->select('sipc.Modulo_principal')
+            ->select('sipc.Modulo_principal', 'sipc.Estado_facturacion')
             ->where([
                 ['sipc.Id_cliente', '=', $id_cliente],
                 ['sipc.Id_proceso', '=', $request->Id_proceso],

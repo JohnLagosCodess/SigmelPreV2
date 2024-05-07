@@ -60,6 +60,7 @@ class ParametrizacionController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia2', 'sipc.Accion_antecesora', '=', 'sia2.Id_Accion')
         ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slps2', 'sipc.Bandeja_trabajo_destino', '=', 'slps2.Id_proceso')
         ->leftJoin('sigmel_gestiones.sigmel_grupos_trabajos as sgt', 'sipc.Equipo_trabajo', '=', 'sgt.id')
+        ->leftJoin('sigmel_sys.users as u', 'sipc.Profesional_asignado', '=', 'u.id')
         ->select(
             'sipc.Id_parametrizacion',
             'sipc.Id_cliente',
@@ -78,15 +79,17 @@ class ParametrizacionController extends Controller
             'sipc.Bandeja_trabajo',
             'sipc.Modulo_principal',
             'sipc.Detiene_tiempo_gestion',
+            'sipc.Equipo_trabajo',
+            'sgt.nombre as Nombre_equipo_trabajo',
+            'sipc.Profesional_asignado',
+            'u.name as Nombre_profesional',
             'sipc.Enviar_a_bandeja_trabajo_destino',
             'sipc.Bandeja_trabajo_destino',
             'slps2.Nombre_proceso as Nombre_bandeja_trabajo_destino',
-            'sipc.Copia_facturacion',
+            'sipc.Estado_facturacion',
             'sipc.Tiempo_alerta',
             'sipc.Porcentaje_alerta_naranja',
             'sipc.Porcentaje_alerta_roja',
-            'sipc.Equipo_trabajo',
-            'sgt.nombre as Nombre_equipo_trabajo',
             'sipc.Status_parametrico',
             'sipc.Motivo_descripcion_movimiento',
             'sipc.Nombre_usuario',
@@ -113,6 +116,7 @@ class ParametrizacionController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia2', 'sipc.Accion_antecesora', '=', 'sia2.Id_Accion')
         ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slps2', 'sipc.Bandeja_trabajo_destino', '=', 'slps2.Id_proceso')
         ->leftJoin('sigmel_gestiones.sigmel_grupos_trabajos as sgt', 'sipc.Equipo_trabajo', '=', 'sgt.id')
+        ->leftJoin('sigmel_sys.users as u', 'sipc.Profesional_asignado', '=', 'u.id')
         ->select(
             'sipc.Id_parametrizacion',
             'sipc.Id_cliente',
@@ -131,15 +135,17 @@ class ParametrizacionController extends Controller
             'sipc.Bandeja_trabajo',
             'sipc.Modulo_principal',
             'sipc.Detiene_tiempo_gestion',
+            'sipc.Equipo_trabajo',
+            'sgt.nombre as Nombre_equipo_trabajo',
+            'sipc.Profesional_asignado',
+            'u.name as Nombre_profesional',
             'sipc.Enviar_a_bandeja_trabajo_destino',
             'sipc.Bandeja_trabajo_destino',
             'slps2.Nombre_proceso as Nombre_bandeja_trabajo_destino',
-            'sipc.Copia_facturacion',
+            'sipc.Estado_facturacion',
             'sipc.Tiempo_alerta',
             'sipc.Porcentaje_alerta_naranja',
             'sipc.Porcentaje_alerta_roja',
-            'sipc.Equipo_trabajo',
-            'sgt.nombre as Nombre_equipo_trabajo',
             'sipc.Status_parametrico',
             'sipc.Motivo_descripcion_movimiento',
             'sipc.Nombre_usuario',
@@ -166,6 +172,7 @@ class ParametrizacionController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia2', 'sipc.Accion_antecesora', '=', 'sia2.Id_Accion')
         ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slps2', 'sipc.Bandeja_trabajo_destino', '=', 'slps2.Id_proceso')
         ->leftJoin('sigmel_gestiones.sigmel_grupos_trabajos as sgt', 'sipc.Equipo_trabajo', '=', 'sgt.id')
+        ->leftJoin('sigmel_sys.users as u', 'sipc.Profesional_asignado', '=', 'u.id')
         ->select(
             'sipc.Id_parametrizacion',
             'sipc.Id_cliente',
@@ -184,15 +191,17 @@ class ParametrizacionController extends Controller
             'sipc.Bandeja_trabajo',
             'sipc.Modulo_principal',
             'sipc.Detiene_tiempo_gestion',
+            'sipc.Equipo_trabajo',
+            'sgt.nombre as Nombre_equipo_trabajo',
+            'sipc.Profesional_asignado',
+            'u.name as Nombre_profesional',
             'sipc.Enviar_a_bandeja_trabajo_destino',
             'sipc.Bandeja_trabajo_destino',
             'slps2.Nombre_proceso as Nombre_bandeja_trabajo_destino',
-            'sipc.Copia_facturacion',
+            'sipc.Estado_facturacion',
             'sipc.Tiempo_alerta',
             'sipc.Porcentaje_alerta_naranja',
             'sipc.Porcentaje_alerta_roja',
-            'sipc.Equipo_trabajo',
-            'sgt.nombre as Nombre_equipo_trabajo',
             'sipc.Status_parametrico',
             'sipc.Motivo_descripcion_movimiento',
             'sipc.Nombre_usuario',
@@ -302,11 +311,24 @@ class ParametrizacionController extends Controller
             ->select('id', 'nombre')
             ->where([
                 ['Id_proceso_equipo', '=', 1],
+                ['Accion', '=', $request->id_accion_seleccionada],
                 ['estado', '=', 'activo']
             ])->get();
 
             $informacion_equipos_trabajo_proceso_origen_atel = json_decode(json_encode($equipos_trabajo_proceso_origen_atel), true);
             return response()->json($informacion_equipos_trabajo_proceso_origen_atel);
+        }
+
+        // listado de profesionales relacionados al equipo de trabajo
+        if ($parametro == "listado_profesionales_proceso_origen_atel") {
+            $listado_profesionales_proceso_origen_atel = DB::table('users as u')
+            ->leftJoin('sigmel_gestiones.sigmel_usuarios_grupos_trabajos as sugt', 'u.id', '=', 'sugt.id_usuarios_asignados')
+            ->select('u.id', 'u.name as nombre')
+            ->where([['sugt.id_equipo_trabajo', $request->id_equipo_seleccionado]])
+            ->get();
+
+            $informacion_listado_profesionales_proceso_origen_atel = json_decode(json_encode($listado_profesionales_proceso_origen_atel), true);
+            return response()->json($informacion_listado_profesionales_proceso_origen_atel);
         }
 
         /* INFORMACIÓN PARA TRAER DE TODO LO RELACIONADO AL PROCESO CALIFICACIÓN PCL */
@@ -388,11 +410,24 @@ class ParametrizacionController extends Controller
             ->select('id', 'nombre')
             ->where([
                 ['Id_proceso_equipo', '=', 2],
+                ['Accion', '=', $request->id_accion_seleccionada],
                 ['estado', '=', 'activo']
             ])->get();
 
             $informacion_equipos_trabajo_proceso_calificacion_pcl = json_decode(json_encode($equipos_trabajo_proceso_calificacion_pcl), true);
             return response()->json($informacion_equipos_trabajo_proceso_calificacion_pcl);
+        }
+
+        // listado de profesionales relacionados al equipo de trabajo
+        if ($parametro == "listado_profesionales_proceso_calificacion_pcl") {
+            $listado_profesionales_proceso_calificacion_pcl = DB::table('users as u')
+            ->leftJoin('sigmel_gestiones.sigmel_usuarios_grupos_trabajos as sugt', 'u.id', '=', 'sugt.id_usuarios_asignados')
+            ->select('u.id', 'u.name as nombre')
+            ->where([['sugt.id_equipo_trabajo', $request->id_equipo_seleccionado]])
+            ->get();
+
+            $informacion_listado_profesionales_proceso_calificacion_pcl = json_decode(json_encode($listado_profesionales_proceso_calificacion_pcl), true);
+            return response()->json($informacion_listado_profesionales_proceso_calificacion_pcl);
         }
 
         /* INFORMACIÓN PARA TRAER DE TODO LO RELACIONADO AL PROCESO JUNTAS */
@@ -474,11 +509,24 @@ class ParametrizacionController extends Controller
             ->select('id', 'nombre')
             ->where([
                 ['Id_proceso_equipo', '=', 3],
+                ['Accion', '=', $request->id_accion_seleccionada],
                 ['estado', '=', 'activo']
             ])->get();
 
             $informacion_equipos_trabajo_proceso_juntas = json_decode(json_encode($equipos_trabajo_proceso_juntas), true);
             return response()->json($informacion_equipos_trabajo_proceso_juntas);
+        }
+
+        // listado de profesionales relacionados al equipo de trabajo
+        if ($parametro == "listado_profesionales_proceso_juntas") {
+            $listado_profesionales_proceso_juntas = DB::table('users as u')
+            ->leftJoin('sigmel_gestiones.sigmel_usuarios_grupos_trabajos as sugt', 'u.id', '=', 'sugt.id_usuarios_asignados')
+            ->select('u.id', 'u.name as nombre')
+            ->where([['sugt.id_equipo_trabajo', $request->id_equipo_seleccionado]])
+            ->get();
+
+            $informacion_listado_profesionales_proceso_juntas = json_decode(json_encode($listado_profesionales_proceso_juntas), true);
+            return response()->json($informacion_listado_profesionales_proceso_juntas);
         }
 
     }
@@ -513,9 +561,9 @@ class ParametrizacionController extends Controller
             // Creamos el array con el nombre de las columnas de la tabla sigmel_informacion_parametrizaciones_clientes
             $array_tabla_parametrizaciones_cliente = ['Id_cliente','Id_proceso','F_creacion_movimiento','Servicio_asociado',
             'Estado','Accion_ejecutar','Accion_antecesora','Modulo_nuevo','Modulo_consultar','Bandeja_trabajo',
-            'Modulo_principal','Detiene_tiempo_gestion','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
-            'Copia_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
-            'Equipo_trabajo','Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
+            'Modulo_principal','Detiene_tiempo_gestion','Equipo_trabajo','Profesional_asignado','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
+            'Estado_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
+            'Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
             ];
 
             // Realizamos la combinación del array de datos y los nombres de las columnas de la tabla
@@ -580,9 +628,9 @@ class ParametrizacionController extends Controller
             // Creamos el array con el nombre de las columnas de la tabla sigmel_informacion_parametrizaciones_clientes
             $array_tabla_parametrizaciones_cliente = ['Id_cliente','Id_proceso','F_creacion_movimiento','Servicio_asociado',
             'Estado','Accion_ejecutar','Accion_antecesora','Modulo_nuevo','Modulo_consultar','Bandeja_trabajo',
-            'Modulo_principal','Detiene_tiempo_gestion','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
-            'Copia_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
-            'Equipo_trabajo','Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
+            'Modulo_principal','Detiene_tiempo_gestion','Equipo_trabajo','Profesional_asignado','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
+            'Estado_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
+            'Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
             ];
 
             // Realizamos la combinación del array de datos y los nombres de las columnas de la tabla
@@ -649,9 +697,9 @@ class ParametrizacionController extends Controller
             // Creamos el array con el nombre de las columnas de la tabla sigmel_informacion_parametrizaciones_clientes
             $array_tabla_parametrizaciones_cliente = ['Id_cliente','Id_proceso','F_creacion_movimiento','Servicio_asociado',
             'Estado','Accion_ejecutar','Accion_antecesora','Modulo_nuevo','Modulo_consultar','Bandeja_trabajo',
-            'Modulo_principal','Detiene_tiempo_gestion','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
-            'Copia_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
-            'Equipo_trabajo','Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
+            'Modulo_principal','Detiene_tiempo_gestion','Equipo_trabajo','Profesional_asignado','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
+            'Estado_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
+            'Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
             ];
     
             // Realizamos la combinación del array de datos y los nombres de las columnas de la tabla
@@ -716,9 +764,9 @@ class ParametrizacionController extends Controller
             // Creamos el array con el nombre de las columnas de la tabla sigmel_informacion_parametrizaciones_clientes
             $array_tabla_parametrizaciones_cliente = ['Id_cliente','Id_proceso','F_creacion_movimiento','Servicio_asociado',
             'Estado','Accion_ejecutar','Accion_antecesora','Modulo_nuevo','Modulo_consultar','Bandeja_trabajo',
-            'Modulo_principal','Detiene_tiempo_gestion','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
-            'Copia_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
-            'Equipo_trabajo','Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
+            'Modulo_principal','Detiene_tiempo_gestion','Equipo_trabajo','Profesional_asignado','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
+            'Estado_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
+            'Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
             ];
     
             // Realizamos la combinación del array de datos y los nombres de las columnas de la tabla
@@ -785,9 +833,9 @@ class ParametrizacionController extends Controller
             // Creamos el array con el nombre de las columnas de la tabla sigmel_informacion_parametrizaciones_clientes
             $array_tabla_parametrizaciones_cliente = ['Id_cliente','Id_proceso','F_creacion_movimiento','Servicio_asociado',
             'Estado','Accion_ejecutar','Accion_antecesora','Modulo_nuevo','Modulo_consultar','Bandeja_trabajo',
-            'Modulo_principal','Detiene_tiempo_gestion','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
-            'Copia_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
-            'Equipo_trabajo','Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
+            'Modulo_principal','Detiene_tiempo_gestion','Equipo_trabajo','Profesional_asignado','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
+            'Estado_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
+            'Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
             ];
         
             // Realizamos la combinación del array de datos y los nombres de las columnas de la tabla
@@ -852,9 +900,9 @@ class ParametrizacionController extends Controller
             // Creamos el array con el nombre de las columnas de la tabla sigmel_informacion_parametrizaciones_clientes
             $array_tabla_parametrizaciones_cliente = ['Id_cliente','Id_proceso','F_creacion_movimiento','Servicio_asociado',
             'Estado','Accion_ejecutar','Accion_antecesora','Modulo_nuevo','Modulo_consultar','Bandeja_trabajo',
-            'Modulo_principal','Detiene_tiempo_gestion','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
-            'Copia_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
-            'Equipo_trabajo','Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
+            'Modulo_principal','Detiene_tiempo_gestion','Equipo_trabajo','Profesional_asignado','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
+            'Estado_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
+            'Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
             ];
     
             // Realizamos la combinación del array de datos y los nombres de las columnas de la tabla

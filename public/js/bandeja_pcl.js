@@ -117,6 +117,39 @@ $(document).ready(function () {
         });
     });
 
+    // CARGUE LISTADO DE PROFESIONALES DEPENDIENDO DE LA SELECCIÓN DE LA ACCIÓN
+    $('#accion').change(function(){
+        // LISTADO PROFESIONAL
+        $('#profesional').prop('disabled', false);
+        let datos_lista_profesional={
+            '_token':token,
+            'parametro':"lista_profesional_pcl",
+            // 'Id_cliente': $("#cliente").val(),
+            'Id_proceso': $("#procesos_parametrizados").val(),
+            'Id_servicio': $("#redireccionar").val(),
+            'Id_accion': $(this).val(),
+        }
+        
+        $.ajax({
+            type:'POST',
+            url:'/selectoresBandejaPCL',
+            data: datos_lista_profesional,
+            success:function (data) {
+                //console.log(data)
+                $('#profesional').empty();
+                $('#profesional').append('<option value="" selected>Seleccione</option>');
+                let profesionales = Object.keys(data.info_listado_profesionales);
+                for (let i = 0; i < profesionales.length; i++) {
+                    if (data.info_listado_profesionales[profesionales[i]]['id'] == data.Profesional_asignado) {
+                        $('#profesional').append('<option value="'+data.info_listado_profesionales[profesionales[i]]['id']+'" selected>'+data.info_listado_profesionales[profesionales[i]]['name']+'</option>')
+                    } else {
+                        $('#profesional').append('<option value="'+data.info_listado_profesionales[profesionales[i]]['id']+'">'+data.info_listado_profesionales[profesionales[i]]['name']+'</option>')
+                    }
+                }
+            }
+        });
+    });
+
     /* VALIDACIÓN PARA DETERMINAR QUE LA PARAMÉTRICA QUE SE CONFIGURE PARA LA BANDEJA DE TRABAJI ESTE EN UN VALOR DE SI EN LA TABLA sigmel_informacion_parametrizaciones_clientes */
     var validar_bandeja_trabajo = setInterval(() => {
         if($("#procesos_parametrizados").val() != '' && $("#redireccionar").val() != '' && $("#accion").val() != ''){
@@ -148,25 +181,25 @@ $(document).ready(function () {
                             // Cargue Listado de seleccion profesional bandeja PCL
                             $(".columna_selector_profesional").slideDown('slow');
                             $(".columna_decripcion_bandeja").slideDown('slow');
-                            let datos_lista_profesional={
-                                '_token':token,
-                                'parametro':"lista_profesional_pcl"
-                            }
+                            // let datos_lista_profesional={
+                            //     '_token':token,
+                            //     'parametro':"lista_profesional_pcl"
+                            // }
 
-                            $.ajax({
-                                type:'POST',
-                                url:'/selectoresBandejaPCL',
-                                data: datos_lista_profesional,
-                                success:function (data) {
-                                    //console.log(data)
-                                    $('#profesional').empty();
-                                    $('#profesional').append('<option value="" selected>Seleccione</option>');
-                                    let profecionalpcl = Object.keys(data);
-                                    for (let i = 0; i < profecionalpcl.length; i++) {
-                                        $('#profesional').append('<option value="'+data[profecionalpcl[i]]['id']+'">'+data[profecionalpcl[i]]['name']+'</option>')
-                                    }
-                                }
-                            });
+                            // $.ajax({
+                            //     type:'POST',
+                            //     url:'/selectoresBandejaPCL',
+                            //     data: datos_lista_profesional,
+                            //     success:function (data) {
+                            //         //console.log(data)
+                            //         $('#profesional').empty();
+                            //         $('#profesional').append('<option value="" selected>Seleccione</option>');
+                            //         let profecionalpcl = Object.keys(data);
+                            //         for (let i = 0; i < profecionalpcl.length; i++) {
+                            //             $('#profesional').append('<option value="'+data[profecionalpcl[i]]['id']+'">'+data[profecionalpcl[i]]['name']+'</option>')
+                            //         }
+                            //     }
+                            // });
                         }
                     }
                 }

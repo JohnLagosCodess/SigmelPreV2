@@ -196,30 +196,6 @@ $(document).ready(function(){
     var Id_asignacion_pro = $('#newId_asignacion').val();
     var Id_proceso_actual = $('#Id_proceso').val();
 
-    //Listado de profesional    
-
-    let datos_lista_profesional={
-        '_token':token,
-        'parametro':"lista_profesional_proceso",
-        'id_proceso' : Id_proceso_actual,
-    }
-
-    $.ajax({
-        type:'POST',
-        url:'/selectoresModuloCalificacionPCL',
-        data: datos_lista_profesional,
-        success:function (data) {
-            // console.log(data)
-            let id_profesional= $('select[name=profesional]').val();
-            let profecionalpcl = Object.keys(data);
-            for (let i = 0; i < profecionalpcl.length; i++) {
-                if (data[profecionalpcl[i]]['id'] != id_profesional) {
-                    $('#profesional').append('<option value="'+data[profecionalpcl[i]]['id']+'">'+data[profecionalpcl[i]]['name']+'</option>')                    
-                }
-            }
-        }
-    });
-
     //Listado de causal de devolucion comite calificacion PCL    
     
     let datos_lista_causal_devolucion_comite = {
@@ -306,9 +282,42 @@ $(document).ready(function(){
                     } else {
                         $(".no_ejecutar_parametrica_modulo_principal").addClass('d-none');
                         $("#Edicion").removeClass('d-none');
+
+                        // llenado del input Estado de Facturación
+                        $("#estado_facturacion").val(data[0]["Estado_facturacion"]);
                     }
                 }
             
+            }
+        });
+
+        let datos_lista_profesional={
+            '_token':token,
+            'parametro':"lista_profesional_accion",
+            'nro_evento': $("#newId_evento").val(),
+            'Id_proceso' : Id_proceso_actual,
+            'Id_servicio': $("#Id_servicio").val(),
+            'Id_accion': $(this).val(),
+        }
+    
+        $.ajax({
+            type:'POST',
+            url:'/selectoresModuloCalificacionPCL',
+            data: datos_lista_profesional,
+            success:function (data) {
+                $('#profesional').empty();
+                $('#profesional').append('<option value="" selected>Seleccione</option>');
+                let id_profesional= $('select[name=profesional]').val();
+                let profecionalpcl = Object.keys(data.info_listado_profesionales);
+                for (let i = 0; i < profecionalpcl.length; i++) {
+                    if (data.info_listado_profesionales[profecionalpcl[i]]['id'] != id_profesional) {
+                        if (data.info_listado_profesionales[profecionalpcl[i]]['id'] == data.Profesional_asignado) {
+                            $('#profesional').append('<option value="'+data.info_listado_profesionales[profecionalpcl[i]]['id']+'" selected>'+data.info_listado_profesionales[profecionalpcl[i]]['name']+'</option>')                    
+                        }else{
+                            $('#profesional').append('<option value="'+data.info_listado_profesionales[profecionalpcl[i]]['id']+'">'+data.info_listado_profesionales[profecionalpcl[i]]['name']+'</option>')                    
+                        }
+                    }
+                }
             }
         });
     });
@@ -423,6 +432,7 @@ $(document).ready(function(){
         formData.append('accion', $('#accion').val());
         formData.append('fecha_alerta', $('#fecha_alerta').val());
         formData.append('enviar', $('#enviar').val());
+        formData.append('estado_facturacion', $('#estado_facturacion').val());
         formData.append('profesional', $('#profesional').val());
         formData.append('causal_devolucion_comite', $('#causal_devolucion_comite').val());
         formData.append('descripcion_accion', $('#descripcion_accion').val());
