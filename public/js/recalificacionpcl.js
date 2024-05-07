@@ -3800,6 +3800,7 @@ $(document).ready(function(){
         var tipo_origen = $('#tipo_origen').val();
         var f_evento_pericial = $('#f_evento_pericial').val();
         var f_estructura_pericial = $('#f_estructura_pericial').val();
+        var n_siniestro = $('#n_siniestro').val();
         var sustenta_fecha = $('#sustenta_fecha').val();
         var detalle_califi = $('#detalle_califi').val();
         var enfermedad_catastrofica = $('input[name="enfermedad_catastrofica"]:checked').val(); 
@@ -3826,6 +3827,7 @@ $(document).ready(function(){
             'tipo_origen':tipo_origen,
             'f_evento_pericial':f_evento_pericial,
             'f_estructura_pericial':f_estructura_pericial,
+            'n_siniestro':n_siniestro,
             'sustenta_fecha':sustenta_fecha,
             'detalle_califi':detalle_califi,
             'enfermedad_catastrofica':enfermedad_catastrofica,

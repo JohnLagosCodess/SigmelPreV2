@@ -609,6 +609,7 @@ $(document).ready(function(){
             'nom_entidad': $('#nom_entidad').val(),
             'N_dictamen_controvertido': $('#N_dictamen_controvertido').val(),
             'f_dictamen_controvertido': $('#f_dictamen_controvertido').val(),
+            'n_siniestro': $('#n_siniestro').val(),
             'f_notifi_afiliado': $('#f_notifi_afiliado').val(),
             'f_contro_primer_califi': $('#f_contro_primer_califi').val(),
             'bandera_controvertido_guardar_actualizar': $('#guardar_datos_controvertido').val(),

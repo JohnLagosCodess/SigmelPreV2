@@ -1250,6 +1250,7 @@ $(document).ready(function(){
                     'motivo_solicitud': $("#motivo_solicitud").val(),
                     'Tipo_accidente': $("#tipo_accidente").val(), 
                     'Fecha_evento': $("#fecha_evento").val(), 
+                    'N_siniestro': $("#n_siniestro").val(),                     
                     'Hora_evento': $("#hora_evento").val(), 
                     'Grado_severidad': $("#grado_severidad").val(),
                     'Mortal': mortal_opt,
@@ -1282,6 +1283,7 @@ $(document).ready(function(){
                     'motivo_solicitud': $("#motivo_solicitud").val(),
                     'Tipo_accidente': $("#tipo_accidente").val(), 
                     'Fecha_evento': $("#fecha_evento").val(), 
+                    'N_siniestro': $("#n_siniestro").val(), 
                     'Hora_evento': $("#hora_evento").val(), 
                     'Grado_severidad': $("#grado_severidad").val(),
                     'Mortal': mortal_opt,
@@ -1297,6 +1299,7 @@ $(document).ready(function(){
                     'Otros_relacion_documentos': $("#otros_acci_inci_sincober").val(),
                     'Sustentacion': $("#sustentacion_califi_origen").val(),
                     'Origen': $("#origen_dto_atel").val(),
+                    'radicado_dictamen': $("#radicado_dictamen").val(),
                 };
             }
         }
@@ -1382,6 +1385,7 @@ $(document).ready(function(){
                     'Numero_dictamen': $("#numero_dictamen").val(),
                     'motivo_solicitud': $("#motivo_solicitud").val(),
                     'Fecha_diagnostico_enfermedad': $("#fecha_enfermedad").val(),
+                    'N_siniestro': $("#n_siniestro").val(), 
                     'Mortal': mortal_opt,
                     'Fecha_fallecimiento': $("#fecha_fallecimiento").val(),
                     'Factor_riesgo': $("#factor_riesgo").val(),
@@ -1410,6 +1414,7 @@ $(document).ready(function(){
                     'Numero_dictamen': $("#numero_dictamen").val(),
                     'motivo_solicitud': $("#motivo_solicitud").val(),
                     'Fecha_diagnostico_enfermedad': $("#fecha_enfermedad").val(),
+                    'N_siniestro': $("#n_siniestro").val(), 
                     'Mortal': mortal_opt,
                     'Fecha_fallecimiento': $("#fecha_fallecimiento").val(),
                     'Factor_riesgo': $("#factor_riesgo").val(),
@@ -1422,6 +1427,7 @@ $(document).ready(function(){
                     'Otros_relacion_documentos': $("#otros_enfermedad").val(),
                     'Sustentacion': $("#sustentacion_califi_origen").val(),
                     'Origen': $("#origen_dto_atel").val(),
+                    'radicado_dictamen': $("#radicado_dictamen").val(),
                 };
             }
 

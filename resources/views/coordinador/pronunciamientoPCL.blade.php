@@ -236,6 +236,16 @@
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
+                                            <label for="n_siniestro">N° de Siniestro</label>                                            
+                                            @if (!empty($info_pronuncia[0]->N_siniestro))                                                
+                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="{{$info_pronuncia[0]->N_siniestro}}">                                                
+                                            @else                                               
+                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro">                                                
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
                                             <label for="fecha_estruturacion">Fecha Estructuración<span style="color: red;">(*)</span></label>
                                             @if (!empty($info_pronuncia[0]->Fecha_calificador))
                                                 <input type="date" class="form-control" id="fecha_estruturacion" name="fecha_estruturacion" value="{{$info_pronuncia[0]->Fecha_estruturacion}}" required>

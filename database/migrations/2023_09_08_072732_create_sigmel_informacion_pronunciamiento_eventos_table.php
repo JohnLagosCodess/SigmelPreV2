@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_pronunciamiento_eventos', function (Blueprint $table) {
             $table->increments('Id_Pronuncia');
-            $table->string('ID_evento', 10);
+            $table->string('ID_evento', 15);
             $table->integer('Id_Asignacion');
             $table->integer('Id_proceso');
             $table->integer('Id_primer_calificador')->nullable();
@@ -53,6 +53,7 @@ return new class extends Migration
             $table->string('Reviso_pronuncia', 100)->nullable();
             $table->string('Ciudad_correspon', 100)->nullable();
             $table->string('N_radicado', 22)->nullable();
+            $table->text('N_siniestro')->nullable();
             $table->string('Firmar', 7)->nullable();
             $table->date('Fecha_correspondencia')->nullable();
             $table->text('Archivo_pronuncia')->nullable();

@@ -96,6 +96,14 @@ $(document).ready(function(){
         allowClear: false
     });
 
+     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE AFP conocimiento */
+     $(".afp_conocimiento").select2({
+        width: '100%',
+        placeholder: "Seleccione una opción",
+        allowClear: false
+    });
+
+
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE ARL (INFORMACIÓN AFILIADO) */
     $(".arl_info_afiliado").select2({
         placeholder: "Seleccione una opción",
@@ -663,6 +671,28 @@ $(document).ready(function(){
             }
         }
     });
+
+    // lista afp conocimiento
+    let datos_lista_afp_conocimiento = {
+        '_token': token,
+        'parametro' : "lista_afp"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargarselectores',
+        data: datos_lista_afp_conocimiento,
+        success:function(data) {
+            // console.log(data);
+            let afpEdicion = $('select[name=afp_conocimiento]').val();
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["Id_Afp"] != afpEdicion) {                    
+                    $('#afp_conocimiento').append('<option value="'+data[claves[i]]["Id_Afp"]+'">'+data[claves[i]]["Nombre_afp"]+'</option>');
+                }
+            }
+        }
+    });
+    
     // lista arl (información afiliado)
     let datos_lista_arl_info_afiliado = {
         '_token': token,
@@ -1544,6 +1574,20 @@ $(document).ready(function(){
             $(".columna_otro_afp").slideUp('slow');
         }
     });
+
+    // Validación marcacion checkbox entidad de conocimiento AFP 
+    $('#entidad_conocimiento').change(function (){
+        if ($(this).prop('checked')) {
+            $('#div_afp_conocimiento').removeClass('d-none');         
+        }else{
+            $('#div_afp_conocimiento').addClass('d-none');
+        }       
+    });
+
+    var entidad_conocimiento = $('#entidad_conocimiento');
+    if (entidad_conocimiento.is(":checked")) {
+        $('#div_afp_conocimiento').removeClass('d-none');         
+    }
 
     /* Validación opción OTRO/¿Cuál? del selector Tipo ARL (Información Afiliado) */
     $('#arl_info_afiliado').change(function(){

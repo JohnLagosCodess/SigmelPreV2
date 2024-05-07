@@ -94,6 +94,13 @@ $(document).ready(function(){
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE AFP */
     $(".afp").select2({
         placeholder: "Seleccione una opción",
+        allowClear: false   
+    });
+
+    /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE AFP conocimiento */
+    $(".afp_conocimiento").select2({
+        width: '100%',
+        placeholder: "Seleccione una opción",
         allowClear: false
     });
 
@@ -544,6 +551,25 @@ $(document).ready(function(){
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
                 $('#afp').append('<option value="'+data[claves[i]]["Id_Afp"]+'">'+data[claves[i]]["Nombre_afp"]+'</option>');
+            }
+        }
+    });
+    // lista afp conocimiento
+    let datos_lista_afp_conocimiento = {
+        '_token': token,
+        'parametro' : "lista_afp"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargarselectores',
+        data: datos_lista_afp_conocimiento,
+        success:function(data) {
+            // console.log(data);
+            $('#afp_conocimiento').empty();
+            $('#afp_conocimiento').append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $('#afp_conocimiento').append('<option value="'+data[claves[i]]["Id_Afp"]+'">'+data[claves[i]]["Nombre_afp"]+'</option>');
             }
         }
     });
@@ -1231,6 +1257,15 @@ $(document).ready(function(){
         } else {
             $(".columna_otro_afp").slideUp('slow');
         }
+    });
+
+    // Validación marcacion checkbox entidad de conocimiento AFP 
+    $('#entidad_conocimiento').change(function (){
+        if ($(this).prop('checked')) {
+            $('#div_afp_conocimiento').removeClass('d-none');         
+        }else{
+            $('#div_afp_conocimiento').addClass('d-none');
+        }       
     });
 
     /* Validación opción OTRO/¿Cuál? del selector Tipo ARL (Información Afiliado) */

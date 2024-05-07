@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_diagnosticos_eventos', function (Blueprint $table) {
             $table->increments('Id_Diagnosticos_motcali');
-            $table->string('ID_evento', 10)->nullable();
+            $table->string('ID_evento', 15)->nullable();
             $table->integer('Id_Asignacion')->nullable();
             $table->integer('Id_proceso')->nullable();
             $table->text('CIE10')->nullable();

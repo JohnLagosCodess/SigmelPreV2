@@ -686,6 +686,7 @@ class AdicionDxDTO extends Controller
                 'Id_Dto_ATEL' => $request->Id_Dto_ATEL,
                 'Activo' => $request->Activo,
                 'Tipo_evento' => $request->Tipo_evento,
+                'N_siniestro' => $request->N_siniestro,
                 'Relacion_documentos' => $total_relacion_documentos,
                 'Otros_relacion_documentos' => $request->Otros_relacion_documentos,
                 'Sustentacion_Adicion_Dx' => $request->Sustentacion_Adicion_Dx,

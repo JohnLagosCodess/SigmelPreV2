@@ -22,6 +22,7 @@ class sigmel_informacion_examenes_interconsultas_eventos extends Model
         'Nombre_examen_interconsulta',
         'Descripcion_resultado',
         'Estado',
+        'Estado_Recalificacion',
         'Nombre_usuario',
         'F_registro',
     ];

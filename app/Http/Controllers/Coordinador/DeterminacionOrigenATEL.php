@@ -664,6 +664,7 @@ class DeterminacionOrigenATEL extends Controller
                 'Numero_dictamen' => $request->Numero_dictamen,
                 'Tipo_accidente' => $request->Tipo_accidente,
                 'Fecha_evento' => $request->Fecha_evento,
+                'N_siniestro' => $request->N_siniestro,
                 'Hora_evento' => $request->Hora_evento,
                 'Grado_severidad' => $request->Grado_severidad,
                 'Mortal' => $request->Mortal,
@@ -705,6 +706,7 @@ class DeterminacionOrigenATEL extends Controller
                 'Sustentacion' => $request->Sustentacion,
                 'Origen' => $request->Origen,
                 'N_radicado' => $request->radicado_dictamen,
+                'N_siniestro' => $request->N_siniestro,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];

@@ -523,6 +523,12 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
+                                                <label for="n_siniestro">N° de Siniestro</label>                                            
+                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="<?php if(!empty($arrayinfo_controvertido[0]->N_siniestro)) { echo $arrayinfo_controvertido[0]->N_siniestro;} ?>">                                                                                                                                                        
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
                                                 <label for="f_notifi_afiliado">Fecha notificación al afiliado<span style="color: red;">(*)</span></label>
                                                 <input type="date" class="form-control" name="f_notifi_afiliado" id="f_notifi_afiliado" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado)) { echo $arrayinfo_controvertido[0]->F_notifi_afiliado;} ?>" required>
                                             </div>

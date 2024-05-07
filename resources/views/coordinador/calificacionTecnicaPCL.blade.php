@@ -6948,6 +6948,16 @@
                                             @endif
                                         </div>
                                     </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="n_siniestro">N° de Siniestro</label>                                            
+                                            @if (!empty($array_dictamen_pericial[0]->N_siniestro))                                                
+                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="{{$array_dictamen_pericial[0]->N_siniestro}}">                                                
+                                            @else                                               
+                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro">                                                
+                                            @endif
+                                        </div>
+                                    </div>
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label for="sustenta_fecha">Sustentación de fecha de estructuración<span style="color: red;">(*)</span></label>

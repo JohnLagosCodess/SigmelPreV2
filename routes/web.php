@@ -756,6 +756,8 @@ Route::post('/CrearCliente', [AdministradorController::class, 'guardar_cliente']
 Route::get  ('/Sigmel/RolAdministrador/ListarClientes', [AdministradorController::class, 'mostrarVistaListarClientes'])->name('listarClientes');
 // Acción: Traer información del cliente
 Route::post('/Sigmel/InformacionClienteEditar', [AdministradorController::class, 'InformacionClienteEditar'])->name('InformacionClienteEditar');
+// Acción: Consultar consecutivo Evento
+Route::post('/ConsecutivoIdEvento', [AdministradorController::class, 'ConsecutivoEvento']);
 // Acción: Eliminar fila dinámica en tabla de sucursales modal edicion cliente
 Route::post('/eliminarSucursalCliente', [AdministradorController::class, 'eliminarSucursalCliente']);
 // Acción: Eliminar fila dinámica en tabla de ans modal edicion cliente
