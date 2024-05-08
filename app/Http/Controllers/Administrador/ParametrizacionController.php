@@ -284,7 +284,8 @@ class ParametrizacionController extends Controller
             ->select('sia.Id_Accion', 'sia.Accion')
             ->where([
                 ['sipc.Servicio_asociado', $servicio_asociado_origen_atel],
-                ['sipc.Id_cliente', '=', $Id_cliente]
+                ['sipc.Id_cliente', '=', $Id_cliente],
+                ['sipc.Status_parametrico', '=', 'Activo']
             ])->get();
 
             $informacion_acciones_antecesoras_proceso_origen_atel = json_decode(json_encode($acciones_antecesoras_origen_atel), true);
@@ -383,7 +384,8 @@ class ParametrizacionController extends Controller
             ->select('sia.Id_Accion', 'sia.Accion')
             ->where([
                 ['sipc.Servicio_asociado', $servicio_asociado_calificacion_pcl],
-                ['sipc.Id_cliente', '=', $Id_cliente]
+                ['sipc.Id_cliente', '=', $Id_cliente],
+                ['sipc.Status_parametrico', '=', 'Activo']
             ])->get();
 
             $informacion_acciones_antecesoras_proceso_calificacion_pcl = json_decode(json_encode($acciones_antecesoras_calificacion_pcl), true);
@@ -482,7 +484,8 @@ class ParametrizacionController extends Controller
             ->select('sia.Id_Accion', 'sia.Accion')
             ->where([
                 ['sipc.Servicio_asociado', $servicio_asociado_juntas],
-                ['sipc.Id_cliente', '=', $Id_cliente]
+                ['sipc.Id_cliente', '=', $Id_cliente],
+                ['sipc.Status_parametrico', '=', 'Activo']
             ])->get();
 
             $informacion_acciones_antecesoras_proceso_juntas = json_decode(json_encode($acciones_antecesoras_juntas), true);
