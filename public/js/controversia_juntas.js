@@ -502,7 +502,14 @@ $(document).ready(function(){
     });
     function iniciarIntervalo_pPCL() {
         intervalo = setInterval(() => {
-            var opt_sumaTotal_pcl = parseFloat(total_deficiencia) + parseFloat(total_rol_ocupacional) + parseFloat(total_discapacidad) + parseFloat(total_minusvalia);
+            // Verificar si alguna de las variables es falsa o indefinida, y establecerlas como cero en ese caso
+            var deficiencia = total_deficiencia ? parseFloat(total_deficiencia.replace(',', '.')) : 0;
+            var rolOcupacional = total_rol_ocupacional ? parseFloat(total_rol_ocupacional.replace(',', '.')) : 0;
+            var discapacidad = total_discapacidad ? parseFloat(total_discapacidad.replace(',', '.')) : 0;
+            var minusvalia = total_minusvalia ? parseFloat(total_minusvalia.replace(',', '.')) : 0;
+
+            // Sumar los valores y asignarlos a opt_sumaTotal_pcl
+            var opt_sumaTotal_pcl = deficiencia + rolOcupacional + discapacidad + minusvalia;
             var sumaTotal_pcl = opt_sumaTotal_pcl.toFixed(2);
             if (!isNaN(sumaTotal_pcl)){
                 $('#porcentaje_pcl').val(sumaTotal_pcl);
@@ -621,7 +628,12 @@ $(document).ready(function(){
     });
     function iniciarIntervalo_pPCL_jrci_emitido() {
         intervalo = setInterval(() => {
-            opt_sumaTotal_pcl_jrci_emitido = parseFloat(total_deficiencia_jrci_emitido) + parseFloat(total_rol_ocupacional_jrci_emitido) + parseFloat(total_discapacidad_jrci_emitido)+ parseFloat(total_minusvalia_jrci_emitido);
+            var deficiencia_jrci = total_deficiencia_jrci_emitido ? parseFloat(total_deficiencia_jrci_emitido.replace(',', '.')) : 0;
+            var rolOcupacional_jrci = total_rol_ocupacional_jrci_emitido ? parseFloat(total_rol_ocupacional_jrci_emitido.replace(',', '.')) : 0;
+            var discapacidad_jrci = total_discapacidad_jrci_emitido ? parseFloat(total_discapacidad_jrci_emitido.replace(',', '.')) : 0;
+            var minusvalia_jrci = total_minusvalia_jrci_emitido ? parseFloat(total_minusvalia_jrci_emitido.replace(',', '.')) : 0;
+            // Sumar los valores y asignarlos a opt_sumaTotal_pcl
+            opt_sumaTotal_pcl_jrci_emitido = deficiencia_jrci + rolOcupacional_jrci + discapacidad_jrci + minusvalia_jrci;
             var sumaTotal_pcl_jrci = opt_sumaTotal_pcl_jrci_emitido.toFixed(2);
             if (!isNaN(sumaTotal_pcl_jrci)){
                 $('#porcentaje_pcl_jrci_emitido').val(sumaTotal_pcl_jrci);
@@ -741,7 +753,13 @@ $(document).ready(function(){
     });
     function iniciarIntervalo_pPCL_jrci_reposicion() {
         intervalo = setInterval(() => {
-            opt_sumaTotal_pcl_jrci_reposicion = parseFloat(total_deficiencia_reposicion_jrci) + parseFloat(total_rol_reposicion_jrci) + parseFloat(total_discapacidad_reposicion_jrci)+ parseFloat(total_minusvalia_reposicion_jrci);
+            var deficiencia_re_jrci = total_deficiencia_reposicion_jrci ? parseFloat(total_deficiencia_reposicion_jrci.replace(',', '.')) : 0;
+            var rolOcupacional_re_jrci = total_rol_reposicion_jrci ? parseFloat(total_rol_reposicion_jrci.replace(',', '.')) : 0;
+            var discapacidad_re_jrci = total_discapacidad_reposicion_jrci ? parseFloat(total_discapacidad_reposicion_jrci.replace(',', '.')) : 0;
+            var minusvalia_re_jrci = total_minusvalia_reposicion_jrci ? parseFloat(total_minusvalia_reposicion_jrci.replace(',', '.')) : 0;
+
+            // Sumar los valores y asignarlos a opt_sumaTotal_pcl
+            opt_sumaTotal_pcl_jrci_reposicion = deficiencia_re_jrci + rolOcupacional_re_jrci + discapacidad_re_jrci + minusvalia_re_jrci;
             var sumaTotal_pcl_jrci_reposicion = opt_sumaTotal_pcl_jrci_reposicion.toFixed(2);
             if (!isNaN(sumaTotal_pcl_jrci_reposicion)){
                 $('#porcentaje_pcl_reposicion_jrci').val(sumaTotal_pcl_jrci_reposicion);
@@ -861,7 +879,12 @@ $(document).ready(function(){
     });
     function iniciarIntervalo_pPCL_jnci_emitido() {
         intervalo = setInterval(() => {
-            opt_sumaTotal_pcl_jnci_emitido = parseFloat(total_deficiencia_jnci_emitido) + parseFloat(total_rol_ocupacional_jnci_emitido) + parseFloat(total_discapacidad_jnci_emitido)+ parseFloat(total_minusvalia_jnci_emitido);
+            var deficiencia_jnci_emi = total_deficiencia_jnci_emitido ? parseFloat(total_deficiencia_jnci_emitido.replace(',', '.')) : 0;
+            var rolOcupacional_jnci_emi = total_rol_ocupacional_jnci_emitido ? parseFloat(total_rol_ocupacional_jnci_emitido.replace(',', '.')) : 0;
+            var discapacidad_jnci_emi = total_discapacidad_jnci_emitido ? parseFloat(total_discapacidad_jnci_emitido.replace(',', '.')) : 0;
+            var minusvalia_jnci_emi = total_minusvalia_jnci_emitido ? parseFloat(total_minusvalia_jnci_emitido.replace(',', '.')) : 0;
+            // Sumar los valores y asignarlos a opt_sumaTotal_pcl_jnci_emitido
+            opt_sumaTotal_pcl_jnci_emitido = deficiencia_jnci_emi + rolOcupacional_jnci_emi + discapacidad_jnci_emi + minusvalia_jnci_emi;
             var sumaTotal_pcl_jnci_emitido = opt_sumaTotal_pcl_jnci_emitido.toFixed(2);
             if (!isNaN(sumaTotal_pcl_jnci_emitido)){
                 $('#porcentaje_pcl_jnci_emitido').val(redondearNumero(sumaTotal_pcl_jnci_emitido) );
