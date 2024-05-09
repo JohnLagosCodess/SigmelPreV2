@@ -177,7 +177,7 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="fecha_asignacion_calificacion">Fecha de asignación para DTO</label>
-                                            <input type="text" class="form-control" name="fecha_asignacion_dto" id="fecha_asignacion_dto"  value="<?php if(!empty($array_datos_calificacionOrigen[0]->Fecha_asignacion_dto)){echo $array_datos_calificacionOrigen[0]->Fecha_asignacion_dto;}?>" disabled>
+                                            <input type="text" class="form-control" name="fecha_asignacion_dto" id="fecha_asignacion_dto"  value="<?php if(!empty($array_datos_calificacionOrigen[0]->Fecha_asignacion_dto) && $array_datos_calificacionOrigen[0]->Fecha_asignacion_dto != '0000-00-00 00:00:00'){echo $array_datos_calificacionOrigen[0]->Fecha_asignacion_dto;}else{ echo 'Sin Fecha de Asignación para DTO';}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">

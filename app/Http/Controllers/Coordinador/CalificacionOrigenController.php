@@ -234,10 +234,14 @@ class CalificacionOrigenController extends Controller
         $Accion_realizar = $request->accion;
 
         if ($Accion_realizar == 7) {
-            $Fecha_devolucion_comite = $date;
+            $Fecha_devolucion_comite = $date_time;
             $Causal_devolucion_comite =$request->causal_devolucion_comite;
         }else{
-            $Fecha_devolucion_comite = $request->fecha_devolucion;
+            if ($request->fecha_devolucion == "0000-00-00 00:00:00" || $request->fecha_devolucion == "Sin Fecha Devolución") {
+                $Fecha_devolucion_comite = null;
+            } else {
+                $Fecha_devolucion_comite = $request->fecha_devolucion;
+            }
             $Causal_devolucion_comite =$request->causal_devolucion_comite;
         }
 
@@ -245,7 +249,11 @@ class CalificacionOrigenController extends Controller
         if ($Accion_realizar == 2 || $Accion_realizar == 101) {
             $Fecha_asignacion_dto = $date_time;
         }else{
-            $Fecha_asignacion_dto = "0000-00-00 00:00:00";
+            if ($request->fecha_asignacion_dto == "0000-00-00 00:00:00" || $request->fecha_asignacion_dto == "Sin Fecha de Asignación para DTO") {
+                $Fecha_asignacion_dto = null;
+            } else {
+                $Fecha_asignacion_dto = $request->fecha_asignacion_dto;
+            }
         }
 
         // validacion de bandera para guardar o actualizar
