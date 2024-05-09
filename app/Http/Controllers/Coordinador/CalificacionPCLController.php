@@ -439,7 +439,28 @@ class CalificacionPCLController extends Controller
                     return response()->json(($info_listado_acciones_nuevo_servicio));
                 }
             }
-        }        
+        }
+        
+        if ($parametro == "lista_tipos_docs") {
+            // $datos_tipos_documentos_familia = sigmel_lista_documentos::on('sigmel_gestiones')
+            // ->select('Nro_documento', 'Nombre_documento')
+            // ->get();
+
+            $datos_tipos_documentos_familia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_documentos as sld')
+            ->leftJoin('sigmel_gestiones.sigmel_registro_documentos_eventos as srde', 'sld.Id_Documento', '=', 'srde.Id_Documento')
+            ->select('sld.Nro_documento', 'sld.Nombre_documento')
+            ->where([
+                ['srde.ID_evento', $request->evento],
+                ['srde.Id_servicio', $request->servicio],
+                ['sld.Estado', 'activo']
+            ])
+            ->groupBy('sld.Nro_documento')
+            ->get();
+
+            $info_datos_tipos_documentos_familia = json_decode(json_encode($datos_tipos_documentos_familia, true));
+            return response()->json($info_datos_tipos_documentos_familia);
+        }
+        
     }
 
     public function guardarCalificacionPCL(Request $request){

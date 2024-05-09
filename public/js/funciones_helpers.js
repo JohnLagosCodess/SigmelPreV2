@@ -553,7 +553,44 @@ $(document).ready(function () {
         $("#visar").prop('disabled', true);
         $("#GuardarComiteInter").prop('disabled', true);
     }
+
+    /* Datatable para el listado de documentos (Módulos Principales) */
+    var listado_documentos_ed = $("#listado_documentos_ed").DataTable({
+        "destroy":true,
+        "paging":false,
+        "ordering": false,
+        "searching": true,
+        "scrollCollapse": true,
+        "scrollX": true,
+        "scrollY": 350,
+        "language":{                
+            "search": "Buscar",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "info": "Mostrando registros _START_ a _END_ de un total de _TOTAL_ registros",
+            
+            "paginate": {
+                "previous": "Anterior",
+                "next": "Siguiente",
+                "first": "Primero",
+                "last": "Último"
+            },
+            "zeroRecords": "No se encontraron resultados",
+            "emptyTable": "No se encontró información",
+            "infoEmpty": "No se encontró información",
+        },
+        "initComplete": function(settings, json) {
+            // Eliminar el contenedor <div class="col-sm-12 col-md-6"></div> que rodea al campo de búsqueda
+            $('#listado_documentos_ed_filter').parent().prev('.col-sm-12.col-md-6').remove();
+        }
+    });
+
+    $('#listado_documentos_ed_filter').addClass('pull-left');
+    autoAdjustColumns(listado_documentos_ed);
     
+    // recargar ventana en cargue documentos en modulos principales
+    $("#recargar_ventana").click(function(){
+        location.reload();
+    });
 });
 
 /* Función para ajustar un Datatable cuando este tenga un scroll vertical */
@@ -562,7 +599,7 @@ function autoAdjustColumns(table) {
     //console.log(container);
     if (container instanceof Element) {
       var resizeObserver = new ResizeObserver(function () {
-        table.columns.adjust();
+        table.columns.adjust().draw();
       });
   
       resizeObserver.observe(container);
