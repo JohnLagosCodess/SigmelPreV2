@@ -484,7 +484,11 @@ class CalificacionPCLController extends Controller
             $Fecha_devolucion_comite = $date;
             $Causal_devolucion_comite =$request->causal_devolucion_comite;
         }else{
-            $Fecha_devolucion_comite = $request->fecha_devolucion;
+            if ($request->fecha_devolucion == "0000-00-00 00:00:00" || $request->fecha_devolucion == "Sin Fecha Devolución") {
+                $Fecha_devolucion_comite = null;
+            } else {
+                $Fecha_devolucion_comite = $request->fecha_devolucion;
+            }
             $Causal_devolucion_comite =$request->causal_devolucion_comite;
         }
         
