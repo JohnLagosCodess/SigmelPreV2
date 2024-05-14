@@ -57,12 +57,21 @@ $(document).ready(function(){
         placeholder:"Seleccione una opción",
         allowClear:false
     });
+    
+    $(".listado_tipos_documentos").select2({      
+        width: '100%',
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
 
     /* FUNCIONALIDAD DESCARGA DOCUMENTO */
     $("a[id^='btn_generar_descarga_']").click(function(){
+        var id_registro_doc = $(this).data('id_doc_reg_descargar');
         var id_documento = $(this).data('id_documento_descargar');
-        var nombre_documento = $("#nombre_documento_descarga_"+id_documento).val();
-        var extension_documento = $("#extension_documento_descarga_"+id_documento).val();
+
+        var nombre_documento = $("#nombre_documento_descarga_"+id_registro_doc+"_"+id_documento).val();
+        var extension_documento = $("#extension_documento_descarga_"+id_registro_doc+"_"+id_documento).val();
+
         var regex = /IdEvento_(.*?)_IdServicio/;
         var resultado = nombre_documento.match(regex);
 
@@ -230,29 +239,6 @@ $(document).ready(function(){
     var Id_asignacion_pro = $('#newId_asignacion').val();
     var Id_proceso_actual = $('#Id_proceso').val();
     
-    //Listado de profesional    
-    let datos_lista_profesional={
-        '_token':token,
-        'parametro':"lista_profesional_proceso",
-        'id_proceso' : Id_proceso_actual,
-    }
-
-    $.ajax({
-        type:'POST',
-        url:'/cargarselectores',
-        data: datos_lista_profesional,
-        success:function (data) {
-            // console.log(data)
-            let id_profesional= $('select[name=profesional]').val();
-            let profecionalpcl = Object.keys(data);
-            for (let i = 0; i < profecionalpcl.length; i++) {
-                if (data[profecionalpcl[i]]['id'] != id_profesional) {
-                    $('#profesional').append('<option value="'+data[profecionalpcl[i]]['id']+'">'+data[profecionalpcl[i]]['name']+'</option>')                    
-                }
-            }
-        }
-    });
-
     //Listado de causal de devolucion comite calificacion PCL    
     
     let datos_lista_causal_devolucion_comite = {
@@ -339,9 +325,164 @@ $(document).ready(function(){
                     } else {
                         $(".no_ejecutar_parametrica_modulo_principal").addClass('d-none');
                         $("#Edicion").removeClass('d-none');
+
+                        // llenado del input Estado de Facturación
+                        $("#estado_facturacion").val(data[0]["Estado_facturacion"]);
                     }
                 }
             }
+        });
+
+        // CARGUE LISTADO DE PROFESIONALES DEPENDIENDO DE LA SELECCIÓN DE LA ACCIÓN
+        let datos_lista_profesional = {
+            '_token':token,
+            'parametro':"lista_profesional_accion",
+            'nro_evento': $("#newId_evento").val(),
+            'Id_proceso' : Id_proceso_actual,
+            'Id_servicio': $("#Id_servicio").val(),
+            'Id_accion': $(this).val(),
+        }
+
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_lista_profesional,
+            success:function (data) {
+                // console.log(data)
+                $('#profesional').empty();
+                $('#profesional').append('<option value="" selected>Seleccione</option>');
+                let id_profesional= $('select[name=profesional]').val();
+                let profesionalorigen = Object.keys(data.info_listado_profesionales);
+                for (let i = 0; i < profesionalorigen.length; i++) {
+                    if (data.info_listado_profesionales[profesionalorigen[i]]['id'] != id_profesional) {
+                        if (data.info_listado_profesionales[profesionalorigen[i]]['id'] == data.Profesional_asignado) {
+                            $('#profesional').append('<option value="'+data.info_listado_profesionales[profesionalorigen[i]]['id']+'" selected>'+data.info_listado_profesionales[profesionalorigen[i]]['name']+'</option>')                    
+                        }else{
+                            $('#profesional').append('<option value="'+data.info_listado_profesionales[profesionalorigen[i]]['id']+'">'+data.info_listado_profesionales[profesionalorigen[i]]['name']+'</option>')                    
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+    //Listado de los tipos de documento que pueden subir
+    let datos_lista_tipos_documentos = {
+        '_token': token,
+        'evento': $("#newId_evento").val(),
+        'servicio': $("#Id_servicio").val(),
+        'parametro':"lista_tipos_docs",
+    };
+    $.ajax({
+        type:'POST',
+        url:'/selectoresOrigenAtel',
+        data: datos_lista_tipos_documentos,
+        success:function(data) {
+            let tiposdoc = Object.keys(data);
+            for (let i = 0; i < tiposdoc.length; i++) {
+                $('#listado_tipos_documentos').append('<option value="'+data[tiposdoc[i]]["Nro_documento"]+'">'+data[tiposdoc[i]]["Nro_documento"]+' - '+data[tiposdoc[i]]["Nombre_documento"]+'</option>');
+            }
+        }
+    });
+
+    // seteo del id, nombre del documento familia, id evento, id servicio
+    $("#listado_tipos_documentos").change(function(){
+        var id_doc_familia_seleccionado = $(this).val();
+        var nombre_doc_familia_seleccionado = $(this).find("option:selected").text().replace(/^\d+\s*-\s*/, '');
+        $("#id_doc_familia").val(id_doc_familia_seleccionado);
+        $("#nombre_doc_familia").val(nombre_doc_familia_seleccionado);
+
+        var evento = $("#newId_evento").val();
+        var servicio = $("#Id_servicio").val();
+        $("#id_evento_familia").val(evento);
+        $("#id_servicio_familia").val(servicio);
+    });
+
+    /* Envío de información del documento familia */
+    $("#familia_documentos").submit(function(e){
+        e.preventDefault();
+        var formData = new FormData($(this)[0]);
+        // for (var pair of formData.entries()) {
+        //     console.log(pair[0] + ": " + pair[1]);
+        // }
+    
+        $.ajax({
+            url: "/cargaDocumentosComplementarios",
+            type: "post",
+            dataType: "json",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success:function(response){
+                if (response.parametro == "fallo") {
+                    if (response.otro != undefined) {
+                        $('#listadodocumento_'+response.otro).val('');
+                    }else{
+                        $('#doc_subir').val('');
+                    }
+                    $('.mostrar_fallo_doc_familia').removeClass('d-none');
+                    $('.mostrar_fallo_doc_familia').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_fallo_doc_familia').addClass('d-none');
+                        $('.mostrar_fallo_doc_familia').empty();
+                    }, 6000);
+                }else if (response.parametro == "exito") {
+                    // if(response.otro != undefined){
+                    //     $("#estadoDocumentoOtro_"+response.otro).empty();
+                    //     $("#estadoDocumentoOtro_"+response.otro).append('<strong class="text-success">Cargado</strong>');
+                    //     $('#listadodocumento_'+response.otro).prop("disabled", true);
+                    //     $('#CargarDocumento_'+response.otro).prop("disabled", true);
+                    //     $('#habilitar_modal_otro_doc').prop("disabled", true);
+                    // }else{
+                    //     $("#"+cambio_estado).empty();
+                    //     $("#"+cambio_estado).append('<strong class="text-success">Cargado</strong>');
+                    // }
+
+                    $('.mostrar_exito_doc_familia').removeClass('d-none');
+                    $('.mostrar_exito_doc_familia').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_exito_doc_familia').addClass('d-none');
+                        $('.mostrar_exito_doc_familia').empty();
+                    }, 6000);
+                }else{}
+
+            }         
+        });
+    });
+
+    /* Envío de Información para eliminar el documento Complementario */
+    $("form[id^='form_eliminar_doc_complementario_']").submit(function(e){
+        e.preventDefault();
+        var formData = new FormData($(this)[0]);
+        // for (var pair of formData.entries()) {
+        //     console.log(pair[0] + ": " + pair[1]);
+        // }
+        $.ajax({
+            url: "/eliminarDocumentoComplementario",
+            type: "post",
+            dataType: "json",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success:function(response){
+                if (response.parametro == "fallo") {
+                    $('.mostrar_fallo').removeClass('d-none');
+                    $('.mostrar_fallo').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_fallo').addClass('d-none');
+                        $('.mostrar_fallo').empty();
+                    }, 6000);
+                }else if (response.parametro == "exito") {
+                    $('.mostrar_exito').removeClass('d-none');
+                    $('.mostrar_exito').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_exito').addClass('d-none');
+                        $('.mostrar_exito').empty();
+                    }, 6000);
+                }else{}
+            }         
         });
     });
 
@@ -351,10 +492,15 @@ $(document).ready(function(){
         //console.log(idobtenido);
         $("input[id^='EventoID_']").val(idobtenido);
     });
+
     /* Envío de Información del Documento a Cargar */
+    var fechaActual = new Date().toISOString().slice(0,10);
     $("form[id^='formulario_documento_']").submit(function(e){
 
         e.preventDefault();
+        var id_reg_doc = $(this).data("id_reg_doc");
+        var id_doc = $(this).data("id_doc");
+
         var formData = new FormData($(this)[0]);
         var cambio_estado = $(this).parents()[1]['children'][2]["id"];
         var input_documento = $(this).parents()[0]['children'][0][4]["id"];
@@ -362,6 +508,7 @@ $(document).ready(function(){
         //for (var pair of formData.entries()) {
         //   console.log(pair[0]+ ', ' + pair[1]); 
         //}
+
         // Enviamos los datos para validar y guardar el docmuento correspondiente
         $.ajax({
             url: "/cargarDocumentos",
@@ -386,6 +533,7 @@ $(document).ready(function(){
                         $('.mostrar_fallo').empty();
                     }, 6000);
                 }else if (response.parametro == "exito") {
+                    $("#fecha_cargue_documento_"+id_reg_doc+"_"+id_doc).val(fechaActual);
                     if(response.otro != undefined){
                         $("#estadoDocumentoOtro_"+response.otro).empty();
                         $("#estadoDocumentoOtro_"+response.otro).append('<strong class="text-success">Cargado</strong>');
@@ -449,6 +597,7 @@ $(document).ready(function(){
         formData.append('accion', $('#accion').val());
         formData.append('fecha_alerta', $('#fecha_alerta').val());
         formData.append('enviar', $('#enviar').val());
+        formData.append('estado_facturacion', $('#estado_facturacion').val());
         formData.append('causal_devolucion_comite', $('#causal_devolucion_comite').val());
         formData.append('profesional', $('#profesional').val());
         formData.append('descripcion_accion', $('#descripcion_accion').val());        

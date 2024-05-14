@@ -67,13 +67,13 @@ class CalificacionJuntasController extends Controller
         // Trae informacion de controversia_juntas
         $arrayinfo_controvertido= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_controversia_juntas_eventos as j')
         ->select('j.ID_evento','j.Enfermedad_heredada','j.F_transferencia_enfermedad','j.Primer_calificador','pa.Nombre_parametro as Calificador'
-        ,'j.Nom_entidad','j.N_dictamen_controvertido','j.F_dictamen_controvertido','j.F_notifi_afiliado','j.Parte_controvierte_califi','pa2.Nombre_parametro as ParteCalificador','j.Nombre_controvierte_califi',
+        ,'j.Nom_entidad','j.N_dictamen_controvertido','j.F_dictamen_controvertido','j.N_siniestro','j.F_notifi_afiliado','j.Parte_controvierte_califi','pa2.Nombre_parametro as ParteCalificador','j.Nombre_controvierte_califi',
         'j.N_radicado_entrada_contro','j.Contro_origen','j.Contro_pcl','j.Contro_diagnostico','j.Contro_f_estructura','j.Contro_m_califi',
         'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','sie.Nombre_entidad as JrciNombre')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa', 'j.Primer_calificador', '=', 'pa.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa2', 'j.Parte_controvierte_califi', '=', 'pa2.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'j.Jrci_califi_invalidez', '=', 'sie.Id_Entidad')
-        ->where('j.ID_evento',  '=', $newIdEvento)
+        ->where([['j.ID_evento',  '=', $newIdEvento],['j.Id_Asignacion', $newIdAsignacion]])
         ->get();
 
         //Trae Pago de Honorarios 
@@ -82,7 +82,7 @@ class CalificacionJuntasController extends Controller
         ,'p.N_orden_pago','p.Valor_pagado','p.F_pago_honorarios','p.F_pago_radicacion')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa', 'p.Tipo_pago', '=', 'pa.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa2', 'p.Pago_junta', '=', 'pa2.Id_Parametro')
-        ->where('p.ID_evento',  '=', $newIdEvento)
+        ->where([['p.ID_evento',  '=', $newIdEvento],['p.Id_Asignacion', $newIdAsignacion]])
         ->get();
 
         //Trae Listado de documentos
@@ -296,6 +296,59 @@ class CalificacionJuntasController extends Controller
             return response()->json($info_lista_profesional_proceso);
         }
 
+        // listado de profesionales segun la acción a realizar
+        if ($parametro == 'lista_profesional_accion') {
+            if ($request->Id_cliente == "") {
+                $array_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
+                ->select('Cliente')->where('ID_evento', $request->nro_evento)->first();
+
+                $id_cliente = $array_id_cliente["Cliente"];
+            } else {
+                $id_cliente = $request->Id_cliente;
+            }
+            
+            $id_proceso = $request->Id_proceso;
+            $id_servicio = $request->Id_servicio;
+            $id_accion = $request->Id_accion;
+
+            /* Extraemos el equippo de trabajo y el profesional asignado configurados en la paramétrica */
+            $info_equipo_prof_asig = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Equipo_trabajo', 'sipc.Profesional_asignado')
+            ->where([
+                ['sipc.Id_cliente', '=', $id_cliente],
+                ['sipc.Id_proceso', '=', $id_proceso],
+                ['sipc.Servicio_asociado', '=', $id_servicio],
+                ['sipc.Accion_ejecutar', '=', $id_accion]
+            ])->get();
+
+            /* Si el profesional asignado está configurado entonces el listado de profesionales
+            se cargará con los usuarios que pertenecen al equipo de trabajo configurado en la paramétrica */
+            if($info_equipo_prof_asig[0]->Profesional_asignado <> ""){
+                $listado_profesionales = DB::table('users as u')
+                ->leftJoin('sigmel_gestiones.sigmel_usuarios_grupos_trabajos as sugt', 'u.id', '=', 'sugt.id_usuarios_asignados')
+                ->select('u.id', 'u.name')
+                ->where([['sugt.id_equipo_trabajo', $info_equipo_prof_asig[0]->Equipo_trabajo]])
+                ->get();
+
+                $info_listado_profesionales = json_decode(json_encode($listado_profesionales, true));
+                return response()->json([
+                    'info_listado_profesionales' => $info_listado_profesionales,
+                    'Profesional_asignado' => $info_equipo_prof_asig[0]->Profesional_asignado
+                ]);
+            }else{
+                $lista_profesional_proceso = DB::table('users')->select('id', 'name')
+                ->where('estado', 'Activo')
+                ->whereRaw("FIND_IN_SET($id_proceso, id_procesos_usuario) > 0")->get();
+
+                $info_lista_profesional_proceso = json_decode(json_encode($lista_profesional_proceso, true));
+                // return response()->json($info_lista_profesional_proceso);
+                return response()->json([
+                    'info_listado_profesionales' => $info_lista_profesional_proceso,
+                    'Profesional_asignado' => ''
+                ]);
+            }
+        }
+
         if($parametro = "listado_accion"){
             /* Iniciamos trayendo las acciones a ejecutar configuradas en la tabla de parametrizaciones
             dependiendo del id del cliente, id del proceso, id del servicio, estado activo */
@@ -387,6 +440,27 @@ class CalificacionJuntasController extends Controller
                 }
             }
         }
+
+        if ($parametro == "lista_tipos_docs") {
+            // $datos_tipos_documentos_familia = sigmel_lista_documentos::on('sigmel_gestiones')
+            // ->select('Nro_documento', 'Nombre_documento')
+            // ->get();
+
+            $datos_tipos_documentos_familia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_documentos as sld')
+            ->leftJoin('sigmel_gestiones.sigmel_registro_documentos_eventos as srde', 'sld.Id_Documento', '=', 'srde.Id_Documento')
+            ->select('sld.Nro_documento', 'sld.Nombre_documento')
+            ->where([
+                ['srde.ID_evento', $request->evento],
+                ['srde.Id_servicio', $request->servicio],
+                ['sld.Estado', 'activo']
+            ])
+            ->groupBy('sld.Nro_documento')
+            ->get();
+
+            $info_datos_tipos_documentos_familia = json_decode(json_encode($datos_tipos_documentos_familia, true));
+            return response()->json($info_datos_tipos_documentos_familia);
+        }
+
     }
 
     //Guardar informacion del modulo de Juntas
@@ -427,6 +501,7 @@ class CalificacionJuntasController extends Controller
                 'Accion' => $request->accion,
                 'F_Alerta' => $request->fecha_alerta,
                 'Enviar' => $request->enviar,
+                'Estado_Facturacion' => $request->estado_facturacion,
                 'Causal_devolucion_comite' => 'N/A',
                 'Descripcion_accion' => $request->descripcion_accion,
                 'Nombre_usuario' => $nombre_usuario,
@@ -597,6 +672,7 @@ class CalificacionJuntasController extends Controller
                 'Accion' => $request->accion,
                 'F_Alerta' => $request->fecha_alerta,
                 'Enviar' => $request->enviar,
+                'Estado_Facturacion' => $request->estado_facturacion,
                 'Causal_devolucion_comite' => 'N/A',
                 'Descripcion_accion' => $request->descripcion_accion,
                 'Nombre_usuario' => $nombre_usuario,
@@ -794,6 +870,7 @@ class CalificacionJuntasController extends Controller
                 'Nom_entidad' => $request->nom_entidad,
                 'N_dictamen_controvertido' => $request->N_dictamen_controvertido,
                 'F_dictamen_controvertido' => $request->f_dictamen_controvertido,
+                'N_siniestro' => $request->n_siniestro,
                 'F_notifi_afiliado' => $request->f_notifi_afiliado,
                 'Termino_contro_califi' => $terminos,
                 'Nombre_usuario' => $nombre_usuario,
@@ -817,6 +894,7 @@ class CalificacionJuntasController extends Controller
                 'Nom_entidad' => $request->nom_entidad,
                 'N_dictamen_controvertido' => $request->N_dictamen_controvertido,
                 'F_dictamen_controvertido' => $request->f_dictamen_controvertido,
+                'N_siniestro' => $request->n_siniestro,
                 'F_notifi_afiliado' => $request->f_notifi_afiliado,
                 'Termino_contro_califi' => $terminos,
                 'Nombre_usuario' => $nombre_usuario,

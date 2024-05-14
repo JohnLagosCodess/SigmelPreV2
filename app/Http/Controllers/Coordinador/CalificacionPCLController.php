@@ -280,6 +280,59 @@ class CalificacionPCLController extends Controller
             return response()->json($info_lista_profesional_proceso);
         }
 
+        // listado de profesionales segun la acción a realizar
+        if ($parametro == 'lista_profesional_accion') {
+            if ($request->Id_cliente == "") {
+                $array_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
+                ->select('Cliente')->where('ID_evento', $request->nro_evento)->first();
+
+                $id_cliente = $array_id_cliente["Cliente"];
+            } else {
+                $id_cliente = $request->Id_cliente;
+            }
+            
+            $id_proceso = $request->Id_proceso;
+            $id_servicio = $request->Id_servicio;
+            $id_accion = $request->Id_accion;
+
+            /* Extraemos el equippo de trabajo y el profesional asignado configurados en la paramétrica */
+            $info_equipo_prof_asig = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Equipo_trabajo', 'sipc.Profesional_asignado')
+            ->where([
+                ['sipc.Id_cliente', '=', $id_cliente],
+                ['sipc.Id_proceso', '=', $id_proceso],
+                ['sipc.Servicio_asociado', '=', $id_servicio],
+                ['sipc.Accion_ejecutar', '=', $id_accion]
+            ])->get();
+
+            /* Si el profesional asignado está configurado entonces el listado de profesionales
+            se cargará con los usuarios que pertenecen al equipo de trabajo configurado en la paramétrica */
+            if($info_equipo_prof_asig[0]->Profesional_asignado <> ""){
+                $listado_profesionales = DB::table('users as u')
+                ->leftJoin('sigmel_gestiones.sigmel_usuarios_grupos_trabajos as sugt', 'u.id', '=', 'sugt.id_usuarios_asignados')
+                ->select('u.id', 'u.name')
+                ->where([['sugt.id_equipo_trabajo', $info_equipo_prof_asig[0]->Equipo_trabajo]])
+                ->get();
+
+                $info_listado_profesionales = json_decode(json_encode($listado_profesionales, true));
+                return response()->json([
+                    'info_listado_profesionales' => $info_listado_profesionales,
+                    'Profesional_asignado' => $info_equipo_prof_asig[0]->Profesional_asignado
+                ]);
+            }else{
+                $lista_profesional_proceso = DB::table('users')->select('id', 'name')
+                ->where('estado', 'Activo')
+                ->whereRaw("FIND_IN_SET($id_proceso, id_procesos_usuario) > 0")->get();
+
+                $info_lista_profesional_proceso = json_decode(json_encode($lista_profesional_proceso, true));
+                // return response()->json($info_lista_profesional_proceso);
+                return response()->json([
+                    'info_listado_profesionales' => $info_lista_profesional_proceso,
+                    'Profesional_asignado' => ''
+                ]);
+            }
+        }
+
         // Listado Causal de devolucion comite PCL
         if($parametro == 'lista_causal_devo_comite'){            
 
@@ -386,7 +439,28 @@ class CalificacionPCLController extends Controller
                     return response()->json(($info_listado_acciones_nuevo_servicio));
                 }
             }
-        }        
+        }
+        
+        if ($parametro == "lista_tipos_docs") {
+            // $datos_tipos_documentos_familia = sigmel_lista_documentos::on('sigmel_gestiones')
+            // ->select('Nro_documento', 'Nombre_documento')
+            // ->get();
+
+            $datos_tipos_documentos_familia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_documentos as sld')
+            ->leftJoin('sigmel_gestiones.sigmel_registro_documentos_eventos as srde', 'sld.Id_Documento', '=', 'srde.Id_Documento')
+            ->select('sld.Nro_documento', 'sld.Nombre_documento')
+            ->where([
+                ['srde.ID_evento', $request->evento],
+                ['srde.Id_servicio', $request->servicio],
+                ['sld.Estado', 'activo']
+            ])
+            ->groupBy('sld.Nro_documento')
+            ->get();
+
+            $info_datos_tipos_documentos_familia = json_decode(json_encode($datos_tipos_documentos_familia, true));
+            return response()->json($info_datos_tipos_documentos_familia);
+        }
+        
     }
 
     public function guardarCalificacionPCL(Request $request){
@@ -410,7 +484,11 @@ class CalificacionPCLController extends Controller
             $Fecha_devolucion_comite = $date;
             $Causal_devolucion_comite =$request->causal_devolucion_comite;
         }else{
-            $Fecha_devolucion_comite = $request->fecha_devolucion;
+            if ($request->fecha_devolucion == "0000-00-00 00:00:00" || $request->fecha_devolucion == "Sin Fecha Devolución") {
+                $Fecha_devolucion_comite = null;
+            } else {
+                $Fecha_devolucion_comite = $request->fecha_devolucion;
+            }
             $Causal_devolucion_comite =$request->causal_devolucion_comite;
         }
         
@@ -430,6 +508,7 @@ class CalificacionPCLController extends Controller
                     'Accion' => $request->accion,
                     'F_Alerta' => $request->fecha_alerta,
                     'Enviar' => $request->enviar,
+                    'Estado_Facturacion' => $request->estado_facturacion,
                     'Causal_devolucion_comite' => $Causal_devolucion_comite,
                     'F_devolucion_comite' => $Fecha_devolucion_comite,
                     'Descripcion_accion' => $request->descripcion_accion,
@@ -447,6 +526,7 @@ class CalificacionPCLController extends Controller
                     'Accion' => $request->accion,
                     'F_Alerta' => $request->fecha_alerta,
                     'Enviar' => $request->enviar,
+                    'Estado_Facturacion' => $request->estado_facturacion,
                     'Causal_devolucion_comite' => $Causal_devolucion_comite,                    
                     'F_devolucion_comite' => $Fecha_devolucion_comite,
                     'Descripcion_accion' => $request->descripcion_accion,
@@ -619,6 +699,7 @@ class CalificacionPCLController extends Controller
                     'Accion' => $request->accion,
                     'F_Alerta' => $request->fecha_alerta,
                     'Enviar' => $request->enviar,
+                    'Estado_Facturacion' => $request->estado_facturacion,
                     'Causal_devolucion_comite' => $Causal_devolucion_comite,
                     'F_devolucion_comite' => $Fecha_devolucion_comite,
                     'Descripcion_accion' => $request->descripcion_accion,
@@ -636,6 +717,7 @@ class CalificacionPCLController extends Controller
                     'Accion' => $request->accion,
                     'F_Alerta' => $request->fecha_alerta,
                     'Enviar' => $request->enviar,
+                    'Estado_Facturacion' => $request->estado_facturacion,
                     'Causal_devolucion_comite' => $Causal_devolucion_comite,
                     'F_devolucion_comite' => $Fecha_devolucion_comite,
                     'Descripcion_accion' => $request->descripcion_accion,

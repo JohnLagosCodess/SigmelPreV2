@@ -234,10 +234,14 @@ class CalificacionOrigenController extends Controller
         $Accion_realizar = $request->accion;
 
         if ($Accion_realizar == 7) {
-            $Fecha_devolucion_comite = $date;
+            $Fecha_devolucion_comite = $date_time;
             $Causal_devolucion_comite =$request->causal_devolucion_comite;
         }else{
-            $Fecha_devolucion_comite = $request->fecha_devolucion;
+            if ($request->fecha_devolucion == "0000-00-00 00:00:00" || $request->fecha_devolucion == "Sin Fecha Devolución") {
+                $Fecha_devolucion_comite = null;
+            } else {
+                $Fecha_devolucion_comite = $request->fecha_devolucion;
+            }
             $Causal_devolucion_comite =$request->causal_devolucion_comite;
         }
 
@@ -245,7 +249,11 @@ class CalificacionOrigenController extends Controller
         if ($Accion_realizar == 2 || $Accion_realizar == 101) {
             $Fecha_asignacion_dto = $date_time;
         }else{
-            $Fecha_asignacion_dto = "0000-00-00 00:00:00";
+            if ($request->fecha_asignacion_dto == "0000-00-00 00:00:00" || $request->fecha_asignacion_dto == "Sin Fecha de Asignación para DTO") {
+                $Fecha_asignacion_dto = null;
+            } else {
+                $Fecha_asignacion_dto = $request->fecha_asignacion_dto;
+            }
         }
 
         // validacion de bandera para guardar o actualizar
@@ -263,6 +271,7 @@ class CalificacionOrigenController extends Controller
                 'Accion' => $request->accion,
                 'F_Alerta' => $request->fecha_alerta,
                 'Enviar' => $request->enviar,
+                'Estado_Facturacion' => $request->estado_facturacion,
                 'Causal_devolucion_comite' => $Causal_devolucion_comite,
                 'F_devolucion_comite' => $Fecha_devolucion_comite,
                 'Descripcion_accion' => $request->descripcion_accion,
@@ -436,6 +445,7 @@ class CalificacionOrigenController extends Controller
                 'Accion' => $request->accion,
                 'F_Alerta' => $request->fecha_alerta,
                 'Enviar' => $request->enviar,
+                'Estado_Facturacion' => $request->estado_facturacion,
                 'Causal_devolucion_comite' => $Causal_devolucion_comite,
                 'F_devolucion_comite' => $Fecha_devolucion_comite,
                 'Descripcion_accion' => $request->descripcion_accion,
@@ -676,7 +686,7 @@ class CalificacionOrigenController extends Controller
             return response()->json($info_listado_causal_devo_comite);
         }
 
-        if($parametro = "listado_accion"){
+        if($parametro == "listado_accion"){
             /* Iniciamos trayendo las acciones a ejecutar configuradas en la tabla de parametrizaciones
             dependiendo del id del cliente, id del proceso, id del servicio, estado activo */
             
@@ -766,6 +776,27 @@ class CalificacionOrigenController extends Controller
                     return response()->json(($info_listado_acciones_nuevo_servicio));
                 }
             }
+        }
+
+        if ($parametro == "lista_tipos_docs") {
+            // $datos_tipos_documentos_familia = sigmel_lista_documentos::on('sigmel_gestiones')
+            // ->select('Nro_documento', 'Nombre_documento')
+            // ->get();
+
+            $datos_tipos_documentos_familia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_documentos as sld')
+            ->leftJoin('sigmel_gestiones.sigmel_registro_documentos_eventos as srde', 'sld.Id_Documento', '=', 'srde.Id_Documento')
+            ->select('sld.Nro_documento', 'sld.Nombre_documento')
+            ->where([
+                ['srde.ID_evento', $request->evento],
+                ['srde.Id_servicio', $request->servicio],
+                ['sld.Estado', 'activo']
+            ])
+            ->groupBy('sld.Nro_documento')
+            // ->orderBy('sld.Nro_documento', 'ASC')
+            ->get();
+
+            $info_datos_tipos_documentos_familia = json_decode(json_encode($datos_tipos_documentos_familia, true));
+            return response()->json($info_datos_tipos_documentos_familia);
         }
     }
 

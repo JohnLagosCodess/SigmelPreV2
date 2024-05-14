@@ -42,7 +42,7 @@ class ControversiaJuntasController extends Controller
         // Trae informacion de controversia_juntas
         $arrayinfo_controvertido= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_controversia_juntas_eventos as j')
         ->select('j.ID_evento','j.Enfermedad_heredada','j.F_transferencia_enfermedad','j.Primer_calificador','pa.Nombre_parametro as Calificador'
-        ,'j.Nom_entidad','j.N_dictamen_controvertido','j.F_notifi_afiliado','j.Parte_controvierte_califi','pa2.Nombre_parametro as ParteCalificador','j.Nombre_controvierte_califi',
+        ,'j.Nom_entidad','j.N_dictamen_controvertido','j.N_siniestro','j.F_notifi_afiliado','j.Parte_controvierte_califi','pa2.Nombre_parametro as ParteCalificador','j.Nombre_controvierte_califi',
         'j.N_radicado_entrada_contro','j.Contro_origen','j.Contro_pcl','j.Contro_diagnostico','j.Contro_f_estructura','j.Contro_m_califi',
         'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','sie.Nombre_entidad as JrciNombre',
         'j.Origen_controversia','pa4.Nombre_parametro as OrigenContro','j.Manual_de_califi','d.Nombre_decreto','j.Total_deficiencia','j.Total_rol_ocupacional','j.Total_discapacidad',
@@ -76,7 +76,7 @@ class ControversiaJuntasController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d', 'j.Manual_de_califi', '=', 'd.Id_Decreto')
         ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d1', 'j.Manual_de_califi_jrci_emitido', '=', 'd1.Id_Decreto')
         ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d2', 'j.Manual_reposicion_jrci', '=', 'd2.Id_Decreto')
-        ->where('j.ID_evento',  '=', $Id_evento_juntas)
+        ->where([['j.ID_evento',  '=', $Id_evento_juntas],['j.Id_Asignacion', $Id_asignacion_juntas]])
         ->get();
         
         // TRAER DATOS CIE10 (Diagnóstico motivo de calificación)
@@ -87,6 +87,7 @@ class ControversiaJuntasController extends Controller
         ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
         'slp.Nombre_parametro as Nombre_parametro_origen', 'side.Deficiencia_motivo_califi_condiciones', 'side.Lateralidad_CIE10', 'slp2.Nombre_parametro as Nombre_parametro_lateralidad', 'side.Principal')
         ->where([['side.ID_evento',$Id_evento_juntas],
+            ['side.Id_Asignacion',$Id_asignacion_juntas],
             ['side.Id_proceso',$array_datos_controversiaJuntas[0]->Id_proceso],
             ['side.Item_servicio', '=', 'Controvertido Juntas'],
             ['side.Estado', '=', 'Activo']
@@ -100,6 +101,7 @@ class ControversiaJuntasController extends Controller
         ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
         'slp.Nombre_parametro as Nombre_parametro_origen', 'side.Deficiencia_motivo_califi_condiciones', 'side.Lateralidad_CIE10', 'slp2.Nombre_parametro as Nombre_parametro_lateralidad', 'side.Principal')
         ->where([['side.ID_evento',$Id_evento_juntas],
+            ['side.Id_Asignacion',$Id_asignacion_juntas],
             ['side.Id_proceso',$array_datos_controversiaJuntas[0]->Id_proceso],
             ['side.Item_servicio', '=', 'Emitido JRCI'],
             ['side.Estado', '=', 'Activo']
@@ -112,6 +114,7 @@ class ControversiaJuntasController extends Controller
         ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
         'slp.Nombre_parametro as Nombre_parametro_origen', 'side.Deficiencia_motivo_califi_condiciones', 'side.Lateralidad_CIE10', 'slp2.Nombre_parametro as Nombre_parametro_lateralidad', 'side.Principal')
         ->where([['side.ID_evento',$Id_evento_juntas],
+            ['side.Id_Asignacion',$Id_asignacion_juntas],
             ['side.Id_proceso',$array_datos_controversiaJuntas[0]->Id_proceso],
             ['side.Item_servicio', '=', 'Reposicion JRCI'],
             ['side.Estado', '=', 'Activo']
@@ -125,6 +128,7 @@ class ControversiaJuntasController extends Controller
         ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
         'slp.Nombre_parametro as Nombre_parametro_origen', 'side.Deficiencia_motivo_califi_condiciones', 'side.Lateralidad_CIE10', 'slp2.Nombre_parametro as Nombre_parametro_lateralidad', 'side.Principal')
         ->where([['side.ID_evento',$Id_evento_juntas],
+            ['side.Id_Asignacion',$Id_asignacion_juntas],
             ['side.Id_proceso',$array_datos_controversiaJuntas[0]->Id_proceso],
             ['side.Item_servicio', '=', 'Emitido JNCI'],
             ['side.Estado', '=', 'Activo']
@@ -480,11 +484,12 @@ class ControversiaJuntasController extends Controller
         
         // Validar si existe el evento
         $info_controverisa_juntas = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$newIdEvento]])->get();
+        ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])->get();
         //Si el evento existe hace el IF y si no hace ELSE
         if (count($info_controverisa_juntas) > 0) {
             //Captura los datos a actualizar en controversia
             $datos_info_controvertido_juntas= [
+                'N_siniestro' => $request->n_siniestro,
                 'Origen_controversia' => $request->origen_controversia,
                 'Manual_de_califi' => $request->manual_de_califi,
                 'Total_deficiencia' => $request->total_deficiencia,
@@ -503,7 +508,8 @@ class ControversiaJuntasController extends Controller
             ];
                
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-            ->where('ID_evento', $newIdEvento)->update($datos_info_controvertido_juntas);
+            ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])
+            ->update($datos_info_controvertido_juntas);
             $mensajes = array(
                 "parametro" => 'registro_controvertido_juntas',
                 "mensaje" => 'Registro actualizado satisfactoriamente.'
@@ -515,6 +521,7 @@ class ControversiaJuntasController extends Controller
                 'ID_evento' => $request->newId_evento,
                 'Id_Asignacion' => $request->newId_asignacion,
                 'Id_proceso' => $request->Id_proceso,
+                'N_siniestro' => $request->n_siniestro,
                 'Origen_controversia' => $request->origen_controversia,
                 'Manual_de_califi' => $request->manual_de_califi,
                 'Total_deficiencia' => $request->total_deficiencia,
@@ -602,7 +609,7 @@ class ControversiaJuntasController extends Controller
         
         // Validar si existe el evento
         $info_controverisa_juntas = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$newIdEvento]])->get();
+        ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])->get();
         //Si el evento existe hace el IF y si no hace ELSE
         if (count($info_controverisa_juntas) > 0) {
             //Captura los datos a actualizar en controversia
@@ -626,7 +633,8 @@ class ControversiaJuntasController extends Controller
             ];
                
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-            ->where('ID_evento', $newIdEvento)->update($datos_info_controvertido_juntas);
+            ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])
+            ->update($datos_info_controvertido_juntas);
     
             $mensajes = array(
                 "parametro" => 'registro_emitido_jrci',
@@ -684,7 +692,7 @@ class ControversiaJuntasController extends Controller
         
         // Validar si existe el evento
         $info_controverisa_juntas = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$newIdEvento]])->get();
+        ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])->get();
         //Si el evento existe hace el IF y si no hace ELSE
 
         if (count($info_controverisa_juntas) > 0) {
@@ -699,7 +707,8 @@ class ControversiaJuntasController extends Controller
             ];
                
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-            ->where('ID_evento', $newIdEvento)->update($datos_info_controvertido_juntas);
+            ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])
+            ->update($datos_info_controvertido_juntas);
     
             $mensajes = array(
                 "parametro" => 'registro_revision_jrci',
@@ -752,7 +761,7 @@ class ControversiaJuntasController extends Controller
         
         // Validar si existe el evento
         $info_controverisa_juntas = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$newIdEvento]])->get();
+        ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])->get();
         //Si el evento existe hace el IF y si no hace ELSE
 
         if (count($info_controverisa_juntas) > 0) {
@@ -766,7 +775,8 @@ class ControversiaJuntasController extends Controller
             ];
                
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-            ->where('ID_evento', $newIdEvento)->update($datos_info_controvertido_juntas);
+            ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])
+            ->update($datos_info_controvertido_juntas);
     
             $mensajes = array(
                 "parametro" => 'registro_recurso_jrci',
@@ -813,7 +823,7 @@ class ControversiaJuntasController extends Controller
         
         // Validar si existe el evento
         $info_controverisa_juntas = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$newIdEvento]])->get();
+        ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])->get();
         //Si el evento existe hace el IF y si no hace ELSE
 
         if (count($info_controverisa_juntas) > 0) {
@@ -828,7 +838,8 @@ class ControversiaJuntasController extends Controller
             ];
             
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-            ->where('ID_evento', $newIdEvento)->update($datos_info_controvertido_juntas);
+            ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])
+            ->update($datos_info_controvertido_juntas);
     
             $mensajes = array(
                 "parametro" => 'registro_parte_jrci',
@@ -876,7 +887,7 @@ class ControversiaJuntasController extends Controller
         
         // Validar si existe el evento
         $info_controverisa_juntas = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$newIdEvento]])->get();
+        ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])->get();
         //Si el evento existe hace el IF y si no hace ELSE
 
         if (count($info_controverisa_juntas) > 0) {
@@ -895,7 +906,8 @@ class ControversiaJuntasController extends Controller
             ];
             
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-            ->where('ID_evento', $newIdEvento)->update($datos_info_controvertido_juntas);
+            ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])
+            ->update($datos_info_controvertido_juntas);
     
             $mensajes = array(
                 "parametro" => 'registro_parte_contro_jrci',
@@ -991,7 +1003,7 @@ class ControversiaJuntasController extends Controller
         
        // Validar si existe el evento
        $info_controverisa_juntas = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-       ->where([['ID_evento',$newIdEvento]])->get();
+       ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])->get();
        //Si el evento existe hace el IF y si no hace ELSE
 
        if (count($info_controverisa_juntas) > 0) {
@@ -1015,7 +1027,8 @@ class ControversiaJuntasController extends Controller
            ];
            
            sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-           ->where('ID_evento', $newIdEvento)->update($datos_info_controvertido_juntas);
+           ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])
+           ->update($datos_info_controvertido_juntas);
    
            $mensajes = array(
                "parametro" => 'registro_datos_repo_jrci',
@@ -1073,7 +1086,7 @@ class ControversiaJuntasController extends Controller
         
         // Validar si existe el evento
         $info_controverisa_juntas = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$newIdEvento]])->get();
+        ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])->get();
         //Si el evento existe hace el IF y si no hace ELSE
 
         if (count($info_controverisa_juntas) > 0) {
@@ -1088,7 +1101,8 @@ class ControversiaJuntasController extends Controller
             ];
                
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-            ->where('ID_evento', $newIdEvento)->update($datos_info_controvertido_juntas);
+            ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])
+            ->update($datos_info_controvertido_juntas);
     
             $mensajes = array(
                 "parametro" => 'registro_reposicion_jrci',
@@ -1141,7 +1155,7 @@ class ControversiaJuntasController extends Controller
         
         // Validar si existe el evento
         $info_controverisa_juntas = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$newIdEvento]])->get();
+        ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])->get();
         //Si el evento existe hace el IF y si no hace ELSE
 
         if (count($info_controverisa_juntas) > 0) {
@@ -1159,7 +1173,8 @@ class ControversiaJuntasController extends Controller
             ];
                
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-            ->where('ID_evento', $newIdEvento)->update($datos_info_controvertido_juntas);
+            ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])
+            ->update($datos_info_controvertido_juntas);
     
             $mensajes = array(
                 "parametro" => 'registro_apela_jrci',
@@ -1216,7 +1231,7 @@ class ControversiaJuntasController extends Controller
         
         // Validar si existe el evento
         $info_controverisa_juntas = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$newIdEvento]])->get();
+        ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])->get();
         //Si el evento existe hace el IF y si no hace ELSE
 
         if (count($info_controverisa_juntas) > 0) {            
@@ -1231,7 +1246,8 @@ class ControversiaJuntasController extends Controller
             ];
                
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-            ->where('ID_evento', $newIdEvento)->update($datos_info_controvertido_juntas);
+            ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])
+            ->update($datos_info_controvertido_juntas);
     
             $mensajes = array(
                 "parametro" => 'registro_acta_jrci',
@@ -1322,7 +1338,7 @@ class ControversiaJuntasController extends Controller
         
         // Validar si existe el evento
         $info_controverisa_juntas = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$newIdEvento]])->get();
+        ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])->get();
         //Si el evento existe hace el IF y si no hace ELSE
 
         if (count($info_controverisa_juntas) > 0) {
@@ -1350,7 +1366,8 @@ class ControversiaJuntasController extends Controller
             ];
                
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-            ->where('ID_evento', $newIdEvento)->update($datos_info_controvertido_juntas);
+            ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])
+            ->update($datos_info_controvertido_juntas);
     
             $mensajes = array(
                 "parametro" => 'registro_emitido_jnci',

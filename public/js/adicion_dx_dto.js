@@ -896,6 +896,7 @@ $(document).ready(function(){
                     'Activo': $("#es_activo").val(),
                     'Tipo_evento': tipo_evento,
                     'motivo_solicitud': $("#motivo_solicitud").val(),
+                    'N_siniestro': $("#n_siniestro").val(),
                     'Relacion_documentos': relacion_docs_dto_atel,
                     'Examenes_interconsultas': datos_finales_examenes_interconsultas,
                     'Adicion_motivo_calificacion': datos_finales_adiciones_calificacion,
@@ -916,12 +917,14 @@ $(document).ready(function(){
                     'Activo': $("#es_activo").val(),
                     'Tipo_evento': tipo_evento,
                     'motivo_solicitud': $("#motivo_solicitud").val(),
+                    'N_siniestro': $("#n_siniestro").val(),
                     'Relacion_documentos': relacion_docs_dto_atel,
                     'Examenes_interconsultas': datos_finales_examenes_interconsultas,
                     'Adicion_motivo_calificacion': datos_finales_adiciones_calificacion,
                     'Otros_relacion_documentos': $("#otros_docs").val(),
                     'Sustentacion_Adicion_Dx': $("#sustentacion_adicion_dx").val(),
                     'Origen': $("#origen_dto_atel").val(),
+                    'radicado_dictamen': $("#radicado_dictamen").val(),                    
                 };
             }
 

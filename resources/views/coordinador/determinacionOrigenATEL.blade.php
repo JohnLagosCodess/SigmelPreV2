@@ -435,6 +435,16 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="n_siniestro">N° de Siniestro</label>                                            
+                                                @if (!empty($datos_bd_DTO_ATEL[0]->N_siniestro))                                                
+                                                    <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="{{$datos_bd_DTO_ATEL[0]->N_siniestro}}">                                                
+                                                @else                                               
+                                                    <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro">                                                
+                                                @endif
+                                            </div>
+                                        </div>
                                         <div class="col-4" id="contenedor_grado_severidad">
                                             <div class="form-group">
                                                 <label for="grado_severidad">Grado de severidad <span style="color:red;">(*)</span></label>

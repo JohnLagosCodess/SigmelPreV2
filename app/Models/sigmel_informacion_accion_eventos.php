@@ -22,6 +22,7 @@ class sigmel_informacion_accion_eventos extends Model
     'Accion',
     'F_Alerta',
     'Enviar',
+    'Estado_Facturacion',
     'Causal_devolucion_comite',
     'F_devolucion_comite',
     'Descripcion_accion',

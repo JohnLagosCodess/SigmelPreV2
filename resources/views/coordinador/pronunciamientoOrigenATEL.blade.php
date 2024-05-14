@@ -242,6 +242,16 @@
                                             @endif
                                         </div>
                                     </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="n_siniestro">N° de Siniestro</label>                                            
+                                            @if (!empty($info_pronuncia[0]->N_siniestro))                                                
+                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="{{$info_pronuncia[0]->N_siniestro}}">                                                
+                                            @else                                               
+                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro">                                                
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

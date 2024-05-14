@@ -7635,6 +7635,7 @@
                                                     @if (!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion == 1)                                                            
                                                         @foreach ($array_comunicados_correspondencia as $index => $comunicados)                                                        
                                                         <tr>
+                                                            {{-- Generar pdf Dictamen PCL 1507 --}}
                                                             <form name="ver_dictamenPcl" action="{{ route('descargar_Dictamen_PCL') }}" method="POST">  
                                                                 @csrf                        
                                                                 @if ($index === 0)
@@ -7679,6 +7680,7 @@
                                                     @elseif(!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion == 2)                                                            
                                                         @foreach ($array_comunicados_correspondencia as $index => $comunicados)                                                        
                                                         <tr>
+                                                            {{-- Generar pdf Dictamen PCL Cero --}}
                                                             <form name="ver_dictamenPcl" action="{{ route('descargar_Dictamen_PCLCero') }}" method="POST">  
                                                                 @csrf                        
                                                                 @if ($index === 0)
@@ -7723,6 +7725,7 @@
                                                     @elseif(!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion == 3)                                                            
                                                         @foreach ($array_comunicados_correspondencia as $index => $comunicados)                                                        
                                                         <tr>
+                                                            {{-- Generar pdf Dictamen PCL 917 --}}
                                                             <form name="ver_dictamenPcl" action="{{ route('descargar_Dictamen_PCL917') }}" method="POST">  
                                                                 @csrf                        
                                                                 @if ($index === 0)

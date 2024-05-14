@@ -521,7 +521,7 @@
             </tr>            
             <tr>
                 <td colspan="1" rowspan="1" class="centrar_titulo_labels">No.</td>
-                <td colspan="3" rowspan="1" class="centrar_titulo_labels">Nombre de deficiencia</td>
+                <td colspan="2" rowspan="1" class="centrar_titulo_labels">Nombre de deficiencia</td>
                 <td colspan="1" rowspan="1" class="centrar_titulo_labels">No. Tabla</td>
                 <td colspan="1" rowspan="1" class="centrar_titulo_labels">Clase / FP</td>
                 <td colspan="1" rowspan="1" class="centrar_titulo_labels">FU</td>
@@ -529,6 +529,7 @@
                 <td colspan="1" rowspan="1" class="centrar_titulo_labels">CFM2</td>
                 <td colspan="1" rowspan="1" class="centrar_titulo_labels">CFM3</td>
                 <td colspan="2" class="centrar_titulo_labels">Clase final y Literal</td>
+                <td colspan="1" rowspan="1" class="centrar_titulo_labels">MSD</td>
                 <td colspan="2" class="centrar_titulo_labels">% Deficiencia.</td>
                 <td colspan="1" rowspan="1" class="centrar_titulo_labels">CAT</td>
                 <td colspan="2" rowspan="1" class="centrar_titulo_labels">Dominancia</td>
@@ -543,7 +544,7 @@
                     <?php $conteo_deficiencias = $conteo_deficiencias + 1; ?>                   
                     <tr>
                         <td colspan="1" class="centrar_dato_dinamico">{{ $conteo_deficiencias }}</td>
-                        <td colspan="3" class="dato_dinamico">{{ $deficiencias_fc->Nombre_tabla }}</td>
+                        <td colspan="2" class="dato_dinamico">{{ $deficiencias_fc->Nombre_tabla }}</td>
                         <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_fc->Ident_tabla }}</td>
                         <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_fc->FP }}</td>
                         <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_fc->FU }}</td>
@@ -551,6 +552,7 @@
                         <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_fc->CFM2 }}</td>
                         <td colspan="1" class="centrar_dato_dinamico"></td>
                         <td colspan="2" class="centrar_dato_dinamico">{{ $deficiencias_fc->Clase_Final }}</td>
+                        <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_fc->MSD }}</td>
                         <td colspan="2" class="centrar_dato_dinamico">{{ $deficiencias_fc->Total_deficiencia }}</td>
                         <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_fc->CAT }}</td>
                         <td colspan="2" class="centrar_dato_dinamico">{{ $deficiencias_fc->MSD }}</td>                        
@@ -559,13 +561,14 @@
             @else
                 <tr>
                     <td colspan="1" class="centrar_dato_dinamico"></td>
-                    <td colspan="3" class="dato_dinamico"></td>
+                    <td colspan="2" class="dato_dinamico"></td>
                     <td colspan="1" class="centrar_dato_dinamico"></td>
                     <td colspan="1" class="centrar_dato_dinamico"></td>
                     <td colspan="1" class="centrar_dato_dinamico"></td>
                     <td colspan="1" class="centrar_dato_dinamico"></td>
                     <td colspan="1" class="centrar_dato_dinamico"></td>
                     <td colspan="1" class="centrar_dato_dinamico"></td>
+                    <td colspan="2" class="centrar_dato_dinamico"></td>
                     <td colspan="2" class="centrar_dato_dinamico"></td>
                     <td colspan="1" class="centrar_dato_dinamico"></td>
                     <td colspan="1" class="centrar_dato_dinamico"></td>

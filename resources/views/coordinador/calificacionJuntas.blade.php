@@ -295,6 +295,12 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="estado_facturacion">Estado de Facturación</label>
+                                                    <input type="text" class="form-control" name="estado_facturacion" id="estado_facturacion" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Estado_Facturacion)){echo $array_datos_calificacionJuntas[0]->Estado_Facturacion;}?>" readonly>
+                                                </div>
+                                            </div>
                                             <div class="col-12">
                                                 <div class="form-group">
                                                     <label for="cargue_documentos">Cargue Documento Historial:</label>                                                
@@ -513,6 +519,12 @@
                                             <div class="form-group">
                                                 <label for="f_dictamen_controvertido">Fecha dictámen controvertido<span style="color: red;">(*)</span></label>
                                                 <input type="date" class="form-control" name="f_dictamen_controvertido" id="f_dictamen_controvertido" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->F_dictamen_controvertido;} ?>" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="n_siniestro">N° de Siniestro</label>                                            
+                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="<?php if(!empty($arrayinfo_controvertido[0]->N_siniestro)) { echo $arrayinfo_controvertido[0]->N_siniestro;} ?>">                                                                                                                                                        
                                             </div>
                                         </div>
                                         <div class="col-4">

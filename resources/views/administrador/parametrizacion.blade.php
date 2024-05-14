@@ -79,6 +79,7 @@
                                                 <label ><span>Movimientos: Activos: {{$conteo_activos_inactivos_parametrizaciones_origen_atel[0]->Activos}}</span> - Inactivos: {{$conteo_activos_inactivos_parametrizaciones_origen_atel[0]->Inactivos}} </label>
                                             </div>
                                         </div>
+                                        {{-- tabla para descargar el reporte de origen atel --}}
                                         <div class="table-responsive">
                                             <table id="tabla_origen_atel_descarga" class="table table-striped table-bordered d-none" style="width:100%;">
                                                 <thead>
@@ -95,13 +96,14 @@
                                                         <th>Bandeja de Trabajo</th>
                                                         <th>Módulo principal</th>
                                                         <th>Detiene tiempo de gestión</th>
+                                                        <th>Equipo de trabajo asociado</th>
+                                                        <th>Profesional asignado</th>
                                                         <th>Enviar a</th>
                                                         <th>Bandeja de trabajo destino</th>
-                                                        <th>Copia a facturación</th>
+                                                        <th>Estado de Facturación</th>
                                                         <th>Tiempo de  alerta (horas)</th>
                                                         <th>Porcentaje alerta (Naranja)</th>
                                                         <th>Porcentaje alerta (Rojo)</th>
-                                                        <th>Equipo de trabajo asociado</th>
                                                         <th>Status paramétrico</th>
                                                         <th>Motivo / Descripción de movimiento</th>
                                                         <th>Usuario</th>
@@ -183,6 +185,14 @@
                                                                         No
                                                                     <?php endif?>
                                                                 </td>
+                                                                {{-- equipo trabajo --}}
+                                                                <td>
+                                                                    {{$parametrizacion_origen_atel_editar->Nombre_equipo_trabajo}}
+                                                                </td>
+                                                                {{-- profesional asignado --}}
+                                                                <td>
+                                                                    {{$parametrizacion_origen_atel_editar->Nombre_profesional}}
+                                                                </td>
                                                                 {{-- enviar a --}}
                                                                 <td>
                                                                     <?php if($parametrizacion_origen_atel_editar->Enviar_a_bandeja_trabajo_destino == "Si"):?>
@@ -195,13 +205,9 @@
                                                                 <td>
                                                                     {{$parametrizacion_origen_atel_editar->Nombre_bandeja_trabajo_destino}}
                                                                 </td>
-                                                                {{-- copia facturacion --}}
+                                                                {{-- estado facturacion --}}
                                                                 <td>
-                                                                    <?php if($parametrizacion_origen_atel_editar->Copia_facturacion == "Si"):?>
-                                                                        Si
-                                                                    <?php else: ?>
-                                                                        No
-                                                                    <?php endif?>
+                                                                    {{$parametrizacion_origen_atel_editar->Estado_facturacion}}
                                                                 </td>
                                                                 {{-- tiempo alerta --}}
                                                                 <td>
@@ -215,10 +221,7 @@
                                                                 <td>
                                                                     {{$parametrizacion_origen_atel_editar->Porcentaje_alerta_roja}}
                                                                 </td>
-                                                                {{-- equipo trabajo --}}
-                                                                <td>
-                                                                    {{$parametrizacion_origen_atel_editar->Nombre_equipo_trabajo}}
-                                                                </td>
+                                                                
                                                                 {{-- status --}}
                                                                 <td>
                                                                     <?php if($parametrizacion_origen_atel_editar->Status_parametrico == "Activo"): ?>
@@ -245,6 +248,8 @@
                                                 </tbody>
                                             </table>
                                         </div>
+
+                                        {{-- tabla para crear o editar parametrizaciones de origen atel --}}
                                         <div class="table-responsive">
                                             <table id="parametrizar_origen_atel" class="table table-striped table-bordered" style="width:100%;">
                                                 <thead>
@@ -261,13 +266,14 @@
                                                         <th>Bandeja de Trabajo</th>
                                                         <th>Módulo principal</th>
                                                         <th>Detiene tiempo de gestión</th>
+                                                        <th>Equipo de trabajo asociado</th>
+                                                        <th>Profesional asignado</th>
                                                         <th>Enviar a</th>
                                                         <th>Bandeja de trabajo destino</th>
-                                                        <th>Copia a facturación</th>
+                                                        <th>Estado de Facturación</th>
                                                         <th>Tiempo de  alerta (horas)</th>
                                                         <th>Porcentaje alerta (Naranja)</th>
                                                         <th>Porcentaje alerta (Rojo)</th>
-                                                        <th>Equipo de trabajo asociado</th>
                                                         <th>Status paramétrico</th>
                                                         <th>Motivo / Descripción de movimiento</th>
                                                         <th>Usuario</th>
@@ -376,6 +382,22 @@
                                                                         disabled>
                                                                     </div>
                                                                 </td>
+                                                                {{-- equipo trabajo --}}
+                                                                <input type="hidden" id="bd_id_equipo_trabajo_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Equipo_trabajo}}">
+                                                                <td>
+                                                                    <select style="width:140px;" class="custom-select bd_equipo_trabajo_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" id="bd_equipo_trabajo_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" disabled>
+                                                                        <option></option>
+                                                                        <option value="{{$parametrizacion_origen_atel_editar->Equipo_trabajo}}" selected>{{$parametrizacion_origen_atel_editar->Nombre_equipo_trabajo}}</option>
+                                                                    </select>
+                                                                </td>
+                                                                {{-- profesional asignado --}}
+                                                                <input type="hidden" id="bd_id_profesional_asignado_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Profesional_asignado}}">
+                                                                <td>
+                                                                    <select style="width:140px;" class="custom-select bd_listado_profesionales_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" id="bd_listado_profesionales_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" disabled>
+                                                                        <option></option>
+                                                                        <option value="{{$parametrizacion_origen_atel_editar->Profesional_asignado}}" selected>{{$parametrizacion_origen_atel_editar->Nombre_profesional}}</option>
+                                                                    </select>
+                                                                </td>
                                                                 {{-- enviar a --}}
                                                                 <td>
                                                                     <div style="text-align:center;">
@@ -394,15 +416,16 @@
                                                                         <option value="{{$parametrizacion_origen_atel_editar->Bandeja_trabajo_destino}}" selected>{{$parametrizacion_origen_atel_editar->Nombre_bandeja_trabajo_destino}}</option>
                                                                     </select>
                                                                 </td>
-                                                                {{-- copia facturacion --}}
+                                                                {{-- estado facturacion --}}
                                                                 <td>
-                                                                    <div style="text-align:center;">
+                                                                    {{-- <div style="text-align:center;">
                                                                         <input type="checkbox" class="scales" id="bd_copia_facturacion_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}"
-                                                                        <?php if($parametrizacion_origen_atel_editar->Copia_facturacion == "Si"):?>
+                                                                        <?php if($parametrizacion_origen_atel_editar->Estado_facturacion == "Si"):?>
                                                                             checked
                                                                         <?php endif?>
                                                                         disabled>
-                                                                    </div>
+                                                                    </div> --}}
+                                                                    <input type="text" class="form-control" id="bd_estado_facturacion_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Estado_facturacion}}" disabled>
                                                                 </td>
                                                                 {{-- tiempo alerta --}}
                                                                 <td>
@@ -415,14 +438,6 @@
                                                                 {{-- porcentaje alerta roja --}}
                                                                 <td>
                                                                     <input style="width:140px;" type="text" class="form-control" id="bd_porcentaje_alerta_roja_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Porcentaje_alerta_roja}}" disabled>
-                                                                </td>
-                                                                {{-- equipo trabajo --}}
-                                                                <input type="hidden" id="bd_id_equipo_trabajo_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Equipo_trabajo}}">
-                                                                <td>
-                                                                    <select style="width:140px;" class="custom-select bd_equipo_trabajo_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" id="bd_equipo_trabajo_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" disabled>
-                                                                        <option></option>
-                                                                        <option value="{{$parametrizacion_origen_atel_editar->Equipo_trabajo}}" selected>{{$parametrizacion_origen_atel_editar->Nombre_equipo_trabajo}}</option>
-                                                                    </select>
                                                                 </td>
                                                                 {{-- status --}}
                                                                 <td>
@@ -500,6 +515,7 @@
                                                 <label ><span>Movimientos: Activos: {{$conteo_activos_inactivos_parametrizaciones_calificacion_pcl[0]->Activos}}</span> - Inactivos: {{$conteo_activos_inactivos_parametrizaciones_calificacion_pcl[0]->Inactivos}} </label>
                                             </div>
                                         </div>
+                                        {{-- tabla para la descarga del reporte pcl --}}
                                         <div class="table-responsive">
                                             <table id="tabla_calificacion_pcl_descarga" class="table table-striped table-bordered d-none" style="width:100%;">
                                                 <thead>
@@ -516,13 +532,14 @@
                                                         <th>Bandeja de Trabajo</th>
                                                         <th>Módulo principal</th>
                                                         <th>Detiene tiempo de gestión</th>
+                                                        <th>Equipo de trabajo asociado</th>
+                                                        <th>Profesional asignado</th>
                                                         <th>Enviar a</th>
                                                         <th>Bandeja de trabajo destino</th>
-                                                        <th>Copia a facturación</th>
+                                                        <th>Estado de Facturación</th>
                                                         <th>Tiempo de  alerta (horas)</th>
                                                         <th>Porcentaje alerta (Naranja)</th>
                                                         <th>Porcentaje alerta (Rojo)</th>
-                                                        <th>Equipo de trabajo asociado</th>
                                                         <th>Status paramétrico</th>
                                                         <th>Motivo / Descripción de movimiento</th>
                                                         <th>Usuario</th>
@@ -604,6 +621,14 @@
                                                                         No
                                                                     <?php endif?>
                                                                 </td>
+                                                                {{-- equipo trabajo --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->Nombre_equipo_trabajo}}
+                                                                </td>
+                                                                {{-- profesional asignado --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->Nombre_profesional}}
+                                                                </td>
                                                                 {{-- enviar a --}}
                                                                 <td>
                                                                     <?php if($parametrizacion_calificacion_pcl_editar->Enviar_a_bandeja_trabajo_destino == "Si"):?>
@@ -616,13 +641,9 @@
                                                                 <td>
                                                                     {{$parametrizacion_calificacion_pcl_editar->Nombre_bandeja_trabajo_destino}}
                                                                 </td>
-                                                                {{-- copia facturacion --}}
+                                                                {{-- estado facturacion --}}
                                                                 <td>
-                                                                    <?php if($parametrizacion_calificacion_pcl_editar->Copia_facturacion == "Si"):?>
-                                                                        Si
-                                                                    <?php else: ?>
-                                                                        No
-                                                                    <?php endif?>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->Estado_facturacion}}
                                                                 </td>
                                                                 {{-- tiempo alerta --}}
                                                                 <td>
@@ -635,10 +656,6 @@
                                                                 {{-- porcentaje alerta roja --}}
                                                                 <td>
                                                                     {{$parametrizacion_calificacion_pcl_editar->Porcentaje_alerta_roja}}
-                                                                </td>
-                                                                {{-- equipo trabajo --}}
-                                                                <td>
-                                                                    {{$parametrizacion_calificacion_pcl_editar->Nombre_equipo_trabajo}}
                                                                 </td>
                                                                 {{-- status --}}
                                                                 <td>
@@ -668,6 +685,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
+                                        {{-- tabla para crear o editar parametrizaciones de pcl --}}
                                         <div class="table-responsive">
                                             <table id="parametrizar_calificacion_pcl" class="table table-striped table-bordered" style="width:100%;">
                                                 <thead>
@@ -684,13 +702,14 @@
                                                         <th>Bandeja de Trabajo</th>
                                                         <th>Módulo principal</th>
                                                         <th>Detiene tiempo de gestión</th>
+                                                        <th>Equipo de trabajo asociado</th>
+                                                        <th>Profesional asignado</th>
                                                         <th>Enviar a</th>
                                                         <th>Bandeja de trabajo destino</th>
-                                                        <th>Copia a facturación</th>
+                                                        <th>Estado de Facturación</th>
                                                         <th>Tiempo de  alerta (horas)</th>
                                                         <th>Porcentaje alerta (Naranja)</th>
                                                         <th>Porcentaje alerta (Rojo)</th>
-                                                        <th>Equipo de trabajo asociado</th>
                                                         <th>Status paramétrico</th>
                                                         <th>Motivo / Descripción de movimiento</th>
                                                         <th>Usuario</th>
@@ -799,6 +818,22 @@
                                                                         disabled>
                                                                     </div>
                                                                 </td>
+                                                                {{-- equipo trabajo --}}
+                                                                <input type="hidden" id="bd_id_equipo_trabajo_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Equipo_trabajo}}">
+                                                                <td>
+                                                                    <select style="width:140px;" class="custom-select bd_equipo_trabajo_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_equipo_trabajo_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
+                                                                        <option></option>
+                                                                        <option value="{{$parametrizacion_calificacion_pcl_editar->Equipo_trabajo}}" selected>{{$parametrizacion_calificacion_pcl_editar->Nombre_equipo_trabajo}}</option>
+                                                                    </select>
+                                                                </td>
+                                                                {{-- profesional asignado --}}
+                                                                <input type="hidden" id="bd_id_profesional_asignado_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Profesional_asignado}}">
+                                                                <td>
+                                                                    <select style="width:140px;" class="custom-select bd_listado_profesionales_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_listado_profesionales_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
+                                                                        <option></option>
+                                                                        <option value="{{$parametrizacion_calificacion_pcl_editar->Profesional_asignado}}" selected>{{$parametrizacion_calificacion_pcl_editar->Nombre_profesional}}</option>
+                                                                    </select>
+                                                                </td>
                                                                 {{-- enviar a --}}
                                                                 <td>
                                                                     <div style="text-align:center;">
@@ -817,15 +852,16 @@
                                                                         <option value="{{$parametrizacion_calificacion_pcl_editar->Bandeja_trabajo_destino}}" selected>{{$parametrizacion_calificacion_pcl_editar->Nombre_bandeja_trabajo_destino}}</option>
                                                                     </select>
                                                                 </td>
-                                                                {{-- copia facturacion --}}
+                                                                {{-- estado facturacion --}}
                                                                 <td>
-                                                                    <div style="text-align:center;">
+                                                                    {{-- <div style="text-align:center;">
                                                                         <input type="checkbox" class="scales" id="bd_copia_facturacion_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}"
-                                                                        <?php if($parametrizacion_calificacion_pcl_editar->Copia_facturacion == "Si"):?>
+                                                                        <?php if($parametrizacion_calificacion_pcl_editar->Estado_facturacion == "Si"):?>
                                                                             checked
                                                                         <?php endif?>
                                                                         disabled>
-                                                                    </div>
+                                                                    </div> --}}
+                                                                    <input type="text" class="form-control" id="bd_estado_facturacion_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Estado_facturacion}}" disabled>
                                                                 </td>
                                                                 {{-- tiempo alerta --}}
                                                                 <td>
@@ -839,14 +875,7 @@
                                                                 <td>
                                                                     <input style="width:140px;" type="text" class="form-control" id="bd_porcentaje_alerta_roja_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Porcentaje_alerta_roja}}" disabled>
                                                                 </td>
-                                                                {{-- equipo trabajo --}}
-                                                                <input type="hidden" id="bd_id_equipo_trabajo_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Equipo_trabajo}}">
-                                                                <td>
-                                                                    <select style="width:140px;" class="custom-select bd_equipo_trabajo_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_equipo_trabajo_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
-                                                                        <option></option>
-                                                                        <option value="{{$parametrizacion_calificacion_pcl_editar->Equipo_trabajo}}" selected>{{$parametrizacion_calificacion_pcl_editar->Nombre_equipo_trabajo}}</option>
-                                                                    </select>
-                                                                </td>
+                                                                
                                                                 {{-- status --}}
                                                                 <td>
                                                                     <select style="width:140px;" class="custom-select bd_status_parametrico_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_status_parametrico_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
@@ -923,6 +952,7 @@
                                                 <label ><span>Movimientos: Activos: {{$conteo_activos_inactivos_parametrizaciones_juntas[0]->Activos}}</span> - Inactivos: {{$conteo_activos_inactivos_parametrizaciones_juntas[0]->Inactivos}} </label>
                                             </div>
                                         </div>
+                                        {{-- tabla para la descarga del reporte juntas --}}
                                         <div class="table-responsive">
                                             <table id="tabla_juntas_descarga" class="table table-striped table-bordered d-none" style="width:100%;">
                                                 <thead>
@@ -939,13 +969,14 @@
                                                         <th>Bandeja de Trabajo</th>
                                                         <th>Módulo principal</th>
                                                         <th>Detiene tiempo de gestión</th>
+                                                        <th>Equipo de trabajo asociado</th>
+                                                        <th>Profesional asignado</th>
                                                         <th>Enviar a</th>
                                                         <th>Bandeja de trabajo destino</th>
-                                                        <th>Copia a facturación</th>
+                                                        <th>Estado de Facturación</th>
                                                         <th>Tiempo de  alerta (horas)</th>
                                                         <th>Porcentaje alerta (Naranja)</th>
                                                         <th>Porcentaje alerta (Rojo)</th>
-                                                        <th>Equipo de trabajo asociado</th>
                                                         <th>Status paramétrico</th>
                                                         <th>Motivo / Descripción de movimiento</th>
                                                         <th>Usuario</th>
@@ -1027,6 +1058,14 @@
                                                                         No
                                                                     <?php endif?>
                                                                 </td>
+                                                                {{-- equipo trabajo --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->Nombre_equipo_trabajo}}
+                                                                </td>
+                                                                {{-- profesional asignado --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->Nombre_profesional}}
+                                                                </td>
                                                                 {{-- enviar a --}}
                                                                 <td>
                                                                     <?php if($parametrizacion_juntas_editar->Enviar_a_bandeja_trabajo_destino == "Si"):?>
@@ -1039,13 +1078,9 @@
                                                                 <td>
                                                                     {{$parametrizacion_juntas_editar->Nombre_bandeja_trabajo_destino}}
                                                                 </td>
-                                                                {{-- copia facturacion --}}
+                                                                {{-- estado facturacion --}}
                                                                 <td>
-                                                                    <?php if($parametrizacion_juntas_editar->Copia_facturacion == "Si"):?>
-                                                                        Si
-                                                                    <?php else:?>
-                                                                        No
-                                                                    <?php endif?>
+                                                                    {{$parametrizacion_juntas_editar->Estado_facturacion}}
                                                                 </td>
                                                                 {{-- tiempo alerta --}}
                                                                 <td>
@@ -1059,10 +1094,7 @@
                                                                 <td>
                                                                     {{$parametrizacion_juntas_editar->Porcentaje_alerta_roja}}
                                                                 </td>
-                                                                {{-- equipo trabajo --}}
-                                                                <td>
-                                                                    {{$parametrizacion_juntas_editar->Nombre_equipo_trabajo}}
-                                                                </td>
+                                                                
                                                                 {{-- status --}}
                                                                 <td>
                                                                     <?php if($parametrizacion_juntas_editar->Status_parametrico == "Activo"): ?>
@@ -1089,6 +1121,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
+                                        {{-- tabla para crear o editar parametrizaciones de juntas --}}
                                         <div class="table-responsive">
                                             <table id="parametrizar_juntas" class="table table-striped table-bordered" style="width:100%;">
                                                 <thead>
@@ -1105,13 +1138,14 @@
                                                         <th>Bandeja de Trabajo</th>
                                                         <th>Módulo principal</th>
                                                         <th>Detiene tiempo de gestión</th>
+                                                        <th>Equipo de trabajo asociado</th>
+                                                        <th>Profesional asignado</th>
                                                         <th>Enviar a</th>
                                                         <th>Bandeja de trabajo destino</th>
-                                                        <th>Copia a facturación</th>
+                                                        <th>Estado de Facturación</th>
                                                         <th>Tiempo de  alerta (horas)</th>
                                                         <th>Porcentaje alerta (Naranja)</th>
                                                         <th>Porcentaje alerta (Rojo)</th>
-                                                        <th>Equipo de trabajo asociado</th>
                                                         <th>Status paramétrico</th>
                                                         <th>Motivo / Descripción de movimiento</th>
                                                         <th>Usuario</th>
@@ -1220,6 +1254,22 @@
                                                                         disabled>
                                                                     </div>
                                                                 </td>
+                                                                {{-- equipo trabajo --}}
+                                                                <input type="hidden" id="bd_id_equipo_trabajo_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Equipo_trabajo}}">
+                                                                <td>
+                                                                    <select style="width:140px;" class="custom-select bd_equipo_trabajo_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" id="bd_equipo_trabajo_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" disabled>
+                                                                        <option></option>
+                                                                        <option value="{{$parametrizacion_juntas_editar->Equipo_trabajo}}" selected>{{$parametrizacion_juntas_editar->Nombre_equipo_trabajo}}</option>
+                                                                    </select>
+                                                                </td>
+                                                                {{-- profesional asignado --}}
+                                                                <input type="hidden" id="bd_id_profesional_asignado_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Profesional_asignado}}">
+                                                                <td>
+                                                                    <select style="width:140px;" class="custom-select bd_listado_profesionales_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" id="bd_listado_profesionales_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" disabled>
+                                                                        <option></option>
+                                                                        <option value="{{$parametrizacion_juntas_editar->Profesional_asignado}}" selected>{{$parametrizacion_juntas_editar->Nombre_profesional}}</option>
+                                                                    </select>
+                                                                </td>
                                                                 {{-- enviar a --}}
                                                                 <td>
                                                                     <div style="text-align:center;">
@@ -1238,15 +1288,16 @@
                                                                         <option value="{{$parametrizacion_juntas_editar->Bandeja_trabajo_destino}}" selected>{{$parametrizacion_juntas_editar->Nombre_bandeja_trabajo_destino}}</option>
                                                                     </select>
                                                                 </td>
-                                                                {{-- copia facturacion --}}
+                                                                {{-- estado facturacion --}}
                                                                 <td>
-                                                                    <div style="text-align:center;">
+                                                                    {{-- <div style="text-align:center;">
                                                                         <input type="checkbox" class="scales" id="bd_copia_facturacion_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}"
-                                                                        <?php if($parametrizacion_juntas_editar->Copia_facturacion == "Si"):?>
+                                                                        <?php if($parametrizacion_juntas_editar->Estado_facturacion == "Si"):?>
                                                                             checked
                                                                         <?php endif?>
                                                                         disabled>
-                                                                    </div>
+                                                                    </div> --}}
+                                                                    <input type="text" class="form-control" id="bd_estado_facturacion_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Estado_facturacion}}" disabled>
                                                                 </td>
                                                                 {{-- tiempo alerta --}}
                                                                 <td>
@@ -1259,14 +1310,6 @@
                                                                 {{-- porcentaje alerta roja --}}
                                                                 <td>
                                                                     <input style="width:140px;" type="text" class="form-control" id="bd_porcentaje_alerta_roja_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Porcentaje_alerta_roja}}" disabled>
-                                                                </td>
-                                                                {{-- equipo trabajo --}}
-                                                                <input type="hidden" id="bd_id_equipo_trabajo_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Equipo_trabajo}}">
-                                                                <td>
-                                                                    <select style="width:140px;" class="custom-select bd_equipo_trabajo_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" id="bd_equipo_trabajo_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" disabled>
-                                                                        <option></option>
-                                                                        <option value="{{$parametrizacion_juntas_editar->Equipo_trabajo}}" selected>{{$parametrizacion_juntas_editar->Nombre_equipo_trabajo}}</option>
-                                                                    </select>
                                                                 </td>
                                                                 {{-- status --}}
                                                                 <td>

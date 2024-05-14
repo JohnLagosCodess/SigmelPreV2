@@ -268,6 +268,10 @@ Route::post('/consultarInfoLaboralLlenar', [AdministradorController::class, 'lle
 
 // Acción: Cargar documentos en Gestion Inicial Nuevo
 Route::post('/cargarDocumentos', [AdministradorController::class, 'cargaListadoDocumentosInicialNuevo'])->name('cargaDocumento');
+// Acción: Cargar documentos complementarios
+Route::post('/cargaDocumentosComplementarios', [AdministradorController::class, 'cargaDocumentosComplementarios'])->name('cargaDocumentoComplementario');
+// Acción: Eliminar documento complementario
+Route::post('/eliminarDocumentoComplementario', [AdministradorController::class, 'eliminarDocumentoComplementario']);
 
 // Acción: Descargar Documentos
 Route::get('/descargar-archivo/{nombreArchivo}/{id_evento}', [AdministradorController::class, 'DescargarDocumentos']);

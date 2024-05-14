@@ -143,11 +143,21 @@ $(document).ready(function () {
                             // Validación para crear el modal del formulario de nuevo servicio
                             if(data[i]['Nombre_servicio'] == 'Determinación del Origen (DTO) ATEL' || data[i]['Nombre_servicio'] == 'Adición DX' || data[i]['Nombre_servicio'] == 'Calificación técnica' || data[i]['Nombre_servicio'] == 'Recalificación' || data[i]['Nombre_servicio'] == 'Revisión pensión'){
                                 if(data[i]['Visible_Nuevo_Servicio'] == 'Si' && data[i]['Nombre_estado'] == 'Gestionado'){
-                                    agregar_nuevo_servicio = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoServicio_'+data[i]["ID_evento"]+'" id="btn_nuevo_servicio_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Servicio"\
-                                     data-id_evento_nuevo_servicio="'+data[i]["ID_evento"]+'" data-id_proceso_nuevo_servicio="'+data[i]["Id_proceso"]+'" data-nombre_proceso_nuevo_servicio="'+data[i]["Nombre_proceso"]+'" \
-                                     data-id_servicio_nuevo_servicio="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_servicio="'+data[i]["Id_Asignacion"]+'" data-id_cliente="'+data[i]["Id_cliente"]+'"><i class="fa fa-puzzle-piece text-info"></i></a>';
-                                    
-                                    data[i]['agregar_nuevo_servicio'] = agregar_nuevo_servicio;
+                                    if (data[i]['Nombre_servicio'] == 'Determinación del Origen (DTO) ATEL' && data[i]['Nombre_evento'] != 'Enfermedad') {
+                                        agregar_nuevo_servicio = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoServicio_'+data[i]["ID_evento"]+'" id="btn_nuevo_servicio_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Servicio"\
+                                        data-id_evento_nuevo_servicio="'+data[i]["ID_evento"]+'" data-id_proceso_nuevo_servicio="'+data[i]["Id_proceso"]+'" data-nombre_proceso_nuevo_servicio="'+data[i]["Nombre_proceso"]+'" \
+                                        data-id_servicio_nuevo_servicio="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_servicio="'+data[i]["Id_Asignacion"]+'" data-id_cliente="'+data[i]["Id_cliente"]+'"><i class="fa fa-puzzle-piece text-info"></i></a>';
+                                        data[i]['agregar_nuevo_servicio'] = agregar_nuevo_servicio;
+                                    } 
+                                    else if(data[i]['Nombre_servicio'] != 'Determinación del Origen (DTO) ATEL'){
+                                        agregar_nuevo_servicio = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoServicio_'+data[i]["ID_evento"]+'" id="btn_nuevo_servicio_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Servicio"\
+                                        data-id_evento_nuevo_servicio="'+data[i]["ID_evento"]+'" data-id_proceso_nuevo_servicio="'+data[i]["Id_proceso"]+'" data-nombre_proceso_nuevo_servicio="'+data[i]["Nombre_proceso"]+'" \
+                                        data-id_servicio_nuevo_servicio="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_servicio="'+data[i]["Id_Asignacion"]+'" data-id_cliente="'+data[i]["Id_cliente"]+'"><i class="fa fa-puzzle-piece text-info"></i></a>';
+                                        data[i]['agregar_nuevo_servicio'] = agregar_nuevo_servicio;
+                                    }
+                                    else{
+                                        data[i]['agregar_nuevo_servicio'] = "";
+                                    }
 
                                 }else{
                                     data[i]['agregar_nuevo_servicio'] = ""; 
@@ -571,6 +581,52 @@ $(document).ready(function () {
             });
         });
 
+        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO PROFESIONALES DEPENDIENDO DEL PROCESO. */
+        $("select[id^='nuevo_profesional_']").select2({
+            placeholder: "Seleccione una opción",
+            allowClear: false
+        });
+
+        let selector_nuevo_profesional = $('.renderizar_nuevo_servicio').find("select[id^='nuevo_profesional_']").attr("id");
+
+        // CARGUE LISTADO DE PROFESIONALES DEPENDIENDO DE LA SELECCIÓN DE LA ACCIÓN
+        $("#"+selector_nueva_accion_nuevo_servicio).change(function(){
+            let datos_listado_profesionales_proceso = {
+                '_token': token,
+                'id_cliente':id_clientes_actual,
+                'id_proceso' : id_proceso_actual,
+                'id_servicio': $("#"+selector_nuevo_servicio).val(),
+                'id_accion': $(this).val()
+            };
+
+            // CARGUE DE PROFESIONALES
+            $.ajax({
+                type:'POST',
+                url:'/ProfesionalesXProceso',
+                data: datos_listado_profesionales_proceso,
+                success:function(data) {
+                    
+                    if (data.info_listado_profesionales.length > 0) {
+                        $("#"+selector_nuevo_profesional).empty();
+                        $("#"+selector_nuevo_profesional).append('<option value="" selected>Seleccione</option>');
+            
+                        let claves = Object.keys(data.info_listado_profesionales);
+                        for (let i = 0; i < claves.length; i++) {
+                            if (data.info_listado_profesionales[claves[i]]["id"] == data.Profesional_asignado) {
+                                $("#"+selector_nuevo_profesional).append('<option value="'+data.info_listado_profesionales[claves[i]]["id"]+'" selected>'+data.info_listado_profesionales[claves[i]]["name"]+'</option>');
+                            } else {
+                                $("#"+selector_nuevo_profesional).append('<option value="'+data.info_listado_profesionales[claves[i]]["id"]+'">'+data.info_listado_profesionales[claves[i]]["name"]+'</option>');
+                            }
+                        }
+                        
+                        $('.mensaje_no_hay_profesionales_servicio').addClass("d-none");
+                    }else{
+                        $('.mensaje_no_hay_profesionales_servicio').removeClass("d-none");
+                    }
+                }
+            });
+        });
+
         /* VALIDACIÓN PARA DETERMINAR QUE LA PARAMÉTRICA QUE SE CONFIGURE PARA EL MÓDULO CONSULTAR ESTE EN UN VALOR DE SI EN LA TABLA sigmel_informacion_parametrizaciones_clientes */
         var validar_mod_consultar = setInterval(() => {
             if(id_proceso_actual != '' && $("#"+selector_nuevo_servicio).val() != '' && $("#"+selector_nueva_accion_nuevo_servicio).val() != ''){
@@ -608,40 +664,6 @@ $(document).ready(function () {
             
         }, 500);
 
-        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO PROFESIONALES DEPENDIENDO DEL PROCESO. */
-        $("select[id^='nuevo_profesional_']").select2({
-            placeholder: "Seleccione una opción",
-            allowClear: false
-        });
-
-        let selector_nuevo_profesional = $('.renderizar_nuevo_servicio').find("select[id^='nuevo_profesional_']").attr("id");
-
-        let datos_listado_profesionales_proceso = {
-            '_token': token,
-            'id_proceso' : id_proceso_actual,
-        };
-
-        // CARGUE DE PROFESIONALES ACORDE AL PROCESO.
-        $.ajax({
-            type:'POST',
-            url:'/ProfesionalesXProceso',
-            data: datos_listado_profesionales_proceso,
-            success:function(data) {
-                if (data.length > 0) {
-                    $("#"+selector_nuevo_profesional).empty();
-                    $("#"+selector_nuevo_profesional).append('<option value="" selected>Seleccione</option>');
-        
-                    let claves = Object.keys(data);
-                    for (let i = 0; i < claves.length; i++) {
-                        $("#"+selector_nuevo_profesional).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["name"]+'</option>');
-                    }
-                    
-                    $('.mensaje_no_hay_profesionales_servicio').addClass("d-none");
-                }else{
-                    $('.mensaje_no_hay_profesionales_servicio').removeClass("d-none");
-                }
-            }
-        });
     });
 
     /* Obtener el ID del servicio a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id servicio */
@@ -1033,6 +1055,51 @@ $(document).ready(function () {
 
         });
 
+        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO PROFESIONALES DEPENDIENDO DEL PROCESO. */
+        $("select[id^='nuevo_profesional_nuevo_proceso_']").select2({
+            placeholder: "Seleccione una opción",
+            allowClear: false
+        });
+
+        let selector_nuevo_profesional_nuevo_proceso = $('.renderizar_nuevo_proceso').find("select[id^='nuevo_profesional_nuevo_proceso_']").attr("id");
+
+        // CARGUE LISTADO DE PROFESIONALES DEPENDIENDO DE LA SELECCIÓN DE LA ACCIÓN
+        $("#"+selector_nueva_accion_nuevo_proceso).change(function(){
+            let datos_listado_profesionales_proceso = {
+                '_token': token,
+                'id_cliente':id_clientes,
+                'id_proceso' : $("#"+selector_nuevo_proceso).val(),
+                'id_servicio': $("#"+selector_nuevo_servicio).val(),
+                'id_accion': $(this).val()
+            };
+            // CARGUE DE PROFESIONALES
+            $.ajax({
+                type:'POST',
+                url:'/ProfesionalesXProceso',
+                data: datos_listado_profesionales_proceso,
+                success:function(data) {
+                    
+                    if (data.info_listado_profesionales.length > 0) {
+                        $("#"+selector_nuevo_profesional_nuevo_proceso).empty();
+                        $("#"+selector_nuevo_profesional_nuevo_proceso).append('<option value="" selected>Seleccione</option>');
+            
+                        let claves = Object.keys(data.info_listado_profesionales);
+                        for (let i = 0; i < claves.length; i++) {
+                            if (data.info_listado_profesionales[claves[i]]["id"] == data.Profesional_asignado) {
+                                $("#"+selector_nuevo_profesional_nuevo_proceso).append('<option value="'+data.info_listado_profesionales[claves[i]]["id"]+'" selected>'+data.info_listado_profesionales[claves[i]]["name"]+'</option>');
+                            } else {
+                                $("#"+selector_nuevo_profesional_nuevo_proceso).append('<option value="'+data.info_listado_profesionales[claves[i]]["id"]+'">'+data.info_listado_profesionales[claves[i]]["name"]+'</option>');
+                            }
+                        }
+                        
+                        $('.mensaje_no_hay_profesionales_proceso').addClass("d-none");
+                    }else{
+                        $('.mensaje_no_hay_profesionales_proceso').removeClass("d-none");
+                    }
+                }
+            });
+        });
+
         /* VALIDACIÓN PARA DETERMINAR QUE LA PARAMÉTRICA QUE SE CONFIGURE PARA EL MÓDULO CONSULTAR ESTE EN UN VALOR DE SI EN LA TABLA sigmel_informacion_parametrizaciones_clientes */
         var validar_mod_consultar = setInterval(() => {
             if($("#"+id_proceso_escogido).val() != '' && $("#"+selector_nuevo_servicio).val() != '' && $("#"+selector_nueva_accion_nuevo_proceso).val() != ''){
@@ -1071,13 +1138,6 @@ $(document).ready(function () {
             
         }, 500);
 
-
-        /* INICIALIZACIÓN DEL SELECT2 DE LISTADO PROFESIONALES DEPENDIENDO DEL PROCESO. */
-        $("select[id^='nuevo_profesional_nuevo_proceso_']").select2({
-            placeholder: "Seleccione una opción",
-            allowClear: false
-        });
-        
     });
 
     /* CARGUE DE INFORMACIÓN DEL SELECTOR de Servicios y Profesionales que dependen del proceso. */
@@ -1116,32 +1176,31 @@ $(document).ready(function () {
             }
         });
 
-        let datos_listado_profesionales_proceso = {
-            '_token': token,
-            'id_proceso' : id_proceso_escogido,
-        };
+        // let datos_listado_profesionales_proceso = {
+        //     '_token': token,
+        //     'id_proceso' : id_proceso_escogido,
+        // };
 
         // CARGUE DE PROFESIONALES ACORDE AL PROCESO.
-        $.ajax({
-            type:'POST',
-            url:'/ProfesionalesXProceso',
-            data: datos_listado_profesionales_proceso,
-            success:function(data) {
-                if (data.length > 0) {
-                    $("#"+selector_nuevo_profesional_nuevo_proceso).empty();
-                    $("#"+selector_nuevo_profesional_nuevo_proceso).append('<option value="" selected>Seleccione</option>');
+        // $.ajax({
+        //     type:'POST',
+        //     url:'/ProfesionalesXProceso',
+        //     data: datos_listado_profesionales_proceso,
+        //     success:function(data) {
+        //         if (data.length > 0) {
+        //             $("#"+selector_nuevo_profesional_nuevo_proceso).empty();
+        //             $("#"+selector_nuevo_profesional_nuevo_proceso).append('<option value="" selected>Seleccione</option>');
         
-                    let claves = Object.keys(data);
-                    for (let i = 0; i < claves.length; i++) {
-                        $("#"+selector_nuevo_profesional_nuevo_proceso).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["name"]+'</option>');
-                    }
-                    $('.mensaje_no_hay_profesionales_proceso').addClass("d-none");
-                }else{
-                    $('.mensaje_no_hay_profesionales_proceso').removeClass("d-none");
-                }
-            }
-        });
-        
+        //             let claves = Object.keys(data);
+        //             for (let i = 0; i < claves.length; i++) {
+        //                 $("#"+selector_nuevo_profesional_nuevo_proceso).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["name"]+'</option>');
+        //             }
+        //             $('.mensaje_no_hay_profesionales_proceso').addClass("d-none");
+        //         }else{
+        //             $('.mensaje_no_hay_profesionales_proceso').removeClass("d-none");
+        //         }
+        //     }
+        // });
 
     });
 

@@ -64,7 +64,7 @@ $(document).ready(function () {
             success:function(data){
                 // console.log(data);
                 $('#accion').empty();
-                $('#profesional').empty();
+                // $('#profesional').empty();
                 $(".columna_selector_profesional").slideUp('slow');
                 $(".columna_decripcion_bandeja").slideUp('slow');
                 $('#redireccionar').empty();
@@ -79,6 +79,7 @@ $(document).ready(function () {
 
     $(".columna_selector_profesional").slideUp('slow');
     $(".columna_decripcion_bandeja").slideUp('slow');
+
     // listado de acciones a ejecutar dependiendo del proceso y servicio (es decir lo de parametrizaciones)
     $("#redireccionar").change(function(){
         let datos_listado_accion = {
@@ -115,6 +116,38 @@ $(document).ready(function () {
         });
     });
     
+    // CARGUE LISTADO DE PROFESIONALES DEPENDIENDO DE LA SELECCIÓN DE LA ACCIÓN
+    $('#accion').change(function(){
+        // LISTADO PROFESIONAL
+        $('#profesional').prop('disabled', false);
+        let datos_lista_profesional={
+            '_token':token,
+            'parametro':"lista_profesional_origen",
+            // 'Id_cliente': $("#cliente").val(),
+            'Id_proceso': $("#procesos_parametrizados").val(),
+            'Id_servicio': $("#redireccionar").val(),
+            'Id_accion': $(this).val(),
+        }
+        
+        $.ajax({
+            type:'POST',
+            url:'/selectoresBandejaOrigen',
+            data: datos_lista_profesional,
+            success:function (data) {
+                //console.log(data)
+                $('#profesional').empty();
+                $('#profesional').append('<option value="" selected>Seleccione</option>');
+                let profesionales = Object.keys(data.info_listado_profesionales);
+                for (let i = 0; i < profesionales.length; i++) {
+                    if (data.info_listado_profesionales[profesionales[i]]['id'] == data.Profesional_asignado) {
+                        $('#profesional').append('<option value="'+data.info_listado_profesionales[profesionales[i]]['id']+'" selected>'+data.info_listado_profesionales[profesionales[i]]['name']+'</option>')
+                    } else {
+                        $('#profesional').append('<option value="'+data.info_listado_profesionales[profesionales[i]]['id']+'">'+data.info_listado_profesionales[profesionales[i]]['name']+'</option>')
+                    }
+                }
+            }
+        });
+    });
 
     /* VALIDACIÓN PARA DETERMINAR QUE LA PARAMÉTRICA QUE SE CONFIGURE PARA EL MÓDULO NUEVO ESTE EN UN VALOR DE SI EN LA TABLA sigmel_informacion_parametrizaciones_clientes */
     var validar_bandeja_trabajo = setInterval(() => {
@@ -147,25 +180,25 @@ $(document).ready(function () {
                             // Cargue Listado de seleccion profesional bandeja Origen
                             $(".columna_selector_profesional").slideDown('slow');
                             $(".columna_decripcion_bandeja").slideDown('slow');
-                            let datos_lista_profesional ={
-                                '_token':token,
-                                'parametro':"lista_profesional_origen"
-                            }
+                            // let datos_lista_profesional ={
+                            //     '_token':token,
+                            //     'parametro':"lista_profesional_origen"
+                            // }
 
-                            $.ajax({
-                                type:'POST',
-                                url:'/selectoresBandejaOrigen',
-                                data: datos_lista_profesional,
-                                success:function (data) {
-                                    $('#profesional').empty();
-                                    $('#profesional').append('<option value="" selected>Seleccione</option>');
-                                    let profecionalorigen = Object.keys(data);
-                                    for (let i = 0; i < profecionalorigen.length; i++) {
-                                        $('#profesional').append('<option value="'+data[profecionalorigen[i]]['id']+'">'+data[profecionalorigen[i]]['name']+'</option>')
-                                    }
+                            // $.ajax({
+                            //     type:'POST',
+                            //     url:'/selectoresBandejaOrigen',
+                            //     data: datos_lista_profesional,
+                            //     success:function (data) {
+                            //         $('#profesional').empty();
+                            //         $('#profesional').append('<option value="" selected>Seleccione</option>');
+                            //         let profecionalorigen = Object.keys(data);
+                            //         for (let i = 0; i < profecionalorigen.length; i++) {
+                            //             $('#profesional').append('<option value="'+data[profecionalorigen[i]]['id']+'">'+data[profecionalorigen[i]]['name']+'</option>')
+                            //         }
                                     
-                                }
-                            });
+                            //     }
+                            // });
 
                         }
                     }

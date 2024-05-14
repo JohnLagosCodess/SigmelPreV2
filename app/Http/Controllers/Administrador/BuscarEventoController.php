@@ -2071,16 +2071,54 @@ class BuscarEventoController extends Controller
             return redirect('/');
         }
 
-        // Traemos los lideres acorde a la selección del proceso
-        // DB::raw("SELECT id, name, email FROM users WHERE FIND_IN_SET($request->id_proceso_seleccionado, id_procesos_usuario)");
-        $datos_lideres_x_proceso = DB::table('users')
-        ->select("id", "name", "email")
-        ->whereRaw("FIND_IN_SET($request->id_proceso, id_procesos_usuario) > 0")
-        ->get();
+        $id_cliente = $request->id_cliente;
+        $id_proceso = $request->id_proceso;
+        $id_servicio = $request->id_servicio;
+        $id_accion = $request->id_accion;
 
-        $informacion_de_vuelta = json_decode(json_encode($datos_lideres_x_proceso), true);
+        /* Extraemos el equippo de trabajo y el profesional asignado configurados en la paramétrica */
+        $info_equipo_prof_asig = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+        ->select('sipc.Equipo_trabajo', 'sipc.Profesional_asignado')
+        ->where([
+            ['sipc.Id_cliente', '=', $id_cliente],
+            ['sipc.Id_proceso', '=', $id_proceso],
+            ['sipc.Servicio_asociado', '=', $id_servicio],
+            ['sipc.Accion_ejecutar', '=', $id_accion]
+        ])->get();
 
-        return response()->json($informacion_de_vuelta);
+        /* Si el profesional asignado está configurado entonces el listado de profesionales
+        se cargará con los usuarios que pertenecen al equipo de trabajo configurado en la paramétrica */
+        if($info_equipo_prof_asig[0]->Profesional_asignado <> ""){
+            $listado_profesionales = DB::table('users as u')
+            ->leftJoin('sigmel_gestiones.sigmel_usuarios_grupos_trabajos as sugt', 'u.id', '=', 'sugt.id_usuarios_asignados')
+            ->select('u.id', 'u.name')
+            ->where([['sugt.id_equipo_trabajo', $info_equipo_prof_asig[0]->Equipo_trabajo]])
+            ->get();
+    
+            $info_listado_profesionales = json_decode(json_encode($listado_profesionales, true));
+            return response()->json([
+                'info_listado_profesionales' => $info_listado_profesionales,
+                'Profesional_asignado' => $info_equipo_prof_asig[0]->Profesional_asignado
+            ]);
+        }else{
+            
+            // Traemos los lideres acorde a la selección del proceso
+            // DB::raw("SELECT id, name, email FROM users WHERE FIND_IN_SET($request->id_proceso_seleccionado, id_procesos_usuario)");
+            $datos_lideres_x_proceso = DB::table('users')
+            ->select("id", "name", "email")
+            ->whereRaw("FIND_IN_SET($id_proceso, id_procesos_usuario) > 0")
+            ->get();
+    
+            $informacion_de_vuelta = json_decode(json_encode($datos_lideres_x_proceso), true);
+            // return response()->json($informacion_de_vuelta);
+
+            return response()->json([
+                'info_listado_profesionales' => $informacion_de_vuelta,
+                'Profesional_asignado' => ''
+            ]);
+
+        }
+
     }
 
     // Crear un nuevo servicio para el Evento seleccionado

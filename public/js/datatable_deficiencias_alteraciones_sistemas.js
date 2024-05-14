@@ -470,19 +470,21 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                                     let a = resultado_Deficiencia;
                                     let b = nuevoValor;
                                     let resultadoMSD = a +((100 - a) * b / 100);
-                                    let dominancia = (resultadoMSD - a);
+                                    // let dominancia = (resultadoMSD - a);
+                                    let dominancia = nuevoValor;
                                     // console.log(dominancia);
                                     let total_deficiencia = resultadoMSD;
                                     // console.log(total_deficiencia);
                                     $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancia.toFixed(2));
                                     $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(total_deficiencia.toFixed(2));                                
                                 } else {
-                                    if (isNaN(resultado_Deficiencia)) {
-                                        resultado_Deficiencia = dominancia_suma;
-                                    }
+                                    // if (isNaN(resultado_Deficiencia)) {
+                                    //     resultado_Deficiencia = dominancia_suma;
+                                    // }
                                     // console.log('No está marcado');  
                                     $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancia_suma.toFixed(2));
-                                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultado_Deficiencia.toFixed(2));                                              
+                                    // $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultado_Deficiencia.toFixed(2));                                              
+                                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancia_suma.toFixed(2));
                                 }                            
                             }
                             setInterval(() => {
@@ -503,7 +505,7 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
         if (id_tabla_seleccionado == 100 || id_tabla_seleccionado == 101 || id_tabla_seleccionado == 102 || id_tabla_seleccionado == 103 || 
             id_tabla_seleccionado == 104 || id_tabla_seleccionado == 105 || id_tabla_seleccionado == 106 || id_tabla_seleccionado == 107 || 
             id_tabla_seleccionado == 109 
-            ) {
+        ) {
             $("#ClaseFinal_fila_alteraciones_"+num_consecutivo_alteraciones).empty();            
             $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
             $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
@@ -527,7 +529,8 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
             let dominancias_sumas = 0.00;                
             $("#ClaseFinal_fila_alteraciones_"+num_consecutivo_alteraciones).empty();            
             $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
-            $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+            // $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+            $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input type="number" class="form-control" id="resultado_Deficiencia_'+num_consecutivo_alteraciones+'">');
             $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
             $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancias_sumas.toFixed(2));
             $("#ClaseFinal_fila_alteraciones_"+num_consecutivo_alteraciones).append('<select id="resultado_Clase_'+num_consecutivo_alteraciones+'" class="custom-select resultado_Clase_'+num_consecutivo_alteraciones+'" data-fila_pertenece="'+num_consecutivo_alteraciones+'">');
@@ -567,30 +570,45 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
             let value_Tabla6_3_A = 25.00;
             let value_Tabla6_3_B = 50.00;
             value_selectTabla6_3.change(function (){
-                value_Tabla6_3 = $(this).val();
-                $("#resultado_Deficiencia_"+num_consecutivo_alteraciones).empty();
-                $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                
-                clearInterval(intervalo_B);                 
+                var value_Tabla6_3 = $(this).val();
+                // $("#resultado_Deficiencia_"+num_consecutivo_alteraciones).empty();
+                // $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                
+                clearInterval(intervalo_B);
+                clearInterval(intervalo_opc_a);
+                clearInterval(intervalo_opc_ab);
+                                
                 // console.log(value_Tabla6_3);
                 if (value_Tabla6_3 == 'A') {
-                    $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
-                    $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(value_Tabla6_3_A.toFixed(2));                                                    
-                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                                                                                        
-                    let resultados_deficiencias = parseFloat($("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).text());
-                    // console.log(resultados_deficiencias);                                            
-                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultados_deficiencias.toFixed(2));                                        
+                    // $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+                    // $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(value_Tabla6_3_A.toFixed(2));                                                    
+                    $("#resultado_Deficiencia_"+num_consecutivo_alteraciones).val(value_Tabla6_3_A.toFixed(2));
+                    var intervalo_opc_a = setInterval(() => {
+                        $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+                        let resultados_deficiencias = parseFloat($("#resultado_Deficiencia_"+num_consecutivo_alteraciones).val());
+                        if (isNaN(resultados_deficiencias)) {
+                            $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancias_sumas.toFixed(2));                                  
+                        }else{
+                            $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultados_deficiencias.toFixed(2));                                        
+                        }
+                    }, 250);                                      
                 }else if(value_Tabla6_3 == 'AB'){
-                    $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
-                    $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(value_Tabla6_3_B.toFixed(2));                                                    
-                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                                                                                        
-                    let resultados_deficiencias = parseFloat($("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).text());
-                    // console.log(resultados_deficiencias);                    
-                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultados_deficiencias.toFixed(2));                    
-                    
+                    // $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
+                    // $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(value_Tabla6_3_B.toFixed(2));                                                    
+                    $("#resultado_Deficiencia_"+num_consecutivo_alteraciones).val(value_Tabla6_3_B.toFixed(2));
+
+                    var intervalo_opc_ab = setInterval(() => {
+                        $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                
+                        let resultados_deficiencias = parseFloat($("#resultado_Deficiencia_"+num_consecutivo_alteraciones).val());
+                        if (isNaN(resultados_deficiencias)) {
+                            $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancias_sumas.toFixed(2));                                  
+                        }else{
+                            $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultados_deficiencias.toFixed(2));                    
+                        }
+                    }, 250);                    
                 } 
                 
                 if(value_Tabla6_3 == 'B'){
-                    $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input type="number" class="form-control" id="resultado_Deficiencia_'+num_consecutivo_alteraciones+'">');                                                    
+                    // $("#Deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append('<input type="number" class="form-control" id="resultado_Deficiencia_'+num_consecutivo_alteraciones+'">');                                                    
                     $("#resultado_Deficiencia_"+num_consecutivo_alteraciones).empty();                                                                                                                                               
                     var intervalo_B = setInterval(() => {
                         $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                                                                                        
@@ -3457,6 +3475,7 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
                 $("#Total_deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
                 $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).empty();
                 var selectTabla7_6 = $("#resultado_FU_"+id_fila_insertar_dato);
+
                 if (parseInt(valor_FP_tabla_7_6) == 3 && parseInt(valor_CFM1_tabla_7_6) == 3 && parseInt(valor_CFM2_tabla_7_6) == 3) {
 
                     //Habilitar y Deshabilitar el FU
@@ -3521,11 +3540,37 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
                     //     $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_FU_tabla_7_6));
                     // }
                 }else{
-                    $("#resultado_FU_"+id_fila_insertar_dato).empty();
-                    selectTabla7_6.append('<option value="">Seleccione</option>');
-                    $("#guardar_FU_fila_"+id_fila_insertar_dato).val("");
-                    //console.log(valor_FU_tabla_7_4);                  
-                    $("#resultado_FU_"+id_fila_insertar_dato).prop("disabled", true);
+
+                    if ((parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 3) && (parseInt(valor_CFM2_tabla_7_6) == 2) ||
+                    (parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 2) && (parseInt(valor_CFM2_tabla_7_6) == 3)) {
+                        //Habilitar y Deshabilitar el FU
+                        $("#resultado_FU_"+id_fila_insertar_dato).prop("disabled", false);  
+                        // nuevas Opciones
+                        var nuevasOpciones = [
+                            { value: '', text: 'Seleccione' },                        
+                            { value: '55', text: '55' },
+                            { value: '65', text: '65' },
+                        ];
+                        // Obtener las opciones existentes (si las hay)
+                        var opcionesExist = selectTabla7_6.children('option');
+
+                        // Filtrar las nuevas opciones para incluir solo las que no existen aún
+                        var nuevasOpcionesFiltradas = nuevasOpciones.filter(function (nuevaOpcion) {
+                            return !opcionesExist.filter(function () {
+                            return this.value === nuevaOpcion.value;
+                            }).length;
+                        });
+
+                        // Agregar solo las nuevas opciones al select
+                        nuevasOpcionesFiltradas.forEach(function (nuevaOpcion) {
+                            selectTabla7_6.append('<option value="' + nuevaOpcion.value + '">' + nuevaOpcion.text + '</option>');
+                        }); 
+                    } else {
+                        $("#resultado_FU_"+id_fila_insertar_dato).empty();
+                        selectTabla7_6.append('<option value="">Seleccione</option>');
+                        $("#guardar_FU_fila_"+id_fila_insertar_dato).val("");
+                        $("#resultado_FU_"+id_fila_insertar_dato).prop("disabled", true);
+                    }
 
                     let datos_consulta_deficiencia_tabla_7_6 = {
                         '_token': token,
@@ -4647,6 +4692,15 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_2);                    
             let deficiencias_12_2 = parseFloat(valor_FU_tabla_12_2);
             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_2.toFixed(2));
+
+            // Auto seleccionado de la columna MSD cuando cumple las siguientes validaciones
+            if (valor_FU_tabla_12_2 == 25 || valor_FU_tabla_12_2 == 45 ||
+                valor_FU_tabla_12_2 == 55 || valor_FU_tabla_12_2 == 65
+            ) {
+                $("#resultado_MSD_"+id_fila_insertar_dato).prop("checked", true);                    
+            } else {
+                $("#resultado_MSD_"+id_fila_insertar_dato).prop("checked", false); 
+            }
 
             // let datos_consulta_deficiencia_tabla_12_2 = {
             //     '_token': token,

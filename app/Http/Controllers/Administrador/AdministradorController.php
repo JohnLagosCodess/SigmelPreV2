@@ -133,6 +133,7 @@ class AdministradorController extends Controller
                     'nombre' => $request->nombre_equipo_trabajo,
                     'Id_proceso_equipo' => $request->proceso,
                     'lider' => $request->listado_lider,
+                    'Accion' => $request->listado_acciones,
                     'estado' => $request->estado_equipo,
                     'descripcion' => $request->descripcion_equipo_trabajo,
                     'created_at' => $date
@@ -183,7 +184,7 @@ class AdministradorController extends Controller
         $listado_equipos_trabajo = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_grupos_trabajos as sgt')
         ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slps', 'sgt.Id_proceso_equipo', '=', 'slps.Id_proceso')
         ->leftJoin('sigmel_sys.users as u', 'sgt.lider', '=', 'u.id')
-        ->select("sgt.id", "slps.Id_proceso", "slps.Nombre_proceso", "sgt.nombre as Nombre_equipo", "sgt.lider", "u.name as Nombre_lider", "u.email as Correo_lider", "sgt.estado", "sgt.descripcion","sgt.created_at")
+        ->select("sgt.id", "slps.Id_proceso", "slps.Nombre_proceso", "sgt.nombre as Nombre_equipo", "sgt.lider", "u.name as Nombre_lider", "u.email as Correo_lider", "sgt.Accion", "sgt.estado", "sgt.descripcion","sgt.created_at")
         ->groupBy("sgt.id")
         ->get();
         
@@ -314,6 +315,7 @@ class AdministradorController extends Controller
                 'Id_proceso_equipo' => $request->editar_proceso,
                 'nombre' => $request->editar_nombre_equipo_trabajo,
                 'lider' => $request->editar_listado_lider,
+                'Accion' => $request->listado_acciones_editar,
                 'estado' => $request->editar_estado_equipo,
                 'descripcion' => $descripcion_final,
                 'updated_at' => $date
@@ -2163,6 +2165,32 @@ class AdministradorController extends Controller
             return response()->json(($info_listado_proceso));
         }
 
+        /* LISTADO DE TODAS LAS ACCIONES PARA LA CREACIÓN DE UN EQUIPO DE TRABAJO */
+        if ($parametro == "listado_acciones_equipo_trabajo") {
+            $listado_acciones = sigmel_informacion_acciones::on('sigmel_gestiones')
+            ->select('Id_Accion', 'Accion')
+            ->where([
+                ['Status_accion', '=', 'Activo']
+            ])
+            ->get();
+        
+            $info_listado_acciones = json_decode(json_encode($listado_acciones, true));
+            return response()->json(($info_listado_acciones));
+        }
+
+        /* LISTADO DE TODAS LAS ACCIONES PARA LA CREACIÓN DE UN EQUIPO DE TRABAJO */
+        if ($parametro == "listado_acciones_equipo_trabajo_edicion") {
+            $listado_acciones = sigmel_informacion_acciones::on('sigmel_gestiones')
+            ->select('Id_Accion', 'Accion')
+            ->where([
+                ['Status_accion', '=', 'Activo']
+            ])
+            ->get();
+        
+            $info_listado_acciones = json_decode(json_encode($listado_acciones, true));
+            return response()->json(($info_listado_acciones));
+        }
+
         /* LISTADO SERVICIOS */
         if ($parametro == 'listado_servicios') {
             // 
@@ -2202,6 +2230,59 @@ class AdministradorController extends Controller
 
             $info_lista_profesional_proceso = json_decode(json_encode($lista_profesional_proceso, true));
             return response()->json($info_lista_profesional_proceso);
+        }
+
+        // listado de profesionales segun la acción a realizar
+        if ($parametro == 'lista_profesional_accion') {
+            if ($request->Id_cliente == "") {
+                $array_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
+                ->select('Cliente')->where('ID_evento', $request->nro_evento)->first();
+
+                $id_cliente = $array_id_cliente["Cliente"];
+            } else {
+                $id_cliente = $request->Id_cliente;
+            }
+            
+            $id_proceso = $request->Id_proceso;
+            $id_servicio = $request->Id_servicio;
+            $id_accion = $request->Id_accion;
+
+            /* Extraemos el equippo de trabajo y el profesional asignado configurados en la paramétrica */
+            $info_equipo_prof_asig = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->select('sipc.Equipo_trabajo', 'sipc.Profesional_asignado')
+            ->where([
+                ['sipc.Id_cliente', '=', $id_cliente],
+                ['sipc.Id_proceso', '=', $id_proceso],
+                ['sipc.Servicio_asociado', '=', $id_servicio],
+                ['sipc.Accion_ejecutar', '=', $id_accion]
+            ])->get();
+
+            /* Si el profesional asignado está configurado entonces el listado de profesionales
+            se cargará con los usuarios que pertenecen al equipo de trabajo configurado en la paramétrica */
+            if($info_equipo_prof_asig[0]->Profesional_asignado <> ""){
+                $listado_profesionales = DB::table('users as u')
+                ->leftJoin('sigmel_gestiones.sigmel_usuarios_grupos_trabajos as sugt', 'u.id', '=', 'sugt.id_usuarios_asignados')
+                ->select('u.id', 'u.name')
+                ->where([['sugt.id_equipo_trabajo', $info_equipo_prof_asig[0]->Equipo_trabajo]])
+                ->get();
+
+                $info_listado_profesionales = json_decode(json_encode($listado_profesionales, true));
+                return response()->json([
+                    'info_listado_profesionales' => $info_listado_profesionales,
+                    'Profesional_asignado' => $info_equipo_prof_asig[0]->Profesional_asignado
+                ]);
+            }else{
+                $lista_profesional_proceso = DB::table('users')->select('id', 'name')
+                ->where('estado', 'Activo')
+                ->whereRaw("FIND_IN_SET($id_proceso, id_procesos_usuario) > 0")->get();
+
+                $info_lista_profesional_proceso = json_decode(json_encode($lista_profesional_proceso, true));
+                // return response()->json($info_lista_profesional_proceso);
+                return response()->json([
+                    'info_listado_profesionales' => $info_lista_profesional_proceso,
+                    'Profesional_asignado' => ''
+                ]);
+            }
         }
 
         /* LISTADO ACCION */
@@ -2846,7 +2927,7 @@ class AdministradorController extends Controller
             $id_cliente = $array_id_cliente["Cliente"];
 
             $casilla_mod_principal = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
-            ->select('sipc.Modulo_principal')
+            ->select('sipc.Modulo_principal', 'sipc.Estado_facturacion')
             ->where([
                 ['sipc.Id_cliente', '=', $id_cliente],
                 ['sipc.Id_proceso', '=', $request->Id_proceso],
@@ -4790,6 +4871,291 @@ class AdministradorController extends Controller
 
         }
 
+    }
+
+    // Función para cargar documentos familia (es decir los complementarios)
+    public function cargaDocumentosComplementarios(Request $request){
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+
+        /* Validación N° 1: TAMAÑO DEL ARCHIVO */
+        $reglas_validacion_tamano_documento = array(
+            'doc_subir' => 'max:10000000000000000'
+        );
+
+        $ejecutar_validador_tamano_documento = Validator::make($request->all(), $reglas_validacion_tamano_documento);
+
+        if ($ejecutar_validador_tamano_documento->fails()) {
+
+            $mensajes = array(
+                "parametro" => 'fallo',
+                "mensaje" => 'El tamaño máximo permitido para cargar este documento es de 100 Megas.'
+            );
+
+            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
+            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
+                $mensajes["otro"] = $request->bandera_otro_documento;
+            }
+            
+            return json_decode(json_encode($mensajes, true));
+        }
+
+        /* Validación N° 2: Cuando el documento que se intenta cargar son de los que no son obligatorios y aún así se manda vacío el dato */
+        if($request->file('doc_subir') == ""){
+
+            // echo "estoy vacio no subo gonorreas";
+            $mensajes = array(
+                "parametro" => 'fallo',
+                "mensaje" => 'Debe cargar este documento para poder guardarlo.'
+            );
+
+            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
+            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
+                $mensajes["otro"] = $request->bandera_otro_documento;
+            }
+
+            return json_decode(json_encode($mensajes, true));
+        }
+
+        /* Validación N° 3: EL ID DEL EVENTO DEBE ESTAR ESCRITO */
+        if($request->id_evento_familia == ""){
+            $mensajes = array(
+                "parametro" => 'fallo',
+                "mensaje" => 'Debe diligenciar primero el formulario para poder cargar este documento.'
+            );
+
+            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
+            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
+                $mensajes["otro"] = $request->bandera_otro_documento;
+            }
+
+            return json_decode(json_encode($mensajes, true));
+        }
+        
+        /* Validación N° 4: TIPO DE DOCUMENTO */
+        $reglas_validacion_tipo_documento = array(
+            'doc_subir' => 'mimes:pdf,xls,xlsx,doc,docx,jpeg,png,zip'
+        );
+
+        $ejecutar_validador_tipo_documento = Validator::make($request->all(), $reglas_validacion_tipo_documento);
+
+        if ($ejecutar_validador_tipo_documento->fails()) {
+            $mensajes = array(
+                "parametro" => 'fallo',
+                "mensaje" => 'El tipo de documento debe ser de alguna de estas extensiones: pdf, xls, xlsx, doc, docx, jpeg, png, zip.'
+            );
+
+            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
+            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
+                $mensajes["otro"] = $request->bandera_otro_documento;
+            }
+
+            return json_decode(json_encode($mensajes, true));
+        }
+
+        /* Validación N° 5: EL ID DEL SERVICIO DEBE ESTAR ESCRITO */
+        if($request->id_servicio_familia == ""){
+            $mensajes = array(
+                "parametro" => 'fallo',
+                "mensaje" => 'Debe seleccionar un servicio para poder cargar este documento.'
+            );
+
+            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
+            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
+                $mensajes["otro"] = $request->bandera_otro_documento;
+            }
+
+            return json_decode(json_encode($mensajes, true));
+        }
+
+        /* Si las validaciones son exitosas, Se procede a subir el documento */
+
+        // Captura de variables del formulario.
+        $file = $request->file('doc_subir');
+        $id_documento = $request->id_doc_familia;
+        
+        // Evaluamos si han enviado el OTRO DOCUMENTO para que así pueda reemplazar el nombre original por el nombre que indico en el formulario
+        if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
+            $nombre_lista_documento = str_replace(' ', '_', str_replace('/', '_', pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)));
+            $nombre_lista_documento = "Otro_Documento_".$nombre_lista_documento;
+        } else {
+            $nombre_lista_documento = str_replace(' ', '_', str_replace('/', '_', pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)));
+        }
+
+        $idEvento = $request->id_evento_familia;
+        $Id_servicio = $request->id_servicio_familia;
+
+        // Creación de carpeta con el ID EVENTO para insertar los documentos
+        $path = public_path('Documentos_Eventos/'.$idEvento);
+        $mode = 777;
+
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0777, true, true);
+    
+            chmod($path, octdec($mode));
+    
+            if(!empty($request->bandera_nombre_otro_doc)){
+                $nombre_final_documento_en_carpeta = $request->bandera_nombre_otro_doc.".".$file->extension();
+            }else{
+                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
+            }
+    
+            Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
+    
+        }else {
+    
+            if(!empty($request->bandera_nombre_otro_doc)){
+                $nombre_final_documento_en_carpeta = $request->bandera_nombre_otro_doc.".".$file->extension();
+            }else{
+                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
+            }
+    
+            Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
+        }
+
+        // Registrar la información del documento con relación al ID del evento.
+        if(!empty($request->bandera_nombre_otro_doc)){
+            $nombrecompletodocumento = $request->bandera_nombre_otro_doc;
+        }else{
+            $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio;
+        }
+
+        $nuevoDocumento = [
+            'Id_Documento' => $id_documento,
+            'ID_evento' => $idEvento,
+            'Nombre_documento' => $nombrecompletodocumento,
+            'Formato_documento' => $file->extension(),
+            'Id_servicio' => $Id_servicio,
+            'Estado' => 'activo',
+            'Tipo' => 'Complementario',
+            'F_cargue_documento' => $date,
+            'Descripcion' => $request->descripcion_documento,
+            'Nombre_usuario' => $nombre_usuario,
+            'F_registro' => $date
+        ];  
+
+        if (count($nuevoDocumento) > 0) {
+
+            // Consultamos si el documento ya se encuentra dentro de la tabla para no cargarlo nuevamente (se reemplaza por el nuevo).
+            $consulta_documento_bd = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
+                ->select( "Id_Registro_Documento", "Nombre_documento", "Formato_documento")
+                ->where([
+                    ["Nombre_documento", "=", $nombrecompletodocumento],
+                    // ["Formato_documento", "=", $file->extension()],
+                    ["ID_evento", "=", $idEvento]
+                ])->get();
+    
+            $array_consulta_documento_bd = json_decode(json_encode($consulta_documento_bd), true);
+            
+            if(!empty($array_consulta_documento_bd)){
+                $Id_Registro_Documento_en_bd = $array_consulta_documento_bd[0]['Id_Registro_Documento'];
+                $Nombre_documento_en_bd = $array_consulta_documento_bd[0]['Nombre_documento'];
+    
+                // $Formato_documento_en_bd = $array_consulta_documento_bd[0]['Formato_documento'];
+                // && $Formato_documento_en_bd == $file->extension()
+                
+                if ($Nombre_documento_en_bd == $nombrecompletodocumento) {
+                    $actualizar_documento = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
+                        ->where('Id_Registro_Documento', $Id_Registro_Documento_en_bd)->firstOrFail();
+    
+                    $actualizar_documento->fill($nuevoDocumento);
+                    $actualizar_documento->save();
+    
+                    $mensajes = array(
+                        "parametro" => 'exito',
+                        "mensaje" => 'Documento cargado satisfactoriamente.'
+                    );
+                    return json_decode(json_encode($mensajes, true));
+    
+                } 
+    
+            }
+            else {
+    
+                sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($nuevoDocumento);
+    
+                $mensajes = array(
+                    "parametro" => 'exito',
+                    "mensaje" => 'Documento cargado satisfactoriamente.'
+                );
+    
+                // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
+                if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
+                    $mensajes["otro"] = $request->bandera_otro_documento;
+                }
+                
+                // SE VALIDA SI TODOS LOS DOCUMENTOS OBLIGATORIOS HAN SIDO CARGADOS PARA PROCEDER A HABILITAR EL BOTÓN QUE CREARÁ EL EVENTO
+                $id_docs_obligatorios = sigmel_lista_documentos::on('sigmel_gestiones')
+                        ->select('Id_Documento')
+                        ->where([
+                            ["Requerido", "=", "Si"],
+                            ["Estado", "=", "activo"]
+                        ])->get();
+        
+                $array_id_docs_obligatorios = json_decode(json_encode($id_docs_obligatorios), true);
+                $cantidad_id_docs_obligatorios = count($array_id_docs_obligatorios);
+        
+                $cantidad_id_docs_subidos = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['ID_evento', '=', $request->EventoID]
+                ])
+                ->whereIn('Id_Documento', $array_id_docs_obligatorios)->count();
+                
+                if ($cantidad_id_docs_obligatorios == $cantidad_id_docs_subidos) {
+                    $mensajes["todos_obligatorios"] = "Si";
+                }
+    
+                return json_decode(json_encode($mensajes, true));
+                
+            }
+    
+        }
+
+    }
+
+    // Función para eliminar el documento complementario
+    public function eliminarDocumentoComplementario(Request $request){
+        $tupla_doc_complementario = $request->tupla_doc_complementario;
+        $nombre_doc_complementario = $request->nombre_doc_complementario;
+
+        // Extraemos el ID del evento
+        $info_id_evento = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
+        ->select('ID_evento')
+        ->where('Id_Registro_Documento', $tupla_doc_complementario)
+        ->get();
+
+        $id_evento = $info_id_evento[0]->ID_evento;
+        
+        // Eliminamos el archivo de la carpeta del evento si se encuentra
+        $ruta_archivo = "Documentos_Eventos/{$id_evento}/{$nombre_doc_complementario}";
+        $path = public_path($ruta_archivo);
+
+        if (File::exists($path)) {
+
+            File::delete($path);
+
+            // Eliminamos el registro de ese documento de la base de datos
+            sigmel_registro_documentos_eventos::on('sigmel_gestiones')
+            ->where('Id_Registro_Documento', $tupla_doc_complementario)
+            ->delete();
+
+            $mensajes = array(
+                "parametro" => 'exito',
+                "mensaje" => 'Documento complementario eliminado correctamente.'
+            );
+
+            return json_decode(json_encode($mensajes, true));
+
+        }else{
+            $mensajes = array(
+                "parametro" => 'fallo',
+                "mensaje" => 'El archivo no se pudo eliminar'
+            );
+
+            return json_decode(json_encode($mensajes, true));
+        }
+       
     }
 
     public function DescargarDocumentos(Request $request, $nombreArchivo, $id_evento)

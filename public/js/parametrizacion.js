@@ -26,7 +26,7 @@ $(document).ready(function(){
             var api = this.api();
 
             // Columnas específicas a las que se aplicará el código de filtros
-            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
             
             // Para cada columna
             api.columns().eq(0).each(function (colIdx) {
@@ -89,7 +89,7 @@ $(document).ready(function(){
                                                 
                     ],
                     exportOptions: {
-                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]
+                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
                     }
                 }
             ]
@@ -115,7 +115,7 @@ $(document).ready(function(){
                 var api = this.api();
     
                 // Columnas específicas a las que se aplicará el código de filtros
-                var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+                var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
                 
                 // Para cada columna
                 api.columns().eq(0).each(function (colIdx) {
@@ -173,27 +173,6 @@ $(document).ready(function(){
     
             },
             dom: 'Bfrtip',
-            // buttons:{
-            //     dom:{
-            //         buttons:{
-            //             className: 'btn'
-            //         }
-            //     },
-            //     buttons:[
-            //         {
-            //             extend:"excel",
-            //             title: 'Listado Parametrización Proceso Origen ATEL',
-            //             text:'Exportar datos',
-            //             className: 'btn btn-info',
-            //             "excelStyles": [                      // Add an excelStyles definition
-                                                    
-            //             ],
-            //             exportOptions: {
-            //                 columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]
-            //             }
-            //         }
-            //     ]
-            // },
             "language":{
                 "search": "Buscar",
                 "lengthMenu": "Mostrar _MENU_ resgistros por página",
@@ -269,7 +248,7 @@ $(document).ready(function(){
         });
 
         array_datos_fila_parametrizacion_origen_atel.shift();
-
+        
         // Enviamos la información para insertar y/o actualizar
         let actualizar_informacion_parametrizacion_origen_atel = {
             '_token': token,
@@ -340,13 +319,14 @@ $(document).ready(function(){
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="bandeja_trabajo_origen_atel" id="bandeja_trabajo_origen_atel_'+contador_origen_atel+'"></div>',
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="modulo_principal_origen_atel" id="modulo_principal_origen_atel_'+contador_origen_atel+'"></div>',
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="detiene_tiempo_gestion_origen_atel" id="detiene_tiempo_gestion_origen_atel_'+contador_origen_atel+'"></div>',
+            '<select disabled class="custom-select equipo_trabajo_origen_atel_'+contador_origen_atel+'" name="equipo_trabajo_origen_atel" id="equipo_trabajo_origen_atel_'+contador_origen_atel+'"><option value=""></option></select>',
+            '<select disabled class="custom-select listado_profesionales_origen_atel_'+contador_origen_atel+'" name="listado_profesionales_origenl_atel" id="listado_profesionales_origen_atel_'+contador_origen_atel+'"><option value=""></option></select>',
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="enviar_a_origen_atel" id="enviar_a_origen_atel_'+contador_origen_atel+'"></div>',
             '<select disabled class="custom-select bandeja_trabajo_destino_origen_atel_'+contador_origen_atel+'" name="bandeja_trabajo_destino_origen_atel" id="bandeja_trabajo_destino_origen_atel_'+contador_origen_atel+'"><option value=""></option></select>',
-            '<div style="text-align:center;"><input type="checkbox" class="scales" name="copia_facturacion_origen_atel" id="copia_facturacion_origen_atel_'+contador_origen_atel+'"></div>',
+            '<input type="text" class="form-control" name="estado_facturacion_origen_atel" id="estado_facturacion_origen_atel_'+contador_origen_atel+'">',
             '<input style="width:140px;" type="text" class="form-control" name="tiempo_alerta_origen_atel" id="tiempo_alerta_origen_atel_'+contador_origen_atel+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_naranja_origen_atel" id="porcentaje_alerta_naranja_origen_atel_'+contador_origen_atel+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_roja_origen_atel" id="porcentaje_alerta_roja_origen_atel_'+contador_origen_atel+'">',
-            '<select class="custom-select equipo_trabajo_origen_atel_'+contador_origen_atel+'" name="equipo_trabajo_origen_atel" id="equipo_trabajo_origen_atel_'+contador_origen_atel+'"><option value=""></option></select>',
             '<select class="custom-select status_parametrico_origen_atel_'+contador_origen_atel+'" name="status_parametrico_origen_atel" id="status_parametrico_origen_atel_'+contador_origen_atel+'"><option></option><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option></select>',
             '<textarea style="width:140px;" class="form-control" name="motivo_movimiento_origen_atel" id="motivo_movimiento_origen_atel_'+contador_origen_atel+'" cols="90" rows="4"></textarea>',
             '<input style="width:140px;" type="text" class="form-control" name="nombre_usuario_origen_atel" id="nombre_usuario_origen_atel_'+contador_origen_atel+'" value="'+nombre_usuario+'">',
@@ -380,7 +360,7 @@ $(document).ready(function(){
             var api = this.api();
 
             // Columnas específicas a las que se aplicará el código de filtros
-            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
             
             // Para cada columna
             api.columns().eq(0).each(function (colIdx) {
@@ -443,7 +423,7 @@ $(document).ready(function(){
                                                 
                     ],
                     exportOptions: {
-                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]
+                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
                     }
                 }
             ]
@@ -469,7 +449,7 @@ $(document).ready(function(){
                 var api = this.api();
     
                 // Columnas específicas a las que se aplicará el código de filtros
-                var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+                var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
                 
                 // Para cada columna
                 api.columns().eq(0).each(function (colIdx) {
@@ -526,27 +506,6 @@ $(document).ready(function(){
                 });
             },
             dom: 'Bfrtip',
-            // buttons:{
-            //     dom:{
-            //         buttons:{
-            //             className: 'btn'
-            //         }
-            //     },
-            //     buttons:[
-            //         {
-            //             extend:"excel",
-            //             title: 'Listado Parametrización Proceso Calificación PCL',
-            //             text:'Exportar datos',
-            //             className: 'btn btn-info',
-            //             "excelStyles": [                      // Add an excelStyles definition
-                                                    
-            //             ],
-            //             exportOptions: {
-            //                 columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]
-            //             }
-            //         }
-            //     ]
-            // },
             "language":{
                 "search": "Buscar",
                 "lengthMenu": "Mostrar _MENU_ resgistros por página",
@@ -691,13 +650,14 @@ $(document).ready(function(){
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="bandeja_trabajo_calificacion_pcl" id="bandeja_trabajo_calificacion_pcl_'+contador_calificacion_pcl+'"></div>',
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="modulo_principal_calificacion_pcl" id="modulo_principal_calificacion_pcl_'+contador_calificacion_pcl+'"></div>',
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="detiene_tiempo_gestion_calificacion_pcl" id="detiene_tiempo_gestion_calificacion_pcl_'+contador_calificacion_pcl+'"></div>',
+            '<select class="custom-select equipo_trabajo_calificacion_pcl_'+contador_calificacion_pcl+'" name="equipo_trabajo_calificacion_pcl" id="equipo_trabajo_calificacion_pcl_'+contador_calificacion_pcl+'"><option value=""></option></select>',
+            '<select disabled class="custom-select listado_profesionales_calificacion_pcl_'+contador_calificacion_pcl+'" name="listado_profesionales_calificacion_pcl" id="listado_profesionales_calificacion_pcl_'+contador_calificacion_pcl+'"><option value=""></option></select>',
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="enviar_a_calificacion_pcl" id="enviar_a_calificacion_pcl_'+contador_calificacion_pcl+'"></div>',
             '<select disabled class="custom-select bandeja_trabajo_destino_calificacion_pcl_'+contador_calificacion_pcl+'" name="bandeja_trabajo_destino_calificacion_pcl" id="bandeja_trabajo_destino_calificacion_pcl_'+contador_calificacion_pcl+'"><option value=""></option></select>',
-            '<div style="text-align:center;"><input type="checkbox" class="scales" name="copia_facturacion_calificacion_pcl" id="copia_facturacion_calificacion_pcl_'+contador_calificacion_pcl+'"></div>',
+            '<input type="text" class="form-control" name="estado_facturacion_calificacion_pcl" id="estado_facturacion_calificacion_pcl_'+contador_calificacion_pcl+'">',
             '<input style="width:140px;" type="text" class="form-control" name="tiempo_alerta_calificacion_pcl" id="tiempo_alerta_calificacion_pcl_'+contador_calificacion_pcl+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_naranja_calificacion_pcl" id="porcentaje_alerta_naranja_calificacion_pcl_'+contador_calificacion_pcl+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_roja_calificacion_pcl" id="porcentaje_alerta_roja_calificacion_pcl_'+contador_calificacion_pcl+'">',
-            '<select class="custom-select equipo_trabajo_calificacion_pcl_'+contador_calificacion_pcl+'" name="equipo_trabajo_calificacion_pcl" id="equipo_trabajo_calificacion_pcl_'+contador_calificacion_pcl+'"><option value=""></option></select>',
             '<select class="custom-select status_parametrico_calificacion_pcl_'+contador_calificacion_pcl+'" name="status_parametrico_calificacion_pcl" id="status_parametrico_calificacion_pcl_'+contador_calificacion_pcl+'"><option></option><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option></select>',
             '<textarea style="width:140px;" class="form-control" name="motivo_movimiento_calificacion_pcl" id="motivo_movimiento_calificacion_pcl_'+contador_calificacion_pcl+'" cols="90" rows="4"></textarea>',
             '<input style="width:140px;" type="text" class="form-control" name="nombre_usuario_calificacion_pcl" id="nombre_usuario_calificacion_pcl_'+contador_calificacion_pcl+'" value="'+nombre_usuario+'">',
@@ -731,7 +691,7 @@ $(document).ready(function(){
             var api = this.api();
 
             // Columnas específicas a las que se aplicará el código de filtros
-            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
             
             // Para cada columna
             api.columns().eq(0).each(function (colIdx) {
@@ -794,7 +754,7 @@ $(document).ready(function(){
                                                 
                     ],
                     exportOptions: {
-                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]
+                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
                     }
                 }
             ]
@@ -819,7 +779,7 @@ $(document).ready(function(){
                 var api = this.api();
     
                 // Columnas específicas a las que se aplicará el código de filtros
-                var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+                var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
                 
                 // Para cada columna
                 api.columns().eq(0).each(function (colIdx) {
@@ -1042,13 +1002,14 @@ $(document).ready(function(){
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="bandeja_trabajo_juntas" id="bandeja_trabajo_juntas_'+contador_juntas+'"></div>',
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="modulo_principal_juntas" id="modulo_principal_juntas_'+contador_juntas+'"></div>',
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="detiene_tiempo_gestion_juntas" id="detiene_tiempo_gestion_juntas_'+contador_juntas+'"></div>',
+            '<select class="custom-select equipo_trabajo_juntas_'+contador_juntas+'" name="equipo_trabajo_juntas" id="equipo_trabajo_juntas_'+contador_juntas+'"><option value=""></option></select>',
+            '<select disabled class="custom-select listado_profesionales_juntas_'+contador_juntas+'" name="listado_profesionales_juntas" id="listado_profesionales_juntas_'+contador_juntas+'"><option value=""></option></select>',
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="enviar_a_juntas" id="enviar_a_juntas_'+contador_juntas+'"></div>',
             '<select disabled class="custom-select bandeja_trabajo_destino_juntas_'+contador_juntas+'" name="bandeja_trabajo_destino_juntas" id="bandeja_trabajo_destino_juntas_'+contador_juntas+'"><option value=""></option></select>',
-            '<div style="text-align:center;"><input type="checkbox" class="scales" name="copia_facturacion_juntas" id="copia_facturacion_juntas_'+contador_juntas+'"></div>',
+            '<input type="text" class="form-control" name="estado_facturacion_juntas" id="estado_facturacion_juntas_'+contador_juntas+'">',
             '<input style="width:140px;" type="text" class="form-control" name="tiempo_alerta_juntas" id="tiempo_alerta_juntas_'+contador_juntas+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_naranja_juntas" id="porcentaje_alerta_naranja_juntas_'+contador_juntas+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_roja_juntas" id="porcentaje_alerta_roja_juntas_'+contador_juntas+'">',
-            '<select class="custom-select equipo_trabajo_juntas_'+contador_juntas+'" name="equipo_trabajo_juntas" id="equipo_trabajo_juntas_'+contador_juntas+'"><option value=""></option></select>',
             '<select class="custom-select status_parametrico_juntas_'+contador_juntas+'" name="status_parametrico_juntas" id="status_parametrico_juntas_'+contador_juntas+'"><option></option><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option></select>',
             '<textarea style="width:140px;" class="form-control" name="motivo_movimiento_juntas" id="motivo_movimiento_juntas_'+contador_juntas+'" cols="90" rows="4"></textarea>',
             '<input style="width:140px;" type="text" class="form-control" name="nombre_usuario_juntas" id="nombre_usuario_juntas_'+contador_juntas+'" value="'+nombre_usuario+'">',
@@ -1099,19 +1060,27 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
         allowClear: false
     });
 
-    /* INICIALIZACIÓN SELECT 2 LISTADO BANDEJA TRABAJO DESTINO */
-    $(".bandeja_trabajo_destino_origen_atel_"+num_consecutivo).select2({
-        width: '140px',
-        placeholder: "Seleccione",
-        allowClear: false
-    });
-
     /* INICIALIZACIÓN SELECT 2 LISTADO EQUIPOS DE TRABAJO */
     $(".equipo_trabajo_origen_atel_"+num_consecutivo).select2({
         width: '140px',
         placeholder: "Seleccione",
         allowClear: false
     });
+
+    /* INICIALIZACIÓN SELECT 2 LISTADO DE PROFESIONALES */
+    $(".listado_profesionales_origen_atel_"+num_consecutivo).select2({
+        width: '140px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN SELECT 2 LISTADO BANDEJA TRABAJO DESTINO */
+    $(".bandeja_trabajo_destino_origen_atel_"+num_consecutivo).select2({
+        width: '140px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+    
 
     /* INICIALIZACIÓN SELECT 2 STATUS PARAMETRICO */
     $(".status_parametrico_origen_atel_"+num_consecutivo).select2({
@@ -1162,12 +1131,12 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
     /* Carga del selector de acciones a ejecutar dependiendo de la seleccion del estado del proceso origen atel */
     $("#estado_origen_atel_"+num_consecutivo).change(function(){
         $("#accion_ejecutar_origen_atel_"+num_consecutivo).prop('disabled', false);
-        let id_accion_seleccionada_origen_atel = $("#estado_origen_atel_"+num_consecutivo).val();
+        let id_estado_seleccionada_origen_atel = $("#estado_origen_atel_"+num_consecutivo).val();
         let datos_acciones_ejecutar_origen_atel = {
             '_token': token,
             'parametro': "acciones_ejecutar_proceso_origen_atel",
             'Id_cliente': Id_cliente,
-            'id_accion_seleccionada_origen_atel': id_accion_seleccionada_origen_atel
+            'id_accion_seleccionada_origen_atel': id_estado_seleccionada_origen_atel
         };
         $.ajax({
             type:'POST',
@@ -1179,6 +1148,55 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
                     $("#accion_ejecutar_origen_atel_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                }
+            }
+        });
+    });
+
+    /* Carga del selector de equipos de trabajo dependiendo de la selección de la acción a ejecutar del proceso origen atel */
+    $("#accion_ejecutar_origen_atel_"+num_consecutivo).change(function(){
+        $("#equipo_trabajo_origen_atel_"+num_consecutivo).prop('disabled', false);
+        let id_accion = $("#accion_ejecutar_origen_atel_"+num_consecutivo).val();
+
+        let datos_equipos_trabajo_origen_atel = {
+            '_token': token,
+            'parametro' : "equipos_trabajo_proceso_origen_atel",
+            'id_accion_seleccionada': id_accion
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_equipos_trabajo_origen_atel,
+            success:function(data){
+                $('#equipo_trabajo_origen_atel_'+num_consecutivo).empty();
+                $('#equipo_trabajo_origen_atel_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#equipo_trabajo_origen_atel_"+num_consecutivo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        });
+    });
+
+    /* Carga del selector de profesionales dependendiendo de la selección del equipo de trabajo */
+    $("#equipo_trabajo_origen_atel_"+num_consecutivo).change(function(){
+        $("#listado_profesionales_origen_atel_"+num_consecutivo).prop('disabled', false);
+        let id_equipo_seleccionado = $("#equipo_trabajo_origen_atel_"+num_consecutivo).val();
+        let datos_listado_profesionales_origen_atel = {
+            '_token': token,
+            'parametro' : "listado_profesionales_proceso_origen_atel",
+            'id_equipo_seleccionado': id_equipo_seleccionado
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_listado_profesionales_origen_atel,
+            success:function(data){
+                $('#listado_profesionales_origen_atel_'+num_consecutivo).empty();
+                $('#listado_profesionales_origen_atel_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#listado_profesionales_origen_atel_"+num_consecutivo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
                 }
             }
         });
@@ -1257,22 +1275,6 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
         $(this).val(value);
     });
 
-    /* Carga del selector de equipos de trabajo del proceso origen atel */
-    let datos_equipos_trabajo_origen_atel = {
-        '_token': token,
-        'parametro' : "equipos_trabajo_proceso_origen_atel",
-    };
-    $.ajax({
-        type:'POST',
-        url:'/CargueSelectoresParametrizar',
-        data: datos_equipos_trabajo_origen_atel,
-        success:function(data){
-            let claves = Object.keys(data);
-            for (let i = 0; i < claves.length; i++) {
-                $("#equipo_trabajo_origen_atel_"+num_consecutivo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
-            }
-        }
-    });
 
     // mantenemos el input fecha actualización movimiento disabled en todo movimiento
     $("#fecha_actualizacion_movimiento_origen_atel_"+num_consecutivo).prop('disabled', true);
@@ -1313,13 +1315,27 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
             } else if (input.val() !== undefined ) {
                 datos_cada_fila_proceso_origen_atel[fieldName] = input.val();
             }
+
+            // // Recorre cada elemento dentro de la celda
+            // cell.find('input, textarea, select').each(function() {
+            //     // Obtén el elemento actual
+            //     var input = $(this);
+            //     var fieldName = input.attr('id'); 
+
+            //     // Se valida los checkbox para verificar si fueron marcados o no.
+            //     if (input.is(':checkbox')) {
+            //         datos_cada_fila_proceso_origen_atel[fieldName] = input.is(':checked') ? 'Si' : 'No';
+            //     } else if (input.val() !== undefined ) {
+            //         datos_cada_fila_proceso_origen_atel[fieldName] = input.val();
+            //     }
+            // });
         });
 
         // Convierte el objeto en un array para mejor manejo de los datos
         var array_datos_fila_parametrizacion_origen_atel = $.map(datos_cada_fila_proceso_origen_atel, function(value, key) {
             return { nombre: key, valor: value };
         });
-
+        // console.log(array_datos_fila_parametrizacion_origen_atel);
         // Enviamos la información para insertar y/o actualizar
         let enviar_informacion_parametrizacion_origen_atel = {
             '_token': token,
@@ -1382,6 +1398,20 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
         allowClear: false
     });
 
+    /* INICIALIZACIÓN SELECT 2 LISTADO EQUIPOS DE TRABAJO */
+    $(".bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).select2({
+        width: '140px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN SELECT 2 LISTADO DE PROFESIONALES */
+    $(".bd_listado_profesionales_origen_atel_"+id_parametrizacion_origen_atel_editar).select2({
+        width: '140px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
     /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES ANTECESORAS */
     $(".bd_accion_antecesora_origen_atel_"+id_parametrizacion_origen_atel_editar).select2({
         width: '240px',
@@ -1391,13 +1421,6 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
 
     /* INICIALIZACIÓN SELECT 2 LISTADO BANDEJA TRABAJO DESTINO */
     $(".bd_bandeja_trabajo_destino_origen_atel_"+id_parametrizacion_origen_atel_editar).select2({
-        width: '140px',
-        placeholder: "Seleccione",
-        allowClear: false
-    });
-
-    /* INICIALIZACIÓN SELECT 2 LISTADO EQUIPOS DE TRABAJO */
-    $(".bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).select2({
         width: '140px',
         placeholder: "Seleccione",
         allowClear: false
@@ -1461,7 +1484,7 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
         }
     });
 
-    /* Carga del selector de acciones a ejecutar dependiendo de la seleccion del estado del proceso origen atel */
+    /* Carga del selector de acciones a ejecutar dependiendo de la seleccion del estado del proceso origen atel apenas carga */
     let datos_acciones_ejecutar_origen_atel = {
         '_token': token,
         'parametro': "acciones_ejecutar_proceso_origen_atel",
@@ -1486,30 +1509,7 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
         }
     });
 
-    /* Carga del selector de acciones antecesoras dependiendo del servicio asociado generado */
-    $("#bd_servicio_asociado_origen_atel_"+id_parametrizacion_origen_atel_editar).change(function(){
-        var id_servicio_asociado_origen_atel = $(this).val();
-        let datos_accion_antecesora_origen_atel = {
-            '_token': token,
-            'parametro' : "acciones_antecesoras_proceso_origen_atel",
-            'servicio_asociado_origen_atel':id_servicio_asociado_origen_atel,
-            'Id_cliente': Id_cliente
-        };
-        $.ajax({
-            type:'POST',
-            url:'/CargueSelectoresParametrizar',
-            data: datos_accion_antecesora_origen_atel,
-            success:function(data){
-                $('#bd_accion_antecesora_origen_atel_'+id_parametrizacion_origen_atel_editar).empty();
-                $('#bd_accion_antecesora_origen_atel_'+id_parametrizacion_origen_atel_editar).append('<option></option>');
-                let claves = Object.keys(data);
-                for (let i = 0; i < claves.length; i++) {
-                    $("#bd_accion_antecesora_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Accion"]+'</option>');
-                }
-            }
-        });
-    });
-
+    /* Carga del selector de acciones a ejecutar dependiendo de la seleccion del estado del proceso origen atel evento change */
     $("#bd_estado_origen_atel_"+id_parametrizacion_origen_atel_editar).change(function(){
         $("#bd_accion_ejecutar_origen_atel_"+id_parametrizacion_origen_atel_editar).prop('disabled', false);
         let id_accion_seleccionada_origen_atel = $("#bd_estado_origen_atel_"+id_parametrizacion_origen_atel_editar).val();
@@ -1529,6 +1529,158 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
                     $("#bd_accion_ejecutar_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                }
+            }
+        });
+    });
+
+    /* Carga del selector de equipos de trabajo dependiendo de la selección de la acción a ejecutar del proceso origen atel apenas carga */
+    let datos_equipos_trabajo_origen_atel = {
+        '_token': token,
+        'parametro' : "equipos_trabajo_proceso_origen_atel",
+        'id_accion_seleccionada': $("#bd_accion_ejecutar_origen_atel_"+id_parametrizacion_origen_atel_editar).val()
+    };
+    
+    $.ajax({
+        type:'POST',
+        url:'/CargueSelectoresParametrizar',
+        data: datos_equipos_trabajo_origen_atel,
+        success:function(data){
+            $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).empty();
+            $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["id"] == $("#bd_id_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).val()) {
+                    $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["id"]+'" selected>'+data[claves[i]]["nombre"]+'</option>');
+                } else {
+                    $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        }
+    });
+
+    /* Carga del selector de equipos de trabajo dependiendo de la selección de la acción a ejecutar del proceso origen atel evento change */
+    $("#bd_accion_ejecutar_origen_atel_"+id_parametrizacion_origen_atel_editar).change(function(){
+        $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).prop('disabled', false);
+        let id_accion = $("#bd_accion_ejecutar_origen_atel_"+id_parametrizacion_origen_atel_editar).val();
+    
+        let datos_equipos_trabajo_origen_atel = {
+            '_token': token,
+            'parametro' : "equipos_trabajo_proceso_origen_atel",
+            'id_accion_seleccionada': id_accion
+        };
+        
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_equipos_trabajo_origen_atel,
+            success:function(data){
+                $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).empty();
+                $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        });
+    });
+
+    /* Carga del selector de profesionales dependendiendo de la selección del equipo de trabajo apenas carga */
+    let datos_listado_profesionales_origen_atel = {
+        '_token': token,
+        'parametro' : "listado_profesionales_proceso_origen_atel",
+        'id_equipo_seleccionado': $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).val()
+    };
+    
+    $.ajax({
+        type:'POST',
+        url:'/CargueSelectoresParametrizar',
+        data: datos_listado_profesionales_origen_atel,
+        success:function(data){
+            $("#bd_listado_profesionales_origen_atel_"+id_parametrizacion_origen_atel_editar).empty();
+            $("#bd_listado_profesionales_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["id"] == $("#bd_id_profesional_asignado_origen_atel_"+id_parametrizacion_origen_atel_editar).val()) {
+                    $("#bd_listado_profesionales_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["id"]+'" selected>'+data[claves[i]]["nombre"]+'</option>');
+                } else {
+                    $("#bd_listado_profesionales_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        }
+    });
+
+    /* Carga del selector de profesionales dependendiendo de la selección del equipo de trabajo evento change */
+    $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).change(function(){
+        $("#bd_listado_profesionales_origen_atel_"+id_parametrizacion_origen_atel_editar).prop('disabled', false);
+        let id_equipo_seleccionado = $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).val();
+
+        let datos_listado_profesionales_origen_atel = {
+            '_token': token,
+            'parametro' : "listado_profesionales_proceso_origen_atel",
+            'id_equipo_seleccionado': id_equipo_seleccionado
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_listado_profesionales_origen_atel,
+            success:function(data){
+                console.log('aqui');
+                $("#bd_listado_profesionales_origen_atel_"+id_parametrizacion_origen_atel_editar).empty();
+                $("#bd_listado_profesionales_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#bd_listado_profesionales_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        });
+    });
+
+    /* Carga del selector de acciones antecesoras dependiendo del servicio asociado generado apenas carga */
+    let datos_accion_antecesora_origen_atel = {
+        '_token': token,
+        'parametro' : "acciones_antecesoras_proceso_origen_atel",
+        'servicio_asociado_origen_atel':$("#bd_servicio_asociado_origen_atel_"+id_parametrizacion_origen_atel_editar).val(),
+        'Id_cliente': Id_cliente
+    };
+    $.ajax({
+        type:'POST',
+        url:'/CargueSelectoresParametrizar',
+        data: datos_accion_antecesora_origen_atel,
+        success:function(data){
+            $('#bd_accion_antecesora_origen_atel_'+id_parametrizacion_origen_atel_editar).empty();
+            $('#bd_accion_antecesora_origen_atel_'+id_parametrizacion_origen_atel_editar).append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["Id_Accion"] == $("#bd_servicio_asociado_origen_atel_"+id_parametrizacion_origen_atel_editar).val()) {
+                    $("#bd_accion_antecesora_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Accion"]+'</option>');
+                } else {
+                    $("#bd_accion_antecesora_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                }
+            }
+        }
+    });
+
+    /* Carga del selector de acciones antecesoras dependiendo del servicio asociado generado evento change */
+    $("#bd_servicio_asociado_origen_atel_"+id_parametrizacion_origen_atel_editar).change(function(){
+        var id_servicio_asociado_origen_atel = $(this).val();
+        let datos_accion_antecesora_origen_atel = {
+            '_token': token,
+            'parametro' : "acciones_antecesoras_proceso_origen_atel",
+            'servicio_asociado_origen_atel':id_servicio_asociado_origen_atel,
+            'Id_cliente': Id_cliente
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_accion_antecesora_origen_atel,
+            success:function(data){
+                $('#bd_accion_antecesora_origen_atel_'+id_parametrizacion_origen_atel_editar).empty();
+                $('#bd_accion_antecesora_origen_atel_'+id_parametrizacion_origen_atel_editar).append('<option></option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#bd_accion_antecesora_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Accion"]+'</option>');
                 }
             }
         });
@@ -1583,30 +1735,6 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
         $(this).val(value);
     });
 
-    /* Carga del selector de equipos de trabajo del proceso origen atel */
-    let datos_equipos_trabajo_origen_atel = {
-        '_token': token,
-        'parametro' : "equipos_trabajo_proceso_origen_atel",
-    };
-    $.ajax({
-        type:'POST',
-        url:'/CargueSelectoresParametrizar',
-        data: datos_equipos_trabajo_origen_atel,
-        success:function(data){
-            $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).empty();
-            $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option></option>');
-            let claves = Object.keys(data);
-            for (let i = 0; i < claves.length; i++) {
-                if (data[claves[i]]["id"] == $("#bd_id_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).val()) {
-                    $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["id"]+'" selected>'+data[claves[i]]["nombre"]+'</option>');
-                } else {
-                    $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
-                }
-            }
-        }
-    });
-
-
 };
 
 function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo){
@@ -1639,6 +1767,13 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
         allowClear: false
     });
 
+    /* INICIALIZACIÓN SELECT 2 LISTADO EQUIPOS DE TRABAJO */
+    $(".equipo_trabajo_calificacion_pcl_"+num_consecutivo).select2({
+        width: '140px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
     /* INICIALIZACIÓN SELECT 2 LISTADO BANDEJA TRABAJO DESTINO */
     $(".bandeja_trabajo_destino_calificacion_pcl_"+num_consecutivo).select2({
         width: '140px',
@@ -1646,8 +1781,8 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
         allowClear: false
     });
 
-    /* INICIALIZACIÓN SELECT 2 LISTADO EQUIPOS DE TRABAJO */
-    $(".equipo_trabajo_calificacion_pcl_"+num_consecutivo).select2({
+    /* INICIALIZACIÓN SELECT 2 LISTADO DE PROFESIONALES */
+    $(".listado_profesionales_calificacion_pcl_"+num_consecutivo).select2({
         width: '140px',
         placeholder: "Seleccione",
         allowClear: false
@@ -1663,7 +1798,7 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
     let token = $("input[name='_token']").val();
     var Id_cliente = $("#Id_cliente").val();
 
-    /* Carga del selector servicios asociados del proceso origen atel */
+    /* Carga del selector servicios asociados del proceso calificacion pcl */
     let datos_servicios_asociados_calificacion_pcl = {
         '_token': token,
         'parametro' : "servicios_asociados_proceso_calificacion_pcl",
@@ -1681,7 +1816,7 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
         }
     });
 
-    /* Carga del selector de estados del proceso origen atel */
+    /* Carga del selector de estados del proceso calificacion pcl */
     let datos_estados_calificacion_pcl = {
         '_token': token,
         'parametro' : "lista_estados",
@@ -1699,7 +1834,7 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
         }
     });
 
-    /* Carga del selector de acciones a ejecutar dependiendo de la seleccion del estado del proceso origen atel */
+    /* Carga del selector de acciones a ejecutar dependiendo de la seleccion del estado del proceso calificacion pcl */
     $("#estado_calificacion_pcl_"+num_consecutivo).change(function(){
         $("#accion_ejecutar_calificacion_pcl_"+num_consecutivo).prop('disabled', false);
         let id_accion_seleccionada_calificacion_pcl = $("#estado_calificacion_pcl_"+num_consecutivo).val();
@@ -1719,6 +1854,55 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
                     $("#accion_ejecutar_calificacion_pcl_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                }
+            }
+        });
+    });
+
+    /* Carga del selector de equipos de trabajo dependiendo de la selección de la acción a ejecutar del proceso calificacion pcl */
+    $("#accion_ejecutar_calificacion_pcl_"+num_consecutivo).change(function(){
+        $("#equipo_trabajo_calificacion_pcl_"+num_consecutivo).prop('disabled', false);
+        let id_accion = $("#accion_ejecutar_calificacion_pcl_"+num_consecutivo).val();
+
+        let datos_equipos_trabajo_calificacion_pcl = {
+            '_token': token,
+            'parametro' : "equipos_trabajo_proceso_calificacion_pcl",
+            'id_accion_seleccionada': id_accion
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_equipos_trabajo_calificacion_pcl,
+            success:function(data){
+                $('#equipo_trabajo_calificacion_pcl_'+num_consecutivo).empty();
+                $('#equipo_trabajo_calificacion_pcl_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#equipo_trabajo_calificacion_pcl_"+num_consecutivo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        });
+    });
+
+    /* Carga del selector de profesionales dependendiendo de la selección del equipo de trabajo del proceso calificacion pcl */
+    $("#equipo_trabajo_calificacion_pcl_"+num_consecutivo).change(function(){
+        $("#listado_profesionales_calificacion_pcl_"+num_consecutivo).prop('disabled', false);
+        let id_equipo_seleccionado = $("#equipo_trabajo_calificacion_pcl_"+num_consecutivo).val();
+        let datos_listado_profesionales_calificacion_pcl = {
+            '_token': token,
+            'parametro' : "listado_profesionales_proceso_calificacion_pcl",
+            'id_equipo_seleccionado': id_equipo_seleccionado
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_listado_profesionales_calificacion_pcl,
+            success:function(data){
+                $('#listado_profesionales_calificacion_pcl_'+num_consecutivo).empty();
+                $('#listado_profesionales_calificacion_pcl_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#listado_profesionales_calificacion_pcl_"+num_consecutivo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
                 }
             }
         });
@@ -1748,7 +1932,7 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
         });
     });
 
-    /* Habilitar el selector de bandeja de trabajo destino cuando se checkea el checkbox de enviar del proceso origen atel */
+    /* Habilitar el selector de bandeja de trabajo destino cuando se checkea el checkbox de enviar del proceso calificacion pcl */
     $("#enviar_a_calificacion_pcl_"+num_consecutivo).click(function(){
         if($(this).is(':checked')){
             $("#bandeja_trabajo_destino_calificacion_pcl_"+num_consecutivo).prop("disabled", false);
@@ -1779,7 +1963,7 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
         }
     });
 
-    /* Función solo numeros para input tiempo alerta del proceso origen atel */
+    /* Función solo numeros para input tiempo alerta del proceso calificacion pcl */
     /* La funcionalidad de permitir que solo se ingrese una sola cifra decimal está realizada en el archivo funciones_helpers.js */
     $(document).on('input', "input[id^='tiempo_alerta_calificacion_pcl_']", function(event){
         var value = $(this).val();
@@ -1795,23 +1979,6 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
         
         // Actualizar el valor del input
         $(this).val(value);
-    });
-
-    /* Carga del selector de equipos de trabajo del proceso origen atel */
-    let datos_equipos_trabajo_calificacion_pcl = {
-        '_token': token,
-        'parametro' : "equipos_trabajo_proceso_calificacion_pcl",
-    };
-    $.ajax({
-        type:'POST',
-        url:'/CargueSelectoresParametrizar',
-        data: datos_equipos_trabajo_calificacion_pcl,
-        success:function(data){
-            let claves = Object.keys(data);
-            for (let i = 0; i < claves.length; i++) {
-                $("#equipo_trabajo_calificacion_pcl_"+num_consecutivo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
-            }
-        }
     });
 
     // mantenemos el input fecha actualización movimiento disabled en todo movimiento
@@ -1929,15 +2096,22 @@ function edicion_parametrizacion_calificacion_pcl(id_parametrizacion_calificacio
         allowClear: false
     });
 
-    /* INICIALIZACIÓN SELECT 2 LISTADO BANDEJA TRABAJO DESTINO */
-    $(".bd_bandeja_trabajo_destino_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).select2({
+    /* INICIALIZACIÓN SELECT 2 LISTADO EQUIPOS DE TRABAJO */
+    $(".bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).select2({
         width: '140px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
-    /* INICIALIZACIÓN SELECT 2 LISTADO EQUIPOS DE TRABAJO */
-    $(".bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).select2({
+    /* INICIALIZACIÓN SELECT 2 LISTADO DE PROFESIONALES */
+    $(".bd_listado_profesionales_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).select2({
+        width: '140px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN SELECT 2 LISTADO BANDEJA TRABAJO DESTINO */
+    $(".bd_bandeja_trabajo_destino_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).select2({
         width: '140px',
         placeholder: "Seleccione",
         allowClear: false
@@ -1953,7 +2127,7 @@ function edicion_parametrizacion_calificacion_pcl(id_parametrizacion_calificacio
     let token = $("input[name='_token']").val();
     var Id_cliente = $("#Id_cliente").val();
 
-    /* Carga del selector servicios asociados del proceso origen atel */
+    /* Carga del selector servicios asociados del proceso calificacion pcl */
     let datos_servicios_asociados_calificacion_pcl = {
         '_token': token,
         'parametro' : "servicios_asociados_proceso_calificacion_pcl",
@@ -1977,7 +2151,7 @@ function edicion_parametrizacion_calificacion_pcl(id_parametrizacion_calificacio
         }
     });
 
-    /* Carga del selector de estados del proceso origen atel */
+    /* Carga del selector de estados del proceso calificacion pcl */
     let datos_estados_calificacion_pcl = {
         '_token': token,
         'parametro' : "lista_estados",
@@ -2026,7 +2200,134 @@ function edicion_parametrizacion_calificacion_pcl(id_parametrizacion_calificacio
         }
     });
 
-    /* Carga del selector de acciones antecesoras dependiendo del servicio asociado generado */
+    /* Carga del selector de equipos de trabajo dependiendo de la selección de la acción a ejecutar del proceso origen atel apenas carga */
+    let datos_equipos_trabajo_calificacion_pcl = {
+        '_token': token,
+        'parametro' : "equipos_trabajo_proceso_calificacion_pcl",
+        'id_accion_seleccionada': $("#bd_accion_ejecutar_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).val()
+    };
+
+    $.ajax({
+        type:'POST',
+        url:'/CargueSelectoresParametrizar',
+        data: datos_equipos_trabajo_calificacion_pcl,
+        success:function(data){
+            $("#bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).empty();
+            $("#bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["id"] == $("#bd_id_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).val()) {
+                    $("#bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["id"]+'" selected>'+data[claves[i]]["nombre"]+'</option>');
+                } else {
+                    $("#bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        }
+    });
+
+    /* Carga del selector de equipos de trabajo dependiendo de la selección de la acción a ejecutar del proceso origen atel evento change */
+    $("#bd_accion_ejecutar_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).change(function(){
+        $("#bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).prop('disabled', false);
+        let id_accion = $("#bd_accion_ejecutar_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).val();
+
+        let datos_equipos_trabajo_calificacion_pcl = {
+            '_token': token,
+            'parametro' : "equipos_trabajo_proceso_calificacion_pcl",
+            'id_accion_seleccionada': id_accion
+        };
+        
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_equipos_trabajo_calificacion_pcl,
+            success:function(data){
+                $("#bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).empty();
+                $("#bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        });
+    });
+
+    /* Carga del selector de profesionales dependendiendo de la selección del equipo de trabajo apenas carga */
+    let datos_listado_profesionales_calificacion_pcl = {
+        '_token': token,
+        'parametro' : "listado_profesionales_proceso_calificacion_pcl",
+        'id_equipo_seleccionado': $("#bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).val()
+    };
+
+    $.ajax({
+        type:'POST',
+        url:'/CargueSelectoresParametrizar',
+        data: datos_listado_profesionales_calificacion_pcl,
+        success:function(data){
+            $("#bd_listado_profesionales_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).empty();
+            $("#bd_listado_profesionales_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["id"] == $("#bd_id_profesional_asignado_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).val()) {
+                    $("#bd_listado_profesionales_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["id"]+'" selected>'+data[claves[i]]["nombre"]+'</option>');
+                } else {
+                    $("#bd_listado_profesionales_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        }
+    });
+
+    /* Carga del selector de profesionales dependendiendo de la selección del equipo de trabajo evento change */
+    $("#bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).change(function(){
+        $("#bd_listado_profesionales_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).prop('disabled', false);
+        let id_equipo_seleccionado = $("#bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).val();
+
+        let datos_listado_profesionales_calificacion_pcl = {
+            '_token': token,
+            'parametro' : "listado_profesionales_proceso_calificacion_pcl",
+            'id_equipo_seleccionado': id_equipo_seleccionado
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_listado_profesionales_calificacion_pcl,
+            success:function(data){
+                $("#bd_listado_profesionales_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).empty();
+                $("#bd_listado_profesionales_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#bd_listado_profesionales_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        });
+    });
+
+    /* Carga del selector de acciones antecesoras dependiendo del servicio asociado generado apenas carga */
+    let datos_accion_antecesora_calificacion_pcl = {
+        '_token': token,
+        'parametro' : "acciones_antecesoras_proceso_calificacion_pcl",
+        'servicio_asociado_calificacion_pcl':$("#bd_servicio_asociado_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).val(),
+        'Id_cliente': Id_cliente
+    };
+    $.ajax({
+        type:'POST',
+        url:'/CargueSelectoresParametrizar',
+        data: datos_accion_antecesora_calificacion_pcl,
+        success:function(data){
+            $('#bd_accion_antecesora_calificacion_pcl_'+id_parametrizacion_calificacion_pcl_editar).empty();
+            $('#bd_accion_antecesora_calificacion_pcl_'+id_parametrizacion_calificacion_pcl_editar).append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["Id_Accion"] == $("#bd_servicio_asociado_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).val()) {
+                    $("#bd_accion_antecesora_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Accion"]+'</option>');
+                } else {
+                    $("#bd_accion_antecesora_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                }
+            }
+        }
+    });
+
+    /* Carga del selector de acciones antecesoras dependiendo del servicio asociado generado evento change */
     $("#bd_servicio_asociado_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).change(function(){
         var id_servicio_asociado_calificacion_pcl = $(this).val();
         let datos_accion_antecesora_calificacion_pcl = {
@@ -2123,30 +2424,6 @@ function edicion_parametrizacion_calificacion_pcl(id_parametrizacion_calificacio
         $(this).val(value);
     });
 
-    /* Carga del selector de equipos de trabajo del proceso origen atel */
-    let datos_equipos_trabajo_calificacion_pcl = {
-        '_token': token,
-        'parametro' : "equipos_trabajo_proceso_calificacion_pcl",
-    };
-    $.ajax({
-        type:'POST',
-        url:'/CargueSelectoresParametrizar',
-        data: datos_equipos_trabajo_calificacion_pcl,
-        success:function(data){
-            $("#bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).empty();
-            $("#bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option></option>');
-            let claves = Object.keys(data);
-            for (let i = 0; i < claves.length; i++) {
-                if (data[claves[i]]["id"] == $("#bd_id_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).val()) {
-                    $("#bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["id"]+'" selected>'+data[claves[i]]["nombre"]+'</option>');
-                } else {
-                    $("#bd_equipo_trabajo_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
-                }
-            }
-        }
-    });
-
-
 };
 
 function funciones_elementos_fila_parametrizar_juntas(num_consecutivo){
@@ -2179,15 +2456,22 @@ function funciones_elementos_fila_parametrizar_juntas(num_consecutivo){
         allowClear: false
     });
 
-    /* INICIALIZACIÓN SELECT 2 LISTADO BANDEJA TRABAJO DESTINO */
-    $(".bandeja_trabajo_destino_juntas_"+num_consecutivo).select2({
+    /* INICIALIZACIÓN SELECT 2 LISTADO EQUIPOS DE TRABAJO */
+    $(".equipo_trabajo_juntas_"+num_consecutivo).select2({
         width: '140px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
-    /* INICIALIZACIÓN SELECT 2 LISTADO EQUIPOS DE TRABAJO */
-    $(".equipo_trabajo_juntas_"+num_consecutivo).select2({
+    /* INICIALIZACIÓN SELECT 2 LISTADO DE PROFESIONALES */
+    $(".listado_profesionales_juntas_"+num_consecutivo).select2({
+        width: '140px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN SELECT 2 LISTADO BANDEJA TRABAJO DESTINO */
+    $(".bandeja_trabajo_destino_juntas_"+num_consecutivo).select2({
         width: '140px',
         placeholder: "Seleccione",
         allowClear: false
@@ -2264,6 +2548,55 @@ function funciones_elementos_fila_parametrizar_juntas(num_consecutivo){
         });
     });
 
+    /* Carga del selector de equipos de trabajo dependiendo de la selección de la acción a ejecutar del proceso origen atel */
+    $("#accion_ejecutar_juntas_"+num_consecutivo).change(function(){
+        $("#equipo_trabajo_juntas_"+num_consecutivo).prop('disabled', false);
+        let id_accion = $("#accion_ejecutar_juntas_"+num_consecutivo).val();
+
+        let datos_equipos_trabajo_juntas = {
+            '_token': token,
+            'parametro' : "equipos_trabajo_proceso_juntas",
+            'id_accion_seleccionada': id_accion
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_equipos_trabajo_juntas,
+            success:function(data){
+                $('#equipo_trabajo_juntas_'+num_consecutivo).empty();
+                $('#equipo_trabajo_juntas_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#equipo_trabajo_juntas_"+num_consecutivo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        });
+    });
+
+    /* Carga del selector de profesionales dependendiendo de la selección del equipo de trabajo */
+    $("#equipo_trabajo_juntas_"+num_consecutivo).change(function(){
+        $("#listado_profesionales_juntas_"+num_consecutivo).prop('disabled', false);
+        let id_equipo_seleccionado = $("#equipo_trabajo_juntas_"+num_consecutivo).val();
+        let datos_listado_profesionales_juntas = {
+            '_token': token,
+            'parametro' : "listado_profesionales_proceso_juntas",
+            'id_equipo_seleccionado': id_equipo_seleccionado
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_listado_profesionales_juntas,
+            success:function(data){
+                $('#listado_profesionales_juntas_'+num_consecutivo).empty();
+                $('#listado_profesionales_juntas_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#listado_profesionales_juntas_"+num_consecutivo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        });
+    });
+
     /* Carga del selector de acciones antecesoras dependiendo del servicio asociado generado */
     $("#servicio_asociado_juntas_"+num_consecutivo).change(function(){
         var id_servicio_asociado_juntas = $(this).val();
@@ -2335,23 +2668,6 @@ function funciones_elementos_fila_parametrizar_juntas(num_consecutivo){
         
         // Actualizar el valor del input
         $(this).val(value);
-    });
-
-    /* Carga del selector de equipos de trabajo del proceso origen atel */
-    let datos_equipos_trabajo_juntas = {
-        '_token': token,
-        'parametro' : "equipos_trabajo_proceso_juntas",
-    };
-    $.ajax({
-        type:'POST',
-        url:'/CargueSelectoresParametrizar',
-        data: datos_equipos_trabajo_juntas,
-        success:function(data){
-            let claves = Object.keys(data);
-            for (let i = 0; i < claves.length; i++) {
-                $("#equipo_trabajo_juntas_"+num_consecutivo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
-            }
-        }
     });
 
     // mantenemos el input fecha actualización movimiento disabled en todo movimiento
@@ -2469,15 +2785,22 @@ function edicion_parametrizacion_juntas(id_parametrizacion_juntas_editar){
         allowClear: false
     });
 
-    /* INICIALIZACIÓN SELECT 2 LISTADO BANDEJA TRABAJO DESTINO */
-    $(".bd_bandeja_trabajo_destino_juntas_"+id_parametrizacion_juntas_editar).select2({
+    /* INICIALIZACIÓN SELECT 2 LISTADO EQUIPOS DE TRABAJO */
+    $(".bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).select2({
         width: '140px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
-    /* INICIALIZACIÓN SELECT 2 LISTADO EQUIPOS DE TRABAJO */
-    $(".bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).select2({
+    /* INICIALIZACIÓN SELECT 2 LISTADO DE PROFESIONALES */
+    $(".bd_listado_profesionales_juntas_"+id_parametrizacion_juntas_editar).select2({
+        width: '140px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN SELECT 2 LISTADO BANDEJA TRABAJO DESTINO */
+    $(".bd_bandeja_trabajo_destino_juntas_"+id_parametrizacion_juntas_editar).select2({
         width: '140px',
         placeholder: "Seleccione",
         allowClear: false
@@ -2566,7 +2889,134 @@ function edicion_parametrizacion_juntas(id_parametrizacion_juntas_editar){
         }
     });
 
-    /* Carga del selector de acciones antecesoras dependiendo del servicio asociado generado */
+    /* Carga del selector de equipos de trabajo dependiendo de la selección de la acción a ejecutar del proceso origen atel apenas carga */
+    let datos_equipos_trabajo_juntas = {
+        '_token': token,
+        'parametro' : "equipos_trabajo_proceso_juntas",
+        'id_accion_seleccionada': $("#bd_accion_ejecutar_juntas_"+id_parametrizacion_juntas_editar).val()
+    };
+
+    $.ajax({
+        type:'POST',
+        url:'/CargueSelectoresParametrizar',
+        data: datos_equipos_trabajo_juntas,
+        success:function(data){
+            $("#bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).empty();
+            $("#bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["id"] == $("#bd_id_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).val()) {
+                    $("#bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["id"]+'" selected>'+data[claves[i]]["nombre"]+'</option>');
+                } else {
+                    $("#bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        }
+    });
+
+    /* Carga del selector de equipos de trabajo dependiendo de la selección de la acción a ejecutar del proceso origen atel evento change */
+    $("#bd_accion_ejecutar_juntas_"+id_parametrizacion_juntas_editar).change(function(){
+        $("#bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).prop('disabled', false);
+        let id_accion = $("#bd_accion_ejecutar_juntas_"+id_parametrizacion_juntas_editar).val();
+
+        let datos_equipos_trabajo_juntas = {
+            '_token': token,
+            'parametro' : "equipos_trabajo_proceso_juntas",
+            'id_accion_seleccionada': id_accion
+        };
+        
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_equipos_trabajo_juntas,
+            success:function(data){
+                $("#bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).empty();
+                $("#bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        });
+    });
+
+    /* Carga del selector de profesionales dependendiendo de la selección del equipo de trabajo apenas carga */
+    let datos_listado_profesionales_juntas = {
+        '_token': token,
+        'parametro' : "listado_profesionales_proceso_juntas",
+        'id_equipo_seleccionado': $("#bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).val()
+    };
+
+    $.ajax({
+        type:'POST',
+        url:'/CargueSelectoresParametrizar',
+        data: datos_listado_profesionales_juntas,
+        success:function(data){
+            $("#bd_listado_profesionales_juntas_"+id_parametrizacion_juntas_editar).empty();
+            $("#bd_listado_profesionales_juntas_"+id_parametrizacion_juntas_editar).append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["id"] == $("#bd_id_profesional_asignado_juntas_"+id_parametrizacion_juntas_editar).val()) {
+                    $("#bd_listado_profesionales_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["id"]+'" selected>'+data[claves[i]]["nombre"]+'</option>');
+                } else {
+                    $("#bd_listado_profesionales_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        }
+    });
+
+    /* Carga del selector de profesionales dependendiendo de la selección del equipo de trabajo evento change */
+    $("#bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).change(function(){
+        $("#bd_listado_profesionales_juntas_"+id_parametrizacion_juntas_editar).prop('disabled', false);
+        let id_equipo_seleccionado = $("#bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).val();
+
+        let datos_listado_profesionales_juntas = {
+            '_token': token,
+            'parametro' : "listado_profesionales_proceso_juntas",
+            'id_equipo_seleccionado': id_equipo_seleccionado
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_listado_profesionales_juntas,
+            success:function(data){
+                $("#bd_listado_profesionales_juntas_"+id_parametrizacion_juntas_editar).empty();
+                $("#bd_listado_profesionales_juntas_"+id_parametrizacion_juntas_editar).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#bd_listado_profesionales_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        });
+    });
+
+    /* Carga del selector de acciones antecesoras dependiendo del servicio asociado generado apenas carga */
+    let datos_accion_antecesora_juntas = {
+        '_token': token,
+        'parametro' : "acciones_antecesoras_proceso_juntas",
+        'servicio_asociado_juntas':$("#bd_servicio_asociado_juntas_"+id_parametrizacion_juntas_editar).val(),
+        'Id_cliente': Id_cliente
+    };
+    $.ajax({
+        type:'POST',
+        url:'/CargueSelectoresParametrizar',
+        data: datos_accion_antecesora_juntas,
+        success:function(data){
+            $('#bd_accion_antecesora_juntas_'+id_parametrizacion_juntas_editar).empty();
+            $('#bd_accion_antecesora_juntas_'+id_parametrizacion_juntas_editar).append('<option value="">Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (ata[claves[i]]["Id_Accion"] == $("#bd_servicio_asociado_juntas_"+id_parametrizacion_juntas_editar).val()) {
+                    $("#bd_accion_antecesora_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Accion"]+'</option>');
+                } else {
+                    $("#bd_accion_antecesora_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                }
+            }
+        }
+    });
+    
+    /* Carga del selector de acciones antecesoras dependiendo del servicio asociado generado evento change */
     $("#bd_servicio_asociado_juntas_"+id_parametrizacion_juntas_editar).change(function(){
         var id_servicio_asociado_juntas = $(this).val();
         let datos_accion_antecesora_juntas = {
@@ -2662,29 +3112,4 @@ function edicion_parametrizacion_juntas(id_parametrizacion_juntas_editar){
         // Actualizar el valor del input
         $(this).val(value);
     });
-
-    /* Carga del selector de equipos de trabajo del proceso origen atel */
-    let datos_equipos_trabajo_juntas = {
-        '_token': token,
-        'parametro' : "equipos_trabajo_proceso_juntas",
-    };
-    $.ajax({
-        type:'POST',
-        url:'/CargueSelectoresParametrizar',
-        data: datos_equipos_trabajo_juntas,
-        success:function(data){
-            $("#bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).empty();
-            $("#bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).append('<option></option>');
-            let claves = Object.keys(data);
-            for (let i = 0; i < claves.length; i++) {
-                if (data[claves[i]]["id"] == $("#bd_id_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).val()) {
-                    $("#bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["id"]+'" selected>'+data[claves[i]]["nombre"]+'</option>');
-                } else {
-                    $("#bd_equipo_trabajo_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
-                }
-            }
-        }
-    });
-
-
 };
