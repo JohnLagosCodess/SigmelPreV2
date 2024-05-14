@@ -470,19 +470,21 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                                     let a = resultado_Deficiencia;
                                     let b = nuevoValor;
                                     let resultadoMSD = a +((100 - a) * b / 100);
-                                    let dominancia = (resultadoMSD - a);
+                                    // let dominancia = (resultadoMSD - a);
+                                    let dominancia = nuevoValor;
                                     // console.log(dominancia);
                                     let total_deficiencia = resultadoMSD;
                                     // console.log(total_deficiencia);
                                     $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancia.toFixed(2));
                                     $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(total_deficiencia.toFixed(2));                                
                                 } else {
-                                    if (isNaN(resultado_Deficiencia)) {
-                                        resultado_Deficiencia = dominancia_suma;
-                                    }
+                                    // if (isNaN(resultado_Deficiencia)) {
+                                    //     resultado_Deficiencia = dominancia_suma;
+                                    // }
                                     // console.log('No está marcado');  
                                     $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancia_suma.toFixed(2));
-                                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultado_Deficiencia.toFixed(2));                                              
+                                    // $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultado_Deficiencia.toFixed(2));                                              
+                                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancia_suma.toFixed(2));
                                 }                            
                             }
                             setInterval(() => {
@@ -3540,7 +3542,6 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
                     $("#resultado_FU_"+id_fila_insertar_dato).empty();
                     selectTabla7_6.append('<option value="">Seleccione</option>');
                     $("#guardar_FU_fila_"+id_fila_insertar_dato).val("");
-                    //console.log(valor_FU_tabla_7_4);                  
                     $("#resultado_FU_"+id_fila_insertar_dato).prop("disabled", true);
 
                     let datos_consulta_deficiencia_tabla_7_6 = {
@@ -4663,6 +4664,15 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
             $("#ClaseFinal_fila_alteraciones_"+id_fila_insertar_dato).append(clase_final_tabla_12_2);                    
             let deficiencias_12_2 = parseFloat(valor_FU_tabla_12_2);
             $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(deficiencias_12_2.toFixed(2));
+
+            // Auto seleccionado de la columna MSD cuando cumple las siguientes validaciones
+            if (valor_FU_tabla_12_2 == 25 || valor_FU_tabla_12_2 == 45 ||
+                valor_FU_tabla_12_2 == 55 || valor_FU_tabla_12_2 == 65
+            ) {
+                $("#resultado_MSD_"+id_fila_insertar_dato).prop("checked", true);                    
+            } else {
+                $("#resultado_MSD_"+id_fila_insertar_dato).prop("checked", false); 
+            }
 
             // let datos_consulta_deficiencia_tabla_12_2 = {
             //     '_token': token,
