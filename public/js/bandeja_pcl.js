@@ -644,7 +644,14 @@ $(document).ready(function () {
 
 function renderizarRegistros(data, inicio, fin, bandejaPclTable) {
 
+    var f_radicacion = '';
     for (let a = inicio; a < fin; a++) {
+
+        if (data[a].Nueva_F_radicacion === null) {
+            f_radicacion = data[a].F_radicacion;
+        } else {
+            f_radicacion = data[a].Nueva_F_radicacion;
+        };
 
         var datos = [
             data[a].actualizarproser+data[a].moduloPCL,
@@ -658,7 +665,7 @@ function renderizarRegistros(data, inicio, fin, bandejaPclTable) {
             data[a].Nombre_evento,
             data[a].ID_evento,
             data[a].F_evento,
-            data[a].F_radicacion,
+            f_radicacion,
             data[a].Tiempo_de_gestion,
             data[a].Dias_transcurridos_desde_el_evento,
             data[a].Empresa,

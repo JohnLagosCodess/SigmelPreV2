@@ -288,6 +288,12 @@
                                                 <input type="text" class="form-control" name="fecha_ajuste_califi" id="fecha_ajuste_califi" value="<?php if(!empty($array_datos_calificacionPcl[0]->F_ajuste_calificacion)){echo $array_datos_calificacionPcl[0]->F_ajuste_calificacion;}else{ echo 'Sin ajuste Calificación';}?>" disabled>
                                             </div>
                                         </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="">Nueva Fecha de radicación</label>
+                                                <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($array_datos_calificacionPcl[0]->Nueva_F_radicacion)){echo $array_datos_calificacionPcl[0]->Nueva_F_radicacion;}?>">
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-12">

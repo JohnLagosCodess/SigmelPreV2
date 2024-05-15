@@ -235,6 +235,12 @@
                                             <input type="text" class="form-control" name="tiempo_gestion" id="tiempo_gestion" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Tiempo_de_gestion)){echo $array_datos_calificacionOrigen[0]->Tiempo_de_gestion;}?>" disabled>
                                         </div>
                                     </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="">Nueva Fecha de radicación</label>
+                                            <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Nueva_F_radicacion)){echo $array_datos_calificacionOrigen[0]->Nueva_F_radicacion;}?>">
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-12">

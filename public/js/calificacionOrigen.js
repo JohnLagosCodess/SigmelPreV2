@@ -592,8 +592,8 @@ $(document).ready(function(){
         formData.append('newId_asignacion', $('#newId_asignacion').val());
         formData.append('Id_proceso', $('#Id_proceso').val());
         formData.append('Id_servicio', $("#Id_servicio").val());
-        formData.append('fecha_devolucion', $('#fecha_devolucion').val());   
-        // formData.append('f_accion', $('#f_accion').val());
+        formData.append('fecha_devolucion', $('#fecha_devolucion').val());
+        formData.append('nueva_fecha_radicacion', $('#nueva_fecha_radicacion').val());
         formData.append('accion', $('#accion').val());
         formData.append('fecha_alerta', $('#fecha_alerta').val());
         formData.append('enviar', $('#enviar').val());

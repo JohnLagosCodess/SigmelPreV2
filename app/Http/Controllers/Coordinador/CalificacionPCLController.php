@@ -491,6 +491,13 @@ class CalificacionPCLController extends Controller
             }
             $Causal_devolucion_comite =$request->causal_devolucion_comite;
         }
+
+        // Programación para la Nueva Fecha de Radicación
+        if ($request->nueva_fecha_radicacion <> "") {
+            $Nueva_fecha_radicacion = $request->nueva_fecha_radicacion;
+        } else {
+            $Nueva_fecha_radicacion = null;
+        }
         
         // validacion de bandera para guardar o actualizar
         if ($request->banderaguardar == 'Guardar') {
@@ -602,7 +609,8 @@ class CalificacionPCLController extends Controller
                 'Id_Estado_evento' => $Id_Estado_evento,
                 'F_alerta' => $request->fecha_alerta,
                 'Id_profesional' => $id_profesional,
-                'Nombre_profesional' => $asignacion_profesional,                
+                'Nombre_profesional' => $asignacion_profesional,
+                'Nueva_F_radicacion' => $Nueva_fecha_radicacion,          
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
@@ -795,7 +803,8 @@ class CalificacionPCLController extends Controller
                 'Id_Estado_evento' => $Id_Estado_evento, 
                 'F_alerta' => $request->fecha_alerta,    
                 'Id_profesional' => $id_profesional,
-                'Nombre_profesional' => $asignacion_profesional,             
+                'Nombre_profesional' => $asignacion_profesional,
+                'Nueva_F_radicacion' => $Nueva_fecha_radicacion,        
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,

@@ -25,6 +25,7 @@ return new class extends Migration
             $table->integer('Aud_Id_Estado_evento')->nullable();
             $table->date('Aud_F_accion')->nullable();
             $table->date('Aud_F_radicacion')->nullable();
+            $table->date('Aud_Nueva_F_radicacion')->nullable();
             $table->string('Aud_N_de_orden', 20)->nullable();
             $table->integer('Aud_Id_proceso_anterior')->nullable();
             $table->integer('Aud_Id_servicio_anterior')->nullable();

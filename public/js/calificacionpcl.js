@@ -563,7 +563,8 @@ $(document).ready(function(){
         formData.append('Id_servicio', $("#Id_servicio").val());
         formData.append('modalidad_calificacion', $('#modalidad_calificacion').val());   
         formData.append('fecha_devolucion', $('#fecha_devolucion').val());   
-        formData.append('fuente_informacion', $('#fuente_informacion').val());        
+        formData.append('fuente_informacion', $('#fuente_informacion').val());
+        formData.append('nueva_fecha_radicacion', $('#nueva_fecha_radicacion').val());
         formData.append('accion', $('#accion').val());
         formData.append('fecha_alerta', $('#fecha_alerta').val());
         formData.append('enviar', $('#enviar').val());
