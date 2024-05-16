@@ -349,7 +349,7 @@ class CalificacionPCLController extends Controller
             return response()->json($info_listado_causal_devo_comite);
         }
 
-        if($parametro = "listado_accion"){
+        if($parametro == "listado_accion"){
             /* Iniciamos trayendo las acciones a ejecutar configuradas en la tabla de parametrizaciones
             dependiendo del id del cliente, id del proceso, id del servicio, estado activo */
             
@@ -459,6 +459,20 @@ class CalificacionPCLController extends Controller
 
             $info_datos_tipos_documentos_familia = json_decode(json_encode($datos_tipos_documentos_familia, true));
             return response()->json($info_datos_tipos_documentos_familia);
+        }
+
+        if ($parametro == "listado_solicitud_documentos") {
+            $listado_documentos_solicitados = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
+            ->select('Nombre_documento', 'Descripcion')
+            ->where([
+                ['Estado', 'Activo'], ['Id_proceso',$request->id_proceso],
+                ['ID_evento', $request->id_evento],
+                ['Id_Asignacion', $request->id_asignacion]
+            ])
+            ->get();
+
+            $info_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados,true));
+            return response()->json($info_listado_documentos_solicitados);
         }
         
     }

@@ -349,7 +349,7 @@ class CalificacionJuntasController extends Controller
             }
         }
 
-        if($parametro = "listado_accion"){
+        if($parametro == "listado_accion"){
             /* Iniciamos trayendo las acciones a ejecutar configuradas en la tabla de parametrizaciones
             dependiendo del id del cliente, id del proceso, id del servicio, estado activo */
             
