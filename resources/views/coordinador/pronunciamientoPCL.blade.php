@@ -216,11 +216,11 @@
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label for="dictamen_calificador">N° dictamen primer calificador<span style="color: red;">(*)</span></label>
+                                            <label for="dictamen_calificador">N° dictamen primer calificador</label>
                                             @if (!empty($info_pronuncia[0]->Dictamen_calificador))
-                                                <input type="number" class="form-control soloNumeros" id="dictamen_calificador" name="dictamen_calificador"  value="{{$info_pronuncia[0]->Dictamen_calificador}}" required>
+                                                <input type="text" class="form-control soloNumeros1" id="dictamen_calificador" name="dictamen_calificador"  value="{{$info_pronuncia[0]->Dictamen_calificador}}" oninput="validarLongitud(this)" maxlength="20">
                                             @else
-                                                <input type="number" class="form-control soloNumeros" id="dictamen_calificador" name="dictamen_calificador" required />
+                                                <input type="text" class="form-control soloNumeros1" id="dictamen_calificador" name="dictamen_calificador" oninput="validarLongitud(this)" maxlength="20">
                                             @endif
                                         </div>
                                     </div>
@@ -718,6 +718,12 @@
              });
             
         });
+
+        function validarLongitud(input) {
+            if (input.value.length > 20) {
+                input.value = input.value.slice(0, 20);
+            }
+        };
     </script>
     <script type="text/javascript" src="/js/pronunciamientopcl.js"></script>
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>
