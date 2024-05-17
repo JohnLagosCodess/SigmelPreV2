@@ -61,10 +61,12 @@ use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
 use App\Models\sigmel_lista_causal_devoluciones;
-use Psy\Readline\Hoa\Console;
-use Svg\Tag\Rect;
+use App\Models\sigmel_lista_dominancias;
 use App\Models\sigmel_lista_procesos_servicios;
 use App\Models\sigmel_lista_regional_juntas;
+
+use Psy\Readline\Hoa\Console;
+use Svg\Tag\Rect;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class CalificacionPCLController extends Controller
@@ -4256,6 +4258,18 @@ class CalificacionPCLController extends Controller
             $info_listado_Tipo_enfermedad = json_decode(json_encode($listado_Tipo_enfermedad, true));
             return response()->json($info_listado_Tipo_enfermedad);
             
+        }
+
+        /* TRAER LISTADO DE DOMINANCIAS */
+        if ($parametro == "lista_dominancia") {
+            
+            $listado_dominancia = sigmel_lista_dominancias::on('sigmel_gestiones')
+                ->select('Id_Dominancia', 'Nombre_dominancia')
+                ->where('Estado', 'activo')
+                ->get();
+            
+            $info_lista_dominancia = json_decode(json_encode($listado_dominancia, true));
+            return response()->json($info_lista_dominancia);
         }
         
 

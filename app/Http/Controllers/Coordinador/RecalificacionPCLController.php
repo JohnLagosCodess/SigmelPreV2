@@ -2226,6 +2226,9 @@ class RecalificacionPCLController extends Controller
                 }
                 $descripcion_otros = $request->descripcion_otros;
                 $descripcion_enfermedad = $request->descripcion_enfermedad;
+                $dominancia = $request->dominancia;
+                $id_afiliado = $request->id_afiliado;
+
                 $datos_info_decreto_eventos = [
                     'ID_Evento' => $id_Evento_decreto,
                     'Id_proceso' => $id_Proceso_decreto,
@@ -2249,11 +2252,26 @@ class RecalificacionPCLController extends Controller
                 ];
         
                 sigmel_informacion_decreto_eventos::on('sigmel_gestiones')->insert($datos_info_decreto_eventos);
+
                 sleep(3);
+
                 sigmel_informacion_pericial_eventos::on('sigmel_gestiones')
                 ->where([
                     ['ID_evento', $id_Evento_decreto]
                 ])->update($dato_info_pericial_eventos); 
+
+                sleep(2);
+                
+                // Actualización de la dominancia
+                $dato_dominancia = [
+                    'Id_dominancia' => $dominancia
+                ];
+
+                sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['Id_Afiliado', $id_afiliado],
+                    ['ID_evento', $id_Evento_decreto]
+                ])->update($dato_dominancia);
 
                 // Examenes Interconsultas
                 if(!empty($ValorDataExamenesInterconsultas)){
@@ -2731,6 +2749,9 @@ class RecalificacionPCLController extends Controller
                 }
                 $descripcion_otros = $request->descripcion_otros;
                 $descripcion_enfermedad = $request->descripcion_enfermedad;
+                $dominancia = $request->dominancia;
+                $id_afiliado = $request->id_afiliado;
+
                 $datos_info_decreto_eventos = [
                     'ID_Evento' => $id_Evento_decreto,
                     'Id_proceso' => $id_Proceso_decreto,
@@ -2753,11 +2774,26 @@ class RecalificacionPCLController extends Controller
         
                 sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
                 ->where([['ID_Evento', $id_Evento_decreto], ['Id_Asignacion', $id_Asignacion_decreto]])->update($datos_info_decreto_eventos);
+
                 sleep(2);
+
                 sigmel_informacion_pericial_eventos::on('sigmel_gestiones')
                 ->where([
                     ['ID_evento', $id_Evento_decreto]
                 ])->update($dato_info_pericial_eventos);
+
+                sleep(2);
+
+                // Actualización de la dominancia
+                $dato_dominancia = [
+                    'Id_dominancia' => $dominancia
+                ];
+
+                sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['Id_Afiliado', $id_afiliado],
+                    ['ID_evento', $id_Evento_decreto]
+                ])->update($dato_dominancia);
         
                 $mensajes = array(
                     "parametro" => 'update_decreto_parte',
