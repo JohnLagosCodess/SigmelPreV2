@@ -307,6 +307,12 @@
                                                     <input type="text" class="form-control" name="estado_facturacion" id="estado_facturacion" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Estado_Facturacion)){echo $array_datos_calificacionJuntas[0]->Estado_Facturacion;}?>" readonly>
                                                 </div>
                                             </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="">Fecha de cierre</label>
+                                                    <input type="date" class="form-control" name="fecha_cierre" id="fecha_cierre" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($array_datos_calificacionJuntas[0]->F_cierre)){echo $array_datos_calificacionJuntas[0]->F_cierre;}?>">
+                                                </div>
+                                            </div>
                                             <div class="col-12">
                                                 <div class="form-group">
                                                     <label for="cargue_documentos">Cargue Documento Historial:</label>                                                

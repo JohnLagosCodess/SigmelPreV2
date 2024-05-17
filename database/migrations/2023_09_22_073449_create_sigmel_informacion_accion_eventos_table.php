@@ -30,6 +30,7 @@ return new class extends Migration
             $table->datetime('F_asignacion_dto')->nullable();
             $table->datetime('F_calificacion_servicio')->nullable();
             $table->datetime('F_asignacion_pronu_juntas')->nullable();
+            $table->date('F_cierre')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

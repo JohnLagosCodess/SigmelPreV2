@@ -30,6 +30,7 @@ class sigmel_informacion_accion_eventos extends Model
     'F_asignacion_dto',
     'F_calificacion_servicio',
     'F_asignacion_pronu_juntas',
+    'F_cierre',
     'Nombre_usuario',
     'F_registro',
     ];
