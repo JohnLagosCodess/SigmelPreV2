@@ -25,6 +25,7 @@ class sigmel_informacion_asignacion_eventos extends Model
         'Id_Estado_evento',
         'F_accion',
         'F_radicacion',
+        'Nueva_F_radicacion',
         'N_de_orden',
         'Id_proceso_anterior',
         'Id_servicio_anterior',

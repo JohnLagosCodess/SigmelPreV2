@@ -221,6 +221,12 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
+                                                <label for="">Nueva Fecha de radicación</label>
+                                                <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Nueva_F_radicacion)){echo $array_datos_calificacionJuntas[0]->Nueva_F_radicacion;}?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
                                                 <label for="modalidad_documentos">Documentos adjuntos</label><br>
                                                 <a href="javascript:void(0);" class="text-dark text-md" id="cargue_docs" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
                                             </div>

@@ -650,7 +650,14 @@ $(document).ready(function () {
 
 function renderizarRegistros(data, inicio, fin, bandejaJuntasTable) {
 
+    var f_radicacion = '';
     for (let a = inicio; a < fin; a++) {
+
+        if (data[a].Nueva_F_radicacion === null) {
+            f_radicacion = data[a].F_radicacion;
+        } else {
+            f_radicacion = data[a].Nueva_F_radicacion;
+        };
 
         var datos = [
             data[a].actualizarproser+data[a].moduloJuntas,
@@ -664,7 +671,7 @@ function renderizarRegistros(data, inicio, fin, bandejaJuntasTable) {
             data[a].Nombre_evento,
             data[a].ID_evento,
             data[a].F_evento,
-            data[a].F_radicacion,
+            f_radicacion,
             data[a].Tiempo_de_gestion,
             data[a].Dias_transcurridos_desde_el_evento,
             data[a].Empresa,

@@ -349,7 +349,7 @@ class CalificacionJuntasController extends Controller
             }
         }
 
-        if($parametro = "listado_accion"){
+        if($parametro == "listado_accion"){
             /* Iniciamos trayendo las acciones a ejecutar configuradas en la tabla de parametrizaciones
             dependiendo del id del cliente, id del proceso, id del servicio, estado activo */
             
@@ -483,7 +483,15 @@ class CalificacionJuntasController extends Controller
         if ($Accion_realizar == 38 ) {
             $F_asignacion_pronu_juntas = $date_time;
         }else{
-            $F_asignacion_pronu_juntas = "0000-00-00 00:00:00";
+            // $F_asignacion_pronu_juntas = "0000-00-00 00:00:00";
+            $F_asignacion_pronu_juntas = null;
+        }
+
+        // Programación para la Nueva Fecha de Radicación
+        if ($request->nueva_fecha_radicacion <> "") {
+            $Nueva_fecha_radicacion = $request->nueva_fecha_radicacion;
+        } else {
+            $Nueva_fecha_radicacion = null;
         }
 
         // validacion de bandera para guardar o actualizar
@@ -576,7 +584,8 @@ class CalificacionJuntasController extends Controller
                 'Id_Estado_evento' => $Id_Estado_evento,             
                 'F_alerta' => $request->fecha_alerta,   
                 'Id_profesional' => $id_profesional,
-                'Nombre_profesional' => $asignacion_profesional,             
+                'Nombre_profesional' => $asignacion_profesional,
+                'Nueva_F_radicacion' => $Nueva_fecha_radicacion,         
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
@@ -747,7 +756,8 @@ class CalificacionJuntasController extends Controller
                 'Id_Estado_evento' => $Id_Estado_evento,        
                 'F_alerta' => $request->fecha_alerta, 
                 'Id_profesional' => $id_profesional,
-                'Nombre_profesional' => $asignacion_profesional,                
+                'Nombre_profesional' => $asignacion_profesional,
+                'Nueva_F_radicacion' => $Nueva_fecha_radicacion,             
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
