@@ -31,6 +31,7 @@ return new class extends Migration
 			$table->datetime('Aud_F_asignacion_dto')->nullable();
             $table->datetime('Aud_F_calificacion_servicio')->nullable();
             $table->datetime('Aud_F_asignacion_pronu_juntas')->nullable();
+            $table->date('Aud_F_cierre')->nullable();
             $table->text('Aud_Nombre_usuario');
             $table->date('Aud_F_registro');
         });

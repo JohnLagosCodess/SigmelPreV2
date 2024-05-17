@@ -572,6 +572,7 @@ $(document).ready(function(){
         formData.append('estado_facturacion', $('#estado_facturacion').val());
         formData.append('profesional', $('#profesional').val());
         formData.append('causal_devolucion_comite', $('#causal_devolucion_comite').val());
+        formData.append('fecha_cierre', $('#fecha_cierre').val());
         formData.append('descripcion_accion', $('#descripcion_accion').val());
         formData.append('banderaguardar',$('#bandera_accion_guardar_actualizar').val());        
 
