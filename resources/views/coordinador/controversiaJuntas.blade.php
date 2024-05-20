@@ -588,13 +588,15 @@
                                             <div class="form-group">
                                                 <br>
                                                 <label for="causal_decision">Causal de decisión <span style="color: red;">(*)</span></label>
-                                                <select class="custom-select causal_decision" name="causal_decision" id="causal_decision" style="width: 100%;">
+                                                <input type="text" class="form-control soloPrimeraLetraMayus" name="causal_decision" id="causal_decision" value="<?php echo $arrayinfo_controvertido[0]->Causal_decision_jrci ?? '' ?>" required>
+
+                                                {{-- Desactivado segun PSB024 <select class="custom-select causal_decision" name="causal_decision" id="causal_decision" style="width: 100%;">
                                                     @if (!empty($arrayinfo_controvertido[0]->Causal_decision_jrci))
                                                             <option value="{{$arrayinfo_controvertido[0]->Causal_decision_jrci}}" selected>{{$arrayinfo_controvertido[0]->NombreCausal}}</option>
                                                     @else
                                                         <option value="">Seleccione una opción</option>
                                                     @endif
-                                                </select>
+                                                </select> --}}
                                             </div>
                                         </div>
                                         <div class="col-12 row_sustenta_jrci" <?php if(!empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci)){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
@@ -1038,13 +1040,14 @@
                                             <div class="form-group">
                                                 <br>
                                                 <label for="causal_decision_repo">Causal de decisión (Reposición JRCI) <span style="color: red;">(*)</span></label>
-                                                <select class="custom-select causal_decision" name="causal_decision_repo" id="causal_decision_repo" style="width: 100%;">
+                                                <input type="text" class="form-control soloPrimeraLetraMayus" name="causal_decision_repo" id="causal_decision_repo" value="<?php echo $arrayinfo_controvertido[0]->Causal_decision_repo_jrci ?? '' ?>" required>
+                                                {{-- Se cambia a texto segun solicitud PSB024 <select class="custom-select causal_decision" name="causal_decision_repo" id="causal_decision_repo" style="width: 100%;">
                                                     @if (!empty($arrayinfo_controvertido[0]->Causal_decision_repo_jrci))
                                                             <option value="{{$arrayinfo_controvertido[0]->Causal_decision_repo_jrci}}" selected>{{$arrayinfo_controvertido[0]->NombreCausalRepo}}</option>
                                                     @else
                                                         <option value="">Seleccione una opción</option>
                                                     @endif
-                                                </select>
+                                                </select> --}}
                                             </div>
                                         </div>
                                         <div class="col-12 row_sustenta_repo_jrci" <?php if(!empty($arrayinfo_controvertido[0]->Decision_dictamen_repo_jrci)){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
