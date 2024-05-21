@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_documentos_solicitados_eventos', function (Blueprint $table) {
             $table->increments('Id_Documento_Solicitado');
-            $table->string('ID_evento', 10)->nullable();
+            $table->string('ID_evento', 20)->nullable();
             $table->integer('Id_Asignacion')->nullable();
             $table->integer('Id_proceso')->nullable();
             $table->date('F_solicitud_documento')->nullable();
