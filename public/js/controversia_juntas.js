@@ -1150,7 +1150,7 @@ $(document).ready(function(){
             '.row_recurso_ante_jrci'
         ];
         // Mostrar Selector de acuerdo a la revision
-        if(opt_concepto_jrci=='Acuerdo' || opt_concepto_jrci=='Desacuerdo'){
+        /** Se cambia a texto segun solicitud PSB024  if(opt_concepto_jrci=='Acuerdo' || opt_concepto_jrci=='Desacuerdo'){
             //Listado causales
             let datos_lista_causales = {
             '_token': token,
@@ -1172,7 +1172,7 @@ $(document).ready(function(){
                     }
                 }
             });
-        }
+        }**/
         intervaloRe = setInterval(() => {
             switch (opt_concepto_jrci) {
                 case "Acuerdo":
@@ -1425,7 +1425,7 @@ $(document).ready(function(){
             '.activa_boton_repo_g'
         ];
         // Mostrar Selector de acuerdo a la revision
-        if(opt_concepto_repo_jrci=='Acuerdo' || opt_concepto_repo_jrci=='Desacuerdo'){
+        /** Se cambia a texto segun solicitud PSB024 if(opt_concepto_repo_jrci=='Acuerdo' || opt_concepto_repo_jrci=='Desacuerdo'){
             //Listado causales
             let datos_lista_causales = {
             '_token': token,
@@ -1447,7 +1447,7 @@ $(document).ready(function(){
                     }
                 }
             });
-        }
+        } **/
         intervaloRe = setInterval(() => {
             switch (opt_concepto_repo_jrci) {
                 case "Acuerdo":
