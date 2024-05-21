@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_adiciones_dx_eventos', function (Blueprint $table) {
             $table->increments('Id_Adiciones_Dx');
-            $table->string('ID_evento', 15)->nullable();
+            $table->string('ID_evento', 20)->nullable();
             $table->integer('Id_Asignacion');
             $table->integer('Id_proceso');
             $table->integer('Id_Dto_ATEL');
@@ -21,8 +21,8 @@ return new class extends Migration
             $table->integer('Tipo_evento')->nullable();
             $table->text('Relacion_documentos')->nullable();
             $table->text('Otros_relacion_documentos')->nullable();
-            $table->text('Sustentacion_Adicion_Dx');
-            $table->integer('Origen');
+            $table->text('Sustentacion_Adicion_Dx')->nullable();
+            $table->integer('Origen')->nullable();
             $table->text('N_radicado')->nullable();
             $table->text('N_siniestro')->nullable();
             $table->text('Nombre_usuario');

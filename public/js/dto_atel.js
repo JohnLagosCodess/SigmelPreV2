@@ -1147,9 +1147,105 @@ $(document).ready(function(){
         });
     });
 
+    /* Validacion botón para guardar o actualizar la sección Información del evento
+    para quitar el required de los demás campos del formulario */
+    var btn_guardar_info_evento = 0;
+    $("#btn_guardar_info_evento").click(function(){
+        
+        var btn_seccion_info_evento = $('#btn_guardar_info_evento').val();
+        
+        if (btn_seccion_info_evento == "Guardar" || btn_seccion_info_evento == "Actualizar") {
+            // campos sección Justificación para revisión del Origen
+            $("#justificacion_revision_origen").prop("required", false);
+            // campos sección Calificación del Origen
+            $("#sustentacion_califi_origen").prop("required", false);
+            $("#origen_dto_atel").prop("required", false);
+
+            btn_guardar_info_evento = 1; 
+        }
+    });
+
+    /* Validación botón para guardar o actualizar la sección Justificación para revisión del Origen
+    para quitar el required de los demás campos del formulario */
+    var btn_guardar_justi_revi_ori = 0;
+    $("#btn_guardar_justi_revi_ori").click(function(){
+        
+        var btn_seccion_justi_revi_ori = $('#btn_guardar_justi_revi_ori').val();
+        
+        if (btn_seccion_justi_revi_ori == "Guardar" || btn_seccion_justi_revi_ori == "Actualizar") {
+            // campos sección Información del evento
+            $("#tipo_accidente").prop("required", false);
+            $("#fecha_evento").prop("required", false);
+            $("#hora_evento").prop("required", false);
+            $("#grado_severidad").prop("required", false);
+            $("#fecha_fallecimiento").prop("required", false);
+            $("#descripcion_FURAT").prop("required", false);
+            // campos sección Calificación del Origen
+            $("#sustentacion_califi_origen").prop("required", false);
+            $("#origen_dto_atel").prop("required", false);
+
+            btn_guardar_justi_revi_ori = 1;
+        }
+    });
+
+    /* Validación botón para guardar o actualizar la sección Relación de documentos - Ayudas Diagnósticas e Interconsultas
+    para quitar el required de los demás campos del formulario */
+    var btn_guardar_relacion_docs = 0;
+    $("#btn_guardar_relacion_docs").click(function(){
+
+        var btn_seccion_relacion_docs = $('#btn_guardar_relacion_docs').val();
+
+        if (btn_seccion_relacion_docs == "Guardar" || btn_seccion_relacion_docs == "Actualizar") {
+            // campos sección Información del evento
+            $("#tipo_accidente").prop("required", false);
+            $("#fecha_evento").prop("required", false);
+            $("#hora_evento").prop("required", false);
+            $("#grado_severidad").prop("required", false);
+            $("#fecha_fallecimiento").prop("required", false);
+            $("#descripcion_FURAT").prop("required", false);
+            // campos sección Justificación para revisión del Origen
+            $("#justificacion_revision_origen").prop("required", false);
+            // campos sección Calificación del Origen
+            $("#sustentacion_califi_origen").prop("required", false);
+            $("#origen_dto_atel").prop("required", false);
+
+            btn_guardar_relacion_docs = 1;
+        }
+    });
+
+    /* Validación botón para guardar o actualizar la sección Diagnóstico motivo de calificación
+    para quitar el required de los demás campos del formulario */
+    var btn_guardar_diagnosticos_mot_cali = 0;
+    $("#btn_guardar_diagnosticos_mot_cali").click(function(){
+
+        var btn_seccion_diagnosticos_mot_cali = $('#btn_guardar_diagnosticos_mot_cali').val();
+
+        if (btn_seccion_diagnosticos_mot_cali == "Guardar" || btn_seccion_diagnosticos_mot_cali == "Actualizar") {
+            // campos sección Información del evento
+            $("#tipo_accidente").prop("required", false);
+            $("#fecha_evento").prop("required", false);
+            $("#hora_evento").prop("required", false);
+            $("#grado_severidad").prop("required", false);
+            $("#fecha_fallecimiento").prop("required", false);
+            $("#descripcion_FURAT").prop("required", false);
+            // campos sección Justificación para revisión del Origen
+            $("#justificacion_revision_origen").prop("required", false);
+            // campos sección Calificación del Origen
+            $("#sustentacion_califi_origen").prop("required", false);
+            $("#origen_dto_atel").prop("required", false);
+
+            btn_guardar_diagnosticos_mot_cali = 1;
+        }
+    });
+
     // Envío de información
     $("#form_DTO_ATEL").submit(function(e){
         e.preventDefault();
+
+        $("#btn_guardar_info_evento").prop("disabled", true);
+        $("#btn_guardar_justi_revi_ori").prop("disabled", true);
+        $("#btn_guardar_relacion_docs").prop("disabled", true);
+        $("#btn_guardar_diagnosticos_mot_cali").prop("disabled", true);
 
         var GuardarDTOATEL = $('#GuardarDTOATEL');
         var EditarDTOATEL = $('#EditarDTOATEL');
@@ -1441,15 +1537,62 @@ $(document).ready(function(){
             success: function(response){
                 if (response.parametro == "agregar_dto_atel") {
                     // $("#GuardarDTOATEL").prop("disabled", true);
-                    $("#GuardarDTOATEL").addClass('d-none');
-                    $("#EditarDTOATEL").addClass('d-none');
-                    $("#mostrar_mensaje_agrego_dto_atel").removeClass('d-none');
-                    $(".mensaje_agrego_dto_atel").append('<strong>'+response.mensaje+'</strong>');
-                    setTimeout(() => {
-                        $("#mostrar_mensaje_agrego_dto_atel").addClass('d-none');
-                        $(".mensaje_agrego_dto_atel").empty();
-                        location.reload();
-                    }, 3000);
+                    if (btn_guardar_info_evento > 0) {
+                        $("#btn_guardar_info_evento").addClass('d-none');
+                        $("#mostrar_mensaje_1").removeClass('d-none');
+                        $(".mensaje_agrego_1").append('<strong>'+response.mensaje+'</strong>');
+                        setTimeout(() => {
+                            $("#mostrar_mensaje_1").addClass('d-none');
+                            $(".mensaje_agrego_1").empty();
+                            location.reload();
+                        }, 3000);
+                    }
+
+                    else if(btn_guardar_justi_revi_ori > 0){
+                        $("#btn_guardar_justi_revi_ori").addClass('d-none');
+                        $("#mostrar_mensaje_2").removeClass('d-none');
+                        $(".mensaje_agrego_2").append('<strong>'+response.mensaje+'</strong>');
+                        setTimeout(() => {
+                            $("#mostrar_mensaje_2").addClass('d-none');
+                            $(".mensaje_agrego_2").empty();
+                            location.reload();
+                        }, 3000);
+                    }
+
+                    else if(btn_guardar_relacion_docs > 0){
+                        $("#btn_guardar_relacion_docs").addClass('d-none');
+                        $("#mostrar_mensaje_3").removeClass('d-none');
+                        $(".mensaje_agrego_3").append('<strong>'+response.mensaje+'</strong>');
+                        setTimeout(() => {
+                            $("#mostrar_mensaje_3").addClass('d-none');
+                            $(".mensaje_agrego_3").empty();
+                            location.reload();
+                        }, 3000);
+                    }
+
+                    else if(btn_guardar_diagnosticos_mot_cali > 0){
+                        $("#btn_guardar_diagnosticos_mot_cali").addClass('d-none');
+                        $("#mostrar_mensaje_4").removeClass('d-none');
+                        $(".mensaje_agrego_4").append('<strong>'+response.mensaje+'</strong>');
+                        setTimeout(() => {
+                            $("#mostrar_mensaje_4").addClass('d-none');
+                            $(".mensaje_agrego_4").empty();
+                            location.reload();
+                        }, 3000);
+                    }
+                    
+                    else{
+                        $("#GuardarDTOATEL").addClass('d-none');
+                        $("#EditarDTOATEL").addClass('d-none');
+                        $("#mostrar_mensaje_agrego_dto_atel").removeClass('d-none');
+                        $(".mensaje_agrego_dto_atel").append('<strong>'+response.mensaje+'</strong>');
+                        setTimeout(() => {
+                            $("#mostrar_mensaje_agrego_dto_atel").addClass('d-none');
+                            $(".mensaje_agrego_dto_atel").empty();
+                            location.reload();
+                        }, 3000);
+
+                    }
                 }
             }
         });

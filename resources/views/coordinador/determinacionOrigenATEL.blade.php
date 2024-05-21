@@ -539,8 +539,28 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            @if (empty($datos_bd_DTO_ATEL[0]->ID_evento))
+                                                <input type="submit" class="btn btn-info" id="btn_guardar_justi_revi_ori" value="Guardar">    
+                                            @else
+                                                <input type="submit" class="btn btn-info" id="btn_guardar_justi_revi_ori" value="Actualizar">    
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row d-none" id="mostrar_mensaje_2">
+                                        <div  class="col-12">
+                                            <div class="form-group">
+                                                <div class="mensaje_agrego_2 alert alert-success" role="alert"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-    
+                            <br>
+
                             {{-- Justificación para revisión del Origen --}}
                             <div class="card-info">
                                 <div class="card-header text-center" style="border: 1.5px solid black;">
@@ -551,12 +571,32 @@
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="justificacion_revision_origen" class="col-form-label">Justificación para revisión del Origen <span style="color:red;">(*)</span></label>
-                                                <textarea class="form-control justificacion_revision_origen" name="justificacion_revision_origen" id="justificacion_revision_origen" rows="2" required><?php if(!empty($datos_bd_DTO_ATEL[0]->Justificacion_revision_origen)){echo $datos_bd_DTO_ATEL[0]->Justificacion_revision_origen;}?></textarea>
+                                                <textarea class="form-control justificacion_revision_origen" name="justificacion_revision_origen" id="justificacion_revision_origen" rows="10" required><?php if(!empty($datos_bd_DTO_ATEL[0]->Justificacion_revision_origen)){echo $datos_bd_DTO_ATEL[0]->Justificacion_revision_origen;}?></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            @if (empty($datos_bd_DTO_ATEL[0]->ID_evento))
+                                                <input type="submit" class="btn btn-info" id="btn_guardar_justi_revi_ori" value="Guardar">    
+                                            @else
+                                                <input type="submit" class="btn btn-info" id="btn_guardar_justi_revi_ori" value="Actualizar">    
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row d-none" id="mostrar_mensaje_2">
+                                        <div  class="col-12">
+                                            <div class="form-group">
+                                                <div class="mensaje_agrego_2 alert alert-success" role="alert"></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <br>
     
                             {{-- Relación de documentos - Ayudas Diagnósticas e Interconsultas --}}
                             <div class="card-info">
@@ -783,8 +823,28 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            @if (empty($datos_bd_DTO_ATEL[0]->ID_evento))
+                                                <input type="submit" class="btn btn-info" id="btn_guardar_relacion_docs" value="Guardar">    
+                                            @else
+                                                <input type="submit" class="btn btn-info" id="btn_guardar_relacion_docs" value="Actualizar">    
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row d-none" id="mostrar_mensaje_3">
+                                        <div  class="col-12">
+                                            <div class="form-group">
+                                                <div class="mensaje_agrego_3 alert alert-success" role="alert"></div>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
                             </div>
-    
+                            <br>
+
                             {{-- Diagnóstico motivo de calificación --}}
                             <div class="card-info" id="contenedor_diag_moti_califi">
                                 <div class="card-header text-center" style="border: 1.5px solid black;">
@@ -835,8 +895,28 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            @if (empty($datos_bd_DTO_ATEL[0]->ID_evento))
+                                                <input type="submit" class="btn btn-info" id="btn_guardar_diagnosticos_mot_cali" value="Guardar">    
+                                            @else
+                                                <input type="submit" class="btn btn-info" id="btn_guardar_diagnosticos_mot_cali" value="Actualizar">    
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row d-none" id="mostrar_mensaje_4">
+                                        <div  class="col-12">
+                                            <div class="form-group">
+                                                <div class="mensaje_agrego_4 alert alert-success" role="alert"></div>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
                             </div>
-    
+                            <br>
+                            
                             {{-- Calificación del Origen --}}
                             <div class="card-info">
                                 <div class="card-header text-center" style="border: 1.5px solid black;">
