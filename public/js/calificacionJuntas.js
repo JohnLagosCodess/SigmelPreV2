@@ -799,6 +799,7 @@ $(document).ready(function(){
             'f_notifi_afiliado': $('#f_notifi_afiliado').val(),
             'termino_contro_califi': $('#termino_contro_califi').val(),
             'jrci_califi_invalidez': $('#jrci_califi_invalidez').val(),
+            'Observaciones': $('#observaciones_contro').val(),
             'bandera_controversia_guardar_actualizar': $('#guardar_datos_controversia').val(),
         }
         document.querySelector("#guardar_datos_controversia").disabled = true;

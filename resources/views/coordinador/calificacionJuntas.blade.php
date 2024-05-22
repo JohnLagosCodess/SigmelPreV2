@@ -654,6 +654,12 @@
                                             </div>
                                         </div>
                                         <div class="col-4">
+                                            <div class="form-group m-4">
+                                                <label for="fecha_plazo_contro">Fecha plazo para Controversia</label>
+                                                <input type="date" name="fecha_plazo_contro" id="fecha_plazo_contro" class="form-control" max="{{now()->format('Y-m-d')}}" value="<?php echo $arrayinfo_controvertido[0]->F_plazo_controversia ?? '' ?>" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
                                             <div class="form-group">
                                                 <label for="termino_contro_califi">Término de controversia ante primera calificación</label>
                                                 <input type="text" class="form-control" name="termino_contro_califi" id="termino_contro_califi" value="<?php if(!empty($arrayinfo_controvertido[0]->Termino_contro_califi)) { echo $arrayinfo_controvertido[0]->Termino_contro_califi;} ?>" readonly>
@@ -669,6 +675,12 @@
                                                         <option value="">Seleccione una opción</option>
                                                     @endif
                                                 </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="observaciones_contro">Observaciones</label>
+                                                <textarea name="observaciones_contro" id="observaciones_contro" cols="10" rows="4" class="form-control"><?php echo $arrayinfo_controvertido[0]->Observaciones ?? '' ?></textarea>
                                             </div>
                                         </div>
                                     </div>

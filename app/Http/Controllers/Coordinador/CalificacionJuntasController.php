@@ -69,7 +69,7 @@ class CalificacionJuntasController extends Controller
         ->select('j.ID_evento','j.Enfermedad_heredada','j.F_transferencia_enfermedad','j.Primer_calificador','pa.Nombre_parametro as Calificador'
         ,'j.Nom_entidad','j.N_dictamen_controvertido','j.F_dictamen_controvertido','j.N_siniestro','j.F_notifi_afiliado','j.Parte_controvierte_califi','pa2.Nombre_parametro as ParteCalificador','j.Nombre_controvierte_califi',
         'j.N_radicado_entrada_contro','j.Contro_origen','j.Contro_pcl','j.Contro_diagnostico','j.Contro_f_estructura','j.Contro_m_califi',
-        'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','sie.Nombre_entidad as JrciNombre')
+        'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','sie.Nombre_entidad as JrciNombre','j.F_plazo_controversia','j.Observaciones')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa', 'j.Primer_calificador', '=', 'pa.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa2', 'j.Parte_controvierte_califi', '=', 'pa2.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'j.Jrci_califi_invalidez', '=', 'sie.Id_Entidad')
@@ -172,8 +172,13 @@ class CalificacionJuntasController extends Controller
         ->where('p.Id_Servicio',  '=', $array_datos_calificacionJuntas[0]->Id_Servicio)
         ->get();
         $SubModulo=$TraeVista[0]->nombre_renderizar; //Enviar a la vista del SubModulo    
+        
+        //Se agregar principalmente por la ficha psb026, desdepues de la implementacion deberia ser auto. a traves del trigger, para los registros anteriores se agregar las siguientes lineas, el cual anexa la fecha de plazo
+        if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado) && empty($arrayinfo_controvertido[0]->F_plazo_controversia)){
+            $fecha_controversia = DB::select( 'SELECT ' . getDatabaseName('sigmel_gestiones') ."fnCalcularDiasHabilesV2('{$arrayinfo_controvertido[0]->F_notifi_afiliado}') as Fecha");
 
-
+            $arrayinfo_controvertido[0]->F_plazo_controversia = $fecha_controversia[0]->Fecha;
+        }
         return view('coordinador.calificacionJuntas', compact('user','array_datos_calificacionJuntas','arraylistado_documentos','arrayinfo_afiliado',
         'arrayinfo_controvertido','arrayinfo_pagos','listado_documentos_solicitados','dato_validacion_no_aporta_docs',
         'arraycampa_documento_solicitado','consecutivo','hitorialAgregarSeguimiento','SubModulo', 'Id_servicio'));
@@ -976,6 +981,7 @@ class CalificacionJuntasController extends Controller
                 'Jrci_califi_invalidez' => $request->jrci_califi_invalidez,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Observaciones' => $request->Observaciones
             ];
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')->insert($datos_info_controversia);
 
@@ -1003,6 +1009,7 @@ class CalificacionJuntasController extends Controller
                 'Jrci_califi_invalidez' => $request->jrci_califi_invalidez,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Observaciones' => $request->Observaciones
             ];
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_actuali_controversia);
