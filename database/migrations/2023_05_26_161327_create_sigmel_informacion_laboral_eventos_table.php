@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('Nro_identificacion', 25);
             $table->enum('Tipo_empleado', ['Empleado actual', 'Independiente', 'Beneficiario']);
             $table->integer('Id_arl')->nullable();
-            $table->text('Empresa');
-            $table->string('Nit_o_cc', 20);
+            $table->text('Empresa')->nullable();
+            $table->string('Nit_o_cc', 20)->nullable();
             $table->string('Telefono_empresa', 10)->nullable();
             $table->text('Email')->nullable();
             $table->text('Direccion')->nullable();
