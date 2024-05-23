@@ -259,6 +259,7 @@ $(document).ready(function(){
         $('#f_finalizacion_contrato').empty();
         $('#nro_consecutivo_dictamen').empty();
         $("#previewImage").val('');
+        $("#footerContainer").val('');
         $("#footer_dato_1").val('');
         $("#footer_dato_2").val('');
         $("#footer_dato_3").val('');
@@ -432,6 +433,12 @@ $(document).ready(function(){
                     var url_logo_cliente = $("#httpohttps").val()+$("#host").val()+"/logos_clientes/"+id_editar_cliente+"/"+data_cliente[0]["Logo_cliente"];
                     $("#previewImage").attr('src', url_logo_cliente);
                     $("#nombre_logo_bd").val(data_cliente[0]["Logo_cliente"]);
+                }
+
+                if (data_cliente[0]["Footer_cliente"] != null) {
+                    var url_footer_cliente = $("#httpohttps").val()+$("#host").val()+"/footer_clientes/"+id_editar_cliente+"/"+data_cliente[0]["Footer_cliente"];
+                    $("#footerContainer").attr('src', url_footer_cliente);
+                    $("#nombre_footer_bd").val(data_cliente[0]["Footer_cliente"]);
                 }
 
                 if (data_cliente[0]["Estado"] == "Activo") {
@@ -1801,7 +1808,7 @@ $(document).ready(function(){
 
             if (fileExtension === 'png' || fileExtension === 'jpg') {
                 $(".mensaje_extension_logo").addClass('d-none');
-                visualizar_imagen(this);
+                visualizar_imagen(this,'#img_codificada','#previewImage');
             } else {
                 $(".mensaje_extension_logo").removeClass('d-none');
                 setTimeout(() => {
@@ -1811,13 +1818,34 @@ $(document).ready(function(){
             }
         }
     });
+    //Previsualización del footer
+    $("#logo_footer").change(function(){
+        var selectedFile = $(this)[0].files[0];
 
-    function visualizar_imagen(input) {
+        if (selectedFile) {
+            var fileName = selectedFile.name;
+            var fileExtension = fileName.split('.').pop().toLowerCase();
+            $("#nombre_ext_footer").val(fileExtension);
+
+            if (fileExtension === 'png' || fileExtension === 'jpg') {
+                $(".mensaje_extension_footer").addClass('d-none');
+                visualizar_imagen(this,'#footer_codificado','#footerContainer');
+            } else {
+                $(".mensaje_extension_footer").removeClass('d-none');
+                setTimeout(() => {
+                    $(".mensaje_extension_footer").addClass('d-none');
+                }, 5000);
+                $(this).val('');
+            }
+        }
+    });
+
+    function visualizar_imagen(input,imagen,container) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function(e) {
-                $('#previewImage').attr('src', e.target.result);
-                $("#img_codificada").val(e.target.result);
+                $(container).attr('src', e.target.result);
+                $(imagen).val(e.target.result);
             };
             reader.readAsDataURL(input.files[0]);
         }
@@ -2044,11 +2072,14 @@ $(document).ready(function(){
             'Nombre_logo_bd': $("#nombre_logo_bd").val(),
             'Logo': $("#img_codificada").val(),
             'Extension_logo': $("#nombre_ext_imagen").val(),
-            'footer_dato_1': footer_dato_1,
-            'footer_dato_2': footer_dato_2,
-            'footer_dato_3': footer_dato_3,
-            'footer_dato_4': footer_dato_4,
-            'footer_dato_5': footer_dato_5
+            'Nombre_footer_bd': $("#nombre_footer_bd").val(),
+            'Footer': $("#footer_codificado").val(),
+            'Extension_footer': $("#nombre_ext_footer").val()
+            // 'footer_dato_1': footer_dato_1,
+            // 'footer_dato_2': footer_dato_2,
+            // 'footer_dato_3': footer_dato_3,
+            // 'footer_dato_4': footer_dato_4,
+            // 'footer_dato_5': footer_dato_5
         };
 
         $.ajax({

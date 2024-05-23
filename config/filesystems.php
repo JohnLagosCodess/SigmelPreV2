@@ -44,6 +44,14 @@ return [
             'throw' => false,
         ],
 
+        'publicfooter' => [
+            'driver' => 'local',
+            'root' => public_path('footer_clientes'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
         'publicfirmasclientes' => [
             'driver' => 'local',
             'root' => public_path('firmas_clientes'),

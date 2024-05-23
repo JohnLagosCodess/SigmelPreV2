@@ -53,7 +53,41 @@
             #footer4 { position: fixed; left: 40px; bottom: -180px; right: 0px; height: 135px; background-color: white;}
             #footer3 { position: fixed; left: -20px; right: 0px; width: 0px; height: 0px; color:black; background-color: white; transform: rotate(0deg); top:300px;}
             #footer2 { position: fixed; left: 638px; bottom: -180px; right: 0px; height: 50px; background-color: white; }
-            #footer2 .page:after { content: counter(page, upper-decimal); }            
+            #footer2 .page:after { content: counter(page, upper-decimal); } 
+            #footer4 { position: fixed;
+                /* esta ligado con el tercer valor del margin */
+                bottom: -4cm;
+                left: 0cm;
+                width: 100%;
+                height: 15%;
+                /* background-color: green; */
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                align-items: center; 
+            }
+            #footer4 .page{
+                text-align: center;
+            }
+            #footer4 .page:after { content: counter(page, upper-decimal); }    
+            .footer_image{
+                max-width: 100%;
+                max-height: 80%;
+                margin-bottom: -5px;
+            }
+            .footer_content {
+                position: relative;
+                text-align: center;
+            }        
+            .fuente_todo_texto{
+                font-family: Arial;
+                font-size: 15px;
+            }
+            .content2{
+                margin-top: -0.5cm;
+                margin-left: 0.5cm;
+                margin-right: 0.5cm;
+            }         
         </style>
     </head>
     <body>
@@ -67,22 +101,20 @@
             <p>{{$Nombre_afiliado}} - {{$T_documento}} {{$N_identificacion}} - {{$ID_evento}}  </p>
         </div>
         <div id="footer4">
-            <table>
-                <tr>
-                    <td><b style="color:#00917B">Seguros Alfa S.A y Seguros de Vida Alfa S.A</b></td>
-                </tr>
-                <tr>
-                    <td><b style="color:#00917B; font-size: 14px;">Lineas de atención al cliente:</b></td>
-                    <td><b style="color:#00917B; font-size: 14px;"> www.<b style="color:#00917be2;">segurosalfa</b>.com.co</b></td>
-                </tr>
-                <tr>
-                    <td style="font-size: 13px">Bogotá: 3077032, a nivel nacional: 018000122532</td>
-                </tr>
-                <p style="font-size: 13px">Lunes a viernes, de 08:00a.m a 08:00p.m en jornada continua y sábados de 08:00a.m a 12m.</p>
-            </table>
-        </div>
-        <div id="footer2">
-            <p class="page">Pagina  </p>    
+            <?php if($footer == null): ?>
+                <p class="page" style="color: black;">Página </p>
+            <?php else: ?>
+                <?php 
+                    $ruta_footer = "/footer_clientes/{$id_cliente}/{$footer}";
+                    $footer_path = public_path($ruta_footer);
+                    $footer_data = file_get_contents($footer_path);
+                    $footer_base64 = base64_encode($footer_data);
+                ?>
+                <div class="footer_content">
+                    <img src="data:image/png;base64,{{ $footer_base64 }}" class="footer_image">
+                    <p class="page" style="color: black;">Página </p>
+                </div>
+            <?php endif ?>
         </div>
         <div id="footer3">
             <img src="https://www.cfa.com.co/wp-content/uploads/2020/10/vigilado-superintendencia.svg" alt="super">

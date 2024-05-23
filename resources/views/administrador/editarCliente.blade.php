@@ -490,38 +490,27 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label for="footer_cliente" class="col-form-label">Pie de página</label>
-                                            <div class="alert alert-warning" role="alert">
-                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Escriba la información en los campos disponibles 
-                                                ya que el sistema mantendrá esta estructura (tabla) para la creación de los documentos.
+                                            <label for="logo_footer" class="col-form-label">Pie de página</label>
+                                            <div class="alert alert-warning " role="alert">
+                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong>Es recomendable que el ancho de la imagen sea mayor que su altura para garantizar una visualización adecuada, Ejemplo: 1000x200.</div>
+                                            <input type="file" class="logo_footer form-control" name="logo_footer" id="logo_footer" accept=".png, .jpg">
+                                            <input type="hidden" id="footer_codificado">
+                                            <input type="hidden" id="nombre_ext_footer">
+                                            <input type="hidden" id="httpohttps" value="<?php if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on'){
+                                                echo "https://";
+                                            } else {
+                                                echo "http://";
+                                            }?>">
+                                            <input type="hidden" id="host" value="<?php echo $_SERVER['HTTP_HOST'] ;?>">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="col-form-label">Previsualización Footer</label>
+                                        <input type="hidden" id="nombre_footer_bd">
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <div id="imagePreview" class="d-flex justify-content-center align-items-center" style="border: 1.5px solid black; width: 50%; height: 120px; overflow: hidden;">
+                                                <img id="footerContainer" src="#" alt="Previsualización Imagen" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                                             </div>
-                                            <table style="width: 100%;font-family: sf-pro-display-black, sans-serif;font-size: 12px; border: 2px solid black; border-collapse: collapse;">
-                                                <tbody>
-                                                    <tr>
-                                                        <td colspan="2"  style="border: 2px solid black; border-collapse: collapse; padding: 6px;">
-                                                            <input type="text" class="form-control" id="footer_dato_1" placeholder="Escriba texto aquí">
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="border: 2px solid black; border-collapse: collapse; padding: 6px;">
-                                                            <input type="text" class="form-control" id="footer_dato_2" placeholder="Escriba texto aquí">
-                                                        </td>
-                                                        <td style="border: 2px solid black; border-collapse: collapse; padding: 6px;">
-                                                            <input type="text" class="form-control" id="footer_dato_3" placeholder="Escriba texto aquí">
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="2" style="border: 2px solid black; border-collapse: collapse; padding: 6px;">
-                                                            <input type="text" class="form-control" id="footer_dato_4" placeholder="Escriba texto aquí">
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="2" style="border: 2px solid black; border-collapse: collapse; padding: 6px;">
-                                                            <input type="text" class="form-control" id="footer_dato_5" placeholder="Escriba texto aquí">
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
                                         </div>
                                     </div>
                                 </div>

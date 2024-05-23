@@ -1162,25 +1162,39 @@ class PronunciamientoOrigenController extends Controller
             $ruta_logo = "";
         }
 
-        /* Extraemos los datos del footer */
-        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-        ->where('Id_cliente', $Id_cliente_firma)->get();
+        //Footer
+        $dato_logo_footer = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Footer_cliente')
+        ->where([['Id_cliente', $id_cliente]])
+        ->limit(1)->get();
 
-        if(count($datos_footer) > 0){
-            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
-
-        }else{
-            $footer_dato_1 = "";
-            $footer_dato_2 = "";
-            $footer_dato_3 = "";
-            $footer_dato_4 = "";
-            $footer_dato_5 = "";
+        if (count($dato_logo_footer) > 0 && $dato_logo_footer[0]->Footer_cliente != null) {
+            $footer = $dato_logo_footer[0]->Footer_cliente;
+            $ruta_logo_footer = "/footer_clientes/{$id_cliente}/{$logo_footer}";
+        } else {
+            $footer = null;
+            $ruta_logo_footer = null;
         }
+
+        /* Extraemos los datos del footer */
+        // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        // ->where('Id_cliente', $Id_cliente_firma)->get();
+
+        // if(count($datos_footer) > 0){
+        //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+        //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+        //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+        //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+        //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+
+        // }else{
+        //     $footer_dato_1 = "";
+        //     $footer_dato_2 = "";
+        //     $footer_dato_3 = "";
+        //     $footer_dato_4 = "";
+        //     $footer_dato_5 = "";
+        // }
 
         $ramo = "Previsionales";
 
@@ -1208,11 +1222,12 @@ class PronunciamientoOrigenController extends Controller
                 'Firma_cliente' => $Firma_cliente,
                 'Agregar_copia' => $Agregar_copias,
                 'nombre_usuario' => Auth::user()->name,
-                'footer_dato_1' => $footer_dato_1,
-                'footer_dato_2' => $footer_dato_2,
-                'footer_dato_3' => $footer_dato_3,
-                'footer_dato_4' => $footer_dato_4,
-                'footer_dato_5' => $footer_dato_5,
+                'footer' => $footer,
+                // 'footer_dato_1' => $footer_dato_1,
+                // 'footer_dato_2' => $footer_dato_2,
+                // 'footer_dato_3' => $footer_dato_3,
+                // 'footer_dato_4' => $footer_dato_4,
+                // 'footer_dato_5' => $footer_dato_5,
             ];
             
     
@@ -1492,25 +1507,12 @@ class PronunciamientoOrigenController extends Controller
             // Configuramos el footer
             $info = $nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$nro_siniestro;
             $footer = $section->addFooter();
-            $tableStyle = array(
-                'cellMargin'  => 50,
-            );
-            $phpWord->addTableStyle('myTable', $tableStyle);
+            $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
+            if($ruta_logo_footer != null){
+                $imagenPath_footer = public_path($ruta_logo_footer);
+                $footer->addImage($imagenPath_footer, array('width' => 450, 'height' => 70, 'alignment' => 'left'));
+            }
             $table = $footer->addTable('myTable');
-
-            $table->addRow();
-            $table->addCell(80000, ['gridSpan' => 2])->addText($info, array('size' => 10, 'bold' => true));
-            $table->addRow();
-            $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_1, array('size' => 10));
-            $table->addRow();
-            $table->addCell()->addText($footer_dato_2, array('size' => 10));
-            $cell = $table->addCell();
-            $textRun = $cell->addTextRun(['alignment' => 'right']);
-            $textRun->addText($footer_dato_3, array('size' => 10));
-            $table->addRow();
-            $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_4, array('size' => 10));
-            $table->addRow();
-            $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_5, array('size' => 10));
             $table->addRow();
             $cell1 = $table->addCell(80000, ['gridSpan' => 2]);
             $textRun = $cell1->addTextRun(['alignment' => 'center']);

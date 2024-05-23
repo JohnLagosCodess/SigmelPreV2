@@ -29,6 +29,24 @@
             bottom: -2.4cm;
             left: 0cm;
             width: 100%;
+            height: 14%;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center; 
+        }
+        #footer .page{
+            text-align: center;
+        }
+        .footer_image{
+            max-width: 100%;
+            max-height: 80%;
+            margin-bottom: -5px;
+        }
+        .footer_content {
+            position: relative;
+            text-align: center;
         }
 
         #footer .page:after { content: counter(page, upper-decimal); }   
@@ -113,44 +131,20 @@
         <?php endif ?>
     </div>
     <div id="footer">
-        <table class="tabla_footer">
-            {{-- <tbody>
-                <tr>
-                    <td colspan="2" class="color_letras_alfa">Seguros Alfa S.A. y Seguros de Vida Alfa S.A.</td>
-                </tr>
-                <tr>
-                    <td class="color_letras_alfa">Líneas de atención al cliente</td>
-                    <td style="text-align: right;" class="color_letras_alfa">www.segurosalfa.com.co</td>
-                </tr>
-                <tr>
-                    <td colspan="2">Bogotá: 3077032, a nivel nacional: 018000122532</td>
-                </tr>
-                <tr>
-                    <td colspan="2">habilitadas en jornada continua de lunes a viernes de 8:00 a.m. a 6:00 p.m.</td>
-                </tr>
-                <tr>
-                    <td style="text-align: center;" colspan="2"><p class="page">Página </p></td>
-                </tr>
-            </tbody> --}}
-            <tbody>
-                <tr>
-                    <td colspan="2" class="color_letras_alfa1">{{$footer_dato_1}}</td>
-                </tr>
-                <tr>
-                    <td class="color_letras_alfa1">{{$footer_dato_2}}</td>
-                    <td style="text-align: right;" class="color_letras_alfa1">{{$footer_dato_3}}</td>
-                </tr>
-                <tr>
-                    <td colspan="2">{{$footer_dato_4}}</td>
-                </tr>
-                <tr>
-                    <td colspan="2">{{$footer_dato_5}}</td>
-                </tr>
-                <tr>
-                    <td style="text-align: center;" colspan="2"><p class="page">Página </p></td>
-                </tr>
-            </tbody>
-        </table>
+        <?php if($footer == null): ?>
+        <p class="page" style="color: black;">Página </p>
+        <?php else: ?>
+            <?php 
+                $ruta_footer = "/footer_clientes/{$id_cliente}/{$footer}";
+                $footer_path = public_path($ruta_footer);
+                $footer_data = file_get_contents($footer_path);
+                $footer_base64 = base64_encode($footer_data);
+            ?>
+        <div class="footer_content">
+            <img src="data:image/png;base64,{{ $footer_base64 }}" class="footer_image">
+            <p class="page" style="color: black;">Página </p>
+        </div>
+        <?php endif ?>
     </div>
     <div id="footer2">
         <?php

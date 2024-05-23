@@ -322,11 +322,32 @@ $(document).ready(function(){
 
             if (fileExtension === 'png' || fileExtension === 'jpg') {
                 $(".mensaje_extension_logo").addClass('d-none');
-                visualizar_imagen(this);
+                visualizar_imagen(this,'#img_codificada','#previewImage');
             } else {
                 $(".mensaje_extension_logo").removeClass('d-none');
                 setTimeout(() => {
                     $(".mensaje_extension_logo").addClass('d-none');
+                }, 5000);
+                $(this).val('');
+            }
+        }
+    });
+    //Previsualización del footer
+    $("#logo_footer").change(function(){
+        var selectedFile = $(this)[0].files[0];
+
+        if (selectedFile) {
+            var fileName = selectedFile.name;
+            var fileExtension = fileName.split('.').pop().toLowerCase();
+            $("#nombre_ext_footer").val(fileExtension);
+
+            if (fileExtension === 'png' || fileExtension === 'jpg') {
+                $(".mensaje_extension_footer").addClass('d-none');
+                visualizar_imagen(this,'#footer_codificado','#footerContainer');
+            } else {
+                $(".mensaje_extension_footer").removeClass('d-none');
+                setTimeout(() => {
+                    $(".mensaje_extension_footer").addClass('d-none');
                 }, 5000);
                 $(this).val('');
             }
@@ -660,11 +681,11 @@ $(document).ready(function(){
         });
 
         /* Datos del Footer */
-        var footer_dato_1 = $("#footer_dato_1").val();
-        var footer_dato_2 = $("#footer_dato_2").val();
-        var footer_dato_3 = $("#footer_dato_3").val();
-        var footer_dato_4 = $("#footer_dato_4").val();
-        var footer_dato_5 = $("#footer_dato_5").val();
+        // var footer_dato_1 = $("#footer_dato_1").val();
+        // var footer_dato_2 = $("#footer_dato_2").val();
+        // var footer_dato_3 = $("#footer_dato_3").val();
+        // var footer_dato_4 = $("#footer_dato_4").val();
+        // var footer_dato_5 = $("#footer_dato_5").val();
         
         // Recolección de la información para crear un cliente
         var enviar_info_nuevo_cliente = {
@@ -694,17 +715,19 @@ $(document).ready(function(){
             'ANS': datos_finales_ans,
             'Logo': $("#img_codificada").val(),
             'Extension_logo': $("#nombre_ext_imagen").val(),
+            'Footer': $("#footer_codificado").val(),
+            'Extension_footer': $("#nombre_ext_footer").val(),
             'Firmas': datos_finales_firmas_cliente,
             'Urls': url_imagenes,
             'Extensiones_firmas': extension_imagenes,
             'Firmas_proveedor': datos_finales_firmas_proveedor,
             'Urls_proveedor': url_imagenes_proveedor,
             'Extensiones_firmas_proveedor': extension_imagenes_proveedor,
-            'footer_dato_1': footer_dato_1,
-            'footer_dato_2': footer_dato_2,
-            'footer_dato_3': footer_dato_3,
-            'footer_dato_4': footer_dato_4,
-            'footer_dato_5': footer_dato_5
+            // 'footer_dato_1': footer_dato_1,
+            // 'footer_dato_2': footer_dato_2,
+            // 'footer_dato_3': footer_dato_3,
+            // 'footer_dato_4': footer_dato_4,
+            // 'footer_dato_5': footer_dato_5
         };
         
         $.ajax({
@@ -768,12 +791,12 @@ $(document).ready(function(){
         $(this).val(value); */
     });
 
-    function visualizar_imagen(input) {
+    function visualizar_imagen(input,imagen,container) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function(e) {
-                $('#previewImage').attr('src', e.target.result);
-                $("#img_codificada").val(e.target.result);
+                $(container).attr('src', e.target.result);
+                $(imagen).val(e.target.result);
             };
             reader.readAsDataURL(input.files[0]);
         }
