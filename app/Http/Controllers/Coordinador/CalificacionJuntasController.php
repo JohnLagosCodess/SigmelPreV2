@@ -226,6 +226,14 @@ class CalificacionJuntasController extends Controller
             $info_listado_contro_califi = json_decode(json_encode($listado_contro_califi, true));
             return response()->json($info_listado_contro_califi);
         }
+        // Obtenemos la parte que controvierte
+        if($parametro == 'parte_controvierte'){
+            $controvierte = DB::select( 'SELECT ' . getDatabaseName('sigmel_gestiones') ."ObtenerControvierte(:controvierte,:evento) as Nombre",[
+                'controvierte' => $request->controvierte,
+                'evento' => $request->evento,
+            ]);
+            return response()->json($controvierte[0]);
+        }
         // Listado Junta Jrci Invalidez
         if($parametro == 'lista_juntas_invalidez'){
             // $listado_juntas_invalidez = sigmel_lista_parametros::on('sigmel_gestiones')
@@ -870,9 +878,9 @@ class CalificacionJuntasController extends Controller
         ->where('EsFestivo', 0)
         ->count();
         if($conteoDias > 10){
-            $terminos='Fuera de términos';
+                $terminos='Fuera de términos';
         }else{
-            $terminos='Dentro de términos';  
+                $terminos='Dentro de términos';  
         }
         // validacion de bandera para guardar o actualizar
         // insercion de datos a la tabla de sigmel_informacion_controversia_juntas_eventos

@@ -163,6 +163,26 @@ $(document).ready(function(){
             }
         }
     });
+
+    //Dependiendo del selector seleccionado buscaremos su nombre asociado
+    $("#parte_controvierte_califi").change(function(){
+        let controvertido = {
+            '_token': token,
+            'parametro' : 'parte_controvierte',
+            'controvierte' : $(this).find('option:selected').text(),
+            'evento' : $("#Id_Evento").val()
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/selectoresJuntas',
+            data: controvertido,
+            success:function(data) {
+                $("#nombre_controvierte_califi").val(data.Nombre);
+            }
+        });
+    });
+
     // Listado Junta Jrci Invalidez
     let datos_lista_juntas_invalidez = {
         '_token': token,

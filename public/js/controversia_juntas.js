@@ -887,7 +887,7 @@ $(document).ready(function(){
             opt_sumaTotal_pcl_jnci_emitido = deficiencia_jnci_emi + rolOcupacional_jnci_emi + discapacidad_jnci_emi + minusvalia_jnci_emi;
             var sumaTotal_pcl_jnci_emitido = opt_sumaTotal_pcl_jnci_emitido.toFixed(2);
             if (!isNaN(sumaTotal_pcl_jnci_emitido)){
-                $('#porcentaje_pcl_jnci_emitido').val(redondearNumero(sumaTotal_pcl_jnci_emitido) );
+                $('#porcentaje_pcl_jnci_emitido').val(sumaTotal_pcl_jnci_emitido.replace('.', ',') );
             }
             if(sumaTotal_pcl_jnci_emitido=='isNaN'){
                 rango_pcl_jnci_emitido = '0';

@@ -498,7 +498,7 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <label for="resumen_dictamen_jrci">Resumen Dictamen (JRCI)</span></label>
+                                                <label for="resumen_dictamen_jrci">Resumen Dictamen (JRCI)<span style="color: red;">(*)</span></label>
                                                 <textarea class="form-control soloPrimeraLetraMayus" name="resumen_dictamen_jrci " id="resumen_dictamen_jrci" cols="30" rows="5" style="resise:none;" required><?php if(!empty($arrayinfo_controvertido[0]->Resumen_dictamen_jrci)) { echo $arrayinfo_controvertido[0]->Resumen_dictamen_jrci;} ?></textarea>
                                             </div>
                                         </div>
