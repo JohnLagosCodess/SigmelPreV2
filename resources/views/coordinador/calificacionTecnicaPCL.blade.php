@@ -319,7 +319,10 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="dominancia">Dominancia</label>
-                                            <input type="text" class="form-control" name="dominancia" id="dominancia" value="<?php if(!empty($motivo_solicitud_actual[0]->Nombre_dominancia)){echo $motivo_solicitud_actual[0]->Nombre_dominancia;}?>" disabled>
+                                            {{-- <input type="text" class="form-control" name="dominancia" id="dominancia" value="<?php if(!empty($motivo_solicitud_actual[0]->Nombre_dominancia)){echo $motivo_solicitud_actual[0]->Nombre_dominancia;}?>" disabled> --}}
+                                            <input type="hidden" name="id_afiliado" id="id_afiliado" value="{{$array_datos_calificacionPclTecnica[0]->Id_Afiliado}}">
+                                            <input type="hidden" id="bd_id_dominancia" value="<?php if(!empty($motivo_solicitud_actual[0]->Id_dominancia)){echo $motivo_solicitud_actual[0]->Id_dominancia;}?>">
+                                            <select class="custom-select dominancia" name="dominancia" id="dominancia"></select>
                                         </div>
                                     </div>
                                 </div>

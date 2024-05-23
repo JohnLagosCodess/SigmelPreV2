@@ -795,10 +795,63 @@ $(document).ready(function(){
 
     });
 
+    /* Validacion botón para guardar o actualizar la sección Información del evento
+    para quitar el required de los demás campos del formulario */
+    var btn_guardar_info_evento = 0;
+    $("#btn_guardar_info_evento").click(function(){
+        
+        var btn_seccion_info_evento = $('#btn_guardar_info_evento').val();
+        
+        if (btn_seccion_info_evento == "Guardar" || btn_seccion_info_evento == "Actualizar") {
+            // campos sección Diagnósticos Adicionados
+            $("#sustentacion_adicion_dx").prop("required", false);
+            // campos sección Calificación del Origen
+            $("#origen_dto_atel").prop("required", false);
+
+            btn_guardar_info_evento = 1; 
+        }
+    });
+
+    /* Validación botón para guardar o actualizar la sección Relación de documentos - Ayudas Diagnósticas e Interconsultas
+    para quitar el required de los demás campos del formulario */
+    var btn_guardar_relacion_docs = 0;
+    $("#btn_guardar_relacion_docs").click(function(){
+
+        var btn_seccion_relacion_docs = $('#btn_guardar_relacion_docs').val();
+
+        if (btn_seccion_relacion_docs == "Guardar" || btn_seccion_relacion_docs == "Actualizar") {
+            // campos sección Diagnósticos Adicionados
+            $("#sustentacion_adicion_dx").prop("required", false);
+            // campos sección Calificación del Origen
+            $("#origen_dto_atel").prop("required", false);
+
+            btn_guardar_relacion_docs = 1;
+
+        }
+    });
+
+    /* Validación botón para guardar o actualizar la sección Diagnóstico adicionados
+    para quitar el required de los demás campos del formulario */
+    var btn_guardar_diagnosticos_adicionados = 0;
+    $("#btn_guardar_diagnosticos_adicionados").click(function(){
+
+        var btn_seccion_diagnosticos_adicionados = $('#btn_guardar_diagnosticos_adicionados').val();
+
+        if (btn_seccion_diagnosticos_adicionados == "Guardar" || btn_seccion_diagnosticos_adicionados == "Actualizar") {
+            // campos sección Calificación del Origen
+            $("#origen_dto_atel").prop("required", false);
+
+            btn_guardar_diagnosticos_adicionados = 1;
+        }
+    });
 
     // Envío de la información
     $("#form_Adicion_Dx").submit(function(e){
         e.preventDefault();
+
+        $("#btn_guardar_info_evento").prop("disabled", true);
+        $("#btn_guardar_relacion_docs").prop("disabled", true);
+        $("#btn_guardar_diagnosticos_adicionados").prop("disabled", true);
 
         var GuardarAdicionDx = $('#GuardarAdicionDx');
         var ActualizarAdicionDx = $('#ActualizarAdicionDx');
@@ -935,15 +988,47 @@ $(document).ready(function(){
                 data: informacion_formulario,
                 success: function(response){
                     if (response.parametro == "agregar_dto_atel") {
-                        $("#GuardarAdicionDx").addClass('d-none');
-                        $("#ActualizarAdicionDx").addClass('d-none');
-                        $("#mostrar_mensaje_agrego_adicion_dx").removeClass('d-none');
-                        $(".mensaje_agrego_adicion_dx").append('<strong>'+response.mensaje+'</strong>');
-                        setTimeout(() => {
-                            $("#mostrar_mensaje_agrego_adicion_dx").addClass('d-none');
-                            $(".mensaje_agrego_adicion_dx").empty();
-                            location.reload();
-                        }, 3000);
+                        if (btn_guardar_info_evento > 0) {
+                            $("#btn_guardar_info_evento").addClass('d-none');
+                            $("#mostrar_mensaje_1").removeClass('d-none');
+                            $(".mensaje_agrego_1").append('<strong>'+response.mensaje+'</strong>');
+                            setTimeout(() => {
+                                $("#mostrar_mensaje_1").addClass('d-none');
+                                $(".mensaje_agrego_1").empty();
+                                location.reload();
+                            }, 3000);
+                        }
+                        else if (btn_guardar_relacion_docs > 0){
+                            $("#btn_guardar_relacion_docs").addClass('d-none');
+                            $("#mostrar_mensaje_2").removeClass('d-none');
+                            $(".mensaje_agrego_2").append('<strong>'+response.mensaje+'</strong>');
+                            setTimeout(() => {
+                                $("#mostrar_mensaje_2").addClass('d-none');
+                                $(".mensaje_agrego_2").empty();
+                                location.reload();
+                            }, 3000);
+                        }
+                        else if (btn_guardar_diagnosticos_adicionados > 0){
+                            $("#btn_guardar_diagnosticos_adicionados").addClass('d-none');
+                            $("#mostrar_mensaje_3").removeClass('d-none');
+                            $(".mensaje_agrego_3").append('<strong>'+response.mensaje+'</strong>');
+                            setTimeout(() => {
+                                $("#mostrar_mensaje_3").addClass('d-none');
+                                $(".mensaje_agrego_3").empty();
+                                location.reload();
+                            }, 3000);
+                        }
+                        else{
+                            $("#GuardarAdicionDx").addClass('d-none');
+                            $("#ActualizarAdicionDx").addClass('d-none');
+                            $("#mostrar_mensaje_agrego_adicion_dx").removeClass('d-none');
+                            $(".mensaje_agrego_adicion_dx").append('<strong>'+response.mensaje+'</strong>');
+                            setTimeout(() => {
+                                $("#mostrar_mensaje_agrego_adicion_dx").addClass('d-none');
+                                $(".mensaje_agrego_adicion_dx").empty();
+                                location.reload();
+                            }, 3000);
+                        }
                     }
                 }
             });

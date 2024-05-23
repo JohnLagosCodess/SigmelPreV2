@@ -50,16 +50,16 @@ class ControversiaJuntasController extends Controller
         ,'j.F_dictamen_jrci_emitido','j.Origen_jrci_emitido','pa5.Nombre_parametro as OrigenEmitidoJrci','j.Manual_de_califi_jrci_emitido','d1.Nombre_decreto as Nombre_decretoJrci','j.Total_deficiencia_jrci_emitido',
         'j.Total_rol_ocupacional_jrci_emitido','j.Total_discapacidad_jrci_emitido','j.Total_minusvalia_jrci_emitido','j.Porcentaje_pcl_jrci_emitido','j.Rango_pcl_jrci_emitido',
         'j.F_estructuracion_contro_jrci_emitido','j.Resumen_dictamen_jrci','j.F_noti_dictamen_jrci','j.F_radica_dictamen_jrci','j.F_maxima_recurso_jrci','j.Decision_dictamen_jrci',
-        'j.Sustentacion_concepto_jrci','j.F_sustenta_jrci','j.F_notificacion_recurso_jrci','j.N_radicado_recurso_jrci','j.Termino_contro_propia_jrci','j.Causal_decision_jrci','pa6.Nombre_parametro as NombreCausal',
+        'j.Sustentacion_concepto_jrci','j.F_sustenta_jrci','j.F_notificacion_recurso_jrci','j.N_radicado_recurso_jrci','j.Termino_contro_propia_jrci','j.Causal_decision_jrci',
         'j.Firmeza_intere_contro_jrci','j.Firmeza_reposicion_jrci','j.Firmeza_acta_ejecutoria_jrci','j.Firmeza_apelacion_jnci_jrci','j.Parte_contro_ante_jrci','pa7.Nombre_parametro as NomPresentaJrci',
         'j.Nombre_presen_contro_jrci','j.F_contro_otra_jrci','j.Contro_origen_jrci','j.Contro_pcl_jrci','j.Contro_diagnostico_jrci','j.Contro_f_estructura_jrci','j.Contro_m_califi_jrci','j.Reposicion_dictamen_jrci',
         'j.N_dictamen_reposicion_jrci','j.F_dictamen_reposicion_jrci','j.Origen_reposicion_jrci','pa8.Nombre_parametro as Nombre_origenRepoJrci','j.Manual_reposicion_jrci','d2.Nombre_decreto as Nombre_decretoRepoJrci',
         'j.Total_deficiencia_reposicion_jrci','j.Total_reposicion_jrci','j.Total_discapacidad_reposicion_jrci','j.Total_minusvalia_reposicion_jrci','j.Porcentaje_pcl_reposicion_jrci','j.Rango_pcl_reposicion_jrci'
         ,'j.F_estructuracion_contro_reposicion_jrci','j.Resumen_dictamen_reposicion_jrci','j.F_noti_dictamen_reposicion_jrci','j.F_radica_dictamen_reposicion_jrci','j.F_maxima_apelacion_jrci','j.Decision_dictamen_repo_jrci'
-        ,'j.Decision_dictamen_repo_jrci','j.Causal_decision_repo_jrci','pa9.Nombre_parametro as NombreCausalRepo','j.Sustentacion_concepto_repo_jrci','j.F_sustenta_reposicion_jrci','j.F_noti_apela_recurso_jrci'
+        ,'j.Decision_dictamen_repo_jrci','j.Causal_decision_repo_jrci','j.Sustentacion_concepto_repo_jrci','j.F_sustenta_reposicion_jrci','j.F_noti_apela_recurso_jrci'
         ,'j.N_radicado_apela_recurso_jrci','j.T_propia_apela_recurso_jrci','j.Correspon_pago_jnci','j.N_orden_pago_jnci','j.F_orden_pago_jnci','j.F_radi_pago_jnci','j.N_acta_ejecutario_emitida_jrci'
         ,'j.F_acta_ejecutoria_emitida_jrci','j.F_firmeza_dictamen_jrci','j.Dictamen_firme_jrci','j.N_dictamen_jnci_emitido','j.F_dictamen_jnci_emitido','j.Origen_jnci_emitido','pa10.Nombre_parametro as NombreOrigen'
-        ,'j.Manual_de_califi_jnci_emitido','pa11.Nombre_parametro as Nombre_decretoJnci','j.Total_deficiencia_jnci_emitido','j.Total_rol_ocupacional_jnci_emitido','j.Total_discapacidad_jnci_emitido'
+        ,'j.Manual_de_califi_jnci_emitido','d3.Nombre_decreto as Nombre_decretoJnci','j.Total_deficiencia_jnci_emitido','j.Total_rol_ocupacional_jnci_emitido','j.Total_discapacidad_jnci_emitido'
         ,'j.Total_minusvalia_jnci_emitido','j.Porcentaje_pcl_jnci_emitido','j.Rango_pcl_jnci_emitido','j.F_estructuracion_contro_jnci_emitido','j.Resumen_dictamen_jnci','j.Sustentacion_dictamen_jnci'
         ,'j.F_sustenta_ante_jnci','j.F_noti_ante_jnci','j.F_radica_dictamen_jnci','j.F_envio_jnci')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa', 'j.Primer_calificador', '=', 'pa.Id_Parametro','j.')
@@ -67,12 +67,12 @@ class ControversiaJuntasController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'j.Jrci_califi_invalidez', '=', 'sie.Id_Entidad')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa4', 'j.Origen_controversia', '=', 'pa4.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa5', 'j.Origen_jrci_emitido', '=', 'pa5.Id_Parametro')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa6', 'j.Causal_decision_jrci', '=', 'pa6.Id_Parametro')
+        //->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa6', 'j.Causal_decision_jrci', '=', 'pa6.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa7', 'j.Parte_contro_ante_jrci', '=', 'pa7.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa8', 'j.Origen_reposicion_jrci', '=', 'pa8.Id_Parametro')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa9', 'j.Causal_decision_repo_jrci', '=', 'pa9.Id_Parametro')
+        //->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa9', 'j.Causal_decision_repo_jrci', '=', 'pa9.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa10', 'j.Origen_jnci_emitido', '=', 'pa10.Id_Parametro')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa11', 'j.Manual_de_califi_jnci_emitido', '=', 'pa11.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d3', 'j.Manual_de_califi_jnci_emitido', '=', 'd3.Id_Decreto')
         ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d', 'j.Manual_de_califi', '=', 'd.Id_Decreto')
         ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d1', 'j.Manual_de_califi_jrci_emitido', '=', 'd1.Id_Decreto')
         ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d2', 'j.Manual_reposicion_jrci', '=', 'd2.Id_Decreto')
@@ -1743,13 +1743,13 @@ class ControversiaJuntasController extends Controller
             ,'j.F_dictamen_jrci_emitido','j.Origen_jrci_emitido','pa5.Nombre_parametro as OrigenEmitidoJrci','j.Manual_de_califi_jrci_emitido','d1.Nombre_decreto as Nombre_decretoJrci','j.Total_deficiencia_jrci_emitido',
             'j.Total_rol_ocupacional_jrci_emitido','j.Total_discapacidad_jrci_emitido','j.Total_minusvalia_jrci_emitido','j.Porcentaje_pcl_jrci_emitido','j.Rango_pcl_jrci_emitido',
             'j.F_estructuracion_contro_jrci_emitido','j.Resumen_dictamen_jrci','j.F_noti_dictamen_jrci','j.F_radica_dictamen_jrci','j.F_maxima_recurso_jrci','j.Decision_dictamen_jrci',
-            'j.Sustentacion_concepto_jrci','j.F_sustenta_jrci','j.F_notificacion_recurso_jrci','j.N_radicado_recurso_jrci','j.Termino_contro_propia_jrci','j.Causal_decision_jrci','pa6.Nombre_parametro as NombreCausal',
+            'j.Sustentacion_concepto_jrci','j.F_sustenta_jrci','j.F_notificacion_recurso_jrci','j.N_radicado_recurso_jrci','j.Termino_contro_propia_jrci','j.Causal_decision_jrci',
             'j.Firmeza_intere_contro_jrci','j.Firmeza_reposicion_jrci','j.Firmeza_acta_ejecutoria_jrci','j.Firmeza_apelacion_jnci_jrci','j.Parte_contro_ante_jrci','pa7.Nombre_parametro as NomPresentaJrci',
             'j.Nombre_presen_contro_jrci','j.F_contro_otra_jrci','j.Contro_origen_jrci','j.Contro_pcl_jrci','j.Contro_diagnostico_jrci','j.Contro_f_estructura_jrci','j.Contro_m_califi_jrci','j.Reposicion_dictamen_jrci',
             'j.N_dictamen_reposicion_jrci','j.F_dictamen_reposicion_jrci','j.Origen_reposicion_jrci','pa8.Nombre_parametro as Nombre_origenRepoJrci','j.Manual_reposicion_jrci','d2.Nombre_decreto as Nombre_decretoRepoJrci',
             'j.Total_deficiencia_reposicion_jrci','j.Total_reposicion_jrci','j.Total_discapacidad_reposicion_jrci','j.Total_minusvalia_reposicion_jrci','j.Porcentaje_pcl_reposicion_jrci','j.Rango_pcl_reposicion_jrci'
             ,'j.F_estructuracion_contro_reposicion_jrci','j.Resumen_dictamen_reposicion_jrci','j.F_noti_dictamen_reposicion_jrci','j.F_radica_dictamen_reposicion_jrci','j.F_maxima_apelacion_jrci','j.Decision_dictamen_repo_jrci'
-            ,'j.Decision_dictamen_repo_jrci','j.Causal_decision_repo_jrci','pa9.Nombre_parametro as NombreCausalRepo','j.Sustentacion_concepto_repo_jrci','j.F_sustenta_reposicion_jrci','j.F_noti_apela_recurso_jrci'
+            ,'j.Decision_dictamen_repo_jrci','j.Causal_decision_repo_jrci','j.Sustentacion_concepto_repo_jrci','j.F_sustenta_reposicion_jrci','j.F_noti_apela_recurso_jrci'
             ,'j.N_radicado_apela_recurso_jrci','j.T_propia_apela_recurso_jrci','j.Correspon_pago_jnci','j.N_orden_pago_jnci','j.F_orden_pago_jnci','j.F_radi_pago_jnci','j.N_acta_ejecutario_emitida_jrci'
             ,'j.F_acta_ejecutoria_emitida_jrci','j.F_firmeza_dictamen_jrci','j.Dictamen_firme_jrci','j.N_dictamen_jnci_emitido','j.F_dictamen_jnci_emitido','j.Origen_jnci_emitido','pa10.Nombre_parametro as NombreOrigen'
             ,'j.Manual_de_califi_jnci_emitido','pa11.Nombre_parametro as Nombre_decretoJnci','j.Total_deficiencia_jnci_emitido','j.Total_rol_ocupacional_jnci_emitido','j.Total_discapacidad_jnci_emitido'
@@ -1760,10 +1760,10 @@ class ControversiaJuntasController extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'j.Jrci_califi_invalidez', '=', 'sie.Id_Entidad')
             ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa4', 'j.Origen_controversia', '=', 'pa4.Id_Parametro')
             ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa5', 'j.Origen_jrci_emitido', '=', 'pa5.Id_Parametro')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa6', 'j.Causal_decision_jrci', '=', 'pa6.Id_Parametro')
+            //->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa6', 'j.Causal_decision_jrci', '=', 'pa6.Id_Parametro')
             ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa7', 'j.Parte_contro_ante_jrci', '=', 'pa7.Id_Parametro')
             ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa8', 'j.Origen_reposicion_jrci', '=', 'pa8.Id_Parametro')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa9', 'j.Causal_decision_repo_jrci', '=', 'pa9.Id_Parametro')
+            //->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa9', 'j.Causal_decision_repo_jrci', '=', 'pa9.Id_Parametro')
             ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa10', 'j.Origen_jnci_emitido', '=', 'pa10.Id_Parametro')
             ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa11', 'j.Manual_de_califi_jnci_emitido', '=', 'pa11.Id_Parametro')
             ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d', 'j.Manual_de_califi', '=', 'd.Id_Decreto')

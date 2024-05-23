@@ -307,6 +307,12 @@
                                                     <input type="text" class="form-control" name="estado_facturacion" id="estado_facturacion" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Estado_Facturacion)){echo $array_datos_calificacionJuntas[0]->Estado_Facturacion;}?>" readonly>
                                                 </div>
                                             </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label for="">Fecha de cierre</label>
+                                                    <input type="date" class="form-control" name="fecha_cierre" id="fecha_cierre" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($array_datos_calificacionJuntas[0]->F_cierre)){echo $array_datos_calificacionJuntas[0]->F_cierre;}?>">
+                                                </div>
+                                            </div>
                                             <div class="col-12">
                                                 <div class="form-group">
                                                     <label for="cargue_documentos">Cargue Documento Historial:</label>                                                
@@ -535,8 +541,8 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="f_notifi_afiliado">Fecha notificación al afiliado<span style="color: red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="f_notifi_afiliado" id="f_notifi_afiliado" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado)) { echo $arrayinfo_controvertido[0]->F_notifi_afiliado;} ?>" required>
+                                                <label for="f_notifi_afiliado">Fecha notificación al afiliado</span></label>
+                                                <input type="date" class="form-control" name="f_notifi_afiliado" id="f_notifi_afiliado" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado)) { echo $arrayinfo_controvertido[0]->F_notifi_afiliado;} ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -586,8 +592,8 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="n_radicado_entrada_contro"> N° Radicado Entrada - Controversia primera calificación<span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="n_radicado_entrada_contro" id="n_radicado_entrada_contro" value="<?php if(!empty($arrayinfo_controvertido[0]->N_radicado_entrada_contro)) { echo $arrayinfo_controvertido[0]->N_radicado_entrada_contro;} ?>" required>
+                                                <label for="n_radicado_entrada_contro"> N° Radicado Entrada - Controversia primera calificación</label>
+                                                <input type="text" class="form-control" name="n_radicado_entrada_contro" id="n_radicado_entrada_contro" value="<?php if(!empty($arrayinfo_controvertido[0]->N_radicado_entrada_contro)) { echo $arrayinfo_controvertido[0]->N_radicado_entrada_contro;} ?>">
                                             </div>
                                         </div>
                                         <div class="col-12">
@@ -636,15 +642,21 @@
                                             </div>
                                         </div>
                                         <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="f_contro_primer_califi">Fecha de controversia primera calificación<br> <span style="color: red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="f_contro_primer_califi" id="f_contro_primer_califi" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_primer_califi)) { echo $arrayinfo_controvertido[0]->F_contro_primer_califi;} ?>" required>
+                                            <div class="form-group mt-4">
+                                                <label for="f_contro_primer_califi">Fecha de controversia primera calificación</label>
+                                                <input type="date" class="form-control" name="f_contro_primer_califi" id="f_contro_primer_califi" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_primer_califi)) { echo $arrayinfo_controvertido[0]->F_contro_primer_califi;} ?>" >
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="f_contro_radi_califi">Fecha de radicación controversia primera calificación <span style="color: red;">(*)</span></label>
                                                 <input type="date" class="form-control" name="f_contro_radi_califi" id="f_contro_radi_califi" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_radi_califi)) { echo $arrayinfo_controvertido[0]->F_contro_radi_califi;} ?>" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group m-4">
+                                                <label for="fecha_plazo_contro">Fecha plazo para Controversia</label>
+                                                <input type="date" name="fecha_plazo_contro" id="fecha_plazo_contro" class="form-control" max="{{now()->format('Y-m-d')}}" value="<?php echo $arrayinfo_controvertido[0]->F_plazo_controversia ?? '' ?>" readonly>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -663,6 +675,12 @@
                                                         <option value="">Seleccione una opción</option>
                                                     @endif
                                                 </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="observaciones_contro">Observaciones</label>
+                                                <textarea name="observaciones_contro" id="observaciones_contro" cols="10" rows="4" class="form-control"><?php echo $arrayinfo_controvertido[0]->Observaciones ?? '' ?></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -702,8 +720,8 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="f_solicitud_pago">Fecha solicitud de pago<span style="color: red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="f_solicitud_pago" id="f_solicitud_pago" max="{{now()->format('Y-m-d')}}" required>
+                                                <label for="f_solicitud_pago">Fecha solicitud de pago</label>
+                                                <input type="date" class="form-control" name="f_solicitud_pago" id="f_solicitud_pago" max="{{now()->format('Y-m-d')}}" >
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -734,8 +752,8 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="f_pago_radicacion">Fecha de radicación pago<span style="color: red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="f_pago_radicacion" id="f_pago_radicacion" max="{{now()->format('Y-m-d')}}" required>
+                                                <label for="f_pago_radicacion">Fecha de radicación pago</label>
+                                                <input type="date" class="form-control" name="f_pago_radicacion" id="f_pago_radicacion" max="{{now()->format('Y-m-d')}}">
                                             </div>
                                         </div>
                                     </div>

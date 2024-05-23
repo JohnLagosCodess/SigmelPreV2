@@ -489,7 +489,27 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="card-footer">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                @if (empty($info_adicion_dx[0]->ID_evento))
+                                                    <input type="submit" class="btn btn-info" id="btn_guardar_info_evento" value="Guardar">    
+                                                @else
+                                                    <input type="submit" class="btn btn-info" id="btn_guardar_info_evento" value="Actualizar">    
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row d-none" id="mostrar_mensaje_1">
+                                            <div  class="col-12">
+                                                <div class="form-group">
+                                                    <div class="mensaje_agrego_1 alert alert-success" role="alert"></div>
+                                                </div>
+                                            </div>
+                                        </div> 
+                                    </div>
                                 </div>
+                                <br>
 
                                 {{-- Justificación para revisión del Origen --}}
                                 <div class="card-info">
@@ -656,7 +676,27 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="card-footer">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                @if (empty($info_adicion_dx[0]->ID_evento))
+                                                    <input type="submit" class="btn btn-info" id="btn_guardar_relacion_docs" value="Guardar">    
+                                                @else
+                                                    <input type="submit" class="btn btn-info" id="btn_guardar_relacion_docs" value="Actualizar">    
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row d-none" id="mostrar_mensaje_2">
+                                            <div  class="col-12">
+                                                <div class="form-group">
+                                                    <div class="mensaje_agrego_2 alert alert-success" role="alert"></div>
+                                                </div>
+                                            </div>
+                                        </div> 
+                                    </div>
                                 </div>
+                                <br>
 
                                 {{-- Diagnóstico motivo de calificación --}}
                                 <div class="card-info" id="contenedor_diag_moti_califi">
@@ -781,12 +821,32 @@
                                             <div class="col-12">
                                                 <div class="form-group">
                                                     <label for="sustentacion_adicion_dx" class="col-form-label">Sustentación Adición DX <span style="color:red;">(*)</span></label>
-                                                    <textarea class="form-control sustentacion_adicion_dx" name="sustentacion_adicion_dx" id="sustentacion_adicion_dx" rows="2" required><?php if(!empty($info_adicion_dx[0]->Sustentacion_Adicion_Dx)){echo $info_adicion_dx[0]->Sustentacion_Adicion_Dx;}?></textarea>
+                                                    <textarea class="form-control sustentacion_adicion_dx" name="sustentacion_adicion_dx" id="sustentacion_adicion_dx" rows="8" required><?php if(!empty($info_adicion_dx[0]->Sustentacion_Adicion_Dx)){echo $info_adicion_dx[0]->Sustentacion_Adicion_Dx;}?></textarea>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="card-footer">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                @if (empty($info_adicion_dx[0]->ID_evento))
+                                                    <input type="submit" class="btn btn-info" id="btn_guardar_diagnosticos_adicionados" value="Guardar">    
+                                                @else
+                                                    <input type="submit" class="btn btn-info" id="btn_guardar_diagnosticos_adicionados" value="Actualizar">    
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row d-none" id="mostrar_mensaje_3">
+                                            <div  class="col-12">
+                                                <div class="form-group">
+                                                    <div class="mensaje_agrego_3 alert alert-success" role="alert"></div>
+                                                </div>
+                                            </div>
+                                        </div> 
+                                    </div>
                                 </div>
+                                <br>
 
                                 {{-- Calificación del Origen --}}
                                 <div class="card-info">

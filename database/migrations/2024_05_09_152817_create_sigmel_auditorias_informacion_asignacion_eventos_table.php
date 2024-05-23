@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::connection('sigmel_auditorias')->create('sigmel_auditorias_informacion_asignacion_eventos', function (Blueprint $table) {
             $table->increments('Id_Aud_Asignacion');
             $table->integer('Aud_Id_Asignacion');
-            $table->string('Aud_ID_evento', 15);
+            $table->string('Aud_ID_evento', 20);
             $table->integer('Aud_Id_proceso');
             $table->enum('Aud_Visible_Nuevo_Proceso', ['Si','No'])->default('Si')->nullable();
             $table->integer('Aud_Id_servicio');

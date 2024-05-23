@@ -163,6 +163,26 @@ $(document).ready(function(){
             }
         }
     });
+
+    //Dependiendo del selector seleccionado buscaremos su nombre asociado
+    $("#parte_controvierte_califi").change(function(){
+        let controvertido = {
+            '_token': token,
+            'parametro' : 'parte_controvierte',
+            'controvierte' : $(this).find('option:selected').text(),
+            'evento' : $("#Id_Evento").val()
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/selectoresJuntas',
+            data: controvertido,
+            success:function(data) {
+                $("#nombre_controvierte_califi").val(data.Nombre);
+            }
+        });
+    });
+
     // Listado Junta Jrci Invalidez
     let datos_lista_juntas_invalidez = {
         '_token': token,
@@ -470,6 +490,7 @@ $(document).ready(function(){
         formData.append('estado_facturacion', $('#estado_facturacion').val());
         formData.append('profesional', $('#profesional').val());
         formData.append('descripcion_accion', $('#descripcion_accion').val());
+        formData.append('fecha_cierre', $('#fecha_cierre').val());
         formData.append('banderaguardar', $('#bandera_accion_guardar_actualizar').val());
 
         $.ajax({
@@ -798,6 +819,7 @@ $(document).ready(function(){
             'f_notifi_afiliado': $('#f_notifi_afiliado').val(),
             'termino_contro_califi': $('#termino_contro_califi').val(),
             'jrci_califi_invalidez': $('#jrci_califi_invalidez').val(),
+            'Observaciones': $('#observaciones_contro').val(),
             'bandera_controversia_guardar_actualizar': $('#guardar_datos_controversia').val(),
         }
         document.querySelector("#guardar_datos_controversia").disabled = true;

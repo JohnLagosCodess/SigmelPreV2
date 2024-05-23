@@ -69,7 +69,7 @@ class CalificacionJuntasController extends Controller
         ->select('j.ID_evento','j.Enfermedad_heredada','j.F_transferencia_enfermedad','j.Primer_calificador','pa.Nombre_parametro as Calificador'
         ,'j.Nom_entidad','j.N_dictamen_controvertido','j.F_dictamen_controvertido','j.N_siniestro','j.F_notifi_afiliado','j.Parte_controvierte_califi','pa2.Nombre_parametro as ParteCalificador','j.Nombre_controvierte_califi',
         'j.N_radicado_entrada_contro','j.Contro_origen','j.Contro_pcl','j.Contro_diagnostico','j.Contro_f_estructura','j.Contro_m_califi',
-        'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','sie.Nombre_entidad as JrciNombre')
+        'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','sie.Nombre_entidad as JrciNombre','j.F_plazo_controversia','j.Observaciones')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa', 'j.Primer_calificador', '=', 'pa.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa2', 'j.Parte_controvierte_califi', '=', 'pa2.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'j.Jrci_califi_invalidez', '=', 'sie.Id_Entidad')
@@ -172,8 +172,13 @@ class CalificacionJuntasController extends Controller
         ->where('p.Id_Servicio',  '=', $array_datos_calificacionJuntas[0]->Id_Servicio)
         ->get();
         $SubModulo=$TraeVista[0]->nombre_renderizar; //Enviar a la vista del SubModulo    
+        
+        //Se agregar principalmente por la ficha psb026, desdepues de la implementacion deberia ser auto. a traves del trigger, para los registros anteriores se agregar las siguientes lineas, el cual anexa la fecha de plazo
+        if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado) && empty($arrayinfo_controvertido[0]->F_plazo_controversia)){
+            $fecha_controversia = DB::select( 'SELECT ' . getDatabaseName('sigmel_gestiones') ."fnCalcularDiasHabilesV2('{$arrayinfo_controvertido[0]->F_notifi_afiliado}') as Fecha");
 
-
+            $arrayinfo_controvertido[0]->F_plazo_controversia = $fecha_controversia[0]->Fecha;
+        }
         return view('coordinador.calificacionJuntas', compact('user','array_datos_calificacionJuntas','arraylistado_documentos','arrayinfo_afiliado',
         'arrayinfo_controvertido','arrayinfo_pagos','listado_documentos_solicitados','dato_validacion_no_aporta_docs',
         'arraycampa_documento_solicitado','consecutivo','hitorialAgregarSeguimiento','SubModulo', 'Id_servicio'));
@@ -220,6 +225,14 @@ class CalificacionJuntasController extends Controller
 
             $info_listado_contro_califi = json_decode(json_encode($listado_contro_califi, true));
             return response()->json($info_listado_contro_califi);
+        }
+        // Obtenemos la parte que controvierte
+        if($parametro == 'parte_controvierte'){
+            $controvierte = DB::select( 'SELECT ' . getDatabaseName('sigmel_gestiones') ."ObtenerControvierte(:controvierte,:evento) as Nombre",[
+                'controvierte' => $request->controvierte,
+                'evento' => $request->evento,
+            ]);
+            return response()->json($controvierte[0]);
         }
         // Listado Junta Jrci Invalidez
         if($parametro == 'lista_juntas_invalidez'){
@@ -496,26 +509,6 @@ class CalificacionJuntasController extends Controller
 
         // validacion de bandera para guardar o actualizar
         if ($request->banderaguardar == 'Guardar') {
-               
-            // insercion de datos a la tabla de sigmel_informacion_accion_eventos
-    
-            $datos_info_registrarCalifcacionJuntas= [
-                'ID_evento' => $request->newId_evento,
-                'Id_Asignacion' => $request->newId_asignacion,
-                'Id_proceso' => $request->Id_proceso,
-                'Modalidad_calificacion' => 'N/A',
-                // 'F_accion' => $request->f_accion,
-                'F_accion' => $date_time,
-                'Accion' => $request->accion,
-                'F_Alerta' => $request->fecha_alerta,
-                'Enviar' => $request->enviar,
-                'Estado_Facturacion' => $request->estado_facturacion,
-                'Causal_devolucion_comite' => 'N/A',
-                'Descripcion_accion' => $request->descripcion_accion,
-                'Nombre_usuario' => $nombre_usuario,
-                'F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
-                'F_registro' => $date,
-            ];
 
             // Extraemos el id estado de la tabla de parametrizaciones dependiendo del
             // id del cliente, id proceso, id servicio, id accion. Este id irá como estado inicial
@@ -579,6 +572,31 @@ class CalificacionJuntasController extends Controller
                 $asignacion_profesional = null;                    
             }
 
+            // insercion de datos a la tabla de sigmel_informacion_accion_eventos
+            $datos_info_registrarCalifcacionJuntas= [
+                'ID_evento' => $request->newId_evento,
+                'Id_Asignacion' => $request->newId_asignacion,
+                'Id_proceso' => $request->Id_proceso,
+                'Modalidad_calificacion' => 'N/A',
+                // 'F_accion' => $request->f_accion,
+                'F_accion' => $date_time,
+                'Accion' => $request->accion,
+                'F_Alerta' => $request->fecha_alerta,
+                'Enviar' => $request->enviar,
+                'Estado_Facturacion' => $request->estado_facturacion,
+                'Causal_devolucion_comite' => 'N/A',
+                'Descripcion_accion' => $request->descripcion_accion,
+                'F_cierre' => $request->fecha_cierre,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
+                'F_registro' => $date,
+            ];
+
+            sigmel_informacion_accion_eventos::on('sigmel_gestiones')->insert($datos_info_registrarCalifcacionJuntas);
+
+            sleep(2);
+
+            // Actualizacion tabla sigmel_informacion_asignacion_eventos
             $datos_info_actualizarAsignacionEvento= [ 
                 'Id_accion' => $request->accion,
                 'Id_Estado_evento' => $Id_Estado_evento,             
@@ -591,10 +609,6 @@ class CalificacionJuntasController extends Controller
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
                 'F_registro' => $date,
             ];
-    
-            sigmel_informacion_accion_eventos::on('sigmel_gestiones')->insert($datos_info_registrarCalifcacionJuntas);
-
-            sleep(2);
 
             sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_actualizarAsignacionEvento);
@@ -669,26 +683,6 @@ class CalificacionJuntasController extends Controller
 
         }elseif ($request->banderaguardar == 'Actualizar') {
             
-            // actualizacion de datos a la tabla de sigmel_informacion_accion_eventos
-
-            $datos_info_registrarCalifcacionJuntas= [
-                'ID_evento' => $request->newId_evento,
-                'Id_Asignacion' => $request->newId_asignacion,
-                'Id_proceso' => $request->Id_proceso,
-                'Modalidad_calificacion' => 'N/A',
-                // 'F_accion' => $request->f_accion,
-                'F_accion' => $date_time,
-                'Accion' => $request->accion,
-                'F_Alerta' => $request->fecha_alerta,
-                'Enviar' => $request->enviar,
-                'Estado_Facturacion' => $request->estado_facturacion,
-                'Causal_devolucion_comite' => 'N/A',
-                'Descripcion_accion' => $request->descripcion_accion,
-                'Nombre_usuario' => $nombre_usuario,
-                'F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
-                'F_registro' => $date,
-            ];
-
             // Extraemos el id estado de la tabla de parametrizaciones dependiendo del
             // id del cliente, id proceso, id servicio, id accion. Este id irá como estado inicial
             // en la creación de un evento
@@ -751,6 +745,32 @@ class CalificacionJuntasController extends Controller
                 $asignacion_profesional = null;                    
             }
 
+            // actualizacion de datos a la tabla de sigmel_informacion_accion_eventos
+            $datos_info_registrarCalifcacionJuntas= [
+                'ID_evento' => $request->newId_evento,
+                'Id_Asignacion' => $request->newId_asignacion,
+                'Id_proceso' => $request->Id_proceso,
+                'Modalidad_calificacion' => 'N/A',
+                // 'F_accion' => $request->f_accion,
+                'F_accion' => $date_time,
+                'Accion' => $request->accion,
+                'F_Alerta' => $request->fecha_alerta,
+                'Enviar' => $request->enviar,
+                'Estado_Facturacion' => $request->estado_facturacion,
+                'Causal_devolucion_comite' => 'N/A',
+                'Descripcion_accion' => $request->descripcion_accion,
+                'F_cierre' => $request->fecha_cierre,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
+                'F_registro' => $date,
+            ];
+
+            sigmel_informacion_accion_eventos::on('sigmel_gestiones')
+            ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_registrarCalifcacionJuntas);
+
+            sleep(2);
+
+            // Actualizar tabla sigmel_informacion_asignacion_eventos
             $datos_info_actualizarAsignacionEvento= [      
                 'Id_accion' => $request->accion,
                 'Id_Estado_evento' => $Id_Estado_evento,        
@@ -764,9 +784,6 @@ class CalificacionJuntasController extends Controller
                 'F_registro' => $date,
             ];
 
-            sigmel_informacion_accion_eventos::on('sigmel_gestiones')
-            ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_registrarCalifcacionJuntas);
-            sleep(2);
             sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_actualizarAsignacionEvento);
 
@@ -861,9 +878,9 @@ class CalificacionJuntasController extends Controller
         ->where('EsFestivo', 0)
         ->count();
         if($conteoDias > 10){
-            $terminos='Fuera de términos';
+                $terminos='Fuera de términos';
         }else{
-            $terminos='Dentro de términos';  
+                $terminos='Dentro de términos';  
         }
         // validacion de bandera para guardar o actualizar
         // insercion de datos a la tabla de sigmel_informacion_controversia_juntas_eventos
@@ -972,6 +989,7 @@ class CalificacionJuntasController extends Controller
                 'Jrci_califi_invalidez' => $request->jrci_califi_invalidez,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Observaciones' => $request->Observaciones
             ];
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')->insert($datos_info_controversia);
 
@@ -999,6 +1017,7 @@ class CalificacionJuntasController extends Controller
                 'Jrci_califi_invalidez' => $request->jrci_califi_invalidez,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Observaciones' => $request->Observaciones
             ];
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_actuali_controversia);

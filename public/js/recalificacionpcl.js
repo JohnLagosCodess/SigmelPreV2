@@ -70,6 +70,11 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    $(".dominancia").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
     // llenado de selectores
     var token = $('input[name=_token]').val();
 
@@ -373,6 +378,30 @@ $(document).ready(function(){
             for (let i = 0; i < tipoEnfermedadCalifiPCl.length; i++) {
                 if (data[tipoEnfermedadCalifiPCl[i]]['Id_Parametro'] != TipoEnfermedad) {                    
                     $('#tipo_enfermedad').append('<option value="'+data[tipoEnfermedadCalifiPCl[i]]['Id_Parametro']+'">'+data[tipoEnfermedadCalifiPCl[i]]['Nombre_parametro']+'</option>');
+                }
+            }
+        }
+    });
+
+    // listado dominancia
+    let datos_listado_dominancia = {
+        '_token': token,
+        'parametro':"lista_dominancia"
+    }
+
+    $.ajax({
+        type:'POST',
+        url:'/selectoresCalificacionTecnicaPCL',
+        data: datos_listado_dominancia,
+        success:function(data){
+            let bd_id_dominancia = $('#bd_id_dominancia').val();
+            $('#dominancia').append('<option value="">Seleccione</option>');
+            let lista_dominancia = Object.keys(data);
+            for (let i = 0; i < lista_dominancia.length; i++) {
+                if (data[lista_dominancia[i]]['Id_Dominancia'] == bd_id_dominancia) {                    
+                    $('#dominancia').append('<option value="'+data[lista_dominancia[i]]['Id_Dominancia']+'" selected>'+data[lista_dominancia[i]]['Nombre_dominancia']+'</option>');
+                }else{
+                    $('#dominancia').append('<option value="'+data[lista_dominancia[i]]['Id_Dominancia']+'">'+data[lista_dominancia[i]]['Nombre_dominancia']+'</option>');
                 }
             }
         }
@@ -1864,8 +1893,11 @@ $(document).ready(function(){
             });
             var otros = $('#descripcion_otros').val();
             var descripcionEnfermedad = $('#descripcion_enfermedad').val();
+            var dominancia = $("#dominancia").val();
+            var id_afiliado = $("#id_afiliado").val();
             var bandera_decreto_guardar_actualizar = $('#bandera_decreto_guardar_actualizar').val();
             let token = $('input[name=_token]').val();
+
             var datos_agregarDecretoDicRelFun ={
                 '_token': token,
                 'ValorDataExamenesInterconsultas':ValorDataExamenesInterconsultas,
@@ -1888,6 +1920,8 @@ $(document).ready(function(){
                 'Relacion_Documentos':Relacion_Documentos,
                 'descripcion_otros':otros,
                 'descripcion_enfermedad':descripcionEnfermedad,
+                'dominancia': dominancia,
+                'id_afiliado': id_afiliado,
                 'bandera_decreto_guardar_actualizar':bandera_decreto_guardar_actualizar,
             }
             $.ajax({
