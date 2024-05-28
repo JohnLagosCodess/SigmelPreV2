@@ -289,7 +289,7 @@ class RecalificacionPCLController extends Controller
                         'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Dominancia', 'sidae.Deficiencia', 
                         'sidae.Total_deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
                         ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Id_Asignacion', $eventoAsigancion_Recalifi], ['sidae.Estado_Recalificacion', '=', 'Activo']])
-                        ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+                        ->orderByRaw("CAST(sidae.Total_deficiencia AS DECIMAL(10,2)) DESC")
                         ->get();
             
                         $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
@@ -593,7 +593,7 @@ class RecalificacionPCLController extends Controller
                     'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Dominancia', 'sidae.Deficiencia', 
                     'sidae.Total_deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
                     ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Id_Asignacion',$Id_asignacion_recali], ['sidae.Estado_Recalificacion', '=', 'Activo']])
-                    ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+                    ->orderByRaw("CAST(sidae.Total_deficiencia AS DECIMAL(10,2)) DESC")
                     ->get(); 
               
                     $array_agudeza_Auditivare = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
@@ -1115,7 +1115,7 @@ class RecalificacionPCLController extends Controller
                             'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Dominancia', 'sidae.Deficiencia', 
                             'sidae.Total_deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
                             ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Id_Asignacion', $validar_estado_decreto[0]->Id_Asignacion_decreto], ['sidae.Estado', '=', 'Activo']])
-                            ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+                            ->orderByRaw("CAST(sidae.Total_deficiencia AS DECIMAL(10,2)) DESC")
                             ->get();
                 
                             $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
@@ -1205,7 +1205,7 @@ class RecalificacionPCLController extends Controller
                             'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Dominancia', 'sidae.Deficiencia', 
                             'sidae.Total_deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
                             ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Estado', '=', 'Activo']])
-                            ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+                            ->orderByRaw("CAST(sidae.Total_deficiencia AS DECIMAL(10,2)) DESC")
                             ->get();
                 
                             $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
@@ -1421,7 +1421,7 @@ class RecalificacionPCLController extends Controller
                         'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Dominancia', 'sidae.Deficiencia', 
                         'sidae.Total_deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
                         ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Id_Asignacion',$Id_asignacion_recali], ['sidae.Estado_Recalificacion', '=', 'Activo']])
-                        ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+                        ->orderByRaw("CAST(sidae.Total_deficiencia AS DECIMAL(10,2)) DESC")
                         ->get(); 
                   
                         $array_agudeza_Auditivare = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
@@ -5496,7 +5496,7 @@ class RecalificacionPCLController extends Controller
         ->select('sidae.Id_tabla', 'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.FU', 'sidae.CFM1', 'sidae.CFM2', 
         'sidae.Clase_Final', 'sidae.Dominancia', 'sidae.Deficiencia', 'sidae.Total_deficiencia', 'sidae.CAT', 'sidae.MSD')
         ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Estado_Recalificacion','Activo']])
-        ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+        ->orderByRaw("CAST(sidae.Total_deficiencia AS DECIMAL(10,2)) DESC")
         ->get();  
         
         $Suma_combinada_fc = $array_datos_info_dictamen[0]->Suma_combinada;
@@ -5937,7 +5937,7 @@ class RecalificacionPCLController extends Controller
         $array_deficiencias_alteraciones = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')        
         ->select('sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Total_deficiencia')
         ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Estado_Recalificacion', 'Activo']])
-        ->orderByRaw("CAST(sidae.Deficiencia AS UNSIGNED) DESC")
+        ->orderByRaw("CAST(sidae.Deficiencia AS DECIMAL(10,2)) DESC")
         ->get();  
         
         $Suma_combinada_fc = $array_datos_info_dictamen[0]->Suma_combinada;        
