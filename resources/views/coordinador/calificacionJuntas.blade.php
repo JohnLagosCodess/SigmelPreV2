@@ -227,6 +227,18 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
+                                                <label for="fuente_info_juntas">Fuente de Información</label>
+                                                <select class="custom-select" name="fuente_info_juntas" id="fuente_info_juntas">
+                                                    @if (!empty($array_datos_calificacionJuntas[0]->Fuente_informacion))
+                                                    <option value="{{$array_datos_calificacionJuntas[0]->Fuente_informacion}}" selected>{{$array_datos_calificacionJuntas[0]->Nombre_Fuente_informacion}}</option>
+                                                    @else
+                                                        <option value="">Seleccione una opción</option>
+                                                    @endif
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
                                                 <label for="modalidad_documentos">Documentos adjuntos</label><br>
                                                 <a href="javascript:void(0);" class="text-dark text-md" id="cargue_docs" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
                                             </div>

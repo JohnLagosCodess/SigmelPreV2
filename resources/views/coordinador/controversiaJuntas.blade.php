@@ -239,7 +239,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <br>
-                                                <label for="origen_controversia">Origen Dx</label>
+                                                <label for="origen_controversia">Origen</label>
                                                 <select class="custom-select origen_controversia" name="origen_controversia" id="origen_controversia" style="width: 100%;">
                                                     @if (!empty($arrayinfo_controvertido[0]->Origen_controversia))
                                                             <option value="{{$arrayinfo_controvertido[0]->Origen_controversia}}" selected>{{$arrayinfo_controvertido[0]->OrigenContro}}</option>
@@ -272,7 +272,7 @@
                                         <div class="col-4 rol_ocupacional" <?php if(!empty($arrayinfo_controvertido[0]->Manual_de_califi) && $arrayinfo_controvertido[0]->Manual_de_califi=='1'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
                                             <div class="form-group" >
                                                 <br>
-                                                <label for="total_rol_ocupacional">Total Rol ocupacional <span style="color: red;">(*)</span></label>
+                                                <label for="total_rol_ocupacional" style="font-size:0.9em;">Total Laboralmente activo / Rol ocupacional  <span style="color: red;">(*)</span></label>
                                                 <input type="text" class="form-control" name="total_rol_ocupacional" id="total_rol_ocupacional" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_rol_ocupacional)) { echo $arrayinfo_controvertido[0]->Total_rol_ocupacional;} ?>">
                                             </div>
                                         </div>
@@ -424,7 +424,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <br>
-                                                <label for="origen_jrci_emitido">Origen Dx (JRCI)</label>
+                                                <label for="origen_jrci_emitido">Origen (JRCI)</label>
                                                 <select class="custom-select origen_jrci_emitido" name="origen_jrci_emitido" id="origen_jrci_emitido" style="width: 100%;">
                                                     @if (!empty($arrayinfo_controvertido[0]->Origen_jrci_emitido))
                                                             <option value="{{$arrayinfo_controvertido[0]->Origen_jrci_emitido}}" selected>{{$arrayinfo_controvertido[0]->OrigenEmitidoJrci}}</option>
@@ -434,10 +434,11 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div <?php if(!empty($arrayinfo_controvertido[0]->Contro_pcl)){ ?> class="col-4" <?php }else{ ?> class="col-4 text-center d-none" <?php } ?> >
-                                            <div class="form-group">
+                                        @if ($array_control['Dictamen_emitido_JRCI'] || $array_control['Servicios'])
+                                            <div class="col-4">
+                                                <div class="form-group">
                                                 <br>
-                                                <label for="manual_de_califi_jrci_emitido">Manual de calificación <span style="color: red;">(*)</span></label>
+                                                <label for="manual_de_califi_jrci_emitido">Manual de calificación (JRCI) <span style="color: red;">(*)</span></label>
                                                 <select class="custom-select manual_de_califi_jrci_emitido" name="manual_de_califi_jrci_emitido" id="manual_de_califi_jrci_emitido" style="width: 100%;">
                                                     @if (!empty($arrayinfo_controvertido[0]->Manual_de_califi_jrci_emitido))
                                                             <option value="{{$arrayinfo_controvertido[0]->Manual_de_califi_jrci_emitido}}" selected>{{$arrayinfo_controvertido[0]->Nombre_decretoJrci}}</option>
@@ -446,56 +447,63 @@
                                                     @endif
                                                 </select>
                                             </div>
-                                        </div>
-                                        <div <?php if(!empty($arrayinfo_controvertido[0]->Contro_pcl)){ ?> class="col-4" <?php }else{ ?> class="col-4 text-center d-none" <?php } ?>>
+                                            </div>
+                                        <div class="col-4">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="total_deficiencia_jrci_emitido">Total Deficiencia (JRCI) <span style="color: red;">(*)</span></label>
                                                 <input type="text" class="form-control" name="total_deficiencia_jrci_emitido" id="total_deficiencia_jrci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_deficiencia_jrci_emitido)) { echo $arrayinfo_controvertido[0]->Total_deficiencia_jrci_emitido;} ?>">
                                             </div>
                                         </div>
-                                        <div class="col-4 rol_ocupacional_jrci_emitido" <?php if(!empty($arrayinfo_controvertido[0]->Manual_de_califi_jrci_emitido) && $arrayinfo_controvertido[0]->Manual_de_califi_jrci_emitido=='1'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
-                                            <div class="form-group" >
+                                        @endif
+                                        @if ( (!empty($arrayinfo_controvertido[0]->Manual_de_califi_jrci_emitido) && $arrayinfo_controvertido[0]->Manual_de_califi_jrci_emitido=='1' ) || $array_control['Servicios'])
+                                            <div class="col-4 rol_ocupacional_jrci_emitido" >
+                                                <div class="form-group" >
                                                 <br>
-                                                <label for="total_rol_ocupacional_jrci_emitido">Total Rol ocupacional (JRCI) <span style="color: red;">(*)</span></label>
+                                                <label for="total_rol_ocupacional_jrci_emitido" style='font-size:0.8em;'>Total Laboralmente activo / Rol ocupacional (JRCI) <span style="color: red;">(*)</span></label>
                                                 <input type="text" class="form-control" name="total_rol_ocupacional_jrci_emitido" id="total_rol_ocupacional_jrci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_rol_ocupacional_jrci_emitido)) { echo $arrayinfo_controvertido[0]->Total_rol_ocupacional_jrci_emitido;} ?>">
                                             </div>
                                         </div>
-                                        <div class="col-4 total_discapaci_jrci_emitido" <?php if(!empty($arrayinfo_controvertido[0]->Manual_de_califi_jrci_emitido)&& $arrayinfo_controvertido[0]->Manual_de_califi_jrci_emitido=='3'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
+                                        @endif
+                                        @if ((!empty($arrayinfo_controvertido[0]->Manual_de_califi_jrci_emitido) && $arrayinfo_controvertido[0]->Manual_de_califi_jrci_emitido=='1') || $array_control['Servicios'])
+                                        <div class="col-4 total_discapaci_jrci_emitido">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="total_discapacidad_jrci_emitido">Total Discapacidad (JRCI) <span style="color: red;">(*)</span></label>
                                                 <input type="text" class="form-control" name="total_discapacidad_jrci_emitido" id="total_discapacidad_jrci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_discapacidad_jrci_emitido)) { echo $arrayinfo_controvertido[0]->Total_discapacidad_jrci_emitido;} ?>">
                                             </div>
                                         </div>
-                                        <div class="col-4 total_minusva_jrci_emitido" <?php if(!empty($arrayinfo_controvertido[0]->Manual_de_califi_jrci_emitido)&& $arrayinfo_controvertido[0]->Manual_de_califi_jrci_emitido=='3'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
+                                        <div class="col-4 total_minusva_jrci_emitido">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="total_minusvalia_jrci_emitido">Total Minusvalía (JRCI) <span style="color: red;">(*)</span></label>
                                                 <input type="text" class="form-control" name="total_minusvalia_jrci_emitido" id="total_minusvalia_jrci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_minusvalia_jrci_emitido)) { echo $arrayinfo_controvertido[0]->Total_minusvalia_jrci_emitido;} ?>">
                                             </div>
                                         </div>
-                                        <div <?php if(!empty($arrayinfo_controvertido[0]->Contro_pcl)){ ?> class="col-4" <?php }else{ ?> class="col-4 text-center d-none" <?php } ?>>
+                                        @endif
+                                        @if ($array_control['Dictamen_emitido_JRCI'] || $array_control['Servicios'])
+                                        <div class="col-4">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="porcentaje_pcl_jrci_emitido">% PCL (JRCI) <span style="color: red;">(*)</span></label>
                                                 <input type="text" class="form-control" name="porcentaje_pcl_jrci_emitido" id="porcentaje_pcl_jrci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Porcentaje_pcl_jrci_emitido)) { echo $arrayinfo_controvertido[0]->Porcentaje_pcl_jrci_emitido;} ?>" readonly>
                                             </div>
                                         </div>
-                                        <div <?php if(!empty($arrayinfo_controvertido[0]->Contro_pcl)){ ?> class="col-4" <?php }else{ ?> class="col-4 text-center d-none" <?php } ?>>
+                                        <div class="col-4">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="rango_pcl_jrci_emitido">Rango PCL (JRCI) <span style="color: red;">(*)</span></label>
                                                 <input type="text" class="form-control" name="rango_pcl_jrci_emitido" id="rango_pcl_jrci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Rango_pcl_jrci_emitido)) { echo $arrayinfo_controvertido[0]->Rango_pcl_jrci_emitido;} ?>" readonly>
                                             </div>
                                         </div>
-                                    <div  <?php if(!empty($arrayinfo_controvertido[0]->Contro_pcl)){ ?> class="col-4" <?php }else{ ?> class="col-4 text-center d-none" <?php } ?>>
+                                        <div class="col-4">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="f_estructuracion_contro_jrci_emitido">Fecha de estructuración (JRCI) <span style="color: red;">(*)</span></label>
                                                 <input type="date" class="form-control" name="f_estructuracion_contro_jrci_emitido" id="f_estructuracion_contro_jrci_emitido" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_estructuracion_contro_jrci_emitido)) { echo $arrayinfo_controvertido[0]->F_estructuracion_contro_jrci_emitido;} ?>">
                                             </div>
                                         </div>
+                                        @endif
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="resumen_dictamen_jrci">Resumen Dictamen (JRCI)<span style="color: red;">(*)</span></label>
@@ -1263,7 +1271,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <br>
-                                                <label for="origen_jnci_emitido">Origen Dx (JNCI)</label>
+                                                <label for="origen_jnci_emitido">Origen (JNCI)</label>
                                                 <select class="custom-select origen_jnci_emitido" name="origen_jnci_emitido" id="origen_jnci_emitido" style="width: 100%;">
                                                     @if (!empty($arrayinfo_controvertido[0]->Origen_jnci_emitido))
                                                             <option value="{{$arrayinfo_controvertido[0]->Origen_jnci_emitido}}" selected>{{$arrayinfo_controvertido[0]->NombreOrigen}}</option>
@@ -1273,7 +1281,8 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div <?php if(!empty($arrayinfo_controvertido[0]->Contro_pcl)){ ?> class="col-4" <?php }else{ ?> class="col-4 text-center d-none" <?php } ?> >
+                                        @if ($array_control['Dictamen_emitido_JNCI'] || $array_control['Servicios'])
+                                        <div class="col-4" >
                                             <div class="form-group">
                                                 <br>
                                                 <label for="manual_de_califi_jnci_emitido">Manual de calificación (JNCI) <span style="color: red;">(*)</span></label>
@@ -1286,55 +1295,62 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div <?php if(!empty($arrayinfo_controvertido[0]->Contro_pcl)){ ?> class="col-4" <?php }else{ ?> class="col-4 text-center d-none" <?php } ?>>
+                                        <div class="col-4">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="total_deficiencia_jnci_emitido">Total Deficiencia (JNCI) <span style="color: red;">(*)</span></label>
                                                 <input type="text" class="form-control" name="total_deficiencia_jnci_emitido" id="total_deficiencia_jnci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_deficiencia_jnci_emitido)) { echo $arrayinfo_controvertido[0]->Total_deficiencia_jnci_emitido;} ?>">
                                             </div>
                                         </div>
-                                        <div class="col-4 rol_ocupacional_jnci_emitido" <?php if(!empty($arrayinfo_controvertido[0]->Manual_de_califi_jnci_emitido) && $arrayinfo_controvertido[0]->Manual_de_califi_jnci_emitido=='1'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
+                                        @endif
+                                        @if ((!empty($arrayinfo_controvertido[0]->Manual_de_califi_jnci_emitido) && $arrayinfo_controvertido[0]->Manual_de_califi_jnci_emitido=='1' ) || $array_control['Servicios'])
+                                        <div class="col-4 rol_ocupacional_jnci_emitido">
                                             <div class="form-group" >
                                                 <br>
-                                                <label for="total_rol_ocupacional_jnci_emitido">Total Rol ocupacional (JNCI) <span style="color: red;">(*)</span></label>
+                                                <label for="total_rol_ocupacional_jnci_emitido"  style='font-size:0.8em;'>Total Laboralmente activo / Rol ocupacional (JNCI) <span style="color: red;">(*)</span></label>
                                                 <input type="text" class="form-control" name="total_rol_ocupacional_jnci_emitido" id="total_rol_ocupacional_jnci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_rol_ocupacional_jnci_emitido)) { echo $arrayinfo_controvertido[0]->Total_rol_ocupacional_jnci_emitido;} ?>">
                                             </div>
                                         </div>
-                                        <div class="col-4 total_discapaci_jnci_emitido" <?php if(!empty($arrayinfo_controvertido[0]->Manual_de_califi_jnci_emitido)&& $arrayinfo_controvertido[0]->Manual_de_califi_jnci_emitido=='3'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
+                                        @endif
+                                        @if ((!empty($arrayinfo_controvertido[0]->Manual_de_califi_jnci_emitido) && $arrayinfo_controvertido[0]->Manual_de_califi_jnci_emitido=='3' ) || $array_control['Servicios'])
+                                        <div class="col-4 total_discapaci_jnci_emitido">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="total_discapacidad_jnci_emitido">Total Discapacidad (JNCI) <span style="color: red;">(*)</span></label>
                                                 <input type="text" class="form-control" name="total_discapacidad_jnci_emitido" id="total_discapacidad_jnci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_discapacidad_jnci_emitido)) { echo $arrayinfo_controvertido[0]->Total_discapacidad_jnci_emitido;} ?>">
                                             </div>
                                         </div>
-                                        <div class="col-4 total_minusva_jnci_emitido" <?php if(!empty($arrayinfo_controvertido[0]->Manual_de_califi_jnci_emitido)&& $arrayinfo_controvertido[0]->Manual_de_califi_jnci_emitido=='3'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
+                                        <div class="col-4 total_minusva_jnci_emitido">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="total_minusvalia_jnci_emitido">Total Minusvalía (JNCI) <span style="color: red;">(*)</span></label>
                                                 <input type="text" class="form-control" name="total_minusvalia_jnci_emitido" id="total_minusvalia_jnci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_minusvalia_jnci_emitido)) { echo $arrayinfo_controvertido[0]->Total_minusvalia_jnci_emitido;} ?>">
                                             </div>
                                         </div>
-                                        <div <?php if(!empty($arrayinfo_controvertido[0]->Contro_pcl)){ ?> class="col-4" <?php }else{ ?> class="col-4 text-center d-none" <?php } ?>>
+                                        @endif
+                                        @if ($array_control['Dictamen_emitido_JNCI'] || $array_control['Servicios'])
+                                        <div class="col-4" >
                                             <div class="form-group">
                                                 <br>
                                                 <label for="porcentaje_pcl_jnci_emitido">% PCL (JNCI) <span style="color: red;">(*)</span></label>
                                                 <input type="text" class="form-control" name="porcentaje_pcl_jnci_emitido" id="porcentaje_pcl_jnci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Porcentaje_pcl_jnci_emitido)) { echo $arrayinfo_controvertido[0]->Porcentaje_pcl_jnci_emitido;} ?>" readonly>
                                             </div>
                                         </div>
-                                        <div <?php if(!empty($arrayinfo_controvertido[0]->Contro_pcl)){ ?> class="col-4" <?php }else{ ?> class="col-4 text-center d-none" <?php } ?>>
+                                        <div class="col-4" >
                                             <div class="form-group">
                                                 <br>
                                                 <label for="rango_pcl_jnci_emitido">Rango PCL (JNCI) <span style="color: red;">(*)</span></label>
                                                 <input type="text" class="form-control" name="rango_pcl_jnci_emitido" id="rango_pcl_jnci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Rango_pcl_jnci_emitido)) { echo $arrayinfo_controvertido[0]->Rango_pcl_jnci_emitido;} ?>" readonly>
                                             </div>
                                         </div>
-                                    <div  <?php if(!empty($arrayinfo_controvertido[0]->Contro_pcl)){ ?> class="col-4" <?php }else{ ?> class="col-4 text-center d-none" <?php } ?>>
+                                        <div class="col-4">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="f_estructuracion_contro_jnci_emitido">Fecha de estructuración (JNCI) <span style="color: red;">(*)</span></label>
                                                 <input type="date" class="form-control" name="f_estructuracion_contro_jnci_emitido" id="f_estructuracion_contro_jnci_emitido" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_estructuracion_contro_jnci_emitido)) { echo $arrayinfo_controvertido[0]->F_estructuracion_contro_jnci_emitido;} ?>">
                                             </div>
                                         </div>
+                                        @endif
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="resumen_dictamen_jnci">Resumen Dictamen (JNCI)</span></label>

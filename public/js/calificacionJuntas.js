@@ -90,6 +90,26 @@ $(document).ready(function(){
 
     // llenado de selectores
     let token = $('input[name=_token]').val();
+    //Listado de fuente de informacion Calificacion juntas
+    let datos_lista_fuente_informacion = {
+        '_token': token,
+        'parametro':"lista_fuente_informacion",
+        'opciones': ['Afiliado','Juntas', 'PCL 45 a 49','Tutela','Otros'] //Opciones que estaran disponibles para seleccion
+    };
+    
+    $.ajax({
+        type:'POST',
+        url:'/selectoresJuntas',
+        data: datos_lista_fuente_informacion,
+        success:function(data){
+            console.log(data);
+            let fuente_info = $("#fuente_info_juntas").val();
+            for(const key in data){
+                $("#fuente_info_juntas").append(`<option value='${data[key].Id_Parametro}'>${data[key].Nombre_parametro}</option>`);
+            }
+
+        }
+    });
 
     /* FUNCIONALIDAD DESCARGA DOCUMENTO */
     $("a[id^='btn_generar_descarga_']").click(function(){
@@ -164,24 +184,10 @@ $(document).ready(function(){
         }
     });
 
-    //Dependiendo del selector seleccionado buscaremos su nombre asociado
-    $("#parte_controvierte_califi").change(function(){
-        let controvertido = {
-            '_token': token,
-            'parametro' : 'parte_controvierte',
-            'controvierte' : $(this).find('option:selected').text(),
-            'evento' : $("#Id_Evento").val()
-        };
-
-        $.ajax({
-            type:'POST',
-            url:'/selectoresJuntas',
-            data: controvertido,
-            success:function(data) {
-                $("#nombre_controvierte_califi").val(data.Nombre);
-            }
-        });
-    });
+    //Caso Informacion controversia
+    obtener_info_afiliado("#parte_controvierte_califi","#nombre_controvierte_califi"); 
+    //Caso dictamen controversia
+    obtener_info_afiliado("#primer_calificador","#nom_entidad");
 
     // Listado Junta Jrci Invalidez
     let datos_lista_juntas_invalidez = {
@@ -490,6 +496,7 @@ $(document).ready(function(){
         formData.append('estado_facturacion', $('#estado_facturacion').val());
         formData.append('profesional', $('#profesional').val());
         formData.append('descripcion_accion', $('#descripcion_accion').val());
+        formData.append('fuente_info_juntas', $('#fuente_info_juntas').val());
         formData.append('fecha_cierre', $('#fecha_cierre').val());
         formData.append('banderaguardar', $('#bandera_accion_guardar_actualizar').val());
 
@@ -5351,6 +5358,32 @@ $(document).ready(function(){
   
 
 });
+/**
+ * Obtiene la información del afiliado seleccionado y la muestra en un elemento de destino.
+ * @param {string} idSelector - El id del selector que desencadena el evento de cambio.
+ * @param {string} append - El id del elemento donde se mostrará la información del afiliado.
+ * @returns {void}
+ */
+function obtener_info_afiliado(idSelector,append) {
+    $(idSelector).change(function(){
+        let controvertido = {
+            '_token': $("input[name='_token']").val(),
+            'parametro' : 'info_afiliado',
+            'controvierte' : $(this).find('option:selected').text(),
+            'evento' : $("#Id_Evento").val()
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/selectoresJuntas',
+            data: controvertido,
+            success:function(data) {
+                console.log(data);
+                $(append).val(data.Nombre);
+            }
+        });
+    });
+}
 /* SELECT 2 LISTADO SOLICITANTES */
 function funciones_elementos_fila(num_consecutivo) {
     $("#lista_solicitante_fila_"+num_consecutivo).select2({

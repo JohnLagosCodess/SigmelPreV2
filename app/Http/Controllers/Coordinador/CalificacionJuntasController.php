@@ -213,6 +213,18 @@ class CalificacionJuntasController extends Controller
             $info_listado_tipo_entidad = json_decode(json_encode($listado_tipo_entidad, true));
             return response()->json($info_listado_tipo_entidad);
         }
+        //Listado fuentes de informacion
+        if($parametro == 'lista_fuente_informacion'){
+            $listado_fuente_info = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro', 'Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Fuente de Información'],
+                ['Estado', '=', 'activo'],
+            ])->whereIn('Nombre_Parametro',$request->opciones)->get();
+
+            return json_decode(json_encode($listado_fuente_info, true));
+
+        }
         // Listado parte que controvierte
         if($parametro == 'lista_controvierte_calificacion'){
             $listado_contro_califi = sigmel_lista_parametros::on('sigmel_gestiones')
@@ -227,7 +239,7 @@ class CalificacionJuntasController extends Controller
             return response()->json($info_listado_contro_califi);
         }
         // Obtenemos la parte que controvierte
-        if($parametro == 'parte_controvierte'){
+        if($parametro == 'info_afiliado'){
             $controvierte = DB::select( 'SELECT ' . getDatabaseName('sigmel_gestiones') ."ObtenerControvierte(:controvierte,:evento) as Nombre",[
                 'controvierte' => $request->controvierte,
                 'evento' => $request->evento,
@@ -589,6 +601,7 @@ class CalificacionJuntasController extends Controller
                 'F_cierre' => $request->fecha_cierre,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
+                'Fuente_informacion' => $request->fuente_info_juntas,
                 'F_registro' => $date,
             ];
 
@@ -762,6 +775,7 @@ class CalificacionJuntasController extends Controller
                 'F_cierre' => $request->fecha_cierre,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
+                'Fuente_informacion' => $request->fuente_info_juntas,
                 'F_registro' => $date,
             ];
 

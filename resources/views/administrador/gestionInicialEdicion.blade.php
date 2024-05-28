@@ -149,7 +149,7 @@
             <h4>Edición de Evento: {{$array_datos_info_evento[0]->ID_evento}}</h4>
             <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
         </div>
-        <form action="{{route('actualizarEvento')}}" method="POST">
+        <form action="{{route('actualizarEvento')}}" method="POST" id="gestion_inicial">
             @csrf
             <div class="card-body">
                 @if (session()->get('evento_actualizado'))
@@ -1384,10 +1384,14 @@
 
     <script>
         function OcultarbotonActualizar(){
-            $('#Edicion').addClass('d-none');
-            $('#Borrar').addClass('d-none');
-            $('#mostrar-barra2').css("display","block");
-        }
+            $("#gestion_inicial").submit(function(e) {
+                $('#Edicion, #Borrar').addClass('d-none');
+                $('#mostrar-barra2').css("display", "block");
+            return true
+    });
+
+
+    }
 
         $('#Borrar').click(function(){
             location.reload();

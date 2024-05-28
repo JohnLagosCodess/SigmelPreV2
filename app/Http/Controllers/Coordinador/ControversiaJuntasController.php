@@ -78,7 +78,7 @@ class ControversiaJuntasController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d2', 'j.Manual_reposicion_jrci', '=', 'd2.Id_Decreto')
         ->where([['j.ID_evento',  '=', $Id_evento_juntas],['j.Id_Asignacion', $Id_asignacion_juntas]])
         ->get();
-        
+        //dd($Id_evento_juntas,$Id_asignacion_juntas);
         // TRAER DATOS CIE10 (Diagnóstico motivo de calificación)
         $array_datos_diagnostico_motcalifi_contro =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
@@ -198,11 +198,59 @@ class ControversiaJuntasController extends Controller
         $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$Id_evento_juntas], ['Id_Asignacion',$Id_asignacion_juntas], ['T_documento','N/A']])->get();
 
+        //Obtenemos las secciones a mostrar
+        $array_control = $this->controlJuntas($Id_evento_juntas, $Id_asignacion_juntas,  $array_datos_controversiaJuntas[0]->Nombre_servicio);
+
+        //dd($arrayinfo_controvertido);
         return view('coordinador.controversiaJuntas', compact('user','array_datos_controversiaJuntas','arrayinfo_controvertido',
         'array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci',
         'array_datos_diagnostico_reposi_dictamen_jrci',
         'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 
-        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio'));
+        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control'));
+    }
+
+        /**
+     * Funcion para determinar las secciones visibles basadas en el tipo de controversia
+     * y sus permisos, comparando la información de la controversia con los permisos predefinidos.
+     * @param $id_evento int identificador del evento.
+     * @param $id_asignacion int Id de asignacion del evento.
+     * @param $Servicio string El servicio asociado al evento.
+     * @return Array con las secciones disponibles para mostrar
+     */
+    public function controlJuntas($id_evento, $id_asignacion,$Servicio) {
+
+        // Definimos las secciones que podran ser visibles dependiento el tipo de controversia.
+        $permisos = [
+            "Diagnosticos_dictamen" => [],
+            "Dictamen_emitido_JRCI" => ['% PCL'],
+            "Dictamen_emitido_JNCI" => ['% PCL'],
+            'Servicios' => ['Controversia PCL'] //Aqui agregamos los servicios que podran ver todas los formularios, de momento en la vista solo esta seteada para PCL
+        ];
+    
+        // Obtenemos la información de controversia_juntas
+        $controvertido =(array) DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_controversia_juntas_eventos')
+            ->select('Contro_origen', 'Contro_pcl', 'Contro_diagnostico', 'Contro_f_estructura', 'Contro_m_califi')
+            ->where('ID_evento', $id_evento)
+            ->where('Id_Asignacion', $id_asignacion)
+            ->first();
+    
+        // Combinamos los resultados
+        array_push($controvertido, $Servicio);
+    
+        //Comparamos la info del controvertido vs los @permisos y en caso de encontrar alguna coincidencia dejara en true la seccion a mostrar
+        $resultado = [];
+        foreach ($permisos as $key => $value) {
+            $permisoCumplido = false;
+            foreach ($value as $elemento) {
+                if (in_array($elemento, $controvertido)) {
+                    $permisoCumplido = true;
+                    break;
+                }
+            }
+            $resultado[$key] = $permisoCumplido;
+        }
+        //dd($resultado);
+        return $resultado;
     }
 
     //Cargar Selectores pronunciamiento

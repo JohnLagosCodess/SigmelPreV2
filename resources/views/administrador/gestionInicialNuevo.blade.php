@@ -20,7 +20,7 @@
             <h4>Registrar: Nuevo Evento</h4>
             <h4></h4>
         </div>
-        <form action="{{route('creacionEvento')}}" method="POST">
+        <form action="{{route('creacionEvento')}}" method="POST" id="gestion_inicial_nuevo">
             @csrf
             <div class="card-body">
                 @if (session()->get('mensaje_confirmacion_nuevo_evento'))
@@ -768,7 +768,9 @@
 <script src="/js/selectores_gestion_inicial.js"></script>
 <script>
     $(document).ready(function(){
-        $('#btn_guardar_evento').click(function(){
+        $('#gestion_inicial_nuevo').submit(function(e){
+            $('#btn_borrar','#btn_guardar_evento').addClass('d-none');
+            $('#mostrar_barra_creacion_evento').css("display","block");
             var si_cliente = $('#cliente').val();
             var si_tipo_cliente = $('#tipo_cliente').val();            
             var si_id_evento= $('#id_evento').val();            
@@ -797,10 +799,9 @@
             && si_proceso != '' && si_servicio != '' && si_accion != '') {
                 /*if(si_cliente != '' && si_tipo_cliente != '' && si_tipo_evento !='' && si_id_evento != ''  &&
                 si_fecha_radicacion != '' && si_nro_identificacion != '' && si_tipo_documento != '' && si_nombre_afiliado != ''){   */
-                $('#btn_borrar').addClass('d-none');
-                $('#btn_guardar_evento').addClass('d-none');
-                $('#mostrar_barra_creacion_evento').css("display","block");
+
             }
+            return true;
         });
     });
 
