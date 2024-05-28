@@ -769,7 +769,7 @@
 <script>
     $(document).ready(function(){
         $('#gestion_inicial_nuevo').submit(function(e){
-            $('#btn_borrar','#btn_guardar_evento').addClass('d-none');
+            $('#btn_borrar,#btn_guardar_evento').addClass('d-none');
             $('#mostrar_barra_creacion_evento').css("display","block");
             var si_cliente = $('#cliente').val();
             var si_tipo_cliente = $('#tipo_cliente').val();            
