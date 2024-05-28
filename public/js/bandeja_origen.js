@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
     // Inicialización select2 listado de procesos parametrizados
     $(".procesos_parametrizados").select2({
         width: '100%',
@@ -385,59 +384,59 @@ $(document).ready(function () {
                     
                     // console.log(cell_1[0].cellIndex);
 
-                    if(cell_1[0].cellIndex != 29){
+                if(cell_1[0].cellIndex != 29){
 
-                        var cell = $('.filters th').eq(
-                            $(api.column(colIdx).header()).index()
-                        );
+                    var cell = $('.filters th').eq(
+                        $(api.column(colIdx).header()).index()
+                    );
+                    
+                    var title = $(cell).text();
+                    
+                    if (title === 'Detalle  ') {
+                        $(cell).append('<input type="checkbox" class="principal" id="toggleButton" />');                            
+
+                         // Selecciona los elementos repetidos (en este caso, elementos con la clase "repetido")
+                        var elementosRepetidos = $(".principal");
+
+                        // Verifica que haya más de un elemento repetido antes de eliminarlos
+                        if (elementosRepetidos.length > 1) {
+                            // Selecciona los dos primeros elementos repetidos utilizando "slice(0, 2)"
+                            var elementosEliminar = elementosRepetidos.slice(0, 1);
+
+                            // Elimina los elementos seleccionados del DOM
+                            elementosEliminar.remove();
+                        }                            
                         
-                        var title = $(cell).text();
-                        
-                        if (title === 'Detalle  ') {
-                            $(cell).append('<input type="checkbox" class="principal" id="toggleButton" />');                            
-
-                             // Selecciona los elementos repetidos (en este caso, elementos con la clase "repetido")
-                            var elementosRepetidos = $(".principal");
-
-                            // Verifica que haya más de un elemento repetido antes de eliminarlos
-                            if (elementosRepetidos.length > 1) {
-                                // Selecciona los dos primeros elementos repetidos utilizando "slice(0, 2)"
-                                var elementosEliminar = elementosRepetidos.slice(0, 1);
-
-                                // Elimina los elementos seleccionados del DOM
-                                elementosEliminar.remove();
-                            }                            
-                            
-                        }else{
-                            $(cell).html('<input type="text" placeholder="' + title + '" />');
-                            $('input',$('.filters th').eq($(api.column(colIdx).header()).index())).off('keyup change')
-                            .on('change', function (e) {
-                                // Get the search value
-                                $(this).attr('title', $(this).val());
-                                var regexr = '({search})'; //$(this).parents('th').find('select').val();
-                                // Search the column for that value
-                                api
-                                    .column(colIdx)
-                                    .search(
-                                        this.value != ''
-                                            ? regexr.replace('{search}', '(((' + this.value + ')))')
-                                            : '',
-                                        this.value != '',
-                                        this.value == ''
-                                    )
-                                    .draw();
-                            })
-                            .on('keyup', function (e) {
-                                e.stopPropagation();
-                                var cursorPosition = this.selectionStart;
-                                $(this).trigger('change');
-                                $(this)
-                                    .focus()[0]
-                                    .setSelectionRange(cursorPosition, cursorPosition);
-                            });
-                        }
-                        
+                    }else{
+                        $(cell).html('<input type="text" placeholder="' + title + '" />');
+                        $('input',$('.filters th').eq($(api.column(colIdx).header()).index())).off('keyup change')
+                        .on('change', function (e) {
+                            // Get the search value
+                            $(this).attr('title', $(this).val());
+                            var regexr = '({search})'; //$(this).parents('th').find('select').val();
+                            // Search the column for that value
+                            api
+                                .column(colIdx)
+                                .search(
+                                    this.value != ''
+                                        ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                        : '',
+                                    this.value != '',
+                                    this.value == ''
+                                )
+                                .draw();
+                        })
+                        .on('keyup', function (e) {
+                            e.stopPropagation();
+                            var cursorPosition = this.selectionStart;
+                            $(this).trigger('change');
+                            $(this)
+                                .focus()[0]
+                                .setSelectionRange(cursorPosition, cursorPosition);
+                        });
                     }
+                    
+                }
 
                 });
             },

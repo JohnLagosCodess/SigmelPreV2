@@ -2423,25 +2423,38 @@ class ControversiaJuntasController extends Controller
             $ruta_logo = "";
         }
 
-        /* Extraemos los datos del footer */
-        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-        ->where('Id_cliente', $id_cliente)->get();
+        $dato_logo_footer = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Footer_cliente')
+        ->where([['Id_cliente', $id_cliente]])
+        ->limit(1)->get();
 
-        if(count($datos_footer) > 0){
-            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
-
-        }else{
-            $footer_dato_1 = "";
-            $footer_dato_2 = "";
-            $footer_dato_3 = "";
-            $footer_dato_4 = "";
-            $footer_dato_5 = "";
+        if (count($dato_logo_footer) > 0 && $dato_logo_footer[0]->Footer_cliente != null) {
+            $logo_footer = $dato_logo_footer[0]->Footer_cliente;
+            $ruta_logo_footer = "/footer_clientes/{$id_cliente}/{$logo_footer}";
+        } else {
+            $logo_footer = null;
+            $ruta_logo_footer = null;
         }
+
+        /* Extraemos los datos del footer */
+        // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        // ->where('Id_cliente', $id_cliente)->get();
+
+        // if(count($datos_footer) > 0){
+        //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+        //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+        //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+        //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+        //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+
+        // }else{
+        //     $footer_dato_1 = "";
+        //     $footer_dato_2 = "";
+        //     $footer_dato_3 = "";
+        //     $footer_dato_4 = "";
+        //     $footer_dato_5 = "";
+        // }
 
         /* Construcción proforma en formato docx (word) */
         $phpWord = new PhpWord();
@@ -2633,30 +2646,12 @@ class ControversiaJuntasController extends Controller
         // Configuramos el footer
         $info = $nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$id_evento;
         $footer = $section->addFooter();
-        $tableStyle = array(
-            'cellMargin'  => 50,
-        );
-        $phpWord->addTableStyle('myTable', $tableStyle);
+        $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
+        if($ruta_logo_footer != null){
+            $imagenPath_footer = public_path($ruta_logo_footer);
+            $footer->addImage($imagenPath_footer, array('width' => 450, 'height' => 70, 'alignment' => 'left'));
+        }
         $table = $footer->addTable('myTable');
-
-        $table->addRow();
-        $table->addCell(80000, ['gridSpan' => 2])->addText($info, array('size' => 10, 'bold' => true));
-        $table->addRow();
-        // $table->addCell(80000, ['gridSpan' => 2])->addText('Seguros Alfa S.A. y Seguros de Vida Alfa S.A.', array('size' => 10, 'color' => '#184F56', 'bold' => true));
-        $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_1, array('size' => 10));
-        $table->addRow();
-        // $table->addCell()->addText('Líneas de atención al cliente', array('size' => 10, 'color' => '#184F56', 'bold' => true));
-        $table->addCell()->addText($footer_dato_2, array('size' => 10));
-        $cell = $table->addCell();
-        $textRun = $cell->addTextRun(['alignment' => 'right']);
-        // $textRun->addText('www.segurosalfa.com.co', array('size' => 10));
-        $textRun->addText($footer_dato_3, array('size' => 10));
-        $table->addRow();
-        // $table->addCell(80000, ['gridSpan' => 2])->addText('Bogotá: 3077032, a nivel nacional: 018000122532', array('size' => 10));
-        $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_4, array('size' => 10));
-        $table->addRow();
-        // $table->addCell(80000, ['gridSpan' => 2])->addText('Habilitadas en jornada continua de lunes a viernes de 8:00 a.m. a 6:00 p.m.', array('size' => 10));
-        $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_5, array('size' => 10));
         $table->addRow();
         $cell1 = $table->addCell(80000, ['gridSpan' => 2]);
         $textRun = $cell1->addTextRun(['alignment' => 'center']);
@@ -3134,25 +3129,37 @@ class ControversiaJuntasController extends Controller
             $ruta_logo = "";
         }
 
+        //Footer image
+        $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Footer_cliente')
+        ->where([['Id_cliente', $id_cliente]])
+        ->limit(1)->get();
+
+        if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+            $footer = $footer_imagen[0]->Footer_cliente;
+        } else {
+            $footer = null;
+        } 
+
         /* Extraemos los datos del footer */
-        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-        ->where('Id_cliente', $id_cliente)->get();
+        // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        // ->where('Id_cliente', $id_cliente)->get();
 
-        if(count($datos_footer) > 0){
-            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+        // if(count($datos_footer) > 0){
+        //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+        //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+        //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+        //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+        //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
 
-        }else{
-            $footer_dato_1 = "";
-            $footer_dato_2 = "";
-            $footer_dato_3 = "";
-            $footer_dato_4 = "";
-            $footer_dato_5 = "";
-        }
+        // }else{
+        //     $footer_dato_1 = "";
+        //     $footer_dato_2 = "";
+        //     $footer_dato_3 = "";
+        //     $footer_dato_4 = "";
+        //     $footer_dato_5 = "";
+        // }
 
         /* Armado de datos para reemplazarlos en la plantilla */
 
@@ -3184,11 +3191,12 @@ class ControversiaJuntasController extends Controller
             'string_diagnosticos_cie10_jrci' => $string_diagnosticos_cie10_jrci,
             'Firma_cliente' => $Firma_cliente,
             'nombre_usuario' => $nombre_usuario,
-            'footer_dato_1' => $footer_dato_1,
-            'footer_dato_2' => $footer_dato_2,
-            'footer_dato_3' => $footer_dato_3,
-            'footer_dato_4' => $footer_dato_4,
-            'footer_dato_5' => $footer_dato_5,
+            'footer' => $footer,
+            // 'footer_dato_1' => $footer_dato_1,
+            // 'footer_dato_2' => $footer_dato_2,
+            // 'footer_dato_3' => $footer_dato_3,
+            // 'footer_dato_4' => $footer_dato_4,
+            // 'footer_dato_5' => $footer_dato_5,
         ];
 
         // print_r($datos_finales_proforma_acuerdo);

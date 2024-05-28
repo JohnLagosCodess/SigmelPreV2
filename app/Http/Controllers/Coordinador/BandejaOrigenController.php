@@ -230,7 +230,7 @@ class BandejaOrigenController extends Controller
         $BandejaOrigenTotal = $request->BandejaOrigenTotal;
         $newId_rol = $request->newId_rol; 
         $newId_user = $request->newId_user;
-        
+
         $time = time();
         $date = date("Y-m-d", $time);
         $year = date("Y");
@@ -249,7 +249,8 @@ class BandejaOrigenController extends Controller
             }else{
                 $bandejaOrigen = cndatos_bandeja_eventos::on('sigmel_gestiones')
                 ->where([
-                    ['Nombre_proceso_actual', '=', 'Origen']
+                    ['Nombre_proceso_actual', '=', 'Origen'],
+                    // ['Nombre_estado', '<>', 'Gestionado']
                 ])
                 ->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
                 ->get();
@@ -395,6 +396,9 @@ class BandejaOrigenController extends Controller
             //     }
             // }
 
+            /* echo "<pre>";
+            print_r($bandejaOrigen);
+            echo "</pre>"; */
             $arraybandejaOrigen = json_decode(json_encode($bandejaOrigen, true));                                                 
             return response()->json($arraybandejaOrigen);                
 

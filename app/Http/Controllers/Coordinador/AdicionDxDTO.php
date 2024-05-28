@@ -1640,25 +1640,37 @@ class AdicionDxDTO extends Controller
             $logo_header = "Sin logo";
         }
 
+        //Footer image
+        $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Footer_cliente')
+        ->where([['Id_cliente', $Id_cliente_firma]])
+        ->limit(1)->get();
+
+        if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+            $footer = $footer_imagen[0]->Footer_cliente;
+        } else {
+            $footer = null;
+        } 
+
         /* Extraemos los datos del footer */
-        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-        ->where('Id_cliente',  $Id_cliente_firma)->get();
+        // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        // ->where('Id_cliente',  $Id_cliente_firma)->get();
 
-        if(count($datos_footer) > 0){
-            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+        // if(count($datos_footer) > 0){
+        //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+        //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+        //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+        //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+        //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
 
-        }else{
-            $footer_dato_1 = "";
-            $footer_dato_2 = "";
-            $footer_dato_3 = "";
-            $footer_dato_4 = "";
-            $footer_dato_5 = "";
-        }
+        // }else{
+        //     $footer_dato_1 = "";
+        //     $footer_dato_2 = "";
+        //     $footer_dato_3 = "";
+        //     $footer_dato_4 = "";
+        //     $footer_dato_5 = "";
+        // }
 
         /* Armado de datos para reemplazarlos en la plantilla */
         $datos_finales_noti_dml_origen = [
@@ -1683,11 +1695,12 @@ class AdicionDxDTO extends Controller
             'Agregar_copia' => $Agregar_copias,
             'Firma_cliente' => $Firma_cliente,
             'nombre_usuario' => $nombre_usuario,
-            'footer_dato_1' => $footer_dato_1,
-            'footer_dato_2' => $footer_dato_2,
-            'footer_dato_3' => $footer_dato_3,
-            'footer_dato_4' => $footer_dato_4,
-            'footer_dato_5' => $footer_dato_5,
+            'footer' => $footer,
+            // 'footer_dato_1' => $footer_dato_1,
+            // 'footer_dato_2' => $footer_dato_2,
+            // 'footer_dato_3' => $footer_dato_3,
+            // 'footer_dato_4' => $footer_dato_4,
+            // 'footer_dato_5' => $footer_dato_5,
         ];
 
         /* Creación del pdf */

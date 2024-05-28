@@ -212,7 +212,7 @@ class BandejaJuntasController extends Controller
         $BandejaJuntasTotal = $request->BandejaJuntasTotal;
         $newId_rol = $request->newId_rol; 
         $newId_user = $request->newId_user;
-        
+
         $time = time();
         $date = date("Y-m-d", $time);
         $year = date("Y");
