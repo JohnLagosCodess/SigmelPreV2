@@ -1594,7 +1594,7 @@ $(document).ready(function(){
 
         $.ajax({    
             type:'POST',
-            url:'/DescargaProformaDMLPrev',
+            url:'/ADescargaProformaDMLPrev',
             data: datos_generacion_proforma_dml_previsional,
             xhrFields: {
                 responseType: 'blob' // Indica que la respuesta es un blob

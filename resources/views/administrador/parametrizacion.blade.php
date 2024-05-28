@@ -328,7 +328,7 @@
                                                                 <input type="hidden" id="bd_id_accion_antecesora_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Accion_antecesora}}">
                                                                 <td>
                                                                     <select style="width:240px;" class="custom-select bd_accion_antecesora_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" id="bd_accion_antecesora_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" disabled>
-                                                                        <option></option>
+                                                                        <option>Ninguno</option>
                                                                         <option value="{{$parametrizacion_origen_atel_editar->Accion_antecesora}}" selected>{{$parametrizacion_origen_atel_editar->Nombre_accion_antecesora}}</option>
                                                                     </select>
                                                                 </td>
