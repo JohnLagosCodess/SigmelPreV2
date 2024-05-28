@@ -5378,7 +5378,7 @@ function obtener_info_afiliado(idSelector,append) {
             url:'/selectoresJuntas',
             data: controvertido,
             success:function(data) {
-                console.log(data);
+
                 $(append).val(data.Nombre);
             }
         });

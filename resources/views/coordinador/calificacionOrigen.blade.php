@@ -301,6 +301,12 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
+                                                <label for="estado_facturacion">Estado de Facturación</label>
+                                                <input type="text" class="form-control" name="estado_facturacion" id="estado_facturacion" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Estado_Facturacion)){echo $array_datos_calificacionOrigen[0]->Estado_Facturacion;}?>" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
                                                 <label for="profesional" class="col-form label">Profesional</label>
                                                 <select class="profesional custom-select" name="profesional" id="profesional">
                                                     @if (!empty($array_datos_calificacionOrigen[0]->Id_profesional))
@@ -309,12 +315,6 @@
                                                         <option value="">Seleccione una opción</option>                                                        
                                                     @endif
                                                 </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="estado_facturacion">Estado de Facturación</label>
-                                                <input type="text" class="form-control" name="estado_facturacion" id="estado_facturacion" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Estado_Facturacion)){echo $array_datos_calificacionOrigen[0]->Estado_Facturacion;}?>" readonly>
                                             </div>
                                         </div>
                                         <div class="col-4 d-none" id="div_causal_devolucion_comite">

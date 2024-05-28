@@ -1649,13 +1649,11 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
         url:'/CargueSelectoresParametrizar',
         data: datos_accion_antecesora_origen_atel,
         success:function(data){
-            $('#bd_accion_antecesora_origen_atel_'+id_parametrizacion_origen_atel_editar).empty();
-            $('#bd_accion_antecesora_origen_atel_'+id_parametrizacion_origen_atel_editar).append('<option value="" selected>Seleccione</option>');
+            //$('#bd_accion_antecesora_origen_atel_'+id_parametrizacion_origen_atel_editar).empty();
+            //$('#bd_accion_antecesora_origen_atel_'+id_parametrizacion_origen_atel_editar).append('<option value="" selected>Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                if (data[claves[i]]["Id_Accion"] == $("#bd_servicio_asociado_origen_atel_"+id_parametrizacion_origen_atel_editar).val()) {
-                    $("#bd_accion_antecesora_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Accion"]+'</option>');
-                } else {
+                if (data[claves[i]]["Id_Accion"] != $("#bd_accion_antecesora_origen_atel_"+id_parametrizacion_origen_atel_editar).val()) {
                     $("#bd_accion_antecesora_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Accion"]+'</option>');
                 }
             }

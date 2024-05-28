@@ -2594,26 +2594,27 @@ $(document).ready(function(){
     
     // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:
     // inhabilita los campos nro anexos, asunto, etiquetas, cuerpo comunicado, firmar
-    if (idRol != 6) {
+    //28-05-24 Se inhabilita validacion de rol, dado que se solicita que sea de manera general y habilitar accciones sobre el cuerpo del comunicado
+    //if (idRol != 6) {
         $("#anexos").prop('readonly', true);
         $("#anexos_editar").prop('readonly', true);
         $("#asunto").prop('readonly', true);
         $("#asunto_editar").prop('readonly', true);
 
-        $('#btn_insertar_Origen').prop('disabled', true);
-        $('#btn_insertar_nombreCIE10').prop('disabled', true);
-        $('#btn_insertar_porPcl').prop('disabled', true);
-        $('#btn_insertar_F_estructuracion').prop('disabled', true);
+        $('#btn_insertar_Origen').prop('disabled', false);
+        $('#btn_insertar_nombreCIE10').prop('disabled', false);
+        $('#btn_insertar_porPcl').prop('disabled', false);
+        $('#btn_insertar_F_estructuracion').prop('disabled', false);
 
         $('#btn_insertar_Origen_editar').prop('disabled', true);
         $('#btn_insertar_nombreCIE10_editar').prop('disabled', true);
         $('#btn_insertar_porPcl_editar').prop('disabled', true);
         $('#btn_insertar_F_estructuracion_editar').prop('disabled', true);
         
-        $(".note-editable").attr("contenteditable", false);
+        $(".note-editable").attr("contenteditable", true);
         $("#firmarcomunicado").prop('disabled', true);
         $("#firmarcomunicado_editar").prop('disabled', true);
-    }
+    //}
 });
 
 var copia = 1;
