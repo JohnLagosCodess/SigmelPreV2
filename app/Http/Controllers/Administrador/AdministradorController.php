@@ -133,7 +133,7 @@ class AdministradorController extends Controller
                     'nombre' => $request->nombre_equipo_trabajo,
                     'Id_proceso_equipo' => $request->proceso,
                     'lider' => $request->listado_lider,
-                    'Accion' => $request->listado_acciones,
+                    // 'Accion' => $request->listado_acciones,
                     'estado' => $request->estado_equipo,
                     'descripcion' => $request->descripcion_equipo_trabajo,
                     'created_at' => $date

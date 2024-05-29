@@ -45,20 +45,20 @@
                                 <input type="text" class="form-control" name="nombre_equipo_trabajo" id="nombre_equipo_trabajo" required>
                             </div>
                         </div>
-                        <div class="col-2">
+                        <div class="col-3">
                             <div class="form-group">
                                 <label for="listado_lider" class="col-form-label">Lider del equipo de trabajo <span style="color:red;">(*)</span></label>
                                 <select id="listado_lider" class="listado_lider custom-select" name="listado_lider" required></select>
                                 <strong class="mensaje_no_hay_usuarios text-danger text-sm d-none" role="alert">No hay usuarios relacionados al proceso seleccionado.</strong>
                             </div>
                         </div>
-                        <div class="col-2">
+                        {{-- <div class="col-2">
                             <div class="form-group">
                                 <label for="listado_acciones" class="col-form-label">Acción <span style="color:red;">(*)</span></label>
                                 <select id="listado_acciones" name="listado_acciones" class="listado_acciones custom-select" required></select>
                             </div>
-                        </div>
-                        <div class="col-2">
+                        </div> --}}
+                        <div class="col-3">
                             <div class="form-group">
                                 <label for="estado_equipo" class="col-form-label">Status <span style="color:red;">(*)</span></label>
                                 <select id="estado_equipo" class="estado_equipo custom-select" name="estado_equipo" required>

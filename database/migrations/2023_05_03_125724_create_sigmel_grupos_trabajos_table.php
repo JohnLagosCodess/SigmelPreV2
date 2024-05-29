@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedInteger('Id_proceso_equipo');
             $table->text('nombre');
             $table->unsignedInteger('lider');
-            $table->integer('Accion');
+            $table->integer('Accion')->nullable();
             $table->enum('estado', ['activo', 'inactivo'])->default('activo');
             $table->text('descripcion');
             $table->timestamps();
