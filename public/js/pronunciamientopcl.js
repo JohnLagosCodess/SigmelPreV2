@@ -907,11 +907,11 @@ $(document).ready(function(){
     if (idRol != 6) {
         $("#n_anexos").prop('readonly', true);
         $("#asunto_cali").prop('readonly', true);
-        $(".note-editable").attr("contenteditable", false);
+        $(".note-editable").attr("contenteditable", true);
 
-        $("#btn_insertar_Nombre_afiliado").prop('disabled', true);
-        $("#btn_insertar_nombreCIE10").prop('disabled', true);
-        $("#btn_insertar_porPcl").prop('disabled', true);
+        $("#btn_insertar_Nombre_afiliado").prop('disabled', false);
+        $("#btn_insertar_nombreCIE10").prop('disabled', false);
+        $("#btn_insertar_porPcl").prop('disabled', false);
         $("#sustenta_cali").prop('disabled', true);
         
         $("#firmar").prop('disabled', true);
