@@ -1372,7 +1372,7 @@ $(document).ready(function(){
                         let listado_solicitud_documentos = Object.keys(data);
                         for (let i = 0; i < listado_solicitud_documentos.length; i++) {
                             var sumar = i+1;
-                            listado += '<li>'+sumar+'. ('+data[listado_solicitud_documentos[i]]['Nombre_documento']+') ('+data[listado_solicitud_documentos[i]]['Descripcion']+')</li>';
+                            listado += '<li>'+sumar+'. '+data[listado_solicitud_documentos[i]]['Nombre_documento']+' '+data[listado_solicitud_documentos[i]]['Descripcion']+'</li>';
                         }
     
                         listado += '</ul>';
@@ -2089,7 +2089,7 @@ $(document).ready(function(){
                         let listado_solicitud_documentos = Object.keys(data);
                         for (let i = 0; i < listado_solicitud_documentos.length; i++) {
                             var sumar = i+1;
-                            listado += '<li>'+sumar+'. ('+data[listado_solicitud_documentos[i]]['Nombre_documento']+') ('+data[listado_solicitud_documentos[i]]['Descripcion']+')</li>';
+                            listado += '<li>'+sumar+'. '+data[listado_solicitud_documentos[i]]['Nombre_documento']+' '+data[listado_solicitud_documentos[i]]['Descripcion']+'</li>';
                         }
     
                         listado += '</ul>';
