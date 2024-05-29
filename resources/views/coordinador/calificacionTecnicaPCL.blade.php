@@ -180,7 +180,7 @@
                         <!-- Relacion de documetos-->
                         <div class="card-info columna_row1_documentos" @if ($decreto_1507=='1') style="display:block" @else style="display:none" @endif >
                             <div class="card-header text-center" style="border: 1.5px solid black;">
-                                <h5>Relación de documentos / Examenes fisico - (Descripción)</h5>
+                                <h5>Relación de documentos / Exámenes fisico - (Descripción)</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -384,7 +384,7 @@
                     <!-- examen interconsulta-->
                     <div class="card-info columna_row1_interconsulta" @if ($decreto_1507=='1') style="display:block" @else style="display:none" @endif>
                         <div class="card-header text-center" style="border: 1.5px solid black;">
-                            <h5>Exámanes e interconsultas</h5>
+                            <h5>Exámenes e interconsultas</h5>
                         </div>
                         <div class="card-body">
                             <div class="row">
