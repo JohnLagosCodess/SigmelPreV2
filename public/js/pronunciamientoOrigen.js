@@ -508,10 +508,10 @@ $(document).ready(function(){
             
             $("#btn_insertar_nro_dictamen_pri_cali").prop('disabled', true);
             $("#btn_insertar_fecha_dictamen_pri_cali").prop('disabled', true);
-            $("#btn_insertar_nombre_afiliado").prop('disabled', true);
-            $("#btn_insertar_tipo_doc").prop('disabled', true);
-            $("#btn_insertar_nro_identificacion").prop('disabled', true);
-            $("#btn_insertar_cie10_nombrecie10").prop('disabled', true);
+            $("#btn_insertar_nombre_afiliado").prop('disabled', false);
+            $("#btn_insertar_tipo_doc").prop('disabled', false);
+            $("#btn_insertar_nro_identificacion").prop('disabled', false);
+            $("#btn_insertar_cie10_nombrecie10").prop('disabled', false);
             
             $("#asunto_cali").val("CONCEPTO MÉDICO DE DICTAMEN ORIGEN");
             $('#sustenta_cali').summernote('code', '');
@@ -972,7 +972,7 @@ $(document).ready(function(){
     if (idRol != 6) {
         $("#n_anexos").prop('readonly', true);
         $("#asunto_cali").prop('readonly', true);
-        $(".note-editable").attr("contenteditable", false);
+        $(".note-editable").attr("contenteditable", true);
 
         $("#btn_insertar_nro_dictamen_pri_cali").prop('disabled', true);
         $("#btn_insertar_fecha_dictamen_pri_cali").prop('disabled', true);

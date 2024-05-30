@@ -312,7 +312,7 @@ class ParametrizacionController extends Controller
             ->select('id', 'nombre')
             ->where([
                 ['Id_proceso_equipo', '=', 1],
-                ['Accion', '=', $request->id_accion_seleccionada],
+                // ['Accion', '=', $request->id_accion_seleccionada],
                 ['estado', '=', 'activo']
             ])->get();
 
@@ -412,7 +412,7 @@ class ParametrizacionController extends Controller
             ->select('id', 'nombre')
             ->where([
                 ['Id_proceso_equipo', '=', 2],
-                ['Accion', '=', $request->id_accion_seleccionada],
+                // ['Accion', '=', $request->id_accion_seleccionada],
                 ['estado', '=', 'activo']
             ])->get();
 
@@ -512,7 +512,7 @@ class ParametrizacionController extends Controller
             ->select('id', 'nombre')
             ->where([
                 ['Id_proceso_equipo', '=', 3],
-                ['Accion', '=', $request->id_accion_seleccionada],
+                // ['Accion', '=', $request->id_accion_seleccionada],
                 ['estado', '=', 'activo']
             ])->get();
 

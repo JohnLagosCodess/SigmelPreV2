@@ -1096,6 +1096,10 @@ $(document).ready(function(){
     var profesional_comite = $("#profesional_comite").val();
     if (profesional_comite !== '') {
         $("#GuardarComiteInter").prop('disabled', true);
+        $("#btn_guardar_info_evento").prop('disabled', true);
+        $("#btn_guardar_relacion_docs").prop('disabled', true);
+        $("#btn_guardar_diagnosticos_adicionados").prop('disabled', true);
+        $("#ActualizarAdicionDx").prop('disabled', true);       
         $("#div_correspondecia").removeClass('d-none');
     }
 
