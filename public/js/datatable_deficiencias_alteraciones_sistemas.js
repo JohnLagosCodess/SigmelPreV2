@@ -408,7 +408,7 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                                         $(".resultado_MSD_"+num_consecutivo_alteraciones).prop('checked', false);
                                         $(".resultado_MSD_"+num_consecutivo_alteraciones).prop('disabled', true);
                                         $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
-                                        $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                                                                                        
+                                        $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                
                                     } else {
                                         $(".resultado_MSD_"+num_consecutivo_alteraciones).prop('disabled', false);
                                         $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
@@ -444,7 +444,9 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                                 $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                    
                                 ValidarMSD();
                             }, 250);
-                        } else if(id_tabla_seleccionado == 100){
+                        } else if(id_tabla_seleccionado == 100 || id_tabla_seleccionado == 101 || id_tabla_seleccionado == 102 || id_tabla_seleccionado == 103 ||
+                            id_tabla_seleccionado == 104 || id_tabla_seleccionado == 105 || id_tabla_seleccionado == 106 || id_tabla_seleccionado == 107 ||
+                            id_tabla_seleccionado == 108 || id_tabla_seleccionado == 109 ){
                             
                             $("#resultado_Deficiencia_"+num_consecutivo_alteraciones).change(function(){
                                 deficiencia_resultado = $(this).val();
@@ -452,7 +454,7 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                                     $(".resultado_MSD_"+num_consecutivo_alteraciones).prop('checked', false);
                                     $(".resultado_MSD_"+num_consecutivo_alteraciones).prop('disabled', true);
                                     $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
-                                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                                                                                        
+                                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                
                                 } else {
                                     $(".resultado_MSD_"+num_consecutivo_alteraciones).prop('disabled', false);                                                                
                                 }
@@ -468,8 +470,8 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                                     let a = resultado_Deficiencia;
                                     let b = nuevoValor;
                                     let resultadoMSD = a +((100 - a) * b / 100);
-                                    let dominancia = (resultadoMSD - a);
-                                    // let dominancia = nuevoValor;
+                                    // let dominancia = (resultadoMSD - a);
+                                    let dominancia = nuevoValor;
                                     // console.log(dominancia);
                                     let total_deficiencia = resultadoMSD;
                                     // console.log(total_deficiencia);
@@ -490,61 +492,7 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                                 $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                    
                                 ValidarMSD();
                             }, 250);
-                        } else if(id_tabla_seleccionado == 101 || id_tabla_seleccionado == 102 || id_tabla_seleccionado == 103 ||
-                            id_tabla_seleccionado == 104 || id_tabla_seleccionado == 105 || id_tabla_seleccionado == 106 || id_tabla_seleccionado == 107 ||
-                            id_tabla_seleccionado == 108 || id_tabla_seleccionado == 109 ){
-                  
-                            $("#resultado_Deficiencia_"+num_consecutivo_alteraciones).change(function(){
-                                deficiencia_resultado = $(this).val();
-                                if (deficiencia_resultado == '') {                                
-                                    $(".resultado_MSD_"+num_consecutivo_alteraciones).prop('checked', false);
-                                    $(".resultado_MSD_"+num_consecutivo_alteraciones).prop('disabled', true);
-                                    $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
-                                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                                                                                        
-                                } else {
-                                    $(".resultado_MSD_"+num_consecutivo_alteraciones).prop('disabled', false);                                                                
-                                }
-                            })
-                            function ValidarMSD() {   
-                                // console.log(MSD_checkeds);             
-                                let dominancia_suma = 0.00;
-                                let deficienci_global = 2;
-                                let resultado_Deficiencia = parseFloat($("#resultado_Deficiencia_"+num_consecutivo_alteraciones).val());                                
-                                if (MSD_checkeds.is(":checked")) {
-                                    // console.log(resultado_Deficiencia);
-                                    let nuevoValor = resultado_Deficiencia * deficienci_global;
-                                    let a = resultado_Deficiencia;
-                                    // let b = nuevoValor;
-                                    let resultadoMSD = a * deficienci_global;
-                                    // let dominancia = (resultadoMSD - a);
-                                    let dominancia = resultado_Deficiencia;
-                                    // console.log(dominancia);
-                                    let total_deficiencia = resultadoMSD;
-                                    // console.log(total_deficiencia);
-                                    $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancia.toFixed(2));
-                                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(total_deficiencia.toFixed(2));                                
-                                } else {
-                                    if (isNaN(resultado_Deficiencia)) {
-                                        resultado_Deficiencia = dominancia_suma;
-                                    }
-                                    let a = resultado_Deficiencia;
-                                    let resultadoMSD = a * deficienci_global;
-                                    // let dominancia = (resultadoMSD - a);
-                                    let dominancia = resultado_Deficiencia;
-                                    // console.log(dominancia);
-                                    let total_deficiencia = resultadoMSD;
-                                    // console.log('No está marcado');  
-                                    $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancia.toFixed(2));
-                                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(total_deficiencia.toFixed(2));                                              
-                                    // $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancia_suma.toFixed(2));
-                                }                            
-                            }
-                            setInterval(() => {
-                                $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
-                                $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                    
-                                ValidarMSD();
-                            }, 250);
-                    }
+                        }
                     break;
                     default:
                         $("#MSD_fila_alteraciones_"+num_consecutivo_alteraciones).append('');
