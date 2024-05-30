@@ -766,6 +766,7 @@
 @section('js')
 <script src="/plugins/toatsr/build/toastr.min.js"></script>
 <script src="/js/selectores_gestion_inicial.js"></script>
+<script src="/js/funciones_helpers.js"></script>
 <script>
     $(document).ready(function(){
         $('#gestion_inicial_nuevo').submit(function(e){
@@ -849,11 +850,23 @@
     })
 </script>
 <script>
-    $(function() {
-        $("#fecha_evento").on("change", function() {
-            var fechaEvento = $(this).val();
-            $("#fecha_radicacion").val('').attr("min", fechaEvento);
-        });
+    // Validación inicial si el input de fecha está vacío
+    $("#fecha_radicacion").on("focus", function() {
+        if(!$("#fecha_evento").val()){
+            Validarfecha("#fecha_radicacion");
+        }else{
+            let fechaEvento = $("#fecha_evento").val();
+            Validarfecha("#fecha_radicacion","<",fechaEvento,"La fecha debe ser igual o mayor al evento");
+        }
+    });
+
+    $("#fecha_evento").on("focus", function() {
+                var fechaEvento = $(this).val();
+                $("#fecha_radicacion").val('').attr("min", fechaEvento);
+    });
+
+    $("#fecha_alerta").on("focus",function(){
+        Validarfecha("#fecha_alerta","<",null,"La fecha debe ser igual o mayor a");
     });
     $(function() {
         $("#fecha_ingreso").on("change", function() {
