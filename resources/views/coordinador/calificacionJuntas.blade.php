@@ -228,7 +228,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fuente_info_juntas">Fuente de Información</label>
-                                                <select class="custom-select" name="fuente_info_juntas" id="fuente_info_juntas">
+                                                <select class="fuente_informacion custom-select" name="fuente_info_juntas" id="fuente_info_juntas">
                                                     @if (!empty($array_datos_calificacionJuntas[0]->Fuente_informacion))
                                                     <option value="{{$array_datos_calificacionJuntas[0]->Fuente_informacion}}" selected>{{$array_datos_calificacionJuntas[0]->Nombre_Fuente_informacion}}</option>
                                                     @else

@@ -87,6 +87,11 @@ $(document).ready(function(){
         placeholder:"Seleccione una opción",
         allowClear:false
     });
+    $(".fuente_informacion").select2({      
+        width: '100%',
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
 
     // llenado de selectores
     let token = $('input[name=_token]').val();

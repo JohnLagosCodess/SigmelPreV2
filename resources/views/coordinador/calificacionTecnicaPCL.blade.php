@@ -7885,8 +7885,11 @@
             $(agregar_examen_fila).addClass('fila_'+contador_examen);
             $(agregar_examen_fila).attr("id", 'fila_'+contador_examen);
 
+            //Valida que la fecha no sea mayor a la actual
+            Validarfecha("#fecha_examen_fila_"+contador_examen);
+
         });
-        
+
         $(document).on('click', '#btn_remover_examen_fila', function(){
             var nombre_exame_fila = $(this).data("fila");
             listado_examenes_interconsultas.row("."+nombre_exame_fila).remove().draw();

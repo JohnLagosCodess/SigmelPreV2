@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('Edad', 3)->nullable();
             $table->integer('Genero')->nullable();
             $table->text('Email')->nullable();
-            $table->string('Telefono_contacto', 120)->nullable();
+            $table->text('Telefono_contacto')->nullable();
             $table->integer('Estado_civil')->nullable();
             $table->integer('Nivel_escolar')->nullable();
             $table->enum('Apoderado', ['Si', 'No'])->nullable();
