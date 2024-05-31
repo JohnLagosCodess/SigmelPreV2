@@ -2237,13 +2237,14 @@ class BuscarEventoController extends Controller
             'F_registro' => $date
         ];
 
-        sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insert($datos_nuevo_servicio);
+        $Id_Asignacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insertGetId($datos_nuevo_servicio);
 
         sleep(1);
 
         // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
 
         $datos_historial_accion_eventos = [
+            'Id_Asignacion' => $Id_Asignacion,
             'ID_evento' => $request->id_evento,
             'Id_proceso' => $request->id_proceso_actual,
             'Id_servicio' => $request->nuevo_servicio,
@@ -2383,13 +2384,14 @@ class BuscarEventoController extends Controller
             'F_registro' => $date
         ];
 
-        sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insert($datos_nuevo_proceso);
+        $Id_Asignacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insertGetId($datos_nuevo_proceso);
 
         sleep(1);
 
         // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
 
         $datos_historial_accion_eventos = [
+            'Id_Asignacion' => $Id_Asignacion,
             'ID_evento' => $request->id_evento,
             'Id_proceso' => $request->selector_nuevo_proceso,
             'Id_servicio' => $request->selector_nuevo_servicio,

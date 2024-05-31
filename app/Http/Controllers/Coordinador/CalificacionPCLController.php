@@ -658,6 +658,7 @@ class CalificacionPCLController extends Controller
             // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
 
             $datos_historial_accion_eventos = [
+                'Id_Asignacion' => $newIdAsignacion,
                 'ID_evento' => $newIdEvento,
                 'Id_proceso' => $Id_proceso,
                 'Id_servicio' => $Id_servicio,
@@ -853,6 +854,7 @@ class CalificacionPCLController extends Controller
             // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
 
             $datos_historial_accion_eventos = [
+                'Id_Asignacion' => $newIdAsignacion,
                 'ID_evento' => $newIdEvento,
                 'Id_proceso' => $Id_proceso,
                 'Id_servicio' => $Id_servicio,

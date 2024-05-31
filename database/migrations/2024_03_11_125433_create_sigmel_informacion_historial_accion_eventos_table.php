@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_historial_accion_eventos', function (Blueprint $table) {
             $table->increments('Id_historial_accion');
-            $table->string('ID_evento', 10)->nullable();
+            $table->integer('Id_Asignacion')->nullable();
+            $table->string('ID_evento', 20)->nullable();
             $table->integer('Id_proceso')->nullable();
             $table->integer('Id_servicio')->nullable();            
             $table->integer('Id_accion')->nullable();

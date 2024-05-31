@@ -3559,7 +3559,7 @@ class AdministradorController extends Controller
         ];
 
         // Inserción de datos en la tabla sigmel_informacion_asignacion_eventos
-        sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insert($datos_info_asignacion_evento);
+        $Id_Asignacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insertGetId($datos_info_asignacion_evento);
 
         // colacamos un tiempo de retardo pequeño para que alcance a insertar los datos
         sleep(2);
@@ -3579,6 +3579,7 @@ class AdministradorController extends Controller
         // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
 
         $datos_historial_accion_eventos = [
+            'Id_Asignacion' => $Id_Asignacion,
             'ID_evento' => $Id_evento,
             'Id_proceso' => $request->proceso,
             'Id_servicio' => $request->servicio,
