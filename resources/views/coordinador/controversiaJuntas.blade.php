@@ -1465,7 +1465,7 @@
                         <div class="card-info d-none" id="div_correspondencia">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Correspondencia</h5>
-                                <input type="hidden" id="hay_datos_form_corres" value="<?php echo count($array_comunicados_correspondencia);?>">
+                                <input class="d-none" type="hidden" id="hay_datos_form_corres" value={{true}}>
                             </div>
                             <form id="form_correspondencia" action="POST">
                                 <div class="card-body">
@@ -1793,6 +1793,7 @@
                                             <div class="form-group">
                                                 <label for="radicado">N° Radicado</span></label>
                                                 <input type="text" class="form-control" name="radicado" id="radicado" value="{{$consecutivo}}" disabled> 
+                                                <input type="hidden" class="form-control" name="radicado_comunicado_manual" id="radicado_comunicado_manual" value="{{$consecutivo}}" disabled>
                                             </div>
                                         </div> 
                                     </div>
@@ -1820,39 +1821,49 @@
                             </form>
                         </div>
                         {{-- Comunicados --}}
-                        <?php if(count($array_comunicados_correspondencia) > 0):?>
-                            <div class="card-info">
-                                <div class="card-header text-center" style="border: 1.5px solid black;">
-                                    <h5>Comunicados</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-12" id="msg_alerta">
-                                            <div class="alert alert-warning mensaje_confirmacion_emitido_jnci" role="alert">
-                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de ver la información de una correspondencia, 
-                                                tenga en cuenta que al modifcarla y hacer clic en el botón Guardar, el sistema generará un nuevo registro más no una actualización de la información.
-                                                Si necesita generar la proforma debe editar la información del formulario y luego hacer clic en el botón correspondiente.
-                                            </div>
+                        <div class="card-info">
+                            <div class="card-header text-center" style="border: 1.5px solid black;">
+                                <h5>Comunicados</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12" id="msg_alerta">
+                                        <div class="alert alert-warning mensaje_confirmacion_emitido_jnci" role="alert">
+                                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de ver la información de una correspondencia, 
+                                            tenga en cuenta que al modifcarla y hacer clic en el botón Guardar, el sistema generará un nuevo registro más no una actualización de la información.
+                                            Si necesita generar la proforma debe editar la información del formulario y luego hacer clic en el botón correspondiente.
                                         </div>
-                                        <div class="col-12">
-                                            <div class="table-responsive">
-                                                <table class="table table-striped table-bordered" id="tabla_comunicados_juntas" width="100%">
-                                                    <thead>
-                                                        <tr class="bg-info">
-                                                            <th>N° de Radicado</th>
-                                                            <th>Elaboró</th>
-                                                            <th>Fecha de comunicado</th>
-                                                            <th>Acción</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        
-                                                        @foreach ($array_comunicados_correspondencia as $key => $comunicados)
-                                                            <tr>
-                                                                <td>{{$comunicados->N_radicado}}</td>
-                                                                <td>{{$comunicados->Elaboro}}</td>
-                                                                <td>{{$comunicados->F_comunicado}}</td>  
-                                                                <td>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered" id="tabla_comunicados_juntas" width="100%">
+                                                <thead>
+                                                    <tr class="bg-info">
+                                                        <th>N° de Radicado</th>
+                                                        <th>Elaboró</th>
+                                                        <th>Fecha de comunicado</th>
+                                                        <th>Documento</th>
+                                                        <th>Acción</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    
+                                                    @foreach ($array_comunicados_correspondencia as $key => $comunicados)
+                                                        <tr>
+                                                            <td>{{$comunicados->N_radicado}}</td>
+                                                            <td>{{$comunicados->Elaboro}}</td>
+                                                            <td>{{$comunicados->F_comunicado}}</td>
+                                                            <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>
+                                                            @if ($comunicados->Tipo_descarga == "Manual") 
+                                                                <td style="display: flex; flex-direction:row; justify-content:space-around;">
+                                                                    <form id="form_descargar_archivo_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" method="POST">
+                                                                        <button type="submit" id="btn_descargar_archivo_{{$comunicados->Id_Comunicado}}" style="border: none; background:transparent;">
+                                                                            <i class="far fa-eye text-info"></i>
+                                                                        </button>
+                                                                    </form>
+                                                                </td>
+                                                            @else
+                                                                <td style="display: flex; flex-direction:row; justify-content:space-around;">
                                                                     {{-- <label for="editar_correspondencia_{{$comunicados->Id_Comunicado}}"><i class="fa fa-pen text-info"></i></label>
                                                                     <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia_{{$comunicados->Id_Comunicado}}" 
                                                                     data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
@@ -1883,16 +1894,24 @@
                                                                     ><i class="far fa-eye text-info"></i>
                                                                     </a>
                                                                 </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
+                                                            @endif
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                            <div class="alert alert-danger cargueundocumentoprimero d-none" role="alert">
+                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Por favor, adjunta un documento antes de cargar. 
+                                            </div>
+                                            <div class="alerta_externa_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                                            <div style="display: flex; flex-direction:row; justify-content:flex-end; gap:2px;"> <!-- Alinea el contenido a la derecha -->
+                                                <input style="width:40%" type="file" class="form-control select-doc" name="cargue_comunicados" id="cargue_comunicados" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx"/>
+                                                <button class="btn-info" id="cargarComunicado">Cargar</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        <?php endif ?>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1918,6 +1937,8 @@
             document.getElementById('formularioEnvio').submit();
         });
 
+        var arrayComunicadosCorrespondencia = <?php echo json_encode($array_comunicados_correspondencia); ?>;
+        
         //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE DIAGNOSTCO CIE10 CONTROVERTIDO
         $(".centrar").css('text-align', 'center');
         var listado_diagnostico_cie10_controvertido = $('#listado_diagnostico_cie10_controvertido').DataTable({

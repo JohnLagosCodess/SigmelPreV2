@@ -42,6 +42,7 @@ return new class extends Migration
             $table->text('JRCI_copia')->nullable();
             $table->string('Firmar_Comunicado', 20)->nullable();
             $table->text('Tipo_descarga')->nullable();
+            $table->text('Modulo_creacion')->nullable();
             $table->string('Nombre_usuario', 100);
             $table->date('F_registro');
         });

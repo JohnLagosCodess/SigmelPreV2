@@ -1047,7 +1047,7 @@ class RecalificacionPCLController extends Controller
                     ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion',$Id_asignacion_recali]])->get();
                     
                     $array_comunicados_correspondenciare = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-                    ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali], ['T_documento','N/A']])->get();
+                    ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali], ['T_documento','N/A'], ['Modulo_creacion','recalificacionPCL']])->get();
 
                     $array_comunicados_comite_interre = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
                     ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali]])->get();  
@@ -1875,7 +1875,7 @@ class RecalificacionPCLController extends Controller
                         ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion',$Id_asignacion_recali]])->get();  
                         
                         $array_comunicados_correspondenciare = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-                        ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali], ['T_documento','N/A']])->get();  
+                        ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali], ['T_documento','N/A'], ['Modulo_creacion','recalificacionPCL']])->get();  
 
                         $array_comunicados_comite_interre = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
                         ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali]])->get();  
@@ -4748,6 +4748,8 @@ class RecalificacionPCLController extends Controller
                 'Anexos' => $anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Tipo_descarga' => $request->tipo_descarga,
+                'Modulo_creacion' => 'recalificacionPCL'
             ];
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -4941,6 +4943,8 @@ class RecalificacionPCLController extends Controller
                     'Anexos' => 'N/A',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
+                    'Tipo_descarga' => 'Dictamen',
+                    'Modulo_creacion' => 'recalificacionPCL'
                 ];
         
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -5012,6 +5016,8 @@ class RecalificacionPCLController extends Controller
                     'Anexos' => 'N/A',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
+                    'Tipo_descarga' => 'Dictamen',
+                    'Modulo_creacion' => 'recalificacionPCL'
                 ];
         
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
