@@ -125,8 +125,10 @@ class PronunciamientoPCLController extends Controller
             $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
             $consecutivo = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted;
         }
+        $array_comunicados = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$Id_evento_calitec], ['Id_Asignacion',$Id_asignacion_calitec], ['Modulo_creacion','pronunciamientoPCL']])->get();
 
-        return view('coordinador.pronunciamientoPCL', compact('user','array_datos_pronunciamientoPcl','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo'));
+        return view('coordinador.pronunciamientoPCL', compact('user','array_datos_pronunciamientoPcl','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo', 'array_comunicados'));
     }
     //Ver Documento Pronuncia
     public function VerDocumentoPronuncia(Request $request){
@@ -546,11 +548,15 @@ class PronunciamientoPCLController extends Controller
                 'Anexos' => $request->n_anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Tipo_descarga' => $request->decision_pr,
+                'Modulo_creacion' => 'pronunciamientoPCL',
             ];
             sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->insert($datos_info_pronunciamiento_eventos);
             sleep(2);
-            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
-            sleep(2);
+            if($request->decision_pr != 'Silencio'){
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+                sleep(2);
+            }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
             $Id_Pronuncia = sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->select('Id_Pronuncia')->latest('Id_Pronuncia')->first();
             $accion_realizada = "Registro de Pronuciamiento {$Id_Pronuncia['Id_Pronuncia']}";
@@ -685,6 +691,66 @@ class PronunciamientoPCLController extends Controller
             sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')
             ->where([['ID_Evento', $Id_EventoPronuncia], ['Id_Asignacion',$Id_Asignacion_Pronuncia]])->update($datos_info_pronunciamiento_eventos);
             sleep(2);
+
+            $datos_info_comunicado_eventos = [
+                'ID_Evento' => $Id_EventoPronuncia,
+                'Id_proceso' => $Id_ProcesoPronuncia,
+                'Id_Asignacion' => $Id_Asignacion_Pronuncia,
+                'Ciudad' => $request->ciudad_correspon,
+                'F_comunicado' => $date,
+                'N_radicado' => $request->n_radicado,
+                'Cliente' => $request->primer_calificador,
+                'Nombre_afiliado' => $request->nombre_afiliado,
+                'T_documento' => 'N/A',
+                'N_identificacion' => $request->identificacion,
+                'Destinatario' => 'N/A',
+                'Nombre_destinatario' => 'N/A',
+                'Nit_cc' => 'N/A',
+                'Direccion_destinatario' => 'N/A',
+                'Telefono_destinatario' => '001',
+                'Email_destinatario' => 'N/A',
+                'Id_departamento' => '001',
+                'Id_municipio' => '001',
+                'Asunto'=> $request->asunto_cali,
+                'Cuerpo_comunicado' => $request->sustenta_cali,
+                'Forma_envio' => '0',
+                'Elaboro' => $request->elaboro,
+                'Reviso' => '0',
+                'Anexos' => $request->n_anexos,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+                'Tipo_descarga' => $request->decision_pr,
+                'Modulo_creacion' => 'pronunciamientoPCL',
+            ];
+            // dd($request->decision_pr);
+            if($request->decision_pr != 'Silencio' && $request->Id_Comunicado){
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where([
+                    ['ID_evento', $Id_EventoPronuncia],
+                    ['Id_Asignacion', $Id_Asignacion_Pronuncia],
+                    ['Id_Comunicado', $request->Id_Comunicado]
+                ])->update($datos_info_comunicado_eventos);
+                sleep(2);
+            }
+            else if($request->decision_pr == 'Silencio' && $request->Id_Comunicado){
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $request->Id_Comunicado)->delete();
+                $archivos_a_eliminar = [
+                    "PCL_ACUERDO_{$Id_Asignacion_Pronuncia}_{$request->identificacion}.pdf",
+                    "PCL_DESACUERDO_{$Id_Asignacion_Pronuncia}_{$request->identificacion}.docx"
+                ];
+                
+                foreach ($archivos_a_eliminar as $archivo) {
+                    $ruta_archivo = "Documentos_Eventos/{$Id_EventoPronuncia}/{$archivo}";
+                    $path = public_path($ruta_archivo);
+                    if (File::exists($path)) {
+                        File::delete($path);
+                    }
+                }
+                sleep(2);
+            }
+            if($request->decision_pr != 'Silencio' && $request->Id_Comunicado == "null"){
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+                sleep(2);
+            }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
             $Id_Pronuncia = sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->select('Id_Pronuncia','Id_Asignacion')->latest('Id_Pronuncia')->first();
             $accion_realizada = "Actualiza Pronuciamiento {$Id_Pronuncia['Id_Pronuncia']}";
@@ -1119,7 +1185,7 @@ class PronunciamientoPCLController extends Controller
 
         if (count($dato_logo_footer) > 0 && $dato_logo_footer[0]->Footer_cliente != null) {
             $footer = $dato_logo_footer[0]->Footer_cliente;
-            $ruta_logo_footer = "/footer_clientes/{$id_cliente}/{$logo_footer}";
+            $ruta_logo_footer = "/footer_clientes/{$Cliente}/{$footer}";
         } else {
             $footer = null;
             $ruta_logo_footer = null;

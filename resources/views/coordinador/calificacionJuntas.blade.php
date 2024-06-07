@@ -909,11 +909,20 @@
                                                 <th>N° Radicado</th>
                                                 <th>Elaboro</th>
                                                 <th>Fecha Comunicado</th>
+                                                <th>Documento</th>
                                                 <th>Acción</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
                                     </table>
+                                    <div class="alert alert-danger cargueundocumentoprimero d-none" role="alert">
+                                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Por favor, adjunta un documento antes de cargar. 
+                                    </div>
+                                    <div class="alerta_externa_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                                    <div style="display: flex; flex-direction:row; justify-content:flex-end; gap:2px;"> <!-- Alinea el contenido a la derecha -->
+                                        <input style="width:40%" type="file" class="form-control select-doc" name="cargue_comunicados" id="cargue_comunicados" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx"/>
+                                        <button class="btn-info" id="cargarComunicado">Cargar</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1750,14 +1759,14 @@
                                                 <input type="hidden" class="form-control" name="Id_evento_act" id="Id_evento_act">
                                                 <input type="hidden" class="form-control" name="Id_asignacion_act" id="Id_asignacion_act">
                                                 <input type="hidden" class="form-control" name="Id_procesos_act" id="Id_procesos_act">
-                                                <input type="hidden" class="form-control" name="Nombre_junta_act" value="<?php if(!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez)){echo $arrayinfo_controvertido[0]->JrciNombre;}?>">
-                                                <input type="hidden" class="form-control" name="Id_junta_act" value="<?php if(!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez)){echo $arrayinfo_controvertido[0]->Jrci_califi_invalidez;}?>">
+                                                <input type="hidden" class="form-control" name="Nombre_junta_act" id="Nombre_junta_act" value="<?php if(!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez)){echo $arrayinfo_controvertido[0]->JrciNombre;}?>">
+                                                <input type="hidden" class="form-control" name="Id_junta_act" id="Id_junta_act" value="<?php if(!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez)){echo $arrayinfo_controvertido[0]->Jrci_califi_invalidez;}?>">
                                                 {{-- mauro --}}
-                                                <input type="hidden" class="form-control" name="F_notifi_afiliado_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado)) { echo $arrayinfo_controvertido[0]->F_notifi_afiliado;} ?>">
-                                                <input type="hidden" class="form-control" name="F_radicacion_contro_pri_cali_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_radi_califi)) { echo $arrayinfo_controvertido[0]->F_contro_radi_califi;} ?>">
-                                                <input type="hidden" class="form-control" name="F_estructuracion_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_estructuracion_contro)) { echo $arrayinfo_controvertido[0]->F_estructuracion_contro;} ?>">
+                                                <input type="hidden" class="form-control" name="F_notifi_afiliado_act" id="F_notifi_afiliado_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado)) { echo $arrayinfo_controvertido[0]->F_notifi_afiliado;} ?>">
+                                                <input type="hidden" class="form-control" name="F_radicacion_contro_pri_cali_act" id="F_radicacion_contro_pri_cali_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_radi_califi)) { echo $arrayinfo_controvertido[0]->F_contro_radi_califi;} ?>">
+                                                <input type="hidden" class="form-control" name="F_estructuracion_act" id="F_estructuracion_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_estructuracion_contro)) { echo $arrayinfo_controvertido[0]->F_estructuracion_contro;} ?>">
                                                 {{-- revisar fecha --}}
-                                                <input type="hidden" class="form-control" name="F_dictamen_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_dictamen_jrci_emitido)) { echo $arrayinfo_controvertido[0]->F_dictamen_jrci_emitido;} ?>">
+                                                <input type="hidden" class="form-control" name="F_dictamen_act" id="F_dictamen_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_dictamen_jrci_emitido)) { echo $arrayinfo_controvertido[0]->F_dictamen_jrci_emitido;} ?>">
                                             </div>
                                         </div>
                                         <div class="col-4">

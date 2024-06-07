@@ -196,7 +196,7 @@ class ControversiaJuntasController extends Controller
 
         // traemos los comunicados
         $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$Id_evento_juntas], ['Id_Asignacion',$Id_asignacion_juntas], ['T_documento','N/A']])->get();
+        ->where([['ID_evento',$Id_evento_juntas], ['Id_Asignacion',$Id_asignacion_juntas], ['T_documento','N/A'],['Modulo_creacion','controversiaJuntas']])->get();
 
         //Obtenemos las secciones a mostrar
         $array_control = $this->controlJuntas($Id_evento_juntas, $Id_asignacion_juntas,  $array_datos_controversiaJuntas[0]->Nombre_servicio);
@@ -1697,6 +1697,8 @@ class ControversiaJuntasController extends Controller
                 'Anexos' => $anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Tipo_descarga' => 'Controversia',
+                'Modulo_creacion' => 'controversiaJuntas',
             ];
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);

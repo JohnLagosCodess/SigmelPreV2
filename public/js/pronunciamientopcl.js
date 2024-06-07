@@ -88,6 +88,19 @@ $(document).ready(function(){
             }
         }
     });
+
+    var info_pronuncia = $('#info_pronuncia').val();
+    if(info_pronuncia){
+        var info_pronunciamiento = JSON.parse(info_pronuncia)[0];
+        if(info_pronunciamiento.Decision == 'Silencio'){
+            $("#div_pronu_califi").removeClass('d-none');
+        } 
+        else{
+            $("#ActualizarPronuncia").addClass('d-none');
+            $("#div_pronu_califi").addClass('d-none');
+            $("#div_doc_pronu").addClass('d-none');
+        }     
+    }
     // Listado Nombre Entidad    
     $('#primer_calificador').change( function(){
         $('#nombre_calificador').prop('disabled', false);
@@ -396,6 +409,7 @@ $(document).ready(function(){
         $(this).val(opt_correspondencia);
         iniciarIntervalo_correspon();
     });
+
     // Función para validar items a mostrar
     const tiempoDeslizamiento2 = 'slow';
     function iniciarIntervalo_correspon() {
@@ -427,33 +441,137 @@ $(document).ready(function(){
                 $("#reviso").prop("selectedIndex", 1);
             }
         });
-        intervaloCo = setInterval(() => {
-            switch (opt_correspondencia) {
-                case "Acuerdo":
-                    elementosDeslizar2.forEach(elemento => {
-                        $(elemento).slideDown(tiempoDeslizamiento2);
-                    }); 
-                    $('#reviso').prop('required', true);
-                break;
-                case "Desacuerdo": 
-                    elementosDeslizar2.forEach(elemento => {
-                        $(elemento).slideDown(tiempoDeslizamiento2);
-                    });
-                    $('#reviso').prop('required', true);
-                break;
+        if(!info_pronuncia){
+            intervaloCo = setInterval(() => {
+                switch (opt_correspondencia) {
+                    case "Acuerdo":
+                        elementosDeslizar2.forEach(elemento => {
+                            $(elemento).slideUp(tiempoDeslizamiento2);
+                        }); 
+                        $('#reviso').prop('required', true);
+                    break;
+                    case "Desacuerdo": 
+                        elementosDeslizar2.forEach(elemento => {
+                            $(elemento).slideUp(tiempoDeslizamiento2);
+                        });
+                        $('#reviso').prop('required', true);
+                    break;
 
-                default:
-                    // Deslizar hacia arriba (ocultar) los elementos
+                    default:
+                        // Deslizar hacia arriba (ocultar) los elementos
+                        elementosDeslizar2.forEach(elemento => {
+                            $(elemento).slideUp(tiempoDeslizamiento2);
+                        });
+                        $('#reviso').prop('required', false);
+                    break;
+                }
+            }, 500);1
+        }
+        else{
+            switch (opt_correspondencia) {
+                case "Silencio":
                     elementosDeslizar2.forEach(elemento => {
                         $(elemento).slideUp(tiempoDeslizamiento2);
                     });
                     $('#reviso').prop('required', false);
                 break;
+                default:
+                    elementosDeslizar2.forEach(elemento => {
+                        $(elemento).slideDown(tiempoDeslizamiento2);
+                    });
+                    $('#reviso').prop('required', true);
+                break;
             }
-
-        }, 500);
-
+        }
     }
+
+    //Cargar comunicado manual
+    $('#cargarComunicado').click(function(){
+        if(!$('#cargue_comunicados')[0].files[0]){
+            return $(".cargueundocumentoprimero").removeClass('d-none');
+        }
+        $(".cargueundocumentoprimero").addClass('d-none');
+        var archivo = $('#cargue_comunicados')[0].files[0];
+        var documentName = archivo.name;
+        var formData = new FormData($('form')[0]);
+        formData.append('cargue_comunicados', archivo);
+        formData.append('token', $('input[name=_token]').val());
+        formData.append('ciudad', 'N/A');
+        formData.append('Id_evento',$('#Id_Evento_pronuncia').val());
+        formData.append('Id_asignacion',$('#Asignacion_Pronuncia').val());
+        formData.append('Id_procesos',$('#Id_Proceso_pronuncia').val());
+        formData.append('fecha_comunicado2',null);
+        formData.append('radicado2',$('#radicado_comunicado_manual').val());
+        formData.append('cliente_comunicado2','N/A');
+        formData.append('nombre_afiliado_comunicado2','N/A');
+        formData.append('tipo_documento_comunicado2','N/A');
+        formData.append('identificacion_comunicado2','N/A');
+        formData.append('destinatario', 'N/A');
+        formData.append('nombre_destinatario','N/A');
+        formData.append('nic_cc','N/A');
+        formData.append('direccion_destinatario','N/A');
+        formData.append('telefono_destinatario',1);
+        formData.append('email_destinatario','N/A');
+        formData.append('departamento_destinatario',1);
+        formData.append('ciudad_destinatario',1);
+        formData.append('asunto',documentName);
+        formData.append('cuerpo_comunicado','N/A');
+        formData.append('anexos',0);
+        formData.append('forma_envio',0);
+        formData.append('reviso',0);
+        formData.append('firmarcomunicado',null);
+        formData.append('tipo_descarga', 'Manual');
+        formData.append('modulo_creacion','pronunciamientoPCL');
+        formData.append('modulo','Comunicados pronuncionamiento PCL');
+        $.ajax({
+            type:'POST',
+            url:'/registrarComunicadoOrigen',
+            data: formData,   
+            processData: false,
+            contentType: false,         
+            success:function(response){
+                if (response.parametro == 'agregar_comunicado') {
+                    $('.alerta_externa_comunicado').removeClass('d-none');
+                    $('.alerta_externa_comunicado').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.alerta_externa_comunicado').addClass('d-none');
+                        $('.alerta_externa_comunicado').empty();
+                        location.reload();
+                    }, 3000);
+                }
+            }
+        });  
+    }); 
+
+    //Descargar archivo cargado manualmente
+    $("form[id^='form_descargar_archivo_']").submit(function (e){
+        e.preventDefault();              
+        var archivo = $(this).data("archivo");
+
+        var nombre_documento = archivo.Asunto;
+        var idEvento = archivo.ID_evento;
+        var enlaceDescarga = document.createElement('a');
+        enlaceDescarga.href = '/descargar-archivo/'+nombre_documento+'/'+idEvento;     
+        enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+        enlaceDescarga.style.display = 'none';
+        document.body.appendChild(enlaceDescarga);
+    
+        // Simular clic en el enlace para iniciar la descarga
+        enlaceDescarga.click();
+    
+        // Eliminar el enlace después de la descarga
+        setTimeout(function() {
+            document.body.removeChild(enlaceDescarga);
+        }, 1000);
+    });
+
+    $("#editar_correspondencia").click(function(e){
+        var info_pronunciamiento = JSON.parse(info_pronuncia)[0];
+        $("#ActualizarPronuncia").removeClass('d-none');
+        $("#div_pronu_califi").removeClass('d-none');
+        $("#div_doc_pronu").removeClass('d-none');
+        $("#correspondencia-item").removeClass('d-none');  
+    });
     /* VALIDACIÓN MOSTRAR CUAL JUNTA REGIONAL */
     
     $('#div_cual').hide();
@@ -620,6 +738,7 @@ $(document).ready(function(){
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', false);
         }
+        iniciarIntervalo_correspon();
     });
 
      $("#btn_insertar_Nombre_afiliado").click(function(e){
@@ -740,6 +859,14 @@ $(document).ready(function(){
         formData.append('identificacion', $('#identificacion').val());
         formData.append('DocPronuncia', $('#DocPronuncia')[0].files[0]);
         formData.append('bandera_pronuncia_guardar_actualizar', $('#bandera_pronuncia_guardar_actualizar').val());
+        if($('#bandera_pronuncia_guardar_actualizar').val() == 'Actualizar'){
+            if($('#id_comunicado_a_editar').val()){
+                formData.append('Id_Comunicado',$('#id_comunicado_a_editar').val());
+            }
+            else{
+                formData.append('Id_Comunicado',null);
+            }
+        }
         $.ajax({
             type:'POST',
             url:'/guardarInfoServiPronuncia',
@@ -770,8 +897,13 @@ $(document).ready(function(){
             }
         })
     });
+    $("form[id^='form_editar_comunicado_']").click(function(event){
+        event.preventDefault();
+        var tupla_comunicado = $(this).data("tupla_comunicado");
+    });
+
     // Captura de datos para la proformas de pronunciamiento PCL acuerdo y desacuerdo
-    $('#proformas_pro_pcl').click(function (e) {
+    $("form[id^='archivo_']").click(function (e) {
         e.preventDefault();
         
         var desicion_proforma_di_acuerdo_pr = $('#di_acuerdo_pr');
@@ -824,6 +956,9 @@ $(document).ready(function(){
             xhrFields: {
                 responseType: 'blob' // Indica que la respuesta es un blob
             },
+            beforeSend:  function() {
+                $("#btn_generar_proforma").addClass("descarga-deshabilitada");
+            },
             success: function (response, status, xhr) {
                 var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
         
@@ -847,7 +982,10 @@ $(document).ready(function(){
             error: function (error) {
                 // Manejar casos de error
                 console.error('Error al descargar el PDF:', error);
-            } 
+            },
+            complete: function(){
+                $("#btn_generar_proforma").removeClass("descarga-deshabilitada");
+            }  
         });
 
     });
