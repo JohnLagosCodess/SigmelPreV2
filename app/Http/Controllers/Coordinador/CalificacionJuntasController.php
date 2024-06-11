@@ -1005,6 +1005,8 @@ class CalificacionJuntasController extends Controller
                 'Jrci_califi_invalidez' => $request->jrci_califi_invalidez,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'F_envio_jrci' => $request->fecha_envio_jrci,
+                'F_envio_jnci' => $request->fecha_envio_jnci,
                 'Observaciones' => $request->Observaciones
             ];
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')->insert($datos_info_controversia);
@@ -1033,6 +1035,8 @@ class CalificacionJuntasController extends Controller
                 'Jrci_califi_invalidez' => $request->jrci_califi_invalidez,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'F_envio_jrci' => $request->fecha_envio_jrci,
+                'F_envio_jnci' => $request->fecha_envio_jnci,
                 'Observaciones' => $request->Observaciones
             ];
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
