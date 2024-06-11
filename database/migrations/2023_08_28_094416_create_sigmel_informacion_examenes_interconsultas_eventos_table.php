@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_examenes_interconsultas_eventos', function (Blueprint $table) {
             $table->increments('Id_Examenes_interconsultas');
-            $table->string('ID_evento', 15)->nullable();
+            $table->string('ID_evento', 20)->nullable();
             $table->integer('Id_Asignacion')->nullable();
             $table->integer('Id_proceso')->nullable();
             $table->date('F_examen_interconsulta')->nullable();

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::connection('sigmel_auditorias')->create('sigmel_auditorias_pronunciamiento_eventos', function (Blueprint $table) {
             $table->increments('Id');
             $table->integer('Id_Pronuncia')->nullable();
-            $table->string('ID_evento', 10);
+            $table->string('ID_evento', 20);
             $table->string('Id_Asignacion', 20)->nullable();
             $table->integer('Id_proceso');
             $table->integer('Id_primer_calificador')->nullable();

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->text('Cliente');
             $table->integer('Tipo_cliente');
             $table->integer('Tipo_evento')->nullable();
-            $table->string('ID_evento', 15);
+            $table->string('ID_evento', 20);
             $table->date('F_evento')->nullable();
             $table->date('F_radicacion');
             $table->text('Nombre_usuario');
