@@ -175,7 +175,7 @@ class CalificacionJuntasController extends Controller
         
         //Se agregar principalmente por la ficha psb026, desdepues de la implementacion deberia ser auto. a traves del trigger, para los registros anteriores se agregar las siguientes lineas, el cual anexa la fecha de plazo
         if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado) && empty($arrayinfo_controvertido[0]->F_plazo_controversia)){
-            $fecha_controversia = DB::select( 'SELECT ' . getDatabaseName('sigmel_gestiones') ."fnCalcularDiasHabilesV2('{$arrayinfo_controvertido[0]->F_notifi_afiliado}') as Fecha");
+            $fecha_controversia = calcularDiasHabiles($arrayinfo_controvertido[0]->F_notifi_afiliado);
 
             $arrayinfo_controvertido[0]->F_plazo_controversia = $fecha_controversia[0]->Fecha;
         }
