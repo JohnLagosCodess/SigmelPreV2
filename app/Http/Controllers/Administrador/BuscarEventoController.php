@@ -2237,13 +2237,14 @@ class BuscarEventoController extends Controller
             'F_registro' => $date
         ];
 
-        sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insert($datos_nuevo_servicio);
+        $Id_Asignacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insertGetId($datos_nuevo_servicio);
 
         sleep(1);
 
         // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
 
         $datos_historial_accion_eventos = [
+            'Id_Asignacion' => $Id_Asignacion,
             'ID_evento' => $request->id_evento,
             'Id_proceso' => $request->id_proceso_actual,
             'Id_servicio' => $request->nuevo_servicio,
@@ -2306,7 +2307,7 @@ class BuscarEventoController extends Controller
                 ];
         
                 sigmel_clientes::on('sigmel_gestiones')->where('Id_cliente',$request->id_clientes)
-                ->update($actualizar_id_cliente);
+              ->update($actualizar_id_cliente);
 
             } else {
                 $numero_consecutivo_Dictamen = null;
@@ -2383,13 +2384,14 @@ class BuscarEventoController extends Controller
             'F_registro' => $date
         ];
 
-        sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insert($datos_nuevo_proceso);
+        $Id_Asignacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insertGetId($datos_nuevo_proceso);
 
         sleep(1);
 
         // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
 
         $datos_historial_accion_eventos = [
+            'Id_Asignacion' => $Id_Asignacion,
             'ID_evento' => $request->id_evento,
             'Id_proceso' => $request->selector_nuevo_proceso,
             'Id_servicio' => $request->selector_nuevo_servicio,
@@ -2402,6 +2404,9 @@ class BuscarEventoController extends Controller
 
         sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insert($datos_historial_accion_eventos);
         sleep(2);
+
+        //Procesamos la informacion del formulario asociado al nuevo servicio
+        $this->procesarFormulariosJuntas($request->id_evento, $Id_Asignacion,$request->selector_nuevo_servicio,$request->tupla_proceso_escogido,$request->selector_nuevo_proceso);
         
         $mensajes = array(
             "parametro" => 'creo_proceso',
@@ -2413,6 +2418,191 @@ class BuscarEventoController extends Controller
 
     }
 
+    /**
+    *   Ficha: PSB023 - En funcion del servicio origen a partir del cual se creara el nuevo proceso extraemos la informacion relevante segun aplique
+    *   para las reglas en @var $reglas
+    *   @param evento Corresponden al numero de evento con el cual estaremos trabajando.
+    *   @param nuevo_id_asignacion Corresponde al id de asignacion para el nuevo proceso.
+    *   @param servicioNuevo Corresponde al nuevo servicio que se creo.
+    *   @param Id_Asignacion_origen Corresponde al id de asignacion del evento origen a partid del cual se creo el proceso.
+    *   @param proceso Corresponde al proceso asociado al nuevo servicio
+    *   @return void
+    */
+    public function procesarFormulariosJuntas($evento, $nuevo_id_asignacion,$servicioNuevo,$Id_Asignacion_origen,$proceso) {
+        /**
+         *  Reglas sobre las cuales se estaran insertado los datos en el nuevo servicio siempre y cuando se cumplan las condiciones
+         *  @var servico_nuevo corresponde a Controversia origen o Controversia pcl
+         *  @var servicio_origen Corresponde al servicio origen a partir del cual se esta creando el nuevo proceso.
+         */
+        $reglas = [
+            [
+                'servicio_origen' => ['Determinación del Origen (DTO) ATEL', 'Adición DX'],
+                'servicio_nuevo' => 12,
+                'accion' => 'traer_informacion',
+            ],
+            [
+                'servicio_origen' => ['Calificación técnica', 'Recalificación', 'Revisión pensión','Controversia PCL'],
+                'servicio_nuevo' => 13,
+                'accion' => 'traer_informacion',
+            ],
+        ];
+    
+        $date = date("Y-m-d", time());
+        $nombre_usuario = Auth::user()->name;
+    
+        //Info del servico a partir del cual se esta creando el nuevo proceso.
+        $servicio = (array) DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_procesos_servicios as lps')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_historial_accion_eventos as ihae', 'ihae.id_servicio', 'lps.id_servicio')
+            ->select('Nombre_proceso', 'Nombre_servicio')
+            ->where([['ihae.ID_evento', $evento], ['ihae.Id_Asignacion', $Id_Asignacion_origen]])
+            ->first();
+
+        foreach ($reglas as $regla) {
+
+            //Info. que se llenaran tanto para origen como para pcl
+            if (in_array($servicio['Nombre_servicio'], $regla['servicio_origen']) && ($servicioNuevo == 12 || $servicioNuevo == 13)) {
+                if ($regla['accion'] == 'traer_informacion') {
+                    $InfoControvertido = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_eventos as IE')
+                        ->leftJoin('sigmel_gestiones.sigmel_clientes AS SC', 'SC.Id_cliente', 'IE.cliente')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_clientes AS TC', 'TC.Id_TipoCliente', 'IE.Tipo_cliente')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros AS LP', 'LP.Nombre_parametro', 'TC.Nombre_tipo_cliente')
+                        ->select(
+                            'Nombre_cliente',
+                            'Id_Parametro as TipoCliente',
+                            'Tipo_evento'
+                            )->where([
+                            ['IE.ID_evento', $evento],
+                            ['LP.Tipo_lista','Juntas Controversia']
+                            ])->first();
+    
+                    $Controvertido = [
+                        'ID_evento' => $evento,
+                        'Id_asignacion' => $nuevo_id_asignacion,
+                        'Id_proceso' => $proceso,
+                        'Primer_calificador' => $InfoControvertido->TipoCliente,
+                        'Nom_entidad' => $InfoControvertido->Nombre_cliente,
+                        'Nombre_usuario' => $nombre_usuario,
+                        'F_registro' => $date
+                    ];
+                }
+    
+                break;
+            }
+        }
+
+        foreach ($reglas as $regla) {
+            //Caso PCL
+            if ($regla['servicio_nuevo'] == $servicioNuevo && in_array($servicio['Nombre_servicio'], $regla['servicio_origen'])) {
+                //Informacion para calificacion, recalificacion y revision pension
+                $informacionComite = optional(DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_comite_interdisciplinario_eventos as cie')
+                    ->leftJoin('sigmel_gestiones.sigmel_informacion_asignacion_eventos as sae', function ($join) {
+                        $join->on('cie.ID_evento', '=', 'sae.ID_evento')
+                             ->on('cie.Id_Asignacion', '=', 'sae.Id_Asignacion');
+                    })->leftJoin('sigmel_gestiones.sigmel_informacion_decreto_eventos as de', function ($join) {
+                        $join->on('cie.ID_evento', '=', 'de.ID_evento')
+                             ->on('cie.Id_Asignacion', '=', 'de.Id_Asignacion');
+                    })->leftJoin('sigmel_gestiones.sigmel_informacion_laboralmente_activo_eventos as lae', function ($join) {
+                        $join->on('cie.ID_evento', '=', 'lae.ID_evento')
+                             ->on('cie.Id_Asignacion', '=', 'lae.Id_Asignacion');
+                    })->leftJoin('sigmel_gestiones.sigmel_informacion_libro2_libro3_eventos as lle', function ($join) {
+                        $join->on('cie.ID_evento', '=', 'lle.ID_evento')
+                             ->on('cie.Id_Asignacion', '=', 'lle.Id_Asignacion');
+                    })->select('cie.F_visado_comite as FechaDictamen',
+                    'sae.Consecutivo_dictamen as Consecutivo_dictamen',
+                    'de.N_siniestro as N_siniestro',
+                    'de.Porcentaje_pcl as _pcl',
+                    'de.Decreto_calificacion as Decreto_calificacion',
+                    'de.Total_Deficiencia50 as Deficiencia_50',
+                    'de.F_estructuracion as F_estructuracion',
+                    'de.Origen as Origen',
+                    'lae.Total_otras_areas as Total_otras_areas',
+                    'lle.Total_discapacidad as Total_discapacidad',
+                    'lle.Total_minusvalia as Total_minusvalia')
+                    ->where([
+                        ['cie.ID_evento', '=', $evento],
+                        ['cie.Id_Asignacion', '=', $Id_Asignacion_origen]
+                    ])->first());
+
+                //Diagnostico de la calificacion
+                $diagnostico = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos')
+                ->select('CIE10','Nombre_CIE10','Deficiencia_motivo_califi_condiciones','Origen_CIE10','Principal')
+                ->where([
+                    ['ID_evento', $evento],
+                    ['Id_Asignacion', $Id_Asignacion_origen],
+                    ['Estado', '=', 'Activo']
+                ])
+                ->get()
+                ->map(function($item) use ($nombre_usuario, $date,$evento,$nuevo_id_asignacion,$proceso) {
+                    $item = (array)$item;
+                    $item['Nombre_usuario'] = $nombre_usuario;
+                    $item['F_registro'] = $date;
+                    $item['ID_evento'] = $evento;
+                    $item['Id_Asignacion'] = $nuevo_id_asignacion;
+                    $item['Id_proceso'] = $proceso;
+                    $item['Item_servicio'] = 'Controvertido Juntas';
+                    return $item;
+                });
+                        
+                //Informacion del controvertido para el caso PCL, el caul debe estar visado en el caso de calificacion
+                $Controvertido['N_dictamen_controvertido'] = optional($informacionComite)->Consecutivo_dictamen;
+                $Controvertido['F_dictamen_controvertido'] = optional($informacionComite)->FechaDictamen;
+                $Controvertido['N_siniestro'] =  optional($informacionComite)->N_siniestro;
+                $Controvertido['Origen_controversia'] = optional($informacionComite)->Origen;
+                $Controvertido['Manual_de_califi'] = optional($informacionComite)->Decreto_calificacion;
+                $Controvertido['Total_deficiencia'] = optional($informacionComite)->Deficiencia_50;
+                $Controvertido['Total_rol_ocupacional'] = optional($informacionComite)->Total_otras_areas;
+                $Controvertido['Total_discapacidad'] = optional($informacionComite)->Total_discapacidad;
+                $Controvertido['Total_minusvalia'] = optional($informacionComite)->Total_minusvalia;
+                $Controvertido['Porcentaje_pcl'] = optional($informacionComite)->_pcl;
+                $Controvertido['F_estructuracion_contro'] = optional($informacionComite)->F_estructuracion;
+            }
+
+            //Caso Origen
+            if ($regla['servicio_nuevo'] == $servicioNuevo && in_array($servicio['Nombre_servicio'], $regla['servicio_origen'])){
+                //Informacion diagonostico
+                $diagnostico = optional(DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos')
+                ->select('CIE10','Nombre_CIE10','Deficiencia_motivo_califi_condiciones','Origen_CIE10','Lateralidad_CIE10','Principal')
+                ->where([
+                    ['ID_evento', $evento],
+                    ['Id_Asignacion', $Id_Asignacion_origen],
+                    ['Estado', '=', 'Activo']
+                ])
+                ->get()
+                ->map(function($item) use ($nombre_usuario, $date,$evento,$nuevo_id_asignacion,$proceso) {
+                    $item = (array)$item;
+                    $item['Nombre_usuario'] = $nombre_usuario;
+                    $item['F_registro'] = $date;
+                    $item['ID_evento'] = $evento;
+                    $item['Id_Asignacion'] = $nuevo_id_asignacion;
+                    $item['Id_proceso'] = $proceso;
+                    $item['Item_servicio'] = 'Controvertido Juntas';
+                    return $item;
+                }));
+
+                //Informacion DTO
+                $origen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as IAE')
+                ->select('IAE.Consecutivo_dictamen as Consecutivo_dictamen', 'IAE.F_registro as F_registro', 'DTO.N_siniestro as N_siniestro', 'DTO.Origen as DTO_Origen')
+                ->leftJoin('sigmel_gestiones.sigmel_informacion_dto_atel_eventos as DTO', function ($join){
+                    $join->on('DTO.ID_evento', '=', 'IAE.ID_Evento')
+                        ->on('DTO.Id_Asignacion', '=', 'IAE.Id_Asignacion');
+                })->where('IAE.Id_Asignacion', $Id_Asignacion_origen)->get();
+
+                $Controvertido['Origen_controversia'] = optional($origen[0])->DTO_Origen;
+                $Controvertido['N_dictamen_controvertido'] = optional($origen[0])->Consecutivo_dictamen;
+                $Controvertido['F_dictamen_controvertido'] = optional($origen[0])->F_registro;
+                $Controvertido['N_siniestro'] = optional($origen[0])->N_siniestro;
+            }
+        }
+       
+        DB::table('sigmel_gestiones.sigmel_informacion_controversia_juntas_eventos')->insert($Controvertido);
+        sleep(1);
+
+        //Siempre y cuando el diagnostico no este vacio se insertera la informacion en la tabla
+        if(!$diagnostico->isEmpty()){
+            $diagnostico = json_decode(json_encode($diagnostico),true);
+            DB::table('sigmel_gestiones.sigmel_informacion_diagnosticos_eventos')->insert($diagnostico);
+        }
+    }
     // Mantener o Borrar datos de búsqueda del formulario de buscador de eventos
     public function mantenerDatosBusquedaEvento(Request $request){
         // Obtén la instancia del objeto de sesión

@@ -122,7 +122,10 @@ class PronunciamientoOrigenController extends Controller
             $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted;
         }
 
-        return view('coordinador.pronunciamientoOrigenATEL', compact('user','array_datos_pronunciamientoOrigen','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo'));
+        $array_comunicados = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$Id_evento_calitec], ['Id_Asignacion',$Id_asignacion_calitec],['Modulo_creacion','pronunciamientoOrigen']])->get();  
+
+        return view('coordinador.pronunciamientoOrigenATEL', compact('user','array_datos_pronunciamientoOrigen','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo','array_comunicados'));
     }
 
     //Cargar Selectores pronunciamiento
@@ -490,11 +493,15 @@ class PronunciamientoOrigenController extends Controller
                 'Anexos' => $request->n_anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Tipo_descarga' => $request->decision_pr,
+                'Modulo_creacion' => 'pronunciamientoOrigen',
             ];
             sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->insert($datos_info_pronunciamiento_eventos);
             sleep(2);
-            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
-            sleep(2);
+            if($request->decision_pr != 'Silencio'){
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+                sleep(2);
+            }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
             $Id_Pronuncia = sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->select('Id_Pronuncia')->latest('Id_Pronuncia')->first();
             $accion_realizada = "Registro de Pronuciamiento Origen {$Id_Pronuncia['Id_Pronuncia']}";
@@ -633,6 +640,66 @@ class PronunciamientoOrigenController extends Controller
                 ['Id_Asignacion', $Id_Asignacion_Pronuncia]
             ])->update($datos_info_pronunciamiento_eventos);
             sleep(2);
+
+            $datos_info_comunicado_eventos = [
+                'ID_Evento' => $Id_EventoPronuncia,
+                'Id_proceso' => $Id_ProcesoPronuncia,
+                'Id_Asignacion' => $Id_Asignacion_Pronuncia,
+                'Ciudad' => $request->ciudad_correspon,
+                'F_comunicado' => $date,
+                'N_radicado' => $request->n_radicado,
+                'Cliente' => $request->primer_calificador,
+                'Nombre_afiliado' => $request->nombre_afiliado,
+                'T_documento' => 'N/A',
+                'N_identificacion' => $request->identificacion,
+                'Destinatario' => 'N/A',
+                'Nombre_destinatario' => 'N/A',
+                'Nit_cc' => 'N/A',
+                'Direccion_destinatario' => 'N/A',
+                'Telefono_destinatario' => '001',
+                'Email_destinatario' => 'N/A',
+                'Id_departamento' => '001',
+                'Id_municipio' => '001',
+                'Asunto'=> $request->asunto_cali,
+                'Cuerpo_comunicado' => $request->sustenta_cali,
+                'Forma_envio' => '0',
+                'Elaboro' => $request->elaboro,
+                'Reviso' => '0',
+                'Anexos' => $request->n_anexos,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+                'Tipo_descarga' => $request->decision_pr,
+                'Modulo_creacion' => 'pronunciamientoOrigen',
+            ];
+            // dd($request->decision_pr);
+            if($request->decision_pr != 'Silencio' && $request->Id_Comunicado){
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where([
+                    ['ID_evento', $Id_EventoPronuncia],
+                    ['Id_Asignacion', $Id_Asignacion_Pronuncia],
+                    ['Id_Comunicado', $request->Id_Comunicado]
+                ])->update($datos_info_comunicado_eventos);
+                sleep(2);
+            }
+            else if($request->decision_pr == 'Silencio' && $request->Id_Comunicado){
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $request->Id_Comunicado)->delete();
+                $archivos_a_eliminar = [
+                    "ORI_ACUERDO_{$Id_Asignacion_Pronuncia}_{$request->identificacion}.pdf",
+                    "ORI_DESACUERDO_{$Id_Asignacion_Pronuncia}_{$request->identificacion}.docx"
+                ];
+                
+                foreach ($archivos_a_eliminar as $archivo) {
+                    $ruta_archivo = "Documentos_Eventos/{$Id_EventoPronuncia}/{$archivo}";
+                    $path = public_path($ruta_archivo);
+                    if (File::exists($path)) {
+                        File::delete($path);
+                    }
+                }
+                sleep(2);
+            }
+            if($request->decision_pr != 'Silencio' && $request->Id_Comunicado == "null"){
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+                sleep(2);
+            }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
             $Id_Pronuncia = sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->select('Id_Pronuncia','Id_Asignacion')->latest('Id_Pronuncia')->first();
             $accion_realizada = "Actualiza Pronuciamiento Origen {$Id_Pronuncia['Id_Pronuncia']}";
@@ -1153,8 +1220,7 @@ class PronunciamientoOrigenController extends Controller
         ->select('Logo_cliente')
         ->where([['Id_cliente', $Id_cliente_firma]])
         ->limit(1)->get();
-
-        if (count($dato_logo_header) > 0) {
+        if (count($dato_logo_header) > 0 && $dato_logo_header[0]->Logo_cliente != null) {
             $logo_header = $dato_logo_header[0]->Logo_cliente;
             $ruta_logo = "/logos_clientes/{$Id_cliente_firma}/{$logo_header}";
         } else {
@@ -1163,28 +1229,38 @@ class PronunciamientoOrigenController extends Controller
         }
 
         /* Extraemos los datos del footer */
-        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-        ->where('Id_cliente', $Id_cliente_firma)->get();
+        // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        // ->where('Id_cliente', $Id_cliente_firma)->get();
 
-        if(count($datos_footer) > 0){
-            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+        // if(count($datos_footer) > 0){
+        //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+        //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+        //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+        //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+        //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
 
-        }else{
-            $footer_dato_1 = "";
-            $footer_dato_2 = "";
-            $footer_dato_3 = "";
-            $footer_dato_4 = "";
-            $footer_dato_5 = "";
-        }
+        // }else{
+        //     $footer_dato_1 = "";
+        //     $footer_dato_2 = "";
+        //     $footer_dato_3 = "";
+        //     $footer_dato_4 = "";
+        //     $footer_dato_5 = "";
+        // }
 
         $ramo = "Previsionales";
 
         if ($bandera_tipo_proforma == "proforma_acuerdo") {
+            $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+                ->select('Footer_cliente')
+                ->where([['Id_cliente', $Id_cliente_firma]])
+                ->limit(1)->get();
+
+                if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+                    $footer = $footer_imagen[0]->Footer_cliente;
+                } else {
+                    $footer = null;
+                } 
             $datos_finales_proforma = [
                 'logo_header' => $logo_header,
                 'id_cliente' => $Id_cliente_firma,
@@ -1208,11 +1284,12 @@ class PronunciamientoOrigenController extends Controller
                 'Firma_cliente' => $Firma_cliente,
                 'Agregar_copia' => $Agregar_copias,
                 'nombre_usuario' => Auth::user()->name,
-                'footer_dato_1' => $footer_dato_1,
-                'footer_dato_2' => $footer_dato_2,
-                'footer_dato_3' => $footer_dato_3,
-                'footer_dato_4' => $footer_dato_4,
-                'footer_dato_5' => $footer_dato_5,
+                'footer' => $footer,
+                // 'footer_dato_1' => $footer_dato_1,
+                // 'footer_dato_2' => $footer_dato_2,
+                // 'footer_dato_3' => $footer_dato_3,
+                // 'footer_dato_4' => $footer_dato_4,
+                // 'footer_dato_5' => $footer_dato_5,
             ];
             
     
@@ -1298,6 +1375,18 @@ class PronunciamientoOrigenController extends Controller
             return $pdf->download($nombre_pdf); 
         }
          else {
+            $dato_logo_footer = sigmel_clientes::on('sigmel_gestiones')
+            ->select('Footer_cliente')
+            ->where([['Id_cliente', $Id_cliente_firma]])
+            ->limit(1)->get();
+            if (count($dato_logo_footer) > 0 && $dato_logo_footer[0]->Footer_cliente != null) {
+                dd($dato_logo_footer);
+                $logo_footer = $dato_logo_footer[0]->Footer_cliente;
+                $ruta_logo_footer = "/footer_clientes/{$Id_cliente_firma}/{$logo_footer}";
+            } else {
+                $logo_footer = null;
+                $ruta_logo_footer = null;
+            }
             
             $phpWord = new PhpWord();
             // Configuramos la fuente y el tamaño de letra para todo el documento
@@ -1319,8 +1408,8 @@ class PronunciamientoOrigenController extends Controller
 
             // Creación de Header
             $header = $section->addHeader();
-            $imagenPath_header = public_path($ruta_logo);
-            $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
+            // $imagenPath_header = public_path($ruta_logo);
+            // $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
 
             // Creación de Contenido
             $section->addText($ciudad.', '.$fecha, array('bold' => true));
@@ -1492,25 +1581,12 @@ class PronunciamientoOrigenController extends Controller
             // Configuramos el footer
             $info = $nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$nro_siniestro;
             $footer = $section->addFooter();
-            $tableStyle = array(
-                'cellMargin'  => 50,
-            );
-            $phpWord->addTableStyle('myTable', $tableStyle);
+            $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
+            if($ruta_logo_footer != null){
+                $imagenPath_footer = public_path($ruta_logo_footer);
+                $footer->addImage($imagenPath_footer, array('width' => 450, 'height' => 70, 'alignment' => 'left'));
+            }
             $table = $footer->addTable('myTable');
-
-            $table->addRow();
-            $table->addCell(80000, ['gridSpan' => 2])->addText($info, array('size' => 10, 'bold' => true));
-            $table->addRow();
-            $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_1, array('size' => 10));
-            $table->addRow();
-            $table->addCell()->addText($footer_dato_2, array('size' => 10));
-            $cell = $table->addCell();
-            $textRun = $cell->addTextRun(['alignment' => 'right']);
-            $textRun->addText($footer_dato_3, array('size' => 10));
-            $table->addRow();
-            $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_4, array('size' => 10));
-            $table->addRow();
-            $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_5, array('size' => 10));
             $table->addRow();
             $cell1 = $table->addCell(80000, ['gridSpan' => 2]);
             $textRun = $cell1->addTextRun(['alignment' => 'center']);

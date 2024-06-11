@@ -392,7 +392,7 @@ $(document).ready(function () {
         var fecha_de_hoy = $("#fecha_de_hoy").val();
 
         $string_html_modal_nuevo_servicio = '\
-            <div class="modal fade" id="modalNuevoServicio_'+id_evento_nuevo_servicio+'" tabindex="-1" aria-hidden="true">\
+            <div class="modal fade" id="modalNuevoServicio_'+id_evento_nuevo_servicio+'"  aria-hidden="true">\
                 <div class="modal-dialog modal-lg">\
                     <div class="modal-content">\
                         <div class="modal-header bg-info">\
@@ -854,7 +854,7 @@ $(document).ready(function () {
         var fecha_de_hoy = $("#fecha_de_hoy").val();
 
         $string_html_modal_nuevo_proceso = '\
-            <div class="modal fade" id="modalNuevoProceso_'+id_evento_nuevo_proceso+'" tabindex="-1" aria-hidden="true">\
+            <div class="modal fade" id="modalNuevoProceso_'+id_evento_nuevo_proceso+'" aria-hidden="true">\
                 <div class="modal-dialog modal-lg">\
                     <div class="modal-content">\
                         <div class="modal-header bg-info">\

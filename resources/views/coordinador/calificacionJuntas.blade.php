@@ -227,6 +227,18 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
+                                                <label for="fuente_info_juntas">Fuente de Información</label>
+                                                <select class="fuente_informacion custom-select" name="fuente_info_juntas" id="fuente_info_juntas">
+                                                    @if (!empty($array_datos_calificacionJuntas[0]->Fuente_informacion))
+                                                    <option value="{{$array_datos_calificacionJuntas[0]->Fuente_informacion}}" selected>{{$array_datos_calificacionJuntas[0]->Nombre_Fuente_informacion}}</option>
+                                                    @else
+                                                        <option value="">Seleccione una opción</option>
+                                                    @endif
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
                                                 <label for="modalidad_documentos">Documentos adjuntos</label><br>
                                                 <a href="javascript:void(0);" class="text-dark text-md" id="cargue_docs" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
                                             </div>
@@ -291,6 +303,12 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
+                                                    <label for="estado_facturacion">Estado de Facturación</label>
+                                                    <input type="text" class="form-control" name="estado_facturacion" id="estado_facturacion" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Estado_Facturacion)){echo $array_datos_calificacionJuntas[0]->Estado_Facturacion;}?>" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
                                                     <label for="profesional" class="col-form label">Profesional</label>
                                                     <select class="profesional custom-select" name="profesional" id="profesional">
                                                         @if (!empty($array_datos_calificacionJuntas[0]->Id_profesional))
@@ -299,12 +317,6 @@
                                                             <option value="">Seleccione una opción</option>                                                        
                                                         @endif
                                                     </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="form-group">
-                                                    <label for="estado_facturacion">Estado de Facturación</label>
-                                                    <input type="text" class="form-control" name="estado_facturacion" id="estado_facturacion" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Estado_Facturacion)){echo $array_datos_calificacionJuntas[0]->Estado_Facturacion;}?>" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -541,8 +553,8 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="f_notifi_afiliado">Fecha notificación al afiliado<span style="color: red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="f_notifi_afiliado" id="f_notifi_afiliado" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado)) { echo $arrayinfo_controvertido[0]->F_notifi_afiliado;} ?>" required>
+                                                <label for="f_notifi_afiliado">Fecha notificación al afiliado</span></label>
+                                                <input type="date" class="form-control" name="f_notifi_afiliado" id="f_notifi_afiliado" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado)) { echo $arrayinfo_controvertido[0]->F_notifi_afiliado;} ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -592,8 +604,8 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="n_radicado_entrada_contro"> N° Radicado Entrada - Controversia primera calificación<span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="n_radicado_entrada_contro" id="n_radicado_entrada_contro" value="<?php if(!empty($arrayinfo_controvertido[0]->N_radicado_entrada_contro)) { echo $arrayinfo_controvertido[0]->N_radicado_entrada_contro;} ?>" required>
+                                                <label for="n_radicado_entrada_contro"> N° Radicado Entrada - Controversia primera calificación</label>
+                                                <input type="text" class="form-control" name="n_radicado_entrada_contro" id="n_radicado_entrada_contro" value="<?php if(!empty($arrayinfo_controvertido[0]->N_radicado_entrada_contro)) { echo $arrayinfo_controvertido[0]->N_radicado_entrada_contro;} ?>">
                                             </div>
                                         </div>
                                         <div class="col-12">
@@ -642,15 +654,21 @@
                                             </div>
                                         </div>
                                         <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="f_contro_primer_califi">Fecha de controversia primera calificación<br> <span style="color: red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="f_contro_primer_califi" id="f_contro_primer_califi" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_primer_califi)) { echo $arrayinfo_controvertido[0]->F_contro_primer_califi;} ?>" required>
+                                            <div class="form-group mt-4">
+                                                <label for="f_contro_primer_califi">Fecha de controversia primera calificación</label>
+                                                <input type="date" class="form-control" name="f_contro_primer_califi" id="f_contro_primer_califi" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_primer_califi)) { echo $arrayinfo_controvertido[0]->F_contro_primer_califi;} ?>" >
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="f_contro_radi_califi">Fecha de radicación controversia primera calificación <span style="color: red;">(*)</span></label>
                                                 <input type="date" class="form-control" name="f_contro_radi_califi" id="f_contro_radi_califi" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_radi_califi)) { echo $arrayinfo_controvertido[0]->F_contro_radi_califi;} ?>" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group m-4">
+                                                <label for="fecha_plazo_contro">Fecha plazo para Controversia</label>
+                                                <input type="date" name="fecha_plazo_contro" id="fecha_plazo_contro" class="form-control" max="{{now()->format('Y-m-d')}}" value="<?php echo $arrayinfo_controvertido[0]->F_plazo_controversia ?? '' ?>" readonly>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -681,6 +699,12 @@
                                             <div class="form-group">
                                                 <label for="f_envio_jnci">Fecha de envío a JNCI</label>
                                                 <input type="date" class="form-control" name="f_envio_jnci" id="f_envio_jnci" max="{{now()->format('Y-m-d')}}" value="<?php echo $arrayinfo_controvertido[0]->F_envio_jnci ?? '' ?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="observaciones_contro">Observaciones</label>
+                                                <textarea name="observaciones_contro" id="observaciones_contro" cols="10" rows="4" class="form-control"><?php echo $arrayinfo_controvertido[0]->Observaciones ?? '' ?></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -720,8 +744,8 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="f_solicitud_pago">Fecha solicitud de pago<span style="color: red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="f_solicitud_pago" id="f_solicitud_pago" max="{{now()->format('Y-m-d')}}" required>
+                                                <label for="f_solicitud_pago">Fecha solicitud de pago</label>
+                                                <input type="date" class="form-control" name="f_solicitud_pago" id="f_solicitud_pago" max="{{now()->format('Y-m-d')}}" >
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -752,8 +776,8 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="f_pago_radicacion">Fecha de radicación pago<span style="color: red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="f_pago_radicacion" id="f_pago_radicacion" max="{{now()->format('Y-m-d')}}" required>
+                                                <label for="f_pago_radicacion">Fecha de radicación pago</label>
+                                                <input type="date" class="form-control" name="f_pago_radicacion" id="f_pago_radicacion" max="{{now()->format('Y-m-d')}}">
                                             </div>
                                         </div>
                                     </div>
@@ -897,11 +921,20 @@
                                                 <th>N° Radicado</th>
                                                 <th>Elaboro</th>
                                                 <th>Fecha Comunicado</th>
+                                                <th>Documento</th>
                                                 <th>Acción</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
                                     </table>
+                                    <div class="alert alert-danger cargueundocumentoprimero d-none" role="alert">
+                                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Por favor, adjunta un documento antes de cargar. 
+                                    </div>
+                                    <div class="alerta_externa_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                                    <div style="display: flex; flex-direction:row; justify-content:flex-end; gap:2px;"> <!-- Alinea el contenido a la derecha -->
+                                        <input style="width:40%" type="file" class="form-control select-doc" name="cargue_comunicados" id="cargue_comunicados" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx"/>
+                                        <button class="btn-info" id="cargarComunicado">Cargar</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1738,14 +1771,14 @@
                                                 <input type="hidden" class="form-control" name="Id_evento_act" id="Id_evento_act">
                                                 <input type="hidden" class="form-control" name="Id_asignacion_act" id="Id_asignacion_act">
                                                 <input type="hidden" class="form-control" name="Id_procesos_act" id="Id_procesos_act">
-                                                <input type="hidden" class="form-control" name="Nombre_junta_act" value="<?php if(!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez)){echo $arrayinfo_controvertido[0]->JrciNombre;}?>">
-                                                <input type="hidden" class="form-control" name="Id_junta_act" value="<?php if(!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez)){echo $arrayinfo_controvertido[0]->Jrci_califi_invalidez;}?>">
+                                                <input type="hidden" class="form-control" name="Nombre_junta_act" id="Nombre_junta_act" value="<?php if(!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez)){echo $arrayinfo_controvertido[0]->JrciNombre;}?>">
+                                                <input type="hidden" class="form-control" name="Id_junta_act" id="Id_junta_act" value="<?php if(!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez)){echo $arrayinfo_controvertido[0]->Jrci_califi_invalidez;}?>">
                                                 {{-- mauro --}}
-                                                <input type="hidden" class="form-control" name="F_notifi_afiliado_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado)) { echo $arrayinfo_controvertido[0]->F_notifi_afiliado;} ?>">
-                                                <input type="hidden" class="form-control" name="F_radicacion_contro_pri_cali_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_radi_califi)) { echo $arrayinfo_controvertido[0]->F_contro_radi_califi;} ?>">
-                                                <input type="hidden" class="form-control" name="F_estructuracion_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_estructuracion_contro)) { echo $arrayinfo_controvertido[0]->F_estructuracion_contro;} ?>">
+                                                <input type="hidden" class="form-control" name="F_notifi_afiliado_act" id="F_notifi_afiliado_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado)) { echo $arrayinfo_controvertido[0]->F_notifi_afiliado;} ?>">
+                                                <input type="hidden" class="form-control" name="F_radicacion_contro_pri_cali_act" id="F_radicacion_contro_pri_cali_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_radi_califi)) { echo $arrayinfo_controvertido[0]->F_contro_radi_califi;} ?>">
+                                                <input type="hidden" class="form-control" name="F_estructuracion_act" id="F_estructuracion_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_estructuracion_contro)) { echo $arrayinfo_controvertido[0]->F_estructuracion_contro;} ?>">
                                                 {{-- revisar fecha --}}
-                                                <input type="hidden" class="form-control" name="F_dictamen_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_dictamen_jrci_emitido)) { echo $arrayinfo_controvertido[0]->F_dictamen_jrci_emitido;} ?>">
+                                                <input type="hidden" class="form-control" name="F_dictamen_act" id="F_dictamen_act" value="<?php if(!empty($arrayinfo_controvertido[0]->F_dictamen_jrci_emitido)) { echo $arrayinfo_controvertido[0]->F_dictamen_jrci_emitido;} ?>">
                                             </div>
                                         </div>
                                         <div class="col-4">

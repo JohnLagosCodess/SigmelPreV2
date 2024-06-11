@@ -1801,7 +1801,7 @@ $(document).ready(function(){
             document.getElementById('medio_notificacion_laboral').required = false;
             $(".si_nom_empresa").addClass('d-none');
             $(".no_nom_empresa").removeClass('d-none');
-            $(".si_medio_noti").addClass('d-none');
+            //$(".si_medio_noti").addClass('d-none');
             $(".no_medio_noti").removeClass('d-none');
         }
     }); 

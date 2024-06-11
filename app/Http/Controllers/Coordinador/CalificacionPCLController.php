@@ -658,6 +658,7 @@ class CalificacionPCLController extends Controller
             // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
 
             $datos_historial_accion_eventos = [
+                'Id_Asignacion' => $newIdAsignacion,
                 'ID_evento' => $newIdEvento,
                 'Id_proceso' => $Id_proceso,
                 'Id_servicio' => $Id_servicio,
@@ -853,6 +854,7 @@ class CalificacionPCLController extends Controller
             // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
 
             $datos_historial_accion_eventos = [
+                'Id_Asignacion' => $newIdAsignacion,
                 'ID_evento' => $newIdEvento,
                 'Id_proceso' => $Id_proceso,
                 'Id_servicio' => $Id_servicio,
@@ -1309,75 +1311,151 @@ class CalificacionPCLController extends Controller
         $Id_evento = $request->Id_evento;
         $Id_asignacion = $request->Id_asignacion;
         $Id_procesos = $request->Id_procesos;
-        $radioafiliado_comunicado = $request->radioafiliado_comunicado;
-        $radioempresa_comunicado = $request->radioempresa_comunicado;
-        $radioOtro = $request->radioOtro;
-        $firmarcomunicado = $request->firmarcomunicado;        
-        if (!empty($firmarcomunicado)) {
-            $firmacliente = implode($firmarcomunicado);
-        } else {
-            $firmacliente = '';
-        }   
-        $agregar_copia = $request->agregar_copia;
-        if (!empty($agregar_copia)) {
-            $total_agregarcopias = implode(", ", $agregar_copia);                
-        }else{
-            $total_agregarcopias = '';
-        }        
-        if(!empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && empty($radioOtro)){
-            $destinatario = 'Afiliado';
-        }elseif(empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado) && empty($radioOtro)){
-            $destinatario = 'Empresa';
-        }elseif(empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && !empty($radioOtro)){
-            $destinatario = 'Otro';
-        }
         $tipo_descarga = $request->tipo_descarga;
-        $datos_info_registrarComunicadoPcl=[
+        if($tipo_descarga != 'Manual'){
+            $radioafiliado_comunicado = $request->radioafiliado_comunicado;
+            $radioempresa_comunicado = $request->radioempresa_comunicado;
+            $radioOtro = $request->radioOtro;
+            $firmarcomunicado = $request->firmarcomunicado;        
+            if (!empty($firmarcomunicado)) {
+                $firmacliente = implode($firmarcomunicado);
+            } else {
+                $firmacliente = '';
+            }   
+            $agregar_copia = $request->agregar_copia;
+            if (!empty($agregar_copia)) {
+                $total_agregarcopias = implode(", ", $agregar_copia);                
+            }else{
+                $total_agregarcopias = '';
+            }        
+            if(!empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && empty($radioOtro)){
+                $destinatario = 'Afiliado';
+            }elseif(empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado) && empty($radioOtro)){
+                $destinatario = 'Empresa';
+            }elseif(empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && !empty($radioOtro)){
+                $destinatario = 'Otro';
+            }
+            $tipo_descarga = $request->tipo_descarga;
+            $datos_info_registrarComunicadoPcl=[
 
-            'ID_evento' => $Id_evento,
-            'Id_Asignacion' => $Id_asignacion,
-            'Id_proceso' => $Id_procesos,
-            'Ciudad' => $request->ciudad,
-            'F_comunicado' => $request->fecha_comunicado2,
-            'N_radicado' => $request->radicado2,
-            'Cliente' => $request->cliente_comunicado2,
-            'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
-            'T_documento' => $request->tipo_documento_comunicado2,
-            'N_identificacion' => $request->identificacion_comunicado2,
-            'Destinatario' => $destinatario,
-            'Nombre_destinatario' => $request->nombre_destinatario,
-            'Nit_cc' => $request->nic_cc,
-            'Direccion_destinatario' => $request->direccion_destinatario,
-            'Telefono_destinatario' => $request->telefono_destinatario,
-            'Email_destinatario' => $request->email_destinatario,
-            'Id_departamento' => $request->departamento_destinatario,
-            'Id_municipio' => $request->ciudad_destinatario,
-            'Asunto' => $request->asunto,
-            'Cuerpo_comunicado' => $request->cuerpo_comunicado,
-            'Anexos' => $request->anexos,
-            'Forma_envio' => $request->forma_envio,
-            'Elaboro' => $request->elaboro2,
-            'Reviso' => $request->reviso,
-            'Agregar_copia' => $total_agregarcopias,
-            'Firmar_Comunicado' => $firmacliente,
-            'Tipo_descarga' => $tipo_descarga,
-            'Nombre_usuario' => $nombre_usuario,
-            'F_registro' => $date,
-        ];
-        
-        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
+                'ID_evento' => $Id_evento,
+                'Id_Asignacion' => $Id_asignacion,
+                'Id_proceso' => $Id_procesos,
+                'Ciudad' => $request->ciudad,
+                'F_comunicado' => $request->fecha_comunicado2,
+                'N_radicado' => $request->radicado2,
+                'Cliente' => $request->cliente_comunicado2,
+                'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
+                'T_documento' => $request->tipo_documento_comunicado2,
+                'N_identificacion' => $request->identificacion_comunicado2,
+                'Destinatario' => $destinatario,
+                'Nombre_destinatario' => $request->nombre_destinatario,
+                'Nit_cc' => $request->nic_cc,
+                'Direccion_destinatario' => $request->direccion_destinatario,
+                'Telefono_destinatario' => $request->telefono_destinatario,
+                'Email_destinatario' => $request->email_destinatario,
+                'Id_departamento' => $request->departamento_destinatario,
+                'Id_municipio' => $request->ciudad_destinatario,
+                'Asunto' => $request->asunto,
+                'Cuerpo_comunicado' => $request->cuerpo_comunicado,
+                'Anexos' => $request->anexos,
+                'Forma_envio' => $request->forma_envio,
+                'Elaboro' => $request->elaboro2,
+                'Reviso' => $request->reviso,
+                'Agregar_copia' => $total_agregarcopias,
+                'Firmar_Comunicado' => $firmacliente,
+                'Tipo_descarga' => $tipo_descarga,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+                'Modulo_creacion' => 'calificacionPCL'
+            ];
+            
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
 
-        sleep(2);
-        $datos_info_historial_acciones = [
-            'ID_evento' => $Id_evento,
-            'F_accion' => $date,
-            'Nombre_usuario' => $nombre_usuario,
-            'Accion_realizada' => "Se genera comunicado.",
-            'Descripcion' => $request->asunto,
-        ];
+            sleep(2);
+            $datos_info_historial_acciones = [
+                'ID_evento' => $Id_evento,
+                'F_accion' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+                'Accion_realizada' => "Se genera comunicado.",
+                'Descripcion' => $request->asunto,
+            ];
 
-        sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
-        
+            sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+        }
+        else if($tipo_descarga == 'Manual'){
+            if($request->modulo){
+                $modulo = $request->modulo;
+            }
+            else{
+                $modulo = '';
+            }
+            $datos_info_comunicado_manual=[
+    
+                'ID_evento' => $Id_evento,
+                'Id_Asignacion' => $Id_asignacion,
+                'Id_proceso' => $Id_procesos,
+                'Ciudad' => $request->ciudad,
+                'F_comunicado' => $date,
+                'N_radicado' => $request->radicado2,
+                'Cliente' => $request->cliente_comunicado2,
+                'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
+                'T_documento' => $request->tipo_documento_comunicado2,
+                'N_identificacion' => $request->identificacion_comunicado2,
+                'Destinatario' => $request->destinatario,
+                'Nombre_destinatario' => $request->nombre_destinatario,
+                'Nit_cc' => $request->nic_cc,
+                'Direccion_destinatario' => $request->direccion_destinatario,
+                'Telefono_destinatario' => $request->telefono_destinatario,
+                'Email_destinatario' => $request->email_destinatario,
+                'Id_departamento' => $request->departamento_destinatario,
+                'Id_municipio' => $request->ciudad_destinatario,
+                'Asunto' => $request->asunto,
+                'Cuerpo_comunicado' => $request->cuerpo_comunicado,
+                'Anexos' => $request->anexos,
+                'Forma_envio' => $request->forma_envio,
+                'Elaboro' => $nombre_usuario,
+                'Reviso' => $request->reviso,
+                'Agregar_copia' => null,
+                'Firmar_Comunicado' => $request->firmarcomunicado,
+                'Tipo_descarga' => $request->tipo_descarga,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+                'Modulo_creacion' => 'calificacionPCL'
+            ];
+
+            if($request->hasFile('cargue_comunicados')){
+                $archivo = $request->file('cargue_comunicados');
+                $path = public_path('Documentos_Eventos/'.$Id_evento);
+                $mode = 777;
+
+                if (!File::exists($path)) {
+                    File::makeDirectory($path, $mode, true, true);
+                    chmod($path, $mode);
+                }
+
+                // $nombre_final_documento = $nombre_documento."_IdEvento_".$Id_evento.".".$archivo->extension();
+                $nombre_final_documento = $request->asunto;
+                Storage::putFileAs($Id_evento, $archivo, $nombre_final_documento);
+                
+            }else{
+                
+                $nombre_final_documento='N/A';            
+            }     
+
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_manual);
+
+            sleep(2);
+            $datos_info_historial_acciones = [
+                'ID_evento' => $Id_evento,
+                'F_accion' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+                'Accion_realizada' => "Se genera comunicado de forma manual en $modulo.",
+                'Descripcion' => $request->asunto,
+            ];
+
+            sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+        }
         $mensajes = array(
             "parametro" => 'agregar_comunicado',
             "mensaje" => 'Comunicado generado satisfactoriamente.'
@@ -1498,6 +1576,7 @@ class CalificacionPCLController extends Controller
             'Tipo_descarga' => $tipo_descarga,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
+            'Modulo_creacion' => 'calificacionPCL'
         ];
 
         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado_editar)
@@ -1537,7 +1616,7 @@ class CalificacionPCLController extends Controller
         $ciudad_destinatario_act = $request->ciudad_destinatario_act;
         $Forma_envio = $request->forma_envio_act;
         $Reviso = $request->reviso_act;
-        if ($request->afiliado_comunicado_act == 'Otro') {
+        if ($request->afiliado_comunicado_act == "Otro") {
             $nombre_destinatario = $request->nombre_destinatario_act;
             $nit_cc = $request->nic_cc_act;
             $direccion_destinatario = $request->direccion_destinatario_act;
@@ -1819,24 +1898,36 @@ class CalificacionPCLController extends Controller
             
             $string_pruebas_solicitadas = "<b>".implode(", ", $pruebas_solicitadas)."</b>";
 
-            $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-            ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-            ->where('Id_cliente', $id_cliente)->get();
+            //Footer image
+            $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+            ->select('Footer_cliente')
+            ->where([['Id_cliente', $id_cliente]])
+            ->limit(1)->get();
+
+            if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+                $footer = $footer_imagen[0]->Footer_cliente;
+            } else {
+                $footer = null;
+            } 
+
+            // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+            // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+            // ->where('Id_cliente', $id_cliente)->get();
     
-            if(count($datos_footer) > 0){
-                $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-                $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-                $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-                $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-                $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+            // if(count($datos_footer) > 0){
+            //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+            //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+            //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+            //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+            //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
     
-            }else{
-                $footer_dato_1 = "";
-                $footer_dato_2 = "";
-                $footer_dato_3 = "";
-                $footer_dato_4 = "";
-                $footer_dato_5 = "";
-            }
+            // }else{
+            //     $footer_dato_1 = "";
+            //     $footer_dato_2 = "";
+            //     $footer_dato_3 = "";
+            //     $footer_dato_4 = "";
+            //     $footer_dato_5 = "";
+            // }
     
 
             $data = [
@@ -1860,11 +1951,12 @@ class CalificacionPCLController extends Controller
                 'Firma_cliente' => $Firma_cliente,
                 'nombre_usuario' => $nombre_usuario,
                 'Agregar_copia' => $Agregar_copias,
-                'footer_dato_1' => $footer_dato_1,
-                'footer_dato_2' => $footer_dato_2,
-                'footer_dato_3' => $footer_dato_3,
-                'footer_dato_4' => $footer_dato_4,
-                'footer_dato_5' => $footer_dato_5,
+                'footer' => $footer,
+                // 'footer_dato_1' => $footer_dato_1,
+                // 'footer_dato_2' => $footer_dato_2,
+                // 'footer_dato_3' => $footer_dato_3,
+                // 'footer_dato_4' => $footer_dato_4,
+                // 'footer_dato_5' => $footer_dato_5,
             ];
 
             // Creación y guardado del pdf
@@ -2095,25 +2187,36 @@ class CalificacionPCLController extends Controller
             } else {
                 $logo_header = "Sin logo";
             }  
+            //Footer_Image
+            $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+            ->select('Footer_cliente')
+            ->where([['Id_cliente', $id_cliente]])
+            ->limit(1)->get();
+
+            if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+                $footer = $footer_imagen[0]->Footer_cliente;
+            } else {
+                $footer = null;
+            } 
             
-            $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-            ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-            ->where('Id_cliente', $id_cliente)->get();
+            // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+            // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+            // ->where('Id_cliente', $id_cliente)->get();
     
-            if(count($datos_footer) > 0){
-                $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-                $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-                $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-                $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-                $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+            // if(count($datos_footer) > 0){
+            //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+            //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+            //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+            //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+            //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
     
-            }else{
-                $footer_dato_1 = "";
-                $footer_dato_2 = "";
-                $footer_dato_3 = "";
-                $footer_dato_4 = "";
-                $footer_dato_5 = "";
-            }
+            // }else{
+            //     $footer_dato_1 = "";
+            //     $footer_dato_2 = "";
+            //     $footer_dato_3 = "";
+            //     $footer_dato_4 = "";
+            //     $footer_dato_5 = "";
+            // }
 
             $data = [
                 'logo_header' => $logo_header,
@@ -2139,11 +2242,12 @@ class CalificacionPCLController extends Controller
                 'nombre_usuario' => $nombre_usuario,
                 'Anexos' => $Anexos,
                 'Agregar_copia' => $Agregar_copias,
-                'footer_dato_1' => $footer_dato_1,
-                'footer_dato_2' => $footer_dato_2,
-                'footer_dato_3' => $footer_dato_3,
-                'footer_dato_4' => $footer_dato_4,
-                'footer_dato_5' => $footer_dato_5,
+                'footer' => $footer,
+                // 'footer_dato_1' => $footer_dato_1,
+                // 'footer_dato_2' => $footer_dato_2,
+                // 'footer_dato_3' => $footer_dato_3,
+                // 'footer_dato_4' => $footer_dato_4,
+                // 'footer_dato_5' => $footer_dato_5,
             ];
 
             // Creación y guardado del pdf
@@ -2381,24 +2485,36 @@ class CalificacionPCLController extends Controller
                 $logo_header = "Sin logo";
             }  
             
-            $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-            ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-            ->where('Id_cliente', $id_cliente)->get();
+            //Footer_Image
+            $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+            ->select('Footer_cliente')
+            ->where([['Id_cliente', $id_cliente]])
+            ->limit(1)->get();
+
+            if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+                $footer = $footer_imagen[0]->Footer_cliente;
+            } else {
+                $footer = null;
+            } 
+
+            // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+            // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+            // ->where('Id_cliente', $id_cliente)->get();
     
-            if(count($datos_footer) > 0){
-                $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-                $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-                $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-                $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-                $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+            // if(count($datos_footer) > 0){
+            //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+            //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+            //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+            //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+            //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
     
-            }else{
-                $footer_dato_1 = "";
-                $footer_dato_2 = "";
-                $footer_dato_3 = "";
-                $footer_dato_4 = "";
-                $footer_dato_5 = "";
-            }
+            // }else{
+            //     $footer_dato_1 = "";
+            //     $footer_dato_2 = "";
+            //     $footer_dato_3 = "";
+            //     $footer_dato_4 = "";
+            //     $footer_dato_5 = "";
+            // }
 
             $data = [
                 'logo_header' => $logo_header,
@@ -2424,11 +2540,12 @@ class CalificacionPCLController extends Controller
                 'nombre_usuario' => $nombre_usuario,
                 'Anexos' => $Anexos,
                 'Agregar_copia' => $Agregar_copias,
-                'footer_dato_1' => $footer_dato_1,
-                'footer_dato_2' => $footer_dato_2,
-                'footer_dato_3' => $footer_dato_3,
-                'footer_dato_4' => $footer_dato_4,
-                'footer_dato_5' => $footer_dato_5,
+                'footer' => $footer,
+                // 'footer_dato_1' => $footer_dato_1,
+                // 'footer_dato_2' => $footer_dato_2,
+                // 'footer_dato_3' => $footer_dato_3,
+                // 'footer_dato_4' => $footer_dato_4,
+                // 'footer_dato_5' => $footer_dato_5,
             ];
 
             // Creación y guardado del pdf
@@ -2664,24 +2781,36 @@ class CalificacionPCLController extends Controller
                 $logo_header = "Sin logo";
             }  
             
-            $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-            ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-            ->where('Id_cliente', $id_cliente)->get();
+            // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+            // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+            // ->where('Id_cliente', $id_cliente)->get();
     
-            if(count($datos_footer) > 0){
-                $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-                $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-                $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-                $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-                $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+            // if(count($datos_footer) > 0){
+            //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+            //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+            //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+            //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+            //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
     
-            }else{
-                $footer_dato_1 = "";
-                $footer_dato_2 = "";
-                $footer_dato_3 = "";
-                $footer_dato_4 = "";
-                $footer_dato_5 = "";
-            }
+            // }else{
+            //     $footer_dato_1 = "";
+            //     $footer_dato_2 = "";
+            //     $footer_dato_3 = "";
+            //     $footer_dato_4 = "";
+            //     $footer_dato_5 = "";
+            // }
+
+            //Footer_Image
+            $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+            ->select('Footer_cliente')
+            ->where([['Id_cliente', $id_cliente]])
+            ->limit(1)->get();
+
+            if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+                $footer = $footer_imagen[0]->Footer_cliente;
+            } else {
+                $footer = null;
+            } 
 
             $data = [
                 'logo_header' => $logo_header,
@@ -2707,11 +2836,12 @@ class CalificacionPCLController extends Controller
                 'nombre_usuario' => $nombre_usuario,
                 'Anexos' => $Anexos,
                 'Agregar_copia' => $Agregar_copias,
-                'footer_dato_1' => $footer_dato_1,
-                'footer_dato_2' => $footer_dato_2,
-                'footer_dato_3' => $footer_dato_3,
-                'footer_dato_4' => $footer_dato_4,
-                'footer_dato_5' => $footer_dato_5,
+                'footer' => $footer,
+                // 'footer_dato_1' => $footer_dato_1,
+                // 'footer_dato_2' => $footer_dato_2,
+                // 'footer_dato_3' => $footer_dato_3,
+                // 'footer_dato_4' => $footer_dato_4,
+                // 'footer_dato_5' => $footer_dato_5,
             ];
 
             // Creación y guardado del pdf
@@ -2947,24 +3077,36 @@ class CalificacionPCLController extends Controller
                 $logo_header = "Sin logo";
             }  
             
-            $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-            ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-            ->where('Id_cliente', $id_cliente)->get();
+            //Footer_Image
+            $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+            ->select('Footer_cliente')
+            ->where([['Id_cliente', $id_cliente]])
+            ->limit(1)->get();
+
+            if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+                $footer = $footer_imagen[0]->Footer_cliente;
+            } else {
+                $footer = null;
+            } 
+
+            // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+            // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+            // ->where('Id_cliente', $id_cliente)->get();
     
-            if(count($datos_footer) > 0){
-                $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-                $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-                $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-                $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-                $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+            // if(count($datos_footer) > 0){
+            //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+            //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+            //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+            //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+            //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
     
-            }else{
-                $footer_dato_1 = "";
-                $footer_dato_2 = "";
-                $footer_dato_3 = "";
-                $footer_dato_4 = "";
-                $footer_dato_5 = "";
-            }
+            // }else{
+            //     $footer_dato_1 = "";
+            //     $footer_dato_2 = "";
+            //     $footer_dato_3 = "";
+            //     $footer_dato_4 = "";
+            //     $footer_dato_5 = "";
+            // }
 
             // Captura de datos del dictamen pericial
             $array_datos_info_dictamen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
@@ -3046,11 +3188,12 @@ class CalificacionPCLController extends Controller
                 'nombre_usuario' => $nombre_usuario,
                 'Anexos' => $Anexos,
                 'Agregar_copia' => $Agregar_copias,
-                'footer_dato_1' => $footer_dato_1,
-                'footer_dato_2' => $footer_dato_2,
-                'footer_dato_3' => $footer_dato_3,
-                'footer_dato_4' => $footer_dato_4,
-                'footer_dato_5' => $footer_dato_5,
+                'footer' => $footer,
+                // 'footer_dato_1' => $footer_dato_1,
+                // 'footer_dato_2' => $footer_dato_2,
+                // 'footer_dato_3' => $footer_dato_3,
+                // 'footer_dato_4' => $footer_dato_4,
+                // 'footer_dato_5' => $footer_dato_5,
             ];
 
             // Creación y guardado del pdf
@@ -3280,6 +3423,27 @@ class CalificacionPCLController extends Controller
                 $Agregar_copias['JNCI'] = $jnci_nomb.' '.$jnci_email;
 
             }
+
+            /* Extraer el id del cliente */
+            $dato_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->select('Cliente')
+            ->where([['ID_evento', $ID_evento]])
+            ->get();
+
+            if (count($dato_id_cliente)>0) {
+                $id_cliente = $dato_id_cliente[0]->Cliente;
+            }
+            //Footer image
+            $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+            ->select('Footer_cliente')
+            ->where([['Id_cliente', $id_cliente]])
+            ->limit(1)->get();
+
+            if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+                $footer = $footer_imagen[0]->Footer_cliente;
+            } else {
+                $footer = null;
+            } 
             
             //Obtener los datos del formulario
             $data = [
@@ -3312,6 +3476,8 @@ class CalificacionPCLController extends Controller
                 'Agregar_copia' => $Agregar_copias,
                 'Nombre_usuario' => $Nombre_usuario,
                 'F_registro' => $F_registro,
+                'id_cliente' => $id_cliente,
+                'footer' => $footer,
             ];
 
             // Crear una instancia de Dompdf
@@ -3554,7 +3720,7 @@ class CalificacionPCLController extends Controller
         'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Dominancia', 'sidae.Deficiencia', 
         'sidae.Total_deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
         ->where([['sidae.ID_evento',$Id_evento_calitec], ['sidae.Id_Asignacion',$Id_asignacion_calitec], ['sidae.Estado', '=', 'Activo']])
-        ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+        ->orderByRaw("CAST(sidae.Total_deficiencia AS DECIMAL(10,2)) DESC")
         ->get();         
         
         $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
@@ -3998,7 +4164,7 @@ class CalificacionPCLController extends Controller
         ->where([['side.ID_evento',$Id_evento_calitec], ['side.Id_Asignacion',$Id_asignacion_calitec]])->get();        
 
         $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$Id_evento_calitec], ['Id_Asignacion',$Id_asignacion_calitec], ['T_documento','N/A']])->get();  
+        ->where([['ID_evento',$Id_evento_calitec], ['Id_Asignacion',$Id_asignacion_calitec], ['T_documento','N/A'], ['Modulo_creacion','calificacionTecnicaPCL']])->get();  
 
         $array_comunicados_comite_inter = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$Id_evento_calitec], ['Id_Asignacion',$Id_asignacion_calitec]])->get();  
@@ -6098,6 +6264,7 @@ class CalificacionPCLController extends Controller
         $Asunto = $request->Asunto;
         $afiliado = $request->afiliado;
         $cuerpo_comunicado = $request->cuerpo_comunicado;
+        $afiliado = $request->afiliado;
         $empleador = $request->empleador;
         $eps = $request->eps;
         $afp = $request->afp;
@@ -6219,6 +6386,8 @@ class CalificacionPCLController extends Controller
                 'Anexos' => $anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Tipo_descarga' => $request->tipo_descarga,
+                'Modulo_creacion' => 'calificacionTecnicaPCL'
             ];
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -6409,6 +6578,8 @@ class CalificacionPCLController extends Controller
                     'Anexos' => 'N/A',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
+                    'Tipo_descarga' => 'Dictamen',
+                    'Modulo_creacion' => 'calificacionTecnicaPCL'
                 ];
         
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -6481,6 +6652,8 @@ class CalificacionPCLController extends Controller
                     'Anexos' => 'N/A',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
+                    'Tipo_descarga' => 'Dictamen',
+                    'Modulo_creacion' => 'calificacionTecnicaPCL'
                 ];
         
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -7125,7 +7298,7 @@ class CalificacionPCLController extends Controller
         ->select('sidae.Id_tabla', 'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.FU', 'sidae.CFM1', 'sidae.CFM2', 
         'sidae.Clase_Final', 'sidae.Dominancia', 'sidae.Deficiencia', 'sidae.Total_deficiencia', 'sidae.CAT', 'sidae.MSD')
         ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['sidae.Estado','Activo']])
-        ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+        ->orderByRaw("CAST(sidae.Total_deficiencia AS DECIMAL(10,2)) DESC")
         ->get();  
         
         $Suma_combinada_fc = $array_datos_info_dictamen[0]->Suma_combinada;
@@ -7567,7 +7740,7 @@ class CalificacionPCLController extends Controller
         $array_deficiencias_alteraciones = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')        
         ->select('sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Total_deficiencia')
         ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['sidae.Estado', 'Activo']])
-        ->orderByRaw("CAST(sidae.Deficiencia AS UNSIGNED) DESC")
+        ->orderByRaw("CAST(sidae.Deficiencia AS DECIMAL(10,2)) DESC")
         ->get();  
         
         $Suma_combinada_fc = $array_datos_info_dictamen[0]->Suma_combinada;        
@@ -7801,6 +7974,18 @@ class CalificacionPCLController extends Controller
             $logo_header = $dato_logo_header[0]->Logo_cliente;
         } else {
             $logo_header = "Sin logo";
+        } 
+
+        //Footer_Image
+        $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Footer_cliente')
+        ->where([['Id_cliente', $Cliente]])
+        ->limit(1)->get();
+
+        if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+            $footer = $footer_imagen[0]->Footer_cliente;
+        } else {
+            $footer = null;
         } 
 
         // Captura de datos de Comite interdiciplinario y correspondencia
@@ -8160,24 +8345,24 @@ class CalificacionPCLController extends Controller
         }
 
         /* Extraemos los datos del footer */
-        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-        ->where('Id_cliente',  $Cliente)->get();
+        // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        // ->where('Id_cliente',  $Cliente)->get();
 
-        if(count($datos_footer) > 0){
-            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+        // if(count($datos_footer) > 0){
+        //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+        //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+        //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+        //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+        //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
 
-        }else{
-            $footer_dato_1 = "";
-            $footer_dato_2 = "";
-            $footer_dato_3 = "";
-            $footer_dato_4 = "";
-            $footer_dato_5 = "";
-        }
+        // }else{
+        //     $footer_dato_1 = "";
+        //     $footer_dato_2 = "";
+        //     $footer_dato_3 = "";
+        //     $footer_dato_4 = "";
+        //     $footer_dato_5 = "";
+        // }
 
         //Obtener los datos del formulario IF para el Oficio PCL y else para Oficio Incapacidad
 
@@ -8243,12 +8428,14 @@ class CalificacionPCLController extends Controller
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
-                'footer_dato_1' => $footer_dato_1,
-                'footer_dato_2' => $footer_dato_2,
-                'footer_dato_3' => $footer_dato_3,
-                'footer_dato_4' => $footer_dato_4,
-                'footer_dato_5' => $footer_dato_5,
+                'footer' => $footer,
+                // 'footer_dato_1' => $footer_dato_1,
+                // 'footer_dato_2' => $footer_dato_2,
+                // 'footer_dato_3' => $footer_dato_3,
+                // 'footer_dato_4' => $footer_dato_4,
+                // 'footer_dato_5' => $footer_dato_5,
             ];
+            
             // Crear una instancia de Dompdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_remisorio_pcl', $data);            
@@ -8400,11 +8587,12 @@ class CalificacionPCLController extends Controller
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
-                'footer_dato_1' => $footer_dato_1,
-                'footer_dato_2' => $footer_dato_2,
-                'footer_dato_3' => $footer_dato_3,
-                'footer_dato_4' => $footer_dato_4,
-                'footer_dato_5' => $footer_dato_5,
+                'footer' => $footer,
+                // 'footer_dato_1' => $footer_dato_1,
+                // 'footer_dato_2' => $footer_dato_2,
+                // 'footer_dato_3' => $footer_dato_3,
+                // 'footer_dato_4' => $footer_dato_4,
+                // 'footer_dato_5' => $footer_dato_5,
             ];
             // Crear una instancia de Dompdf
             $pdf = app('dompdf.wrapper');
@@ -9122,6 +9310,18 @@ class CalificacionPCLController extends Controller
             $logo_header = "Sin logo";
         } 
 
+        //Footer_Image
+        $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Footer_cliente')
+        ->where([['Id_cliente', $Cliente]])
+        ->limit(1)->get();
+
+        if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+            $footer = $footer_imagen[0]->Footer_cliente;
+        } else {
+            $footer = null;
+        } 
+
         // Captura de datos de Comite interdiciplinario y correspondencia
 
         $array_datos_comite_inter = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
@@ -9328,24 +9528,24 @@ class CalificacionPCLController extends Controller
         }
 
         /* Extraemos los datos del footer */
-        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-        ->where('Id_cliente',  $Cliente)->get();
+        // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        // ->where('Id_cliente',  $Cliente)->get();
 
-        if(count($datos_footer) > 0){
-            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+        // if(count($datos_footer) > 0){
+        //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+        //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+        //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+        //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+        //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
 
-        }else{
-            $footer_dato_1 = "";
-            $footer_dato_2 = "";
-            $footer_dato_3 = "";
-            $footer_dato_4 = "";
-            $footer_dato_5 = "";
-        }
+        // }else{
+        //     $footer_dato_1 = "";
+        //     $footer_dato_2 = "";
+        //     $footer_dato_3 = "";
+        //     $footer_dato_4 = "";
+        //     $footer_dato_5 = "";
+        // }
 
         //Obtener los datos del formulario
         
@@ -9397,11 +9597,12 @@ class CalificacionPCLController extends Controller
             'Direccion_arl' => $Direccion_arl,
             'Telefono_arl' => $Telefono_arl,
             'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
-            'footer_dato_1' => $footer_dato_1,
-            'footer_dato_2' => $footer_dato_2,
-            'footer_dato_3' => $footer_dato_3,
-            'footer_dato_4' => $footer_dato_4,
-            'footer_dato_5' => $footer_dato_5,
+            'footer' => $footer,
+            // 'footer_dato_1' => $footer_dato_1,
+            // 'footer_dato_2' => $footer_dato_2,
+            // 'footer_dato_3' => $footer_dato_3,
+            // 'footer_dato_4' => $footer_dato_4,
+            // 'footer_dato_5' => $footer_dato_5,
         ];
 
         // Crear una instancia de Dompdf

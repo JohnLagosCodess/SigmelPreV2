@@ -810,7 +810,7 @@ Route::post('/DescargarProformaPronunciamiento', [PronunciamientoOrigenControlle
 /* DESCARGAR PROFORMAS PREVISIONAL */
 // Proformas DML ORIGEN (DICTAMEN) PARA DTO ATEL Y ADICIÓN DX
 Route::post('/DescargaProformaDMLPrev', [DeterminacionOrigenATEL::class, 'DescargaProformaDMLPrev']);
-Route::post('/ADescargaProformaDMLPrev', [DeterminacionOrigenATEL::class, 'ADescargaProformaDMLPrev']);
+Route::post('/ADescargaProformaDMLPrev', [AdicionDxDTO::class, 'ADescargaProformaDMLPrev']);
 // Proformas Notificación DML (OFICIO REMISORIO) PARA DTO ATEL Y ADICIÓN DX
 Route::post('/DescargaProformaNotiDMLPrev', [DeterminacionOrigenATEL::class, 'DescargaProformaNotiDMLPrev']);
 Route::post('/ADescargaProformaNotiDMLPrev', [AdicionDxDTO::class, 'ADescargaProformaNotiDMLPrev']);

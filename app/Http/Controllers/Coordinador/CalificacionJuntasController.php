@@ -69,7 +69,7 @@ class CalificacionJuntasController extends Controller
         ->select('j.ID_evento','j.Enfermedad_heredada','j.F_transferencia_enfermedad','j.Primer_calificador','pa.Nombre_parametro as Calificador'
         ,'j.Nom_entidad','j.N_dictamen_controvertido','j.F_dictamen_controvertido','j.N_siniestro','j.F_notifi_afiliado','j.Parte_controvierte_califi','pa2.Nombre_parametro as ParteCalificador','j.Nombre_controvierte_califi',
         'j.N_radicado_entrada_contro','j.Contro_origen','j.Contro_pcl','j.Contro_diagnostico','j.Contro_f_estructura','j.Contro_m_califi',
-        'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','sie.Nombre_entidad as JrciNombre','j.F_envio_jrci', 'j.F_envio_jnci')
+        'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','sie.Nombre_entidad as JrciNombre','j.F_envio_jrci', 'j.F_envio_jnci','j.F_plazo_controversia','j.Observaciones')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa', 'j.Primer_calificador', '=', 'pa.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa2', 'j.Parte_controvierte_califi', '=', 'pa2.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'j.Jrci_califi_invalidez', '=', 'sie.Id_Entidad')
@@ -172,8 +172,13 @@ class CalificacionJuntasController extends Controller
         ->where('p.Id_Servicio',  '=', $array_datos_calificacionJuntas[0]->Id_Servicio)
         ->get();
         $SubModulo=$TraeVista[0]->nombre_renderizar; //Enviar a la vista del SubModulo    
+        
+        //Se agregar principalmente por la ficha psb026, desdepues de la implementacion deberia ser auto. a traves del trigger, para los registros anteriores se agregar las siguientes lineas, el cual anexa la fecha de plazo
+        if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado) && empty($arrayinfo_controvertido[0]->F_plazo_controversia)){
+            $fecha_controversia = DB::select( 'SELECT ' . getDatabaseName('sigmel_gestiones') ."fnCalcularDiasHabilesV2('{$arrayinfo_controvertido[0]->F_notifi_afiliado}') as Fecha");
 
-
+            $arrayinfo_controvertido[0]->F_plazo_controversia = $fecha_controversia[0]->Fecha;
+        }
         return view('coordinador.calificacionJuntas', compact('user','array_datos_calificacionJuntas','arraylistado_documentos','arrayinfo_afiliado',
         'arrayinfo_controvertido','arrayinfo_pagos','listado_documentos_solicitados','dato_validacion_no_aporta_docs',
         'arraycampa_documento_solicitado','consecutivo','hitorialAgregarSeguimiento','SubModulo', 'Id_servicio'));
@@ -208,6 +213,18 @@ class CalificacionJuntasController extends Controller
             $info_listado_tipo_entidad = json_decode(json_encode($listado_tipo_entidad, true));
             return response()->json($info_listado_tipo_entidad);
         }
+        //Listado fuentes de informacion
+        if($parametro == 'lista_fuente_informacion'){
+            $listado_fuente_info = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro', 'Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Fuente de Información'],
+                ['Estado', '=', 'activo'],
+            ])->whereIn('Nombre_Parametro',$request->opciones)->get();
+
+            return json_decode(json_encode($listado_fuente_info, true));
+
+        }
         // Listado parte que controvierte
         if($parametro == 'lista_controvierte_calificacion'){
             $listado_contro_califi = sigmel_lista_parametros::on('sigmel_gestiones')
@@ -220,6 +237,14 @@ class CalificacionJuntasController extends Controller
 
             $info_listado_contro_califi = json_decode(json_encode($listado_contro_califi, true));
             return response()->json($info_listado_contro_califi);
+        }
+        // Obtenemos la parte que controvierte
+        if($parametro == 'info_afiliado'){
+            $controvierte = DB::select( 'SELECT ' . getDatabaseName('sigmel_gestiones') ."ObtenerControvierte(:controvierte,:evento) as Nombre",[
+                'controvierte' => $request->controvierte,
+                'evento' => $request->evento,
+            ]);
+            return response()->json($controvierte[0]);
         }
         // Listado Junta Jrci Invalidez
         if($parametro == 'lista_juntas_invalidez'){
@@ -576,6 +601,7 @@ class CalificacionJuntasController extends Controller
                 'F_cierre' => $request->fecha_cierre,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
+                'Fuente_informacion' => $request->fuente_info_juntas,
                 'F_registro' => $date,
             ];
 
@@ -616,6 +642,7 @@ class CalificacionJuntasController extends Controller
             // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
 
             $datos_historial_accion_eventos = [
+                'Id_Asignacion' => $newIdAsignacion,
                 'ID_evento' => $newIdEvento,
                 'Id_proceso' => $Id_proceso,
                 'Id_servicio' => $Id_servicio,
@@ -749,6 +776,7 @@ class CalificacionJuntasController extends Controller
                 'F_cierre' => $request->fecha_cierre,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
+                'Fuente_informacion' => $request->fuente_info_juntas,
                 'F_registro' => $date,
             ];
 
@@ -790,6 +818,7 @@ class CalificacionJuntasController extends Controller
             // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
 
             $datos_historial_accion_eventos = [
+                'Id_Asignacion' => $newIdAsignacion,
                 'ID_evento' => $newIdEvento,
                 'Id_proceso' => $Id_proceso,
                 'Id_servicio' => $Id_servicio,
@@ -865,9 +894,9 @@ class CalificacionJuntasController extends Controller
         ->where('EsFestivo', 0)
         ->count();
         if($conteoDias > 10){
-            $terminos='Fuera de términos';
+                $terminos='Fuera de términos';
         }else{
-            $terminos='Dentro de términos';  
+                $terminos='Dentro de términos';  
         }
         // validacion de bandera para guardar o actualizar
         // insercion de datos a la tabla de sigmel_informacion_controversia_juntas_eventos
@@ -976,6 +1005,7 @@ class CalificacionJuntasController extends Controller
                 'Jrci_califi_invalidez' => $request->jrci_califi_invalidez,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Observaciones' => $request->Observaciones
             ];
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')->insert($datos_info_controversia);
 
@@ -1003,6 +1033,7 @@ class CalificacionJuntasController extends Controller
                 'Jrci_califi_invalidez' => $request->jrci_califi_invalidez,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Observaciones' => $request->Observaciones
             ];
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_actuali_controversia);
@@ -1458,102 +1489,178 @@ class CalificacionJuntasController extends Controller
         $Id_evento = $request->Id_evento;
         $Id_asignacion = $request->Id_asignacion;
         $Id_procesos = $request->Id_procesos;
-        $radiojrci_comunicado = $request->radiojrci_comunicado;
-        $radiojnci_comunicado = $request->radiojnci_comunicado;
-        $radioafiliado_comunicado = $request->radioafiliado_comunicado;
-        $radioempresa_comunicado = $request->radioempresa_comunicado;
-        $radioeps_comunicado = $request->radioeps_comunicado;
-        $radioafp_comunicado = $request->radioafp_comunicado;
-        $radioarl_comunicado = $request->radioarl_comunicado;
+        $tipo_descarga = $request->tipo_descarga;
+        if($tipo_descarga != 'Manual'){
+            $radiojrci_comunicado = $request->radiojrci_comunicado;
+            $radiojnci_comunicado = $request->radiojnci_comunicado;
+            $radioafiliado_comunicado = $request->radioafiliado_comunicado;
+            $radioempresa_comunicado = $request->radioempresa_comunicado;
+            $radioeps_comunicado = $request->radioeps_comunicado;
+            $radioafp_comunicado = $request->radioafp_comunicado;
+            $radioarl_comunicado = $request->radioarl_comunicado;
 
-        $radioOtro = $request->radioOtro;
-        $copiaComunicadoTotal = $request->copiaComunicadoTotal;
-        if (!empty($copiaComunicadoTotal)) {
-            $total_copia_comunicado = implode(", ", $copiaComunicadoTotal);                
-        }else{
-            $total_copia_comunicado = '';
-        }
+            $radioOtro = $request->radioOtro;
+            $copiaComunicadoTotal = $request->copiaComunicadoTotal;
+            if (!empty($copiaComunicadoTotal)) {
+                $total_copia_comunicado = implode(", ", $copiaComunicadoTotal);                
+            }else{
+                $total_copia_comunicado = '';
+            }
 
-        if(!empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
-            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
-                $destinatario = 'Jrci';
-        }
-        elseif(empty($radiojrci_comunicado) && !empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
-            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
-                $destinatario = 'Jnci';
-        }
-        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && !empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
-            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
-            $destinatario = 'Afiliado';
-        }
-        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado)
-            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
-            $destinatario = 'Empresa';
-        }
-        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
-            && !empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
-                $destinatario = 'Eps';
-        }
-        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
-            && empty($radioeps_comunicado) && !empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
-                $destinatario = 'Afp';
-        }
-        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
-            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && !empty($radioarl_comunicado) && empty($radioOtro)){
-                $destinatario = 'Arl';
-        }
-        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
-            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && !empty($radioOtro)){
-                $destinatario = 'Otro';
-        }
+            if(!empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+                && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+                    $destinatario = 'Jrci';
+            }
+            elseif(empty($radiojrci_comunicado) && !empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+                && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+                    $destinatario = 'Jnci';
+            }
+            elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && !empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+                && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+                $destinatario = 'Afiliado';
+            }
+            elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado)
+                && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+                $destinatario = 'Empresa';
+            }
+            elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+                && !empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+                    $destinatario = 'Eps';
+            }
+            elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+                && empty($radioeps_comunicado) && !empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+                    $destinatario = 'Afp';
+            }
+            elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+                && empty($radioeps_comunicado) && empty($radioafp_comunicado) && !empty($radioarl_comunicado) && empty($radioOtro)){
+                    $destinatario = 'Arl';
+            }
+            elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+                && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && !empty($radioOtro)){
+                    $destinatario = 'Otro';
+            }
 
-        $datos_info_registrarComunicadoPcl=[
+            $datos_info_registrarComunicadoPcl=[
 
-            'ID_evento' => $Id_evento,
-            'Id_Asignacion' => $Id_asignacion,
-            'Id_proceso' => $Id_procesos,
-            'Ciudad' => $request->ciudad,
-            'F_comunicado' => $request->fecha_comunicado2,
-            'N_radicado' => $request->radicado2,
-            'Cliente' => $request->cliente_comunicado2,
-            'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
-            'T_documento' => $request->tipo_documento_comunicado2,
-            'N_identificacion' => $request->identificacion_comunicado2,
-            'Destinatario' => $destinatario,
-            'JRCI_Destinatario' => $request->JRCI_Destinatario,
-            'Nombre_destinatario' => $request->nombre_destinatario,
-            'Nit_cc' => $request->nic_cc,
-            'Direccion_destinatario' => $request->direccion_destinatario,
-            'Telefono_destinatario' => $request->telefono_destinatario,
-            'Email_destinatario' => $request->email_destinatario,
-            'Id_departamento' => $request->departamento_destinatario,
-            'Id_municipio' => $request->ciudad_destinatario,
-            'Asunto' => $request->asunto,
-            'Cuerpo_comunicado' => $request->cuerpo_comunicado,
-            'Anexos' => $request->anexos,
-            'Forma_envio' => $request->forma_envio,
-            'Elaboro' => $request->elaboro2,
-            'Reviso' => $request->reviso,
-            'Agregar_copia' => $total_copia_comunicado,
-            'JRCI_copia' => $request->JRCI_copia,
-            'Firmar_Comunicado' => $request->firmarcomunicado,
-            'Tipo_descarga' => $request->tipo_descarga,
-            'Nombre_usuario' => $nombre_usuario,
-            'F_registro' => $date,
-        ];
-        
-        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
+                'ID_evento' => $Id_evento,
+                'Id_Asignacion' => $Id_asignacion,
+                'Id_proceso' => $Id_procesos,
+                'Ciudad' => $request->ciudad,
+                'F_comunicado' => $request->fecha_comunicado2,
+                'N_radicado' => $request->radicado2,
+                'Cliente' => $request->cliente_comunicado2,
+                'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
+                'T_documento' => $request->tipo_documento_comunicado2,
+                'N_identificacion' => $request->identificacion_comunicado2,
+                'Destinatario' => $destinatario,
+                'JRCI_Destinatario' => $request->JRCI_Destinatario,
+                'Nombre_destinatario' => $request->nombre_destinatario,
+                'Nit_cc' => $request->nic_cc,
+                'Direccion_destinatario' => $request->direccion_destinatario,
+                'Telefono_destinatario' => $request->telefono_destinatario,
+                'Email_destinatario' => $request->email_destinatario,
+                'Id_departamento' => $request->departamento_destinatario,
+                'Id_municipio' => $request->ciudad_destinatario,
+                'Asunto' => $request->asunto,
+                'Cuerpo_comunicado' => $request->cuerpo_comunicado,
+                'Anexos' => $request->anexos,
+                'Forma_envio' => $request->forma_envio,
+                'Elaboro' => $request->elaboro2,
+                'Reviso' => $request->reviso,
+                'Agregar_copia' => $total_copia_comunicado,
+                'JRCI_copia' => $request->JRCI_copia,
+                'Firmar_Comunicado' => $request->firmarcomunicado,
+                'Tipo_descarga' => $request->tipo_descarga,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+                'Modulo_creacion' => $request->modulo_creacion,
+            ];
+            
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
 
-        sleep(2);
-        $datos_info_historial_acciones = [
-            'ID_evento' => $Id_evento,
-            'F_accion' => $date,
-            'Nombre_usuario' => $nombre_usuario,
-            'Accion_realizada' => "Se genera comunicado Juntas.",
-            'Descripcion' => $request->asunto,
-        ];
+            sleep(2);
+            $datos_info_historial_acciones = [
+                'ID_evento' => $Id_evento,
+                'F_accion' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+                'Accion_realizada' => "Se genera comunicado Juntas.",
+                'Descripcion' => $request->asunto,
+            ];
 
-        sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+            sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+        }
+        else if($tipo_descarga == 'Manual'){
+            if($request->modulo){
+                $modulo = $request->modulo;
+            }
+            else{
+                $modulo = '';
+            }
+
+            $datos_info_registrarComunicadoJuntas=[
+                'ID_evento' => $Id_evento,
+                'Id_Asignacion' => $Id_asignacion,
+                'Id_proceso' => $Id_procesos,
+                'Ciudad' => $request->ciudad,
+                'F_comunicado' => $date,
+                'N_radicado' => $request->radicado2,
+                'Cliente' => $request->cliente_comunicado2,
+                'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
+                'T_documento' => $request->tipo_documento_comunicado2,
+                'N_identificacion' => $request->identificacion_comunicado2,
+                'Destinatario' => $request->destinatario,
+                'Nombre_destinatario' => $request->nombre_destinatario,
+                'Nit_cc' => $request->nic_cc,
+                'Direccion_destinatario' => $request->direccion_destinatario,
+                'Telefono_destinatario' => $request->telefono_destinatario,
+                'Email_destinatario' => $request->email_destinatario,
+                'Id_departamento' => $request->departamento_destinatario,
+                'Id_municipio' => $request->ciudad_destinatario,
+                'Asunto' => $request->asunto,
+                'Cuerpo_comunicado' => $request->cuerpo_comunicado,
+                'Anexos' => $request->anexos,
+                'Forma_envio' => $request->forma_envio,
+                'Elaboro' => $nombre_usuario,
+                'Reviso' => $request->reviso,
+                'Agregar_copia' => null,
+                'Firmar_Comunicado' => $request->firmarcomunicado,
+                'Tipo_descarga' => $request->tipo_descarga,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+                'Modulo_creacion' => $request->modulo_creacion,
+            ];
+
+            if($request->hasFile('cargue_comunicados')){
+                $archivo = $request->file('cargue_comunicados');
+                $path = public_path('Documentos_Eventos/'.$Id_evento);
+                $mode = 777;
+
+                if (!File::exists($path)) {
+                    File::makeDirectory($path, $mode, true, true);
+                    chmod($path, $mode);
+                }
+
+                // $nombre_final_documento = $nombre_documento."_IdEvento_".$Id_evento.".".$archivo->extension();
+                $nombre_final_documento = $request->asunto;
+                Storage::putFileAs($Id_evento, $archivo, $nombre_final_documento);
+                
+            }else{
+                $nombre_final_documento='N/A';            
+            }     
+
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoJuntas);
+
+            sleep(2);
+            $datos_info_historial_acciones = [
+                'ID_evento' => $Id_evento,
+                'F_accion' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+                'Accion_realizada' => "Se genera comunicado de forma manual en $modulo.",
+                'Descripcion' => $request->asunto,
+            ];
+
+            sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+        }
         
         $mensajes = array(
             "parametro" => 'agregar_comunicado',
@@ -1701,6 +1808,7 @@ class CalificacionJuntasController extends Controller
             'Tipo_descarga' => $request->tipo_descarga,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
+            'Modulo_creacion' => $request->modulo_creacion
         ];
 
         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado_editar)
@@ -2105,25 +2213,37 @@ class CalificacionJuntasController extends Controller
                     $logo_header = "Sin logo";
                 }
 
+                //Footer image
+                $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+                ->select('Footer_cliente')
+                ->where([['Id_cliente', $id_cliente]])
+                ->limit(1)->get();
+
+                if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+                    $footer = $footer_imagen[0]->Footer_cliente;
+                } else {
+                    $footer = null;
+                } 
+
                 /* datos del footer */
-                $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-                ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-                ->where('Id_cliente', $id_cliente)->get();
+                // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+                // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+                // ->where('Id_cliente', $id_cliente)->get();
         
-                if(count($datos_footer) > 0){
-                    $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-                    $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-                    $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-                    $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-                    $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+                // if(count($datos_footer) > 0){
+                //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+                //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+                //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+                //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+                //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
         
-                }else{
-                    $footer_dato_1 = "";
-                    $footer_dato_2 = "";
-                    $footer_dato_3 = "";
-                    $footer_dato_4 = "";
-                    $footer_dato_5 = "";
-                }
+                // }else{
+                //     $footer_dato_1 = "";
+                //     $footer_dato_2 = "";
+                //     $footer_dato_3 = "";
+                //     $footer_dato_4 = "";
+                //     $footer_dato_5 = "";
+                // }
 
                 /* Recolección de datos para la proforma en pdf */
                 $data = [
@@ -2145,11 +2265,12 @@ class CalificacionJuntasController extends Controller
                     'Agregar_copia' => $Agregar_copias,
                     'Firma_cliente' => $Firma_cliente,
                     'logo_header' => $logo_header,
-                    'footer_dato_1' => $footer_dato_1,
-                    'footer_dato_2' => $footer_dato_2,
-                    'footer_dato_3' => $footer_dato_3,
-                    'footer_dato_4' => $footer_dato_4,
-                    'footer_dato_5' => $footer_dato_5,
+                    'footer' => $footer,
+                    // 'footer_dato_1' => $footer_dato_1,
+                    // 'footer_dato_2' => $footer_dato_2,
+                    // 'footer_dato_3' => $footer_dato_3,
+                    // 'footer_dato_4' => $footer_dato_4,
+                    // 'footer_dato_5' => $footer_dato_5,
                     'nombre_usuario' => $nombre_usuario,
                 ];
 
@@ -3011,25 +3132,39 @@ class CalificacionJuntasController extends Controller
                     $logo_header = "Sin logo";
                 }
 
+                //Footer image
+                $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+                ->select('Footer_cliente')
+                ->where([['Id_cliente', $id_cliente]])
+                ->limit(1)->get();
+
+                if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+                    $footer = $footer_imagen[0]->Footer_cliente;
+                } else {
+                    $footer = null;
+                } 
+
+                
+
                 /* datos del footer */
-                $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-                ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-                ->where('Id_cliente', $id_cliente)->get();
+                // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+                // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+                // ->where('Id_cliente', $id_cliente)->get();
 
-                if(count($datos_footer) > 0){
-                    $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-                    $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-                    $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-                    $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-                    $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+                // if(count($datos_footer) > 0){
+                //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+                //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+                //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+                //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+                //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
 
-                }else{
-                    $footer_dato_1 = "";
-                    $footer_dato_2 = "";
-                    $footer_dato_3 = "";
-                    $footer_dato_4 = "";
-                    $footer_dato_5 = "";
-                }
+                // }else{
+                //     $footer_dato_1 = "";
+                //     $footer_dato_2 = "";
+                //     $footer_dato_3 = "";
+                //     $footer_dato_4 = "";
+                //     $footer_dato_5 = "";
+                // }
 
                 /* Recolección de datos para la proforma en pdf */
                 $data = [
@@ -3060,11 +3195,12 @@ class CalificacionJuntasController extends Controller
                     'Agregar_copia' => $Agregar_copias,
                     'Firma_cliente' => $Firma_cliente,
                     'nombre_usuario' => $nombre_usuario,
-                    'footer_dato_1' => $footer_dato_1,
-                    'footer_dato_2' => $footer_dato_2,
-                    'footer_dato_3' => $footer_dato_3,
-                    'footer_dato_4' => $footer_dato_4,
-                    'footer_dato_5' => $footer_dato_5
+                    'footer' => $footer,
+                    // 'footer_dato_1' => $footer_dato_1,
+                    // 'footer_dato_2' => $footer_dato_2,
+                    // 'footer_dato_3' => $footer_dato_3,
+                    // 'footer_dato_4' => $footer_dato_4,
+                    // 'footer_dato_5' => $footer_dato_5
                 ];
 
                 $extension_proforma = "pdf";
@@ -3487,25 +3623,39 @@ class CalificacionJuntasController extends Controller
                     $ruta_logo = "";
                 }
 
-                /* datos del footer */
-                $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-                ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-                ->where('Id_cliente', $id_cliente)->get();
+                //Footer
+                $dato_logo_footer = sigmel_clientes::on('sigmel_gestiones')
+                ->select('Footer_cliente')
+                ->where([['Id_cliente', $id_cliente]])
+                ->limit(1)->get();
 
-                if(count($datos_footer) > 0){
-                    $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-                    $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-                    $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-                    $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-                    $footer_dato_5 = $datos_footer[0]->footer_dato_5;
-
-                }else{
-                    $footer_dato_1 = "";
-                    $footer_dato_2 = "";
-                    $footer_dato_3 = "";
-                    $footer_dato_4 = "";
-                    $footer_dato_5 = "";
+                if (count($dato_logo_footer) > 0 && $dato_logo_footer[0]->Footer_cliente != null) {
+                    $logo_footer = $dato_logo_footer[0]->Footer_cliente;
+                    $ruta_logo_footer = "/footer_clientes/{$id_cliente}/{$logo_footer}";
+                } else {
+                    $logo_footer = null;
+                    $ruta_logo_footer = null;
                 }
+
+                /* datos del footer */
+                // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+                // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+                // ->where('Id_cliente', $id_cliente)->get();
+
+                // if(count($datos_footer) > 0){
+                //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+                //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+                //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+                //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+                //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+
+                // }else{
+                //     $footer_dato_1 = "";
+                //     $footer_dato_2 = "";
+                //     $footer_dato_3 = "";
+                //     $footer_dato_4 = "";
+                //     $footer_dato_5 = "";
+                // }
 
                 /* Construcción proforma en formato docx (word) */
                 $phpWord = new PhpWord();
@@ -3673,30 +3823,13 @@ class CalificacionJuntasController extends Controller
                     // Configuramos el footer
                     $info = $nombre_afiliado." - ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." - Siniestro: ".$ID_evento;
                     $footer = $section->addFooter();
-                    $tableStyle = array(
-                        'cellMargin'  => 50,
-                    );
-                    $phpWord->addTableStyle('myTable', $tableStyle);
+                    $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
+                    
+                    if($ruta_logo_footer != null){
+                        $imagenPath_footer = public_path($ruta_logo_footer);
+                        $footer->addImage($imagenPath_footer, array('width' => 450, 'height' => 70, 'alignment' => 'left'));
+                    }
                     $table = $footer->addTable('myTable');
-
-                    $table->addRow();
-                    $table->addCell(80000, ['gridSpan' => 2])->addText($info, array('size' => 10, 'bold' => true));
-                    $table->addRow();
-                    // $table->addCell(80000, ['gridSpan' => 2])->addText('Seguros Alfa S.A. y Seguros de Vida Alfa S.A.', array('size' => 10, 'color' => '#184F56', 'bold' => true));
-                    $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_1, array('size' => 10));
-                    $table->addRow();
-                    // $table->addCell()->addText('Líneas de atención al cliente', array('size' => 10, 'color' => '#184F56', 'bold' => true));
-                    $table->addCell()->addText($footer_dato_2, array('size' => 10));
-                    $cell = $table->addCell();
-                    $textRun = $cell->addTextRun(['alignment' => 'right']);
-                    // $textRun->addText('www.segurosalfa.com.co', array('size' => 10));
-                    $textRun->addText($footer_dato_3, array('size' => 10));
-                    $table->addRow();
-                    // $table->addCell(80000, ['gridSpan' => 2])->addText('Bogotá: 3077032, a nivel nacional: 018000122532', array('size' => 10));
-                    $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_4, array('size' => 10));
-                    $table->addRow();
-                    // $table->addCell(80000, ['gridSpan' => 2])->addText('Habilitadas en jornada continua de lunes a viernes de 8:00 a.m. a 6:00 p.m.', array('size' => 10));
-                    $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_5, array('size' => 10));
                     $table->addRow();
                     $cell1 = $table->addCell(80000, ['gridSpan' => 2]);
                     $textRun = $cell1->addTextRun(['alignment' => 'center']);
@@ -4126,25 +4259,39 @@ class CalificacionJuntasController extends Controller
                     $ruta_logo = "";
                 }
 
-                /* datos del footer */
-                $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-                ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-                ->where('Id_cliente', $id_cliente)->get();
+                //Footer
+                $dato_logo_footer = sigmel_clientes::on('sigmel_gestiones')
+                ->select('Footer_cliente')
+                ->where([['Id_cliente', $id_cliente]])
+                ->limit(1)->get();
 
-                if(count($datos_footer) > 0){
-                    $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-                    $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-                    $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-                    $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-                    $footer_dato_5 = $datos_footer[0]->footer_dato_5;
-
-                }else{
-                    $footer_dato_1 = "";
-                    $footer_dato_2 = "";
-                    $footer_dato_3 = "";
-                    $footer_dato_4 = "";
-                    $footer_dato_5 = "";
+                if (count($dato_logo_footer) > 0 && $dato_logo_footer[0]->Footer_cliente != null) {
+                    $logo_footer = $dato_logo_footer[0]->Footer_cliente;
+                    $ruta_logo_footer = "/footer_clientes/{$id_cliente}/{$logo_footer}";
+                } else {
+                    $logo_footer = null;
+                    $ruta_logo_footer = null;
                 }
+
+                /* datos del footer */
+                // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+                // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+                // ->where('Id_cliente', $id_cliente)->get();
+
+                // if(count($datos_footer) > 0){
+                //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+                //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+                //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+                //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+                //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+
+                // }else{
+                //     $footer_dato_1 = "";
+                //     $footer_dato_2 = "";
+                //     $footer_dato_3 = "";
+                //     $footer_dato_4 = "";
+                //     $footer_dato_5 = "";
+                // }
 
                 /* Construcción proforma en formato docx (word) */
                 $phpWord = new PhpWord();
@@ -4312,30 +4459,12 @@ class CalificacionJuntasController extends Controller
                     // Configuramos el footer
                     $info = $nombre_afiliado." - ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." - Siniestro: ".$ID_evento;
                     $footer = $section->addFooter();
-                    $tableStyle = array(
-                        'cellMargin'  => 50,
-                    );
-                    $phpWord->addTableStyle('myTable', $tableStyle);
+                    $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
+                    if($ruta_logo_footer != null){
+                        $imagenPath_footer = public_path($ruta_logo_footer);
+                        $footer->addImage($imagenPath_footer, array('width' => 450, 'height' => 70, 'alignment' => 'left'));
+                    }
                     $table = $footer->addTable('myTable');
-
-                    $table->addRow();
-                    $table->addCell(80000, ['gridSpan' => 2])->addText($info, array('size' => 10, 'bold' => true));
-                    $table->addRow();
-                    // $table->addCell(80000, ['gridSpan' => 2])->addText('Seguros Alfa S.A. y Seguros de Vida Alfa S.A.', array('size' => 10, 'color' => '#184F56', 'bold' => true));
-                    $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_1, array('size' => 10));
-                    $table->addRow();
-                    // $table->addCell()->addText('Líneas de atención al cliente', array('size' => 10, 'color' => '#184F56', 'bold' => true));
-                    $table->addCell()->addText($footer_dato_2, array('size' => 10));
-                    $cell = $table->addCell();
-                    $textRun = $cell->addTextRun(['alignment' => 'right']);
-                    // $textRun->addText('www.segurosalfa.com.co', array('size' => 10));
-                    $textRun->addText($footer_dato_3, array('size' => 10));
-                    $table->addRow();
-                    // $table->addCell(80000, ['gridSpan' => 2])->addText('Bogotá: 3077032, a nivel nacional: 018000122532', array('size' => 10));
-                    $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_4, array('size' => 10));
-                    $table->addRow();
-                    // $table->addCell(80000, ['gridSpan' => 2])->addText('Habilitadas en jornada continua de lunes a viernes de 8:00 a.m. a 6:00 p.m.', array('size' => 10));
-                    $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_5, array('size' => 10));
                     $table->addRow();
                     $cell1 = $table->addCell(80000, ['gridSpan' => 2]);
                     $textRun = $cell1->addTextRun(['alignment' => 'center']);

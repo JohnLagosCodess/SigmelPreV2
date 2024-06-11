@@ -180,7 +180,7 @@
                         <!-- Relacion de documetos-->
                         <div class="card-info columna_row1_documentos" @if ($decreto_1507=='1') style="display:block" @else style="display:none" @endif >
                             <div class="card-header text-center" style="border: 1.5px solid black;">
-                                <h5>Relación de documentos / Examenes fisico - (Descripción)</h5>
+                                <h5>Relación de documentos / Exámenes fisico - (Descripción)</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -384,7 +384,7 @@
                     <!-- examen interconsulta-->
                     <div class="card-info columna_row1_interconsulta" @if ($decreto_1507=='1') style="display:block" @else style="display:none" @endif>
                         <div class="card-header text-center" style="border: 1.5px solid black;">
-                            <h5>Exámanes e interconsultas</h5>
+                            <h5>Exámenes e interconsultas</h5>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -6860,6 +6860,7 @@
                                             @else
                                                 <input type="hidden" class="form-control" name="radicado_dictamen" id="radicado_dictamen" value="{{$consecutivo}}" disabled> 
                                             @endif
+                                                <input type="hidden" class="form-control" name="radicado_comunicado_manual" id="radicado_comunicado_manual" value="{{$consecutivo}}" disabled>
                                             <label for="porcentaje_pcl">% PCL</label>
                                             @if(!empty($array_info_decreto_evento[0]->Decreto_calificacion) && $array_info_decreto_evento[0]->Decreto_calificacion == 2)
                                                 <input type="text" class="form-control" name="porcentaje_pcl" id="porcentaje_pcl" value="0" disabled>                                                
@@ -7398,7 +7399,19 @@
                                         <div class="form-group">
                                             <label for="tipo_clasificacion">Copia a partes interesadas</label>
                                         </div>
-                                    </div>  
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                @if (!empty($array_comite_interdisciplinario[0]->Copia_empleador))
+                                                    <input class="custom-control-input" type="checkbox" id="afiliado" name="afiliado" value="Afiliado" checked>
+                                                @else
+                                                    <input class="custom-control-input" type="checkbox" id="afiliado" name="afiliado" value="Afiliado">
+                                                @endif
+                                                <label for="afiliado" class="custom-control-label">Afiliado</label>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-3">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
@@ -7616,7 +7629,7 @@
                         </form>
                     </div>
                     <!-- Comunicados - Dictamen y Oficio remisorio -->                    
-                    <div class="card-info d-none" id="div_comunicado_dictamen_oficioremisorio">
+                    <div class="card-info" id="div_comunicado_dictamen_oficioremisorio">
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Comunicados</h5>
                         </div>
@@ -7632,148 +7645,211 @@
                                                         <th>N° de Radicado</th>
                                                         <th>Elaboró</th>
                                                         <th>Fecha de comunicado</th>
+                                                        <th>Documento</th>
                                                         <th>Acción</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     @if (!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion == 1)                                                            
                                                         @foreach ($array_comunicados_correspondencia as $index => $comunicados)                                                        
-                                                        <tr>
-                                                            {{-- Generar pdf Dictamen PCL 1507 --}}
-                                                            <form name="ver_dictamenPcl" action="{{ route('descargar_Dictamen_PCL') }}" method="POST">  
-                                                                @csrf                        
-                                                                @if ($index === 0)
-                                                                    <input type="hidden"  name="ID_Evento_comuni" value="{{$comunicados['ID_evento']}}">
-                                                                    <input type="hidden"  name="Id_Asignacion_comuni" value="{{$comunicados['Id_Asignacion']}}">
-                                                                    <input type="hidden"  name="Id_Proceso_comuni" value="{{$comunicados['Id_proceso']}}">     
-                                                                    <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}">                                                                    
+                                                            @if ($comunicados->Tipo_descarga != 'Oficio')
+                                                                <tr>
+                                                                    {{-- Generar pdf Dictamen PCL 1507 --}}
                                                                     <td>{{$comunicados['N_radicado']}}</td>
                                                                     <td>{{$comunicados['Elaboro']}}</td>
-                                                                    <td>{{$comunicados['F_comunicado']}}</td>     
-                                                                @endif
-                                                                @if ($comunicados->Ciudad == 'N/A')
-                                                                <td>                                                                    
-                                                                    <label for="ver_dictamenesPcl"><i class="far fa-eye text-info"></i></i></label>
-                                                                    <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
-                                                                </td>                                                                
-                                                                @endif
-                                                            </form>
+                                                                    <td>{{$comunicados['F_comunicado']}}</td>
+                                                                    <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>                                                                       
+                                                                    @if ($comunicados->Ciudad == 'N/A' && $comunicados->Tipo_descarga != 'Manual')
+                                                                        <td style="display: flex; flex-direction:row; justify-content:space-around;">                                                                    
+                                                                            <form name="ver_dictamenPcl" action="{{ route('descargar_Dictamen_PCL') }}" method="POST">  
+                                                                                @csrf                                                                
+                                                                                    <input type="hidden"  name="ID_Evento_comuni" value="{{$comunicados['ID_evento']}}">
+                                                                                    <input type="hidden"  name="Id_Asignacion_comuni" value="{{$comunicados['Id_Asignacion']}}">
+                                                                                    <input type="hidden"  name="Id_Proceso_comuni" value="{{$comunicados['Id_proceso']}}">     
+                                                                                    <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}">
+                                                                                    <label for="ver_dictamenesPcl"><i class="far fa-eye text-info" style="cursor: pointer;"></i></i></label>
+                                                                                    <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
+                                                                            </form>        
+                                                                        </td> 
+                                                                    @elseif ($comunicados->Tipo_descarga == 'Manual')  
+                                                                        <td style="display: flex; flex-direction:row; justify-content:space-around;">
+                                                                            <form id="form_descargar_archivo_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" method="POST">
+                                                                                <button type="submit" id="btn_descargar_archivo_{{$comunicados->Id_Comunicado}}" style="border: none; background:transparent;">
+                                                                                    <i class="far fa-eye text-info" style="cursor: pointer;"></i>
+                                                                                </button>
+                                                                            </form>
+                                                                        </td>
+                                                                    @endif
+                                                                </tr>
+                                                            @endif
                                                         @endforeach
                                                         @if (!empty($array_comunicados_comite_inter[0]->Asunto))
                                                             @foreach ($array_comunicados_comite_inter as $comite_inter)
-                                                                <form name="ver_notificacionPcl" action="{{ route('generarOficio_Pcl') }}" method="POST">
-                                                                    @csrf
-                                                                    <input type="hidden" name="ID_Evento_comuni_comite" value="{{$comite_inter->ID_evento}}">
-                                                                    <input type="hidden" name="Id_Asignacion_comuni_comite" value="{{$comite_inter->Id_Asignacion}}">
-                                                                    <input type="hidden" name="Id_Proceso_comuni_comite" value="{{$comite_inter->Id_proceso}}">    
-                                                                    <input type="hidden" name="Radicado_comuni_comite" value="{{$comite_inter->N_radicado}}"> 
-                                                                    <input type="hidden" name="Firma_comuni_comite" value="{{$comite_inter->Firmar}}">
-                                                                    <td>{{$comite_inter->N_radicado}}</td>
-                                                                    <td>{{$comite_inter->Elaboro}}</td>
-                                                                    <td>{{$comite_inter->F_visado_comite}}</td>
-                                                                    <td>
-                                                                        <label for="ver_notificacionesPcl"><i class="far fa-eye text-info"></i></i></label>
-                                                                        <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold;" value="">
-                                                                        <label for="editar_correspondencia"><i class="fa fa-pen text-info"></i></label>
-                                                                        <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia" type="button" style="font-weight: bold;">
-                                                                    </td>                                                                                                                               
-                                                                </form>
+                                                            <tr>
+                                                                <td>{{$comite_inter->N_radicado}}</td>
+                                                                <td>{{$comite_inter->Elaboro}}</td>
+                                                                <td>{{$comite_inter->F_visado_comite}}</td>
+                                                                <td>Oficio</td>
+                                                                <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
+                                                                    <form name="ver_notificacionPcl" action="{{ route('generarOficio_Pcl') }}" method="POST">
+                                                                        @csrf
+                                                                        <input type="hidden" name="ID_Evento_comuni_comite" value="{{$comite_inter->ID_evento}}">
+                                                                        <input type="hidden" name="Id_Asignacion_comuni_comite" value="{{$comite_inter->Id_Asignacion}}">
+                                                                        <input type="hidden" name="Id_Proceso_comuni_comite" value="{{$comite_inter->Id_proceso}}">    
+                                                                        <input type="hidden" name="Radicado_comuni_comite" value="{{$comite_inter->N_radicado}}"> 
+                                                                        <input type="hidden" name="Firma_comuni_comite" value="{{$comite_inter->Firmar}}">
+                                                                        <label for="ver_notificacionesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
+                                                                        <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold; cursor: pointer;" value="">
+                                                                    </form>
+                                                                    <i class="fa fa-pen text-info" id="editar_correspondencia" style="cursor: pointer;"></i>
+                                                                </td>                                                                                                                               
+                                                            </tr>
                                                             @endforeach                                                                
-                                                        @endif
-                                                        </tr>    
+                                                        @endif     
                                                     @elseif(!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion == 2)                                                            
-                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados)                                                        
-                                                        <tr>
-                                                            {{-- Generar pdf Dictamen PCL Cero --}}
-                                                            <form name="ver_dictamenPcl" action="{{ route('descargar_Dictamen_PCLCero') }}" method="POST">  
-                                                                @csrf                        
-                                                                @if ($index === 0)
-                                                                    <input type="hidden"  name="ID_Evento_comuni" value="{{$comunicados['ID_evento']}}">
-                                                                    <input type="hidden"  name="Id_Asignacion_comuni" value="{{$comunicados['Id_Asignacion']}}">
-                                                                    <input type="hidden"  name="Id_Proceso_comuni" value="{{$comunicados['Id_proceso']}}">     
-                                                                    <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}">                                                                    
+                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados)    
+                                                            @if ($comunicados->Tipo_descarga != 'Oficio')
+                                                                <tr>
+                                                                    {{-- Generar pdf Dictamen PCL Cero --}}
                                                                     <td>{{$comunicados['N_radicado']}}</td>
                                                                     <td>{{$comunicados['Elaboro']}}</td>
-                                                                    <td>{{$comunicados['F_comunicado']}}</td>     
-                                                                @endif
-                                                                @if ($comunicados->Ciudad == 'N/A')
-                                                                <td>                                                                    
-                                                                    <label for="ver_dictamenesPcl"><i class="far fa-eye text-info"></i></i></label>
-                                                                    <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
-                                                                </td>                                                                
-                                                                @endif
-                                                            </form>
+                                                                    <td>{{$comunicados['F_comunicado']}}</td>
+                                                                    <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>                                                                       
+                                                                    @if ($comunicados->Ciudad == 'N/A' && $comunicados->Tipo_descarga != 'Manual')
+                                                                        <td style="display: flex; flex-direction:row; justify-content:space-around;">                                                                    
+                                                                            <form name="ver_dictamenPcl" action="{{ route('descargar_Dictamen_PCLCero') }}" method="POST">  
+                                                                                @csrf                        
+                                                                                <input type="hidden"  name="ID_Evento_comuni" value="{{$comunicados['ID_evento']}}">
+                                                                                <input type="hidden"  name="Id_Asignacion_comuni" value="{{$comunicados['Id_Asignacion']}}">
+                                                                                <input type="hidden"  name="Id_Proceso_comuni" value="{{$comunicados['Id_proceso']}}">     
+                                                                                <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}">  
+                                                                                <label for="ver_dictamenesPcl"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
+                                                                                <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
+                                                                            </form>
+                                                                        </td>                                                                
+                                                                    @elseif ($comunicados->Tipo_descarga == 'Manual')  
+                                                                        <td style="display: flex; flex-direction:row; justify-content:space-around;">
+                                                                            <form id="form_descargar_archivo_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" method="POST">
+                                                                                <button type="submit" id="btn_descargar_archivo_{{$comunicados->Id_Comunicado}}" style="border: none; background:transparent;">
+                                                                                    <i class="far fa-eye text-info" style="cursor: pointer;"></i>
+                                                                                </button>
+                                                                            </form>
+                                                                        </td>                                                             
+                                                                    @endif
+                                                                </tr>
+                                                            @endif 
                                                         @endforeach
                                                         @if (!empty($array_comunicados_comite_inter[0]->Asunto))
                                                             @foreach ($array_comunicados_comite_inter as $comite_inter)
-                                                                <form name="ver_notificacionPcl" action="{{ route('generarOficio_Pcl') }}" method="POST">
-                                                                    @csrf
-                                                                    <input type="hidden"  name="ID_Evento_comuni_comite" value="{{$comite_inter->ID_evento}}">
-                                                                    <input type="hidden"  name="Id_Asignacion_comuni_comite" value="{{$comite_inter->Id_Asignacion}}">
-                                                                    <input type="hidden"  name="Id_Proceso_comuni_comite" value="{{$comite_inter->Id_proceso}}">    
-                                                                    <input type="hidden"  name="Radicado_comuni_comite" value="{{$comite_inter->N_radicado}}"> 
-                                                                    <input type="hidden"  name="Firma_comuni_comite" value="{{$comite_inter->Firmar}}">
-                                                                    <td>{{$comite_inter->N_radicado}}</td>
-                                                                    <td>{{$comite_inter->Elaboro}}</td>
-                                                                    <td>{{$comite_inter->F_visado_comite}}</td>
-                                                                    <td>
-                                                                        <label for="ver_notificacionesPcl"><i class="far fa-eye text-info"></i></i></label>
-                                                                        <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold;" value="">
-                                                                        <label for="editar_correspondencia"><i class="fa fa-pen text-info"></i></label>
-                                                                        <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia" type="button" style="font-weight: bold;">
-                                                                    </td>                                                                                                                               
-                                                                </form>
+                                                            <tr>
+                                                                <td>{{$comite_inter->N_radicado}}</td>
+                                                                <td>{{$comite_inter->Elaboro}}</td>
+                                                                <td>{{$comite_inter->F_visado_comite}}</td>
+                                                                <td>Oficio</td>
+                                                                <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
+                                                                    <form name="ver_notificacionPcl" action="{{ route('generarOficio_Pcl') }}" method="POST">
+                                                                        @csrf
+                                                                        <input type="hidden"  name="ID_Evento_comuni_comite" value="{{$comite_inter->ID_evento}}">
+                                                                        <input type="hidden"  name="Id_Asignacion_comuni_comite" value="{{$comite_inter->Id_Asignacion}}">
+                                                                        <input type="hidden"  name="Id_Proceso_comuni_comite" value="{{$comite_inter->Id_proceso}}">    
+                                                                        <input type="hidden"  name="Radicado_comuni_comite" value="{{$comite_inter->N_radicado}}"> 
+                                                                        <input type="hidden"  name="Firma_comuni_comite" value="{{$comite_inter->Firmar}}">
+                                                                        <label for="ver_notificacionesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
+                                                                        <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold; cursor:pointer;" value="">
+                                                                    </form>
+                                                                    <i class="fa fa-pen text-info" style="cursor:pointer;" id="editar_correspondencia"></i>
+                                                                </td>                                                                                                                               
+                                                            </tr>
                                                             @endforeach
-                                                        @endif
-                                                        </tr>                                                   
+                                                        @endif                                                   
                                                     @elseif(!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion == 3)                                                            
-                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados)                                                        
-                                                        <tr>
-                                                            {{-- Generar pdf Dictamen PCL 917 --}}
-                                                            <form name="ver_dictamenPcl" action="{{ route('descargar_Dictamen_PCL917') }}" method="POST">  
-                                                                @csrf                        
-                                                                @if ($index === 0)
-                                                                    <input type="hidden"  name="ID_Evento_comuni" value="{{$comunicados['ID_evento']}}">
-                                                                    <input type="hidden"  name="Id_Asignacion_comuni" value="{{$comunicados['Id_Asignacion']}}">
-                                                                    <input type="hidden"  name="Id_Proceso_comuni" value="{{$comunicados['Id_proceso']}}">     
-                                                                    <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}">                                                                    
+                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados)
+                                                            @if ($comunicados->Tipo_descarga != 'Oficio')
+                                                                <tr>
+                                                                    {{-- Generar pdf Dictamen PCL 917 --}}
                                                                     <td>{{$comunicados['N_radicado']}}</td>
                                                                     <td>{{$comunicados['Elaboro']}}</td>
-                                                                    <td>{{$comunicados['F_comunicado']}}</td>     
-                                                                @endif
-                                                                @if ($comunicados->Ciudad == 'N/A')
-                                                                <td>                                                                    
-                                                                    <label for="ver_dictamenesPcl"><i class="far fa-eye text-info"></i></i></label>
-                                                                    <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
-                                                                </td>                                                                
-                                                                @endif
-                                                            </form>
+                                                                    <td>{{$comunicados['F_comunicado']}}</td>  
+                                                                    <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td> 
+                                                                    @if ($comunicados->Ciudad == 'N/A' && $comunicados->Tipo_descarga != 'Manual')
+                                                                        <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
+                                                                            <form name="ver_dictamenPcl" action="{{ route('descargar_Dictamen_PCL917') }}" method="POST">  
+                                                                                @csrf              
+                                                                                    <input type="hidden"  name="ID_Evento_comuni" value="{{$comunicados['ID_evento']}}">
+                                                                                    <input type="hidden"  name="Id_Asignacion_comuni" value="{{$comunicados['Id_Asignacion']}}">
+                                                                                    <input type="hidden"  name="Id_Proceso_comuni" value="{{$comunicados['Id_proceso']}}">     
+                                                                                    <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}">                                                                                                                                       
+                                                                                    <label for="ver_dictamenesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></i></label>
+                                                                                    <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
+                                                                            </form>
+                                                                        </td>                                                                
+                                                                    @elseif ($comunicados->Tipo_descarga == 'Manual')
+                                                                        <td style="display: flex; flex-direction:row; justify-content:space-around;">
+                                                                            <form id="form_descargar_archivo_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" method="POST">
+                                                                                <button type="submit" id="btn_descargar_archivo_{{$comunicados->Id_Comunicado}}" style="border: none; background:transparent;">
+                                                                                    <i class="far fa-eye text-info"></i>
+                                                                                </button>
+                                                                            </form>
+                                                                        </td>
+                                                                    @endif
+                                                                </tr>
+                                                            @endif
                                                         @endforeach
                                                         @if (!empty($array_comunicados_comite_inter[0]->Asunto))
                                                             @foreach ($array_comunicados_comite_inter as $comite_inter)
-                                                                <form name="ver_notificacionPcl" action="{{ route('generarOficio_Pcl') }}" method="POST">
-                                                                    @csrf
-                                                                    <input type="hidden"  name="ID_Evento_comuni_comite" value="{{$comite_inter->ID_evento}}">
-                                                                    <input type="hidden"  name="Id_Asignacion_comuni_comite" value="{{$comite_inter->Id_Asignacion}}">
-                                                                    <input type="hidden"  name="Id_Proceso_comuni_comite" value="{{$comite_inter->Id_proceso}}">    
-                                                                    <input type="hidden"  name="Radicado_comuni_comite" value="{{$comite_inter->N_radicado}}"> 
-                                                                    <input type="hidden"  name="Firma_comuni_comite" value="{{$comite_inter->Firmar}}">
-                                                                    <td>{{$comite_inter->N_radicado}}</td>
-                                                                    <td>{{$comite_inter->Elaboro}}</td>
-                                                                    <td>{{$comite_inter->F_visado_comite}}</td>
-                                                                    <td>
-                                                                        <label for="ver_notificacionesPcl"><i class="far fa-eye text-info"></i></i></label>
-                                                                        <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold;" value="">
-                                                                        <label for="editar_correspondencia"><i class="fa fa-pen text-info"></i></label>
-                                                                        <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia" type="button" style="font-weight: bold;">
-                                                                    </td>                                                                                                                               
-                                                                </form>
+                                                            <tr>
+                                                                <td>{{$comite_inter->N_radicado}}</td>
+                                                                <td>{{$comite_inter->Elaboro}}</td>
+                                                                <td>{{$comite_inter->F_visado_comite}}</td>
+                                                                <td>Oficio</td>
+                                                                <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
+                                                                    <form name="ver_notificacionPcl" action="{{ route('generarOficio_Pcl') }}" method="POST">
+                                                                        @csrf
+                                                                        <input type="hidden"  name="ID_Evento_comuni_comite" value="{{$comite_inter->ID_evento}}">
+                                                                        <input type="hidden"  name="Id_Asignacion_comuni_comite" value="{{$comite_inter->Id_Asignacion}}">
+                                                                        <input type="hidden"  name="Id_Proceso_comuni_comite" value="{{$comite_inter->Id_proceso}}">    
+                                                                        <input type="hidden"  name="Radicado_comuni_comite" value="{{$comite_inter->N_radicado}}"> 
+                                                                        <input type="hidden"  name="Firma_comuni_comite" value="{{$comite_inter->Firmar}}">
+                                                                            <label for="ver_notificacionesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
+                                                                            <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold; cursor: pointer;" value="">
+                                                                    </form>
+                                                                    <i class="fa fa-pen text-info" id="editar_correspondencia" style="cursor: pointer;"></i>
+                                                                </td>                                                                                                                                  
+                                                            </tr>
                                                             @endforeach
                                                         @endif
-                                                        </tr> 
+                                                    @elseif(empty($datos_demos[0]->Decreto_calificacion))
+                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados) 
+                                                            @if ($comunicados->Tipo_descarga != 'Oficio')
+                                                                <tr>
+                                                                    {{-- Documentos cargados manualmente  --}}
+                                                                    <td>{{$comunicados['N_radicado']}}</td>
+                                                                    <td>{{$comunicados['Elaboro']}}</td>
+                                                                    <td>{{$comunicados['F_comunicado']}}</td>  
+                                                                    <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>                                                                       
+                                                                    @if ($comunicados->Tipo_descarga == 'Manual')  
+                                                                        <td style="display: flex; flex-direction:row; justify-content:space-around;">
+                                                                            <form id="form_descargar_archivo_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" method="POST">
+                                                                                <button type="submit" id="btn_descargar_archivo_{{$comunicados->Id_Comunicado}}" style="border: none; background:transparent;">
+                                                                                    <i class="far fa-eye text-info" style="cursor: pointer;"></i>
+                                                                                </button>
+                                                                            </form>
+                                                                        </td>                                                             
+                                                                    @endif
+                                                                </tr>
+                                                            @endif
+                                                        @endforeach
                                                     @endif
                                                 </tbody>
                                             </table>
+                                            <div class="alert alert-danger cargueundocumentoprimero d-none" role="alert">
+                                                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Por favor, adjunta un documento antes de cargar. 
+                                            </div>
+                                            <div class="alerta_externa_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                                            <div style="display: flex; flex-direction:row; justify-content:flex-end; gap:2px;"> <!-- Alinea el contenido a la derecha -->
+                                                <input style="width:40%" type="file" class="form-control select-doc" name="cargue_comunicados" id="cargue_comunicados" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx"/>
+                                                <button class="btn-info" id="cargarComunicado">Cargar</button>
+                                            </div>
                                         </div>  
                                     </div>
                                 </div>                     
@@ -7886,8 +7962,11 @@
             $(agregar_examen_fila).addClass('fila_'+contador_examen);
             $(agregar_examen_fila).attr("id", 'fila_'+contador_examen);
 
+            //Valida que la fecha no sea mayor a la actual
+            Validarfecha("#fecha_examen_fila_"+contador_examen);
+
         });
-        
+
         $(document).on('click', '#btn_remover_examen_fila', function(){
             var nombre_exame_fila = $(this).data("fila");
             listado_examenes_interconsultas.row("."+nombre_exame_fila).remove().draw();

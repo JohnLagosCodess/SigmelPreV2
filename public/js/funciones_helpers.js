@@ -608,3 +608,45 @@ function autoAdjustColumns(table) {
     }
 }
 
+/**
+ * La función para validar y establecer un limite en la fecha dentro de un input, mostrando a su vez un mensaje de advertencia debajo del elemento.
+ * @param {string} Idselector Corresponde al id del input
+ * @param {string} operador Operador con el cual se estara evaluando la validacion
+ * @param {string} fecha Fecha con la cual se estara evaluando
+ * @param {string} info Mensaje de advertencia al cumplirse la validacion
+*/
+function Validarfecha(IdSelector,operador = '>',fecha = null,info = 'La fecha no debe ser mayor a'){
+    let fechaActual = '';
+    let operadores = {
+        '<' : function(a,b) {return a < b},
+        '>' : function(a,b) {return a > b},
+        '>=' : function(a,b) {return a >= b},
+        '<=' : function(a,b) {return a <= b},
+        '!==' : function(a,b) {return a !== b},
+        '==' : function(a,b) {return a == b}
+    }
+    if(fecha == null){
+        fechaActual = new Date().toISOString().slice(0,10); //Obtenemos la fecha en Ymd
+    }else{
+        fechaActual = fecha;
+    }
+
+
+    $(IdSelector).off("change").on("change",function(){
+        let FechaDigitada = $(this).val();
+        let etiqueta = $(IdSelector).next('i');
+        let mensaje = `<i style="color:red;">${info} ${fechaActual}.</i>`;
+        
+        if(operadores[operador](FechaDigitada,fechaActual)){
+            $(IdSelector).val(fechaActual); //Seteamos la el input como fecha maxima la actual
+            if(etiqueta.length > 0){
+                etiqueta.remove();
+            }
+            $(IdSelector).after(mensaje); //Agregamos el mensaje despues del input
+        }else{
+            etiqueta.remove();
+        }
+
+    });
+
+}

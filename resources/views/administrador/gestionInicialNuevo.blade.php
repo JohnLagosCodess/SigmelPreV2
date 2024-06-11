@@ -20,7 +20,7 @@
             <h4>Registrar: Nuevo Evento</h4>
             <h4></h4>
         </div>
-        <form action="{{route('creacionEvento')}}" method="POST">
+        <form action="{{route('creacionEvento')}}" method="POST" id="gestion_inicial_nuevo">
             @csrf
             <div class="card-body">
                 @if (session()->get('mensaje_confirmacion_nuevo_evento'))
@@ -766,9 +766,12 @@
 @section('js')
 <script src="/plugins/toatsr/build/toastr.min.js"></script>
 <script src="/js/selectores_gestion_inicial.js"></script>
+<script src="/js/funciones_helpers.js"></script>
 <script>
     $(document).ready(function(){
-        $('#btn_guardar_evento').click(function(){
+        $('#gestion_inicial_nuevo').submit(function(e){
+            $('#btn_borrar,#btn_guardar_evento').addClass('d-none');
+            $('#mostrar_barra_creacion_evento').css("display","block");
             var si_cliente = $('#cliente').val();
             var si_tipo_cliente = $('#tipo_cliente').val();            
             var si_id_evento= $('#id_evento').val();            
@@ -797,10 +800,9 @@
             && si_proceso != '' && si_servicio != '' && si_accion != '') {
                 /*if(si_cliente != '' && si_tipo_cliente != '' && si_tipo_evento !='' && si_id_evento != ''  &&
                 si_fecha_radicacion != '' && si_nro_identificacion != '' && si_tipo_documento != '' && si_nombre_afiliado != ''){   */
-                $('#btn_borrar').addClass('d-none');
-                $('#btn_guardar_evento').addClass('d-none');
-                $('#mostrar_barra_creacion_evento').css("display","block");
+
             }
+            return true;
         });
     });
 
@@ -848,11 +850,23 @@
     })
 </script>
 <script>
-    $(function() {
-        $("#fecha_evento").on("change", function() {
-            var fechaEvento = $(this).val();
-            $("#fecha_radicacion").val('').attr("min", fechaEvento);
-        });
+    // Validación inicial si el input de fecha está vacío
+    $("#fecha_radicacion").on("focus", function() {
+        if(!$("#fecha_evento").val()){
+            Validarfecha("#fecha_radicacion");
+        }else{
+            let fechaEvento = $("#fecha_evento").val();
+            Validarfecha("#fecha_radicacion","<",fechaEvento,"La fecha debe ser igual o mayor al evento");
+        }
+    });
+
+    $("#fecha_evento").on("focus", function() {
+                var fechaEvento = $(this).val();
+                $("#fecha_radicacion").val('').attr("min", fechaEvento);
+    });
+
+    $("#fecha_alerta").on("focus",function(){
+        Validarfecha("#fecha_alerta","<",null,"La fecha debe ser igual o mayor a");
     });
     $(function() {
         $("#fecha_ingreso").on("change", function() {

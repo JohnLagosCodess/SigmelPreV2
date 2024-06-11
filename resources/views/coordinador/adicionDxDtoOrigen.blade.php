@@ -878,6 +878,7 @@
                                                     @else
                                                         <input type="hidden" class="form-control" name="radicado_dictamen" id="radicado_dictamen" value="{{$consecutivo}}" disabled> 
                                                     @endif
+                                                        <input type="hidden" class="form-control" name="radicado_comunicado_manual" id="radicado_comunicado_manual" value="{{$consecutivo}}" disabled>
                                                     <label for="origen_dto_atel">Origen <span style="color:red;">(*)</span></label>
                                                     <?php if(!empty($info_adicion_dx[0]->Origen)):?>
                                                         <input type="hidden" id="bd_origen" value="<?php if(!empty($info_adicion_dx[0]->Origen)){echo $info_adicion_dx[0]->Origen;}?>">
@@ -1380,7 +1381,7 @@
                 </form>
             </div>
             <!-- Comunicados - Dictamen y Oficio remisorio -->                    
-            <div class="card-info d-none" id="div_comunicado_dictamen_oficioremisorio">
+            <div class="card-info" id="div_comunicado_dictamen_oficioremisorio">
                 <div class="card-header text-center" style="border: 1.5px solid black;">
                     <h5>Comunicados</h5>
                 </div>
@@ -1395,6 +1396,7 @@
                                                 <th>N° de Radicado</th>
                                                 <th>Elaboró</th>
                                                 <th>Fecha de comunicado</th>
+                                                <th>Documento</th>
                                                 <th>Acción</th>
                                             </tr>
                                         </thead>
@@ -1403,9 +1405,10 @@
                                             <tr>
                                                 <td>{{$comunicados->N_radicado}}</td>
                                                 <td>{{$comunicados->Elaboro}}</td>
-                                                <td>{{$comunicados->F_comunicado}}</td>     
-                                                @if ($comunicados->Ciudad == 'N/A')
-                                                    <td>
+                                                <td>{{$comunicados->F_comunicado}}</td>
+                                                <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>
+                                                @if ($comunicados->Ciudad == 'N/A' && $comunicados->Tipo_descarga == "Dictamen")
+                                                    <td style="display: flex; flex-direction:row; justify-content:space-around;">
                                                        {{-- Formulario para descargar el dml origen atel previsional (dictamen) --}}
                                                        <form id="Form_dml_origen_previsional_{{$comunicados->Id_Comunicado}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
                                                             @csrf
@@ -1443,13 +1446,21 @@
                                                                 {{-- Sustentación --}}
                                                                 <textarea name="sustentacion_califi_origen_{{$comunicados->Id_Comunicado}}" id="sustentacion_califi_origen_{{$comunicados->Id_Comunicado}}" rows="2"><?php if(!empty($datos_bd_DTO_ATEL[0]->Sustentacion)){echo $datos_bd_DTO_ATEL[0]->Sustentacion;}?></textarea>
                                                             </div>
-                                                            <button type="submit" id="btn_enviar_dictamen_previsional_{{$comunicados->Id_Comunicado}}" style="border: none; background:transparent;">
+                                                            <button type="submit" id="btn_enviar_dictamen_previsional" style="border: none; background:transparent;">
+                                                                <i class="far fa-eye text-info"></i>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                @elseif ($comunicados->Tipo_descarga == "Manual")
+                                                    <td style="display: flex; flex-direction:row; justify-content:space-around;">
+                                                        <form id="form_descargar_archivo_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" method="POST">
+                                                            <button type="submit" id="btn_descargar_archivo_{{$comunicados->Id_Comunicado}}" style="border: none; background:transparent;">
                                                                 <i class="far fa-eye text-info"></i>
                                                             </button>
                                                         </form>
                                                     </td>                                                                
                                                 @else
-                                                    <td>
+                                                    <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
                                                         {{-- formulario Notificación del DML PREVISIONAL (oficio remisorio) --}}
                                                         <form id="Form_noti_dml_previsional_{{$comunicados->Id_Comunicado}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
                                                             <div class="d-none">
@@ -1483,7 +1494,7 @@
                                                                 <input type="text" name="Id_cliente_firma_{{$comunicados->Id_Comunicado}}" id="Id_cliente_firma_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_cliente)){echo $array_datos_calificacion_origen[0]->Id_cliente;}?>">
                                                             </div>
 
-                                                            <button type="submit" id="enviar_form_noti_previsional_{{$comunicados->Id_Comunicado}}" style="border: none; background:transparent;">
+                                                            <button type="submit" id="enviar_form_noti_previsional" style="border: none; background:transparent;">
                                                                 <i class="far fa-eye text-info"></i>
                                                             </button>
                                                         </form>
@@ -1496,6 +1507,14 @@
                                             @endforeach
                                         </tbody>
                                     </table>
+                                    <div class="alert alert-danger cargueundocumentoprimero d-none" role="alert">
+                                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Por favor, adjunta un documento antes de cargar. 
+                                    </div>
+                                    <div class="alerta_externa_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                                    <div style="display: flex; flex-direction:row; justify-content:flex-end; gap:2px;"> <!-- Alinea el contenido a la derecha -->
+                                        <input style="width:40%" type="file" class="form-control select-doc" name="cargue_comunicados" id="cargue_comunicados" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx"/>
+                                        <button class="btn-info" id="cargarComunicado">Cargar</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>                     

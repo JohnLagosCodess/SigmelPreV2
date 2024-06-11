@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('Nro_identificacion', 25);
             $table->enum('Tipo_empleado', ['Empleado actual', 'Independiente', 'Beneficiario']);
             $table->integer('Id_arl')->nullable();
-            $table->text('Empresa');
-            $table->string('Nit_o_cc', 20);
-            $table->string('Telefono_empresa', 10)->nullable();
+            $table->text('Empresa')->nullable();
+            $table->string('Nit_o_cc', 20)->nullable();
+            $table->text('Telefono_empresa')->nullable();
             $table->text('Email')->nullable();
             $table->text('Direccion')->nullable();
             $table->integer('Id_departamento')->nullable();
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->integer('Id_actividad_economica')->nullable();
             $table->integer('Id_clase_riesgo')->nullable();
             $table->text('Persona_contacto')->nullable();
-            $table->string('Telefono_persona_contacto', 22)->nullable();
+            $table->text('Telefono_persona_contacto')->nullable();
             $table->integer('Id_codigo_ciuo')->nullable();
             $table->date('F_ingreso')->nullable();
             $table->text('Cargo')->nullable();

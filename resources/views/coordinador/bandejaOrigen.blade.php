@@ -210,7 +210,7 @@
             setTimeout(() => {
                 $('#btn_filtro_bandeja').removeClass('d-none');
                 $('#mostrar-barra').css("display","none");                
-            }, 2000);
+            }, 5000);
         }
 
         $('#btn_bandeja').click(function(){

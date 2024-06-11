@@ -96,7 +96,7 @@ $(document).ready(function(){
         placeholder:"Seleccione una opción",
         allowClear:false
     });
-
+    
     var token = $('input[name=_token]').val();
 
     //Listado de origen
@@ -887,7 +887,7 @@ $(document).ready(function(){
             opt_sumaTotal_pcl_jnci_emitido = deficiencia_jnci_emi + rolOcupacional_jnci_emi + discapacidad_jnci_emi + minusvalia_jnci_emi;
             var sumaTotal_pcl_jnci_emitido = opt_sumaTotal_pcl_jnci_emitido.toFixed(2);
             if (!isNaN(sumaTotal_pcl_jnci_emitido)){
-                $('#porcentaje_pcl_jnci_emitido').val(redondearNumero(sumaTotal_pcl_jnci_emitido) );
+                $('#porcentaje_pcl_jnci_emitido').val(sumaTotal_pcl_jnci_emitido.replace('.', ',') );
             }
             if(sumaTotal_pcl_jnci_emitido=='isNaN'){
                 rango_pcl_jnci_emitido = '0';
@@ -1410,6 +1410,85 @@ $(document).ready(function(){
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', false);
         }
+    });
+
+    //Cargar comunicado
+    $('#cargarComunicado').click(function(){
+        if(!$('#cargue_comunicados')[0].files[0]){
+            return $(".cargueundocumentoprimero").removeClass('d-none');
+        }
+        $(".cargueundocumentoprimero").addClass('d-none');
+        var archivo = $('#cargue_comunicados')[0].files[0];
+        var documentName = archivo.name;
+        var formData = new FormData($('form')[0]);
+        formData.append('cargue_comunicados', archivo);
+        formData.append('token', $("input[name='_token']").val());
+        formData.append('ciudad', 'N/A');
+        formData.append('Id_evento',$("#newId_evento").val());
+        formData.append('Id_asignacion',$('#newId_asignacion').val());
+        formData.append('Id_procesos',$("#Id_proceso").val());
+        formData.append('fecha_comunicado2',null);
+        formData.append('radicado2',$('#radicado_comunicado_manual').val());
+        formData.append('cliente_comunicado2','N/A');
+        formData.append('nombre_afiliado_comunicado2','N/A');
+        formData.append('tipo_documento_comunicado2','N/A');
+        formData.append('identificacion_comunicado2','N/A');
+        formData.append('destinatario', 'N/A');
+        formData.append('nombre_destinatario','N/A');
+        formData.append('nic_cc','N/A');
+        formData.append('direccion_destinatario','N/A');
+        formData.append('telefono_destinatario',1);
+        formData.append('email_destinatario','N/A');
+        formData.append('departamento_destinatario',1);
+        formData.append('ciudad_destinatario',1);
+        formData.append('asunto',documentName);
+        formData.append('cuerpo_comunicado','N/A');
+        formData.append('anexos',0);
+        formData.append('forma_envio',0);
+        formData.append('reviso',0);
+        formData.append('firmarcomunicado',null);
+        formData.append('tipo_descarga', 'Manual');
+        formData.append('modulo_creacion','controversiaJuntas');
+        formData.append('modulo','Comunicados controversia juntas');
+        $.ajax({
+            type:'POST',
+            url:'/registrarComunicadoOrigen',
+            data: formData,   
+            processData: false,
+            contentType: false,         
+            success:function(response){
+                if (response.parametro == 'agregar_comunicado') {
+                    $('.alerta_externa_comunicado').removeClass('d-none');
+                    $('.alerta_externa_comunicado').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.alerta_externa_comunicado').addClass('d-none');
+                        $('.alerta_externa_comunicado').empty();
+                        location.reload();
+                    }, 3000);
+                }
+            }
+        });  
+    }); 
+    //Descargar archivo cargado manualmente
+    $("form[id^='form_descargar_archivo_']").submit(function (e){
+        e.preventDefault();              
+        var archivo = $(this).data("archivo");
+
+        var nombre_documento = archivo.Asunto;
+        var idEvento = archivo.ID_evento;
+        var enlaceDescarga = document.createElement('a');
+        enlaceDescarga.href = '/descargar-archivo/'+nombre_documento+'/'+idEvento;     
+        enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+        enlaceDescarga.style.display = 'none';
+        document.body.appendChild(enlaceDescarga);
+    
+        // Simular clic en el enlace para iniciar la descarga
+        enlaceDescarga.click();
+    
+        // Eliminar el enlace después de la descarga
+        setTimeout(function() {
+            document.body.removeChild(enlaceDescarga);
+        }, 1000);
     });
 
     // Función para validar items a mostrar
@@ -2809,8 +2888,18 @@ $(document).ready(function(){
     autoAdjustColumns(tabla_comunicados_juntas);
 
     // Funcionalidad botón editar correspondencia (lapiz)
-    if($("#hay_datos_form_corres").val() == 0){
-        $("#div_correspondencia").removeClass('d-none');
+    if($("#hay_datos_form_corres").val()){
+        if(arrayComunicadosCorrespondencia){
+            var existeOtroOficio = arrayComunicadosCorrespondencia.some(function(comunicado) {
+                return comunicado.Tipo_descarga !== 'Manual';
+            });
+            if(!existeOtroOficio){
+                $("#div_correspondencia").removeClass('d-none');
+            }
+        }else{
+            $("#div_correspondencia").removeClass('d-none');
+        }
+        
     }
 
     // Evento click: para mostrar el formulario de la correspondencia.

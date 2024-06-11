@@ -1777,6 +1777,83 @@ $(document).ready(function(){
         });
     }); */
 
+    $('#cargarComunicado').click(function(){
+        if(!$('#cargue_comunicados')[0].files[0]){
+            return $(".cargueundocumentoprimero").removeClass('d-none');
+        }
+        $(".cargueundocumentoprimero").addClass('d-none');
+        var archivo = $('#cargue_comunicados')[0].files[0];
+        var documentName = archivo.name;
+        var formData = new FormData($('form')[0]);
+        formData.append('cargue_comunicados', archivo);
+        formData.append('token', $("input[name='_token']").val());
+        formData.append('ciudad', 'N/A');
+        formData.append('Id_evento',$("#Id_Evento_decreto").val());
+        formData.append('Id_asignacion',$('#Id_Asignacion_decreto').val());
+        formData.append('Id_procesos',$("#Id_Proceso_decreto").val());
+        formData.append('fecha_comunicado2',null);
+        formData.append('radicado2',$('#radicado_comunicado_manual').val());
+        formData.append('cliente_comunicado2','N/A');
+        formData.append('nombre_afiliado_comunicado2','N/A');
+        formData.append('tipo_documento_comunicado2','N/A');
+        formData.append('identificacion_comunicado2','N/A');
+        formData.append('destinatario', 'N/A');
+        formData.append('nombre_destinatario','N/A');
+        formData.append('nic_cc','N/A');
+        formData.append('direccion_destinatario','N/A');
+        formData.append('telefono_destinatario',1);
+        formData.append('email_destinatario','N/A');
+        formData.append('departamento_destinatario',1);
+        formData.append('ciudad_destinatario',1);
+        formData.append('asunto',documentName);
+        formData.append('cuerpo_comunicado','N/A');
+        formData.append('anexos',0);
+        formData.append('forma_envio',0);
+        formData.append('reviso',0);
+        formData.append('firmarcomunicado',null);
+        formData.append('tipo_descarga', 'Manual');
+        formData.append('modulo_creacion','recalificacionPCL');
+        formData.append('modulo','Comunicados recalificación');
+        $.ajax({
+            type:'POST',
+            url:'/registrarComunicadoOrigen',
+            data: formData,   
+            processData: false,
+            contentType: false,         
+            success:function(response){
+                if (response.parametro == 'agregar_comunicado') {
+                    $('.alerta_externa_comunicado').removeClass('d-none');
+                    $('.alerta_externa_comunicado').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.alerta_externa_comunicado').addClass('d-none');
+                        $('.alerta_externa_comunicado').empty();
+                        location.reload();
+                    }, 3000);
+                }
+            }
+        });  
+    }); 
+    //Descargar archivo cargado manualmente
+    $("form[id^='form_descargar_archivo_']").submit(function (e){
+        e.preventDefault();              
+        var archivo = $(this).data("archivo");
+
+        var nombre_documento = archivo.Asunto;
+        var idEvento = archivo.ID_evento;
+        var enlaceDescarga = document.createElement('a');
+        enlaceDescarga.href = '/descargar-archivo/'+nombre_documento+'/'+idEvento;     
+        enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+        enlaceDescarga.style.display = 'none';
+        document.body.appendChild(enlaceDescarga);
+    
+        // Simular clic en el enlace para iniciar la descarga
+        enlaceDescarga.click();
+    
+        // Eliminar el enlace después de la descarga
+        setTimeout(function() {
+            document.body.removeChild(enlaceDescarga);
+        }, 1000);
+    });
     //Formulario para guardar el decreto
     $('#form_RecaliDecreto').submit(function (e){
         e.preventDefault();        
@@ -3753,7 +3830,8 @@ $(document).ready(function(){
             'ciudad':ciudad,
             'f_correspondencia':f_correspondencia,
             'radicado':radicado,
-            'bandera_correspondecia_guardar_actualizar':bandera_correspondecia_guardar_actualizar
+            'bandera_correspondecia_guardar_actualizar':bandera_correspondecia_guardar_actualizar,
+            'tipo_descarga':'Oficio'
         }
 
         $.ajax({    

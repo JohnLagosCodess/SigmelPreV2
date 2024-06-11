@@ -289,7 +289,7 @@ class RecalificacionPCLController extends Controller
                         'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Dominancia', 'sidae.Deficiencia', 
                         'sidae.Total_deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
                         ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Id_Asignacion', $eventoAsigancion_Recalifi], ['sidae.Estado_Recalificacion', '=', 'Activo']])
-                        ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+                        ->orderByRaw("CAST(sidae.Total_deficiencia AS DECIMAL(10,2)) DESC")
                         ->get();
             
                         $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
@@ -593,7 +593,7 @@ class RecalificacionPCLController extends Controller
                     'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Dominancia', 'sidae.Deficiencia', 
                     'sidae.Total_deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
                     ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Id_Asignacion',$Id_asignacion_recali], ['sidae.Estado_Recalificacion', '=', 'Activo']])
-                    ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+                    ->orderByRaw("CAST(sidae.Total_deficiencia AS DECIMAL(10,2)) DESC")
                     ->get(); 
               
                     $array_agudeza_Auditivare = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
@@ -1047,7 +1047,7 @@ class RecalificacionPCLController extends Controller
                     ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion',$Id_asignacion_recali]])->get();
                     
                     $array_comunicados_correspondenciare = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-                    ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali], ['T_documento','N/A']])->get();
+                    ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali], ['T_documento','N/A'], ['Modulo_creacion','recalificacionPCL']])->get();
 
                     $array_comunicados_comite_interre = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
                     ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali]])->get();  
@@ -1115,7 +1115,7 @@ class RecalificacionPCLController extends Controller
                             'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Dominancia', 'sidae.Deficiencia', 
                             'sidae.Total_deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
                             ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Id_Asignacion', $validar_estado_decreto[0]->Id_Asignacion_decreto], ['sidae.Estado', '=', 'Activo']])
-                            ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+                            ->orderByRaw("CAST(sidae.Total_deficiencia AS DECIMAL(10,2)) DESC")
                             ->get();
                 
                             $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
@@ -1205,7 +1205,7 @@ class RecalificacionPCLController extends Controller
                             'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Dominancia', 'sidae.Deficiencia', 
                             'sidae.Total_deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
                             ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Estado', '=', 'Activo']])
-                            ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+                            ->orderByRaw("CAST(sidae.Total_deficiencia AS DECIMAL(10,2)) DESC")
                             ->get();
                 
                             $array_agudeza_Auditiva = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
@@ -1421,7 +1421,7 @@ class RecalificacionPCLController extends Controller
                         'sidae.Dx_Principal', 'sidae.MSD', 'sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Dominancia', 'sidae.Deficiencia', 
                         'sidae.Total_deficiencia', 'sidae.Estado', 'sidae.Nombre_usuario', 'sidae.F_registro')
                         ->where([['sidae.ID_evento',$Id_evento_recali], ['sidae.Id_Asignacion',$Id_asignacion_recali], ['sidae.Estado_Recalificacion', '=', 'Activo']])
-                        ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+                        ->orderByRaw("CAST(sidae.Total_deficiencia AS DECIMAL(10,2)) DESC")
                         ->get(); 
                   
                         $array_agudeza_Auditivare = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
@@ -1875,7 +1875,7 @@ class RecalificacionPCLController extends Controller
                         ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion',$Id_asignacion_recali]])->get();  
                         
                         $array_comunicados_correspondenciare = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-                        ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali], ['T_documento','N/A']])->get();  
+                        ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali], ['T_documento','N/A'], ['Modulo_creacion','recalificacionPCL']])->get();  
 
                         $array_comunicados_comite_interre = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
                         ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali]])->get();  
@@ -4748,6 +4748,8 @@ class RecalificacionPCLController extends Controller
                 'Anexos' => $anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Tipo_descarga' => $request->tipo_descarga,
+                'Modulo_creacion' => 'recalificacionPCL'
             ];
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -4943,6 +4945,8 @@ class RecalificacionPCLController extends Controller
                     'Anexos' => 'N/A',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
+                    'Tipo_descarga' => 'Dictamen',
+                    'Modulo_creacion' => 'recalificacionPCL'
                 ];
         
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -5015,6 +5019,8 @@ class RecalificacionPCLController extends Controller
                     'Anexos' => 'N/A',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
+                    'Tipo_descarga' => 'Dictamen',
+                    'Modulo_creacion' => 'recalificacionPCL'
                 ];
         
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -5501,7 +5507,7 @@ class RecalificacionPCLController extends Controller
         ->select('sidae.Id_tabla', 'sltd.Ident_tabla', 'sltd.Nombre_tabla', 'sidae.FP', 'sidae.FU', 'sidae.CFM1', 'sidae.CFM2', 
         'sidae.Clase_Final', 'sidae.Dominancia', 'sidae.Deficiencia', 'sidae.Total_deficiencia', 'sidae.CAT', 'sidae.MSD')
         ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Estado_Recalificacion','Activo']])
-        ->orderByRaw("CAST(sidae.Total_deficiencia AS UNSIGNED) DESC")
+        ->orderByRaw("CAST(sidae.Total_deficiencia AS DECIMAL(10,2)) DESC")
         ->get();  
         
         $Suma_combinada_fc = $array_datos_info_dictamen[0]->Suma_combinada;
@@ -5942,7 +5948,7 @@ class RecalificacionPCLController extends Controller
         $array_deficiencias_alteraciones = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')        
         ->select('sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Total_deficiencia')
         ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Estado_Recalificacion', 'Activo']])
-        ->orderByRaw("CAST(sidae.Deficiencia AS UNSIGNED) DESC")
+        ->orderByRaw("CAST(sidae.Deficiencia AS DECIMAL(10,2)) DESC")
         ->get();  
         
         $Suma_combinada_fc = $array_datos_info_dictamen[0]->Suma_combinada;        
@@ -6176,6 +6182,18 @@ class RecalificacionPCLController extends Controller
             $logo_header = $dato_logo_header[0]->Logo_cliente;
         } else {
             $logo_header = "Sin logo";
+        } 
+
+        //Footer image
+        $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Footer_cliente')
+        ->where([['Id_cliente', $Cliente]])
+        ->limit(1)->get();
+
+        if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+            $footer = $footer_imagen[0]->Footer_cliente;
+        } else {
+            $footer = null;
         } 
 
         // Captura de datos de Comite interdiciplinario y correspondencia
@@ -6531,24 +6549,24 @@ class RecalificacionPCLController extends Controller
         }
 
         /* Extraemos los datos del footer */
-        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-        ->where('Id_cliente',  $Cliente)->get();
+        // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        // ->where('Id_cliente',  $Cliente)->get();
 
-        if(count($datos_footer) > 0){
-            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+        // if(count($datos_footer) > 0){
+        //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+        //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+        //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+        //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+        //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
 
-        }else{
-            $footer_dato_1 = "";
-            $footer_dato_2 = "";
-            $footer_dato_3 = "";
-            $footer_dato_4 = "";
-            $footer_dato_5 = "";
-        }
+        // }else{
+        //     $footer_dato_1 = "";
+        //     $footer_dato_2 = "";
+        //     $footer_dato_3 = "";
+        //     $footer_dato_4 = "";
+        //     $footer_dato_5 = "";
+        // }
         // captura de datos de los tabla de deficiencicias alteraciones por factor
         $deficiencias_calculadas_factores = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
         ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
@@ -6666,11 +6684,12 @@ class RecalificacionPCLController extends Controller
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
-                'footer_dato_1' => $footer_dato_1,
-                'footer_dato_2' => $footer_dato_2,
-                'footer_dato_3' => $footer_dato_3,
-                'footer_dato_4' => $footer_dato_4,
-                'footer_dato_5' => $footer_dato_5,
+                'footer' => $footer,
+                // 'footer_dato_1' => $footer_dato_1,
+                // 'footer_dato_2' => $footer_dato_2,
+                // 'footer_dato_3' => $footer_dato_3,
+                // 'footer_dato_4' => $footer_dato_4,
+                // 'footer_dato_5' => $footer_dato_5,
             ];
             // Crear una instancia de Dompdf
             $pdf = app('dompdf.wrapper');
@@ -6822,11 +6841,12 @@ class RecalificacionPCLController extends Controller
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
-                'footer_dato_1' => $footer_dato_1,
-                'footer_dato_2' => $footer_dato_2,
-                'footer_dato_3' => $footer_dato_3,
-                'footer_dato_4' => $footer_dato_4,
-                'footer_dato_5' => $footer_dato_5,
+                'footer' => $footer
+                // 'footer_dato_1' => $footer_dato_1,
+                // 'footer_dato_2' => $footer_dato_2,
+                // 'footer_dato_3' => $footer_dato_3,
+                // 'footer_dato_4' => $footer_dato_4,
+                // 'footer_dato_5' => $footer_dato_5,
             ];
             // Crear una instancia de Dompdf
             $pdf = app('dompdf.wrapper');
@@ -6974,11 +6994,12 @@ class RecalificacionPCLController extends Controller
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
-                'footer_dato_1' => $footer_dato_1,
-                'footer_dato_2' => $footer_dato_2,
-                'footer_dato_3' => $footer_dato_3,
-                'footer_dato_4' => $footer_dato_4,
-                'footer_dato_5' => $footer_dato_5,
+                'footer' => $footer,
+                // 'footer_dato_1' => $footer_dato_1,
+                // 'footer_dato_2' => $footer_dato_2,
+                // 'footer_dato_3' => $footer_dato_3,
+                // 'footer_dato_4' => $footer_dato_4,
+                // 'footer_dato_5' => $footer_dato_5,
             ];
             // Crear una instancia de Dompdf
             $pdf = app('dompdf.wrapper');
@@ -7135,11 +7156,12 @@ class RecalificacionPCLController extends Controller
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
-                'footer_dato_1' => $footer_dato_1,
-                'footer_dato_2' => $footer_dato_2,
-                'footer_dato_3' => $footer_dato_3,
-                'footer_dato_4' => $footer_dato_4,
-                'footer_dato_5' => $footer_dato_5,
+                'footer' => $footer,
+                // 'footer_dato_1' => $footer_dato_1,
+                // 'footer_dato_2' => $footer_dato_2,
+                // 'footer_dato_3' => $footer_dato_3,
+                // 'footer_dato_4' => $footer_dato_4,
+                // 'footer_dato_5' => $footer_dato_5,
             ];
             // Crear una instancia de Dompdf
             $pdf = app('dompdf.wrapper');
@@ -7287,11 +7309,12 @@ class RecalificacionPCLController extends Controller
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
-                'footer_dato_1' => $footer_dato_1,
-                'footer_dato_2' => $footer_dato_2,
-                'footer_dato_3' => $footer_dato_3,
-                'footer_dato_4' => $footer_dato_4,
-                'footer_dato_5' => $footer_dato_5,
+                'footer' => $footer,
+                // 'footer_dato_1' => $footer_dato_1,
+                // 'footer_dato_2' => $footer_dato_2,
+                // 'footer_dato_3' => $footer_dato_3,
+                // 'footer_dato_4' => $footer_dato_4,
+                // 'footer_dato_5' => $footer_dato_5,
             ];
             // Crear una instancia de Dompdf
             $pdf = app('dompdf.wrapper');
@@ -7448,11 +7471,12 @@ class RecalificacionPCLController extends Controller
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
-                'footer_dato_1' => $footer_dato_1,
-                'footer_dato_2' => $footer_dato_2,
-                'footer_dato_3' => $footer_dato_3,
-                'footer_dato_4' => $footer_dato_4,
-                'footer_dato_5' => $footer_dato_5,
+                'footer' => $footer,
+                // 'footer_dato_1' => $footer_dato_1,
+                // 'footer_dato_2' => $footer_dato_2,
+                // 'footer_dato_3' => $footer_dato_3,
+                // 'footer_dato_4' => $footer_dato_4,
+                // 'footer_dato_5' => $footer_dato_5,
             ];
             // Crear una instancia de Dompdf
             $pdf = app('dompdf.wrapper');
@@ -8172,6 +8196,17 @@ class RecalificacionPCLController extends Controller
             $logo_header = "Sin logo";
         } 
 
+        //Footer image
+        $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Footer_cliente')
+        ->where([['Id_cliente', $Cliente]])
+        ->limit(1)->get();
+
+        if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+            $footer = $footer_imagen[0]->Footer_cliente;
+        } else {
+            $footer = null;
+        } 
         // Captura de datos de Comite interdiciplinario y correspondencia
 
         $array_datos_comite_inter = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
@@ -8378,24 +8413,24 @@ class RecalificacionPCLController extends Controller
         }
 
         /* Extraemos los datos del footer */
-        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-        ->where('Id_cliente',  $Cliente)->get();
+        // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        // ->where('Id_cliente',  $Cliente)->get();
 
-        if(count($datos_footer) > 0){
-            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+        // if(count($datos_footer) > 0){
+        //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+        //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+        //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+        //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+        //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
 
-        }else{
-            $footer_dato_1 = "";
-            $footer_dato_2 = "";
-            $footer_dato_3 = "";
-            $footer_dato_4 = "";
-            $footer_dato_5 = "";
-        }
+        // }else{
+        //     $footer_dato_1 = "";
+        //     $footer_dato_2 = "";
+        //     $footer_dato_3 = "";
+        //     $footer_dato_4 = "";
+        //     $footer_dato_5 = "";
+        // }
 
         //Obtener los datos del formulario
         
@@ -8447,11 +8482,12 @@ class RecalificacionPCLController extends Controller
             'Direccion_arl' => $Direccion_arl,
             'Telefono_arl' => $Telefono_arl,
             'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
-            'footer_dato_1' => $footer_dato_1,
-            'footer_dato_2' => $footer_dato_2,
-            'footer_dato_3' => $footer_dato_3,
-            'footer_dato_4' => $footer_dato_4,
-            'footer_dato_5' => $footer_dato_5,
+            'footer' => $footer,
+            // 'footer_dato_1' => $footer_dato_1,
+            // 'footer_dato_2' => $footer_dato_2,
+            // 'footer_dato_3' => $footer_dato_3,
+            // 'footer_dato_4' => $footer_dato_4,
+            // 'footer_dato_5' => $footer_dato_5,
         ];
 
         // Crear una instancia de Dompdf

@@ -59,7 +59,7 @@ class ControversiaJuntasController extends Controller
         ,'j.Decision_dictamen_repo_jrci','j.Causal_decision_repo_jrci','j.Sustentacion_concepto_repo_jrci','j.F_sustenta_reposicion_jrci','j.F_noti_apela_recurso_jrci'
         ,'j.N_radicado_apela_recurso_jrci','j.T_propia_apela_recurso_jrci','j.Correspon_pago_jnci','j.N_orden_pago_jnci','j.F_orden_pago_jnci','j.F_radi_pago_jnci','j.N_acta_ejecutario_emitida_jrci'
         ,'j.F_acta_ejecutoria_emitida_jrci','j.F_firmeza_dictamen_jrci','j.Dictamen_firme_jrci','j.N_dictamen_jnci_emitido','j.F_dictamen_jnci_emitido','j.Origen_jnci_emitido','pa10.Nombre_parametro as NombreOrigen'
-        ,'j.Manual_de_califi_jnci_emitido','pa11.Nombre_parametro as Nombre_decretoJnci','j.Total_deficiencia_jnci_emitido','j.Total_rol_ocupacional_jnci_emitido','j.Total_discapacidad_jnci_emitido'
+        ,'j.Manual_de_califi_jnci_emitido','d3.Nombre_decreto as Nombre_decretoJnci','j.Total_deficiencia_jnci_emitido','j.Total_rol_ocupacional_jnci_emitido','j.Total_discapacidad_jnci_emitido'
         ,'j.Total_minusvalia_jnci_emitido','j.Porcentaje_pcl_jnci_emitido','j.Rango_pcl_jnci_emitido','j.F_estructuracion_contro_jnci_emitido','j.Resumen_dictamen_jnci','j.Sustentacion_dictamen_jnci'
         ,'j.F_sustenta_ante_jnci','j.F_noti_ante_jnci','j.F_radica_dictamen_jnci','j.F_envio_jnci')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa', 'j.Primer_calificador', '=', 'pa.Id_Parametro','j.')
@@ -72,13 +72,13 @@ class ControversiaJuntasController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa8', 'j.Origen_reposicion_jrci', '=', 'pa8.Id_Parametro')
         //->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa9', 'j.Causal_decision_repo_jrci', '=', 'pa9.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa10', 'j.Origen_jnci_emitido', '=', 'pa10.Id_Parametro')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa11', 'j.Manual_de_califi_jnci_emitido', '=', 'pa11.Id_Parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d3', 'j.Manual_de_califi_jnci_emitido', '=', 'd3.Id_Decreto')
         ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d', 'j.Manual_de_califi', '=', 'd.Id_Decreto')
         ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d1', 'j.Manual_de_califi_jrci_emitido', '=', 'd1.Id_Decreto')
         ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d2', 'j.Manual_reposicion_jrci', '=', 'd2.Id_Decreto')
         ->where([['j.ID_evento',  '=', $Id_evento_juntas],['j.Id_Asignacion', $Id_asignacion_juntas]])
         ->get();
-        
+        //dd($Id_evento_juntas,$Id_asignacion_juntas);
         // TRAER DATOS CIE10 (Diagnóstico motivo de calificación)
         $array_datos_diagnostico_motcalifi_contro =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
@@ -196,13 +196,61 @@ class ControversiaJuntasController extends Controller
 
         // traemos los comunicados
         $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$Id_evento_juntas], ['Id_Asignacion',$Id_asignacion_juntas], ['T_documento','N/A']])->get();
+        ->where([['ID_evento',$Id_evento_juntas], ['Id_Asignacion',$Id_asignacion_juntas], ['T_documento','N/A'],['Modulo_creacion','controversiaJuntas']])->get();
 
+        //Obtenemos las secciones a mostrar
+        $array_control = $this->controlJuntas($Id_evento_juntas, $Id_asignacion_juntas,  $array_datos_controversiaJuntas[0]->Nombre_servicio);
+
+        //dd($arrayinfo_controvertido);
         return view('coordinador.controversiaJuntas', compact('user','array_datos_controversiaJuntas','arrayinfo_controvertido',
         'array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci',
         'array_datos_diagnostico_reposi_dictamen_jrci',
         'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 
-        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio'));
+        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control'));
+    }
+
+        /**
+     * Funcion para determinar las secciones visibles basadas en el tipo de controversia
+     * y sus permisos, comparando la información de la controversia con los permisos predefinidos.
+     * @param $id_evento int identificador del evento.
+     * @param $id_asignacion int Id de asignacion del evento.
+     * @param $Servicio string El servicio asociado al evento.
+     * @return Array con las secciones disponibles para mostrar
+     */
+    public function controlJuntas($id_evento, $id_asignacion,$Servicio) {
+
+        // Definimos las secciones que podran ser visibles dependiento el tipo de controversia.
+        $permisos = [
+            "Diagnosticos_dictamen" => [],
+            "Dictamen_emitido_JRCI" => ['% PCL'],
+            "Dictamen_emitido_JNCI" => ['% PCL'],
+            'Servicios' => ['Controversia PCL'] //Aqui agregamos los servicios que podran ver todas los formularios, de momento en la vista solo esta seteada para PCL
+        ];
+    
+        // Obtenemos la información de controversia_juntas
+        $controvertido =(array) DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_controversia_juntas_eventos')
+            ->select('Contro_origen', 'Contro_pcl', 'Contro_diagnostico', 'Contro_f_estructura', 'Contro_m_califi')
+            ->where('ID_evento', $id_evento)
+            ->where('Id_Asignacion', $id_asignacion)
+            ->first();
+    
+        // Combinamos los resultados
+        array_push($controvertido, $Servicio);
+    
+        //Comparamos la info del controvertido vs los @permisos y en caso de encontrar alguna coincidencia dejara en true la seccion a mostrar
+        $resultado = [];
+        foreach ($permisos as $key => $value) {
+            $permisoCumplido = false;
+            foreach ($value as $elemento) {
+                if (in_array($elemento, $controvertido)) {
+                    $permisoCumplido = true;
+                    break;
+                }
+            }
+            $resultado[$key] = $permisoCumplido;
+        }
+        //dd($resultado);
+        return $resultado;
     }
 
     //Cargar Selectores pronunciamiento
@@ -1649,6 +1697,8 @@ class ControversiaJuntasController extends Controller
                 'Anexos' => $anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Tipo_descarga' => 'Controversia',
+                'Modulo_creacion' => 'controversiaJuntas',
             ];
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -2375,25 +2425,38 @@ class ControversiaJuntasController extends Controller
             $ruta_logo = "";
         }
 
-        /* Extraemos los datos del footer */
-        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-        ->where('Id_cliente', $id_cliente)->get();
+        $dato_logo_footer = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Footer_cliente')
+        ->where([['Id_cliente', $id_cliente]])
+        ->limit(1)->get();
 
-        if(count($datos_footer) > 0){
-            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
-
-        }else{
-            $footer_dato_1 = "";
-            $footer_dato_2 = "";
-            $footer_dato_3 = "";
-            $footer_dato_4 = "";
-            $footer_dato_5 = "";
+        if (count($dato_logo_footer) > 0 && $dato_logo_footer[0]->Footer_cliente != null) {
+            $logo_footer = $dato_logo_footer[0]->Footer_cliente;
+            $ruta_logo_footer = "/footer_clientes/{$id_cliente}/{$logo_footer}";
+        } else {
+            $logo_footer = null;
+            $ruta_logo_footer = null;
         }
+
+        /* Extraemos los datos del footer */
+        // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        // ->where('Id_cliente', $id_cliente)->get();
+
+        // if(count($datos_footer) > 0){
+        //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+        //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+        //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+        //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+        //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+
+        // }else{
+        //     $footer_dato_1 = "";
+        //     $footer_dato_2 = "";
+        //     $footer_dato_3 = "";
+        //     $footer_dato_4 = "";
+        //     $footer_dato_5 = "";
+        // }
 
         /* Construcción proforma en formato docx (word) */
         $phpWord = new PhpWord();
@@ -2585,30 +2648,12 @@ class ControversiaJuntasController extends Controller
         // Configuramos el footer
         $info = $nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$id_evento;
         $footer = $section->addFooter();
-        $tableStyle = array(
-            'cellMargin'  => 50,
-        );
-        $phpWord->addTableStyle('myTable', $tableStyle);
+        $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
+        if($ruta_logo_footer != null){
+            $imagenPath_footer = public_path($ruta_logo_footer);
+            $footer->addImage($imagenPath_footer, array('width' => 450, 'height' => 70, 'alignment' => 'left'));
+        }
         $table = $footer->addTable('myTable');
-
-        $table->addRow();
-        $table->addCell(80000, ['gridSpan' => 2])->addText($info, array('size' => 10, 'bold' => true));
-        $table->addRow();
-        // $table->addCell(80000, ['gridSpan' => 2])->addText('Seguros Alfa S.A. y Seguros de Vida Alfa S.A.', array('size' => 10, 'color' => '#184F56', 'bold' => true));
-        $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_1, array('size' => 10));
-        $table->addRow();
-        // $table->addCell()->addText('Líneas de atención al cliente', array('size' => 10, 'color' => '#184F56', 'bold' => true));
-        $table->addCell()->addText($footer_dato_2, array('size' => 10));
-        $cell = $table->addCell();
-        $textRun = $cell->addTextRun(['alignment' => 'right']);
-        // $textRun->addText('www.segurosalfa.com.co', array('size' => 10));
-        $textRun->addText($footer_dato_3, array('size' => 10));
-        $table->addRow();
-        // $table->addCell(80000, ['gridSpan' => 2])->addText('Bogotá: 3077032, a nivel nacional: 018000122532', array('size' => 10));
-        $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_4, array('size' => 10));
-        $table->addRow();
-        // $table->addCell(80000, ['gridSpan' => 2])->addText('Habilitadas en jornada continua de lunes a viernes de 8:00 a.m. a 6:00 p.m.', array('size' => 10));
-        $table->addCell(80000, ['gridSpan' => 2])->addText($footer_dato_5, array('size' => 10));
         $table->addRow();
         $cell1 = $table->addCell(80000, ['gridSpan' => 2]);
         $textRun = $cell1->addTextRun(['alignment' => 'center']);
@@ -3086,25 +3131,37 @@ class ControversiaJuntasController extends Controller
             $ruta_logo = "";
         }
 
+        //Footer image
+        $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Footer_cliente')
+        ->where([['Id_cliente', $id_cliente]])
+        ->limit(1)->get();
+
+        if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+            $footer = $footer_imagen[0]->Footer_cliente;
+        } else {
+            $footer = null;
+        } 
+
         /* Extraemos los datos del footer */
-        $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-        ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-        ->where('Id_cliente', $id_cliente)->get();
+        // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
+        // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
+        // ->where('Id_cliente', $id_cliente)->get();
 
-        if(count($datos_footer) > 0){
-            $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-            $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-            $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-            $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-            $footer_dato_5 = $datos_footer[0]->footer_dato_5;
+        // if(count($datos_footer) > 0){
+        //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
+        //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
+        //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
+        //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
+        //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
 
-        }else{
-            $footer_dato_1 = "";
-            $footer_dato_2 = "";
-            $footer_dato_3 = "";
-            $footer_dato_4 = "";
-            $footer_dato_5 = "";
-        }
+        // }else{
+        //     $footer_dato_1 = "";
+        //     $footer_dato_2 = "";
+        //     $footer_dato_3 = "";
+        //     $footer_dato_4 = "";
+        //     $footer_dato_5 = "";
+        // }
 
         /* Armado de datos para reemplazarlos en la plantilla */
 
@@ -3136,11 +3193,12 @@ class ControversiaJuntasController extends Controller
             'string_diagnosticos_cie10_jrci' => $string_diagnosticos_cie10_jrci,
             'Firma_cliente' => $Firma_cliente,
             'nombre_usuario' => $nombre_usuario,
-            'footer_dato_1' => $footer_dato_1,
-            'footer_dato_2' => $footer_dato_2,
-            'footer_dato_3' => $footer_dato_3,
-            'footer_dato_4' => $footer_dato_4,
-            'footer_dato_5' => $footer_dato_5,
+            'footer' => $footer,
+            // 'footer_dato_1' => $footer_dato_1,
+            // 'footer_dato_2' => $footer_dato_2,
+            // 'footer_dato_3' => $footer_dato_3,
+            // 'footer_dato_4' => $footer_dato_4,
+            // 'footer_dato_5' => $footer_dato_5,
         ];
 
         // print_r($datos_finales_proforma_acuerdo);

@@ -408,7 +408,7 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                                         $(".resultado_MSD_"+num_consecutivo_alteraciones).prop('checked', false);
                                         $(".resultado_MSD_"+num_consecutivo_alteraciones).prop('disabled', true);
                                         $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
-                                        $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                                                                                        
+                                        $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                
                                     } else {
                                         $(".resultado_MSD_"+num_consecutivo_alteraciones).prop('disabled', false);
                                         $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
@@ -445,8 +445,8 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                                 ValidarMSD();
                             }, 250);
                         } else if(id_tabla_seleccionado == 100 || id_tabla_seleccionado == 101 || id_tabla_seleccionado == 102 || id_tabla_seleccionado == 103 ||
-                                  id_tabla_seleccionado == 104 || id_tabla_seleccionado == 105 || id_tabla_seleccionado == 106 || id_tabla_seleccionado == 107 ||
-                                  id_tabla_seleccionado == 108 || id_tabla_seleccionado == 109){
+                            id_tabla_seleccionado == 104 || id_tabla_seleccionado == 105 || id_tabla_seleccionado == 106 || id_tabla_seleccionado == 107 ||
+                            id_tabla_seleccionado == 108 || id_tabla_seleccionado == 109 ){
                             
                             $("#resultado_Deficiencia_"+num_consecutivo_alteraciones).change(function(){
                                 deficiencia_resultado = $(this).val();
@@ -454,7 +454,7 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                                     $(".resultado_MSD_"+num_consecutivo_alteraciones).prop('checked', false);
                                     $(".resultado_MSD_"+num_consecutivo_alteraciones).prop('disabled', true);
                                     $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();
-                                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                                                                                                                        
+                                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).empty();                
                                 } else {
                                     $(".resultado_MSD_"+num_consecutivo_alteraciones).prop('disabled', false);                                                                
                                 }
@@ -478,13 +478,13 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                                     $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancia.toFixed(2));
                                     $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(total_deficiencia.toFixed(2));                                
                                 } else {
-                                    // if (isNaN(resultado_Deficiencia)) {
-                                    //     resultado_Deficiencia = dominancia_suma;
-                                    // }
+                                    if (isNaN(resultado_Deficiencia)) {
+                                        resultado_Deficiencia = dominancia_suma;
+                                    }
                                     // console.log('No está marcado');  
                                     $("#Dominancia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancia_suma.toFixed(2));
-                                    // $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultado_Deficiencia.toFixed(2));                                              
-                                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancia_suma.toFixed(2));
+                                    $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(resultado_Deficiencia.toFixed(2));                                              
+                                    // $("#Total_deficiencia_fila_alteraciones_"+num_consecutivo_alteraciones).append(dominancia_suma.toFixed(2));
                                 }                            
                             }
                             setInterval(() => {
@@ -499,7 +499,7 @@ function funciones_elementos_fila_alteraciones(num_consecutivo_alteraciones) {
                     break;
                 }
             }
-        });        
+        });      
        
         /* INSERTAR CAMPOS DE CLASE Y DEFICIENCIAS PARA LAS TABLAS 14.1 hasta la 14.5 y 14.7 ABIERTAS */
         if (id_tabla_seleccionado == 100 || id_tabla_seleccionado == 101 || id_tabla_seleccionado == 102 || id_tabla_seleccionado == 103 || 

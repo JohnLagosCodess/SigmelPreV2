@@ -133,7 +133,7 @@ class AdministradorController extends Controller
                     'nombre' => $request->nombre_equipo_trabajo,
                     'Id_proceso_equipo' => $request->proceso,
                     'lider' => $request->listado_lider,
-                    'Accion' => $request->listado_acciones,
+                    // 'Accion' => $request->listado_acciones,
                     'estado' => $request->estado_equipo,
                     'descripcion' => $request->descripcion_equipo_trabajo,
                     'created_at' => $date
@@ -457,11 +457,11 @@ class AdministradorController extends Controller
                 'Estado' => $request->Estado,
                 'Codigo_cliente' => $request->Codigo_cliente,
                 'Nombre_usuario' => $nombre_usuario,
-                'footer_dato_1' => $request->footer_dato_1,
-                'footer_dato_2' => $request->footer_dato_2,
-                'footer_dato_3' => $request->footer_dato_3,
-                'footer_dato_4' => $request->footer_dato_4,
-                'footer_dato_5' => $request->footer_dato_5,
+                // 'footer_dato_1' => $request->footer_dato_1,
+                // 'footer_dato_2' => $request->footer_dato_2,
+                // 'footer_dato_3' => $request->footer_dato_3,
+                // 'footer_dato_4' => $request->footer_dato_4,
+                // 'footer_dato_5' => $request->footer_dato_5,
                 'F_registro' => $request->Fecha_creacion,
                 'created_at' => $date_con_hora,
             );
@@ -613,7 +613,33 @@ class AdministradorController extends Controller
                 }
                 sleep(1);
 
-                /* PASO N°7: INSERCIÓN DEL CONTENIDO DE LA FIRMA EN LA TABLA sigmel_informacion_firmas_clientes
+                /* PASO N°7: INSERCIÓN DEL FOOTER EN CARPETA Y ACTUALIZACIÓN DEL DATO EN LA TABLA sigmel_clientes */
+                if (!empty($request->Footer)) {
+                    $footerBase64 = $request->Footer;
+                    $footer_decodificado = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $footerBase64));
+                    $nombre_footer = 'footer_cliente'.$id_cliente.'.'. $request->Extension_footer;
+                    $ruta = $id_cliente.'/'.$nombre_footer;
+                    Storage::disk('publicfooter')->put($ruta, $footer_decodificado);
+
+                    // Insertamos el nombre del logo del cliente en la tabla sigmel_clientes.
+                    $datos_nombre_footer = [
+                        'Footer_cliente' => $nombre_footer
+                    ];
+
+                    sigmel_clientes::on('sigmel_gestiones')
+                    ->where([
+                        ['Id_cliente', $id_cliente],
+                    ])
+                    ->update($datos_nombre_footer);
+
+                    // generar permisos a la carpeta del logo del cliente.
+                    $path = public_path('footer_clientes/'.$id_cliente);
+                    $mode = 777;
+                    chmod($path, octdec($mode));
+                }
+                sleep(1);
+
+                /* PASO N°8: INSERCIÓN DEL CONTENIDO DE LA FIRMA EN LA TABLA sigmel_informacion_firmas_clientes
                 E INSERCIÓN DE LAS IMAGENES EN LA CARPETA DEL CLIENTE CORRESPONDIENTE */
                 if(!empty($request->Firmas)){
                     if(count($request->Firmas) > 0){
@@ -697,7 +723,7 @@ class AdministradorController extends Controller
                     }
                 };
 
-                /* PASO N°8: INSERCIÓN DEL CONTENIDO DE LA FIRMA EN LA TABLA sigmel_informacion_firmas_proveedores
+                /* PASO N°9: INSERCIÓN DEL CONTENIDO DE LA FIRMA EN LA TABLA sigmel_informacion_firmas_proveedores
                 E INSERCIÓN DE LAS IMAGENES EN LA CARPETA DEL CLIENTE CORRESPONDIENTE */
                 if(!empty($request->Firmas_proveedor)){
                     if(count($request->Firmas_proveedor) > 0){
@@ -1387,6 +1413,26 @@ class AdministradorController extends Controller
             }else{
                 $nombre_logo = $request->Nombre_logo_bd;
             }
+            // FOOTER IMAGE
+            if ($request->Extension_footer != '') {
+                if($request->Extension_footer == "jpg" || $request->Extension_footer == "png"){
+                    $footerBase64 = $request->Footer;
+                    $footer_decodificado = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $footerBase64));
+                    $nombre_footer = 'footer_cliente_'.$id_cliente_actualizar.'.'. $request->Extension_footer;
+                    $ruta = $id_cliente_actualizar.'/'.$nombre_footer;
+                    Storage::disk('publicfooter')->put($ruta, $footer_decodificado);
+
+                    sleep(1);
+
+                    // generar permisos a la carpeta del logo del cliente.
+                    $path = public_path('footer_clientes/'.$id_cliente_actualizar);
+                    $mode = 777;
+                    chmod($path, octdec($mode));
+                }
+            }else{
+                $nombre_footer = $request->Nombre_footer_bd;
+            }
+
             $actualizar_cliente = array(
                 'Tipo_cliente' => $tipo_cliente,
                 'Nombre_cliente' => $request->Nombre_cliente,
@@ -1407,11 +1453,12 @@ class AdministradorController extends Controller
                 'Estado' => $request->Estado,
                 'Codigo_cliente' => $request->Codigo_cliente,
                 'Logo_cliente' => $nombre_logo,
-                'footer_dato_1' => $request->footer_dato_1,
-                'footer_dato_2' => $request->footer_dato_2,
-                'footer_dato_3' => $request->footer_dato_3,
-                'footer_dato_4' => $request->footer_dato_4,
-                'footer_dato_5' => $request->footer_dato_5,
+                'Footer_cliente' => $nombre_footer,
+                // 'footer_dato_1' => $request->footer_dato_1,
+                // 'footer_dato_2' => $request->footer_dato_2,
+                // 'footer_dato_3' => $request->footer_dato_3,
+                // 'footer_dato_4' => $request->footer_dato_4,
+                // 'footer_dato_5' => $request->footer_dato_5,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $request->Fecha_creacion,
                 'updated_at' => $date_con_hora,
@@ -3512,7 +3559,7 @@ class AdministradorController extends Controller
         ];
 
         // Inserción de datos en la tabla sigmel_informacion_asignacion_eventos
-        sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insert($datos_info_asignacion_evento);
+        $Id_Asignacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insertGetId($datos_info_asignacion_evento);
 
         // colacamos un tiempo de retardo pequeño para que alcance a insertar los datos
         sleep(2);
@@ -3532,6 +3579,7 @@ class AdministradorController extends Controller
         // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
 
         $datos_historial_accion_eventos = [
+            'Id_Asignacion' => $Id_Asignacion,
             'ID_evento' => $Id_evento,
             'Id_proceso' => $request->proceso,
             'Id_servicio' => $request->servicio,

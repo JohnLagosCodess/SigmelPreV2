@@ -388,6 +388,7 @@ class CalificacionOrigenController extends Controller
             // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
 
             $datos_historial_accion_eventos = [
+                'Id_Asignacion' => $newIdAsignacion,
                 'ID_evento' => $newIdEvento,
                 'Id_proceso' => $Id_proceso,
                 'Id_servicio' => $Id_servicio,
@@ -564,6 +565,7 @@ class CalificacionOrigenController extends Controller
             // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
 
             $datos_historial_accion_eventos = [
+                'Id_Asignacion' => $newIdAsignacion,
                 'ID_evento' => $newIdEvento,
                 'Id_proceso' => $Id_proceso,
                 'Id_servicio' => $Id_servicio,
@@ -1109,68 +1111,145 @@ class CalificacionOrigenController extends Controller
         $Id_evento = $request->Id_evento;
         $Id_asignacion = $request->Id_asignacion;
         $Id_procesos = $request->Id_procesos;
-        $radioafiliado_comunicado = $request->radioafiliado_comunicado;
-        $radioempresa_comunicado = $request->radioempresa_comunicado;
-        $radioOtro = $request->radioOtro;
-        $copiaComunicadoTotal = $request->copiaComunicadoTotal;
-        if (!empty($copiaComunicadoTotal)) {
-            $total_copia_comunicado = implode(", ", $copiaComunicadoTotal);                
-        }else{
-            $total_copia_comunicado = '';
+        $tipo_descarga = $request->tipo_descarga;
+        if($tipo_descarga != 'Manual'){
+            $radioafiliado_comunicado = $request->radioafiliado_comunicado;
+            $radioempresa_comunicado = $request->radioempresa_comunicado;
+            $radioOtro = $request->radioOtro;
+            $copiaComunicadoTotal = $request->copiaComunicadoTotal;
+            if (!empty($copiaComunicadoTotal)) {
+                $total_copia_comunicado = implode(", ", $copiaComunicadoTotal);                
+            }else{
+                $total_copia_comunicado = '';
+            }
+    
+            if(!empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && empty($radioOtro)){
+                $destinatario = 'Afiliado';
+            }elseif(empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado) && empty($radioOtro)){
+                $destinatario = 'Empresa';
+            }elseif(empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && !empty($radioOtro)){
+                $destinatario = 'Otro';
+            }
+            $datos_info_registrarComunicadoPcl=[
+    
+                'ID_evento' => $Id_evento,
+                'Id_Asignacion' => $Id_asignacion,
+                'Id_proceso' => $Id_procesos,
+                'Ciudad' => $request->ciudad,
+                'F_comunicado' => $request->fecha_comunicado2,
+                'N_radicado' => $request->radicado2,
+                'Cliente' => $request->cliente_comunicado2,
+                'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
+                'T_documento' => $request->tipo_documento_comunicado2,
+                'N_identificacion' => $request->identificacion_comunicado2,
+                'Destinatario' => $destinatario,
+                'Nombre_destinatario' => $request->nombre_destinatario,
+                'Nit_cc' => $request->nic_cc,
+                'Direccion_destinatario' => $request->direccion_destinatario,
+                'Telefono_destinatario' => $request->telefono_destinatario,
+                'Email_destinatario' => $request->email_destinatario,
+                'Id_departamento' => $request->departamento_destinatario,
+                'Id_municipio' => $request->ciudad_destinatario,
+                'Asunto' => $request->asunto,
+                'Cuerpo_comunicado' => $request->cuerpo_comunicado,
+                'Anexos' => $request->anexos,
+                'Forma_envio' => $request->forma_envio,
+                'Elaboro' => $request->elaboro2,
+                'Reviso' => $request->reviso,
+                'Agregar_copia' => $total_copia_comunicado,
+                'Firmar_Comunicado' => $request->firmarcomunicado,
+                'Tipo_descarga' => $request->tipo_descarga,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+                'Modulo_creacion' => $request->modulo_creacion,
+            ];
+            
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
+    
+            sleep(2);
+            $datos_info_historial_acciones = [
+                'ID_evento' => $Id_evento,
+                'F_accion' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+                'Accion_realizada' => "Se genera comunicado Origen ATEL.",
+                'Descripcion' => $request->asunto,
+            ];
+    
+            sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
         }
+        else if($tipo_descarga == 'Manual'){
+            if($request->modulo){
+                $modulo = $request->modulo;
+            }
+            else{
+                $modulo = '';
+            }
 
-        if(!empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && empty($radioOtro)){
-            $destinatario = 'Afiliado';
-        }elseif(empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado) && empty($radioOtro)){
-            $destinatario = 'Empresa';
-        }elseif(empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && !empty($radioOtro)){
-            $destinatario = 'Otro';
+            $datos_info_registrarComunicadoPcl=[
+                'ID_evento' => $Id_evento,
+                'Id_Asignacion' => $Id_asignacion,
+                'Id_proceso' => $Id_procesos,
+                'Ciudad' => $request->ciudad,
+                'F_comunicado' => $date,
+                'N_radicado' => $request->radicado2,
+                'Cliente' => $request->cliente_comunicado2,
+                'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
+                'T_documento' => $request->tipo_documento_comunicado2,
+                'N_identificacion' => $request->identificacion_comunicado2,
+                'Destinatario' => $request->destinatario,
+                'Nombre_destinatario' => $request->nombre_destinatario,
+                'Nit_cc' => $request->nic_cc,
+                'Direccion_destinatario' => $request->direccion_destinatario,
+                'Telefono_destinatario' => $request->telefono_destinatario,
+                'Email_destinatario' => $request->email_destinatario,
+                'Id_departamento' => $request->departamento_destinatario,
+                'Id_municipio' => $request->ciudad_destinatario,
+                'Asunto' => $request->asunto,
+                'Cuerpo_comunicado' => $request->cuerpo_comunicado,
+                'Anexos' => $request->anexos,
+                'Forma_envio' => $request->forma_envio,
+                'Elaboro' => $nombre_usuario,
+                'Reviso' => $request->reviso,
+                'Agregar_copia' => null,
+                'Firmar_Comunicado' => $request->firmarcomunicado,
+                'Tipo_descarga' => $request->tipo_descarga,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+                'Modulo_creacion' => $request->modulo_creacion,
+            ];
+
+            if($request->hasFile('cargue_comunicados')){
+                $archivo = $request->file('cargue_comunicados');
+                $path = public_path('Documentos_Eventos/'.$Id_evento);
+                $mode = 777;
+
+                if (!File::exists($path)) {
+                    File::makeDirectory($path, $mode, true, true);
+                    chmod($path, $mode);
+                }
+
+                // $nombre_final_documento = $nombre_documento."_IdEvento_".$Id_evento.".".$archivo->extension();
+                $nombre_final_documento = $request->asunto;
+                Storage::putFileAs($Id_evento, $archivo, $nombre_final_documento);
+                
+            }else{
+                $nombre_final_documento='N/A';            
+            }     
+
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
+
+            sleep(2);
+            $datos_info_historial_acciones = [
+                'ID_evento' => $Id_evento,
+                'F_accion' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+                'Accion_realizada' => "Se genera comunicado de forma manual en $modulo.",
+                'Descripcion' => $request->asunto,
+            ];
+
+            sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
         }
-        $datos_info_registrarComunicadoPcl=[
-
-            'ID_evento' => $Id_evento,
-            'Id_Asignacion' => $Id_asignacion,
-            'Id_proceso' => $Id_procesos,
-            'Ciudad' => $request->ciudad,
-            'F_comunicado' => $request->fecha_comunicado2,
-            'N_radicado' => $request->radicado2,
-            'Cliente' => $request->cliente_comunicado2,
-            'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
-            'T_documento' => $request->tipo_documento_comunicado2,
-            'N_identificacion' => $request->identificacion_comunicado2,
-            'Destinatario' => $destinatario,
-            'Nombre_destinatario' => $request->nombre_destinatario,
-            'Nit_cc' => $request->nic_cc,
-            'Direccion_destinatario' => $request->direccion_destinatario,
-            'Telefono_destinatario' => $request->telefono_destinatario,
-            'Email_destinatario' => $request->email_destinatario,
-            'Id_departamento' => $request->departamento_destinatario,
-            'Id_municipio' => $request->ciudad_destinatario,
-            'Asunto' => $request->asunto,
-            'Cuerpo_comunicado' => $request->cuerpo_comunicado,
-            'Anexos' => $request->anexos,
-            'Forma_envio' => $request->forma_envio,
-            'Elaboro' => $request->elaboro2,
-            'Reviso' => $request->reviso,
-            'Agregar_copia' => $total_copia_comunicado,
-            'Firmar_Comunicado' => $request->firmarcomunicado,
-            'Tipo_descarga' => $request->tipo_descarga,
-            'Nombre_usuario' => $nombre_usuario,
-            'F_registro' => $date,
-        ];
         
-        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
-
-        sleep(2);
-        $datos_info_historial_acciones = [
-            'ID_evento' => $Id_evento,
-            'F_accion' => $date,
-            'Nombre_usuario' => $nombre_usuario,
-            'Accion_realizada' => "Se genera comunicado Origen ATEL.",
-            'Descripcion' => $request->asunto,
-        ];
-
-        sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
         
         $mensajes = array(
             "parametro" => 'agregar_comunicado',
@@ -1287,6 +1366,7 @@ class CalificacionOrigenController extends Controller
             'Tipo_descarga' => $request->tipo_descarga,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
+            'Modulo_creacion' => $request->modulo_creacion,
         ];
 
         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado_editar)

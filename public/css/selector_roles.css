@@ -20,6 +20,11 @@
     height: 94% !important;
 }
 
+.descarga-deshabilitada {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
 .not_render{
     display: none;
 }

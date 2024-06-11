@@ -230,7 +230,7 @@ class BandejaOrigenController extends Controller
         $BandejaOrigenTotal = $request->BandejaOrigenTotal;
         $newId_rol = $request->newId_rol; 
         $newId_user = $request->newId_user;
-        
+
         $time = time();
         $date = date("Y-m-d", $time);
         $year = date("Y");
@@ -249,7 +249,8 @@ class BandejaOrigenController extends Controller
             }else{
                 $bandejaOrigen = cndatos_bandeja_eventos::on('sigmel_gestiones')
                 ->where([
-                    ['Nombre_proceso_actual', '=', 'Origen']
+                    ['Nombre_proceso_actual', '=', 'Origen'],
+                    // ['Nombre_estado', '<>', 'Gestionado']
                 ])
                 ->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
                 ->get();
@@ -395,6 +396,9 @@ class BandejaOrigenController extends Controller
             //     }
             // }
 
+            /* echo "<pre>";
+            print_r($bandejaOrigen);
+            echo "</pre>"; */
             $arraybandejaOrigen = json_decode(json_encode($bandejaOrigen, true));                                                 
             return response()->json($arraybandejaOrigen);                
 
@@ -820,17 +824,23 @@ class BandejaOrigenController extends Controller
 
         sleep(2);
         
-        // Capturar todos los eventos de los id de asignacion y almacenarlo en array array_id_eventos
-        $array_id_eventos = [];
+        // Capturar todos los eventos de los id de asignacion y almacenarlo en array array_id_asignacion
+        $array_id_asignacion = [];
         for ($a=0; $a < count($IdEventoBandejaOrigen); $a++) {
-            $array_datos_eventos = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-            ->select('ID_evento')->where('Id_Asignacion', $IdEventoBandejaOrigen[$a])->get();
-            $info_array_eventos = json_decode(json_encode($array_datos_eventos, true));
-            array_push($array_id_eventos, $info_array_eventos[0]->ID_evento);
-        }
+            $array_datos_asignacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            ->select('Id_Asignacion', 'ID_evento')->where('Id_Asignacion', $IdEventoBandejaOrigen[$a])->get();
+            // Convertir la colección a un array de objetos stdClass
+            $info_array_asignacion = $array_datos_asignacion->toArray();
+            // Verificar que el array no esté vacío y contenga al menos un elemento
+            if (!empty($info_array_asignacion)) {
+                $array_id_asignacion[] = [
+                    $info_array_asignacion[0]['Id_Asignacion'], 
+                    $info_array_asignacion[0]['ID_evento']
+                ];
+            }
 
+        }        
         // Captura de informacion de los campos de la bandeja que se van actualizar
-
         $datos_historial_accion_eventos = [
             'Id_proceso' => $Id_proceso,
             'Id_servicio' => $Id_Servicio_redireccionar,
@@ -840,14 +850,21 @@ class BandejaOrigenController extends Controller
             'F_accion' => $date_time,
             'Nombre_usuario' => $usuario,
         ];
-       
+        
         // Construir array para la insercion
         $array_datos_historial_accion_eventos = array();
-        foreach ($array_id_eventos as $evento) {
-            $item = array_merge(array('ID_evento' => $evento), $datos_historial_accion_eventos);
+        foreach ($array_id_asignacion as $asignacion) {
+            // Crear un array combinando Id_Asignacion y ID_evento
+            $asignacion_array = [
+                'Id_Asignacion' => $asignacion[0],
+                'ID_evento' => $asignacion[1]
+            ];            
+            // Fusionar el array de asignación con los datos de historial
+            $item = array_merge($asignacion_array, $datos_historial_accion_eventos);            
+            // Agregar el item al array de resultados
             $array_datos_historial_accion_eventos[] = $item;
         }
-
+        
         foreach ($array_datos_historial_accion_eventos as $historial) {
             sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')
             ->insert($historial);
