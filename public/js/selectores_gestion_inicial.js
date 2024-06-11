@@ -1179,7 +1179,7 @@ $(document).ready(function(){
     /* Validación opción Otro/¿Cuál? del selector Tipo de afiliado y campos de afiliado o beneficario */
     $('#tipo_afiliado').change(function(){
         let opt_otro_afiliado = $('#tipo_afiliado option:selected').text();
-        if (opt_otro_afiliado === "Otro/¿Cuál?") {
+        if (opt_otro_afiliado === "Otro/ ¿Cuál?") {
             $(".columna_otro_tipo_afiliado").removeClass('d-none');
             $(".columna_otro_tipo_afiliado").slideDown('slow');
             $(".nom_beneficiario").addClass('d-none');

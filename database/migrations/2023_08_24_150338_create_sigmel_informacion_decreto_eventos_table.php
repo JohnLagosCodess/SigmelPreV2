@@ -34,6 +34,7 @@ return new class extends Migration
             $table->text('Origen');
             $table->date('F_evento');
             $table->date('F_estructuracion');
+            $table->text('Requiere_Revision_Pension')->nullable();
             $table->text('Sustentacion_F_estructuracion');
             $table->text('Detalle_calificacion');
             $table->text('Enfermedad_catastrofica')->nullable();

@@ -6961,6 +6961,19 @@
                                             @endif
                                         </div>
                                     </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <br>
+                                            <div class="custom-control custom-checkbox">
+                                                @if (!empty($array_dictamen_pericial[0]->Requiere_Revision_Pension))
+                                                    <input class="custom-control-input" type="checkbox" id="requiere_rev_pension" name="requiere_rev_pension" value="Require Revision Pension" checked>
+                                                @else
+                                                    <input class="custom-control-input" type="checkbox" id="requiere_rev_pension" name="requiere_rev_pension" value="Require Revision Pension">
+                                                @endif
+                                                <label for="requiere_rev_pension" class="custom-control-label">¿Requiere revisión pensión?</label>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label for="sustenta_fecha">Sustentación de fecha de estructuración<span style="color: red;">(*)</span></label>
