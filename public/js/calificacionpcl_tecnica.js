@@ -3850,6 +3850,12 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
         allowClear: false
     });
 
+    $("#lista_lateralidadCie10_fila_"+num_consecutivo).select2({
+        width: '100%',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
     //Carga de datos en los selectores
 
     let token = $("input[name='_token']").val();
@@ -3883,6 +3889,23 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
                 $("#lista_origenCie10_fila_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+            }
+        }
+    });
+
+    let listado_LateralidadCIE10 = {
+        '_token': token,
+        'parametro' : "listado_LateralidadCIE10",
+    };
+    $.ajax({
+        type:'POST',
+        url:'/selectoresCalificacionTecnicaPCL',
+        data: listado_LateralidadCIE10,
+        success:function(data){
+            // $("select[id^='lista_origenCie10_fila_']").empty();
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $("#lista_lateralidadCie10_fila_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
             }
         }
     });
@@ -3942,6 +3965,11 @@ $(document).ready(function(){
                             valor_input = $("#"+nombres_ids).val();                              
                             guardar_datos.push(valor_input);                                                     
                         }
+                        // Se extrae la info si se eligió o no el selector lateralidad
+                        if (nombres_ids.startsWith("lista_lateralidadCie10_fila_")) {
+                            valor_select_lateralidad = $("#"+nombres_ids).val();                              
+                            guardar_datos.push(valor_select_lateralidad);                                                     
+                        }
                         // Se extrae la info si se eligió o no el selector Origen
                         if (nombres_ids.startsWith("lista_origenCie10_fila_")) {
                             valor_select_origen = $("#"+nombres_ids).val();                              
@@ -3964,7 +3992,7 @@ $(document).ready(function(){
                         }
                     }
                     // console.log(guardar_datos);
-                    if((index2+1) % 5 === 0){
+                    if((index2+1) % 6 === 0){
                         datos_finales_diagnosticos_moticalifi.push(guardar_datos);
                         guardar_datos = [];
                     }

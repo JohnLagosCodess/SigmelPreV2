@@ -2458,7 +2458,6 @@ class BuscarEventoController extends Controller
             ->first();
 
         foreach ($reglas as $regla) {
-
             //Info. que se llenaran tanto para origen como para pcl
             if (in_array($servicio['Nombre_servicio'], $regla['servicio_origen']) && ($servicioNuevo == 12 || $servicioNuevo == 13)) {
                 if ($regla['accion'] == 'traer_informacion') {
@@ -2525,7 +2524,7 @@ class BuscarEventoController extends Controller
 
                 //Diagnostico de la calificacion
                 $diagnostico = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos')
-                ->select('CIE10','Nombre_CIE10','Deficiencia_motivo_califi_condiciones','Origen_CIE10','Principal')
+                ->select('CIE10','Nombre_CIE10','Lateralidad_CIE10','Deficiencia_motivo_califi_condiciones','Origen_CIE10','Principal')
                 ->where([
                     ['ID_evento', $evento],
                     ['Id_Asignacion', $Id_Asignacion_origen],
@@ -2558,10 +2557,10 @@ class BuscarEventoController extends Controller
             }
 
             //Caso Origen
-            if ($regla['servicio_nuevo'] == $servicioNuevo && in_array($servicio['Nombre_servicio'], $regla['servicio_origen'])){
+            if ($regla['servicio_nuevo'] != $servicioNuevo && in_array($servicio['Nombre_servicio'], $regla['servicio_origen'])){
                 //Informacion diagonostico
                 $diagnostico = optional(DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos')
-                ->select('CIE10','Nombre_CIE10','Deficiencia_motivo_califi_condiciones','Origen_CIE10','Lateralidad_CIE10','Principal')
+                ->select('CIE10','Nombre_CIE10','Lateralidad_CIE10','Deficiencia_motivo_califi_condiciones','Origen_CIE10','Lateralidad_CIE10','Principal')
                 ->where([
                     ['ID_evento', $evento],
                     ['Id_Asignacion', $Id_Asignacion_origen],
@@ -2593,12 +2592,14 @@ class BuscarEventoController extends Controller
                 $Controvertido['N_siniestro'] = optional($origen[0])->N_siniestro;
             }
         }
-       
-        DB::table('sigmel_gestiones.sigmel_informacion_controversia_juntas_eventos')->insert($Controvertido);
-        sleep(1);
+
+        if(isset($Controvertido)){
+            DB::table('sigmel_gestiones.sigmel_informacion_controversia_juntas_eventos')->insert($Controvertido);
+            sleep(1);
+        }
 
         //Siempre y cuando el diagnostico no este vacio se insertera la informacion en la tabla
-        if(!$diagnostico->isEmpty()){
+        if(isset($diagnostico) && !$diagnostico->isEmpty()){
             $diagnostico = json_decode(json_encode($diagnostico),true);
             DB::table('sigmel_gestiones.sigmel_informacion_diagnosticos_eventos')->insert($diagnostico);
         }

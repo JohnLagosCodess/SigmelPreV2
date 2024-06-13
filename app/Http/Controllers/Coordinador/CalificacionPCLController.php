@@ -3709,8 +3709,9 @@ class CalificacionPCLController extends Controller
         $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
         ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
-        'slp.Nombre_parametro', 'side.Principal', 'side.Deficiencia_motivo_califi_condiciones')
+        'slp.Nombre_parametro', 'side.Principal', 'side.Deficiencia_motivo_califi_condiciones','slp2.Nombre_parametro as Nombre_parametro_lateralidad')
         ->where([['side.ID_evento',$Id_evento_calitec], ['side.Id_Asignacion',$Id_asignacion_calitec], ['side.Estado', '=', 'Activo']])->get(); 
         
         $array_datos_deficiencias_alteraciones =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
@@ -4276,6 +4277,19 @@ class CalificacionPCLController extends Controller
             $info_listado_cie_diagnostico = json_decode(json_encode($listado_cie_diagnostico, true));
             return response()->json($info_listado_cie_diagnostico);
         }
+        // Listado Lateralidad CIE10 diagnosticos motivo calificacion
+        if ($parametro == 'listado_LateralidadCIE10') {
+            $listado_Lateralidad_CIE10 = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro', 'Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Lateralidad Cie10'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_Lateralidad_CIE10 = json_decode(json_encode($listado_Lateralidad_CIE10, true));
+            return response()->json($info_listado_Lateralidad_CIE10);
+        }
 
         // Listado Origen CIE10 diagnosticos motivo calificacion (Calificacion Tecnica)
         if ($parametro == 'listado_OrgienCIE10') {
@@ -4729,7 +4743,7 @@ class CalificacionPCLController extends Controller
 
         // Creación de array con los campos de la tabla: sigmel_informacion_diagnosticos_eventos
         $array_tabla_diagnosticos_motivo_calificacion = ['ID_evento','Id_Asignacion','Id_proceso',
-        'CIE10','Nombre_CIE10','Origen_CIE10', 'Principal', 'Deficiencia_motivo_califi_condiciones', 'Estado_Recalificacion',
+        'CIE10','Nombre_CIE10','Lateralidad_CIE10','Origen_CIE10', 'Principal', 'Deficiencia_motivo_califi_condiciones', 'Estado_Recalificacion',
         'Nombre_usuario','F_registro']; 
 
         // Combinación de los campos de la tabla con los datos

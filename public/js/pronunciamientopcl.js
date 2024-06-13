@@ -801,7 +801,7 @@ $(document).ready(function(){
                     if (nombres_ids != undefined) {
                         guardar_datos.push($('#'+nombres_ids).val());                        
                     }
-                    if((index2+1) % 4 === 0){
+                    if((index2+1) % 5 === 0){
                         datos_finales_diagnosticos_moticalifi.push(guardar_datos);
                         guardar_datos = [];
                     }
@@ -1071,6 +1071,11 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
         placeholder: "Seleccione",
         allowClear: false
     });
+    $("#lista_lateralidadCie10_fila_"+num_consecutivo).select2({
+        width: '100%',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
 
     //Carga de datos en los selectores
 
@@ -1108,7 +1113,22 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
             }
         }
     });
-
+    let listado_LateralidadCIE10 = {
+        '_token': token,
+        'parametro' : "listado_LateralidadCIE10",
+    };
+    $.ajax({
+        type:'POST',
+        url:'/selectoresCalificacionTecnicaPCL',
+        data: listado_LateralidadCIE10,
+        success:function(data){
+            // $("select[id^='lista_origenCie10_fila_']").empty();
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $("#lista_lateralidadCie10_fila_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+            }
+        }
+    });
     $(document).on('change', '#lista_Cie10_fila_'+num_consecutivo, function() {        
         let seleccion = $(this).val();        
         let datos_Nombre_CIE = {
