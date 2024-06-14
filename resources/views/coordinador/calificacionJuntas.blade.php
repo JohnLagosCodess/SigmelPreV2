@@ -689,6 +689,18 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-4 mt-4">
+                                            <div class="form-group">
+                                                <label for="f_envio_jrci">Fecha de envío a JRCI</label>
+                                                <input type="date" class="form-control" name="f_envio_jrci" id="f_envio_jrci" max="{{now()->format('Y-m-d')}}" value="<?php echo $arrayinfo_controvertido[0]->F_envio_jrci ?? '' ?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-4 mt-4">
+                                            <div class="form-group">
+                                                <label for="f_envio_jnci">Fecha de envío a JNCI</label>
+                                                <input type="date" class="form-control" name="f_envio_jnci" id="f_envio_jnci" max="{{now()->format('Y-m-d')}}" value="<?php echo $arrayinfo_controvertido[0]->F_envio_jnci ?? '' ?>">
+                                            </div>
+                                        </div>
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="observaciones_contro">Observaciones</label>

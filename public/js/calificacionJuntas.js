@@ -329,7 +329,8 @@ $(document).ready(function(){
         let datos_lista_profesional = {
             '_token':token,
             'parametro':"lista_profesional_accion",
-            'id_proceso' : Id_proceso_actual,
+            // 'id_proceso' : Id_proceso_actual,
+            'Id_proceso' : Id_proceso_actual,
             'Id_servicio': $("#Id_servicio").val(),
             'Id_accion': $(this).val(),
         }
@@ -831,6 +832,8 @@ $(document).ready(function(){
             'f_notifi_afiliado': $('#f_notifi_afiliado').val(),
             'termino_contro_califi': $('#termino_contro_califi').val(),
             'jrci_califi_invalidez': $('#jrci_califi_invalidez').val(),
+            'fecha_envio_jrci': $('#f_envio_jrci').val(),
+            'fecha_envio_jnci': $('#f_envio_jnci').val(),
             'Observaciones': $('#observaciones_contro').val(),
             'bandera_controversia_guardar_actualizar': $('#guardar_datos_controversia').val(),
         }

@@ -3761,8 +3761,9 @@ class CalificacionPCLController extends Controller
         $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
         ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
-        'slp.Nombre_parametro', 'side.Principal', 'side.Deficiencia_motivo_califi_condiciones')
+        'slp.Nombre_parametro', 'side.Principal', 'side.Deficiencia_motivo_califi_condiciones','slp2.Nombre_parametro as Nombre_parametro_lateralidad')
         ->where([['side.ID_evento',$Id_evento_calitec], ['side.Id_Asignacion',$Id_asignacion_calitec], ['side.Estado', '=', 'Activo']])->get(); 
         
         $array_datos_deficiencias_alteraciones =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
@@ -4209,7 +4210,7 @@ class CalificacionPCLController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
         ->select('side.N_radicado','side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Monto_indemnizacion', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
-        'side.F_evento', 'side.F_estructuracion', 'side.N_siniestro', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+        'side.F_evento', 'side.F_estructuracion', 'side.Requiere_Revision_Pension', 'side.N_siniestro', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
         'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
         'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.Nombre_usuario',
         'side.F_registro')
@@ -4370,6 +4371,19 @@ class CalificacionPCLController extends Controller
 
             $info_listado_cie_diagnostico = json_decode(json_encode($listado_cie_diagnostico, true));
             return response()->json($info_listado_cie_diagnostico);
+        }
+        // Listado Lateralidad CIE10 diagnosticos motivo calificacion
+        if ($parametro == 'listado_LateralidadCIE10') {
+            $listado_Lateralidad_CIE10 = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro', 'Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Lateralidad Cie10'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $info_listado_Lateralidad_CIE10 = json_decode(json_encode($listado_Lateralidad_CIE10, true));
+            return response()->json($info_listado_Lateralidad_CIE10);
         }
 
         // Listado Origen CIE10 diagnosticos motivo calificacion (Calificacion Tecnica)
@@ -4824,7 +4838,7 @@ class CalificacionPCLController extends Controller
 
         // Creación de array con los campos de la tabla: sigmel_informacion_diagnosticos_eventos
         $array_tabla_diagnosticos_motivo_calificacion = ['ID_evento','Id_Asignacion','Id_proceso',
-        'CIE10','Nombre_CIE10','Origen_CIE10', 'Principal', 'Deficiencia_motivo_califi_condiciones', 'Estado_Recalificacion',
+        'CIE10','Nombre_CIE10','Lateralidad_CIE10','Origen_CIE10', 'Principal', 'Deficiencia_motivo_califi_condiciones', 'Estado_Recalificacion',
         'Nombre_usuario','F_registro']; 
 
         // Combinación de los campos de la tabla con los datos
@@ -6589,7 +6603,8 @@ class CalificacionPCLController extends Controller
         $tipo_origen = $request->tipo_origen;  
         $f_evento_pericial = $request->f_evento_pericial;
         $f_estructura_pericial = $request->f_estructura_pericial; 
-        $n_siniestro = $request->n_siniestro;  
+        $n_siniestro = $request->n_siniestro;
+        $requiere_rev_pension = $request->requiere_rev_pension;
         $sustenta_fecha = $request->sustenta_fecha;        
         $detalle_califi = $request->detalle_califi;        
         $enfermedad_catastrofica = $request->enfermedad_catastrofica;        
@@ -6618,6 +6633,7 @@ class CalificacionPCLController extends Controller
                     'Origen' => $tipo_origen,
                     'F_evento' => $f_evento_pericial,
                     'F_estructuracion' => $f_estructura_pericial,
+                    'Requiere_Revision_Pension' => $requiere_rev_pension,
                     'N_siniestro' => $n_siniestro,
                     'Sustentacion_F_estructuracion' => $sustenta_fecha,
                     'Detalle_calificacion' => $detalle_califi,
@@ -6691,6 +6707,7 @@ class CalificacionPCLController extends Controller
                     'Origen' => $tipo_origen,
                     'F_evento' => $f_evento_pericial,
                     'F_estructuracion' => $f_estructura_pericial,
+                    'Requiere_Revision_Pension' => $requiere_rev_pension,
                     'N_siniestro' => $n_siniestro,
                     'Sustentacion_F_estructuracion' => $sustenta_fecha,
                     'Detalle_calificacion' => $detalle_califi,
@@ -6770,6 +6787,7 @@ class CalificacionPCLController extends Controller
                     'Origen' => $tipo_origen,
                     'F_evento' => $f_evento_pericial,
                     'F_estructuracion' => $f_estructura_pericial,
+                    'Requiere_Revision_Pension' => $requiere_rev_pension,
                     'N_siniestro' => $n_siniestro,
                     'Sustentacion_F_estructuracion' => $sustenta_fecha,
                     'Detalle_calificacion' => $detalle_califi,
@@ -6809,6 +6827,7 @@ class CalificacionPCLController extends Controller
                     'Origen' => $tipo_origen,
                     'F_evento' => $f_evento_pericial,
                     'F_estructuracion' => $f_estructura_pericial,
+                    'Requiere_Revision_Pension' => $requiere_rev_pension,
                     'N_siniestro' => $n_siniestro,
                     'Sustentacion_F_estructuracion' => $sustenta_fecha,
                     'Detalle_calificacion' => $detalle_califi,

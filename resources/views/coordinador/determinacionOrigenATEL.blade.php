@@ -543,17 +543,17 @@
                                     <div class="row">
                                         <div class="col-12">
                                             @if (empty($datos_bd_DTO_ATEL[0]->ID_evento))
-                                                <input type="submit" class="btn btn-info" id="btn_guardar_justi_revi_ori" value="Guardar">    
+                                                <input type="submit" class="btn btn-info" id="btn_guardar_info_evento" value="Guardar">    
                                             @else
-                                                <input type="submit" class="btn btn-info" id="btn_guardar_justi_revi_ori" value="Actualizar">    
+                                                <input type="submit" class="btn btn-info" id="btn_guardar_info_evento" value="Actualizar">    
                                             @endif
                                         </div>
                                     </div>
                                     <br>
-                                    <div class="row d-none" id="mostrar_mensaje_2">
+                                    <div class="row d-none" id="mostrar_mensaje_1">
                                         <div  class="col-12">
                                             <div class="form-group">
-                                                <div class="mensaje_agrego_2 alert alert-success" role="alert"></div>
+                                                <div class="mensaje_agrego_1 alert alert-success" role="alert"></div>
                                             </div>
                                         </div>
                                     </div>

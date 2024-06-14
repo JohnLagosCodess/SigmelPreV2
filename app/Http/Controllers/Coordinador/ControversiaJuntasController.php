@@ -681,6 +681,9 @@ class ControversiaJuntasController extends Controller
         ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])->get();
         //Si el evento existe hace el IF y si no hace ELSE
         if (count($info_controverisa_juntas) > 0) {
+
+            $f_maxima_r_jrci = $this->calcularFechaMaximaJRCI($request->f_radica_dictamen_jrci,$request->newId_asignacion,$request->newId_evento);
+
             //Captura los datos a actualizar en controversia
             $datos_info_controvertido_juntas= [
                 'N_dictamen_jrci_emitido' => $request->n_dictamen_jrci_emitido,
@@ -697,10 +700,11 @@ class ControversiaJuntasController extends Controller
                 'Resumen_dictamen_jrci' => $request->resumen_dictamen_jrci,
                 'F_radica_dictamen_jrci' => $request->f_radica_dictamen_jrci,  
                 'F_noti_dictamen_jrci' => $request->f_noti_dictamen_jrci,
+                'F_maxima_recurso_jrci' => $f_maxima_r_jrci,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
-               
+            
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
             ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])
             ->update($datos_info_controvertido_juntas);
@@ -711,6 +715,8 @@ class ControversiaJuntasController extends Controller
             );            
         } else {
             //Captura los datos a insertar en controversia
+            $f_maxima_r_jrci = $this->calcularFechaMaximaJRCI($request->f_radica_dictamen_jrci,$request->newId_asignacion,$request->newId_evento);
+
             $datos_info_controvertido_juntas= [
                 'ID_evento' => $request->newId_evento,
                 'Id_Asignacion' => $request->newId_asignacion,
@@ -729,10 +735,10 @@ class ControversiaJuntasController extends Controller
                 'Resumen_dictamen_jrci' => $request->resumen_dictamen_jrci,
                 'F_radica_dictamen_jrci' => $request->f_radica_dictamen_jrci,  
                 'F_noti_dictamen_jrci' => $request->f_noti_dictamen_jrci,
+                'F_maxima_recurso_jrci' => $f_maxima_r_jrci,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
-               
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
             ->insert($datos_info_controvertido_juntas);
     
@@ -743,6 +749,50 @@ class ControversiaJuntasController extends Controller
         }
     
         return json_decode(json_encode($mensajes, true));
+    }
+
+    /**
+     * PBS 043 Se solicita calcular la fecha maxima para recurso ante JRCI segun la claficiacion de LunesAViernes o LunesASabado
+     * @param F_dictamen_jrci Fecha de radicado del dictamen JRCI
+     * @param id_asignacion id de asignacion el evento.
+     * @param id_evento id del evento que se esta procesando.
+     * @return date FechaMaxima para recurso ante JRCI teniendo en cuenta los dias habiles.
+     */
+    public function calcularFechaMaximaJRCI($F_dictamen_jrci,$id_asignacion,$id_evento){
+        $fechaMaxima = null;
+
+        /** @var clasificacion Regiones sobre las cuales se estara operando en el grupo u otro */
+        $clasificacion = [
+            'LunesAViernes' => ['ATLÁNTICO','BOGOTÁ','CUNDINAMARCA','BOLÍVAR','BOYACÁ','HUILA','MAGDALENA','SANTANDER','VALLE DEL CAUCA','TOLIMA','CESAR'],
+            'LunesASabado' => ['ANTIOQUIA','META','CALDAS','NARIÑO','NORTE DE SANTANDER','RISARALDA','QUINDÍO','CAUCA','CASANARE']
+        ];
+
+        if(!empty($F_dictamen_jrci)){
+
+            //Junta Regional de Calificación de Invalidez
+            $entidad= sigmel_informacion_entidades::on('sigmel_gestiones')->select('Nombre_entidad')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_controversia_juntas_eventos as JE','JE.Jrci_califi_invalidez','Id_Entidad')
+            ->where([
+                ['ID_evento',$id_evento],
+                ['Id_Asignacion',$id_asignacion],
+                ['IdTipo_entidad',4] //Tipo JRCI
+                ])->first();
+
+            if($entidad){
+                foreach ($clasificacion as $grupo => $regiones) {
+                    foreach ($regiones as $region) {
+                        if ($grupo == 'LunesAViernes' && stripos($entidad->Nombre_entidad, $region) !== false) {
+                            $fechaMaxima = calcularDiasHabiles($F_dictamen_jrci);
+                            break 2;
+                        }elseif ($grupo == 'LunesASabado' && stripos($entidad->Nombre_entidad, $region) !== false) {
+                            $fechaMaxima = calcularDiasHabiles($F_dictamen_jrci,$grupo);
+                            break 2;
+                        }
+                    }
+                }
+            }
+        }
+        return $fechaMaxima;
     }
 
     //Guarda informacion revision Jrci

@@ -448,6 +448,7 @@
                                                     <tr class="bg-info">
                                                         <th style="width: 340px !important;">CIE10</th>
                                                         <th style="width: 340px !important;">Nombre CIE10</th>
+                                                        <th style="width: 140px !important;">Lateralidad Dx</th>
                                                         <th style="width: 140px !important;">Origen CIE10</th>
                                                         <th>Dx principal</th>
                                                         <th>Deficiencia(s) motivo de la calificación/<br>Condiciones de salud</th>
@@ -459,6 +460,7 @@
                                                     <tr class="fila_diagnosticos_{{$diagnostico->Id_Diagnosticos_motcali}}" id="datos_diagnostico">
                                                         <td>{{$diagnostico->Codigo}}</td>
                                                         <td>{{$diagnostico->Nombre_CIE10}}</td>
+                                                        <td>{{$diagnostico->Nombre_parametro_lateralidad}}</td>
                                                         <td>{{$diagnostico->Nombre_parametro}}</td>
                                                         <td>
                                                             @if ($diagnostico->Principal == 'Si')
@@ -6962,6 +6964,19 @@
                                             @endif
                                         </div>
                                     </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <br>
+                                            <div class="custom-control custom-checkbox">
+                                                @if (!empty($array_dictamen_pericial[0]->Requiere_Revision_Pension))
+                                                    <input class="custom-control-input" type="checkbox" id="requiere_rev_pension" name="requiere_rev_pension" value="Require Revision Pension" checked>
+                                                @else
+                                                    <input class="custom-control-input" type="checkbox" id="requiere_rev_pension" name="requiere_rev_pension" value="Require Revision Pension">
+                                                @endif
+                                                <label for="requiere_rev_pension" class="custom-control-label">¿Requiere revisión pensión?</label>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label for="sustenta_fecha">Sustentación de fecha de estructuración<span style="color: red;">(*)</span></label>
@@ -8066,6 +8081,7 @@
             var nueva_fila_cie10 = [
                 '<select id="lista_Cie10_fila_'+contador_cie10+'" class="form-comtrol custom-select lista_Cie10_fila_'+contador_cie10+'" name="lista_Cie10"><option></option></select>',
                 '<input type="text" class="form-control" id="nombre_cie10_fila_'+contador_cie10+'" name="nombre_cie10"/>',
+                '<select id="lista_lateralidadCie10_fila_'+contador_cie10+'" class="custom-select lista_lateralidadCie10_fila_'+contador_cie10+'" name="lista_lateralidadCie10"><option></option></select>',
                 '<select id="lista_origenCie10_fila_'+contador_cie10+'" class="custom-select lista_origenCie10_fila_'+contador_cie10+'" name="lista_origenCie10"><option></option></select>',
                 '<input type="checkbox" id="checkbox_dx_principal_cie10_'+contador_cie10+'" class="checkbox_dx_principal_cie10_'+contador_cie10+'" data-id_fila_checkbox_dx_principal_cie10_="'+contador_cie10+'" style="transform: scale(1.2);">',
                 '<textarea id="descripcion_cie10_fila_'+contador_cie10+'" class="form-control" name="descripcion_cie10" cols="90" rows="4"></textarea>',

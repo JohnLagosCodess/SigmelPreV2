@@ -453,7 +453,7 @@
                                 </div> 
                                 <div class="col-6" id="div_GrupoDocumental">
                                     <div class="form-group">
-                                        <label for="grupo_documental">Grupo documental<span style="color: red;">(*)</span></label>
+                                        <label for="grupo_documental">Grupo documental <span style="color: red;">(*)</span></label>
                                         <select class="grupo_documental custom-select " name="grupo_documental" id="grupo_documental" <?php if(!empty($dato_articulo_12[0]->Articulo_12) && $dato_articulo_12[0]->Articulo_12=='No_mas_seguimiento'){ ?> disabled <?php } ?> required>
                                             @if (!empty($dato_ultimo_grupo_doc[0]->Grupo_documental))
                                                 <option value="{{$dato_ultimo_grupo_doc[0]->Grupo_documental}}" selected>{{$dato_ultimo_grupo_doc[0]->Tipo_documento}}</option>

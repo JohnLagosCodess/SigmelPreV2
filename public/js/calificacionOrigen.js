@@ -4,12 +4,13 @@ $(document).ready(function(){
     /* $(".tipo_evento_doc").select2({
         placeholder:"Seleccione una opción",
         allowClear:false
-    });
+    });*/
     
     $(".grupo_documental").select2({
         placeholder:"Seleccione una opción",
-        allowClear:false
-    }); */
+        allowClear:false,
+        width: '100%'
+    }); 
 
     $(".forma_envio").select2({
         placeholder:"Seleccione una opción",
@@ -227,10 +228,14 @@ $(document).ready(function(){
           data: datos_sugerido_documentos,
           success: function(data) {
             //console.log(data);
-            $("#datos_visuales").empty();
+            listado_docs_segueridos.clear().draw();
             let nombredocumental = Object.keys(data);
             for (let i = 0; i < nombredocumental.length; i++) {
-              $('#datos_visuales').append('<tr><td><a href="javascript:void(0);" id="btn_insertar_documen_visual_'+data[i]["Id_documental"]+'" data-id_fila_agregar_doc="'+data[i]["Id_documental"]+'"  data-nom_fila_agregar_doc="'+data[i]["Documento"]+'">' + data[nombredocumental[i]]["Documento"] + '</a></td></tr>');
+            //   $('#datos_visuales').append('<tr><td><a href="javascript:void(0);" id="btn_insertar_documen_visual_'+data[i]["Id_documental"]+'" data-id_fila_agregar_doc="'+data[i]["Id_documental"]+'"  data-nom_fila_agregar_doc="'+data[i]["Documento"]+'">' + data[nombredocumental[i]]["Documento"] + '</a></td></tr>');
+                var nueva_fila =[
+                    '<a href="javascript:void(0);" id="btn_insertar_documen_visual_'+data[i]["Id_documental"]+'" data-id_fila_agregar_doc="'+data[i]["Id_documental"]+'"  data-nom_fila_agregar_doc="'+data[i]["Documento"]+'">' + data[nombredocumental[i]]["Documento"] + '</a>'
+                ];
+                listado_docs_segueridos.row.add(nueva_fila).draw().node();
             }
           }
         });

@@ -4055,6 +4055,7 @@ $(document).ready(function(){
         var f_evento_pericial = $('#f_evento_pericial').val();
         var f_estructura_pericial = $('#f_estructura_pericial').val();
         var n_siniestro = $('#n_siniestro').val();
+        var requiere_rev_pension = $('input[name="requiere_rev_pension"]:checked').val();
         var sustenta_fecha = $('#sustenta_fecha').val();
         var detalle_califi = $('#detalle_califi').val();
         var enfermedad_catastrofica = $('input[name="enfermedad_catastrofica"]:checked').val(); 
@@ -4082,6 +4083,7 @@ $(document).ready(function(){
             'f_evento_pericial':f_evento_pericial,
             'f_estructura_pericial':f_estructura_pericial,
             'n_siniestro':n_siniestro,
+            'requiere_rev_pension': requiere_rev_pension,
             'sustenta_fecha':sustenta_fecha,
             'detalle_califi':detalle_califi,
             'enfermedad_catastrofica':enfermedad_catastrofica,
@@ -4886,6 +4888,11 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
         allowClear: false
     });
 
+    $("#lista_lateralidadCie10_fila_"+num_consecutivo).select2({
+        width: '100%',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
     //Carga de datos en los selectores
 
     let token = $("input[name='_token']").val();
@@ -4923,6 +4930,23 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
         }
     });
 
+    let listado_LateralidadCIE10 = {
+        '_token': token,
+        'parametro' : "listado_LateralidadCIE10",
+    };
+    $.ajax({
+        type:'POST',
+        url:'/selectoresCalificacionTecnicaPCL',
+        data: listado_LateralidadCIE10,
+        success:function(data){
+            // $("select[id^='lista_origenCie10_fila_']").empty();
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $("#lista_lateralidadCie10_fila_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+            }
+        }
+    });
+    
     $(document).on('change', '#lista_Cie10_fila_'+num_consecutivo, function() {        
         let seleccion = $(this).val();        
         let datos_Nombre_CIE = {
@@ -4977,6 +5001,11 @@ $(document).ready(function(){
                             valor_input = $("#"+nombres_ids).val();                              
                             guardar_datos.push(valor_input);                                                     
                         }
+                        // Se extrae la info si se eligió o no el selector lateralidad
+                        if (nombres_ids.startsWith("lista_lateralidadCie10_fila_")) {
+                            valor_select_lateralidad = $("#"+nombres_ids).val();                              
+                            guardar_datos.push(valor_select_lateralidad);                                                     
+                        }                        
                         // Se extrae la info si se eligió o no el selector Origen
                         if (nombres_ids.startsWith("lista_origenCie10_fila_")) {
                             valor_select_origen = $("#"+nombres_ids).val();                              
@@ -4999,7 +5028,7 @@ $(document).ready(function(){
                         }
                     }
                     // console.log(guardar_datos);
-                    if((index2+1) % 5 === 0){
+                    if((index2+1) % 6 === 0){
                         datos_finales_diagnosticos_moticalifi.push(guardar_datos);
                         guardar_datos = [];
                     }

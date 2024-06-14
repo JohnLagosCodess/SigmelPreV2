@@ -13,7 +13,7 @@ class sigmel_informacion_historial_accion_eventos extends Model
     
     protected $primaryKey = 'Id_historial_accion';
 
-    protected $fillable = [    
+    protected $fillable = [
     'Id_Asignacion',
     'ID_evento',
     'Id_proceso',
