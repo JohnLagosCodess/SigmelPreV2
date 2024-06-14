@@ -5208,6 +5208,16 @@ class RecalificacionPCLController extends Controller
                 sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
                 ->where('Id_Asignacion', $Id_Asignacion_Dcreto)->update($datos_profesional_calificador);
             }
+            $comunicado_reemplazado = [
+                'Reemplazado' => 0
+            ];
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['ID_evento',$Id_EventoDecreto],
+                    ['Id_Asignacion',$Id_Asignacion_Dcreto],
+                    ['N_radicado',$radicado_dictamen]
+                    ])
+            ->update($comunicado_reemplazado);
             $mensajes = array(
                 "parametro" => 'insertar_dictamen_pericial',
                 "mensaje" => 'Concepto final del dictamen pericial actualizado satisfactoriamente.'

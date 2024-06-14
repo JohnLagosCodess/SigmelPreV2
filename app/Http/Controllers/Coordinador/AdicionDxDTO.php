@@ -765,6 +765,17 @@ class AdicionDxDTO extends Controller
             sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')
             ->where('Id_Adiciones_Dx', $Id_Adiciones_Dx)->update($datos_formulario);
             $mensaje = 'Información actualizada satisfactoriamente.';
+
+            $comunicado_reemplazado = [
+                'Reemplazado' => 0
+            ];
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['ID_evento',$request->ID_Evento],
+                    ['Id_Asignacion',$request->Id_Asignacion],
+                    ['N_radicado',$request->radicado_dictamen]
+                    ])
+            ->update($comunicado_reemplazado);
         }
 
         // Actualizacion del profesional calificador

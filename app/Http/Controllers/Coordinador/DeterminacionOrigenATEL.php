@@ -779,6 +779,17 @@ class DeterminacionOrigenATEL extends Controller
             sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
             ->where('Id_Dto_ATEL', $Id_Dto_ATEL)->update($datos_formulario);
             $mensaje = 'Información actualizada satisfactoriamente.';
+
+            $comunicado_reemplazado = [
+                'Reemplazado' => 0
+            ];
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['ID_evento',$request->ID_Evento],
+                    ['Id_Asignacion',$request->Id_Asignacion],
+                    ['N_radicado',$request->radicado_dictamen]
+                    ])
+            ->update($comunicado_reemplazado);
         }
         
         // Actualizacion del profesional calificador
