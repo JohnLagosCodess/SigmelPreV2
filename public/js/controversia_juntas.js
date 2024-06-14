@@ -1449,6 +1449,7 @@ $(document).ready(function(){
         formData.append('firmarcomunicado',null);
         formData.append('tipo_descarga', 'Manual');
         formData.append('modulo_creacion','controversiaJuntas');
+        formData.append('Nombre_documento', documentName);
         formData.append('modulo','Comunicados controversia juntas');
         $.ajax({
             type:'POST',
@@ -1491,6 +1492,71 @@ $(document).ready(function(){
         }, 1000);
     });
 
+    let comunicado_reemplazar = null;
+    $("form[id^='form_reemplazar_archivo_']").submit(function (e){
+        e.preventDefault();           
+        $('#modalReemplazarArchivos').modal('show');  
+        comunicado_reemplazar = $(this).data('archivo');
+        let nombre_doc = comunicado_reemplazar.Nombre_documento;
+        let nombre_doc_manual = comunicado_reemplazar.Asunto;
+        if(nombre_doc != null && nombre_doc != "null"){
+            extensionDoc = `.${ nombre_doc.split('.').pop()}`;
+            document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
+        }
+        else if(nombre_doc_manual != null && nombre_doc_manual != "null"){
+            extensionDoc = `.${ nombre_doc_manual.split('.').pop()}`;
+            document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
+        }
+    });
+
+    $("form[id^='reemplazar_documento']").submit(function(e){
+        e.preventDefault();
+        if(!$('#cargue_comunicados_modal')[0].files[0]){
+            return $(".cargueundocumentoprimeromodal").removeClass('d-none');
+        }
+        $(".cargueundocumentoprimeromodal").addClass('d-none');
+        $(".extensionInvalidaModal").addClass('d-none');
+        var archivo = $('#cargue_comunicados_modal')[0].files[0];
+        extensionDocCargado = `.${archivo.name.split('.').pop()}`;
+        if(extensionDoc === extensionDocCargado){
+            var formData = new FormData($('form')[0]);
+            formData.append('doc_de_reemplazo', archivo);
+            formData.append('token', $('input[name=_token]').val());
+            formData.append('id_comunicado', comunicado_reemplazar.Id_Comunicado);
+            formData.append('tipo_descarga', comunicado_reemplazar.Tipo_descarga);
+            formData.append('id_asignacion', comunicado_reemplazar.Id_Asignacion);
+            formData.append('id_proceso', comunicado_reemplazar.Id_proceso);
+            formData.append('id_evento', comunicado_reemplazar.ID_evento);
+            formData.append('n_radicado', comunicado_reemplazar.N_radicado);
+            formData.append('numero_identificacion', comunicado_reemplazar.N_identificacion);
+            formData.append('modulo_creacion', 'controversiaJuntas');
+            formData.append('asunto', comunicado_reemplazar.Asunto);
+            formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
+            $.ajax({
+                type:'POST',
+                url:'/reemplazarDocumento',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success:function(response){
+                    if (response.parametro == 'reemplazar_comunicado') {
+                        $('.alerta_externa_comunicado_modal').removeClass('d-none');
+                        $('.alerta_externa_comunicado_modal').append('<strong>'+response.mensaje+'</strong>');
+                        setTimeout(function(){
+                            $('.alerta_externa_comunicado_modal').addClass('d-none');
+                            $('.alerta_externa_comunicado_modal').empty();
+                            localStorage.setItem("#Generar_comunicados", true);
+                            location.reload();
+                        }, 3000);
+                    }
+                }
+            });
+        }
+        else{
+            document.getElementById('extensionInvalidaMensaje').textContent += extensionDoc;
+            return $(".extensionInvalidaModal").removeClass('d-none');
+        }
+    });
     // Función para validar items a mostrar
     const tiempoDeslizamiento_concepto_repo = 'slow';
     function iniciarIntervalo_concepto_repo_jrci() {
@@ -3731,6 +3797,7 @@ $(document).ready(function(){
         
         // Recopilación de datos
         var token = $('input[name=_token]').val();
+        var infoComunicado = $(this).data("archivo");
         var id_comite_inter = $(this).data("id_comite_inter");
         var id_cliente = $("#id_cliente").val();
         var id_asignacion = $("#newId_asignacion").val();
@@ -3790,39 +3857,58 @@ $(document).ready(function(){
             'asunto': asunto,
             'cuerpo': cuerpo,
             'firmar': firmar,
+            'id_comunicado': infoComunicado.Id_Comunicado
         }
-
-        setTimeout(() => {
-            $.ajax({    
-                type:'POST',
-                url:'/DescargarProformaPronunDictaAcuerdo',
-                data: datos_proforma_acuerdo,
-                xhrFields: {
-                    responseType: 'blob' // Indica que la respuesta es un blob
-                },
-                success: function (response, status, xhr) {
-                    var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-            
-                    // Crear un enlace de descarga similar al ejemplo anterior
-                    
-                    var nombre_documento = "JUN_ACUERDO_"+id_asignacion+"_"+num_identificacion+"_"+nro_radicado+".pdf";                    
-                    var link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
-            
-                    // Adjuntar el enlace al documento y activar el evento de clic
-                    document.body.appendChild(link);
-                    link.click();
-            
-                    // Eliminar el enlace del documento
-                    document.body.removeChild(link);
-                },
-                error: function (error) {
-                    // Manejar casos de error
-                    console.error('Error al descargar el word:', error);
-                }       
-            });
-        }, 2000);
+        if(infoComunicado.Reemplazado == 1){
+            var nombre_doc = infoComunicado.Nombre_documento;
+            var idEvento = infoComunicado.ID_evento;
+            var enlaceDescarga = document.createElement('a');
+            enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+            enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+            enlaceDescarga.style.display = 'none';
+            document.body.appendChild(enlaceDescarga);
+            enlaceDescarga.click();
+            setTimeout(function() {
+                document.body.removeChild(enlaceDescarga);
+            }, 1000);
+        }else{
+            setTimeout(() => {
+                $.ajax({    
+                    type:'POST',
+                    url:'/DescargarProformaPronunDictaAcuerdo',
+                    data: datos_proforma_acuerdo,
+                    xhrFields: {
+                        responseType: 'blob' // Indica que la respuesta es un blob
+                    },
+                    success: function (response, status, xhr) {
+                        var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+                
+                        // Crear un enlace de descarga similar al ejemplo anterior
+                        
+                        var nombre_documento = "JUN_ACUERDO_"+id_asignacion+"_"+num_identificacion+"_"+nro_radicado+".pdf";                    
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
+                
+                        // Adjuntar el enlace al documento y activar el evento de clic
+                        document.body.appendChild(link);
+                        link.click();
+                
+                        // Eliminar el enlace del documento
+                        document.body.removeChild(link);
+                    },
+                    error: function (error) {
+                        // Manejar casos de error
+                        console.error('Error al descargar el word:', error);
+                    },
+                    complete: function(){
+                        if(infoComunicado.Nombre_documento == null){
+                            location.reload();
+                        }
+                    }       
+                });
+            }, 2000);
+        }
 
     });
 
@@ -4170,6 +4256,7 @@ $(document).ready(function(){
         
         // Recopilación de datos
         var token = $('input[name=_token]').val();
+        var infoComunicado = $(this).data("archivo");
         var id_comite_inter = $(this).data("id_comite_inter");
         var id_cliente = $("#id_cliente").val();
         var id_asignacion = $("#newId_asignacion").val();
@@ -4218,41 +4305,54 @@ $(document).ready(function(){
             'copia_arl': copia_arl,
             'asunto': asunto,
             'cuerpo': cuerpo,
-            'firmar': firmar
+            'firmar': firmar,
+            'id_comunicado': infoComunicado.Id_Comunicado
         }
-
-        setTimeout(() => {
-            $.ajax({    
-                type:'POST',
-                url:'/DescargarProformaRecursoReposicion',
-                data: datos_proforma_desacuerdo,
-                xhrFields: {
-                    responseType: 'blob' // Indica que la respuesta es un blob
-                },
-                success: function (response, status, xhr) {
-                    var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-            
-                    // Crear un enlace de descarga similar al ejemplo anterior
-                    
-                    var nombre_documento = "JUN_DESACUERDO_"+id_asignacion+"_"+num_identificacion+"_"+nro_radicado+".docx";                    
-                    var link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
-            
-                    // Adjuntar el enlace al documento y activar el evento de clic
-                    document.body.appendChild(link);
-                    link.click();
-            
-                    // Eliminar el enlace del documento
-                    document.body.removeChild(link);
-                },
-                error: function (error) {
-                    // Manejar casos de error
-                    console.error('Error al descargar el word:', error);
-                }       
-            });
-        }, 2000);
-
+        if(infoComunicado.Reemplazado == 1){
+            var nombre_doc = infoComunicado.Nombre_documento;
+            var idEvento = infoComunicado.ID_evento;
+            var enlaceDescarga = document.createElement('a');
+            enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+            enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+            enlaceDescarga.style.display = 'none';
+            document.body.appendChild(enlaceDescarga);
+            enlaceDescarga.click();
+            setTimeout(function() {
+                document.body.removeChild(enlaceDescarga);
+            }, 1000);
+        }else{
+            setTimeout(() => {
+                $.ajax({    
+                    type:'POST',
+                    url:'/DescargarProformaRecursoReposicion',
+                    data: datos_proforma_desacuerdo,
+                    xhrFields: {
+                        responseType: 'blob' // Indica que la respuesta es un blob
+                    },
+                    success: function (response, status, xhr) {
+                        var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+                
+                        // Crear un enlace de descarga similar al ejemplo anterior
+                        
+                        var nombre_documento = "JUN_DESACUERDO_"+id_asignacion+"_"+num_identificacion+"_"+nro_radicado+".docx";                    
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
+                
+                        // Adjuntar el enlace al documento y activar el evento de clic
+                        document.body.appendChild(link);
+                        link.click();
+                
+                        // Eliminar el enlace del documento
+                        document.body.removeChild(link);
+                    },
+                    error: function (error) {
+                        // Manejar casos de error
+                        console.error('Error al descargar el word:', error);
+                    }       
+                });
+            }, 2000);
+        }
     });
 
     /* Funcionalidad para mostrar solo la tabla de comunicados para el rol de Consulta */

@@ -124,7 +124,29 @@ class PronunciamientoOrigenController extends Controller
 
         $array_comunicados = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$Id_evento_calitec], ['Id_Asignacion',$Id_asignacion_calitec],['Modulo_creacion','pronunciamientoOrigen']])->get();  
-
+        foreach ($array_comunicados as $comunicado) {
+            if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
+                $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
+                if(File::exists($filePath)){
+                    $comunicado['Existe'] = true;
+                }
+                else{
+                    $comunicado['Existe'] = false;
+                }
+            }
+            else if($comunicado['Tipo_descarga'] === 'Manual'){
+                $filePath = public_path('Documentos_Eventos/'.$comunicado['ID_evento'].'/'.$comunicado['Asunto']);
+                if(File::exists($filePath)){
+                    $comunicado['Existe'] = true;
+                }
+                else{
+                    $comunicado['Existe'] = false;
+                }
+            }
+            else{
+                $comunicado['Existe'] = false;
+            }
+        }
         return view('coordinador.pronunciamientoOrigenATEL', compact('user','array_datos_pronunciamientoOrigen','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo','array_comunicados'));
     }
 
@@ -670,6 +692,7 @@ class PronunciamientoOrigenController extends Controller
                 'F_registro' => $date,
                 'Tipo_descarga' => $request->decision_pr,
                 'Modulo_creacion' => 'pronunciamientoOrigen',
+                'Reemplazado' => 0,
             ];
             // dd($request->decision_pr);
             if($request->decision_pr != 'Silencio' && $request->Id_Comunicado){
@@ -909,6 +932,8 @@ class PronunciamientoOrigenController extends Controller
         $departamento_entidad = $request->departamento_entidad;
         $nro_dictamen_pri_cali = $request->nro_dictamen_pri_cali;
         $fecha_dictamen_pri_cali = $request->fecha_dictamen_pri_cali;
+        $Id_comunicado = $request->id_comunicado;
+
 
         /* Creación de las variables faltantes que no están en el ajax */
 
@@ -1303,6 +1328,12 @@ class PronunciamientoOrigenController extends Controller
             //Guardar el PDF en un archivo
             file_put_contents(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_pdf}"), $output);
 
+            $actualizar_nombre_documento = [
+                'Nombre_documento' => $nombre_pdf
+            ];
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+            ->update($actualizar_nombre_documento);
+
             /* Inserción del registro de que fue descargado */
             // Extraemos el id del servicio asociado
             $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
@@ -1597,6 +1628,11 @@ class PronunciamientoOrigenController extends Controller
             $writer = new Word2007($phpWord);
             $nombre_docx = "ORI_DESACUERDO_{$Id_Asignacion_consulta_dx}_{$num_identificacion}.docx";
             $writer->save(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));
+            $actualizar_nombre_documento = [
+                'Nombre_documento' => $nombre_docx
+            ];
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+            ->update($actualizar_nombre_documento);
 
             /* Inserción del registro de que fue descargado */
             // Extraemos el id del servicio asociado

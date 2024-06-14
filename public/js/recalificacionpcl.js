@@ -1854,6 +1854,148 @@ $(document).ready(function(){
             document.body.removeChild(enlaceDescarga);
         }, 1000);
     });
+
+    //Reemplazar archivo 
+    let comunicado_reemplazar = null;
+    $("form[id^='form_reemplazar_archivo_']").submit(function (e){
+        e.preventDefault();           
+        $('#modalReemplazarArchivos').modal('show');  
+        comunicado_reemplazar = $(this).data('archivo');
+        let nombre_doc = comunicado_reemplazar.Nombre_documento;
+        let nombre_doc_manual = comunicado_reemplazar.Asunto;
+        if(nombre_doc != null && nombre_doc != "null"){
+            extensionDoc = `.${ nombre_doc.split('.').pop()}`;
+            document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
+        }
+        else if(nombre_doc_manual != null && nombre_doc_manual != "null"){
+            extensionDoc = `.${ nombre_doc_manual.split('.').pop()}`;
+            document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
+        }
+    });
+    
+    $("form[id^='reemplazar_documento']").submit(function(e){
+        e.preventDefault();
+        if(!$('#cargue_comunicados_modal')[0].files[0]){
+            return $(".cargueundocumentoprimeromodal").removeClass('d-none');
+        }
+        $(".cargueundocumentoprimeromodal").addClass('d-none');
+        $(".extensionInvalidaModal").addClass('d-none');
+        var archivo = $('#cargue_comunicados_modal')[0].files[0];
+        extensionDocCargado = `.${archivo.name.split('.').pop()}`;
+        if(extensionDoc === extensionDocCargado){
+            var formData = new FormData($('form')[0]);
+            formData.append('doc_de_reemplazo', archivo);
+            formData.append('token', $('input[name=_token]').val());
+            formData.append('id_comunicado', comunicado_reemplazar.Id_Comunicado);
+            formData.append('tipo_descarga', comunicado_reemplazar.Tipo_descarga);
+            formData.append('id_asignacion', comunicado_reemplazar.Id_Asignacion);
+            formData.append('id_proceso', comunicado_reemplazar.Id_proceso);
+            formData.append('id_evento', comunicado_reemplazar.ID_evento);
+            formData.append('n_radicado', comunicado_reemplazar.N_radicado);
+            formData.append('numero_identificacion', comunicado_reemplazar.N_identificacion);
+            formData.append('modulo_creacion', 'recalificacionPCL');
+            formData.append('asunto', comunicado_reemplazar.Asunto);
+            formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
+            $.ajax({
+                type:'POST',
+                url:'/reemplazarDocumento',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success:function(response){
+                    if (response.parametro == 'reemplazar_comunicado') {
+                        $('.alerta_externa_comunicado_modal').removeClass('d-none');
+                        $('.alerta_externa_comunicado_modal').append('<strong>'+response.mensaje+'</strong>');
+                        setTimeout(function(){
+                            $('.alerta_externa_comunicado_modal').addClass('d-none');
+                            $('.alerta_externa_comunicado_modal').empty();
+                            localStorage.setItem("#Generar_comunicados", true);
+                            location.reload();
+                        }, 3000);
+                    }
+                }
+            });
+        }
+        else{
+            document.getElementById('extensionInvalidaMensaje').textContent += extensionDoc;
+            return $(".extensionInvalidaModal").removeClass('d-none');
+        }
+    });
+
+    $("form[id^='ver_dictamentPCL']").submit(function(e){
+        e.preventDefault();
+        var infoComunicado = $(this).data("archivo");
+        var nombre_doc = infoComunicado.Nombre_documento;
+        var idEvento = infoComunicado.ID_evento;
+        var enlaceDescarga = document.createElement('a');
+        enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+        enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+        enlaceDescarga.style.display = 'none';
+        document.body.appendChild(enlaceDescarga);
+        enlaceDescarga.click();
+        setTimeout(function() {
+            document.body.removeChild(enlaceDescarga);
+        }, 1000);
+    });
+
+    $("form[id^='verNotificacionPCL']").submit(function(e){
+        e.preventDefault();
+        var infoComunicado = $(this).data("archivo");
+        var nombre_doc = infoComunicado.Nombre_documento;
+        var idEvento = infoComunicado.ID_evento;
+        var enlaceDescarga = document.createElement('a');
+        enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+        enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+        enlaceDescarga.style.display = 'none';
+        document.body.appendChild(enlaceDescarga);
+        enlaceDescarga.click();
+        setTimeout(function() {
+            document.body.removeChild(enlaceDescarga);
+        }, 1000);
+
+    });
+
+    $('form[name="ver_dictamenPcl"]').on('submit', function(event) {
+        let form = $(this);
+        var infoComunicado = $(this).data("archivo");
+
+        if(form.attr('action') != undefined && form.attr('action') != null){
+            if(infoComunicado.Nombre_documento == null){
+                $.ajax({
+                    url: form.attr('action'),
+                    method: form.attr('method')
+                })
+                .always(function() {
+                    setTimeout(function() {
+                        location.reload();
+                    },1000)
+                });
+            }
+        }
+    });
+    $('form[name="ver_notificacionPcl"]').on('submit', function(event) {
+        let form = $(this);
+        var infoComunicado = $(this).data("archivo");
+
+        if(form.attr('action') != undefined && form.attr('action') != null){
+            if(infoComunicado.Nombre_documento == null){
+                
+                    $.ajax({
+                        url: form.attr('action'),
+                        method: form.attr('method')
+                    })
+                    .always(function() {
+                        setTimeout(function() {
+                            location.reload();
+                        },1000)
+                    });
+                
+            }
+        }
+    });
+
+
+    
     //Formulario para guardar el decreto
     $('#form_RecaliDecreto').submit(function (e){
         e.preventDefault();        

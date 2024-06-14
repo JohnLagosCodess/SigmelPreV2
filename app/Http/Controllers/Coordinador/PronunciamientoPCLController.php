@@ -127,7 +127,29 @@ class PronunciamientoPCLController extends Controller
         }
         $array_comunicados = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$Id_evento_calitec], ['Id_Asignacion',$Id_asignacion_calitec], ['Modulo_creacion','pronunciamientoPCL']])->get();
-
+        foreach ($array_comunicados as $comunicado) {
+            if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
+                $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
+                if(File::exists($filePath)){
+                    $comunicado['Existe'] = true;
+                }
+                else{
+                    $comunicado['Existe'] = false;
+                }
+            }
+            else if($comunicado['Tipo_descarga'] === 'Manual'){
+                $filePath = public_path('Documentos_Eventos/'.$comunicado['ID_evento'].'/'.$comunicado['Asunto']);
+                if(File::exists($filePath)){
+                    $comunicado['Existe'] = true;
+                }
+                else{
+                    $comunicado['Existe'] = false;
+                }
+            }
+            else{
+                $comunicado['Existe'] = false;
+            }
+        }
         return view('coordinador.pronunciamientoPCL', compact('user','array_datos_pronunciamientoPcl','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo', 'array_comunicados'));
     }
     //Ver Documento Pronuncia
@@ -721,6 +743,7 @@ class PronunciamientoPCLController extends Controller
                 'F_registro' => $date,
                 'Tipo_descarga' => $request->decision_pr,
                 'Modulo_creacion' => 'pronunciamientoPCL',
+                'Reemplazado' => 0,
             ];
             // dd($request->decision_pr);
             if($request->decision_pr != 'Silencio' && $request->Id_Comunicado){
@@ -857,6 +880,7 @@ class PronunciamientoPCLController extends Controller
         $nombre_usuario = Auth::user()->name;
         $cargo_profesional = Auth::user()->cargo;
 
+        $Id_comunicado = $request->id_comunicado;
         $fecha = $request->fecha;
         $nro_radicado = $request->nro_radicado;
         $Id_Evento_pronuncia_corre = $request->Id_Evento_pronuncia_corre;
@@ -1258,7 +1282,11 @@ class PronunciamientoPCLController extends Controller
             $output = $pdf->output();
             //Guardar el PDF en un archivo
             file_put_contents(public_path("Documentos_Eventos/{$Id_Evento_pronuncia_corre}/{$nombre_pdf}"), $output);
-
+            $actualizar_nombre_documento = [
+                'Nombre_documento' => $nombre_pdf
+            ];
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+            ->update($actualizar_nombre_documento);
             /* Inserción del registro de que fue descargado */
             // Extraemos el id del servicio asociado
             $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
@@ -1509,7 +1537,11 @@ class PronunciamientoPCLController extends Controller
             $writer = new Word2007($phpWord);
             $nombre_docx = "PCL_DESACUERDO_{$Asignacion_Pronuncia_corre}_{$Iden_afiliado_corre}.docx";
             $writer->save(public_path("Documentos_Eventos/{$Id_Evento_pronuncia_corre}/{$nombre_docx}"));
-
+            $actualizar_nombre_documento = [
+                'Nombre_documento' => $nombre_docx
+            ];
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+            ->update($actualizar_nombre_documento);
             /* Inserción del registro de que fue descargado */
             // Extraemos el id del servicio asociado
             $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')

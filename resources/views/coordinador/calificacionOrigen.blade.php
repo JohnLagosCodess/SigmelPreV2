@@ -1298,6 +1298,7 @@
 {{-- Modal cargue documentos --}}
 <?php $aperturaModal = 'Edicion'; ?>
 @include('//.administrador.modalcarguedocumentos')
+@include('//.coordinador.modalReemplazarArchivos')
 @stop
 @section('js')
 

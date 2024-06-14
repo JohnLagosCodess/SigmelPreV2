@@ -1213,9 +1213,10 @@ class CalificacionOrigenController extends Controller
                 'Agregar_copia' => null,
                 'Firmar_Comunicado' => $request->firmarcomunicado,
                 'Tipo_descarga' => $request->tipo_descarga,
+                'Modulo_creacion' => $request->modulo_creacion,
+                'Nombre_documento' => $request->Nombre_documento,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
-                'Modulo_creacion' => $request->modulo_creacion,
             ];
 
             if($request->hasFile('cargue_comunicados')){
@@ -1274,6 +1275,29 @@ class CalificacionOrigenController extends Controller
                 ['Id_proceso', '1']
             ])
             ->get();
+            foreach ($hitorialAgregarComunicado as &$comunicado) {
+                if ($comunicado['Tipo_descarga'] === 'Documento_Origen') {
+                    $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
+                    if(File::exists($filePath)){
+                        $comunicado['Existe'] = true;
+                    }
+                    else{
+                        $comunicado['Existe'] = false;
+                    }
+                }
+                else if($comunicado['Tipo_descarga'] === 'Manual'){
+                    $filePath = public_path('Documentos_Eventos/'.$comunicado['ID_evento'].'/'.$comunicado['Asunto']);
+                    if(File::exists($filePath)){
+                        $comunicado['Existe'] = true;
+                    }
+                    else{
+                        $comunicado['Existe'] = false;
+                    }
+                }
+                else{
+                    $comunicado['Existe'] = false;
+                }
+            }
             $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
             return response()->json(($arrayhitorialAgregarComunicado));
 
@@ -1364,9 +1388,10 @@ class CalificacionOrigenController extends Controller
             'Agregar_copia' => $total_copia_comunicado,
             'Firmar_Comunicado' => $request->firmarcomunicado,
             'Tipo_descarga' => $request->tipo_descarga,
+            'Modulo_creacion' => $request->modulo_creacion,
+            'Reemplazado' => 0,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
-            'Modulo_creacion' => $request->modulo_creacion,
         ];
 
         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado_editar)

@@ -43,6 +43,8 @@ return new class extends Migration
             $table->string('Firmar_Comunicado', 20)->nullable();
             $table->text('Tipo_descarga')->nullable();
             $table->text('Modulo_creacion')->nullable();
+            $table->integer('Reemplazado')->default(0);
+            $table->text('Nombre_documento')->nullable();
             $table->string('Nombre_usuario', 100);
             $table->date('F_registro');
         });

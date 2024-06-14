@@ -304,6 +304,8 @@ Route::post('/sinfiltrosBandejaPCL', [CoordinadorController::class, 'sinFiltroBa
 Route::post('/filtrosBandejaPCL', [CoordinadorController::class, 'filtroBandejaPCl']);
 // Accion: Actualizar el profesional y redireccionar el servicio
 Route::post('/actualizarProfesionalServicio', [CoordinadorController::class, 'actualizarBandejaPCL']);
+// Acción: Reemplazar Documentos
+Route::post('/reemplazarDocumento', [CoordinadorController::class, 'reemplazarDocumento']);
 
 // 14/07/2023
 // Vista: Módulo Calificación PCL Coordinador

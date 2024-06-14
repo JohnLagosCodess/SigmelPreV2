@@ -7648,15 +7648,23 @@
                                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>                                                                       
                                                                     @if ($comunicados->Ciudad == 'N/A' && $comunicados->Tipo_descarga != 'Manual')
                                                                         <td style="display: flex; flex-direction:row; justify-content:space-around;">                                                                    
-                                                                            <form name="ver_dictamenPcl" action="{{ route('descargar_Dictamen_PCL') }}" method="POST">  
+                                                                            <form name="ver_dictamenPcl" data-archivo="{{json_encode($comunicados)}}" @if($comunicados->Reemplazado === 1) id="ver_dictamentPCL" @else action="{{ route('descargar_Dictamen_PCL') }}" @endif method="POST"> 
                                                                                 @csrf                                                                
                                                                                     <input type="hidden"  name="ID_Evento_comuni" value="{{$comunicados['ID_evento']}}">
                                                                                     <input type="hidden"  name="Id_Asignacion_comuni" value="{{$comunicados['Id_Asignacion']}}">
                                                                                     <input type="hidden"  name="Id_Proceso_comuni" value="{{$comunicados['Id_proceso']}}">     
                                                                                     <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}">
+                                                                                    <input type="hidden"  name="Id_Comunicado" value="{{$comunicados['Id_Comunicado']}}">
                                                                                     <label for="ver_dictamenesPcl"><i class="far fa-eye text-info" style="cursor: pointer;"></i></i></label>
                                                                                     <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
-                                                                            </form>        
+                                                                            </form> 
+                                                                            @if ($comunicados['Existe'])
+                                                                                <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                        <i class="fas fa-sync-alt text-info"></i>
+                                                                                    </button>
+                                                                                </form>
+                                                                            @endif       
                                                                         </td> 
                                                                     @elseif ($comunicados->Tipo_descarga == 'Manual')  
                                                                         <td style="display: flex; flex-direction:row; justify-content:space-around;">
@@ -7665,6 +7673,13 @@
                                                                                     <i class="far fa-eye text-info" style="cursor: pointer;"></i>
                                                                                 </button>
                                                                             </form>
+                                                                            @if ($comunicados['Existe'])
+                                                                                <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                        <i class="fas fa-sync-alt text-info"></i>
+                                                                                    </button>
+                                                                                </form>
+                                                                            @endif
                                                                         </td>
                                                                     @endif
                                                                 </tr>
@@ -7678,17 +7693,25 @@
                                                                 <td>{{$comite_inter->F_visado_comite}}</td>
                                                                 <td>Oficio</td>
                                                                 <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
-                                                                    <form name="ver_notificacionPcl" action="{{ route('generarOficio_Pcl') }}" method="POST">
+                                                                    <form name="ver_notificacionPcl" data-archivo="{{json_encode($comite_inter)}}" @if($comite_inter->Reemplazado === 1) id="verNotificacionPCL" @else action="{{ route('generarOficio_Pcl') }}" @endif method="POST">
                                                                         @csrf
                                                                         <input type="hidden" name="ID_Evento_comuni_comite" value="{{$comite_inter->ID_evento}}">
                                                                         <input type="hidden" name="Id_Asignacion_comuni_comite" value="{{$comite_inter->Id_Asignacion}}">
                                                                         <input type="hidden" name="Id_Proceso_comuni_comite" value="{{$comite_inter->Id_proceso}}">    
                                                                         <input type="hidden" name="Radicado_comuni_comite" value="{{$comite_inter->N_radicado}}"> 
                                                                         <input type="hidden" name="Firma_comuni_comite" value="{{$comite_inter->Firmar}}">
+                                                                        <input type="hidden" name="Id_Comunicado" value="{{$comite_inter->Id_Comunicado}}">
                                                                         <label for="ver_notificacionesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
                                                                         <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold; cursor: pointer;" value="">
                                                                     </form>
                                                                     <i class="fa fa-pen text-info" id="editar_correspondencia" style="cursor: pointer;"></i>
+                                                                    @if ($comite_inter->Existe)
+                                                                        <form id="form_reemplazar_archivo_" data-archivo="{{json_encode($comite_inter)}}" method="POST">
+                                                                            <button type="submit" id="btn_reemplazar_archivo" style="border: none; background: transparent;">
+                                                                                <i class="fas fa-sync-alt text-info"></i>
+                                                                            </button>
+                                                                        </form>
+                                                                    @endif
                                                                 </td>                                                                                                                               
                                                             </tr>
                                                             @endforeach                                                                
@@ -7704,15 +7727,23 @@
                                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>                                                                       
                                                                     @if ($comunicados->Ciudad == 'N/A' && $comunicados->Tipo_descarga != 'Manual')
                                                                         <td style="display: flex; flex-direction:row; justify-content:space-around;">                                                                    
-                                                                            <form name="ver_dictamenPcl" action="{{ route('descargar_Dictamen_PCLCero') }}" method="POST">  
+                                                                            <form name="ver_dictamenPcl" data-archivo="{{json_encode($comunicados)}}" @if($comunicados->Reemplazado === 1) id="ver_dictamentPCL" @else action="{{ route('descargar_Dictamen_PCLCero') }}" @endif method="POST"> 
                                                                                 @csrf                        
                                                                                 <input type="hidden"  name="ID_Evento_comuni" value="{{$comunicados['ID_evento']}}">
                                                                                 <input type="hidden"  name="Id_Asignacion_comuni" value="{{$comunicados['Id_Asignacion']}}">
                                                                                 <input type="hidden"  name="Id_Proceso_comuni" value="{{$comunicados['Id_proceso']}}">     
-                                                                                <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}">  
+                                                                                <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}">
+                                                                                <input type="hidden"  name="Id_Comunicado" value="{{$comunicados['Id_Comunicado']}}">
                                                                                 <label for="ver_dictamenesPcl"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
                                                                                 <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
                                                                             </form>
+                                                                            @if ($comunicados['Existe'])
+                                                                                <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                        <i class="fas fa-sync-alt text-info"></i>
+                                                                                    </button>
+                                                                                </form>
+                                                                            @endif
                                                                         </td>                                                                
                                                                     @elseif ($comunicados->Tipo_descarga == 'Manual')  
                                                                         <td style="display: flex; flex-direction:row; justify-content:space-around;">
@@ -7721,6 +7752,13 @@
                                                                                     <i class="far fa-eye text-info" style="cursor: pointer;"></i>
                                                                                 </button>
                                                                             </form>
+                                                                            @if ($comunicados['Existe'])
+                                                                                <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                        <i class="fas fa-sync-alt text-info"></i>
+                                                                                    </button>
+                                                                                </form>
+                                                                            @endif
                                                                         </td>                                                             
                                                                     @endif
                                                                 </tr>
@@ -7734,17 +7772,25 @@
                                                                 <td>{{$comite_inter->F_visado_comite}}</td>
                                                                 <td>Oficio</td>
                                                                 <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
-                                                                    <form name="ver_notificacionPcl" action="{{ route('generarOficio_Pcl') }}" method="POST">
+                                                                    <form name="ver_notificacionPcl" data-archivo="{{json_encode($comite_inter)}}" @if($comite_inter->Reemplazado === 1) id="verNotificacionPCL" @else action="{{ route('generarOficio_Pcl') }}" @endif method="POST">
                                                                         @csrf
                                                                         <input type="hidden"  name="ID_Evento_comuni_comite" value="{{$comite_inter->ID_evento}}">
                                                                         <input type="hidden"  name="Id_Asignacion_comuni_comite" value="{{$comite_inter->Id_Asignacion}}">
                                                                         <input type="hidden"  name="Id_Proceso_comuni_comite" value="{{$comite_inter->Id_proceso}}">    
                                                                         <input type="hidden"  name="Radicado_comuni_comite" value="{{$comite_inter->N_radicado}}"> 
                                                                         <input type="hidden"  name="Firma_comuni_comite" value="{{$comite_inter->Firmar}}">
+                                                                        <input type="hidden"  name="Id_Comunicado" value="{{$comite_inter->Id_Comunicado}}">
                                                                         <label for="ver_notificacionesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
                                                                         <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold; cursor:pointer;" value="">
                                                                     </form>
                                                                     <i class="fa fa-pen text-info" style="cursor:pointer;" id="editar_correspondencia"></i>
+                                                                    @if ($comite_inter->Existe)
+                                                                        <form id="form_reemplazar_archivo_" data-archivo="{{json_encode($comite_inter)}}" method="POST">
+                                                                            <button type="submit" id="btn_reemplazar_archivo_" style="border: none; background: transparent;">
+                                                                                <i class="fas fa-sync-alt text-info"></i>
+                                                                            </button>
+                                                                        </form>
+                                                                    @endif
                                                                 </td>                                                                                                                               
                                                             </tr>
                                                             @endforeach
@@ -7760,15 +7806,23 @@
                                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td> 
                                                                     @if ($comunicados->Ciudad == 'N/A' && $comunicados->Tipo_descarga != 'Manual')
                                                                         <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
-                                                                            <form name="ver_dictamenPcl" action="{{ route('descargar_Dictamen_PCL917') }}" method="POST">  
+                                                                            <form name="ver_dictamenPcl" data-archivo="{{json_encode($comunicados)}}" @if($comunicados->Reemplazado === 1) id="ver_dictamentPCL" @else action="{{ route('descargar_Dictamen_PCL917') }}" @endif method="POST"> 
                                                                                 @csrf              
                                                                                     <input type="hidden"  name="ID_Evento_comuni" value="{{$comunicados['ID_evento']}}">
                                                                                     <input type="hidden"  name="Id_Asignacion_comuni" value="{{$comunicados['Id_Asignacion']}}">
                                                                                     <input type="hidden"  name="Id_Proceso_comuni" value="{{$comunicados['Id_proceso']}}">     
-                                                                                    <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}">                                                                                                                                       
+                                                                                    <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}"> 
+                                                                                    <input type="hidden"  name="Id_Comunicado" value="{{$comunicados['Id_Comunicado']}}">
                                                                                     <label for="ver_dictamenesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></i></label>
                                                                                     <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
                                                                             </form>
+                                                                            @if ($comunicados['Existe'])
+                                                                                <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                        <i class="fas fa-sync-alt text-info"></i>
+                                                                                    </button>
+                                                                                </form>
+                                                                            @endif
                                                                         </td>                                                                
                                                                     @elseif ($comunicados->Tipo_descarga == 'Manual')
                                                                         <td style="display: flex; flex-direction:row; justify-content:space-around;">
@@ -7777,6 +7831,13 @@
                                                                                     <i class="far fa-eye text-info"></i>
                                                                                 </button>
                                                                             </form>
+                                                                            @if ($comunicados['Existe'])
+                                                                                <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                        <i class="fas fa-sync-alt text-info"></i>
+                                                                                    </button>
+                                                                                </form>
+                                                                            @endif
                                                                         </td>
                                                                     @endif
                                                                 </tr>
@@ -7790,17 +7851,25 @@
                                                                 <td>{{$comite_inter->F_visado_comite}}</td>
                                                                 <td>Oficio</td>
                                                                 <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
-                                                                    <form name="ver_notificacionPcl" action="{{ route('generarOficio_Pcl') }}" method="POST">
+                                                                    <form name="ver_notificacionPcl" data-archivo="{{json_encode($comite_inter)}}" @if($comite_inter->Reemplazado === 1) id="verNotificacionPCL" @else action="{{ route('generarOficio_Pcl') }}" @endif method="POST">
                                                                         @csrf
                                                                         <input type="hidden"  name="ID_Evento_comuni_comite" value="{{$comite_inter->ID_evento}}">
                                                                         <input type="hidden"  name="Id_Asignacion_comuni_comite" value="{{$comite_inter->Id_Asignacion}}">
                                                                         <input type="hidden"  name="Id_Proceso_comuni_comite" value="{{$comite_inter->Id_proceso}}">    
                                                                         <input type="hidden"  name="Radicado_comuni_comite" value="{{$comite_inter->N_radicado}}"> 
                                                                         <input type="hidden"  name="Firma_comuni_comite" value="{{$comite_inter->Firmar}}">
-                                                                            <label for="ver_notificacionesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
-                                                                            <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold; cursor: pointer;" value="">
+                                                                        <input type="hidden"  name="Id_Comunicado" value="{{$comite_inter->Id_Comunicado}}">
+                                                                        <label for="ver_notificacionesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
+                                                                        <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold; cursor: pointer;" value="">
                                                                     </form>
                                                                     <i class="fa fa-pen text-info" id="editar_correspondencia" style="cursor: pointer;"></i>
+                                                                    @if ($comite_inter->Existe)
+                                                                        <form id="form_reemplazar_archivo_" data-archivo="{{json_encode($comite_inter)}}" method="POST">
+                                                                            <button type="submit" id="btn_reemplazar_archivo_" style="border: none; background: transparent;">
+                                                                                <i class="fas fa-sync-alt text-info"></i>
+                                                                            </button>
+                                                                        </form>
+                                                                    @endif
                                                                 </td>                                                                                                                                  
                                                             </tr>
                                                             @endforeach
@@ -7821,6 +7890,13 @@
                                                                                     <i class="far fa-eye text-info" style="cursor: pointer;"></i>
                                                                                 </button>
                                                                             </form>
+                                                                            @if ($comunicados['Existe'])
+                                                                                <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                        <i class="fas fa-sync-alt text-info"></i>
+                                                                                    </button>
+                                                                                </form>
+                                                                            @endif   
                                                                         </td>                                                             
                                                                     @endif
                                                                 </tr>
@@ -7896,6 +7972,7 @@
         <x-slot name="footerSlot">
         </x-slot>     
     </x-adminlte-modal>
+    @include('//.coordinador.modalReemplazarArchivos')
  @stop
  
 

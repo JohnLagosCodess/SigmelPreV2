@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Coordinador;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use App\Models\sigmel_informacion_dto_atel_eventos;
 use App\Models\sigmel_lista_tipo_eventos;
@@ -332,7 +333,29 @@ class AdicionDxDTO extends Controller
         
         $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$Id_evento], ['Id_Asignacion',$Id_asignacion], ['T_documento','N/A'], ['Modulo_creacion','adicionDxDtoOrigen']])->get();
-
+        foreach ($array_comunicados_correspondencia as $comunicado) {
+            if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
+                $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
+                if(File::exists($filePath)){
+                    $comunicado['Existe'] = true;
+                }
+                else{
+                    $comunicado['Existe'] = false;
+                }
+            }
+            else if($comunicado['Tipo_descarga'] === 'Manual'){
+                $filePath = public_path('Documentos_Eventos/'.$comunicado['ID_evento'].'/'.$comunicado['Asunto']);
+                if(File::exists($filePath)){
+                    $comunicado['Existe'] = true;
+                }
+                else{
+                    $comunicado['Existe'] = false;
+                }
+            }
+            else{
+                $comunicado['Existe'] = false;
+            }
+        }
         /* Nombre Afp */
         $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
@@ -728,10 +751,11 @@ class AdicionDxDTO extends Controller
                 'Elaboro' => $nombre_usuario,
                 'Reviso' => 'N/A',
                 'Anexos' => 'N/A',
-                'Nombre_usuario' => $nombre_usuario,
-                'F_registro' => $date,
                 'Tipo_descarga' => 'Dictamen',
                 'Modulo_creacion' => 'adicionDxDtoOrigen',
+                'Reemplazado' => 0,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
             ];
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -976,10 +1000,11 @@ class AdicionDxDTO extends Controller
                 'Agregar_copia' => $agregar_copias_comu,
                 'JRCI_copia' => $cual,
                 'Anexos' => $anexos,
-                'Nombre_usuario' => $nombre_usuario,
-                'F_registro' => $date,
                 'Tipo_descarga' => 'Comunicado',
                 'Modulo_creacion' => 'adicionDxDtoOrigen',
+                'Reemplazado' => 0,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
             ];
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -1041,6 +1066,7 @@ class AdicionDxDTO extends Controller
                 'JRCI_copia' => $cual,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Reemplazado' => 0
             ];   
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
@@ -1075,6 +1101,7 @@ class AdicionDxDTO extends Controller
         $nro_siniestro = $request->nro_siniestro;
         $Id_Asignacion = $request->Id_Asignacion;
         $Id_Proceso = $request->Id_Proceso;
+        $Id_comunicado = $request->id_comunicado;
         $f_dictamen = date("d-m-Y", strtotime($request->f_dictamen));
         $empresa_laboral = $request->empresa_laboral;
         $nit_cc_laboral = $request->nit_cc_laboral;
@@ -1225,6 +1252,12 @@ class AdicionDxDTO extends Controller
         $output = $pdf->output();
         //Guardar el PDF en un archivo
         file_put_contents(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_pdf}"), $output);
+
+        $actualizar_nombre_documento = [
+            'Nombre_documento' => $nombre_pdf
+        ];
+        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+        ->update($actualizar_nombre_documento);
 
         /* Inserción del registro de que fue descargado */
         // Extraemos el id del servicio asociado
@@ -1718,6 +1751,12 @@ class AdicionDxDTO extends Controller
         //Guardar el PDF en un archivo
         file_put_contents(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_pdf}"), $output);
 
+
+        $actualizar_nombre_documento = [
+            'Nombre_documento' => $nombre_pdf
+        ];
+        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $id_tupla_comunicado)
+        ->update($actualizar_nombre_documento);
         /* Inserción del registro de que fue descargado */
         // Extraemos el id del proceso y servicio asociado
         $dato_id_servicio_proceso = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')

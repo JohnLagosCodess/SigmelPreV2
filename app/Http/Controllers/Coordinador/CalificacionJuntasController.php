@@ -1571,9 +1571,9 @@ class CalificacionJuntasController extends Controller
                 'JRCI_copia' => $request->JRCI_copia,
                 'Firmar_Comunicado' => $request->firmarcomunicado,
                 'Tipo_descarga' => $request->tipo_descarga,
+                'Modulo_creacion' => $request->modulo_creacion,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
-                'Modulo_creacion' => $request->modulo_creacion,
             ];
             
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
@@ -1625,9 +1625,10 @@ class CalificacionJuntasController extends Controller
                 'Agregar_copia' => null,
                 'Firmar_Comunicado' => $request->firmarcomunicado,
                 'Tipo_descarga' => $request->tipo_descarga,
+                'Modulo_creacion' => $request->modulo_creacion,
+                'Nombre_documento' => $request->Nombre_documento,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
-                'Modulo_creacion' => $request->modulo_creacion,
             ];
 
             if($request->hasFile('cargue_comunicados')){
@@ -1685,6 +1686,29 @@ class CalificacionJuntasController extends Controller
                 ['Id_proceso', '3']
             ])
             ->get();
+            foreach ($hitorialAgregarComunicado as &$comunicado) {
+                if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
+                    $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
+                    if(File::exists($filePath)){
+                        $comunicado['Existe'] = true;
+                    }
+                    else{
+                        $comunicado['Existe'] = false;
+                    }
+                }
+                else if($comunicado['Tipo_descarga'] === 'Manual'){
+                    $filePath = public_path('Documentos_Eventos/'.$comunicado['ID_evento'].'/'.$comunicado['Asunto']);
+                    if(File::exists($filePath)){
+                        $comunicado['Existe'] = true;
+                    }
+                    else{
+                        $comunicado['Existe'] = false;
+                    }
+                }
+                else{
+                    $comunicado['Existe'] = false;
+                }
+            }
             $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
             return response()->json(($arrayhitorialAgregarComunicado));
 
@@ -1806,9 +1830,10 @@ class CalificacionJuntasController extends Controller
             'JRCI_copia' => $request->JRCI_copia_editar,
             'Firmar_Comunicado' => $request->firmarcomunicado_editar,
             'Tipo_descarga' => $request->tipo_descarga,
+            'Modulo_creacion' => $request->modulo_creacion,
+            'Reemplazado' => 0,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
-            'Modulo_creacion' => $request->modulo_creacion
         ];
 
         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado_editar)
@@ -2288,7 +2313,11 @@ class CalificacionJuntasController extends Controller
                 $output = $pdf->output();
                 //Guardar el PDF en un archivo
                 file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
-
+                $actualizar_nombre_documento = [
+                    'Nombre_documento' => $nombre_pdf
+                ];
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+                ->update($actualizar_nombre_documento);
                 /* Inserción del registro de que fue descargado */
                 // Extraemos el id del servicio asociado
                 $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
@@ -2607,6 +2636,12 @@ class CalificacionJuntasController extends Controller
                 $output = $pdf->output();
                 //Guardar el PDF en un archivo
                 file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
+
+                $actualizar_nombre_documento = [
+                    'Nombre_documento' => $nombre_pdf
+                ];
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+                ->update($actualizar_nombre_documento);
 
                 /* Inserción del registro de que fue descargado */
                 // Extraemos el id del servicio asociado
@@ -3217,6 +3252,12 @@ class CalificacionJuntasController extends Controller
                 $output = $pdf->output();
                 //Guardar el PDF en un archivo
                 file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
+
+                $actualizar_nombre_documento = [
+                    'Nombre_documento' => $nombre_pdf
+                ];
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+                ->update($actualizar_nombre_documento);
 
                 /* Inserción del registro de que fue descargado */
                 // Extraemos el id del servicio asociado
@@ -3841,6 +3882,11 @@ class CalificacionJuntasController extends Controller
                     $nombre_docx = "JUN_DEV_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$num_identificacion_afiliado}.docx";
                     $writer->save(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
 
+                    $actualizar_nombre_documento = [
+                        'Nombre_documento' => $nombre_docx
+                    ];
+                    sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+                    ->update($actualizar_nombre_documento);
                     /* Inserción del registro de que fue descargado */
                     // Extraemos el id del servicio asociado
                     $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
@@ -4475,7 +4521,12 @@ class CalificacionJuntasController extends Controller
                     $writer = new Word2007($phpWord);
                     $nombre_docx = "JUN_SOL_DICTAMEN_{$Id_comunicado}_{$Id_Asignacion}_{$num_identificacion_afiliado}.docx";
                     $writer->save(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
-
+                    
+                    $actualizar_nombre_documento = [
+                        'Nombre_documento' => $nombre_docx
+                    ];
+                    sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+                    ->update($actualizar_nombre_documento);
                     /* Inserción del registro de que fue descargado */
                     // Extraemos el id del servicio asociado
                     $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')

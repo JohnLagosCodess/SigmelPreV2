@@ -666,7 +666,7 @@
                                                             <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>
                                                             <td style="display: flex; flex-direction:row; justify-content:space-around;">
                                                                 @if ($comunicados->Tipo_descarga == "Acuerdo" || $comunicados->Tipo_descarga == "Desacuerdo")
-                                                                    <form id="archivo_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" method="POST">
+                                                                    <form id="archivo_{{$comunicados->Id_Comunicado}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
                                                                         @csrf
                                                                         <div class="d-none">
                                                                             @if ($comunicados->Tipo_descarga == "Acuerdo")
@@ -724,6 +724,13 @@
                                                                             <i class="fa fa-pen text-info"></i>
                                                                         </button>
                                                                     </form>
+                                                                    @if ($comunicados['Existe'])
+                                                                        <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                            <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                <i class="fas fa-sync-alt text-info"></i>
+                                                                            </button>
+                                                                        </form>
+                                                                    @endif
                                                                 {{-- </td> --}}
                                                                 @else {{--  if ($comunicados->Tipo_descarga == "Manual") --}}
                                                                     <form id="form_descargar_archivo_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" method="POST">
@@ -731,6 +738,13 @@
                                                                             <i class="far fa-eye text-info"></i>
                                                                         </button>
                                                                     </form>
+                                                                    @if ($comunicados['Existe'])
+                                                                        <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                            <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                <i class="fas fa-sync-alt text-info"></i>
+                                                                            </button>
+                                                                        </form>
+                                                                    @endif
                                                                 @endif
                                                                 {{-- <button id="replace_file" style="border: none; background:transparent;">
                                                                     <i class="fas fa-sync-alt text-info"></i>
@@ -776,6 +790,8 @@
         <input hidden="hidden" type="text" name="newIdservicio" id="newIdservicio" value="<?php if(!empty($array_datos_pronunciamientoPcl[0]->Id_Servicio)){ echo $array_datos_pronunciamientoPcl[0]->Id_Servicio;}?>">
         <button type="submit" id="botonVerEdicionEvento" style="display:none !important;"></button>
    </form>
+   @include('//.coordinador.modalReemplazarArchivos')
+
 @stop
 @section('js')
     <script type="text/javascript">

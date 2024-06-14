@@ -151,7 +151,6 @@ class ControversiaJuntasController extends Controller
             ['Id_Asignacion',$Id_asignacion_juntas]
         ])
         ->get(); 
-
         // creación de consecutivo para el comunicado
         $radicadocomunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
         ->select('N_radicado')
@@ -197,7 +196,29 @@ class ControversiaJuntasController extends Controller
         // traemos los comunicados
         $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$Id_evento_juntas], ['Id_Asignacion',$Id_asignacion_juntas], ['T_documento','N/A'],['Modulo_creacion','controversiaJuntas']])->get();
-
+        foreach ($array_comunicados_correspondencia as $comunicado) {
+            if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
+                $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
+                if(File::exists($filePath)){
+                    $comunicado['Existe'] = true;
+                }
+                else{
+                    $comunicado['Existe'] = false;
+                }
+            }
+            else if($comunicado['Tipo_descarga'] === 'Manual'){
+                $filePath = public_path('Documentos_Eventos/'.$comunicado['ID_evento'].'/'.$comunicado['Asunto']);
+                if(File::exists($filePath)){
+                    $comunicado['Existe'] = true;
+                }
+                else{
+                    $comunicado['Existe'] = false;
+                }
+            }
+            else{
+                $comunicado['Existe'] = false;
+            }
+        }
         //Obtenemos las secciones a mostrar
         $array_control = $this->controlJuntas($Id_evento_juntas, $Id_asignacion_juntas,  $array_datos_controversiaJuntas[0]->Nombre_servicio);
 
@@ -1695,10 +1716,11 @@ class ControversiaJuntasController extends Controller
                 'Agregar_copia' => $agregar_copias_comu,
                 'JRCI_copia' => $cual,
                 'Anexos' => $anexos,
-                'Nombre_usuario' => $nombre_usuario,
-                'F_registro' => $date,
                 'Tipo_descarga' => 'Controversia',
                 'Modulo_creacion' => 'controversiaJuntas',
+                'Reemplazado' => 0,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
             ];
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -1757,6 +1779,7 @@ class ControversiaJuntasController extends Controller
                 'JRCI_copia' => $cual,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Reemplazado' => 0,
             ];   
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
@@ -2097,6 +2120,7 @@ class ControversiaJuntasController extends Controller
         $nro_radicado = $request->nro_radicado;
         $nombre_afiliado = $request->nombre_afiliado;
         $tipo_identificacion = $request->tipo_identificacion;
+        $Id_comunicado = $request->id_comunicado;
         $num_identificacion = $request->num_identificacion;
         $id_evento = $request->id_evento;
         $id_Jrci_califi_invalidez = $request->id_Jrci_califi_invalidez;
@@ -2664,7 +2688,11 @@ class ControversiaJuntasController extends Controller
         $writer = new Word2007($phpWord);
         $nombre_docx = "JUN_DESACUERDO_{$id_asignacion}_{$num_identificacion}_{$nro_radicado}.docx";
         $writer->save(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
-
+        $actualizar_nombre_documento = [
+            'Nombre_documento' => $nombre_docx
+        ];
+        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+        ->update($actualizar_nombre_documento);
         /* Inserción del registro de que fue descargado */
 
         // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
@@ -2748,6 +2776,7 @@ class ControversiaJuntasController extends Controller
         $id_cliente = $request->id_cliente;
         $id_asignacion = $request->id_asignacion;
         $id_proceso = $request->id_proceso;
+        $Id_comunicado = $request->id_comunicado;
         $id_servicio = $request->id_servicio;
         $nro_radicado = $request->nro_radicado;
         $tipo_identificacion = $request->tipo_identificacion;
@@ -3213,7 +3242,11 @@ class ControversiaJuntasController extends Controller
         $output = $pdf->output();
         //Guardar el PDF en un archivo
         file_put_contents(public_path("Documentos_Eventos/{$id_evento}/{$nombre_pdf}"), $output);
-
+        $actualizar_nombre_documento = [
+            'Nombre_documento' => $nombre_pdf
+        ];
+        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+        ->update($actualizar_nombre_documento);
         /* Inserción del registro de que fue descargado */
 
         // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes

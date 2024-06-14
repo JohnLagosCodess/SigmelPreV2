@@ -43,6 +43,9 @@ class sigmel_informacion_comunicado_eventos extends Model
     'JRCI_copia',
     'Firmar_Comunicado',
     'Tipo_descarga',
+    'Modulo_creacion',
+    'Reemplazado',
+    'Nombre_documento',
     'Nombre_usuario',
     'F_registro'
     ];

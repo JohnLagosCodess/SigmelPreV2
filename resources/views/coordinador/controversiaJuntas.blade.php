@@ -1861,6 +1861,13 @@
                                                                             <i class="far fa-eye text-info"></i>
                                                                         </button>
                                                                     </form>
+                                                                    @if ($comunicados['Existe'])
+                                                                        <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                            <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                <i class="fas fa-sync-alt text-info"></i>
+                                                                            </button>
+                                                                        </form>
+                                                                    @endif
                                                                 </td>
                                                             @else
                                                                 <td style="display: flex; flex-direction:row; justify-content:space-around;">
@@ -1870,29 +1877,41 @@
                                                                     data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
                                                                     data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
                                                                     type="button" style="font-weight: bold;"> --}}
-                                                                    <a href="javascript:void(0);" id="editar_correspondencia_{{$comunicados->Id_Comunicado}}"
-                                                                        data-id_comite_inter="<?php if(count($array_comite_interdisciplinario) > 0){echo $array_comite_interdisciplinario[$key]->Id_com_inter;}?>"
-                                                                        data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
-                                                                        data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
-                                                                        data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
-                                                                    ><i class="fa fa-pen text-info"></i></a>
-                                                                    &nbsp;&nbsp;
-                                                                    <a href="javascript:void(0);" id="generar_proforma_acuerdo_{{$comunicados->Id_Comunicado}}"
-                                                                        data-tupla_nro_radicado="{{$comunicados->N_radicado}}"
-                                                                        data-id_comite_inter="<?php if(count($array_comite_interdisciplinario) > 0){echo $array_comite_interdisciplinario[$key]->Id_com_inter;}?>"
-                                                                        data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
-                                                                        data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
-                                                                        data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
-                                                                    ><i class="far fa-eye text-info"></i>
-                                                                    </a>
-                                                                    <a href="javascript:void(0);" id="generar_proforma_desacuerdo_{{$comunicados->Id_Comunicado}}"
-                                                                        data-tupla_nro_radicado="{{$comunicados->N_radicado}}"
-                                                                        data-id_comite_inter="<?php if(count($array_comite_interdisciplinario) > 0){echo $array_comite_interdisciplinario[$key]->Id_com_inter;}?>"
-                                                                        data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
-                                                                        data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
-                                                                        data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
-                                                                    ><i class="far fa-eye text-info"></i>
-                                                                    </a>
+                                                                    @foreach ($array_comite_interdisciplinario as $comite_inter)
+                                                                        @if($comite_inter->N_radicado === $comunicados->N_radicado)
+                                                                            <a href="javascript:void(0);" id="editar_correspondencia_{{$comunicados->Id_Comunicado}}"
+                                                                                data-id_comite_inter={{$comite_inter->Id_com_inter}}              
+                                                                                data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
+                                                                                data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
+                                                                                data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
+                                                                            ><i class="fa fa-pen text-info"></i></a>
+                                                                            <a href="javascript:void(0);" id="generar_proforma_acuerdo_{{$comunicados->Id_Comunicado}}"
+                                                                                data-archivo = "{{$comunicados}}"
+                                                                                data-tupla_nro_radicado="{{$comunicados->N_radicado}}"
+                                                                                data-id_comite_inter={{$comite_inter->Id_com_inter}}
+                                                                                data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
+                                                                                data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
+                                                                                data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
+                                                                            ><i class="far fa-eye text-info"></i>
+                                                                            </a>
+                                                                            <a href="javascript:void(0);" id="generar_proforma_desacuerdo_{{$comunicados->Id_Comunicado}}"
+                                                                                data-tupla_nro_radicado="{{$comunicados->N_radicado}}"
+                                                                                data-id_comite_inter={{$comite_inter->Id_com_inter}}
+                                                                                data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
+                                                                                data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
+                                                                                data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
+                                                                            ><i class="far fa-eye text-info"></i>
+                                                                            </a>
+                                                                            @if ($comunicados['Existe'])
+                                                                                <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                        <i class="fas fa-sync-alt text-info"></i>
+                                                                                    </button>
+                                                                                </form>
+                                                                            @endif
+                                                                        @endif
+                                                                    @endforeach
+                                                                    
                                                                 </td>
                                                             @endif
                                                         </tr>
@@ -1927,6 +1946,8 @@
     </form>
     <?php $aperturaModal = 'Edicion'; ?>
     @include('//.administrador.modalcarguedocumentos')
+    @include('//.coordinador.modalReemplazarArchivos')
+
 @stop
 @section('js')
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>

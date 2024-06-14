@@ -1410,7 +1410,7 @@
                                                 @if ($comunicados->Ciudad == 'N/A' && $comunicados->Tipo_descarga == "Dictamen")
                                                     <td style="display: flex; flex-direction:row; justify-content:space-around;">
                                                        {{-- Formulario para descargar el dml origen atel previsional (dictamen) --}}
-                                                       <form id="Form_dml_origen_previsional_{{$comunicados->Id_Comunicado}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
+                                                       <form id="Form_dml_origen_previsional_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
                                                             @csrf
                                                             <div class="d-none">
                                                                 {{-- Id cliente --}}
@@ -1450,6 +1450,13 @@
                                                                 <i class="far fa-eye text-info"></i>
                                                             </button>
                                                         </form>
+                                                        @if ($comunicados['Existe'])
+                                                            <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                    <i class="fas fa-sync-alt text-info"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
                                                     </td>
                                                 @elseif ($comunicados->Tipo_descarga == "Manual")
                                                     <td style="display: flex; flex-direction:row; justify-content:space-around;">
@@ -1458,11 +1465,18 @@
                                                                 <i class="far fa-eye text-info"></i>
                                                             </button>
                                                         </form>
+                                                        @if ($comunicados['Existe'])
+                                                            <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                    <i class="fas fa-sync-alt text-info"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
                                                     </td>                                                                
                                                 @else
                                                     <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
                                                         {{-- formulario Notificación del DML PREVISIONAL (oficio remisorio) --}}
-                                                        <form id="Form_noti_dml_previsional_{{$comunicados->Id_Comunicado}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
+                                                        <form id="Form_noti_dml_previsional_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
                                                             <div class="d-none">
                                                                 {{-- tupla tabla comunicados para extraer el nro radicado--}}
                                                                 <input type="text" name="id_tupla_comunicado_{{$comunicados->Id_Comunicado}}" id="id_tupla_comunicado_{{$comunicados->Id_Comunicado}}" value="<?php echo $comunicados->Id_Comunicado;?>">
@@ -1498,9 +1512,15 @@
                                                                 <i class="far fa-eye text-info"></i>
                                                             </button>
                                                         </form>
-
                                                         <label for="editar_correspondencia"><i class="fa fa-pen text-info"></i></label>
                                                         <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia" type="button" style="font-weight: bold;">
+                                                        @if ($comunicados['Existe'])
+                                                            <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                    <i class="fas fa-sync-alt text-info"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
                                                     </td>
                                                 @endif
                                             </tr>                                                        
@@ -1545,6 +1565,7 @@
         <input hidden="hidden" type="text" name="newIdservicio" id="newIdservicio" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_Servicio)){echo $array_datos_calificacion_origen[0]->Id_Servicio;}?>">
         <button type="submit" id="botonVerEdicionEvento" style="display:none !important;"></button>
    </form>
+   @include('//.coordinador.modalReemplazarArchivos')
 @stop
 
 @section('js')
