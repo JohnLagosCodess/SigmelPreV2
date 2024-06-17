@@ -413,20 +413,22 @@
                                         <div class="row" id="contenedor_forms_acci_inci_sincober">
                                             <div class="col-4">
                                                 <div class="form-group">
-                                                    <label for="tipo_accidente">Tipo de accidente</label>
-                                                    <input type="text" class="form-control" id="tipo_accidente" value="<?php if(!empty($nombre_tipo_accidente)){echo $nombre_tipo_accidente;}?>" disabled>
+                                                    <label for="tipo_accidente">Tipo de accidente <span style="color:red;">(*)</span></label>
+                                                    <input type="hidden" id="bd_tipo_accidente" value="{{$datos_bd_DTO_ATEL[0]->Tipo_accidente}}">
+                                                    <select class="custom-select tipo_accidente" name="tipo_accidente" id="tipo_accidente" required></select>
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
-                                                    <label for="fecha_evento">Fecha del evento</label>
-                                                    <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_evento)){echo $datos_bd_DTO_ATEL[0]->Fecha_evento;}?>" disabled>
+                                                    <label for="fecha_evento">Fecha del evento <span style="color:red;">(*)</span></label>
+                                                    <input type="hidden" id="bd_fecha_evento" value="">
+                                                    <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_evento)){echo $datos_bd_DTO_ATEL[0]->Fecha_evento;}?>" required>
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
-                                                    <label for="hora_evento">Hora del evento</label>
-                                                    <input type="time" class="form-control" name="hora_evento" id="hora_evento" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Hora_evento)){echo $datos_bd_DTO_ATEL[0]->Hora_evento;}?>" disabled>
+                                                    <label for="hora_evento">Hora del evento <span style="color:red;">(*)</span></label>
+                                                    <input type="time" class="form-control" name="hora_evento" id="hora_evento" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Hora_evento)){echo $datos_bd_DTO_ATEL[0]->Hora_evento;}?>" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -443,28 +445,45 @@
                                             </div>
                                             <div class="col-4" id="contenedor_grado_severidad">
                                                 <div class="form-group">
-                                                    <label for="grado_severidad">Grado de severidad</label>
-                                                    <input type="text" class="form-control" id="grado_severidad" value="<?php if(!empty($nombre_grado_severidad)){echo $nombre_grado_severidad;}?>" disabled>
+                                                    <label for="grado_severidad">Grado de severidad <span style="color:red;">(*)</span></label>
+                                                    <input type="hidden" id="bd_grado_severidad" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Grado_severidad)){echo $datos_bd_DTO_ATEL[0]->Grado_severidad;}?>">
+                                                    <select class="custom-select grado_severidad" name="grado_severidad" id="grado_severidad" required></select>
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="mortal">Mortal</label>
-                                                    <input type="text" class="form-control" id="mortal" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Mortal)){echo $datos_bd_DTO_ATEL[0]->Mortal;}?>" disabled>
+                                                    <select class="custom-select mortal" name="mortal" id="mortal">
+                                                        <option value=""></option>
+                                                        <?php if(!empty($datos_bd_DTO_ATEL[0]->Mortal)):?>
+                                                            <?php if($datos_bd_DTO_ATEL[0]->Mortal == "Si"):?>
+                                                                <option value="Si" selected>Si</option>
+                                                                <option value="No">No</option>
+                                                            <?php else:?>
+                                                                <option value="Si">Si</option>
+                                                                <option value="No" selected>No</option>
+                                                            <?php endif?>
+                                                        <?php else:?>
+                                                            <option value="Si">Si</option>
+                                                            <option value="No">No</option>
+                                                        <?php endif?>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-4 d-none" id="mostrar_f_fallecimiento">
                                                 <div class="form-group">
-                                                    <label for="fecha_fallecimiento">Fecha de fallecimiento</label>
-                                                    <input type="date" class="form-control" name="fecha_fallecimiento" id="fecha_fallecimiento" max="{{date("Y-m-d")}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento)){echo $datos_bd_DTO_ATEL[0]->Fecha_fallecimiento;}?>" disabled>
+                                                    <label for="fecha_fallecimiento">Fecha de fallecimiento <span style="color:red;">(*)</span></label>
+                                                    <input type="date" class="form-control" name="fecha_fallecimiento" id="fecha_fallecimiento" max="{{date("Y-m-d")}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento)){echo $datos_bd_DTO_ATEL[0]->Fecha_fallecimiento;}?>" >
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row" id="contenedor_descrip_FURAT">
                                             <div class="col-12">
                                                 <div class="form-group">
-                                                    <label for="descripcion_FURAT" class="col-form-label">Descripción Formato Único de Reporte de presunto Accidente de Trabajo (FURAT)</label>
-                                                    <textarea class="form-control descripcion_FURAT" name="descripcion_FURAT" id="descripcion_FURAT" rows="2" disabled><?php if(!empty($datos_bd_DTO_ATEL[0]->Descripcion_FURAT)){echo $datos_bd_DTO_ATEL[0]->Descripcion_FURAT;}?></textarea>
+                                                    <div class="form-group">
+                                                        <label for="descripcion_FURAT" class="col-form-label">Descripción Formato Único de Reporte de presunto Accidente de Trabajo (FURAT) <span style="color:red;">(*)</span></label>
+                                                        <textarea class="form-control descripcion_FURAT" name="descripcion_FURAT" id="descripcion_FURAT" rows="2" required><?php if(!empty($datos_bd_DTO_ATEL[0]->Descripcion_FURAT)){echo $datos_bd_DTO_ATEL[0]->Descripcion_FURAT;}?></textarea>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -472,19 +491,22 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="factor_riesgo">Factor de riesgo</label>
-                                                    <input type="text" class="form-control" id="factor_riesgo" value="<?php if(!empty($nombre_factor_riesgo)){echo $nombre_factor_riesgo;}?>" disabled>
+                                                    <input type="hidden" id="bd_factor_riesgo" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Factor_riesgo)){echo $datos_bd_DTO_ATEL[0]->Factor_riesgo;}?>">
+                                                    <select class="custom-select factor_riesgo" name="factor_riesgo" id="factor_riesgo"></select>
                                                 </div>
                                             </div>
                                             <div class="col-4" id="contenedor_tipo_lesion">
                                                 <div class="form-group">
                                                     <label for="tipo_lesion">Tipo de lesión</label>
-                                                    <input type="text" class="form-control" id="tipo_lesion" value="<?php if(!empty($nombre_tipo_lesion)){echo $nombre_tipo_lesion;}?>" disabled>
+                                                    <input type="hidden" id="bd_tipo_lesion" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Tipo_lesion)){echo $datos_bd_DTO_ATEL[0]->Tipo_lesion;}?>">
+                                                    <select class="custom-select tipo_lesion" name="tipo_lesion" id="tipo_lesion"></select>
                                                 </div>
                                             </div>
                                             <div class="col-4" id="contenedor_parte_afectada">
                                                 <div class="form-group">
                                                     <label for="parte_cuerpo_afectada">Parte del cuerpo afectada</label>
-                                                    <input type="text" class="form-control" id="parte_cuerpo_afectada" value="<?php if(!empty($nombre_parte_cuerpo_afectada)){echo $nombre_parte_cuerpo_afectada;}?>" disabled>
+                                                    <input type="hidden" id="bd_parte_cuerpo_afectada" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Parte_cuerpo_afectada)){echo $datos_bd_DTO_ATEL[0]->Parte_cuerpo_afectada;}?>">
+                                                    <select class="custom-select parte_cuerpo_afectada" name="parte_cuerpo_afectada" id="parte_cuerpo_afectada"></select>
                                                 </div>
                                             </div>
                                         </div>

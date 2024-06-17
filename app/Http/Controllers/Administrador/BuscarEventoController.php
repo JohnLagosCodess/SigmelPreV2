@@ -2457,6 +2457,9 @@ class BuscarEventoController extends Controller
             ->where([['ihae.ID_evento', $evento], ['ihae.Id_Asignacion', $Id_Asignacion_origen]])
             ->first();
 
+        if(empty($servicio)){
+            return;
+        }
         foreach ($reglas as $regla) {
             //Info. que se llenaran tanto para origen como para pcl
             if (in_array($servicio['Nombre_servicio'], $regla['servicio_origen']) && ($servicioNuevo == 12 || $servicioNuevo == 13)) {
@@ -2490,106 +2493,108 @@ class BuscarEventoController extends Controller
         }
 
         foreach ($reglas as $regla) {
-            //Caso PCL
-            if ($regla['servicio_nuevo'] == $servicioNuevo && in_array($servicio['Nombre_servicio'], $regla['servicio_origen'])) {
-                //Informacion para calificacion, recalificacion y revision pension
-                $informacionComite = optional(DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_comite_interdisciplinario_eventos as cie')
+            if (in_array($servicio['Nombre_servicio'], $regla['servicio_origen']) && $servicioNuevo == $regla['servicio_nuevo']) {
+                //Caso PCL
+                if ($regla['servicio_nuevo'] == 13) {
+                    //Informacion para calificacion, recalificacion y revision pension
+                    $informacionComite = optional(DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comite_interdisciplinario_eventos as cie')
                     ->leftJoin('sigmel_gestiones.sigmel_informacion_asignacion_eventos as sae', function ($join) {
                         $join->on('cie.ID_evento', '=', 'sae.ID_evento')
-                             ->on('cie.Id_Asignacion', '=', 'sae.Id_Asignacion');
+                        ->on('cie.Id_Asignacion', '=', 'sae.Id_Asignacion');
                     })->leftJoin('sigmel_gestiones.sigmel_informacion_decreto_eventos as de', function ($join) {
                         $join->on('cie.ID_evento', '=', 'de.ID_evento')
-                             ->on('cie.Id_Asignacion', '=', 'de.Id_Asignacion');
+                        ->on('cie.Id_Asignacion', '=', 'de.Id_Asignacion');
                     })->leftJoin('sigmel_gestiones.sigmel_informacion_laboralmente_activo_eventos as lae', function ($join) {
                         $join->on('cie.ID_evento', '=', 'lae.ID_evento')
-                             ->on('cie.Id_Asignacion', '=', 'lae.Id_Asignacion');
+                        ->on('cie.Id_Asignacion', '=', 'lae.Id_Asignacion');
                     })->leftJoin('sigmel_gestiones.sigmel_informacion_libro2_libro3_eventos as lle', function ($join) {
                         $join->on('cie.ID_evento', '=', 'lle.ID_evento')
-                             ->on('cie.Id_Asignacion', '=', 'lle.Id_Asignacion');
-                    })->select('cie.F_visado_comite as FechaDictamen',
-                    'sae.Consecutivo_dictamen as Consecutivo_dictamen',
-                    'de.N_siniestro as N_siniestro',
-                    'de.Porcentaje_pcl as _pcl',
-                    'de.Decreto_calificacion as Decreto_calificacion',
-                    'de.Total_Deficiencia50 as Deficiencia_50',
-                    'de.F_estructuracion as F_estructuracion',
-                    'de.Origen as Origen',
-                    'lae.Total_otras_areas as Total_otras_areas',
-                    'lle.Total_discapacidad as Total_discapacidad',
-                    'lle.Total_minusvalia as Total_minusvalia')
-                    ->where([
+                        ->on('cie.Id_Asignacion', '=', 'lle.Id_Asignacion');
+                    })->select(
+                        'cie.F_visado_comite as FechaDictamen',
+                        'sae.Consecutivo_dictamen as Consecutivo_dictamen',
+                        'de.N_siniestro as N_siniestro',
+                        'de.Porcentaje_pcl as _pcl',
+                        'de.Decreto_calificacion as Decreto_calificacion',
+                        'de.Total_Deficiencia50 as Deficiencia_50',
+                        'de.F_estructuracion as F_estructuracion',
+                        'de.Origen as Origen',
+                        'lae.Total_otras_areas as Total_otras_areas',
+                        'lle.Total_discapacidad as Total_discapacidad',
+                        'lle.Total_minusvalia as Total_minusvalia'
+                    )->where([
                         ['cie.ID_evento', '=', $evento],
                         ['cie.Id_Asignacion', '=', $Id_Asignacion_origen]
                     ])->first());
 
-                //Diagnostico de la calificacion
-                $diagnostico = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos')
-                ->select('CIE10','Nombre_CIE10','Lateralidad_CIE10','Deficiencia_motivo_califi_condiciones','Origen_CIE10','Principal')
-                ->where([
-                    ['ID_evento', $evento],
-                    ['Id_Asignacion', $Id_Asignacion_origen],
-                    ['Estado', '=', 'Activo']
-                ])
-                ->get()
-                ->map(function($item) use ($nombre_usuario, $date,$evento,$nuevo_id_asignacion,$proceso) {
-                    $item = (array)$item;
-                    $item['Nombre_usuario'] = $nombre_usuario;
-                    $item['F_registro'] = $date;
-                    $item['ID_evento'] = $evento;
-                    $item['Id_Asignacion'] = $nuevo_id_asignacion;
-                    $item['Id_proceso'] = $proceso;
-                    $item['Item_servicio'] = 'Controvertido Juntas';
-                    return $item;
-                });
-                        
-                //Informacion del controvertido para el caso PCL, el caul debe estar visado en el caso de calificacion
-                $Controvertido['N_dictamen_controvertido'] = optional($informacionComite)->Consecutivo_dictamen;
-                $Controvertido['F_dictamen_controvertido'] = optional($informacionComite)->FechaDictamen;
-                $Controvertido['N_siniestro'] =  optional($informacionComite)->N_siniestro;
-                $Controvertido['Origen_controversia'] = optional($informacionComite)->Origen;
-                $Controvertido['Manual_de_califi'] = optional($informacionComite)->Decreto_calificacion;
-                $Controvertido['Total_deficiencia'] = optional($informacionComite)->Deficiencia_50;
-                $Controvertido['Total_rol_ocupacional'] = optional($informacionComite)->Total_otras_areas;
-                $Controvertido['Total_discapacidad'] = optional($informacionComite)->Total_discapacidad;
-                $Controvertido['Total_minusvalia'] = optional($informacionComite)->Total_minusvalia;
-                $Controvertido['Porcentaje_pcl'] = optional($informacionComite)->_pcl;
-                $Controvertido['F_estructuracion_contro'] = optional($informacionComite)->F_estructuracion;
-            }
+                    //Diagnostico de la calificacion
+                    $diagnostico = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos')
+                    ->select('CIE10', 'Nombre_CIE10', 'Lateralidad_CIE10', 'Deficiencia_motivo_califi_condiciones', 'Origen_CIE10', 'Principal')
+                    ->where([
+                        ['ID_evento', $evento],
+                        ['Id_Asignacion', $Id_Asignacion_origen],
+                        ['Estado', '=', 'Activo']
+                    ])
+                    ->get()
+                        ->map(function ($item) use ($nombre_usuario, $date, $evento, $nuevo_id_asignacion, $proceso) {
+                            $item = (array)$item;
+                            $item['Nombre_usuario'] = $nombre_usuario;
+                            $item['F_registro'] = $date;
+                            $item['ID_evento'] = $evento;
+                            $item['Id_Asignacion'] = $nuevo_id_asignacion;
+                            $item['Id_proceso'] = $proceso;
+                            $item['Item_servicio'] = 'Controvertido Juntas';
+                            return $item;
+                        });
 
-            //Caso Origen
-            if ($regla['servicio_nuevo'] != $servicioNuevo && in_array($servicio['Nombre_servicio'], $regla['servicio_origen'])){
-                //Informacion diagonostico
-                $diagnostico = optional(DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos')
-                ->select('CIE10','Nombre_CIE10','Lateralidad_CIE10','Deficiencia_motivo_califi_condiciones','Origen_CIE10','Lateralidad_CIE10','Principal')
-                ->where([
-                    ['ID_evento', $evento],
-                    ['Id_Asignacion', $Id_Asignacion_origen],
-                    ['Estado', '=', 'Activo']
-                ])
-                ->get()
-                ->map(function($item) use ($nombre_usuario, $date,$evento,$nuevo_id_asignacion,$proceso) {
-                    $item = (array)$item;
-                    $item['Nombre_usuario'] = $nombre_usuario;
-                    $item['F_registro'] = $date;
-                    $item['ID_evento'] = $evento;
-                    $item['Id_Asignacion'] = $nuevo_id_asignacion;
-                    $item['Id_proceso'] = $proceso;
-                    $item['Item_servicio'] = 'Controvertido Juntas';
-                    return $item;
-                }));
+                    //Informacion del controvertido para el caso PCL, el caul debe estar visado en el caso de calificacion
+                    $Controvertido['N_dictamen_controvertido'] = optional($informacionComite)->Consecutivo_dictamen;
+                    $Controvertido['F_dictamen_controvertido'] = optional($informacionComite)->FechaDictamen;
+                    $Controvertido['N_siniestro'] =  optional($informacionComite)->N_siniestro;
+                    $Controvertido['Origen_controversia'] = optional($informacionComite)->Origen;
+                    $Controvertido['Manual_de_califi'] = optional($informacionComite)->Decreto_calificacion;
+                    $Controvertido['Total_deficiencia'] = optional($informacionComite)->Deficiencia_50;
+                    $Controvertido['Total_rol_ocupacional'] = optional($informacionComite)->Total_otras_areas;
+                    $Controvertido['Total_discapacidad'] = optional($informacionComite)->Total_discapacidad;
+                    $Controvertido['Total_minusvalia'] = optional($informacionComite)->Total_minusvalia;
+                    $Controvertido['Porcentaje_pcl'] = optional($informacionComite)->_pcl;
+                    $Controvertido['F_estructuracion_contro'] = optional($informacionComite)->F_estructuracion;
+                } elseif ($regla['servicio_nuevo'] == 12) {
+                    //Caso Origen
+                    //Informacion diagonostico
+                    $diagnostico = optional(DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos')
+                    ->select('CIE10', 'Nombre_CIE10', 'Lateralidad_CIE10', 'Deficiencia_motivo_califi_condiciones', 'Origen_CIE10', 'Lateralidad_CIE10', 'Principal')
+                    ->where([
+                        ['ID_evento', $evento],
+                        ['Id_Asignacion', $Id_Asignacion_origen],
+                        ['Estado', '=', 'Activo']
+                    ])
+                    ->get()
+                        ->map(function ($item) use ($nombre_usuario, $date, $evento, $nuevo_id_asignacion, $proceso) {
+                            $item = (array)$item;
+                            $item['Nombre_usuario'] = $nombre_usuario;
+                            $item['F_registro'] = $date;
+                            $item['ID_evento'] = $evento;
+                            $item['Id_Asignacion'] = $nuevo_id_asignacion;
+                            $item['Id_proceso'] = $proceso;
+                            $item['Item_servicio'] = 'Controvertido Juntas';
+                            return $item;
+                        }));
 
-                //Informacion DTO
-                $origen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as IAE')
-                ->select('IAE.Consecutivo_dictamen as Consecutivo_dictamen', 'IAE.F_registro as F_registro', 'DTO.N_siniestro as N_siniestro', 'DTO.Origen as DTO_Origen')
-                ->leftJoin('sigmel_gestiones.sigmel_informacion_dto_atel_eventos as DTO', function ($join){
-                    $join->on('DTO.ID_evento', '=', 'IAE.ID_Evento')
+                    //Informacion DTO
+                    $origen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as IAE')
+                    ->select('IAE.Consecutivo_dictamen as Consecutivo_dictamen', 'IAE.F_registro as F_registro', 'DTO.N_siniestro as N_siniestro', 'DTO.Origen as DTO_Origen')
+                    ->leftJoin('sigmel_gestiones.sigmel_informacion_dto_atel_eventos as DTO', function ($join) {
+                        $join->on('DTO.ID_evento', '=', 'IAE.ID_Evento')
                         ->on('DTO.Id_Asignacion', '=', 'IAE.Id_Asignacion');
-                })->where('IAE.Id_Asignacion', $Id_Asignacion_origen)->get();
+                    })->where('IAE.Id_Asignacion', $Id_Asignacion_origen)->get();
 
-                $Controvertido['Origen_controversia'] = optional($origen[0])->DTO_Origen;
-                $Controvertido['N_dictamen_controvertido'] = optional($origen[0])->Consecutivo_dictamen;
-                $Controvertido['F_dictamen_controvertido'] = optional($origen[0])->F_registro;
-                $Controvertido['N_siniestro'] = optional($origen[0])->N_siniestro;
+                    $Controvertido['Origen_controversia'] = optional($origen[0])->DTO_Origen;
+                    $Controvertido['N_dictamen_controvertido'] = optional($origen[0])->Consecutivo_dictamen;
+                    $Controvertido['F_dictamen_controvertido'] = optional($origen[0])->F_registro;
+                    $Controvertido['N_siniestro'] = optional($origen[0])->N_siniestro;
+                }
+                break;
             }
         }
 
