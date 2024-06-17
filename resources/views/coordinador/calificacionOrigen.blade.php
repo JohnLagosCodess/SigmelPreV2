@@ -241,6 +241,18 @@
                                             <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Nueva_F_radicacion)){echo $array_datos_calificacionOrigen[0]->Nueva_F_radicacion;}?>">
                                         </div>
                                     </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="fuente_informacion">Fuente de información</label>
+                                            <select class="fuente_informacion custom-select" name="fuente_informacion" id="fuente_informacion">
+                                                @if (!empty($array_datos_calificacionOrigen[0]->Fuente_informacion))
+                                                    <option value="{{$array_datos_calificacionOrigen[0]->Fuente_informacion}}" selected>{{$array_datos_calificacionOrigen[0]->Nombre_Fuente_informacion}}</option>
+                                                @else
+                                                    <option value="">Seleccione una opción</option>
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-12">

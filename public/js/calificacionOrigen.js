@@ -12,6 +12,12 @@ $(document).ready(function(){
         width: '100%'
     }); 
 
+    $(".fuente_informacion").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false,
+        width: '100%'
+    }); 
+
     $(".forma_envio").select2({
         placeholder:"Seleccione una opción",
         allowClear:false
@@ -114,7 +120,32 @@ $(document).ready(function(){
     autoAdjustColumns(listado_docs_segueridos);
 
     // llenado de selectores
+
     let token = $('input[name=_token]').val();
+
+    //Listado de fuente de informacion calificacion PCL    
+    let datos_lista_fuente_informacion = {
+        '_token': token,
+        'parametro':"lista_fuente_informacion",        
+    };
+    
+    $.ajax({
+        type:'POST',
+        url:'/selectoresOrigenAtel',
+        data: datos_lista_fuente_informacion,
+        success:function(data){
+            //console.log(data);
+            let fuenteInformacionCalificacionPcl = $('select[name=fuente_informacion]').val();
+            let fuenteInfoCalificacionPcl = Object.keys(data);
+
+            $('#fuente_informacion').append('<option>Ninguna</option');
+            for (let i = 0; i < fuenteInfoCalificacionPcl.length; i++) {
+                if (data[fuenteInfoCalificacionPcl[i]]['Id_Parametro'] != fuenteInformacionCalificacionPcl) {                    
+                    $('#fuente_informacion').append('<option value="'+data[fuenteInfoCalificacionPcl[i]]['Id_Parametro']+'">'+data[fuenteInfoCalificacionPcl[i]]['Nombre_parametro']+'</option>');
+                }
+            }
+        }
+    });
 
     //Listado de tipo evento
     let datos_lista_tipo_evento = {
@@ -608,7 +639,8 @@ $(document).ready(function(){
         formData.append('profesional', $('#profesional').val());
         formData.append('descripcion_accion', $('#descripcion_accion').val());        
         formData.append('banderaguardar', $('#bandera_accion_guardar_actualizar').val());
-       
+        formData.append('fuente_informacion', $('#fuente_informacion').val());       
+
         $.ajax({
             type:'POST',
             url:'/registrarCalificacionOrigen',

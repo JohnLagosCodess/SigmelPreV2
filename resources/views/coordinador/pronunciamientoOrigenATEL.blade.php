@@ -357,7 +357,7 @@
                                             </span>
                                         </div>
                                         <div class="form-group">
-                                            <label for="asunto_cali">Asunto<span style="color: red;">(*)</span></label>
+                                            <label for="asunto_cali" id='label_asunto_cali'>Asunto<span style="color: red;">(*)</span></label>
                                             <br>
                                             <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nro_dictamen_pri_cali">N° Dictamen Primer Calificador</button>
                                             <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_fecha_dictamen_pri_cali">Fecha Dictamen Primer Calificador</button>
@@ -849,6 +849,22 @@
             $(document).on('click', "a[id^='btn_remover_diagnosticos_moticalifi']", function(){
                 var nombre_cie10_fila = $(this).data("clase_fila");
                 listado_diagnostico_cie10.row("."+nombre_cie10_fila).remove().draw();
+            });
+
+            //PBS 045 se solicita desactivar la obligatoriedad del campo asunto cuando se selecione un silencio.
+            if($("#di_silencio_pr").prop('checked',true)){
+                $("#asunto_cali").prop("required",false);
+                $("#label_asunto_cali span").addClass('d-none');
+            }
+
+            $("#di_silencio_pr").focus(function() {
+                $("#asunto_cali").prop("required",false);
+                $("#label_asunto_cali span").addClass('d-none');
+            });
+
+            $("input[type='radio']:not(#di_silencio_pr)").change(function(){
+                $("#asunto_cali").prop("required",true);
+                $("#label_asunto_cali span").removeClass('d-none');
             });
             
         });

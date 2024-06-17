@@ -23,6 +23,7 @@ use App\Models\sigmel_informacion_seguimientos_eventos;
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
 use App\Models\sigmel_informacion_historial_accion_eventos;
+use App\Models\sigmel_lista_parametros;
 
 class CalificacionOrigenController extends Controller
 {
@@ -340,6 +341,7 @@ class CalificacionOrigenController extends Controller
                 'F_accion' => $date_time,
                 'Accion' => $request->accion,
                 'F_Alerta' => $request->fecha_alerta,
+                'fuente_informacion' => $request->fuente_informacion,
                 'Enviar' => $request->enviar,
                 'Estado_Facturacion' => $request->estado_facturacion,
                 'Causal_devolucion_comite' => $Causal_devolucion_comite,
@@ -516,6 +518,7 @@ class CalificacionOrigenController extends Controller
                 'F_accion' => $date_time,
                 'Accion' => $request->accion,
                 'F_Alerta' => $request->fecha_alerta,
+                'fuente_informacion' => $request->fuente_informacion,
                 'Enviar' => $request->enviar,
                 'Estado_Facturacion' => $request->estado_facturacion,
                 'Causal_devolucion_comite' => $Causal_devolucion_comite,
@@ -684,6 +687,21 @@ class CalificacionOrigenController extends Controller
 
             $info_lista_profesional_proceso = json_decode(json_encode($lista_profesional_proceso, true));
             return response()->json($info_lista_profesional_proceso);
+        }
+
+        // Listado Fuente de informacion
+        if($parametro == 'lista_fuente_informacion'){
+            $listado_fuente_info_calificacion = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro', 'Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Fuente informacion'],
+                ['Estado', '=', 'activo']
+            ])->whereNotIn('Nombre_parametro',['Calificación','Internacional','Tutela'])
+            ->get();
+
+            $info_listado_fuente_info_calificacion = json_decode(json_encode($listado_fuente_info_calificacion, true));
+            return response()->json($info_listado_fuente_info_calificacion);
+
         }
 
         // Listado Causal de devolucion comite PCL

@@ -50,6 +50,32 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    
+    $(".tipo_accidente").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".mortal").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".factor_riesgo").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".tipo_lesion").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".parte_cuerpo_afectada").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
     var token = $('input[name=_token]').val();
 
     // llenado de selector de motivos de solicitud
@@ -71,6 +97,187 @@ $(document).ready(function(){
                     $('#motivo_solicitud').append('<option value="'+data[listado_motivo_solicitud[i]]['Id_Solicitud']+'" selected>'+data[listado_motivo_solicitud[i]]['Nombre_solicitud']+'</option>');
                 }else{
                     $('#motivo_solicitud').append('<option value="'+data[listado_motivo_solicitud[i]]['Id_Solicitud']+'">'+data[listado_motivo_solicitud[i]]['Nombre_solicitud']+'</option>');
+                }
+            }
+        }
+    });
+
+    //Seccion informacion del evento
+    // llenado de datos selector tipo de accidente
+    let datos_tipo_accidente = {
+        '_token': token,
+        'parametro':"tipo_accidente"
+    };
+
+    $.ajax({
+        type:'POST',
+        url:'/cargueListadoSelectoresDTOATEL',
+        data: datos_tipo_accidente,
+        success:function(data){
+            //console.log(data);
+            $('#tipo_accidente').empty();
+            $('#tipo_accidente').append('<option value=""></option>');
+            let listado_tipo_accidente = Object.keys(data);
+            for (let i = 0; i < listado_tipo_accidente.length; i++) {
+                if (data[listado_tipo_accidente[i]]['Id_Parametro'] == $("#bd_tipo_accidente").val()) {
+                    $('#tipo_accidente').append('<option value="'+data[listado_tipo_accidente[i]]['Id_Parametro']+'" selected>'+data[listado_tipo_accidente[i]]['Nombre_parametro']+'</option>');
+                } else {
+                    $('#tipo_accidente').append('<option value="'+data[listado_tipo_accidente[i]]['Id_Parametro']+'">'+data[listado_tipo_accidente[i]]['Nombre_parametro']+'</option>');
+                }
+            }
+        }
+    });
+
+        // llenado de datos de selector de grado de severidad
+        let datos_grado_severidad = {
+            '_token': token,
+            'parametro':"grado_severidad"
+        };
+        $.ajax({
+            type:'POST',
+            url:'/cargueListadoSelectoresDTOATEL',
+            data: datos_grado_severidad,
+            success:function(data){
+                //console.log(data);
+                $('#grado_severidad').empty();
+                $('#grado_severidad').append('<option value=""></option>');
+                let listado_grado_severidad = Object.keys(data);
+                for (let i = 0; i < listado_grado_severidad.length; i++) {
+                    if (data[listado_grado_severidad[i]]['Id_Parametro'] == $("#bd_grado_severidad").val()) {
+                        $('#grado_severidad').append('<option value="'+data[listado_grado_severidad[i]]['Id_Parametro']+'" selected>'+data[listado_grado_severidad[i]]['Nombre_parametro']+'</option>');
+                    } else {
+                        $('#grado_severidad').append('<option value="'+data[listado_grado_severidad[i]]['Id_Parametro']+'">'+data[listado_grado_severidad[i]]['Nombre_parametro']+'</option>');
+                    }
+                }
+            }
+        });
+    
+        // VERIFICACION DE SELECTOR MORTAL EN CASO DE QUE EXISTA INFORMACIÓN GUARDADA
+        var mortal_opt = "";
+    
+        var verificacion_mortal= $("#mortal").val();
+        if (verificacion_mortal == "Si") {
+            $("#mostrar_f_fallecimiento").removeClass("d-none");
+            $("#fecha_fallecimiento").prop("required", true);
+            mortal_opt = verificacion_mortal;
+        } else if(verificacion_mortal == "No") {
+            $("#mostrar_f_fallecimiento").addClass("d-none");
+            $("#fecha_fallecimiento").prop("required", false);
+            $("#fecha_fallecimiento").val("");
+            mortal_opt = "No";
+        } else{
+            mortal_opt = "";
+        }
+        
+        // Validación selector mortal
+        $("#mortal").change(function(){
+            var opt_mortal_selccionada = $(this).val();
+    
+            if (opt_mortal_selccionada == "Si") {
+                $("#mostrar_f_fallecimiento").removeClass("d-none");
+                $("#fecha_fallecimiento").prop("required", true);
+                mortal_opt = opt_mortal_selccionada;
+            } else if(opt_mortal_selccionada == "No") {
+                $("#mostrar_f_fallecimiento").addClass("d-none");
+                $("#fecha_fallecimiento").prop("required", false);
+                $("#fecha_fallecimiento").val("");
+                mortal_opt = "No";
+            }else{
+                mortal_opt = "";
+            }
+        });
+
+            // VERIFICACION DE CHECKBOX ENFERMEDAD HEREDADA EN CASO DE DE QUE EXISTA INFORMACIÓN YA GUARADADA.
+    var enfermedad_heredada_opt = "";
+
+    if ($("#enfermedad_heredada").is(":checked")) {
+        $("#contenedor_nombre_entidad_enfermedad_heredada").removeClass('d-none');
+        enfermedad_heredada_opt = "Si";
+    } else {
+        $("#contenedor_nombre_entidad_enfermedad_heredada").addClass('d-none');
+        $("#entidad_enfermedad").val("");
+        enfermedad_heredada_opt = "No";
+    }
+
+    // Validadion checkbox Enfermedad heredada
+    $("#enfermedad_heredada").click(function(){
+        if ($(this).is(":checked")) {
+            $("#contenedor_nombre_entidad_enfermedad_heredada").removeClass('d-none');
+            enfermedad_heredada_opt = "Si";
+        }else{
+            $("#contenedor_nombre_entidad_enfermedad_heredada").addClass('d-none');
+            $("#entidad_enfermedad").val("");
+            enfermedad_heredada_opt = "No";
+        }
+    });
+
+    // llenado de datos de selector de factor de riesgo
+    let datos_factor_riesgo = {
+        '_token': token,
+        'parametro':"factor_riesgo"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargueListadoSelectoresDTOATEL',
+        data: datos_factor_riesgo,
+        success:function(data){
+            //console.log(data);
+            $('#factor_riesgo').empty();
+            $('#factor_riesgo').append('<option value=""></option>');
+            let listado_factor_riesgo = Object.keys(data);
+            for (let i = 0; i < listado_factor_riesgo.length; i++) {
+                if (data[listado_factor_riesgo[i]]['Id_Parametro'] == $("#bd_factor_riesgo").val()) {
+                    $('#factor_riesgo').append('<option value="'+data[listado_factor_riesgo[i]]['Id_Parametro']+'" selected>'+data[listado_factor_riesgo[i]]['Nombre_parametro']+'</option>');
+                } else {
+                    $('#factor_riesgo').append('<option value="'+data[listado_factor_riesgo[i]]['Id_Parametro']+'">'+data[listado_factor_riesgo[i]]['Nombre_parametro']+'</option>');
+                }
+            }
+        }
+    });
+
+    // llenado de datos de selector de tipo de lesion
+    let datos_tipo_lesion = {
+        '_token': token,
+        'parametro':"tipo_lesion"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargueListadoSelectoresDTOATEL',
+        data: datos_tipo_lesion,
+        success:function(data){
+            //console.log(data);
+            $('#tipo_lesion').empty();
+            $('#tipo_lesion').append('<option value=""></option>');
+            let listado_tipo_lesion = Object.keys(data);
+            for (let i = 0; i < listado_tipo_lesion.length; i++) {
+                if (data[listado_tipo_lesion[i]]['Id_Parametro'] == $("#bd_tipo_lesion").val()) {
+                    $('#tipo_lesion').append('<option value="'+data[listado_tipo_lesion[i]]['Id_Parametro']+'" selected>'+data[listado_tipo_lesion[i]]['Nombre_parametro']+'</option>');
+                } else {
+                    $('#tipo_lesion').append('<option value="'+data[listado_tipo_lesion[i]]['Id_Parametro']+'">'+data[listado_tipo_lesion[i]]['Nombre_parametro']+'</option>');
+                }
+            }
+        }
+    });
+
+    // llenado de datos de selector de parte del cuerpo afectada
+    let datos_parte_cuerpo_afectada = {
+        '_token': token,
+        'parametro':"parte_cuerpo_afectada"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargueListadoSelectoresDTOATEL',
+        data: datos_parte_cuerpo_afectada,
+        success:function(data){
+            //console.log(data);
+            $('#parte_cuerpo_afectada').empty();
+            $('#parte_cuerpo_afectada').append('<option value=""></option>');
+            let listado_parte_cuerpo_afectada = Object.keys(data);
+            for (let i = 0; i < listado_parte_cuerpo_afectada.length; i++) {
+                if (data[listado_parte_cuerpo_afectada[i]]['Id_Parametro'] == $("#bd_parte_cuerpo_afectada").val()) {
+                    $('#parte_cuerpo_afectada').append('<option value="'+data[listado_parte_cuerpo_afectada[i]]['Id_Parametro']+'" selected>'+data[listado_parte_cuerpo_afectada[i]]['Nombre_parametro']+'</option>');
+                } else {
+                    $('#parte_cuerpo_afectada').append('<option value="'+data[listado_parte_cuerpo_afectada[i]]['Id_Parametro']+'">'+data[listado_parte_cuerpo_afectada[i]]['Nombre_parametro']+'</option>');
                 }
             }
         }
@@ -798,11 +1005,14 @@ $(document).ready(function(){
     /* Validacion botón para guardar o actualizar la sección Información del evento
     para quitar el required de los demás campos del formulario */
     var btn_guardar_info_evento = 0;
+    let bandera_info_evento ;
     $("#btn_guardar_info_evento").click(function(){
         
         var btn_seccion_info_evento = $('#btn_guardar_info_evento').val();
         
         if (btn_seccion_info_evento == "Guardar" || btn_seccion_info_evento == "Actualizar") {
+
+            bandera_info_evento = "Actualizar";
             // campos sección Diagnósticos Adicionados
             $("#sustentacion_adicion_dx").prop("required", false);
             // campos sección Calificación del Origen
@@ -942,6 +1152,7 @@ $(document).ready(function(){
                 // Registrar Información
                 var informacion_formulario = {
                     '_token': token,
+                    "bandera_info_evento": bandera_info_evento,
                     'ID_Evento': id_evento,
                     'Id_Asignacion': id_asignacion_adicion_dx,
                     'Id_proceso': id_proceso_adicion_dx,
@@ -949,7 +1160,18 @@ $(document).ready(function(){
                     'Activo': $("#es_activo").val(),
                     'Tipo_evento': tipo_evento,
                     'motivo_solicitud': $("#motivo_solicitud").val(),
-                    'N_siniestro': $("#n_siniestro").val(),
+                    'Tipo_accidente': $("#tipo_accidente").val(), 
+                    'Fecha_evento': $("#fecha_evento").val(), 
+                    'N_siniestro': $("#n_siniestro").val(), 
+                    'Hora_evento': $("#hora_evento").val(), 
+                    'Grado_severidad': $("#grado_severidad").val(),
+                    'Mortal': mortal_opt,
+                    'Fecha_fallecimiento': $("#fecha_fallecimiento").val(),
+                    'Descripcion_FURAT': $("#descripcion_FURAT").val(),
+                    'Factor_riesgo': $("#factor_riesgo").val(),
+                    'Tipo_lesion': $("#tipo_lesion").val(),
+                    'Parte_cuerpo_afectada': $("#parte_cuerpo_afectada").val(),
+                    'Justificacion_revision_origen': $("#justificacion_revision_origen").val(),
                     'Relacion_documentos': relacion_docs_dto_atel,
                     'Examenes_interconsultas': datos_finales_examenes_interconsultas,
                     'Adicion_motivo_calificacion': datos_finales_adiciones_calificacion,
@@ -962,6 +1184,7 @@ $(document).ready(function(){
                 // Actualizar Información
                 var informacion_formulario = {
                     '_token': token,
+                    "bandera_info_evento": bandera_info_evento,
                     'Id_Adiciones_Dx': id_adicion_dx,
                     'ID_Evento': id_evento,
                     'Id_Asignacion': id_asignacion_adicion_dx,
@@ -970,7 +1193,18 @@ $(document).ready(function(){
                     'Activo': $("#es_activo").val(),
                     'Tipo_evento': tipo_evento,
                     'motivo_solicitud': $("#motivo_solicitud").val(),
-                    'N_siniestro': $("#n_siniestro").val(),
+                    'Tipo_accidente': $("#tipo_accidente").val(), 
+                    'Fecha_evento': $("#fecha_evento").val(), 
+                    'N_siniestro': $("#n_siniestro").val(), 
+                    'Hora_evento': $("#hora_evento").val(), 
+                    'Grado_severidad': $("#grado_severidad").val(),
+                    'Mortal': mortal_opt,
+                    'Fecha_fallecimiento': $("#fecha_fallecimiento").val(),
+                    'Descripcion_FURAT': $("#descripcion_FURAT").val(),
+                    'Factor_riesgo': $("#factor_riesgo").val(),
+                    'Tipo_lesion': $("#tipo_lesion").val(),
+                    'Parte_cuerpo_afectada': $("#parte_cuerpo_afectada").val(),
+                    'Justificacion_revision_origen': $("#justificacion_revision_origen").val(),
                     'Relacion_documentos': relacion_docs_dto_atel,
                     'Examenes_interconsultas': datos_finales_examenes_interconsultas,
                     'Adicion_motivo_calificacion': datos_finales_adiciones_calificacion,

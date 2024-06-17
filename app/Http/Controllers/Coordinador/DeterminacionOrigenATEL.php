@@ -469,7 +469,7 @@ class DeterminacionOrigenATEL extends Controller
                 ['Tipo_lista', '=', 'Origen DTO ATEL'],
                 ['Estado', '=', 'activo']
             ])
-            ->whereNotIn('Nombre_parametro', ['Común', 'Laboral', 'Sin Origen', 'Sin Cobertura'])
+            ->whereNotIn('Nombre_parametro', ['Común', 'Laboral', 'Sin Origen', 'Sin Cobertura','Mixto','Integral','Derivado del evento','No derivado del evento'])
             ->get();
             $info_origen_vali_2 = json_decode(json_encode($listado_origen_vali_2, true));
             return response()->json($info_origen_vali_2);
@@ -483,7 +483,7 @@ class DeterminacionOrigenATEL extends Controller
                 ['Tipo_lista', '=', 'Origen DTO ATEL'],
                 ['Estado', '=', 'activo']
             ])
-            ->whereNotIn('Nombre_parametro', ['Común', 'Laboral', 'Sin Origen', 'Incidente'])
+            ->whereNotIn('Nombre_parametro', ['Común', 'Laboral', 'Sin Origen', 'Incidente','Mixto','Integral','Derivado del evento','No derivado del evento'])
             ->get();
             $info_origen_vali_3 = json_decode(json_encode($listado_origen_vali_3, true));
             return response()->json($info_origen_vali_3);
