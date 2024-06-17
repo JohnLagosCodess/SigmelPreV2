@@ -543,7 +543,7 @@
                                             <div class="col-12">
                                                 <div class="form-group">
                                                     <label for="justificacion_revision_origen" class="col-form-label">Justificación para revisión del Origen</label>
-                                                    <textarea class="form-control justificacion_revision_origen" name="justificacion_revision_origen" id="justificacion_revision_origen" rows="2" disabled><?php if(!empty($datos_bd_DTO_ATEL[0]->Justificacion_revision_origen)){echo $datos_bd_DTO_ATEL[0]->Justificacion_revision_origen;}?></textarea>
+                                                    <textarea class="form-control justificacion_revision_origen" name="justificacion_revision_origen" id="justificacion_revision_origen" rows="2" ><?php if(!empty($datos_bd_DTO_ATEL[0]->Justificacion_revision_origen)){echo $datos_bd_DTO_ATEL[0]->Justificacion_revision_origen;}?></textarea>
                                                 </div>
                                             </div>
                                         </div>

@@ -794,8 +794,8 @@ class AdicionDxDTO extends Controller
 
         sigmel_informacion_accion_eventos::on('sigmel_gestiones')
         ->where('ID_evento',$request->ID_Evento)->update($datos_info_accion_evento);
-        
-        if($request->bandera_info_evento == 'Actualizar'){
+
+        if($request->bandera_info_evento == 'Actualizar' || !empty($request->Justificacion_revision_origen)){
             //Informacion del evento
             $datos_formulario = [
                 'Tipo_accidente' => $request->Tipo_accidente,
@@ -808,9 +808,10 @@ class AdicionDxDTO extends Controller
                 'Descripcion_FURAT' => $request->Descripcion_FURAT,
                 'Factor_riesgo' => $request->Factor_riesgo,
                 'Tipo_lesion' => $request->Tipo_lesion,
-                'Parte_cuerpo_afectada' => $request->Parte_cuerpo_afectada
+                'Parte_cuerpo_afectada' => $request->Parte_cuerpo_afectada,
+                'Justificacion_revision_origen' => $request->Justificacion_revision_origen,
                 ];
-                
+
             sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
                 ->where('ID_evento',$request->ID_Evento)->update($datos_formulario);
         }
