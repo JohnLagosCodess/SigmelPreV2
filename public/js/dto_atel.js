@@ -1874,13 +1874,14 @@ $(document).ready(function(){
 
     var profesional_comite = $("#profesional_comite").val();
     if (profesional_comite !== '') {
-        // $("#GuardarComiteInter").prop('disabled', true);
+        $("#GuardarComiteInter").prop('disabled', true);
         $("#div_correspondecia").removeClass('d-none');
     }
 
     // Desabilitar los botones si ya esta visado
     var visar_servicio = $("#visar_servicio").val();
     if (visar_servicio!== '') {
+        // $("#div_correspondecia").addClass('d-none');
         // $("#EditarDTOATEL").prop('disabled', true);
     }
 
@@ -2621,7 +2622,6 @@ $(document).ready(function(){
             $("#btn_guardar_relacion_docs").prop("disabled", true);
             $("#btn_guardar_diagnosticos_mot_cali").prop("disabled", true);
             $("#EditarDTOATEL").prop('disabled', true);
-            $("#GuardarComiteInter").prop('disabled', true);
         }
     }
 
