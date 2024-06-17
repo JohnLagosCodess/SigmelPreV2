@@ -2821,7 +2821,7 @@ $(document).ready(function(){
     }) 
     // habilitar o deshabilitar botones o etiquetas de toda la vista
     var profesional_comite = $("#profesional_comite").val();
-    if (profesional_comite !== '') {
+    if (profesional_comite !== '' && idRol != 6) {
         // botones
         $('#ActualizarLaboralActivo').prop('disabled', true);
         $('#GuardarLaboralActivo').prop('disabled', true);            

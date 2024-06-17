@@ -1094,7 +1094,7 @@ $(document).ready(function(){
     }) 
 
     var profesional_comite = $("#profesional_comite").val();
-    if (profesional_comite !== '') {
+    if (profesional_comite !== '' && idRol != 6) {
         $("#GuardarComiteInter").prop('disabled', true);
         $("#btn_guardar_info_evento").prop('disabled', true);
         $("#btn_guardar_relacion_docs").prop('disabled', true);

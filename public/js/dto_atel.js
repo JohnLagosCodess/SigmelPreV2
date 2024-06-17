@@ -1874,14 +1874,14 @@ $(document).ready(function(){
 
     var profesional_comite = $("#profesional_comite").val();
     if (profesional_comite !== '') {
-        $("#GuardarComiteInter").prop('disabled', true);
+        // $("#GuardarComiteInter").prop('disabled', true);
         $("#div_correspondecia").removeClass('d-none');
     }
 
     // Desabilitar los botones si ya esta visado
     var visar_servicio = $("#visar_servicio").val();
     if (visar_servicio!== '') {
-        $("#EditarDTOATEL").prop('disabled', true);
+        // $("#EditarDTOATEL").prop('disabled', true);
     }
 
 
@@ -2615,6 +2615,14 @@ $(document).ready(function(){
         $("#btn_insertar_origen_evento").prop('disabled', true);
         $(".note-editable").attr("contenteditable", false);
         $("#firmar").prop('disabled', true);
+        if ($("#visar_servicio").val() !== '' && $("#profesional_comite").val() !== '') {
+            $("#btn_guardar_info_evento").prop("disabled", true);
+            $("#btn_guardar_justi_revi_ori").prop("disabled", true);
+            $("#btn_guardar_relacion_docs").prop("disabled", true);
+            $("#btn_guardar_diagnosticos_mot_cali").prop("disabled", true);
+            $("#EditarDTOATEL").prop('disabled', true);
+            $("#GuardarComiteInter").prop('disabled', true);
+        }
     }
 
 });

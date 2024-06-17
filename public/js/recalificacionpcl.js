@@ -3421,7 +3421,7 @@ $(document).ready(function(){
     }) 
 
     var profesional_comite = $("#profesional_comite").val();
-    if (profesional_comite !== '') {
+    if (profesional_comite !== '' && idRol != 6) {
         //Selectores
         $('#origen_firme').prop('disabled', true);
         $('#origen_cobertura').prop('disabled', true);
