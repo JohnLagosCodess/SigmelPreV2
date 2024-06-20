@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_agudeza_auditiva_eventos', function (Blueprint $table) {
             $table->increments('Id_Agudeza_auditiva');
-            $table->string('ID_evento', 15);
+            $table->string('ID_evento', 20);
             $table->integer('Id_Asignacion');
             $table->integer('Id_proceso');
             $table->integer('Oido_Izquierdo');

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_agudeza_visualre_eventos', function (Blueprint $table) {
             $table->increments('Id_agudeza_re');
-            $table->string('ID_evento_re', 15);
+            $table->string('ID_evento_re', 20);
             $table->integer('Id_Asignacion_re');
             $table->integer('Id_proceso_re');
             $table->enum('Ceguera_Total_re',['Si', 'No'])->nullable();

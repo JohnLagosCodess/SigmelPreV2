@@ -69,7 +69,7 @@ class CalificacionJuntasController extends Controller
         ->select('j.ID_evento','j.Enfermedad_heredada','j.F_transferencia_enfermedad','j.Primer_calificador','pa.Nombre_parametro as Calificador'
         ,'j.Nom_entidad','j.N_dictamen_controvertido','j.F_dictamen_controvertido','j.N_siniestro','j.F_notifi_afiliado','j.Parte_controvierte_califi','pa2.Nombre_parametro as ParteCalificador','j.Nombre_controvierte_califi',
         'j.N_radicado_entrada_contro','j.Contro_origen','j.Contro_pcl','j.Contro_diagnostico','j.Contro_f_estructura','j.Contro_m_califi',
-        'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','sie.Nombre_entidad as JrciNombre','j.F_plazo_controversia','j.Observaciones')
+        'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','sie.Nombre_entidad as JrciNombre','j.F_envio_jrci', 'j.F_envio_jnci','j.F_plazo_controversia','j.Observaciones')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa', 'j.Primer_calificador', '=', 'pa.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as pa2', 'j.Parte_controvierte_califi', '=', 'pa2.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'j.Jrci_califi_invalidez', '=', 'sie.Id_Entidad')
@@ -175,7 +175,7 @@ class CalificacionJuntasController extends Controller
         
         //Se agregar principalmente por la ficha psb026, desdepues de la implementacion deberia ser auto. a traves del trigger, para los registros anteriores se agregar las siguientes lineas, el cual anexa la fecha de plazo
         if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado) && empty($arrayinfo_controvertido[0]->F_plazo_controversia)){
-            $fecha_controversia = DB::select( 'SELECT ' . getDatabaseName('sigmel_gestiones') ."fnCalcularDiasHabilesV2('{$arrayinfo_controvertido[0]->F_notifi_afiliado}') as Fecha");
+            $fecha_controversia = calcularDiasHabiles($arrayinfo_controvertido[0]->F_notifi_afiliado);
 
             $arrayinfo_controvertido[0]->F_plazo_controversia = $fecha_controversia[0]->Fecha;
         }
@@ -1005,6 +1005,8 @@ class CalificacionJuntasController extends Controller
                 'Jrci_califi_invalidez' => $request->jrci_califi_invalidez,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'F_envio_jrci' => $request->fecha_envio_jrci,
+                'F_envio_jnci' => $request->fecha_envio_jnci,
                 'Observaciones' => $request->Observaciones
             ];
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')->insert($datos_info_controversia);
@@ -1033,6 +1035,8 @@ class CalificacionJuntasController extends Controller
                 'Jrci_califi_invalidez' => $request->jrci_califi_invalidez,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'F_envio_jrci' => $request->fecha_envio_jrci,
+                'F_envio_jnci' => $request->fecha_envio_jnci,
                 'Observaciones' => $request->Observaciones
             ];
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
@@ -1489,102 +1493,179 @@ class CalificacionJuntasController extends Controller
         $Id_evento = $request->Id_evento;
         $Id_asignacion = $request->Id_asignacion;
         $Id_procesos = $request->Id_procesos;
-        $radiojrci_comunicado = $request->radiojrci_comunicado;
-        $radiojnci_comunicado = $request->radiojnci_comunicado;
-        $radioafiliado_comunicado = $request->radioafiliado_comunicado;
-        $radioempresa_comunicado = $request->radioempresa_comunicado;
-        $radioeps_comunicado = $request->radioeps_comunicado;
-        $radioafp_comunicado = $request->radioafp_comunicado;
-        $radioarl_comunicado = $request->radioarl_comunicado;
+        $tipo_descarga = $request->tipo_descarga;
+        if($tipo_descarga != 'Manual'){
+            $radiojrci_comunicado = $request->radiojrci_comunicado;
+            $radiojnci_comunicado = $request->radiojnci_comunicado;
+            $radioafiliado_comunicado = $request->radioafiliado_comunicado;
+            $radioempresa_comunicado = $request->radioempresa_comunicado;
+            $radioeps_comunicado = $request->radioeps_comunicado;
+            $radioafp_comunicado = $request->radioafp_comunicado;
+            $radioarl_comunicado = $request->radioarl_comunicado;
 
-        $radioOtro = $request->radioOtro;
-        $copiaComunicadoTotal = $request->copiaComunicadoTotal;
-        if (!empty($copiaComunicadoTotal)) {
-            $total_copia_comunicado = implode(", ", $copiaComunicadoTotal);                
-        }else{
-            $total_copia_comunicado = '';
-        }
+            $radioOtro = $request->radioOtro;
+            $copiaComunicadoTotal = $request->copiaComunicadoTotal;
+            if (!empty($copiaComunicadoTotal)) {
+                $total_copia_comunicado = implode(", ", $copiaComunicadoTotal);                
+            }else{
+                $total_copia_comunicado = '';
+            }
 
-        if(!empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
-            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
-                $destinatario = 'Jrci';
-        }
-        elseif(empty($radiojrci_comunicado) && !empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
-            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
-                $destinatario = 'Jnci';
-        }
-        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && !empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
-            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
-            $destinatario = 'Afiliado';
-        }
-        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado)
-            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
-            $destinatario = 'Empresa';
-        }
-        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
-            && !empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
-                $destinatario = 'Eps';
-        }
-        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
-            && empty($radioeps_comunicado) && !empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
-                $destinatario = 'Afp';
-        }
-        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
-            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && !empty($radioarl_comunicado) && empty($radioOtro)){
-                $destinatario = 'Arl';
-        }
-        elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
-            && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && !empty($radioOtro)){
-                $destinatario = 'Otro';
-        }
+            if(!empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+                && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+                    $destinatario = 'Jrci';
+            }
+            elseif(empty($radiojrci_comunicado) && !empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+                && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+                    $destinatario = 'Jnci';
+            }
+            elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && !empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+                && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+                $destinatario = 'Afiliado';
+            }
+            elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado)
+                && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+                $destinatario = 'Empresa';
+            }
+            elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+                && !empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+                    $destinatario = 'Eps';
+            }
+            elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+                && empty($radioeps_comunicado) && !empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
+                    $destinatario = 'Afp';
+            }
+            elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+                && empty($radioeps_comunicado) && empty($radioafp_comunicado) && !empty($radioarl_comunicado) && empty($radioOtro)){
+                    $destinatario = 'Arl';
+            }
+            elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
+                && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && !empty($radioOtro)){
+                    $destinatario = 'Otro';
+            }
 
-        $datos_info_registrarComunicadoPcl=[
+            $datos_info_registrarComunicadoPcl=[
 
-            'ID_evento' => $Id_evento,
-            'Id_Asignacion' => $Id_asignacion,
-            'Id_proceso' => $Id_procesos,
-            'Ciudad' => $request->ciudad,
-            'F_comunicado' => $request->fecha_comunicado2,
-            'N_radicado' => $request->radicado2,
-            'Cliente' => $request->cliente_comunicado2,
-            'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
-            'T_documento' => $request->tipo_documento_comunicado2,
-            'N_identificacion' => $request->identificacion_comunicado2,
-            'Destinatario' => $destinatario,
-            'JRCI_Destinatario' => $request->JRCI_Destinatario,
-            'Nombre_destinatario' => $request->nombre_destinatario,
-            'Nit_cc' => $request->nic_cc,
-            'Direccion_destinatario' => $request->direccion_destinatario,
-            'Telefono_destinatario' => $request->telefono_destinatario,
-            'Email_destinatario' => $request->email_destinatario,
-            'Id_departamento' => $request->departamento_destinatario,
-            'Id_municipio' => $request->ciudad_destinatario,
-            'Asunto' => $request->asunto,
-            'Cuerpo_comunicado' => $request->cuerpo_comunicado,
-            'Anexos' => $request->anexos,
-            'Forma_envio' => $request->forma_envio,
-            'Elaboro' => $request->elaboro2,
-            'Reviso' => $request->reviso,
-            'Agregar_copia' => $total_copia_comunicado,
-            'JRCI_copia' => $request->JRCI_copia,
-            'Firmar_Comunicado' => $request->firmarcomunicado,
-            'Tipo_descarga' => $request->tipo_descarga,
-            'Nombre_usuario' => $nombre_usuario,
-            'F_registro' => $date,
-        ];
-        
-        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
+                'ID_evento' => $Id_evento,
+                'Id_Asignacion' => $Id_asignacion,
+                'Id_proceso' => $Id_procesos,
+                'Ciudad' => $request->ciudad,
+                'F_comunicado' => $request->fecha_comunicado2,
+                'N_radicado' => $request->radicado2,
+                'Cliente' => $request->cliente_comunicado2,
+                'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
+                'T_documento' => $request->tipo_documento_comunicado2,
+                'N_identificacion' => $request->identificacion_comunicado2,
+                'Destinatario' => $destinatario,
+                'JRCI_Destinatario' => $request->JRCI_Destinatario,
+                'Nombre_destinatario' => $request->nombre_destinatario,
+                'Nit_cc' => $request->nic_cc,
+                'Direccion_destinatario' => $request->direccion_destinatario,
+                'Telefono_destinatario' => $request->telefono_destinatario,
+                'Email_destinatario' => $request->email_destinatario,
+                'Id_departamento' => $request->departamento_destinatario,
+                'Id_municipio' => $request->ciudad_destinatario,
+                'Asunto' => $request->asunto,
+                'Cuerpo_comunicado' => $request->cuerpo_comunicado,
+                'Anexos' => $request->anexos,
+                'Forma_envio' => $request->forma_envio,
+                'Elaboro' => $request->elaboro2,
+                'Reviso' => $request->reviso,
+                'Agregar_copia' => $total_copia_comunicado,
+                'JRCI_copia' => $request->JRCI_copia,
+                'Firmar_Comunicado' => $request->firmarcomunicado,
+                'Tipo_descarga' => $request->tipo_descarga,
+                'Modulo_creacion' => $request->modulo_creacion,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];
+            
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
 
-        sleep(2);
-        $datos_info_historial_acciones = [
-            'ID_evento' => $Id_evento,
-            'F_accion' => $date,
-            'Nombre_usuario' => $nombre_usuario,
-            'Accion_realizada' => "Se genera comunicado Juntas.",
-            'Descripcion' => $request->asunto,
-        ];
+            sleep(2);
+            $datos_info_historial_acciones = [
+                'ID_evento' => $Id_evento,
+                'F_accion' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+                'Accion_realizada' => "Se genera comunicado Juntas.",
+                'Descripcion' => $request->asunto,
+            ];
 
-        sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+            sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+        }
+        else if($tipo_descarga == 'Manual'){
+            if($request->modulo){
+                $modulo = $request->modulo;
+            }
+            else{
+                $modulo = '';
+            }
+
+            $datos_info_registrarComunicadoJuntas=[
+                'ID_evento' => $Id_evento,
+                'Id_Asignacion' => $Id_asignacion,
+                'Id_proceso' => $Id_procesos,
+                'Ciudad' => $request->ciudad,
+                'F_comunicado' => $date,
+                'N_radicado' => $request->radicado2,
+                'Cliente' => $request->cliente_comunicado2,
+                'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
+                'T_documento' => $request->tipo_documento_comunicado2,
+                'N_identificacion' => $request->identificacion_comunicado2,
+                'Destinatario' => $request->destinatario,
+                'Nombre_destinatario' => $request->nombre_destinatario,
+                'Nit_cc' => $request->nic_cc,
+                'Direccion_destinatario' => $request->direccion_destinatario,
+                'Telefono_destinatario' => $request->telefono_destinatario,
+                'Email_destinatario' => $request->email_destinatario,
+                'Id_departamento' => $request->departamento_destinatario,
+                'Id_municipio' => $request->ciudad_destinatario,
+                'Asunto' => $request->asunto,
+                'Cuerpo_comunicado' => $request->cuerpo_comunicado,
+                'Anexos' => $request->anexos,
+                'Forma_envio' => $request->forma_envio,
+                'Elaboro' => $nombre_usuario,
+                'Reviso' => $request->reviso,
+                'Agregar_copia' => null,
+                'Firmar_Comunicado' => $request->firmarcomunicado,
+                'Tipo_descarga' => $request->tipo_descarga,
+                'Modulo_creacion' => $request->modulo_creacion,
+                'Nombre_documento' => $request->Nombre_documento,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];
+
+            if($request->hasFile('cargue_comunicados')){
+                $archivo = $request->file('cargue_comunicados');
+                $path = public_path('Documentos_Eventos/'.$Id_evento);
+                $mode = 777;
+
+                if (!File::exists($path)) {
+                    File::makeDirectory($path, $mode, true, true);
+                    chmod($path, $mode);
+                }
+
+                // $nombre_final_documento = $nombre_documento."_IdEvento_".$Id_evento.".".$archivo->extension();
+                $nombre_final_documento = $request->asunto;
+                Storage::putFileAs($Id_evento, $archivo, $nombre_final_documento);
+                
+            }else{
+                $nombre_final_documento='N/A';            
+            }     
+
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoJuntas);
+
+            sleep(2);
+            $datos_info_historial_acciones = [
+                'ID_evento' => $Id_evento,
+                'F_accion' => $date,
+                'Nombre_usuario' => $nombre_usuario,
+                'Accion_realizada' => "Se genera comunicado de forma manual en $modulo.",
+                'Descripcion' => $request->asunto,
+            ];
+
+            sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+        }
         
         $mensajes = array(
             "parametro" => 'agregar_comunicado',
@@ -1609,6 +1690,29 @@ class CalificacionJuntasController extends Controller
                 ['Id_proceso', '3']
             ])
             ->get();
+            foreach ($hitorialAgregarComunicado as &$comunicado) {
+                if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
+                    $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
+                    if(File::exists($filePath)){
+                        $comunicado['Existe'] = true;
+                    }
+                    else{
+                        $comunicado['Existe'] = false;
+                    }
+                }
+                else if($comunicado['Tipo_descarga'] === 'Manual'){
+                    $filePath = public_path('Documentos_Eventos/'.$comunicado['ID_evento'].'/'.$comunicado['Asunto']);
+                    if(File::exists($filePath)){
+                        $comunicado['Existe'] = true;
+                    }
+                    else{
+                        $comunicado['Existe'] = false;
+                    }
+                }
+                else{
+                    $comunicado['Existe'] = false;
+                }
+            }
             $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
             return response()->json(($arrayhitorialAgregarComunicado));
 
@@ -1730,6 +1834,8 @@ class CalificacionJuntasController extends Controller
             'JRCI_copia' => $request->JRCI_copia_editar,
             'Firmar_Comunicado' => $request->firmarcomunicado_editar,
             'Tipo_descarga' => $request->tipo_descarga,
+            'Modulo_creacion' => $request->modulo_creacion,
+            'Reemplazado' => 0,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
         ];
@@ -2211,7 +2317,11 @@ class CalificacionJuntasController extends Controller
                 $output = $pdf->output();
                 //Guardar el PDF en un archivo
                 file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
-
+                $actualizar_nombre_documento = [
+                    'Nombre_documento' => $nombre_pdf
+                ];
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+                ->update($actualizar_nombre_documento);
                 /* Inserción del registro de que fue descargado */
                 // Extraemos el id del servicio asociado
                 $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
@@ -2530,6 +2640,12 @@ class CalificacionJuntasController extends Controller
                 $output = $pdf->output();
                 //Guardar el PDF en un archivo
                 file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
+
+                $actualizar_nombre_documento = [
+                    'Nombre_documento' => $nombre_pdf
+                ];
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+                ->update($actualizar_nombre_documento);
 
                 /* Inserción del registro de que fue descargado */
                 // Extraemos el id del servicio asociado
@@ -3140,6 +3256,12 @@ class CalificacionJuntasController extends Controller
                 $output = $pdf->output();
                 //Guardar el PDF en un archivo
                 file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
+
+                $actualizar_nombre_documento = [
+                    'Nombre_documento' => $nombre_pdf
+                ];
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+                ->update($actualizar_nombre_documento);
 
                 /* Inserción del registro de que fue descargado */
                 // Extraemos el id del servicio asociado
@@ -3764,6 +3886,11 @@ class CalificacionJuntasController extends Controller
                     $nombre_docx = "JUN_DEV_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$num_identificacion_afiliado}.docx";
                     $writer->save(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
 
+                    $actualizar_nombre_documento = [
+                        'Nombre_documento' => $nombre_docx
+                    ];
+                    sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+                    ->update($actualizar_nombre_documento);
                     /* Inserción del registro de que fue descargado */
                     // Extraemos el id del servicio asociado
                     $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
@@ -4398,7 +4525,12 @@ class CalificacionJuntasController extends Controller
                     $writer = new Word2007($phpWord);
                     $nombre_docx = "JUN_SOL_DICTAMEN_{$Id_comunicado}_{$Id_Asignacion}_{$num_identificacion_afiliado}.docx";
                     $writer->save(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
-
+                    
+                    $actualizar_nombre_documento = [
+                        'Nombre_documento' => $nombre_docx
+                    ];
+                    sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+                    ->update($actualizar_nombre_documento);
                     /* Inserción del registro de que fue descargado */
                     // Extraemos el id del servicio asociado
                     $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')

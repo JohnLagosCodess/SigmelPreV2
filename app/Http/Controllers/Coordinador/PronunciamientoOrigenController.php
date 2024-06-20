@@ -122,7 +122,32 @@ class PronunciamientoOrigenController extends Controller
             $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted;
         }
 
-        return view('coordinador.pronunciamientoOrigenATEL', compact('user','array_datos_pronunciamientoOrigen','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo'));
+        $array_comunicados = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$Id_evento_calitec], ['Id_Asignacion',$Id_asignacion_calitec],['Modulo_creacion','pronunciamientoOrigen']])->get();  
+        foreach ($array_comunicados as $comunicado) {
+            if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
+                $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
+                if(File::exists($filePath)){
+                    $comunicado['Existe'] = true;
+                }
+                else{
+                    $comunicado['Existe'] = false;
+                }
+            }
+            else if($comunicado['Tipo_descarga'] === 'Manual'){
+                $filePath = public_path('Documentos_Eventos/'.$comunicado['ID_evento'].'/'.$comunicado['Asunto']);
+                if(File::exists($filePath)){
+                    $comunicado['Existe'] = true;
+                }
+                else{
+                    $comunicado['Existe'] = false;
+                }
+            }
+            else{
+                $comunicado['Existe'] = false;
+            }
+        }
+        return view('coordinador.pronunciamientoOrigenATEL', compact('user','array_datos_pronunciamientoOrigen','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo','array_comunicados'));
     }
 
     //Cargar Selectores pronunciamiento
@@ -490,11 +515,15 @@ class PronunciamientoOrigenController extends Controller
                 'Anexos' => $request->n_anexos,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Tipo_descarga' => $request->decision_pr,
+                'Modulo_creacion' => 'pronunciamientoOrigen',
             ];
             sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->insert($datos_info_pronunciamiento_eventos);
             sleep(2);
-            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
-            sleep(2);
+            if($request->decision_pr != 'Silencio'){
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+                sleep(2);
+            }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
             $Id_Pronuncia = sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->select('Id_Pronuncia')->latest('Id_Pronuncia')->first();
             $accion_realizada = "Registro de Pronuciamiento Origen {$Id_Pronuncia['Id_Pronuncia']}";
@@ -633,6 +662,67 @@ class PronunciamientoOrigenController extends Controller
                 ['Id_Asignacion', $Id_Asignacion_Pronuncia]
             ])->update($datos_info_pronunciamiento_eventos);
             sleep(2);
+
+            $datos_info_comunicado_eventos = [
+                'ID_Evento' => $Id_EventoPronuncia,
+                'Id_proceso' => $Id_ProcesoPronuncia,
+                'Id_Asignacion' => $Id_Asignacion_Pronuncia,
+                'Ciudad' => $request->ciudad_correspon,
+                'F_comunicado' => $date,
+                'N_radicado' => $request->n_radicado,
+                'Cliente' => $request->primer_calificador,
+                'Nombre_afiliado' => $request->nombre_afiliado,
+                'T_documento' => 'N/A',
+                'N_identificacion' => $request->identificacion,
+                'Destinatario' => 'N/A',
+                'Nombre_destinatario' => 'N/A',
+                'Nit_cc' => 'N/A',
+                'Direccion_destinatario' => 'N/A',
+                'Telefono_destinatario' => '001',
+                'Email_destinatario' => 'N/A',
+                'Id_departamento' => '001',
+                'Id_municipio' => '001',
+                'Asunto'=> $request->asunto_cali,
+                'Cuerpo_comunicado' => $request->sustenta_cali,
+                'Forma_envio' => '0',
+                'Elaboro' => $request->elaboro,
+                'Reviso' => '0',
+                'Anexos' => $request->n_anexos,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+                'Tipo_descarga' => $request->decision_pr,
+                'Modulo_creacion' => 'pronunciamientoOrigen',
+                'Reemplazado' => 0,
+            ];
+            // dd($request->decision_pr);
+            if($request->decision_pr != 'Silencio' && $request->Id_Comunicado){
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where([
+                    ['ID_evento', $Id_EventoPronuncia],
+                    ['Id_Asignacion', $Id_Asignacion_Pronuncia],
+                    ['Id_Comunicado', $request->Id_Comunicado]
+                ])->update($datos_info_comunicado_eventos);
+                sleep(2);
+            }
+            else if($request->decision_pr == 'Silencio' && $request->Id_Comunicado){
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $request->Id_Comunicado)->delete();
+                $archivos_a_eliminar = [
+                    "ORI_ACUERDO_{$Id_Asignacion_Pronuncia}_{$request->identificacion}.pdf",
+                    "ORI_DESACUERDO_{$Id_Asignacion_Pronuncia}_{$request->identificacion}.docx"
+                ];
+                
+                foreach ($archivos_a_eliminar as $archivo) {
+                    $ruta_archivo = "Documentos_Eventos/{$Id_EventoPronuncia}/{$archivo}";
+                    $path = public_path($ruta_archivo);
+                    if (File::exists($path)) {
+                        File::delete($path);
+                    }
+                }
+                sleep(2);
+            }
+            if($request->decision_pr != 'Silencio' && $request->Id_Comunicado == "null"){
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+                sleep(2);
+            }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
             $Id_Pronuncia = sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->select('Id_Pronuncia','Id_Asignacion')->latest('Id_Pronuncia')->first();
             $accion_realizada = "Actualiza Pronuciamiento Origen {$Id_Pronuncia['Id_Pronuncia']}";
@@ -842,6 +932,8 @@ class PronunciamientoOrigenController extends Controller
         $departamento_entidad = $request->departamento_entidad;
         $nro_dictamen_pri_cali = $request->nro_dictamen_pri_cali;
         $fecha_dictamen_pri_cali = $request->fecha_dictamen_pri_cali;
+        $Id_comunicado = $request->id_comunicado;
+
 
         /* Creación de las variables faltantes que no están en el ajax */
 
@@ -1153,27 +1245,12 @@ class PronunciamientoOrigenController extends Controller
         ->select('Logo_cliente')
         ->where([['Id_cliente', $Id_cliente_firma]])
         ->limit(1)->get();
-
-        if (count($dato_logo_header) > 0) {
+        if (count($dato_logo_header) > 0 && $dato_logo_header[0]->Logo_cliente != null) {
             $logo_header = $dato_logo_header[0]->Logo_cliente;
             $ruta_logo = "/logos_clientes/{$Id_cliente_firma}/{$logo_header}";
         } else {
             $logo_header = "Sin logo";
             $ruta_logo = "";
-        }
-
-        //Footer
-        $dato_logo_footer = sigmel_clientes::on('sigmel_gestiones')
-        ->select('Footer_cliente')
-        ->where([['Id_cliente', $id_cliente]])
-        ->limit(1)->get();
-
-        if (count($dato_logo_footer) > 0 && $dato_logo_footer[0]->Footer_cliente != null) {
-            $footer = $dato_logo_footer[0]->Footer_cliente;
-            $ruta_logo_footer = "/footer_clientes/{$id_cliente}/{$logo_footer}";
-        } else {
-            $footer = null;
-            $ruta_logo_footer = null;
         }
 
         /* Extraemos los datos del footer */
@@ -1199,6 +1276,16 @@ class PronunciamientoOrigenController extends Controller
         $ramo = "Previsionales";
 
         if ($bandera_tipo_proforma == "proforma_acuerdo") {
+            $footer_imagen = sigmel_clientes::on('sigmel_gestiones')
+                ->select('Footer_cliente')
+                ->where([['Id_cliente', $Id_cliente_firma]])
+                ->limit(1)->get();
+
+                if (count($footer_imagen) > 0 && $footer_imagen[0]->Footer_cliente != null) {
+                    $footer = $footer_imagen[0]->Footer_cliente;
+                } else {
+                    $footer = null;
+                } 
             $datos_finales_proforma = [
                 'logo_header' => $logo_header,
                 'id_cliente' => $Id_cliente_firma,
@@ -1240,6 +1327,12 @@ class PronunciamientoOrigenController extends Controller
             $output = $pdf->output();
             //Guardar el PDF en un archivo
             file_put_contents(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_pdf}"), $output);
+
+            $actualizar_nombre_documento = [
+                'Nombre_documento' => $nombre_pdf
+            ];
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+            ->update($actualizar_nombre_documento);
 
             /* Inserción del registro de que fue descargado */
             // Extraemos el id del servicio asociado
@@ -1313,6 +1406,18 @@ class PronunciamientoOrigenController extends Controller
             return $pdf->download($nombre_pdf); 
         }
          else {
+            $dato_logo_footer = sigmel_clientes::on('sigmel_gestiones')
+            ->select('Footer_cliente')
+            ->where([['Id_cliente', $Id_cliente_firma]])
+            ->limit(1)->get();
+            if (count($dato_logo_footer) > 0 && $dato_logo_footer[0]->Footer_cliente != null) {
+                dd($dato_logo_footer);
+                $logo_footer = $dato_logo_footer[0]->Footer_cliente;
+                $ruta_logo_footer = "/footer_clientes/{$Id_cliente_firma}/{$logo_footer}";
+            } else {
+                $logo_footer = null;
+                $ruta_logo_footer = null;
+            }
             
             $phpWord = new PhpWord();
             // Configuramos la fuente y el tamaño de letra para todo el documento
@@ -1334,8 +1439,8 @@ class PronunciamientoOrigenController extends Controller
 
             // Creación de Header
             $header = $section->addHeader();
-            $imagenPath_header = public_path($ruta_logo);
-            $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
+            // $imagenPath_header = public_path($ruta_logo);
+            // $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
 
             // Creación de Contenido
             $section->addText($ciudad.', '.$fecha, array('bold' => true));
@@ -1523,6 +1628,11 @@ class PronunciamientoOrigenController extends Controller
             $writer = new Word2007($phpWord);
             $nombre_docx = "ORI_DESACUERDO_{$Id_Asignacion_consulta_dx}_{$num_identificacion}.docx";
             $writer->save(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));
+            $actualizar_nombre_documento = [
+                'Nombre_documento' => $nombre_docx
+            ];
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+            ->update($actualizar_nombre_documento);
 
             /* Inserción del registro de que fue descargado */
             // Extraemos el id del servicio asociado

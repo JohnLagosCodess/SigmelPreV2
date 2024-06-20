@@ -50,6 +50,32 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    
+    $(".tipo_accidente").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".mortal").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".factor_riesgo").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".tipo_lesion").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(".parte_cuerpo_afectada").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
     var token = $('input[name=_token]').val();
 
     // llenado de selector de motivos de solicitud
@@ -71,6 +97,187 @@ $(document).ready(function(){
                     $('#motivo_solicitud').append('<option value="'+data[listado_motivo_solicitud[i]]['Id_Solicitud']+'" selected>'+data[listado_motivo_solicitud[i]]['Nombre_solicitud']+'</option>');
                 }else{
                     $('#motivo_solicitud').append('<option value="'+data[listado_motivo_solicitud[i]]['Id_Solicitud']+'">'+data[listado_motivo_solicitud[i]]['Nombre_solicitud']+'</option>');
+                }
+            }
+        }
+    });
+
+    //Seccion informacion del evento
+    // llenado de datos selector tipo de accidente
+    let datos_tipo_accidente = {
+        '_token': token,
+        'parametro':"tipo_accidente"
+    };
+
+    $.ajax({
+        type:'POST',
+        url:'/cargueListadoSelectoresDTOATEL',
+        data: datos_tipo_accidente,
+        success:function(data){
+            //console.log(data);
+            $('#tipo_accidente').empty();
+            $('#tipo_accidente').append('<option value=""></option>');
+            let listado_tipo_accidente = Object.keys(data);
+            for (let i = 0; i < listado_tipo_accidente.length; i++) {
+                if (data[listado_tipo_accidente[i]]['Id_Parametro'] == $("#bd_tipo_accidente").val()) {
+                    $('#tipo_accidente').append('<option value="'+data[listado_tipo_accidente[i]]['Id_Parametro']+'" selected>'+data[listado_tipo_accidente[i]]['Nombre_parametro']+'</option>');
+                } else {
+                    $('#tipo_accidente').append('<option value="'+data[listado_tipo_accidente[i]]['Id_Parametro']+'">'+data[listado_tipo_accidente[i]]['Nombre_parametro']+'</option>');
+                }
+            }
+        }
+    });
+
+        // llenado de datos de selector de grado de severidad
+        let datos_grado_severidad = {
+            '_token': token,
+            'parametro':"grado_severidad"
+        };
+        $.ajax({
+            type:'POST',
+            url:'/cargueListadoSelectoresDTOATEL',
+            data: datos_grado_severidad,
+            success:function(data){
+                //console.log(data);
+                $('#grado_severidad').empty();
+                $('#grado_severidad').append('<option value=""></option>');
+                let listado_grado_severidad = Object.keys(data);
+                for (let i = 0; i < listado_grado_severidad.length; i++) {
+                    if (data[listado_grado_severidad[i]]['Id_Parametro'] == $("#bd_grado_severidad").val()) {
+                        $('#grado_severidad').append('<option value="'+data[listado_grado_severidad[i]]['Id_Parametro']+'" selected>'+data[listado_grado_severidad[i]]['Nombre_parametro']+'</option>');
+                    } else {
+                        $('#grado_severidad').append('<option value="'+data[listado_grado_severidad[i]]['Id_Parametro']+'">'+data[listado_grado_severidad[i]]['Nombre_parametro']+'</option>');
+                    }
+                }
+            }
+        });
+    
+        // VERIFICACION DE SELECTOR MORTAL EN CASO DE QUE EXISTA INFORMACIÓN GUARDADA
+        var mortal_opt = "";
+    
+        var verificacion_mortal= $("#mortal").val();
+        if (verificacion_mortal == "Si") {
+            $("#mostrar_f_fallecimiento").removeClass("d-none");
+            $("#fecha_fallecimiento").prop("required", true);
+            mortal_opt = verificacion_mortal;
+        } else if(verificacion_mortal == "No") {
+            $("#mostrar_f_fallecimiento").addClass("d-none");
+            $("#fecha_fallecimiento").prop("required", false);
+            $("#fecha_fallecimiento").val("");
+            mortal_opt = "No";
+        } else{
+            mortal_opt = "";
+        }
+        
+        // Validación selector mortal
+        $("#mortal").change(function(){
+            var opt_mortal_selccionada = $(this).val();
+    
+            if (opt_mortal_selccionada == "Si") {
+                $("#mostrar_f_fallecimiento").removeClass("d-none");
+                $("#fecha_fallecimiento").prop("required", true);
+                mortal_opt = opt_mortal_selccionada;
+            } else if(opt_mortal_selccionada == "No") {
+                $("#mostrar_f_fallecimiento").addClass("d-none");
+                $("#fecha_fallecimiento").prop("required", false);
+                $("#fecha_fallecimiento").val("");
+                mortal_opt = "No";
+            }else{
+                mortal_opt = "";
+            }
+        });
+
+            // VERIFICACION DE CHECKBOX ENFERMEDAD HEREDADA EN CASO DE DE QUE EXISTA INFORMACIÓN YA GUARADADA.
+    var enfermedad_heredada_opt = "";
+
+    if ($("#enfermedad_heredada").is(":checked")) {
+        $("#contenedor_nombre_entidad_enfermedad_heredada").removeClass('d-none');
+        enfermedad_heredada_opt = "Si";
+    } else {
+        $("#contenedor_nombre_entidad_enfermedad_heredada").addClass('d-none');
+        $("#entidad_enfermedad").val("");
+        enfermedad_heredada_opt = "No";
+    }
+
+    // Validadion checkbox Enfermedad heredada
+    $("#enfermedad_heredada").click(function(){
+        if ($(this).is(":checked")) {
+            $("#contenedor_nombre_entidad_enfermedad_heredada").removeClass('d-none');
+            enfermedad_heredada_opt = "Si";
+        }else{
+            $("#contenedor_nombre_entidad_enfermedad_heredada").addClass('d-none');
+            $("#entidad_enfermedad").val("");
+            enfermedad_heredada_opt = "No";
+        }
+    });
+
+    // llenado de datos de selector de factor de riesgo
+    let datos_factor_riesgo = {
+        '_token': token,
+        'parametro':"factor_riesgo"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargueListadoSelectoresDTOATEL',
+        data: datos_factor_riesgo,
+        success:function(data){
+            //console.log(data);
+            $('#factor_riesgo').empty();
+            $('#factor_riesgo').append('<option value=""></option>');
+            let listado_factor_riesgo = Object.keys(data);
+            for (let i = 0; i < listado_factor_riesgo.length; i++) {
+                if (data[listado_factor_riesgo[i]]['Id_Parametro'] == $("#bd_factor_riesgo").val()) {
+                    $('#factor_riesgo').append('<option value="'+data[listado_factor_riesgo[i]]['Id_Parametro']+'" selected>'+data[listado_factor_riesgo[i]]['Nombre_parametro']+'</option>');
+                } else {
+                    $('#factor_riesgo').append('<option value="'+data[listado_factor_riesgo[i]]['Id_Parametro']+'">'+data[listado_factor_riesgo[i]]['Nombre_parametro']+'</option>');
+                }
+            }
+        }
+    });
+
+    // llenado de datos de selector de tipo de lesion
+    let datos_tipo_lesion = {
+        '_token': token,
+        'parametro':"tipo_lesion"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargueListadoSelectoresDTOATEL',
+        data: datos_tipo_lesion,
+        success:function(data){
+            //console.log(data);
+            $('#tipo_lesion').empty();
+            $('#tipo_lesion').append('<option value=""></option>');
+            let listado_tipo_lesion = Object.keys(data);
+            for (let i = 0; i < listado_tipo_lesion.length; i++) {
+                if (data[listado_tipo_lesion[i]]['Id_Parametro'] == $("#bd_tipo_lesion").val()) {
+                    $('#tipo_lesion').append('<option value="'+data[listado_tipo_lesion[i]]['Id_Parametro']+'" selected>'+data[listado_tipo_lesion[i]]['Nombre_parametro']+'</option>');
+                } else {
+                    $('#tipo_lesion').append('<option value="'+data[listado_tipo_lesion[i]]['Id_Parametro']+'">'+data[listado_tipo_lesion[i]]['Nombre_parametro']+'</option>');
+                }
+            }
+        }
+    });
+
+    // llenado de datos de selector de parte del cuerpo afectada
+    let datos_parte_cuerpo_afectada = {
+        '_token': token,
+        'parametro':"parte_cuerpo_afectada"
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargueListadoSelectoresDTOATEL',
+        data: datos_parte_cuerpo_afectada,
+        success:function(data){
+            //console.log(data);
+            $('#parte_cuerpo_afectada').empty();
+            $('#parte_cuerpo_afectada').append('<option value=""></option>');
+            let listado_parte_cuerpo_afectada = Object.keys(data);
+            for (let i = 0; i < listado_parte_cuerpo_afectada.length; i++) {
+                if (data[listado_parte_cuerpo_afectada[i]]['Id_Parametro'] == $("#bd_parte_cuerpo_afectada").val()) {
+                    $('#parte_cuerpo_afectada').append('<option value="'+data[listado_parte_cuerpo_afectada[i]]['Id_Parametro']+'" selected>'+data[listado_parte_cuerpo_afectada[i]]['Nombre_parametro']+'</option>');
+                } else {
+                    $('#parte_cuerpo_afectada').append('<option value="'+data[listado_parte_cuerpo_afectada[i]]['Id_Parametro']+'">'+data[listado_parte_cuerpo_afectada[i]]['Nombre_parametro']+'</option>');
                 }
             }
         }
@@ -798,11 +1005,14 @@ $(document).ready(function(){
     /* Validacion botón para guardar o actualizar la sección Información del evento
     para quitar el required de los demás campos del formulario */
     var btn_guardar_info_evento = 0;
+    let bandera_info_evento ;
     $("#btn_guardar_info_evento").click(function(){
         
         var btn_seccion_info_evento = $('#btn_guardar_info_evento').val();
         
         if (btn_seccion_info_evento == "Guardar" || btn_seccion_info_evento == "Actualizar") {
+
+            bandera_info_evento = "Actualizar";
             // campos sección Diagnósticos Adicionados
             $("#sustentacion_adicion_dx").prop("required", false);
             // campos sección Calificación del Origen
@@ -942,6 +1152,7 @@ $(document).ready(function(){
                 // Registrar Información
                 var informacion_formulario = {
                     '_token': token,
+                    "bandera_info_evento": bandera_info_evento,
                     'ID_Evento': id_evento,
                     'Id_Asignacion': id_asignacion_adicion_dx,
                     'Id_proceso': id_proceso_adicion_dx,
@@ -949,7 +1160,18 @@ $(document).ready(function(){
                     'Activo': $("#es_activo").val(),
                     'Tipo_evento': tipo_evento,
                     'motivo_solicitud': $("#motivo_solicitud").val(),
-                    'N_siniestro': $("#n_siniestro").val(),
+                    'Tipo_accidente': $("#tipo_accidente").val(), 
+                    'Fecha_evento': $("#fecha_evento").val(), 
+                    'N_siniestro': $("#n_siniestro").val(), 
+                    'Hora_evento': $("#hora_evento").val(), 
+                    'Grado_severidad': $("#grado_severidad").val(),
+                    'Mortal': mortal_opt,
+                    'Fecha_fallecimiento': $("#fecha_fallecimiento").val(),
+                    'Descripcion_FURAT': $("#descripcion_FURAT").val(),
+                    'Factor_riesgo': $("#factor_riesgo").val(),
+                    'Tipo_lesion': $("#tipo_lesion").val(),
+                    'Parte_cuerpo_afectada': $("#parte_cuerpo_afectada").val(),
+                    'Justificacion_revision_origen': $("#justificacion_revision_origen").val(),
                     'Relacion_documentos': relacion_docs_dto_atel,
                     'Examenes_interconsultas': datos_finales_examenes_interconsultas,
                     'Adicion_motivo_calificacion': datos_finales_adiciones_calificacion,
@@ -962,6 +1184,7 @@ $(document).ready(function(){
                 // Actualizar Información
                 var informacion_formulario = {
                     '_token': token,
+                    "bandera_info_evento": bandera_info_evento,
                     'Id_Adiciones_Dx': id_adicion_dx,
                     'ID_Evento': id_evento,
                     'Id_Asignacion': id_asignacion_adicion_dx,
@@ -970,7 +1193,18 @@ $(document).ready(function(){
                     'Activo': $("#es_activo").val(),
                     'Tipo_evento': tipo_evento,
                     'motivo_solicitud': $("#motivo_solicitud").val(),
-                    'N_siniestro': $("#n_siniestro").val(),
+                    'Tipo_accidente': $("#tipo_accidente").val(), 
+                    'Fecha_evento': $("#fecha_evento").val(), 
+                    'N_siniestro': $("#n_siniestro").val(), 
+                    'Hora_evento': $("#hora_evento").val(), 
+                    'Grado_severidad': $("#grado_severidad").val(),
+                    'Mortal': mortal_opt,
+                    'Fecha_fallecimiento': $("#fecha_fallecimiento").val(),
+                    'Descripcion_FURAT': $("#descripcion_FURAT").val(),
+                    'Factor_riesgo': $("#factor_riesgo").val(),
+                    'Tipo_lesion': $("#tipo_lesion").val(),
+                    'Parte_cuerpo_afectada': $("#parte_cuerpo_afectada").val(),
+                    'Justificacion_revision_origen': $("#justificacion_revision_origen").val(),
                     'Relacion_documentos': relacion_docs_dto_atel,
                     'Examenes_interconsultas': datos_finales_examenes_interconsultas,
                     'Adicion_motivo_calificacion': datos_finales_adiciones_calificacion,
@@ -1094,7 +1328,7 @@ $(document).ready(function(){
     }) 
 
     var profesional_comite = $("#profesional_comite").val();
-    if (profesional_comite !== '') {
+    if (profesional_comite !== '' && idRol != 6) {
         $("#GuardarComiteInter").prop('disabled', true);
         $("#btn_guardar_info_evento").prop('disabled', true);
         $("#btn_guardar_relacion_docs").prop('disabled', true);
@@ -1553,11 +1787,157 @@ $(document).ready(function(){
         })
     });
 
+    //Cargar comunicado
+    $('#cargarComunicado').click(function(){
+        if(!$('#cargue_comunicados')[0].files[0]){
+            return $(".cargueundocumentoprimero").removeClass('d-none');
+        }
+        $(".cargueundocumentoprimero").addClass('d-none');
+        var archivo = $('#cargue_comunicados')[0].files[0];
+        var documentName = archivo.name;
+        var formData = new FormData($('form')[0]);
+        formData.append('cargue_comunicados', archivo);
+        formData.append('token', $("input[name='_token']").val());
+        formData.append('ciudad', 'N/A');
+        formData.append('Id_evento',$("#Id_Evento").val());
+        formData.append('Id_asignacion',$('#Id_Asignacion_adicion_dx').val());
+        formData.append('Id_procesos',$("#Id_Proceso_adicion_dx").val());
+        formData.append('fecha_comunicado2',null);
+        formData.append('radicado2',$('#radicado_comunicado_manual').val());
+        formData.append('cliente_comunicado2','N/A');
+        formData.append('nombre_afiliado_comunicado2','N/A');
+        formData.append('tipo_documento_comunicado2','N/A');
+        formData.append('identificacion_comunicado2','N/A');
+        formData.append('destinatario', 'N/A');
+        formData.append('nombre_destinatario','N/A');
+        formData.append('nic_cc','N/A');
+        formData.append('direccion_destinatario','N/A');
+        formData.append('telefono_destinatario',1);
+        formData.append('email_destinatario','N/A');
+        formData.append('departamento_destinatario',1);
+        formData.append('ciudad_destinatario',1);
+        formData.append('asunto',documentName);
+        formData.append('cuerpo_comunicado','N/A');
+        formData.append('anexos',0);
+        formData.append('forma_envio',0);
+        formData.append('reviso',0);
+        formData.append('firmarcomunicado',null);
+        formData.append('tipo_descarga', 'Manual');
+        formData.append('Nombre_documento', documentName);
+        formData.append('modulo_creacion','adicionDxDtoOrigen');
+        formData.append('modulo','Comunicados AdicionDX');
+        $.ajax({
+            type:'POST',
+            url:'/registrarComunicadoOrigen',
+            data: formData,   
+            processData: false,
+            contentType: false,         
+            success:function(response){
+                if (response.parametro == 'agregar_comunicado') {
+                    $('.alerta_externa_comunicado').removeClass('d-none');
+                    $('.alerta_externa_comunicado').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.alerta_externa_comunicado').addClass('d-none');
+                        $('.alerta_externa_comunicado').empty();
+                        location.reload();
+                    }, 3000);
+                }
+            }
+        });  
+    }); 
+
+    //Reemplazar archivo 
+    let comunicado_reemplazar = null;
+    $("form[id^='form_reemplazar_archivo_']").submit(function (e){
+        e.preventDefault();           
+        $('#modalReemplazarArchivos').modal('show');  
+        comunicado_reemplazar = $(this).data('archivo');
+        let nombre_doc = comunicado_reemplazar.Nombre_documento;
+        let nombre_doc_manual = comunicado_reemplazar.Asunto;
+        if(nombre_doc != null && nombre_doc != "null"){
+            extensionDoc = `.${ nombre_doc.split('.').pop()}`;
+            document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
+        }
+        else if(nombre_doc_manual != null && nombre_doc_manual != "null"){
+            extensionDoc = `.${ nombre_doc_manual.split('.').pop()}`;
+            document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
+        }
+    });
+
+    $("form[id^='reemplazar_documento']").submit(function(e){
+        e.preventDefault();
+        if(!$('#cargue_comunicados_modal')[0].files[0]){
+            return $(".cargueundocumentoprimeromodal").removeClass('d-none');
+        }
+        $(".cargueundocumentoprimeromodal").addClass('d-none');
+        $(".extensionInvalidaModal").addClass('d-none');
+        var archivo = $('#cargue_comunicados_modal')[0].files[0];
+        extensionDocCargado = `.${archivo.name.split('.').pop()}`;
+        if(extensionDoc === extensionDocCargado){
+            var formData = new FormData($('form')[0]);
+            formData.append('doc_de_reemplazo', archivo);
+            formData.append('token', $('input[name=_token]').val());
+            formData.append('id_comunicado', comunicado_reemplazar.Id_Comunicado);
+            formData.append('tipo_descarga', comunicado_reemplazar.Tipo_descarga);
+            formData.append('id_asignacion', comunicado_reemplazar.Id_Asignacion);
+            formData.append('id_proceso', comunicado_reemplazar.Id_proceso);
+            formData.append('id_evento', comunicado_reemplazar.ID_evento);
+            formData.append('n_radicado', comunicado_reemplazar.N_radicado);
+            formData.append('numero_identificacion', comunicado_reemplazar.N_identificacion);
+            formData.append('modulo_creacion', 'adicionDxDtoOrigen');
+            formData.append('asunto', comunicado_reemplazar.Asunto);
+            formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
+            $.ajax({
+                type:'POST',
+                url:'/reemplazarDocumento',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success:function(response){
+                    if (response.parametro == 'reemplazar_comunicado') {
+                        $('.alerta_externa_comunicado_modal').removeClass('d-none');
+                        $('.alerta_externa_comunicado_modal').append('<strong>'+response.mensaje+'</strong>');
+                        setTimeout(function(){
+                            $('.alerta_externa_comunicado_modal').addClass('d-none');
+                            $('.alerta_externa_comunicado_modal').empty();
+                            localStorage.setItem("#Generar_comunicados", true);
+                            location.reload();
+                        }, 3000);
+                    }
+                }
+            });
+        }
+        else{
+            document.getElementById('extensionInvalidaMensaje').textContent += extensionDoc;
+            return $(".extensionInvalidaModal").removeClass('d-none');
+        }
+    });
+    //Descargar archivo cargado manualmente
+    $("form[id^='form_descargar_archivo_']").submit(function (e){
+        e.preventDefault();              
+        var archivo = $(this).data("archivo");
+
+        var nombre_documento = archivo.Asunto;
+        var idEvento = archivo.ID_evento;
+        var enlaceDescarga = document.createElement('a');
+        enlaceDescarga.href = '/descargar-archivo/'+nombre_documento+'/'+idEvento;     
+        enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+        enlaceDescarga.style.display = 'none';
+        document.body.appendChild(enlaceDescarga);
+    
+        // Simular clic en el enlace para iniciar la descarga
+        enlaceDescarga.click();
+    
+        // Eliminar el enlace después de la descarga
+        setTimeout(function() {
+            document.body.removeChild(enlaceDescarga);
+        }, 1000);
+    });
     // Captura Formulario DML ORIGEN PREVISIONAL (DICTAMEN)
     $("form[id^='Form_dml_origen_previsional_']").submit(function (e){
         e.preventDefault();              
         var tupla_comunicado = $(this).data("tupla_comunicado");
-
+        var infoComunicado = $(this).data("archivo");
         var id_cliente = $("#Id_cliente_"+tupla_comunicado).val();
         var num_identificacion = $("#num_identificacion_"+tupla_comunicado).val();
         var nro_siniestro = $("#nro_siniestro_"+tupla_comunicado).val();
@@ -1593,37 +1973,61 @@ $(document).ready(function(){
             'f_evento': f_evento,
             'f_fallecimiento': f_fallecimiento,
             'sustentacion_califi_origen': sustentacion_califi_origen,
-            'origen': origen
+            'origen': origen,
+            'id_comunicado': infoComunicado.Id_Comunicado,
         };
-
-        $.ajax({    
-            type:'POST',
-            url:'/ADescargaProformaDMLPrev',
-            data: datos_generacion_proforma_dml_previsional,
-            xhrFields: {
-                responseType: 'blob' // Indica que la respuesta es un blob
-            },
-            success: function (response, status, xhr) {
-                var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-        
-                // Crear un enlace de descarga similar al ejemplo anterior
-                var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
-                var link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
-        
-                // Adjuntar el enlace al documento y activar el evento de clic
-                document.body.appendChild(link);
-                link.click();
-        
-                // Eliminar el enlace del documento
-                document.body.removeChild(link);
-            },
-            error: function (error) {
-                // Manejar casos de error
-                console.error('Error al descargar el PDF:', error);
-            }       
-        });
+        if(infoComunicado.Reemplazado == 1){
+            var nombre_doc = infoComunicado.Nombre_documento;
+            var idEvento = infoComunicado.ID_evento;
+            var enlaceDescarga = document.createElement('a');
+            enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+            enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+            enlaceDescarga.style.display = 'none';
+            document.body.appendChild(enlaceDescarga);
+            enlaceDescarga.click();
+            setTimeout(function() {
+                document.body.removeChild(enlaceDescarga);
+            }, 1000);
+        }
+        else{
+            $.ajax({    
+                type:'POST',
+                url:'/ADescargaProformaDMLPrev',
+                data: datos_generacion_proforma_dml_previsional,
+                xhrFields: {
+                    responseType: 'blob' // Indica que la respuesta es un blob
+                },
+                beforeSend:  function() {
+                    $("#btn_enviar_dictamen_previsional").addClass("descarga-deshabilitada");
+                },
+                success: function (response, status, xhr) {
+                    var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+            
+                    // Crear un enlace de descarga similar al ejemplo anterior
+                    var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
+            
+                    // Adjuntar el enlace al documento y activar el evento de clic
+                    document.body.appendChild(link);
+                    link.click();
+            
+                    // Eliminar el enlace del documento
+                    document.body.removeChild(link);
+                },
+                error: function (error) {
+                    // Manejar casos de error
+                    console.error('Error al descargar el PDF:', error);
+                },
+                complete:  function() {
+                    $("#btn_enviar_dictamen_previsional").removeClass("descarga-deshabilitada");
+                    if(infoComunicado.Nombre_documento == null){
+                        location.reload();
+                    }
+                },       
+            });
+        }
 
     });
 
@@ -1632,7 +2036,7 @@ $(document).ready(function(){
         e.preventDefault();              
        
         var tupla_comunicado = $(this).data("tupla_comunicado");
-
+        var infoComunicado = $(this).data("archivo");
         // Captura de variables del formulario
         var id_tupla_comunicado = $("#id_tupla_comunicado_"+tupla_comunicado).val();
         var id_com_inter = $("#id_com_inter_"+tupla_comunicado).val();
@@ -1693,35 +2097,59 @@ $(document).ready(function(){
             'firmar': firmar,
             'anexos': anexos
         };
-        
-        $.ajax({    
-            type:'POST',
-            url:'/ADescargaProformaNotiDMLPrev',
-            data: datos_pdf_noti_dml_previsional,
-            xhrFields: {
-                responseType: 'blob' // Indica que la respuesta es un blob
-            },
-            success: function (response, status, xhr) {
-                var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-        
-                // Crear un enlace de descarga similar al ejemplo anterior
-                var nombre_pdf = "ORI_OFICIO_"+Id_asignacion+"_"+num_identificacion+".pdf";
-                var link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
-        
-                // Adjuntar el enlace al documento y activar el evento de clic
-                document.body.appendChild(link);
-                link.click();
-        
-                // Eliminar el enlace del documento
-                document.body.removeChild(link);
-            },
-            error: function (error) {
-                // Manejar casos de error
-                console.error('Error al descargar el PDF:', error);
-            }       
-        });
+
+        if(infoComunicado.Reemplazado == 1){
+            var nombre_doc = infoComunicado.Nombre_documento;
+            var idEvento = infoComunicado.ID_evento;
+            var enlaceDescarga = document.createElement('a');
+            enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+            enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+            enlaceDescarga.style.display = 'none';
+            document.body.appendChild(enlaceDescarga);
+            enlaceDescarga.click();
+            setTimeout(function() {
+                document.body.removeChild(enlaceDescarga);
+            }, 1000);
+        }
+        else{
+            $.ajax({    
+                type:'POST',
+                url:'/ADescargaProformaNotiDMLPrev',
+                data: datos_pdf_noti_dml_previsional,
+                xhrFields: {
+                    responseType: 'blob' // Indica que la respuesta es un blob
+                },
+                beforeSend:  function() {
+                    $("#enviar_form_noti_previsional").addClass("descarga-deshabilitada");
+                },
+                success: function (response, status, xhr) {
+                    var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+            
+                    // Crear un enlace de descarga similar al ejemplo anterior
+                    var nombre_pdf = "ORI_OFICIO_"+Id_asignacion+"_"+num_identificacion+".pdf";
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
+            
+                    // Adjuntar el enlace al documento y activar el evento de clic
+                    document.body.appendChild(link);
+                    link.click();
+            
+                    // Eliminar el enlace del documento
+                    document.body.removeChild(link);
+                },
+                error: function (error) {
+                    // Manejar casos de error
+                    console.error('Error al descargar el PDF:', error);
+                },
+                complete:  function() {
+                    $("#enviar_form_noti_previsional").removeClass("descarga-deshabilitada");
+                    if(infoComunicado.Nombre_documento == null){
+                        location.reload();
+                    }
+                },       
+            });
+        }
     });
 
     /* Funcionalidad para mostrar solo la tabla de comunicados para el rol de Consulta */

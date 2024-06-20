@@ -2312,13 +2312,12 @@ function edicion_parametrizacion_calificacion_pcl(id_parametrizacion_calificacio
         url:'/CargueSelectoresParametrizar',
         data: datos_accion_antecesora_calificacion_pcl,
         success:function(data){
-            $('#bd_accion_antecesora_calificacion_pcl_'+id_parametrizacion_calificacion_pcl_editar).empty();
-            $('#bd_accion_antecesora_calificacion_pcl_'+id_parametrizacion_calificacion_pcl_editar).append('<option value="" selected>Seleccione</option>');
+            //$('#bd_accion_antecesora_calificacion_pcl_'+id_parametrizacion_calificacion_pcl_editar).empty();
+            //$('#bd_accion_antecesora_calificacion_pcl_'+id_parametrizacion_calificacion_pcl_editar).append('<option value="" selected>Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                if (data[claves[i]]["Id_Accion"] == $("#bd_servicio_asociado_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).val()) {
-                    $("#bd_accion_antecesora_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Accion"]+'</option>');
-                } else {
+                
+                if (data[claves[i]]["Id_Accion"] != $("#bd_accion_antecesora_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).val()) {
                     $("#bd_accion_antecesora_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Accion"]+'</option>');
                 }
             }
@@ -3001,13 +3000,11 @@ function edicion_parametrizacion_juntas(id_parametrizacion_juntas_editar){
         url:'/CargueSelectoresParametrizar',
         data: datos_accion_antecesora_juntas,
         success:function(data){
-            $('#bd_accion_antecesora_juntas_'+id_parametrizacion_juntas_editar).empty();
-            $('#bd_accion_antecesora_juntas_'+id_parametrizacion_juntas_editar).append('<option value="">Seleccione</option>');
+            //$('#bd_accion_antecesora_juntas_'+id_parametrizacion_juntas_editar).empty();
+            //$('#bd_accion_antecesora_juntas_'+id_parametrizacion_juntas_editar).append('<option value="">Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                if (ata[claves[i]]["Id_Accion"] == $("#bd_servicio_asociado_juntas_"+id_parametrizacion_juntas_editar).val()) {
-                    $("#bd_accion_antecesora_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Accion"]+'</option>');
-                } else {
+                if (ata[claves[i]]["Id_Accion"] != $("#bd_accion_antecesora_juntas"+id_parametrizacion_juntas_editar).val()) {
                     $("#bd_accion_antecesora_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Accion"]+'</option>');
                 }
             }

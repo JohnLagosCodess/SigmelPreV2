@@ -29,6 +29,10 @@ textarea{
     left: 5px;
 }
 
+.descarga-deshabilitada {
+    opacity: 0.5;
+    pointer-events: none;
+}
 .icono {
     animation: spin 2s infinite linear; 
   }

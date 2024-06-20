@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Coordinador;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\sigmel_lista_tipo_eventos;
@@ -258,8 +259,30 @@ class DeterminacionOrigenATEL extends Controller
         }
 
         $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$Id_evento_dto_atel], ['Id_Asignacion',$Id_asignacion_dto_atel], ['T_documento','N/A']])->get();
-
+        ->where([['ID_evento',$Id_evento_dto_atel], ['Id_Asignacion',$Id_asignacion_dto_atel], ['T_documento','N/A'], ['Modulo_creacion','determinacionOrigenATEL']])->get();
+        foreach ($array_comunicados_correspondencia as $comunicado) {
+            if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
+                $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
+                if(File::exists($filePath)){
+                    $comunicado['Existe'] = true;
+                }
+                else{
+                    $comunicado['Existe'] = false;
+                }
+            }
+            else if($comunicado['Tipo_descarga'] === 'Manual'){
+                $filePath = public_path('Documentos_Eventos/'.$comunicado['ID_evento'].'/'.$comunicado['Asunto']);
+                if(File::exists($filePath)){
+                    $comunicado['Existe'] = true;
+                }
+                else{
+                    $comunicado['Existe'] = false;
+                }
+            }
+            else{
+                $comunicado['Existe'] = false;
+            }
+        }
         /* Nombre Afp */
         $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
@@ -446,7 +469,7 @@ class DeterminacionOrigenATEL extends Controller
                 ['Tipo_lista', '=', 'Origen DTO ATEL'],
                 ['Estado', '=', 'activo']
             ])
-            ->whereNotIn('Nombre_parametro', ['Común', 'Laboral', 'Sin Origen', 'Sin Cobertura'])
+            ->whereNotIn('Nombre_parametro', ['Común', 'Laboral', 'Sin Origen', 'Sin Cobertura','Mixto','Integral','Derivado del evento','No derivado del evento'])
             ->get();
             $info_origen_vali_2 = json_decode(json_encode($listado_origen_vali_2, true));
             return response()->json($info_origen_vali_2);
@@ -460,7 +483,7 @@ class DeterminacionOrigenATEL extends Controller
                 ['Tipo_lista', '=', 'Origen DTO ATEL'],
                 ['Estado', '=', 'activo']
             ])
-            ->whereNotIn('Nombre_parametro', ['Común', 'Laboral', 'Sin Origen', 'Incidente'])
+            ->whereNotIn('Nombre_parametro', ['Común', 'Laboral', 'Sin Origen', 'Incidente','Mixto','Integral','Derivado del evento','No derivado del evento'])
             ->get();
             $info_origen_vali_3 = json_decode(json_encode($listado_origen_vali_3, true));
             return response()->json($info_origen_vali_3);
@@ -741,6 +764,9 @@ class DeterminacionOrigenATEL extends Controller
                 'Elaboro' => $nombre_usuario,
                 'Reviso' => 'N/A',
                 'Anexos' => 'N/A',
+                'Tipo_descarga' => 'Dictamen',
+                'Modulo_creacion' => 'determinacionOrigenATEL',
+                'Reemplazado' => 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -753,6 +779,17 @@ class DeterminacionOrigenATEL extends Controller
             sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
             ->where('Id_Dto_ATEL', $Id_Dto_ATEL)->update($datos_formulario);
             $mensaje = 'Información actualizada satisfactoriamente.';
+
+            $comunicado_reemplazado = [
+                'Reemplazado' => 0
+            ];
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['ID_evento',$request->ID_Evento],
+                    ['Id_Asignacion',$request->Id_Asignacion],
+                    ['N_radicado',$request->radicado_dictamen]
+                    ])
+            ->update($comunicado_reemplazado);
         }
         
         // Actualizacion del profesional calificador
@@ -1106,6 +1143,9 @@ class DeterminacionOrigenATEL extends Controller
                 'Agregar_copia' => $agregar_copias_comu,
                 'JRCI_copia' => $cual,
                 'Anexos' => $anexos,
+                'Tipo_descarga' => 'Comunicado',
+                'Modulo_creacion' => 'determinacionOrigenATEL',
+                'Reemplazado' => 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -1169,6 +1209,7 @@ class DeterminacionOrigenATEL extends Controller
                 'JRCI_copia' => $cual,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'Reemplazado' => 0
             ];   
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
@@ -1219,6 +1260,7 @@ class DeterminacionOrigenATEL extends Controller
         }
         
         $sustentacion_califi_origen = $request->sustentacion_califi_origen;
+        $Id_comunicado = $request->id_comunicado;
         $origen = $request->origen;
 
         /* Creación de las variables faltantes que no están en el formulario */
@@ -1353,6 +1395,12 @@ class DeterminacionOrigenATEL extends Controller
         $output = $pdf->output();
         //Guardar el PDF en un archivo
         file_put_contents(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_pdf}"), $output);
+
+        $actualizar_nombre_documento = [
+            'Nombre_documento' => $nombre_pdf
+        ];
+        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+        ->update($actualizar_nombre_documento);
 
         /* Inserción del registro de que fue descargado */
         // Extraemos el id del servicio asociado
@@ -1836,6 +1884,12 @@ class DeterminacionOrigenATEL extends Controller
         $output = $pdf->output();
         //Guardar el PDF en un archivo
         file_put_contents(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_pdf}"), $output);
+
+        $actualizar_nombre_documento = [
+            'Nombre_documento' => $nombre_pdf
+        ];
+        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $id_tupla_comunicado)
+        ->update($actualizar_nombre_documento);
 
         /* Inserción del registro de que fue descargado */
         // Extraemos el id del proceso y servicio asociado

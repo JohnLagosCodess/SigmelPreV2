@@ -6,14 +6,20 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 //llamado de modelos para formulario BandejaPCL y captura de data
 use App\Models\sigmel_lista_procesos_servicios;
 use App\Models\cndatos_bandeja_eventos;
 use App\Models\cndatos_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
+use App\Models\sigmel_historial_acciones_eventos;
+
 use App\Models\sigmel_informacion_acciones;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
+use App\Models\sigmel_informacion_comunicado_eventos;
+
 use App\Models\User;
 use Illuminate\Support\Arr;
 
@@ -1325,5 +1331,68 @@ class CoordinadorController extends Controller
         }
         return json_decode(json_encode($mensajes, true));
 
+    }
+
+    public function reemplazarDocumento(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+        $Id_comunicado = $request->id_comunicado;
+        $Id_evento = $request->id_evento;
+        $Id_asignacion = $request->id_asignacion;
+        $Id_procesos = $request->id_proceso;
+        $tipo_descarga = $request->tipo_descarga;
+        $modulo_creacion = $request->modulo_creacion;
+        $numero_identificacion = $request->numero_identificacion;
+        $n_radicado = $request->n_radicado;
+        $datos_comunicado_actualizar=[
+            'F_comunicado' => $date,
+            'Elaboro' => $nombre_usuario,
+            'Reemplazado' => 1,
+        ];
+
+        if($request->hasFile('doc_de_reemplazo')){
+            $archivo = $request->file('doc_de_reemplazo');
+            $path = public_path('Documentos_Eventos/'.$Id_evento);
+            $mode = 0777;
+
+            if (!File::exists($path)) {
+                File::makeDirectory($path, $mode, true, true);
+                chmod($path, octdec($mode));
+            }
+
+            if($tipo_descarga === 'Manual'){
+                $nombre_final_documento = $request->asunto;
+            }
+            else {
+                $nombre_final_documento = $request -> nombre_documento;
+            }
+            Storage::putFileAs($Id_evento, $archivo, $nombre_final_documento);
+        } 
+
+        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+        ->update($datos_comunicado_actualizar);
+
+        sleep(2);
+        $datos_info_historial_acciones = [
+            'ID_evento' => $Id_evento,
+            'F_accion' => $date,
+            'Nombre_usuario' => $nombre_usuario,
+            'Accion_realizada' => "Reemplaza el comunicado con ID_Comunicado $Id_comunicado",
+            'Descripcion' => $request->asunto,
+        ];
+
+        sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+    
+    
+        $mensajes = array(
+            "parametro" => 'reemplazar_comunicado',
+            "mensaje" => 'Comunicado reemplazado satisfactoriamente.'
+        );
+
+        return json_decode(json_encode($mensajes, true));
     }
 }

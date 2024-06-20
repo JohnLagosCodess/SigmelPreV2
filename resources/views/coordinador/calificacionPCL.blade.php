@@ -553,11 +553,20 @@
                                                 <th>N° Radicado</th>
                                                 <th>Elaboro</th>
                                                 <th>Fecha Comunicado</th>
+                                                <th>Documento</th>
                                                 <th>Acción</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
                                     </table>
+                                    <div class="alert alert-danger cargueundocumentoprimero d-none" role="alert">
+                                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Por favor, adjunta un documento antes de cargar. 
+                                    </div>
+                                    <div class="alerta_externa_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                                    <div style="display: flex; flex-direction:row; justify-content:flex-end; gap:2px;"> <!-- Alinea el contenido a la derecha -->
+                                        <input style="width:40%" type="file" class="form-control select-doc" name="cargue_comunicados" id="cargue_comunicados" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx"/>
+                                        <button class="btn-info" id="cargarComunicado">Cargar</button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-header text-center">
@@ -1336,6 +1345,7 @@
     {{-- Modal cargue documentos --}}
     <?php $aperturaModal = 'Edicion'; ?>
     @include('//.administrador.modalcarguedocumentos')
+    @include('//.coordinador.modalReemplazarArchivos')
     
 @stop
 @section('js')

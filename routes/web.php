@@ -31,6 +31,8 @@ use App\Http\Controllers\Comite\ComiteController;
 use App\Http\Controllers\Analista\AnalistaController;
 use App\Http\Controllers\Consulta\ConsultaController;
 use App\Http\Controllers\Administrador\ReporteNotificacionesController;
+use App\Http\Controllers\Administrador\ReporteFacturacionPclController;
+use App\Http\Controllers\Administrador\ReporteFacturacionJuntasController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -304,6 +306,8 @@ Route::post('/sinfiltrosBandejaPCL', [CoordinadorController::class, 'sinFiltroBa
 Route::post('/filtrosBandejaPCL', [CoordinadorController::class, 'filtroBandejaPCl']);
 // Accion: Actualizar el profesional y redireccionar el servicio
 Route::post('/actualizarProfesionalServicio', [CoordinadorController::class, 'actualizarBandejaPCL']);
+// Acción: Reemplazar Documentos
+Route::post('/reemplazarDocumento', [CoordinadorController::class, 'reemplazarDocumento']);
 
 // 14/07/2023
 // Vista: Módulo Calificación PCL Coordinador
@@ -829,6 +833,19 @@ Route::post('/consultaReporteNotificaciones', [ReporteNotificacionesController::
 Route::post('/generarZipReporteNotificaciones', [ReporteNotificacionesController::class, 'generarZipReporteNotificaciones']);
 // Acción: Eliminaar zip de Reporte de Notificaciones
 Route::post('/eliminarZipReporteNotificaciones', [ReporteNotificacionesController::class, 'eliminarZipReporteNotificaciones']);
+
+// Creación Vista Módulo reporte facturación PCL
+// 31/05/2024 Vista Reporte Facturación PCL
+Route::get('/Sigmel/ReporteFacturacionPcl', [ReporteFacturacionPclController::class, 'show'])->name('reporteFacturacionPcl');
+// Acción: Consulta de Reporte Facturación PCL
+Route::post('/consultaReporteFactuPcl', [ReporteFacturacionPclController::class, 'consultaReporteFactuPcl']);
+
+// Creación Vista Módulo reporte facturación Juntas
+// 31/05/2024 Vista Reporte Facturación Juntas
+Route::get('/Sigmel/ReporteFacturacionJuntas', [ReporteFacturacionJuntasController::class, 'show'])->name('reporteFacturacionJuntas');
+// Acción: Consulta de Reporte Facturación Juntas
+Route::post('/consultaReporteFactuJuntas', [ReporteFacturacionJuntasController::class, 'consultaReporteFactuJuntas']);
+
 
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */

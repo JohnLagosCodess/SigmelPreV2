@@ -2821,7 +2821,7 @@ $(document).ready(function(){
     }) 
     // habilitar o deshabilitar botones o etiquetas de toda la vista
     var profesional_comite = $("#profesional_comite").val();
-    if (profesional_comite !== '') {
+    if (profesional_comite !== '' && idRol != 6) {
         // botones
         $('#ActualizarLaboralActivo').prop('disabled', true);
         $('#GuardarLaboralActivo').prop('disabled', true);            
@@ -3094,6 +3094,224 @@ $(document).ready(function(){
         $("#div_correspondecia").removeClass('d-none');
     });
 
+    //Cargar comunicado
+    $('#cargarComunicado').click(function(){
+        if(!$('#cargue_comunicados')[0].files[0]){
+            return $(".cargueundocumentoprimero").removeClass('d-none');
+        }
+        $(".cargueundocumentoprimero").addClass('d-none');
+        var archivo = $('#cargue_comunicados')[0].files[0];
+        var documentName = archivo.name;
+        var formData = new FormData($('form')[0]);
+        formData.append('cargue_comunicados', archivo);
+        formData.append('token', $("input[name='_token']").val());
+        formData.append('ciudad', 'N/A');
+        formData.append('Id_evento',$("#Id_Evento_decreto").val());
+        formData.append('Id_asignacion',$('#Id_Asignacion_decreto').val());
+        formData.append('Id_procesos',$("#Id_Proceso_decreto").val());
+        formData.append('fecha_comunicado2',null);
+        formData.append('radicado2',$('#radicado_comunicado_manual').val());
+        formData.append('cliente_comunicado2','N/A');
+        formData.append('nombre_afiliado_comunicado2','N/A');
+        formData.append('tipo_documento_comunicado2','N/A');
+        formData.append('identificacion_comunicado2','N/A');
+        formData.append('destinatario', 'N/A');
+        formData.append('nombre_destinatario','N/A');
+        formData.append('nic_cc','N/A');
+        formData.append('direccion_destinatario','N/A');
+        formData.append('telefono_destinatario',1);
+        formData.append('email_destinatario','N/A');
+        formData.append('departamento_destinatario',1);
+        formData.append('ciudad_destinatario',1);
+        formData.append('asunto',documentName);
+        formData.append('cuerpo_comunicado','N/A');
+        formData.append('anexos',0);
+        formData.append('forma_envio',0);
+        formData.append('reviso',0);
+        formData.append('firmarcomunicado',null);
+        formData.append('tipo_descarga', 'Manual');
+        formData.append('modulo_creacion','calificacionTecnicaPCL');
+        formData.append('modulo','Comunicados calificación tecnica');
+        $.ajax({
+            type:'POST',
+            url:'/registrarComunicadoOrigen',
+            data: formData,   
+            processData: false,
+            contentType: false,         
+            success:function(response){
+                if (response.parametro == 'agregar_comunicado') {
+                    $('.alerta_externa_comunicado').removeClass('d-none');
+                    $('.alerta_externa_comunicado').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.alerta_externa_comunicado').addClass('d-none');
+                        $('.alerta_externa_comunicado').empty();
+                        location.reload();
+                    }, 3000);
+                }
+            }
+        });  
+    }); 
+    //Descargar archivo cargado manualmente
+    $("form[id^='form_descargar_archivo_']").submit(function (e){
+        e.preventDefault();              
+        var archivo = $(this).data("archivo");
+
+        var nombre_documento = archivo.Asunto;
+        var idEvento = archivo.ID_evento;
+        var enlaceDescarga = document.createElement('a');
+        enlaceDescarga.href = '/descargar-archivo/'+nombre_documento+'/'+idEvento;     
+        enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+        enlaceDescarga.style.display = 'none';
+        document.body.appendChild(enlaceDescarga);
+    
+        // Simular clic en el enlace para iniciar la descarga
+        enlaceDescarga.click();
+    
+        // Eliminar el enlace después de la descarga
+        setTimeout(function() {
+            document.body.removeChild(enlaceDescarga);
+        }, 1000);
+    });
+
+    //Reemplazar archivo 
+    let comunicado_reemplazar = null;
+    $("form[id^='form_reemplazar_archivo_']").submit(function (e){
+        e.preventDefault();           
+        $('#modalReemplazarArchivos').modal('show');  
+        comunicado_reemplazar = $(this).data('archivo');
+        let nombre_doc = comunicado_reemplazar.Nombre_documento;
+        let nombre_doc_manual = comunicado_reemplazar.Asunto;
+        if(nombre_doc != null && nombre_doc != "null"){
+            extensionDoc = `.${ nombre_doc.split('.').pop()}`;
+            document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
+        }
+        else if(nombre_doc_manual != null && nombre_doc_manual != "null"){
+            extensionDoc = `.${ nombre_doc_manual.split('.').pop()}`;
+            document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
+        }
+    });
+
+    $("form[id^='reemplazar_documento']").submit(function(e){
+        e.preventDefault();
+        if(!$('#cargue_comunicados_modal')[0].files[0]){
+            return $(".cargueundocumentoprimeromodal").removeClass('d-none');
+        }
+        $(".cargueundocumentoprimeromodal").addClass('d-none');
+        $(".extensionInvalidaModal").addClass('d-none');
+        var archivo = $('#cargue_comunicados_modal')[0].files[0];
+        extensionDocCargado = `.${archivo.name.split('.').pop()}`;
+        if(extensionDoc === extensionDocCargado){
+            var formData = new FormData($('form')[0]);
+            formData.append('doc_de_reemplazo', archivo);
+            formData.append('token', $('input[name=_token]').val());
+            formData.append('id_comunicado', comunicado_reemplazar.Id_Comunicado);
+            formData.append('tipo_descarga', comunicado_reemplazar.Tipo_descarga);
+            formData.append('id_asignacion', comunicado_reemplazar.Id_Asignacion);
+            formData.append('id_proceso', comunicado_reemplazar.Id_proceso);
+            formData.append('id_evento', comunicado_reemplazar.ID_evento);
+            formData.append('n_radicado', comunicado_reemplazar.N_radicado);
+            formData.append('numero_identificacion', comunicado_reemplazar.N_identificacion);
+            formData.append('modulo_creacion', 'calificacionTecnicaPCL');
+            formData.append('asunto', comunicado_reemplazar.Asunto);
+            formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
+            $.ajax({
+                type:'POST',
+                url:'/reemplazarDocumento',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success:function(response){
+                    if (response.parametro == 'reemplazar_comunicado') {
+                        $('.alerta_externa_comunicado_modal').removeClass('d-none');
+                        $('.alerta_externa_comunicado_modal').append('<strong>'+response.mensaje+'</strong>');
+                        setTimeout(function(){
+                            $('.alerta_externa_comunicado_modal').addClass('d-none');
+                            $('.alerta_externa_comunicado_modal').empty();
+                            localStorage.setItem("#Generar_comunicados", true);
+                            location.reload();
+                        }, 3000);
+                    }
+                }
+            });
+        }
+        else{
+            document.getElementById('extensionInvalidaMensaje').textContent += extensionDoc;
+            return $(".extensionInvalidaModal").removeClass('d-none');
+        }
+    });
+
+    $("form[id^='ver_dictamentPCL']").submit(function(e){
+        e.preventDefault();
+        var infoComunicado = $(this).data("archivo");
+        var nombre_doc = infoComunicado.Nombre_documento;
+        var idEvento = infoComunicado.ID_evento;
+        var enlaceDescarga = document.createElement('a');
+        enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+        enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+        enlaceDescarga.style.display = 'none';
+        document.body.appendChild(enlaceDescarga);
+        enlaceDescarga.click();
+        setTimeout(function() {
+            document.body.removeChild(enlaceDescarga);
+        }, 1000);
+    });
+
+    $("form[id^='verNotificacionPCL']").submit(function(e){
+        e.preventDefault();
+        var infoComunicado = $(this).data("archivo");
+        var nombre_doc = infoComunicado.Nombre_documento;
+        var idEvento = infoComunicado.ID_evento;
+        var enlaceDescarga = document.createElement('a');
+        enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+        enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+        enlaceDescarga.style.display = 'none';
+        document.body.appendChild(enlaceDescarga);
+        enlaceDescarga.click();
+        setTimeout(function() {
+            document.body.removeChild(enlaceDescarga);
+        }, 1000);
+
+    });
+
+    $('form[name="ver_dictamenPcl"]').on('submit', function(event) {
+        let form = $(this);
+        var infoComunicado = $(this).data("archivo");
+
+        if(form.attr('action') != undefined && form.attr('action') != null){
+            if(infoComunicado.Nombre_documento == null){
+                $.ajax({
+                    url: form.attr('action'),
+                    method: form.attr('method')
+                })
+                .always(function() {
+                    setTimeout(function() {
+                        location.reload();
+                    },1000)
+                });
+            }
+        }
+    });
+    $('form[name="ver_notificacionPcl"]').on('submit', function(event) {
+        let form = $(this);
+        var infoComunicado = $(this).data("archivo");
+
+        if(form.attr('action') != undefined && form.attr('action') != null){
+            if(infoComunicado.Nombre_documento == null){
+                
+                    $.ajax({
+                        url: form.attr('action'),
+                        method: form.attr('method')
+                    })
+                    .always(function() {
+                        setTimeout(function() {
+                            location.reload();
+                        },1000)
+                    });
+                
+            }
+        }
+    });
+
     //Captura Formulario Correspondencia
     $('#form_correspondencia').submit(function (e){
         e.preventDefault();              
@@ -3218,7 +3436,8 @@ $(document).ready(function(){
             'ciudad':ciudad,
             'f_correspondencia':f_correspondencia,
             'radicado':radicado,
-            'bandera_correspondecia_guardar_actualizar':bandera_correspondecia_guardar_actualizar
+            'bandera_correspondecia_guardar_actualizar':bandera_correspondecia_guardar_actualizar,
+            'tipo_descarga':'Oficio'
         }
 
         $.ajax({    
@@ -3305,6 +3524,7 @@ $(document).ready(function(){
         var f_evento_pericial = $('#f_evento_pericial').val();
         var f_estructura_pericial = $('#f_estructura_pericial').val();
         var n_siniestro = $('#n_siniestro').val();
+        var requiere_rev_pension = $('input[name="requiere_rev_pension"]:checked').val();
         var sustenta_fecha = $('#sustenta_fecha').val();
         var detalle_califi = $('#detalle_califi').val();
         var enfermedad_catastrofica = $('input[name="enfermedad_catastrofica"]:checked').val(); 
@@ -3335,6 +3555,7 @@ $(document).ready(function(){
             'f_evento_pericial':f_evento_pericial,
             'f_estructura_pericial':f_estructura_pericial,
             'n_siniestro':n_siniestro,
+            'requiere_rev_pension': requiere_rev_pension,
             'sustenta_fecha':sustenta_fecha,
             'detalle_califi':detalle_califi,
             'enfermedad_catastrofica':enfermedad_catastrofica,
@@ -3639,7 +3860,7 @@ $(document).ready(function(){
         $(".columna_row1_dictamen").addClass('d-none');
         $("#div_comite_interdisciplinario").addClass('d-none');
         $("#div_correspondecia").addClass('d-none');
-        $("label[for='editar_correspondencia']").addClass('d-none');
+        $("#editar_correspondencia").addClass('d-none');
     }
 
     // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:
@@ -3768,6 +3989,12 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
         allowClear: false
     });
 
+    $("#lista_lateralidadCie10_fila_"+num_consecutivo).select2({
+        width: '100%',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
     //Carga de datos en los selectores
 
     let token = $("input[name='_token']").val();
@@ -3801,6 +4028,23 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
                 $("#lista_origenCie10_fila_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+            }
+        }
+    });
+
+    let listado_LateralidadCIE10 = {
+        '_token': token,
+        'parametro' : "listado_LateralidadCIE10",
+    };
+    $.ajax({
+        type:'POST',
+        url:'/selectoresCalificacionTecnicaPCL',
+        data: listado_LateralidadCIE10,
+        success:function(data){
+            // $("select[id^='lista_origenCie10_fila_']").empty();
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $("#lista_lateralidadCie10_fila_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
             }
         }
     });
@@ -3860,6 +4104,11 @@ $(document).ready(function(){
                             valor_input = $("#"+nombres_ids).val();                              
                             guardar_datos.push(valor_input);                                                     
                         }
+                        // Se extrae la info si se eligió o no el selector lateralidad
+                        if (nombres_ids.startsWith("lista_lateralidadCie10_fila_")) {
+                            valor_select_lateralidad = $("#"+nombres_ids).val();                              
+                            guardar_datos.push(valor_select_lateralidad);                                                     
+                        }
                         // Se extrae la info si se eligió o no el selector Origen
                         if (nombres_ids.startsWith("lista_origenCie10_fila_")) {
                             valor_select_origen = $("#"+nombres_ids).val();                              
@@ -3882,7 +4131,7 @@ $(document).ready(function(){
                         }
                     }
                     // console.log(guardar_datos);
-                    if((index2+1) % 5 === 0){
+                    if((index2+1) % 6 === 0){
                         datos_finales_diagnosticos_moticalifi.push(guardar_datos);
                         guardar_datos = [];
                     }

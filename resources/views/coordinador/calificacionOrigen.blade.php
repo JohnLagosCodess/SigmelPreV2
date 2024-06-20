@@ -241,6 +241,18 @@
                                             <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Nueva_F_radicacion)){echo $array_datos_calificacionOrigen[0]->Nueva_F_radicacion;}?>">
                                         </div>
                                     </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="fuente_informacion">Fuente de información</label>
+                                            <select class="fuente_informacion custom-select" name="fuente_informacion" id="fuente_informacion">
+                                                @if (!empty($array_datos_calificacionOrigen[0]->Fuente_informacion))
+                                                    <option value="{{$array_datos_calificacionOrigen[0]->Fuente_informacion}}" selected>{{$array_datos_calificacionOrigen[0]->Nombre_Fuente_informacion}}</option>
+                                                @else
+                                                    <option value="">Seleccione una opción</option>
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
@@ -453,7 +465,7 @@
                                 </div> 
                                 <div class="col-6" id="div_GrupoDocumental">
                                     <div class="form-group">
-                                        <label for="grupo_documental">Grupo documental<span style="color: red;">(*)</span></label>
+                                        <label for="grupo_documental">Grupo documental <span style="color: red;">(*)</span></label>
                                         <select class="grupo_documental custom-select " name="grupo_documental" id="grupo_documental" <?php if(!empty($dato_articulo_12[0]->Articulo_12) && $dato_articulo_12[0]->Articulo_12=='No_mas_seguimiento'){ ?> disabled <?php } ?> required>
                                             @if (!empty($dato_ultimo_grupo_doc[0]->Grupo_documental))
                                                 <option value="{{$dato_ultimo_grupo_doc[0]->Grupo_documental}}" selected>{{$dato_ultimo_grupo_doc[0]->Tipo_documento}}</option>
@@ -561,11 +573,20 @@
                                             <th>N° Radicado</th>
                                             <th>Elaboro</th>
                                             <th>Fecha Comunicado</th>
+                                            <th>Documento</th>
                                             <th>Acción</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
                                 </table>
+                                <div class="alert alert-danger cargueundocumentoprimero d-none" role="alert">
+                                    <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Por favor, adjunta un documento antes de cargar. 
+                                </div>
+                                <div class="alerta_externa_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                                <div style="display: flex; flex-direction:row; justify-content:flex-end; gap:2px;"> <!-- Alinea el contenido a la derecha -->
+                                    <input style="width:40%" type="file" class="form-control select-doc" name="cargue_comunicados" id="cargue_comunicados" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx"/>
+                                    <button class="btn-info" id="cargarComunicado">Cargar</button>
+                                </div>
                             </div>
                         </div>
                         <!-- Ver Historial de seguimientos -->
@@ -1289,6 +1310,7 @@
 {{-- Modal cargue documentos --}}
 <?php $aperturaModal = 'Edicion'; ?>
 @include('//.administrador.modalcarguedocumentos')
+@include('//.coordinador.modalReemplazarArchivos')
 @stop
 @section('js')
 
