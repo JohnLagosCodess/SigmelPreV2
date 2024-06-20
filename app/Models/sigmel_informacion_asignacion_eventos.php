@@ -37,7 +37,8 @@ class sigmel_informacion_asignacion_eventos extends Model
         'F_calificacion',
         'F_ajuste_calificacion',
         'Detener_tiempo_gestion',
-        'F_detencion_tiempo_gestion',        
+        'F_detencion_tiempo_gestion',
+        'Fuente_info_juntas',
         'Nombre_usuario',
         'F_registro'
     ];
