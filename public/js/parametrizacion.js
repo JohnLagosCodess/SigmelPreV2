@@ -201,6 +201,14 @@ $(document).ready(function(){
 
         var row = $(this).closest('tr');
         row.find('input, textarea, select').prop('readonly', false).prop('disabled', false);
+
+        if ($('#bd_movimiento_automatico_origen_atel_'+id_fila_parametrizacion_editar).is(':checked')) {
+            $('#bd_tiempo_movimiento_origen_atel_'+id_fila_parametrizacion_editar).prop('disabled', false);
+            $('#bd_accion_automatica_origen_atel_'+id_fila_parametrizacion_editar).prop('disabled', false);
+        } else {
+            $('#bd_tiempo_movimiento_origen_atel_'+id_fila_parametrizacion_editar).prop('disabled', true);
+            $('#bd_accion_automatica_origen_atel_'+id_fila_parametrizacion_editar).prop('disabled', true);            
+        }
         row.find('#bd_editar_fila_origen_atel_'+id_fila_parametrizacion_editar).addClass('d-none');
         row.find('#bd_guardar_fila_origen_atel_'+id_fila_parametrizacion_editar).removeClass('d-none');
 
@@ -324,6 +332,9 @@ $(document).ready(function(){
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="enviar_a_origen_atel" id="enviar_a_origen_atel_'+contador_origen_atel+'"></div>',
             '<select disabled class="custom-select bandeja_trabajo_destino_origen_atel_'+contador_origen_atel+'" name="bandeja_trabajo_destino_origen_atel" id="bandeja_trabajo_destino_origen_atel_'+contador_origen_atel+'"><option value=""></option></select>',
             '<input type="text" class="form-control" name="estado_facturacion_origen_atel" id="estado_facturacion_origen_atel_'+contador_origen_atel+'">',
+            '<div style="text-align:center;"><input type="checkbox" class="scales" name="movimiento_automatico_origen_atel" id="movimiento_automatico_origen_atel_'+contador_origen_atel+'" data-id_movimiento_automatico_origen_atel="'+contador_origen_atel+'"></div>',
+            '<input disabled style="width:140px;" type="number" class="form-control" name="tiempo_movimiento_origen_atel" id="tiempo_movimiento_origen_atel_'+contador_origen_atel+'">',
+            '<select disabled class="custom-select accion_automatica_origen_atel'+contador_origen_atel+'" name="accion_automatica_origen_atel" id="accion_automatica_origen_atel_'+contador_origen_atel+'"><option value=""></option></select>',
             '<input style="width:140px;" type="text" class="form-control" name="tiempo_alerta_origen_atel" id="tiempo_alerta_origen_atel_'+contador_origen_atel+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_naranja_origen_atel" id="porcentaje_alerta_naranja_origen_atel_'+contador_origen_atel+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_roja_origen_atel" id="porcentaje_alerta_roja_origen_atel_'+contador_origen_atel+'">',
@@ -533,6 +544,14 @@ $(document).ready(function(){
 
         var row = $(this).closest('tr');
         row.find('input, textarea, select').prop('readonly', false).prop('disabled', false);
+
+        if ($('#bd_movimiento_automatico_calificacion_pcl_'+id_fila_parametrizacion_editar).is(':checked')) {
+            $('#bd_tiempo_movimiebd_tiempo_movimiento_calificacion_pcl_nto_origen_atel_'+id_fila_parametrizacion_editar).prop('disabled', false);
+            $('#bd_accion_automatica_calificacion_pcl_'+id_fila_parametrizacion_editar).prop('disabled', false);
+        } else {
+            $('#bd_tiempo_movimiento_calificacion_pcl_'+id_fila_parametrizacion_editar).prop('disabled', true);
+            $('#bd_accion_automatica_calificacion_pcl_'+id_fila_parametrizacion_editar).prop('disabled', true);            
+        }
         row.find('#bd_editar_fila_calificacion_pcl_'+id_fila_parametrizacion_editar).addClass('d-none');
         row.find('#bd_guardar_fila_calificacion_pcl_'+id_fila_parametrizacion_editar).removeClass('d-none');
 
@@ -655,6 +674,9 @@ $(document).ready(function(){
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="enviar_a_calificacion_pcl" id="enviar_a_calificacion_pcl_'+contador_calificacion_pcl+'"></div>',
             '<select disabled class="custom-select bandeja_trabajo_destino_calificacion_pcl_'+contador_calificacion_pcl+'" name="bandeja_trabajo_destino_calificacion_pcl" id="bandeja_trabajo_destino_calificacion_pcl_'+contador_calificacion_pcl+'"><option value=""></option></select>',
             '<input type="text" class="form-control" name="estado_facturacion_calificacion_pcl" id="estado_facturacion_calificacion_pcl_'+contador_calificacion_pcl+'">',
+            '<div style="text-align:center;"><input type="checkbox" class="scales" name="movimiento_automatico_calificacion_pcl" id="movimiento_automatico_calificacion_pcl_'+contador_calificacion_pcl+'" data-id_movimiento_automatico_calificacion_pcl="'+contador_calificacion_pcl+'"></div>',
+            '<input disabled style="width:140px;" type="number" class="form-control" name="tiempo_movimiento_calificacion_pcl" id="tiempo_movimiento_calificacion_pcl_'+contador_calificacion_pcl+'">',
+            '<select disabled class="custom-select accion_automatica_calificacion_pcl'+contador_calificacion_pcl+'" name="accion_automatica_calificacion_pcl" id="accion_automatica_calificacion_pcl_'+contador_calificacion_pcl+'"><option value=""></option></select>',
             '<input style="width:140px;" type="text" class="form-control" name="tiempo_alerta_calificacion_pcl" id="tiempo_alerta_calificacion_pcl_'+contador_calificacion_pcl+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_naranja_calificacion_pcl" id="porcentaje_alerta_naranja_calificacion_pcl_'+contador_calificacion_pcl+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_roja_calificacion_pcl" id="porcentaje_alerta_roja_calificacion_pcl_'+contador_calificacion_pcl+'">',
@@ -885,6 +907,14 @@ $(document).ready(function(){
 
         var row = $(this).closest('tr');
         row.find('input, textarea, select').prop('readonly', false).prop('disabled', false);
+        
+        if ($('#bd_movimiento_automatico_juntas_'+id_fila_parametrizacion_editar).is(':checked')) {
+            $('#bd_tiempo_movimiento_juntas_'+id_fila_parametrizacion_editar).prop('disabled', false);
+            $('#bd_accion_automatica_juntas_'+id_fila_parametrizacion_editar).prop('disabled', false);
+        } else {
+            $('#bd_tiempo_movimiento_juntas_'+id_fila_parametrizacion_editar).prop('disabled', true);
+            $('#bd_accion_automatica_juntas_'+id_fila_parametrizacion_editar).prop('disabled', true);            
+        }
         row.find('#bd_editar_fila_juntas_'+id_fila_parametrizacion_editar).addClass('d-none');
         row.find('#bd_guardar_fila_juntas_'+id_fila_parametrizacion_editar).removeClass('d-none');
 
@@ -1007,6 +1037,9 @@ $(document).ready(function(){
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="enviar_a_juntas" id="enviar_a_juntas_'+contador_juntas+'"></div>',
             '<select disabled class="custom-select bandeja_trabajo_destino_juntas_'+contador_juntas+'" name="bandeja_trabajo_destino_juntas" id="bandeja_trabajo_destino_juntas_'+contador_juntas+'"><option value=""></option></select>',
             '<input type="text" class="form-control" name="estado_facturacion_juntas" id="estado_facturacion_juntas_'+contador_juntas+'">',
+            '<div style="text-align:center;"><input type="checkbox" class="scales" name="movimiento_automatico_juntas" id="movimiento_automatico_juntas_'+contador_juntas+'" data-id_movimiento_automatico_juntas="'+contador_juntas+'"></div>',
+            '<input disabled style="width:140px;" type="number" class="form-control" name="tiempo_movimiento_juntas" id="tiempo_movimiento_juntas_'+contador_juntas+'">',
+            '<select disabled class="custom-select accion_automatica_juntas'+contador_juntas+'" name="accion_automatica_juntas" id="accion_automatica_juntas_'+contador_juntas+'"><option value=""></option></select>',
             '<input style="width:140px;" type="text" class="form-control" name="tiempo_alerta_juntas" id="tiempo_alerta_juntas_'+contador_juntas+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_naranja_juntas" id="porcentaje_alerta_naranja_juntas_'+contador_juntas+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_roja_juntas" id="porcentaje_alerta_roja_juntas_'+contador_juntas+'">',
@@ -1070,6 +1103,13 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
     /* INICIALIZACIÓN SELECT 2 LISTADO DE PROFESIONALES */
     $(".listado_profesionales_origen_atel_"+num_consecutivo).select2({
         width: '140px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES AUTOMATICAS */
+    $(".accion_automatica_origen_atel"+num_consecutivo).select2({
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
@@ -1153,30 +1193,30 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
         });
     });
 
-        /* Carga del selector de equipos de trabajo dependiendo  del proceso origen atel */
-    // $("#accion_ejecutar_origen_atel_"+num_consecutivo).change(function(){
-    //     $("#equipo_trabajo_origen_atel_"+num_consecutivo).prop('disabled', false);
-    //     // let id_accion = $("#accion_ejecutar_origen_atel_"+num_consecutivo).val();
+    /* Carga del selector de equipos de trabajo dependiendo  del proceso origen atel */
+    $("#accion_ejecutar_origen_atel_"+num_consecutivo).change(function(){
+        $("#equipo_trabajo_origen_atel_"+num_consecutivo).prop('disabled', false);
+        // let id_accion = $("#accion_ejecutar_origen_atel_"+num_consecutivo).val();
 
-    //     let datos_equipos_trabajo_origen_atel = {
-    //         '_token': token,
-    //         'parametro' : "equipos_trabajo_proceso_origen_atel",
-    //         // 'id_accion_seleccionada': id_accion
-    //     };
-    //     $.ajax({
-    //         type:'POST',
-    //         url:'/CargueSelectoresParametrizar',
-    //         data: datos_equipos_trabajo_origen_atel,
-    //         success:function(data){
-    //             $('#equipo_trabajo_origen_atel_'+num_consecutivo).empty();
-    //             $('#equipo_trabajo_origen_atel_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
-    //             let claves = Object.keys(data);
-    //             for (let i = 0; i < claves.length; i++) {
-    //                 $("#equipo_trabajo_origen_atel_"+num_consecutivo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
-    //             }
-    //         }
-    //     });
-    // });
+        let datos_equipos_trabajo_origen_atel = {
+            '_token': token,
+            'parametro' : "equipos_trabajo_proceso_origen_atel",
+            // 'id_accion_seleccionada': id_accion
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_equipos_trabajo_origen_atel,
+            success:function(data){
+                $('#equipo_trabajo_origen_atel_'+num_consecutivo).empty();
+                $('#equipo_trabajo_origen_atel_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#equipo_trabajo_origen_atel_"+num_consecutivo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        });
+    });
 
     /* Carga del selector de profesionales dependendiendo de la selección del equipo de trabajo */
     $("#equipo_trabajo_origen_atel_"+num_consecutivo).change(function(){
@@ -1224,6 +1264,68 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
                 }
             }
         });
+
+        /* Carga del selector de acciones automaticas dependiendo del servicio seleccionado*/        
+        let datos_acciones_automaticas_origen_atel = {
+            '_token': token,
+            'parametro': "acciones_automaticas_proceso_origen_atel",
+            'Id_cliente': Id_cliente,
+            'Servicio_asociado_origen': id_servicio_asociado_origen_atel
+        };
+        // console.log(datos_acciones_automaticas_origen_atel);
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_acciones_automaticas_origen_atel,
+            success:function(data){
+                $('#accion_automatica_origen_atel_'+num_consecutivo).empty();
+                $('#accion_automatica_origen_atel_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#accion_automatica_origen_atel_"+num_consecutivo).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                }
+            }
+        });
+    });
+
+    /* HABILITAR CAMPOS DE TIEMPO DE MOVIMIENTO Y ACCION AUTOMATICA*/
+
+    $("[id^='movimiento_automatico_origen_atel_']").change(function () {
+        let id_fila_parametrizacion_movimiento = $(this).data("id_movimiento_automatico_origen_atel");
+        let servicio_asociado_origen = $('#servicio_asociado_origen_atel_'+num_consecutivo).val();
+        if ($(this).is(':checked')) {
+            // console.log('id movi editar es: '+id_fila_parametrizacion_movimiento_editar);   
+            $('#tiempo_movimiento_origen_atel_'+id_fila_parametrizacion_movimiento).prop('disabled', false);
+            $('#accion_automatica_origen_atel_'+id_fila_parametrizacion_movimiento).prop('disabled', false); 
+            
+            /* Carga del selector de acciones automaticas dependiendo del estado seleccionado*/        
+            let datos_acciones_automaticas_origen_atel = {
+                '_token': token,
+                'parametro': "acciones_automaticas_proceso_origen_atel",
+                'Id_cliente': Id_cliente,
+                'Servicio_asociado_origen': servicio_asociado_origen
+            };
+            // console.log(datos_acciones_automaticas_origen_atel);
+            $.ajax({
+                type:'POST',
+                url:'/CargueSelectoresParametrizar',
+                data: datos_acciones_automaticas_origen_atel,
+                success:function(data){
+                    $('#accion_automatica_origen_atel_'+num_consecutivo).empty();
+                    $('#accion_automatica_origen_atel_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                    let claves = Object.keys(data);
+                    for (let i = 0; i < claves.length; i++) {
+                        $("#accion_automatica_origen_atel_"+num_consecutivo).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                    }
+                }
+            });                
+        }else{
+            $("#tiempo_movimiento_origen_atel_"+id_fila_parametrizacion_movimiento).prop("disabled", true);
+            $('#tiempo_movimiento_origen_atel_'+id_fila_parametrizacion_movimiento).val('');
+            $('#accion_automatica_origen_atel_'+id_fila_parametrizacion_movimiento).prop('disabled', true);
+            $('#accion_automatica_origen_atel_'+id_fila_parametrizacion_movimiento).empty();
+            $('#accion_automatica_origen_atel_'+id_fila_parametrizacion_movimiento).append('<option value="" selected>Seleccione</option>');                 
+        }
     });
 
     /* Habilitar el selector de bandeja de trabajo destino cuando se checkea el checkbox de enviar del proceso origen atel */
@@ -1259,22 +1361,87 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
 
     /* Función solo numeros para input tiempo alerta del proceso origen atel */
     /* La funcionalidad de permitir que solo se ingrese una sola cifra decimal está realizada en el archivo funciones_helpers.js */
-    $(document).on('input', "input[id^='tiempo_alerta_origen_atel_']", function(event){
-        var value = $(this).val();
-      
-        // Eliminar todos los caracteres no numéricos y no "."
-        value = value.replace(/[^0-9.]/g, '');
-        
-        // Verificar si hay más de un punto decimal y eliminar el exceso
-        var decimalCount = (value.match(/\./g) || []).length;
-        if (decimalCount > 1) {
-            value = value.replace(/\.+$/,"");
+    $("#tiempo_alerta_origen_atel_" + num_consecutivo).on('input', function () {
+
+        let value = $(this).val();
+        // Expresión regular para números con hasta 6 dígitos y hasta 2 decimales
+        let regex = /^\d{0,6}(\.\d{0,2})?$/;
+        // Verificar si el valor tiene más de un punto decimal o más de 6 dígitos enteros
+        let parts = value.split('.');
+        let integerPart = parts[0];
+        let decimalPart = parts[1];
+
+        if (integerPart.length > 6 || (decimalPart && decimalPart.length > 2) || value.split('.').length > 2) {
+            $(this).val(value.slice(0, -1)); // Elimina el último carácter si no coincide con el regex o si tiene más de 6 enteros o más de 2 decimales
         }
-        
-        // Actualizar el valor del input
-        $(this).val(value);
+    });
+    // Funcion que permite solo numeros enteros del 0 al 100
+
+    $("#porcentaje_alerta_naranja_origen_atel_" + num_consecutivo).on('input', function () {
+        $("#porcentaje_alerta_roja_origen_atel_" + num_consecutivo).val('');  
+        let porcentaje_alerta_naranja = $(this).val();    
+        // Remover caracteres que no son dígitos
+        porcentaje_alerta_naranja = porcentaje_alerta_naranja.replace(/\D/g, '');    
+        // Limitar el rango de 0 a 100
+        if (porcentaje_alerta_naranja !== '') {
+            let intporcentaje_alerta_naranja = parseInt(porcentaje_alerta_naranja, 10);
+            if (intporcentaje_alerta_naranja > 100) {
+                porcentaje_alerta_naranja = '100';
+            } else if (intporcentaje_alerta_naranja < 0) {
+                porcentaje_alerta_naranja = '0';
+            }
+        }    
+        // Establecer el valor corregido en el input    
+        $(this).val(porcentaje_alerta_naranja);
+    })
+
+    let tiempo_alerta_rojas;
+
+    $("#porcentaje_alerta_roja_origen_atel_" + num_consecutivo).on('input', function () {
+        clearTimeout(tiempo_alerta_rojas);
+        tiempo_alerta_rojas = setTimeout(() => {
+            let porcentaje_alerta_naranja = $("#porcentaje_alerta_naranja_origen_atel_" + num_consecutivo).val();
+            let porcentaje_alerta_roja = $(this).val();
+            // Remover caracteres que no son dígitos
+            porcentaje_alerta_roja = porcentaje_alerta_roja.replace(/\D/g, '');
+            // Limitar a 3 dígitos
+            if (porcentaje_alerta_roja.length > 3) {
+                porcentaje_alerta_roja = porcentaje_alerta_roja.substring(0, 3);
+            }
+            // Limitar el rango desde el porcentaje de alerta naranja a 100
+            if (porcentaje_alerta_roja !== '') {
+                let intporcentaje_alerta_roja = parseInt(porcentaje_alerta_roja, 10);
+                if (intporcentaje_alerta_roja > 100) {
+                    porcentaje_alerta_roja = '100';
+                } else if (intporcentaje_alerta_roja < porcentaje_alerta_naranja) {
+                    porcentaje_alerta_roja = porcentaje_alerta_naranja;
+                }
+            }
+            // Establecer el valor corregido en el input
+            $(this).val(porcentaje_alerta_roja);
+        }, 1500);
     });
 
+    // Prevenir entrada de caracteres no numéricos y limitar a 3 dígitos
+    $("#porcentaje_alerta_roja_origen_atel_" + num_consecutivo).on('keydown', function (e) {
+        let value = $(this).val();
+        // Permitir: backspace, delete, tab, escape, enter y .
+        if ($.inArray(e.key, ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', '.']) !== -1 ||
+            // Permitir: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+            (e.ctrlKey === true && (e.key === 'a' || e.key === 'c' || e.key === 'v' || e.key === 'x')) ||
+            // Permitir: home, end, left, right, down, up
+            (e.key >= 'Home' && e.key <= 'End')) {
+            return;
+        }
+        // Prevenir entrada si la longitud actual es de 3 dígitos
+        if (value.length >= 3 && (e.key >= '0' && e.key <= '9')) {
+            e.preventDefault();
+        }
+        // Prevenir: cualquier otro carácter que no sea número
+        if ((e.key < '0' || e.key > '9')) {
+            e.preventDefault();
+        }
+    });
 
     // mantenemos el input fecha actualización movimiento disabled en todo movimiento
     $("#fecha_actualizacion_movimiento_origen_atel_"+num_consecutivo).prop('disabled', true);
@@ -1422,6 +1589,13 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
     /* INICIALIZACIÓN SELECT 2 LISTADO BANDEJA TRABAJO DESTINO */
     $(".bd_bandeja_trabajo_destino_origen_atel_"+id_parametrizacion_origen_atel_editar).select2({
         width: '140px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES AUTOMATICAS */
+    $(".bd_accion_automatica_origen_atel_"+id_parametrizacion_origen_atel_editar).select2({
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
@@ -1614,7 +1788,6 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
     $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).change(function(){
         $("#bd_listado_profesionales_origen_atel_"+id_parametrizacion_origen_atel_editar).prop('disabled', false);
         let id_equipo_seleccionado = $("#bd_equipo_trabajo_origen_atel_"+id_parametrizacion_origen_atel_editar).val();
-
         let datos_listado_profesionales_origen_atel = {
             '_token': token,
             'parametro' : "listado_profesionales_proceso_origen_atel",
@@ -1626,7 +1799,6 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
             url:'/CargueSelectoresParametrizar',
             data: datos_listado_profesionales_origen_atel,
             success:function(data){
-                console.log('aqui');
                 $("#bd_listado_profesionales_origen_atel_"+id_parametrizacion_origen_atel_editar).empty();
                 $("#bd_listado_profesionales_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="" selected>Seleccione</option>');
                 let claves = Object.keys(data);
@@ -1682,6 +1854,26 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
                 }
             }
         });
+        /* Carga del selector de acciones automaticas dependiendo de la seleccion del estado del proceso origen atel apenas carga */
+        let datos_acciones_automaticas_origen_atel = {
+            '_token': token,
+            'parametro': "acciones_automaticas_proceso_origen_atel",
+            'Id_cliente': Id_cliente,
+            'Servicio_asociado_origen': id_servicio_asociado_origen_atel,
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_acciones_automaticas_origen_atel,
+            success:function(data){
+                $('#bd_accion_automatica_origen_atel_'+id_parametrizacion_origen_atel_editar).empty();
+                $('#bd_accion_automatica_origen_atel_'+id_parametrizacion_origen_atel_editar).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#bd_accion_automatica_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'">'+data[claves[i]]["Accion"]+'</option>');                    
+                }
+            }
+        });
     });
 
     /* Habilitar el selector de bandeja de trabajo destino cuando se checkea el checkbox de enviar del proceso origen atel */
@@ -1717,21 +1909,159 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
 
     /* Función solo numeros para input tiempo alerta del proceso origen atel */
     /* La funcionalidad de permitir que solo se ingrese una sola cifra decimal está realizada en el archivo funciones_helpers.js */
-    $("#bd_tiempo_alerta_origen_atel_"+id_parametrizacion_origen_atel_editar).on('input', function(){
-        var value = $(this).val();
-      
-        // Eliminar todos los caracteres no numéricos y no "."
-        value = value.replace(/[^0-9.]/g, '');
+    $("#bd_tiempo_alerta_origen_atel_" + id_parametrizacion_origen_atel_editar).on('input', function () {
         
-        // Verificar si hay más de un punto decimal y eliminar el exceso
-        var decimalCount = (value.match(/\./g) || []).length;
-        if (decimalCount > 1) {
-            value = value.replace(/\.+$/,"");
+        let value = $(this).val();
+        // Expresión regular para números con hasta 6 dígitos y hasta 2 decimales
+        let regex = /^\d{0,6}(\.\d{0,2})?$/;
+        // Verificar si el valor tiene más de un punto decimal o más de 6 dígitos enteros
+        let parts = value.split('.');
+        let integerPart = parts[0];
+        let decimalPart = parts[1];
+
+        if (integerPart.length > 6 || (decimalPart && decimalPart.length > 2) || value.split('.').length > 2) {
+            $(this).val(value.slice(0, -1)); // Elimina el último carácter si no coincide con el regex o si tiene más de 6 enteros o más de 2 decimales
         }
-        
-        // Actualizar el valor del input
-        $(this).val(value);
     });
+    
+    // Funcion que permite solo numeros enteros del 0 al 100 en porcentaje alerta naranja
+
+    $("#bd_porcentaje_alerta_naranja_origen_atel_" + id_parametrizacion_origen_atel_editar).on('input', function () {     
+        $("#bd_porcentaje_alerta_roja_origen_atel_" + id_parametrizacion_origen_atel_editar).val('');  
+        let porcentaje_alerta_naranja = $(this).val();    
+        // Remover caracteres que no son dígitos
+        porcentaje_alerta_naranja = porcentaje_alerta_naranja.replace(/\D/g, '');    
+        // Limitar el rango de 0 a 100
+        if (porcentaje_alerta_naranja !== '') {
+            let intporcentaje_alerta_naranja = parseInt(porcentaje_alerta_naranja, 10);
+            if (intporcentaje_alerta_naranja > 100) {
+                porcentaje_alerta_naranja = '100';
+            } else if (intporcentaje_alerta_naranja < 0) {
+                porcentaje_alerta_naranja = '0';
+            }
+        }    
+        // Establecer el valor corregido en el input
+        $(this).val(porcentaje_alerta_naranja);
+    });
+
+    // funcion para el rango  en el porcentaje de alerta roja
+    let tiempo_alerta_roja_editar;
+
+    $("#bd_porcentaje_alerta_roja_origen_atel_" + id_parametrizacion_origen_atel_editar).on('input', function () {
+        clearTimeout(tiempo_alerta_roja_editar);
+        tiempo_alerta_roja_editar = setTimeout(() => {
+            let porcentaje_alerta_naranja = $("#bd_porcentaje_alerta_naranja_origen_atel_" + id_parametrizacion_origen_atel_editar).val();
+            let porcentaje_alerta_roja = $(this).val();
+            // Remover caracteres que no son dígitos
+            porcentaje_alerta_roja = porcentaje_alerta_roja.replace(/\D/g, '');
+            // Limitar a 3 dígitos
+            if (porcentaje_alerta_roja.length > 3) {
+                porcentaje_alerta_roja = porcentaje_alerta_roja.substring(0, 3);
+            }
+            // Limitar el rango desde el porcentaje de alerta naranja a 100
+            if (porcentaje_alerta_roja !== '') {
+                let intporcentaje_alerta_roja = parseInt(porcentaje_alerta_roja, 10);
+                if (intporcentaje_alerta_roja > 100) {
+                    porcentaje_alerta_roja = '100';
+                } else if (intporcentaje_alerta_roja < porcentaje_alerta_naranja) {
+                    porcentaje_alerta_roja = porcentaje_alerta_naranja;
+                }
+            }
+            // Establecer el valor corregido en el input
+            $(this).val(porcentaje_alerta_roja);
+        }, 1500);
+    });
+
+    // Prevenir entrada de caracteres no numéricos y limitar a 3 dígitos
+    $("#bd_porcentaje_alerta_roja_origen_atel_" + id_parametrizacion_origen_atel_editar).on('keydown', function (e) {
+        let value = $(this).val();
+        // Permitir: backspace, delete, tab, escape, enter y .
+        if ($.inArray(e.key, ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', '.']) !== -1 ||
+            // Permitir: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+            (e.ctrlKey === true && (e.key === 'a' || e.key === 'c' || e.key === 'v' || e.key === 'x')) ||
+            // Permitir: home, end, left, right, down, up
+            (e.key >= 'Home' && e.key <= 'End')) {
+            return;
+        }
+        // Prevenir entrada si la longitud actual es de 3 dígitos
+        if (value.length >= 3 && (e.key >= '0' && e.key <= '9')) {
+            e.preventDefault();
+        }
+        // Prevenir: cualquier otro carácter que no sea número
+        if ((e.key < '0' || e.key > '9')) {
+            e.preventDefault();
+        }
+    });
+
+    let Servicio_asociado_origen_db_editar = $('#bd_servicio_asociado_origen_atel_'+id_parametrizacion_origen_atel_editar).val();
+    /* Carga del selector de acciones automaticas dependiendo de la seleccion del estado del proceso origen atel apenas carga */
+    let datos_acciones_automaticas_origen_atel = {
+        '_token': token,
+        'parametro': "acciones_automaticas_proceso_origen_atel",
+        'Id_cliente': Id_cliente,
+        'Servicio_asociado_origen': Servicio_asociado_origen_db_editar,
+    };
+    $.ajax({
+        type:'POST',
+        url:'/CargueSelectoresParametrizar',
+        data: datos_acciones_automaticas_origen_atel,
+        success:function(data){
+            $('#bd_accion_automatica_origen_atel_'+id_parametrizacion_origen_atel_editar).empty();
+            $('#bd_accion_automatica_origen_atel_'+id_parametrizacion_origen_atel_editar).append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["Accion_ejecutar"] == $("#bd_id_accion_automatica_orgien_atel_"+id_parametrizacion_origen_atel_editar).val()) {
+                    $("#bd_accion_automatica_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'" selected>'+data[claves[i]]["Accion"]+'</option>');
+                } else {
+                    $("#bd_accion_automatica_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                }
+            }
+        }
+    });
+
+    /* HABILITAR CAMPOS DE TIEMPO DE MOVIMIENTO Y ACCION AUTOMATICA*/
+
+    $("[id^='bd_movimiento_automatico_origen_atel_']").change(function () {
+        let id_fila_parametrizacion_movimiento_editar = $(this).data("id_movimiento_automatico_origen_atel");
+        let Servicio_asociado_origen_editar = $('#bd_servicio_asociado_origen_atel_'+id_parametrizacion_origen_atel_editar).val();
+        if ($(this).is(':checked')) {
+            // console.log('id movi editar es: '+id_fila_parametrizacion_movimiento_editar);   
+            $('#bd_tiempo_movimiento_origen_atel_'+id_fila_parametrizacion_movimiento_editar).prop('disabled', false);
+            $('#bd_accion_automatica_origen_atel_'+id_fila_parametrizacion_movimiento_editar).prop('disabled', false); 
+            
+            /* Carga del selector de acciones automaticas dependiendo de la seleccion del estado del proceso origen atel apenas carga */
+            let datos_acciones_automaticas_origen_atel = {
+                '_token': token,
+                'parametro': "acciones_automaticas_proceso_origen_atel",
+                'Id_cliente': Id_cliente,
+                'Servicio_asociado_origen': Servicio_asociado_origen_editar
+            };
+            $.ajax({
+                type:'POST',
+                url:'/CargueSelectoresParametrizar',
+                data: datos_acciones_automaticas_origen_atel,
+                success:function(data){
+                    $('#bd_accion_automatica_origen_atel_'+id_parametrizacion_origen_atel_editar).empty();
+                    $('#bd_accion_automatica_origen_atel_'+id_parametrizacion_origen_atel_editar).append('<option value="" selected>Seleccione</option>');
+                    let claves = Object.keys(data);
+                    for (let i = 0; i < claves.length; i++) {
+                        if (data[claves[i]]["Accion_ejecutar"] == $("#bd_id_accion_automatica_orgien_atel_"+id_parametrizacion_origen_atel_editar).val()) {
+                            $("#bd_accion_automatica_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'" selected>'+data[claves[i]]["Accion"]+'</option>');
+                        } else {
+                            $("#bd_accion_automatica_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                        }
+                    }
+                }
+            });
+            
+        } else {
+            $("#bd_tiempo_movimiento_origen_atel_"+id_fila_parametrizacion_movimiento_editar).prop("disabled", true);
+            $('#bd_tiempo_movimiento_origen_atel_'+id_fila_parametrizacion_movimiento_editar).val('');
+            $('#bd_accion_automatica_origen_atel_'+id_fila_parametrizacion_movimiento_editar).prop('disabled', true);
+            $('#bd_accion_automatica_origen_atel_'+id_fila_parametrizacion_movimiento_editar).empty();
+            $('#bd_accion_automatica_origen_atel_'+id_fila_parametrizacion_movimiento_editar).append('<option value="" selected>Seleccione</option>');                
+        }
+    });  
 
 };
 
@@ -1775,6 +2105,13 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
     /* INICIALIZACIÓN SELECT 2 LISTADO BANDEJA TRABAJO DESTINO */
     $(".bandeja_trabajo_destino_calificacion_pcl_"+num_consecutivo).select2({
         width: '140px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES AUTOMATICAS */
+    $(".accion_automatica_calificacion_pcl"+num_consecutivo).select2({
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
@@ -1858,29 +2195,29 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
     });
 
     /* Carga del selector de equipos de trabajo dependiendo del proceso calificacion pcl */    
-    // $("#accion_ejecutar_calificacion_pcl_"+num_consecutivo).change(function(){
-    //     $("#equipo_trabajo_calificacion_pcl_"+num_consecutivo).prop('disabled', false);
-    //     // let id_accion = $("#accion_ejecutar_calificacion_pcl_"+num_consecutivo).val();
+    $("#accion_ejecutar_calificacion_pcl_"+num_consecutivo).change(function(){
+        $("#equipo_trabajo_calificacion_pcl_"+num_consecutivo).prop('disabled', false);
+        // let id_accion = $("#accion_ejecutar_calificacion_pcl_"+num_consecutivo).val();
 
-    //     let datos_equipos_trabajo_calificacion_pcl = {
-    //         '_token': token,
-    //         'parametro' : "equipos_trabajo_proceso_calificacion_pcl",
-    //         // 'id_accion_seleccionada': id_accion
-    //     };
-    //     $.ajax({
-    //         type:'POST',
-    //         url:'/CargueSelectoresParametrizar',
-    //         data: datos_equipos_trabajo_calificacion_pcl,
-    //         success:function(data){
-    //             $('#equipo_trabajo_calificacion_pcl_'+num_consecutivo).empty();
-    //             $('#equipo_trabajo_calificacion_pcl_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
-    //             let claves = Object.keys(data);
-    //             for (let i = 0; i < claves.length; i++) {
-    //                 $("#equipo_trabajo_calificacion_pcl_"+num_consecutivo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
-    //             }
-    //         }
-    //     });
-    // });
+        let datos_equipos_trabajo_calificacion_pcl = {
+            '_token': token,
+            'parametro' : "equipos_trabajo_proceso_calificacion_pcl",
+            // 'id_accion_seleccionada': id_accion
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_equipos_trabajo_calificacion_pcl,
+            success:function(data){
+                $('#equipo_trabajo_calificacion_pcl_'+num_consecutivo).empty();
+                $('#equipo_trabajo_calificacion_pcl_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#equipo_trabajo_calificacion_pcl_"+num_consecutivo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        });
+    });
 
     /* Carga del selector de profesionales dependendiendo de la selección del equipo de trabajo del proceso calificacion pcl */
     $("#equipo_trabajo_calificacion_pcl_"+num_consecutivo).change(function(){
@@ -1928,7 +2265,69 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
                 }
             }
         });
+
+        /* Carga del selector de acciones automaticas dependiendo del servicio seleccionado*/        
+        let datos_acciones_automaticas_calificacion_pcl = {
+            '_token': token,
+            'parametro': "acciones_automaticas_proceso_calificacion_pcl",
+            'Id_cliente': Id_cliente,
+            'Servicio_asociado_pcl': id_servicio_asociado_calificacion_pcl
+        };
+        // console.log(datos_acciones_automaticas_calificacion_pcl);
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_acciones_automaticas_calificacion_pcl,
+            success:function(data){
+                $('#accion_automatica_calificacion_pcl_'+num_consecutivo).empty();
+                $('#accion_automatica_calificacion_pcl_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#accion_automatica_calificacion_pcl_"+num_consecutivo).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                }
+            }
+        });
     });
+
+    /* HABILITAR CAMPOS DE TIEMPO DE MOVIMIENTO Y ACCION AUTOMATICA*/
+
+    $("[id^='movimiento_automatico_calificacion_pcl_']").change(function () {        
+        let id_fila_parametrizacion_movimiento = $(this).data("id_movimiento_automatico_calificacion_pcl");
+        let servicio_asociado_pcl = $('#servicio_asociado_calificacion_pcl_'+num_consecutivo).val();
+        if ($(this).is(':checked')) {
+            // console.log('id movi editar es: '+id_fila_parametrizacion_movimiento_editar);   
+            $('#tiempo_movimiento_calificacion_pcl_'+id_fila_parametrizacion_movimiento).prop('disabled', false);
+            $('#accion_automatica_calificacion_pcl_'+id_fila_parametrizacion_movimiento).prop('disabled', false); 
+            
+            /* Carga del selector de acciones automaticas dependiendo del estado seleccionado*/        
+            let datos_acciones_automaticas_calificacion_pcl = {
+                '_token': token,
+                'parametro': "acciones_automaticas_proceso_calificacion_pcl",
+                'Id_cliente': Id_cliente,
+                'Servicio_asociado_pcl': servicio_asociado_pcl
+            };
+            // console.log(datos_acciones_automaticas_calificacion_pcl);
+            $.ajax({
+                type:'POST',
+                url:'/CargueSelectoresParametrizar',
+                data: datos_acciones_automaticas_calificacion_pcl,
+                success:function(data){
+                    $('#accion_automatica_calificacion_pcl_'+num_consecutivo).empty();
+                    $('#accion_automatica_calificacion_pcl_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                    let claves = Object.keys(data);
+                    for (let i = 0; i < claves.length; i++) {
+                        $("#accion_automatica_calificacion_pcl_"+num_consecutivo).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                    }
+                }
+            });                
+        }else{
+            $("#tiempo_movimiento_calificacion_pcl_"+id_fila_parametrizacion_movimiento).prop("disabled", true);
+            $('#tiempo_movimiento_calificacion_pcl_'+id_fila_parametrizacion_movimiento).val('');
+            $('#accion_automatica_calificacion_pcl_'+id_fila_parametrizacion_movimiento).prop('disabled', true);
+            $('#accion_automatica_calificacion_pcl_'+id_fila_parametrizacion_movimiento).empty();
+            $('#accion_automatica_calificacion_pcl_'+id_fila_parametrizacion_movimiento).append('<option value="" selected>Seleccione</option>');                 
+        }
+    }); 
 
     /* Habilitar el selector de bandeja de trabajo destino cuando se checkea el checkbox de enviar del proceso calificacion pcl */
     $("#enviar_a_calificacion_pcl_"+num_consecutivo).click(function(){
@@ -1963,20 +2362,85 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
 
     /* Función solo numeros para input tiempo alerta del proceso calificacion pcl */
     /* La funcionalidad de permitir que solo se ingrese una sola cifra decimal está realizada en el archivo funciones_helpers.js */
-    $(document).on('input', "input[id^='tiempo_alerta_calificacion_pcl_']", function(event){
-        var value = $(this).val();
-      
-        // Eliminar todos los caracteres no numéricos y no "."
-        value = value.replace(/[^0-9.]/g, '');
-        
-        // Verificar si hay más de un punto decimal y eliminar el exceso
-        var decimalCount = (value.match(/\./g) || []).length;
-        if (decimalCount > 1) {
-            value = value.replace(/\.+$/,"");
+    $("#tiempo_alerta_calificacion_pcl_" + num_consecutivo).on('input', function () {        
+        let value = $(this).val();
+        // Expresión regular para números con hasta 6 dígitos y hasta 2 decimales
+        let regex = /^\d{0,6}(\.\d{0,2})?$/;
+        // Verificar si el valor tiene más de un punto decimal o más de 6 dígitos enteros
+        let parts = value.split('.');
+        let integerPart = parts[0];
+        let decimalPart = parts[1];
+
+        if (integerPart.length > 6 || (decimalPart && decimalPart.length > 2) || value.split('.').length > 2) {
+            $(this).val(value.slice(0, -1)); // Elimina el último carácter si no coincide con el regex o si tiene más de 6 enteros o más de 2 decimales
         }
-        
-        // Actualizar el valor del input
-        $(this).val(value);
+    });
+    // Funcion que permite solo numeros enteros del 0 al 100
+
+    $("#porcentaje_alerta_naranja_calificacion_pcl_" + num_consecutivo).on('input', function () {
+        $("#porcentaje_alerta_roja_calificacion_pcl_" + num_consecutivo).val('');  
+        let porcentaje_alerta_naranja = $(this).val();    
+        // Remover caracteres que no son dígitos
+        porcentaje_alerta_naranja = porcentaje_alerta_naranja.replace(/\D/g, '');    
+        // Limitar el rango de 0 a 100
+        if (porcentaje_alerta_naranja !== '') {
+            let intporcentaje_alerta_naranja = parseInt(porcentaje_alerta_naranja, 10);
+            if (intporcentaje_alerta_naranja > 100) {
+                porcentaje_alerta_naranja = '100';
+            } else if (intporcentaje_alerta_naranja < 0) {
+                porcentaje_alerta_naranja = '0';
+            }
+        }    
+        // Establecer el valor corregido en el input    
+        $(this).val(porcentaje_alerta_naranja);
+    })
+
+    let tiempo_alerta_rojas;
+
+    $("#porcentaje_alerta_roja_calificacion_pcl_" + num_consecutivo).on('input', function () {
+        clearTimeout(tiempo_alerta_rojas);
+        tiempo_alerta_rojas = setTimeout(() => {
+            let porcentaje_alerta_naranja = $("#porcentaje_alerta_naranja_calificacion_pcl_" + num_consecutivo).val();
+            let porcentaje_alerta_roja = $(this).val();
+            // Remover caracteres que no son dígitos
+            porcentaje_alerta_roja = porcentaje_alerta_roja.replace(/\D/g, '');
+            // Limitar a 3 dígitos
+            if (porcentaje_alerta_roja.length > 3) {
+                porcentaje_alerta_roja = porcentaje_alerta_roja.substring(0, 3);
+            }
+            // Limitar el rango desde el porcentaje de alerta naranja a 100
+            if (porcentaje_alerta_roja !== '') {
+                let intporcentaje_alerta_roja = parseInt(porcentaje_alerta_roja, 10);
+                if (intporcentaje_alerta_roja > 100) {
+                    porcentaje_alerta_roja = '100';
+                } else if (intporcentaje_alerta_roja < porcentaje_alerta_naranja) {
+                    porcentaje_alerta_roja = porcentaje_alerta_naranja;
+                }
+            }
+            // Establecer el valor corregido en el input
+            $(this).val(porcentaje_alerta_roja);
+        }, 1500);
+    });
+
+    // Prevenir entrada de caracteres no numéricos y limitar a 3 dígitos
+    $("#porcentaje_alerta_roja_calificacion_pcl_" + num_consecutivo).on('keydown', function (e) {
+        let value = $(this).val();
+        // Permitir: backspace, delete, tab, escape, enter y .
+        if ($.inArray(e.key, ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', '.']) !== -1 ||
+            // Permitir: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+            (e.ctrlKey === true && (e.key === 'a' || e.key === 'c' || e.key === 'v' || e.key === 'x')) ||
+            // Permitir: home, end, left, right, down, up
+            (e.key >= 'Home' && e.key <= 'End')) {
+            return;
+        }
+        // Prevenir entrada si la longitud actual es de 3 dígitos
+        if (value.length >= 3 && (e.key >= '0' && e.key <= '9')) {
+            e.preventDefault();
+        }
+        // Prevenir: cualquier otro carácter que no sea número
+        if ((e.key < '0' || e.key > '9')) {
+            e.preventDefault();
+        }
     });
 
     // mantenemos el input fecha actualización movimiento disabled en todo movimiento
@@ -2114,6 +2578,14 @@ function edicion_parametrizacion_calificacion_pcl(id_parametrizacion_calificacio
         placeholder: "Seleccione",
         allowClear: false
     });
+
+    /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES AUTOMATICAS */
+    $(".bd_accion_automatica_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).select2({
+        width: '240px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
 
     /* INICIALIZACIÓN SELECT 2 STATUS PARAMETRICO */
     $(".bd_status_parametrico_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).select2({
@@ -2346,6 +2818,27 @@ function edicion_parametrizacion_calificacion_pcl(id_parametrizacion_calificacio
                 }
             }
         });
+
+        /* Carga del selector de acciones automaticas dependiendo de la seleccion del estado del proceso calificacion pcl apenas carga */
+        let datos_acciones_automaticas_calificacion_pcl = {
+            '_token': token,
+            'parametro': "acciones_automaticas_proceso_calificacion_pcl",
+            'Id_cliente': Id_cliente,
+            'Servicio_asociado_pcl': id_servicio_asociado_calificacion_pcl,
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_acciones_automaticas_calificacion_pcl,
+            success:function(data){
+                $('#bd_accion_automatica_calificacion_pcl_'+id_parametrizacion_calificacion_pcl_editar).empty();
+                $('#bd_accion_automatica_calificacion_pcl_'+id_parametrizacion_calificacion_pcl_editar).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#bd_accion_automatica_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'">'+data[claves[i]]["Accion"]+'</option>');                    
+                }
+            }
+        });
     });
 
     $("#bd_estado_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).change(function(){
@@ -2405,21 +2898,159 @@ function edicion_parametrizacion_calificacion_pcl(id_parametrizacion_calificacio
 
     /* Función solo numeros para input tiempo alerta del proceso origen atel */
     /* La funcionalidad de permitir que solo se ingrese una sola cifra decimal está realizada en el archivo funciones_helpers.js */
-    $("#bd_tiempo_alerta_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).on('input', function(){
-        var value = $(this).val();
-      
-        // Eliminar todos los caracteres no numéricos y no "."
-        value = value.replace(/[^0-9.]/g, '');
-        
-        // Verificar si hay más de un punto decimal y eliminar el exceso
-        var decimalCount = (value.match(/\./g) || []).length;
-        if (decimalCount > 1) {
-            value = value.replace(/\.+$/,"");
+    $("#bd_tiempo_alerta_calificacion_pcl_" + id_parametrizacion_calificacion_pcl_editar).on('input', function () {        
+        let value = $(this).val();
+        // Expresión regular para números con hasta 6 dígitos y hasta 2 decimales
+        let regex = /^\d{0,6}(\.\d{0,2})?$/;
+        // Verificar si el valor tiene más de un punto decimal o más de 6 dígitos enteros
+        let parts = value.split('.');
+        let integerPart = parts[0];
+        let decimalPart = parts[1];
+
+        if (integerPart.length > 6 || (decimalPart && decimalPart.length > 2) || value.split('.').length > 2) {
+            $(this).val(value.slice(0, -1)); // Elimina el último carácter si no coincide con el regex o si tiene más de 6 enteros o más de 2 decimales
         }
-        
-        // Actualizar el valor del input
-        $(this).val(value);
     });
+    
+    // Funcion que permite solo numeros enteros del 0 al 100 en porcentaje alerta naranja
+
+    $("#bd_porcentaje_alerta_naranja_calificacion_pcl_" + id_parametrizacion_calificacion_pcl_editar).on('input', function () {
+        $("#bd_porcentaje_alerta_roja_calificacion_pcl_" + id_parametrizacion_calificacion_pcl_editar).val('');  
+        let porcentaje_alerta_naranja = $(this).val();    
+        // Remover caracteres que no son dígitos
+        porcentaje_alerta_naranja = porcentaje_alerta_naranja.replace(/\D/g, '');    
+        // Limitar el rango de 0 a 100
+        if (porcentaje_alerta_naranja !== '') {
+            let intporcentaje_alerta_naranja = parseInt(porcentaje_alerta_naranja, 10);
+            if (intporcentaje_alerta_naranja > 100) {
+                porcentaje_alerta_naranja = '100';
+            } else if (intporcentaje_alerta_naranja < 0) {
+                porcentaje_alerta_naranja = '0';
+            }
+        }    
+        // Establecer el valor corregido en el input
+        $(this).val(porcentaje_alerta_naranja);
+    });
+
+    // funcion para el rango  en el porcentaje de alerta roja
+    let tiempo_alerta_roja_editar;
+
+    $("#bd_porcentaje_alerta_roja_calificacion_pcl_" + id_parametrizacion_calificacion_pcl_editar).on('input', function () {
+        clearTimeout(tiempo_alerta_roja_editar);
+        tiempo_alerta_roja_editar = setTimeout(() => {
+            let porcentaje_alerta_naranja = $("#bd_porcentaje_alerta_naranja_calificacion_pcl_" + id_parametrizacion_calificacion_pcl_editar).val();
+            let porcentaje_alerta_roja = $(this).val();
+            // Remover caracteres que no son dígitos
+            porcentaje_alerta_roja = porcentaje_alerta_roja.replace(/\D/g, '');
+            // Limitar a 3 dígitos
+            if (porcentaje_alerta_roja.length > 3) {
+                porcentaje_alerta_roja = porcentaje_alerta_roja.substring(0, 3);
+            }
+            // Limitar el rango desde el porcentaje de alerta naranja a 100
+            if (porcentaje_alerta_roja !== '') {
+                let intporcentaje_alerta_roja = parseInt(porcentaje_alerta_roja, 10);
+                if (intporcentaje_alerta_roja > 100) {
+                    porcentaje_alerta_roja = '100';
+                } else if (intporcentaje_alerta_roja < porcentaje_alerta_naranja) {
+                    porcentaje_alerta_roja = porcentaje_alerta_naranja;
+                }
+            }
+            // Establecer el valor corregido en el input
+            $(this).val(porcentaje_alerta_roja);
+        }, 1500);
+    });
+
+    // Prevenir entrada de caracteres no numéricos y limitar a 3 dígitos
+    $("#bd_porcentaje_alerta_roja_calificacion_pcl_" + id_parametrizacion_calificacion_pcl_editar).on('keydown', function (e) {
+        let value = $(this).val();
+        // Permitir: backspace, delete, tab, escape, enter y .
+        if ($.inArray(e.key, ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', '.']) !== -1 ||
+            // Permitir: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+            (e.ctrlKey === true && (e.key === 'a' || e.key === 'c' || e.key === 'v' || e.key === 'x')) ||
+            // Permitir: home, end, left, right, down, up
+            (e.key >= 'Home' && e.key <= 'End')) {
+            return;
+        }
+        // Prevenir entrada si la longitud actual es de 3 dígitos
+        if (value.length >= 3 && (e.key >= '0' && e.key <= '9')) {
+            e.preventDefault();
+        }
+        // Prevenir: cualquier otro carácter que no sea número
+        if ((e.key < '0' || e.key > '9')) {
+            e.preventDefault();
+        }
+    });
+
+    let Servicio_asociado_pcl_db_editar = $('#bd_servicio_asociado_calificacion_pcl_'+id_parametrizacion_calificacion_pcl_editar).val();
+    /* Carga del selector de acciones automaticas dependiendo de la seleccion del estado del proceso calificacion pcl apenas carga */
+    let datos_acciones_automaticas_calificacion_pcl = {
+        '_token': token,
+        'parametro': "acciones_automaticas_proceso_calificacion_pcl",
+        'Id_cliente': Id_cliente,
+        'Servicio_asociado_pcl': Servicio_asociado_pcl_db_editar,
+    };
+    $.ajax({
+        type:'POST',
+        url:'/CargueSelectoresParametrizar',
+        data: datos_acciones_automaticas_calificacion_pcl,
+        success:function(data){
+            $('#bd_accion_automatica_calificacion_pcl_'+id_parametrizacion_calificacion_pcl_editar).empty();
+            $('#bd_accion_automatica_calificacion_pcl_'+id_parametrizacion_calificacion_pcl_editar).append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["Accion_ejecutar"] == $("#bd_id_accion_automatica_orgien_atel_"+id_parametrizacion_calificacion_pcl_editar).val()) {
+                    $("#bd_accion_automatica_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'" selected>'+data[claves[i]]["Accion"]+'</option>');
+                } else {
+                    $("#bd_accion_automatica_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                }
+            }
+        }
+    });
+
+    /* HABILITAR CAMPOS DE TIEMPO DE MOVIMIENTO Y ACCION AUTOMATICA*/
+
+    $("[id^='bd_movimiento_automatico_calificacion_pcl_']").change(function () {
+        let id_fila_parametrizacion_movimiento_editar = $(this).data("id_movimiento_automatico_calificacion_pcl");
+        let Servicio_asociado_pcl_editar = $('#bd_servicio_asociado_calificacion_pcl_'+id_parametrizacion_calificacion_pcl_editar).val();
+        // console.log(id_fila_parametrizacion_movimiento_editar + ' - ' + Servicio_asociado_pcl_editar);
+        if ($(this).is(':checked')) {
+            // console.log('id movi editar es: '+id_fila_parametrizacion_movimiento_editar);   
+            $('#bd_tiempo_movimiento_calificacion_pcl_'+id_fila_parametrizacion_movimiento_editar).prop('disabled', false);
+            $('#bd_accion_automatica_calificacion_pcl_'+id_fila_parametrizacion_movimiento_editar).prop('disabled', false); 
+            
+            /* Carga del selector de acciones automaticas dependiendo de la seleccion del estado del proceso origen atel apenas carga */
+            let datos_acciones_automaticas_calificacion_pcl = {
+                '_token': token,
+                'parametro': "acciones_automaticas_proceso_calificacion_pcl",
+                'Id_cliente': Id_cliente,
+                'Servicio_asociado_pcl': Servicio_asociado_pcl_editar
+            };
+            $.ajax({
+                type:'POST',
+                url:'/CargueSelectoresParametrizar',
+                data: datos_acciones_automaticas_calificacion_pcl,
+                success:function(data){
+                    $('#bd_accion_automatica_calificacion_pcl_'+id_parametrizacion_calificacion_pcl_editar).empty();
+                    $('#bd_accion_automatica_calificacion_pcl_'+id_parametrizacion_calificacion_pcl_editar).append('<option value="" selected>Seleccione</option>');
+                    let claves = Object.keys(data);
+                    for (let i = 0; i < claves.length; i++) {
+                        if (data[claves[i]]["Accion_ejecutar"] == $("#bd_id_accion_automatica_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).val()) {
+                            $("#bd_accion_automatica_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'" selected>'+data[claves[i]]["Accion"]+'</option>');
+                        } else {
+                            $("#bd_accion_automatica_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                        }
+                    }
+                }
+            });
+            
+        } else {
+            $("#bd_tiempo_movimiento_calificacion_pcl_"+id_fila_parametrizacion_movimiento_editar).prop("disabled", true);
+            $('#bd_tiempo_movimiento_calificacion_pcl_'+id_fila_parametrizacion_movimiento_editar).val('');
+            $('#bd_accion_automatica_calificacion_pcl_'+id_fila_parametrizacion_movimiento_editar).prop('disabled', true);
+            $('#bd_accion_automatica_calificacion_pcl_'+id_fila_parametrizacion_movimiento_editar).empty();
+            $('#bd_accion_automatica_calificacion_pcl_'+id_fila_parametrizacion_movimiento_editar).append('<option value="" selected>Seleccione</option>');                
+        }
+    }); 
 
 };
 
@@ -2470,6 +3101,13 @@ function funciones_elementos_fila_parametrizar_juntas(num_consecutivo){
     /* INICIALIZACIÓN SELECT 2 LISTADO BANDEJA TRABAJO DESTINO */
     $(".bandeja_trabajo_destino_juntas_"+num_consecutivo).select2({
         width: '140px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES AUTOMATICAS */
+    $(".accion_automatica_juntas"+num_consecutivo).select2({
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
@@ -2546,29 +3184,29 @@ function funciones_elementos_fila_parametrizar_juntas(num_consecutivo){
     });
 
     /* Carga del selector de equipos de trabajo dependiendo del proceso juntas */    
-    // $("#accion_ejecutar_juntas_"+num_consecutivo).change(function(){
-    //     $("#equipo_trabajo_juntas_"+num_consecutivo).prop('disabled', false);
-    //     // let id_accion = $("#accion_ejecutar_juntas_"+num_consecutivo).val();
+    $("#accion_ejecutar_juntas_"+num_consecutivo).change(function(){
+        $("#equipo_trabajo_juntas_"+num_consecutivo).prop('disabled', false);
+        // let id_accion = $("#accion_ejecutar_juntas_"+num_consecutivo).val();
 
-    //     let datos_equipos_trabajo_juntas = {
-    //         '_token': token,
-    //         'parametro' : "equipos_trabajo_proceso_juntas",
-    //         // 'id_accion_seleccionada': id_accion
-    //     };
-    //     $.ajax({
-    //         type:'POST',
-    //         url:'/CargueSelectoresParametrizar',
-    //         data: datos_equipos_trabajo_juntas,
-    //         success:function(data){
-    //             $('#equipo_trabajo_juntas_'+num_consecutivo).empty();
-    //             $('#equipo_trabajo_juntas_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
-    //             let claves = Object.keys(data);
-    //             for (let i = 0; i < claves.length; i++) {
-    //                 $("#equipo_trabajo_juntas_"+num_consecutivo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
-    //             }
-    //         }
-    //     });
-    // });
+        let datos_equipos_trabajo_juntas = {
+            '_token': token,
+            'parametro' : "equipos_trabajo_proceso_juntas",
+            // 'id_accion_seleccionada': id_accion
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_equipos_trabajo_juntas,
+            success:function(data){
+                $('#equipo_trabajo_juntas_'+num_consecutivo).empty();
+                $('#equipo_trabajo_juntas_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#equipo_trabajo_juntas_"+num_consecutivo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
+                }
+            }
+        });
+    });
 
     /* Carga del selector de profesionales dependendiendo de la selección del equipo de trabajo */
     $("#equipo_trabajo_juntas_"+num_consecutivo).change(function(){
@@ -2616,7 +3254,69 @@ function funciones_elementos_fila_parametrizar_juntas(num_consecutivo){
                 }
             }
         });
+
+        /* Carga del selector de acciones automaticas dependiendo del servicio seleccionado*/        
+        let datos_acciones_automaticas_juntas = {
+            '_token': token,
+            'parametro': "acciones_automaticas_proceso_juntas",
+            'Id_cliente': Id_cliente,
+            'Servicio_asociado_juntas': id_servicio_asociado_juntas
+        };
+        // console.log(datos_acciones_automaticas_juntas);
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_acciones_automaticas_juntas,
+            success:function(data){
+                $('#accion_automatica_juntas_'+num_consecutivo).empty();
+                $('#accion_automatica_juntas_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#accion_automatica_juntas_"+num_consecutivo).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                }
+            }
+        });
     });
+
+    /* HABILITAR CAMPOS DE TIEMPO DE MOVIMIENTO Y ACCION AUTOMATICA*/
+
+    $("[id^='movimiento_automatico_juntas_']").change(function () {        
+        let id_fila_parametrizacion_movimiento = $(this).data("id_movimiento_automatico_juntas");
+        let servicio_asociado_juntas = $('#servicio_asociado_juntas_'+num_consecutivo).val();
+        if ($(this).is(':checked')) {
+            // console.log('id movi editar es: '+id_fila_parametrizacion_movimiento_editar);   
+            $('#tiempo_movimiento_juntas_'+id_fila_parametrizacion_movimiento).prop('disabled', false);
+            $('#accion_automatica_juntas_'+id_fila_parametrizacion_movimiento).prop('disabled', false); 
+            
+            /* Carga del selector de acciones automaticas dependiendo del estado seleccionado*/        
+            let datos_acciones_automaticas_juntas = {
+                '_token': token,
+                'parametro': "acciones_automaticas_proceso_juntas",
+                'Id_cliente': Id_cliente,
+                'Servicio_asociado_juntas': servicio_asociado_juntas
+            };
+            // console.log(datos_acciones_automaticas_juntas);
+            $.ajax({
+                type:'POST',
+                url:'/CargueSelectoresParametrizar',
+                data: datos_acciones_automaticas_juntas,
+                success:function(data){
+                    $('#accion_automatica_juntas_'+num_consecutivo).empty();
+                    $('#accion_automatica_juntas_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                    let claves = Object.keys(data);
+                    for (let i = 0; i < claves.length; i++) {
+                        $("#accion_automatica_juntas_"+num_consecutivo).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                    }
+                }
+            });                
+        }else{
+            $("#tiempo_movimiento_juntas_"+id_fila_parametrizacion_movimiento).prop("disabled", true);
+            $('#tiempo_movimiento_juntas_'+id_fila_parametrizacion_movimiento).val('');
+            $('#accion_automatica_juntas_'+id_fila_parametrizacion_movimiento).prop('disabled', true);
+            $('#accion_automatica_juntas_'+id_fila_parametrizacion_movimiento).empty();
+            $('#accion_automatica_juntas_'+id_fila_parametrizacion_movimiento).append('<option value="" selected>Seleccione</option>');                 
+        }
+    }); 
 
     /* Habilitar el selector de bandeja de trabajo destino cuando se checkea el checkbox de enviar del proceso origen atel */
     $("#enviar_a_juntas_"+num_consecutivo).click(function(){
@@ -2651,20 +3351,86 @@ function funciones_elementos_fila_parametrizar_juntas(num_consecutivo){
 
     /* Función solo numeros para input tiempo alerta del proceso origen atel */
     /* La funcionalidad de permitir que solo se ingrese una sola cifra decimal está realizada en el archivo funciones_helpers.js */
-    $(document).on('input', "input[id^='tiempo_alerta_juntas_']", function(event){
-        var value = $(this).val();
-      
-        // Eliminar todos los caracteres no numéricos y no "."
-        value = value.replace(/[^0-9.]/g, '');
-        
-        // Verificar si hay más de un punto decimal y eliminar el exceso
-        var decimalCount = (value.match(/\./g) || []).length;
-        if (decimalCount > 1) {
-            value = value.replace(/\.+$/,"");
+    $("#tiempo_alerta_juntas_" + num_consecutivo).on('input', function () {
+
+        let value = $(this).val();
+        // Expresión regular para números con hasta 6 dígitos y hasta 2 decimales
+        let regex = /^\d{0,6}(\.\d{0,2})?$/;
+        // Verificar si el valor tiene más de un punto decimal o más de 6 dígitos enteros
+        let parts = value.split('.');
+        let integerPart = parts[0];
+        let decimalPart = parts[1];
+
+        if (integerPart.length > 6 || (decimalPart && decimalPart.length > 2) || value.split('.').length > 2) {
+            $(this).val(value.slice(0, -1)); // Elimina el último carácter si no coincide con el regex o si tiene más de 6 enteros o más de 2 decimales
         }
-        
-        // Actualizar el valor del input
-        $(this).val(value);
+    });
+    // Funcion que permite solo numeros enteros del 0 al 100
+
+    $("#porcentaje_alerta_naranja_juntas_" + num_consecutivo).on('input', function () {
+        $("#porcentaje_alerta_roja_juntas_" + num_consecutivo).val('');  
+        let porcentaje_alerta_naranja = $(this).val();    
+        // Remover caracteres que no son dígitos
+        porcentaje_alerta_naranja = porcentaje_alerta_naranja.replace(/\D/g, '');    
+        // Limitar el rango de 0 a 100
+        if (porcentaje_alerta_naranja !== '') {
+            let intporcentaje_alerta_naranja = parseInt(porcentaje_alerta_naranja, 10);
+            if (intporcentaje_alerta_naranja > 100) {
+                porcentaje_alerta_naranja = '100';
+            } else if (intporcentaje_alerta_naranja < 0) {
+                porcentaje_alerta_naranja = '0';
+            }
+        }    
+        // Establecer el valor corregido en el input    
+        $(this).val(porcentaje_alerta_naranja);
+    })
+
+    let tiempo_alerta_rojas;
+
+    $("#porcentaje_alerta_roja_juntas_" + num_consecutivo).on('input', function () {
+        clearTimeout(tiempo_alerta_rojas);
+        tiempo_alerta_rojas = setTimeout(() => {
+            let porcentaje_alerta_naranja = $("#porcentaje_alerta_naranja_juntas_" + num_consecutivo).val();
+            let porcentaje_alerta_roja = $(this).val();
+            // Remover caracteres que no son dígitos
+            porcentaje_alerta_roja = porcentaje_alerta_roja.replace(/\D/g, '');
+            // Limitar a 3 dígitos
+            if (porcentaje_alerta_roja.length > 3) {
+                porcentaje_alerta_roja = porcentaje_alerta_roja.substring(0, 3);
+            }
+            // Limitar el rango desde el porcentaje de alerta naranja a 100
+            if (porcentaje_alerta_roja !== '') {
+                let intporcentaje_alerta_roja = parseInt(porcentaje_alerta_roja, 10);
+                if (intporcentaje_alerta_roja > 100) {
+                    porcentaje_alerta_roja = '100';
+                } else if (intporcentaje_alerta_roja < porcentaje_alerta_naranja) {
+                    porcentaje_alerta_roja = porcentaje_alerta_naranja;
+                }
+            }
+            // Establecer el valor corregido en el input
+            $(this).val(porcentaje_alerta_roja);
+        }, 1500);
+    });
+
+    // Prevenir entrada de caracteres no numéricos y limitar a 3 dígitos
+    $("#porcentaje_alerta_roja_juntas_" + num_consecutivo).on('keydown', function (e) {
+        let value = $(this).val();
+        // Permitir: backspace, delete, tab, escape, enter y .
+        if ($.inArray(e.key, ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', '.']) !== -1 ||
+            // Permitir: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+            (e.ctrlKey === true && (e.key === 'a' || e.key === 'c' || e.key === 'v' || e.key === 'x')) ||
+            // Permitir: home, end, left, right, down, up
+            (e.key >= 'Home' && e.key <= 'End')) {
+            return;
+        }
+        // Prevenir entrada si la longitud actual es de 3 dígitos
+        if (value.length >= 3 && (e.key >= '0' && e.key <= '9')) {
+            e.preventDefault();
+        }
+        // Prevenir: cualquier otro carácter que no sea número
+        if ((e.key < '0' || e.key > '9')) {
+            e.preventDefault();
+        }
     });
 
     // mantenemos el input fecha actualización movimiento disabled en todo movimiento
@@ -2799,6 +3565,13 @@ function edicion_parametrizacion_juntas(id_parametrizacion_juntas_editar){
     /* INICIALIZACIÓN SELECT 2 LISTADO BANDEJA TRABAJO DESTINO */
     $(".bd_bandeja_trabajo_destino_juntas_"+id_parametrizacion_juntas_editar).select2({
         width: '140px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
+    /* INICIALIZACIÓN SELECT 2 LISTADO DE ACCIONES AUTOMATICAS */
+    $(".bd_accion_automatica_juntas_"+id_parametrizacion_juntas_editar).select2({
+        width: '240px',
         placeholder: "Seleccione",
         allowClear: false
     });
@@ -3033,6 +3806,27 @@ function edicion_parametrizacion_juntas(id_parametrizacion_juntas_editar){
                 }
             }
         });
+
+        /* Carga del selector de acciones automaticas dependiendo de la seleccion del estado del proceso juntas apenas carga */
+        let datos_acciones_automaticas_juntas = {
+            '_token': token,
+            'parametro': "acciones_automaticas_proceso_juntas",
+            'Id_cliente': Id_cliente,
+            'Servicio_asociado_juntas': id_servicio_asociado_juntas,
+        };
+        $.ajax({
+            type:'POST',
+            url:'/CargueSelectoresParametrizar',
+            data: datos_acciones_automaticas_juntas,
+            success:function(data){
+                $('#bd_accion_automatica_juntas_'+id_parametrizacion_juntas_editar).empty();
+                $('#bd_accion_automatica_juntas_'+id_parametrizacion_juntas_editar).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#bd_accion_automatica_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'">'+data[claves[i]]["Accion"]+'</option>');                    
+                }
+            }
+        });
     });
 
     $("#bd_estado_juntas_"+id_parametrizacion_juntas_editar).change(function(){
@@ -3092,19 +3886,157 @@ function edicion_parametrizacion_juntas(id_parametrizacion_juntas_editar){
 
     /* Función solo numeros para input tiempo alerta del proceso origen atel */
     /* La funcionalidad de permitir que solo se ingrese una sola cifra decimal está realizada en el archivo funciones_helpers.js */
-    $("#bd_tiempo_alerta_juntas_"+id_parametrizacion_juntas_editar).on('input', function(){
-        var value = $(this).val();
-      
-        // Eliminar todos los caracteres no numéricos y no "."
-        value = value.replace(/[^0-9.]/g, '');
+    $("#bd_tiempo_alerta_juntas_" + id_parametrizacion_juntas_editar).on('input', function () {
         
-        // Verificar si hay más de un punto decimal y eliminar el exceso
-        var decimalCount = (value.match(/\./g) || []).length;
-        if (decimalCount > 1) {
-            value = value.replace(/\.+$/,"");
+        let value = $(this).val();
+        // Expresión regular para números con hasta 6 dígitos y hasta 2 decimales
+        let regex = /^\d{0,6}(\.\d{0,2})?$/;
+        // Verificar si el valor tiene más de un punto decimal o más de 6 dígitos enteros
+        let parts = value.split('.');
+        let integerPart = parts[0];
+        let decimalPart = parts[1];
+
+        if (integerPart.length > 6 || (decimalPart && decimalPart.length > 2) || value.split('.').length > 2) {
+            $(this).val(value.slice(0, -1)); // Elimina el último carácter si no coincide con el regex o si tiene más de 6 enteros o más de 2 decimales
         }
-        
-        // Actualizar el valor del input
-        $(this).val(value);
     });
+    
+    // Funcion que permite solo numeros enteros del 0 al 100 en porcentaje alerta naranja
+
+    $("#bd_porcentaje_alerta_naranja_juntas_" + id_parametrizacion_juntas_editar).on('input', function () {     
+        $("#bd_porcentaje_alerta_roja_juntas_" + id_parametrizacion_juntas_editar).val('');  
+        let porcentaje_alerta_naranja = $(this).val();    
+        // Remover caracteres que no son dígitos
+        porcentaje_alerta_naranja = porcentaje_alerta_naranja.replace(/\D/g, '');    
+        // Limitar el rango de 0 a 100
+        if (porcentaje_alerta_naranja !== '') {
+            let intporcentaje_alerta_naranja = parseInt(porcentaje_alerta_naranja, 10);
+            if (intporcentaje_alerta_naranja > 100) {
+                porcentaje_alerta_naranja = '100';
+            } else if (intporcentaje_alerta_naranja < 0) {
+                porcentaje_alerta_naranja = '0';
+            }
+        }    
+        // Establecer el valor corregido en el input
+        $(this).val(porcentaje_alerta_naranja);
+    });
+
+    // funcion para el rango  en el porcentaje de alerta roja
+    let tiempo_alerta_roja_editar;
+
+    $("#bd_porcentaje_alerta_roja_juntas_" + id_parametrizacion_juntas_editar).on('input', function () {
+        clearTimeout(tiempo_alerta_roja_editar);
+        tiempo_alerta_roja_editar = setTimeout(() => {
+            let porcentaje_alerta_naranja = $("#bd_porcentaje_alerta_naranja_juntas_" + id_parametrizacion_juntas_editar).val();
+            let porcentaje_alerta_roja = $(this).val();
+            // Remover caracteres que no son dígitos
+            porcentaje_alerta_roja = porcentaje_alerta_roja.replace(/\D/g, '');
+            // Limitar a 3 dígitos
+            if (porcentaje_alerta_roja.length > 3) {
+                porcentaje_alerta_roja = porcentaje_alerta_roja.substring(0, 3);
+            }
+            // Limitar el rango desde el porcentaje de alerta naranja a 100
+            if (porcentaje_alerta_roja !== '') {
+                let intporcentaje_alerta_roja = parseInt(porcentaje_alerta_roja, 10);
+                if (intporcentaje_alerta_roja > 100) {
+                    porcentaje_alerta_roja = '100';
+                } else if (intporcentaje_alerta_roja < porcentaje_alerta_naranja) {
+                    porcentaje_alerta_roja = porcentaje_alerta_naranja;
+                }
+            }
+            // Establecer el valor corregido en el input
+            $(this).val(porcentaje_alerta_roja);
+        }, 1500);
+    });
+
+    // Prevenir entrada de caracteres no numéricos y limitar a 3 dígitos
+    $("#bd_porcentaje_alerta_roja_juntas_" + id_parametrizacion_juntas_editar).on('keydown', function (e) {
+        let value = $(this).val();
+        // Permitir: backspace, delete, tab, escape, enter y .
+        if ($.inArray(e.key, ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', '.']) !== -1 ||
+            // Permitir: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+            (e.ctrlKey === true && (e.key === 'a' || e.key === 'c' || e.key === 'v' || e.key === 'x')) ||
+            // Permitir: home, end, left, right, down, up
+            (e.key >= 'Home' && e.key <= 'End')) {
+            return;
+        }
+        // Prevenir entrada si la longitud actual es de 3 dígitos
+        if (value.length >= 3 && (e.key >= '0' && e.key <= '9')) {
+            e.preventDefault();
+        }
+        // Prevenir: cualquier otro carácter que no sea número
+        if ((e.key < '0' || e.key > '9')) {
+            e.preventDefault();
+        }
+    });
+
+    let Servicio_asociado_juntas_db_editar = $('#bd_servicio_asociado_juntas_'+id_parametrizacion_juntas_editar).val();
+    /* Carga del selector de acciones automaticas dependiendo de la seleccion del estado del juntas apenas carga */
+    let datos_acciones_automaticas_juntas = {
+        '_token': token,
+        'parametro': "acciones_automaticas_proceso_juntas",
+        'Id_cliente': Id_cliente,
+        'Servicio_asociado_juntas': Servicio_asociado_juntas_db_editar,
+    };
+    $.ajax({
+        type:'POST',
+        url:'/CargueSelectoresParametrizar',
+        data: datos_acciones_automaticas_juntas,
+        success:function(data){
+            $('#bd_accion_automatica_juntas_'+id_parametrizacion_juntas_editar).empty();
+            $('#bd_accion_automatica_juntas_'+id_parametrizacion_juntas_editar).append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["Accion_ejecutar"] == $("#bd_id_accion_automatica_orgien_atel_"+id_parametrizacion_juntas_editar).val()) {
+                    $("#bd_accion_automatica_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'" selected>'+data[claves[i]]["Accion"]+'</option>');
+                } else {
+                    $("#bd_accion_automatica_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                }
+            }
+        }
+    });
+
+    /* HABILITAR CAMPOS DE TIEMPO DE MOVIMIENTO Y ACCION AUTOMATICA*/
+    
+    $("[id^='bd_movimiento_automatico_juntas_']").change(function () {
+        let id_fila_parametrizacion_movimiento_editar = $(this).data("id_movimiento_automatico_juntas");
+        let Servicio_asociado_juntas_editar = $('#bd_servicio_asociado_juntas_'+id_parametrizacion_juntas_editar).val();
+        if ($(this).is(':checked')) {
+            // console.log('id movi editar es: '+id_fila_parametrizacion_movimiento_editar);   
+            $('#bd_tiempo_movimiento_juntas_'+id_fila_parametrizacion_movimiento_editar).prop('disabled', false);
+            $('#bd_accion_automatica_juntas_'+id_fila_parametrizacion_movimiento_editar).prop('disabled', false); 
+            
+            /* Carga del selector de acciones automaticas dependiendo de la seleccion del estado del proceso origen atel apenas carga */
+            let datos_acciones_automaticas_juntas_atel = {
+                '_token': token,
+                'parametro': "acciones_automaticas_proceso_juntas",
+                'Id_cliente': Id_cliente,
+                'Servicio_asociado_juntas': Servicio_asociado_juntas_editar
+            };
+            $.ajax({
+                type:'POST',
+                url:'/CargueSelectoresParametrizar',
+                data: datos_acciones_automaticas_juntas_atel,
+                success:function(data){
+                    $('#bd_accion_automatica_juntas_'+id_parametrizacion_juntas_editar).empty();
+                    $('#bd_accion_automatica_juntas_'+id_parametrizacion_juntas_editar).append('<option value="" selected>Seleccione</option>');
+                    let claves = Object.keys(data);
+                    for (let i = 0; i < claves.length; i++) {
+                        if (data[claves[i]]["Accion_ejecutar"] == $("#bd_id_accion_automatica_orgien_atel_"+id_parametrizacion_juntas_editar).val()) {
+                            $("#bd_accion_automatica_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'" selected>'+data[claves[i]]["Accion"]+'</option>');
+                        } else {
+                            $("#bd_accion_automatica_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["Accion_ejecutar"]+'">'+data[claves[i]]["Accion"]+'</option>');
+                        }
+                    }
+                }
+            });
+            
+        } else {
+            $("#bd_tiempo_movimiento_juntas_"+id_fila_parametrizacion_movimiento_editar).prop("disabled", true);
+            $('#bd_tiempo_movimiento_juntas_'+id_fila_parametrizacion_movimiento_editar).val('');
+            $('#bd_accion_automatica_juntas_'+id_fila_parametrizacion_movimiento_editar).prop('disabled', true);
+            $('#bd_accion_automatica_juntas_'+id_fila_parametrizacion_movimiento_editar).empty();
+            $('#bd_accion_automatica_juntas_'+id_fila_parametrizacion_movimiento_editar).append('<option value="" selected>Seleccione</option>');                
+        }
+    }); 
 };

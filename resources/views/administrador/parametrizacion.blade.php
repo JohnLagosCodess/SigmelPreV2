@@ -271,6 +271,9 @@
                                                         <th>Enviar a</th>
                                                         <th>Bandeja de trabajo destino</th>
                                                         <th>Estado de Facturación</th>
+                                                        <th>Movimiento automático</th>
+                                                        <th>Tiempo para el movimiento (Días)</th>
+                                                        <th>Acción automática</th>
                                                         <th>Tiempo de  alerta (horas)</th>
                                                         <th>Porcentaje alerta (Naranja)</th>
                                                         <th>Porcentaje alerta (Rojo)</th>
@@ -426,6 +429,28 @@
                                                                         disabled>
                                                                     </div> --}}
                                                                     <input type="text" class="form-control" id="bd_estado_facturacion_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Estado_facturacion}}" disabled>
+                                                                </td>
+                                                                {{-- movimiento automático --}}
+                                                                <td>
+                                                                    <div style="text-align:center;">
+                                                                        <input type="checkbox" class="scales" id="bd_movimiento_automatico_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" data-id_movimiento_automatico_origen_atel="{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}"
+                                                                        <?php if($parametrizacion_origen_atel_editar->Movimiento_automatico == "Si"):?>
+                                                                            checked
+                                                                        <?php endif?>
+                                                                        disabled>
+                                                                    </div>
+                                                                </td>
+                                                                {{-- Tiempo para el movimiento (Días) --}}
+                                                                <td>
+                                                                    <input style="width:140px;" type="number" class="form-control" id="bd_tiempo_movimiento_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Tiempo_movimiento}}" disabled>
+                                                                </td>
+                                                                {{-- Acción automática --}}
+                                                                <input type="hidden" id="bd_id_accion_automatica_orgien_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Accion_automatica}}">
+                                                                <td>
+                                                                    <select style="width:240px;" disabled class="custom-select bd_accion_automatica_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" id="bd_accion_automatica_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" disabled>
+                                                                        <option></option>
+                                                                        <option value="{{$parametrizacion_origen_atel_editar->Accion_automatica}}" selected>{{$parametrizacion_origen_atel_editar->Nombre_accion_automatica}}</option>
+                                                                    </select>
                                                                 </td>
                                                                 {{-- tiempo alerta --}}
                                                                 <td>
@@ -707,6 +732,9 @@
                                                         <th>Enviar a</th>
                                                         <th>Bandeja de trabajo destino</th>
                                                         <th>Estado de Facturación</th>
+                                                        <th>Movimiento automático</th>
+                                                        <th>Tiempo para el movimiento (Días)</th>
+                                                        <th>Acción automática</th>
                                                         <th>Tiempo de  alerta (horas)</th>
                                                         <th>Porcentaje alerta (Naranja)</th>
                                                         <th>Porcentaje alerta (Rojo)</th>
@@ -862,6 +890,28 @@
                                                                         disabled>
                                                                     </div> --}}
                                                                     <input type="text" class="form-control" id="bd_estado_facturacion_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Estado_facturacion}}" disabled>
+                                                                </td>
+                                                                {{-- movimiento automático --}}
+                                                                <td>
+                                                                    <div style="text-align:center;">
+                                                                        <input type="checkbox" class="scales" id="bd_movimiento_automatico_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" data-id_movimiento_automatico_calificacion_pcl="{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}"
+                                                                        <?php if($parametrizacion_calificacion_pcl_editar->Movimiento_automatico == "Si"):?>
+                                                                            checked
+                                                                        <?php endif?>
+                                                                        disabled>
+                                                                    </div>
+                                                                </td>
+                                                                {{-- Tiempo para el movimiento (Días) --}}
+                                                                <td>
+                                                                    <input style="width:140px;" type="number" class="form-control" id="bd_tiempo_movimiento_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Tiempo_movimiento}}" disabled>
+                                                                </td>
+                                                                {{-- Acción automática --}}
+                                                                <input type="hidden" id="bd_id_accion_automatica_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Accion_automatica}}">
+                                                                <td>
+                                                                    <select style="width:240px;" disabled class="custom-select bd_accion_automatica_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_accion_automatica_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
+                                                                        <option></option>
+                                                                        <option value="{{$parametrizacion_calificacion_pcl_editar->Accion_automatica}}" selected>{{$parametrizacion_calificacion_pcl_editar->Nombre_accion_automatica}}</option>
+                                                                    </select>
                                                                 </td>
                                                                 {{-- tiempo alerta --}}
                                                                 <td>
@@ -1143,6 +1193,9 @@
                                                         <th>Enviar a</th>
                                                         <th>Bandeja de trabajo destino</th>
                                                         <th>Estado de Facturación</th>
+                                                        <th>Movimiento automático</th>
+                                                        <th>Tiempo para el movimiento (Días)</th>
+                                                        <th>Acción automática</th>
                                                         <th>Tiempo de  alerta (horas)</th>
                                                         <th>Porcentaje alerta (Naranja)</th>
                                                         <th>Porcentaje alerta (Rojo)</th>
@@ -1298,6 +1351,28 @@
                                                                         disabled>
                                                                     </div> --}}
                                                                     <input type="text" class="form-control" id="bd_estado_facturacion_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Estado_facturacion}}" disabled>
+                                                                </td>
+                                                                {{-- movimiento automático --}}
+                                                                <td>
+                                                                    <div style="text-align:center;">
+                                                                        <input type="checkbox" class="scales" id="bd_movimiento_automatico_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" data-id_movimiento_automatico_juntas="{{$parametrizacion_juntas_editar->Id_parametrizacion}}"
+                                                                        <?php if($parametrizacion_juntas_editar->Movimiento_automatico == "Si"):?>
+                                                                            checked
+                                                                        <?php endif?>
+                                                                        disabled>
+                                                                    </div>
+                                                                </td>
+                                                                {{-- Tiempo para el movimiento (Días) --}}
+                                                                <td>
+                                                                    <input style="width:140px;" type="number" class="form-control" id="bd_tiempo_movimiento_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Tiempo_movimiento}}" disabled>
+                                                                </td>
+                                                                {{-- Acción automática --}}
+                                                                <input type="hidden" id="bd_id_accion_automatica_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Accion_automatica}}">
+                                                                <td>
+                                                                    <select style="width:240px;" disabled class="custom-select bd_accion_automatica_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" id="bd_accion_automatica_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" disabled>
+                                                                        <option></option>
+                                                                        <option value="{{$parametrizacion_juntas_editar->Accion_automatica}}" selected>{{$parametrizacion_juntas_editar->Nombre_accion_automatica}}</option>
+                                                                    </select>
                                                                 </td>
                                                                 {{-- tiempo alerta --}}
                                                                 <td>
