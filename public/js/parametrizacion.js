@@ -26,7 +26,7 @@ $(document).ready(function(){
             var api = this.api();
 
             // Columnas específicas a las que se aplicará el código de filtros
-            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26];
             
             // Para cada columna
             api.columns().eq(0).each(function (colIdx) {
@@ -89,7 +89,7 @@ $(document).ready(function(){
                                                 
                     ],
                     exportOptions: {
-                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
+                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]
                     }
                 }
             ]
@@ -115,7 +115,7 @@ $(document).ready(function(){
                 var api = this.api();
     
                 // Columnas específicas a las que se aplicará el código de filtros
-                var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+                var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27];
                 
                 // Para cada columna
                 api.columns().eq(0).each(function (colIdx) {
@@ -201,7 +201,8 @@ $(document).ready(function(){
 
         var row = $(this).closest('tr');
         row.find('input, textarea, select').prop('readonly', false).prop('disabled', false);
-
+        row.find('input').removeClass('d-none');
+        row.find('span').addClass('d-none');
         if ($('#bd_movimiento_automatico_origen_atel_'+id_fila_parametrizacion_editar).is(':checked')) {
             $('#bd_tiempo_movimiento_origen_atel_'+id_fila_parametrizacion_editar).prop('disabled', false);
             $('#bd_accion_automatica_origen_atel_'+id_fila_parametrizacion_editar).prop('disabled', false);
@@ -338,7 +339,7 @@ $(document).ready(function(){
             '<input style="width:140px;" type="text" class="form-control" name="tiempo_alerta_origen_atel" id="tiempo_alerta_origen_atel_'+contador_origen_atel+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_naranja_origen_atel" id="porcentaje_alerta_naranja_origen_atel_'+contador_origen_atel+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_roja_origen_atel" id="porcentaje_alerta_roja_origen_atel_'+contador_origen_atel+'">',
-            '<select class="custom-select status_parametrico_origen_atel_'+contador_origen_atel+'" name="status_parametrico_origen_atel" id="status_parametrico_origen_atel_'+contador_origen_atel+'"><option></option><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option></select>',
+            '<select class="custom-select status_parametrico_origen_atel_'+contador_origen_atel+'" name="status_parametrico_origen_atel" id="status_parametrico_origen_atel_'+contador_origen_atel+'"><option></option><option value="Activo">Activo</option><option value="Inactivado">Inactivado</option></select>',
             '<textarea style="width:140px;" class="form-control" name="motivo_movimiento_origen_atel" id="motivo_movimiento_origen_atel_'+contador_origen_atel+'" cols="90" rows="4"></textarea>',
             '<input style="width:140px;" type="text" class="form-control" name="nombre_usuario_origen_atel" id="nombre_usuario_origen_atel_'+contador_origen_atel+'" value="'+nombre_usuario+'">',
             '<input type="date" class="form-control" name="fecha_actualizacion_movimiento_origen_atel" id="fecha_actualizacion_movimiento_origen_atel_'+contador_origen_atel+'">',
@@ -371,7 +372,7 @@ $(document).ready(function(){
             var api = this.api();
 
             // Columnas específicas a las que se aplicará el código de filtros
-            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26];
             
             // Para cada columna
             api.columns().eq(0).each(function (colIdx) {
@@ -434,7 +435,7 @@ $(document).ready(function(){
                                                 
                     ],
                     exportOptions: {
-                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
+                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]
                     }
                 }
             ]
@@ -460,7 +461,7 @@ $(document).ready(function(){
                 var api = this.api();
     
                 // Columnas específicas a las que se aplicará el código de filtros
-                var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+                var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27];
                 
                 // Para cada columna
                 api.columns().eq(0).each(function (colIdx) {
@@ -544,7 +545,8 @@ $(document).ready(function(){
 
         var row = $(this).closest('tr');
         row.find('input, textarea, select').prop('readonly', false).prop('disabled', false);
-
+        row.find('input').removeClass('d-none');
+        row.find('span').addClass('d-none');
         if ($('#bd_movimiento_automatico_calificacion_pcl_'+id_fila_parametrizacion_editar).is(':checked')) {
             $('#bd_tiempo_movimiebd_tiempo_movimiento_calificacion_pcl_nto_origen_atel_'+id_fila_parametrizacion_editar).prop('disabled', false);
             $('#bd_accion_automatica_calificacion_pcl_'+id_fila_parametrizacion_editar).prop('disabled', false);
@@ -680,7 +682,7 @@ $(document).ready(function(){
             '<input style="width:140px;" type="text" class="form-control" name="tiempo_alerta_calificacion_pcl" id="tiempo_alerta_calificacion_pcl_'+contador_calificacion_pcl+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_naranja_calificacion_pcl" id="porcentaje_alerta_naranja_calificacion_pcl_'+contador_calificacion_pcl+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_roja_calificacion_pcl" id="porcentaje_alerta_roja_calificacion_pcl_'+contador_calificacion_pcl+'">',
-            '<select class="custom-select status_parametrico_calificacion_pcl_'+contador_calificacion_pcl+'" name="status_parametrico_calificacion_pcl" id="status_parametrico_calificacion_pcl_'+contador_calificacion_pcl+'"><option></option><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option></select>',
+            '<select class="custom-select status_parametrico_calificacion_pcl_'+contador_calificacion_pcl+'" name="status_parametrico_calificacion_pcl" id="status_parametrico_calificacion_pcl_'+contador_calificacion_pcl+'"><option></option><option value="Activo">Activo</option><option value="Inactivado">Inactivado</option></select>',
             '<textarea style="width:140px;" class="form-control" name="motivo_movimiento_calificacion_pcl" id="motivo_movimiento_calificacion_pcl_'+contador_calificacion_pcl+'" cols="90" rows="4"></textarea>',
             '<input style="width:140px;" type="text" class="form-control" name="nombre_usuario_calificacion_pcl" id="nombre_usuario_calificacion_pcl_'+contador_calificacion_pcl+'" value="'+nombre_usuario+'">',
             '<input type="date" class="form-control" name="fecha_actualizacion_movimiento_calificacion_pcl" id="fecha_actualizacion_movimiento_calificacion_pcl_'+contador_calificacion_pcl+'">',
@@ -713,8 +715,8 @@ $(document).ready(function(){
             var api = this.api();
 
             // Columnas específicas a las que se aplicará el código de filtros
-            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
-            
+            var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26];            
+
             // Para cada columna
             api.columns().eq(0).each(function (colIdx) {
                 // Verifica si la columna actual está en la lista de columnas objetivo
@@ -776,7 +778,7 @@ $(document).ready(function(){
                                                 
                     ],
                     exportOptions: {
-                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
+                        columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24, 25, 26]
                     }
                 }
             ]
@@ -801,7 +803,7 @@ $(document).ready(function(){
                 var api = this.api();
     
                 // Columnas específicas a las que se aplicará el código de filtros
-                var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+                var targetColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27];
                 
                 // Para cada columna
                 api.columns().eq(0).each(function (colIdx) {
@@ -907,7 +909,8 @@ $(document).ready(function(){
 
         var row = $(this).closest('tr');
         row.find('input, textarea, select').prop('readonly', false).prop('disabled', false);
-        
+        row.find('input').removeClass('d-none');
+        row.find('span').addClass('d-none');
         if ($('#bd_movimiento_automatico_juntas_'+id_fila_parametrizacion_editar).is(':checked')) {
             $('#bd_tiempo_movimiento_juntas_'+id_fila_parametrizacion_editar).prop('disabled', false);
             $('#bd_accion_automatica_juntas_'+id_fila_parametrizacion_editar).prop('disabled', false);
@@ -1043,7 +1046,7 @@ $(document).ready(function(){
             '<input style="width:140px;" type="text" class="form-control" name="tiempo_alerta_juntas" id="tiempo_alerta_juntas_'+contador_juntas+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_naranja_juntas" id="porcentaje_alerta_naranja_juntas_'+contador_juntas+'">',
             '<input style="width:140px;" type="text" class="form-control" name="porcentaje_alerta_roja_juntas" id="porcentaje_alerta_roja_juntas_'+contador_juntas+'">',
-            '<select class="custom-select status_parametrico_juntas_'+contador_juntas+'" name="status_parametrico_juntas" id="status_parametrico_juntas_'+contador_juntas+'"><option></option><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option></select>',
+            '<select class="custom-select status_parametrico_juntas_'+contador_juntas+'" name="status_parametrico_juntas" id="status_parametrico_juntas_'+contador_juntas+'"><option></option><option value="Activo">Activo</option><option value="Inactivado">Inactivado</option></select>',
             '<textarea style="width:140px;" class="form-control" name="motivo_movimiento_juntas" id="motivo_movimiento_juntas_'+contador_juntas+'" cols="90" rows="4"></textarea>',
             '<input style="width:140px;" type="text" class="form-control" name="nombre_usuario_juntas" id="nombre_usuario_juntas_'+contador_juntas+'" value="'+nombre_usuario+'">',
             '<input type="date" class="form-control" name="fecha_actualizacion_movimiento_juntas" id="fecha_actualizacion_movimiento_juntas_'+contador_juntas+'">',
@@ -1874,6 +1877,30 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
                 }
             }
         });
+    });
+
+    /* Carga del selector de status parametrica proceso origen atel*/
+    let datos_estatus_parametrica_origen = {
+        '_token': token,
+        'parametro' : "estatus_parametrica"
+    };
+    
+    $.ajax({
+        type:'POST',
+        url:'/CargueSelectoresParametrizar',
+        data: datos_estatus_parametrica_origen,
+        success:function(data){
+            $("#bd_status_parametrico_origen_atel_"+id_parametrizacion_origen_atel_editar).empty();
+            $("#bd_status_parametrico_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["Nombre_parametro"] == $("#bd_id_status_parametrico_origen_atel_"+id_parametrizacion_origen_atel_editar).val()) {
+                    $("#bd_status_parametrico_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["Nombre_parametro"]+'" selected>'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                } else {
+                    $("#bd_status_parametrico_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                }
+            }
+        }
     });
 
     /* Habilitar el selector de bandeja de trabajo destino cuando se checkea el checkbox de enviar del proceso origen atel */
@@ -2865,6 +2892,30 @@ function edicion_parametrizacion_calificacion_pcl(id_parametrizacion_calificacio
         });
     });
 
+    /* Carga del selector de status parametrica proceso calificacion pcl*/
+    let datos_estatus_parametrica_pcl = {
+        '_token': token,
+        'parametro' : "estatus_parametrica"
+    };
+    
+    $.ajax({
+        type:'POST',
+        url:'/CargueSelectoresParametrizar',
+        data: datos_estatus_parametrica_pcl,
+        success:function(data){
+            $("#bd_status_parametrico_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).empty();
+            $("#bd_status_parametrico_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["Nombre_parametro"] == $("#bd_id_status_parametrico_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).val()) {
+                    $("#bd_status_parametrico_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["Nombre_parametro"]+'" selected>'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                } else {
+                    $("#bd_status_parametrico_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                }
+            }
+        }
+    });
+
     /* Habilitar el selector de bandeja de trabajo destino cuando se checkea el checkbox de enviar del proceso origen atel */
     $("#bd_enviar_a_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).click(function(){
         if($(this).is(':checked')){
@@ -3851,6 +3902,30 @@ function edicion_parametrizacion_juntas(id_parametrizacion_juntas_editar){
                 }
             }
         });
+    });
+
+    /* Carga del selector de status parametrica proceso juntas*/
+    let datos_estatus_parametrica_juntas = {
+        '_token': token,
+        'parametro' : "estatus_parametrica"
+    };
+    
+    $.ajax({
+        type:'POST',
+        url:'/CargueSelectoresParametrizar',
+        data: datos_estatus_parametrica_juntas,
+        success:function(data){
+            $("#bd_status_parametrico_juntas_"+id_parametrizacion_juntas_editar).empty();
+            $("#bd_status_parametrico_juntas_"+id_parametrizacion_juntas_editar).append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                if (data[claves[i]]["Nombre_parametro"] == $("#bd_id_status_parametrico_juntas_"+id_parametrizacion_juntas_editar).val()) {
+                    $("#bd_status_parametrico_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["Nombre_parametro"]+'" selected>'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                } else {
+                    $("#bd_status_parametrico_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["Nombre_parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                }
+            }
+        }
     });
 
     /* Habilitar el selector de bandeja de trabajo destino cuando se checkea el checkbox de enviar del proceso origen atel */

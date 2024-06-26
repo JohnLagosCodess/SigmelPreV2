@@ -36,7 +36,7 @@ return new class extends Migration
             $table->text('Tiempo_alerta')->nullable();
             $table->text('Porcentaje_alerta_naranja')->nullable();
             $table->text('Porcentaje_alerta_roja')->nullable();
-            $table->enum('Status_parametrico', ['Activo', 'Inactivo'])->nullable();
+            $table->enum('Status_parametrico', ['Activo', 'Inactivado'])->nullable();
             $table->text('Motivo_descripcion_movimiento')->nullable();
             $table->text('Nombre_usuario')->nullable();
             $table->date('F_actualizacion_movimiento')->nullable();

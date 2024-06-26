@@ -101,6 +101,9 @@
                                                         <th>Enviar a</th>
                                                         <th>Bandeja de trabajo destino</th>
                                                         <th>Estado de Facturación</th>
+                                                        <th>Movimiento automático</th>
+                                                        <th>Tiempo para el movimiento (Días)</th>
+                                                        <th>Acción automática</th>
                                                         <th>Tiempo de  alerta (horas)</th>
                                                         <th>Porcentaje alerta (Naranja)</th>
                                                         <th>Porcentaje alerta (Rojo)</th>
@@ -209,6 +212,20 @@
                                                                 <td>
                                                                     {{$parametrizacion_origen_atel_editar->Estado_facturacion}}
                                                                 </td>
+                                                                {{-- movimiento automático --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_origen_atel_editar->Movimiento_automatico == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- Tiempo para el movimiento (Días) --}}
+                                                                <td>
+                                                                    {{$parametrizacion_origen_atel_editar->Tiempo_movimiento}}
+                                                                </td>
+                                                                {{-- Acción automática --}}
+                                                                <td>
                                                                 {{-- tiempo alerta --}}
                                                                 <td>
                                                                     {{$parametrizacion_origen_atel_editar->Tiempo_alerta}}
@@ -227,7 +244,7 @@
                                                                     <?php if($parametrizacion_origen_atel_editar->Status_parametrico == "Activo"): ?>
                                                                         Activo
                                                                     <?php else: ?>
-                                                                        Inactivo
+                                                                        Inactivado
                                                                     <?php endif ?>
                                                                 </td>
                                                                 {{-- motivo descripcion --}}
@@ -301,7 +318,8 @@
                                                                 <td><div style="text-align:center;">{{$conteo_general_proceso_origen_atel}}<input type="hidden" id="contador_origen_atel_{{$conteo_general_proceso_origen_atel}}" value="{{$conteo_general_proceso_origen_atel}}"></div></td>
                                                                 {{-- fecha creacion movimiento --}}
                                                                 <td>
-                                                                    <input type="date" class="form-control" id="bd_fecha_creacion_movimiento_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->F_creacion_movimiento}}" readonly>
+                                                                    <input type="date" class="form-control d-none" id="bd_fecha_creacion_movimiento_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->F_creacion_movimiento}}" readonly>
+                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d-m-Y", strtotime($parametrizacion_origen_atel_editar->F_creacion_movimiento))}}</span>
                                                                 </td>
                                                                 {{-- servicio asociado --}}
                                                                 <input type="hidden" id="bd_id_servicio_asociado_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Servicio_asociado}}">
@@ -428,7 +446,8 @@
                                                                         <?php endif?>
                                                                         disabled>
                                                                     </div> --}}
-                                                                    <input type="text" class="form-control" id="bd_estado_facturacion_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Estado_facturacion}}" disabled>
+                                                                    <input type="text" class="form-control d-none" id="bd_estado_facturacion_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Estado_facturacion}}" disabled>
+                                                                    <span style="width:156px; height:auto;" class="form-control" readonly>{{$parametrizacion_origen_atel_editar->Estado_facturacion}}</span>
                                                                 </td>
                                                                 {{-- movimiento automático --}}
                                                                 <td>
@@ -442,54 +461,53 @@
                                                                 </td>
                                                                 {{-- Tiempo para el movimiento (Días) --}}
                                                                 <td>
-                                                                    <input style="width:140px;" type="number" class="form-control" id="bd_tiempo_movimiento_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Tiempo_movimiento}}" disabled>
+                                                                    <input style="width:140px;" type="number" class="form-control d-none" id="bd_tiempo_movimiento_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Tiempo_movimiento}}" disabled>
+                                                                    <span style="width:140px;" class="form-control" readonly>{{$parametrizacion_origen_atel_editar->Tiempo_movimiento}}</span>
                                                                 </td>
                                                                 {{-- Acción automática --}}
                                                                 <input type="hidden" id="bd_id_accion_automatica_orgien_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Accion_automatica}}">
                                                                 <td>
-                                                                    <select style="width:240px;" disabled class="custom-select bd_accion_automatica_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" id="bd_accion_automatica_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" disabled>
+                                                                    <select style="width:240px;" class="custom-select bd_accion_automatica_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" id="bd_accion_automatica_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
                                                                         <option value="{{$parametrizacion_origen_atel_editar->Accion_automatica}}" selected>{{$parametrizacion_origen_atel_editar->Nombre_accion_automatica}}</option>
                                                                     </select>
                                                                 </td>
                                                                 {{-- tiempo alerta --}}
                                                                 <td>
-                                                                    <input style="width:140px;" type="text" class="form-control" id="bd_tiempo_alerta_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Tiempo_alerta}}" disabled>
+                                                                    <input style="width:140px;" type="text" class="form-control d-none" id="bd_tiempo_alerta_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Tiempo_alerta}}" disabled>
+                                                                    <span style="width:140px;" class="form-control" readonly>{{$parametrizacion_origen_atel_editar->Tiempo_alerta}}</span>
                                                                 </td>
                                                                 {{-- porcentaje alerta naranja --}}
                                                                 <td>
-                                                                    <input style="width:140px;" type="text" class="form-control" id="bd_porcentaje_alerta_naranja_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Porcentaje_alerta_naranja}}" disabled>
+                                                                    <input style="width:140px;" type="text" class="form-control d-none" id="bd_porcentaje_alerta_naranja_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Porcentaje_alerta_naranja}}" disabled>
+                                                                    <span style="width:140px;" class="form-control" readonly>{{$parametrizacion_origen_atel_editar->Porcentaje_alerta_naranja}}</span>
                                                                 </td>
                                                                 {{-- porcentaje alerta roja --}}
                                                                 <td>
-                                                                    <input style="width:140px;" type="text" class="form-control" id="bd_porcentaje_alerta_roja_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Porcentaje_alerta_roja}}" disabled>
+                                                                    <input style="width:140px;" type="text" class="form-control d-none" id="bd_porcentaje_alerta_roja_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Porcentaje_alerta_roja}}" disabled>
+                                                                    <span style="width:140px;" class="form-control" readonly>{{$parametrizacion_origen_atel_editar->Porcentaje_alerta_roja}}</span>
                                                                 </td>
                                                                 {{-- status --}}
+                                                                <input type="hidden" id="bd_id_status_parametrico_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Status_parametrico}}">
                                                                 <td>
                                                                     <select style="width:140px;" class="custom-select bd_status_parametrico_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" id="bd_status_parametrico_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
-                                                                        <?php if($parametrizacion_origen_atel_editar->Status_parametrico == "Activo"): ?>
-                                                                            <option value="Activo" selected>Activo</option>
-                                                                            <option value="Inactivo">Inactivo</option></select>
-                                                                        <?php elseif($parametrizacion_origen_atel_editar->Status_parametrico == "Inactivo"): ?>
-                                                                            <option value="Activo">Activo</option>
-                                                                            <option value="Inactivo" selected>Inactivo</option></select>
-                                                                        <?php else: ?>
-                                                                            <option value="Activo">Activo</option>
-                                                                            <option value="Inactivo">Inactivo</option></select>
-                                                                        <?php endif ?>
+                                                                        <option value="{{$parametrizacion_origen_atel_editar->Status_parametrico}}" selected>{{$parametrizacion_origen_atel_editar->Status_parametrico}}</option>                                                                        
+                                                                    </select>
                                                                 </td>
                                                                 {{-- motivo descripcion --}}
                                                                 <td>
                                                                     <textarea style="width:140px;" class="form-control" id="bd_motivo_movimiento_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" cols="150" rows="4" disabled>{{$parametrizacion_origen_atel_editar->Motivo_descripcion_movimiento}}</textarea>
                                                                 </td>
-                                                                {{-- usuairo --}}
+                                                                {{-- usuario --}}
                                                                 <td>
-                                                                    <input style="width:140px;" type="text" class="form-control" id="bd_nombre_usuario_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Nombre_usuario}}" disabled>
+                                                                    <input style="width:140px;" type="text" class="form-control d-none" id="bd_nombre_usuario_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Nombre_usuario}}" disabled>
+                                                                    <span style="width:200px; height: auto;" class="form-control" readonly>{{$parametrizacion_origen_atel_editar->Nombre_usuario}}</span>                                                                    
                                                                 </td>
                                                                 {{-- fecha actualizacion movimiento --}}
                                                                 <td>
-                                                                    <input type="date" class="form-control" id="bd_fecha_actualizacion_movimiento_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->F_actualizacion_movimiento}}" disabled>
+                                                                    <input type="date" class="form-control d-none" id="bd_fecha_actualizacion_movimiento_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->F_actualizacion_movimiento}}" disabled>
+                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d-m-Y", strtotime($parametrizacion_origen_atel_editar->F_actualizacion_movimiento))}}</span>                                                                    
                                                                 </td>
                                                                 <td>
                                                                     <div style="text-align:center;">-<div>
@@ -562,6 +580,9 @@
                                                         <th>Enviar a</th>
                                                         <th>Bandeja de trabajo destino</th>
                                                         <th>Estado de Facturación</th>
+                                                        <th>Movimiento automático</th>
+                                                        <th>Tiempo para el movimiento (Días)</th>
+                                                        <th>Acción automática</th>
                                                         <th>Tiempo de  alerta (horas)</th>
                                                         <th>Porcentaje alerta (Naranja)</th>
                                                         <th>Porcentaje alerta (Rojo)</th>
@@ -670,6 +691,22 @@
                                                                 <td>
                                                                     {{$parametrizacion_calificacion_pcl_editar->Estado_facturacion}}
                                                                 </td>
+                                                                {{-- movimiento automático --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_calificacion_pcl_editar->Movimiento_automatico == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- Tiempo para el movimiento (Días) --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->Tiempo_movimiento}}
+                                                                </td>
+                                                                {{-- Acción automática --}}
+                                                                <td>
+                                                                    {{$parametrizacion_calificacion_pcl_editar->Nombre_accion_automatica}}
+                                                                </td>
                                                                 {{-- tiempo alerta --}}
                                                                 <td>
                                                                     {{$parametrizacion_calificacion_pcl_editar->Tiempo_alerta}}
@@ -683,14 +720,12 @@
                                                                     {{$parametrizacion_calificacion_pcl_editar->Porcentaje_alerta_roja}}
                                                                 </td>
                                                                 {{-- status --}}
-                                                                <td>
-                                                                    <select style="width:140px;" class="custom-select bd_status_parametrico_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_status_parametrico_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
-                                                                        <option></option>
-                                                                        <?php if($parametrizacion_calificacion_pcl_editar->Status_parametrico == "Activo"): ?>
-                                                                            Activo
-                                                                        <?php else: ?>
-                                                                            Inactivo
-                                                                        <?php endif ?>
+                                                                <td>                                                                    
+                                                                    <?php if($parametrizacion_calificacion_pcl_editar->Status_parametrico == "Activo"): ?>
+                                                                        Activo
+                                                                    <?php else: ?>
+                                                                        Inactivado
+                                                                    <?php endif ?>
                                                                 </td>
                                                                 {{-- motivo descripcion --}}
                                                                 <td>
@@ -762,7 +797,8 @@
                                                                 <td><div style="text-align:center;">{{$conteo_general_proceso_calificacion_pcl}}<input type="hidden" id="contador_calificacion_pcl_{{$conteo_general_proceso_calificacion_pcl}}" value="{{$conteo_general_proceso_calificacion_pcl}}"></div></td>
                                                                 {{-- fecha creacion movimiento --}}
                                                                 <td>
-                                                                    <input type="date" class="form-control" id="bd_fecha_creacion_movimiento_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->F_creacion_movimiento}}" readonly>
+                                                                    <input type="date" class="form-control d-none" id="bd_fecha_creacion_movimiento_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->F_creacion_movimiento}}" readonly>
+                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d-m-Y", strtotime($parametrizacion_calificacion_pcl_editar->F_creacion_movimiento))}}</span>
                                                                 </td>
                                                                 {{-- servicio asociado --}}
                                                                 <input type="hidden" id="bd_id_servicio_asociado_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Servicio_asociado}}">
@@ -889,7 +925,8 @@
                                                                         <?php endif?>
                                                                         disabled>
                                                                     </div> --}}
-                                                                    <input type="text" class="form-control" id="bd_estado_facturacion_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Estado_facturacion}}" disabled>
+                                                                    <input type="text" class="form-control d-none" id="bd_estado_facturacion_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Estado_facturacion}}" disabled>
+                                                                    <span style="width:156px; height:auto;" class="form-control" readonly>{{$parametrizacion_calificacion_pcl_editar->Estado_facturacion}}</span>
                                                                 </td>
                                                                 {{-- movimiento automático --}}
                                                                 <td>
@@ -903,55 +940,54 @@
                                                                 </td>
                                                                 {{-- Tiempo para el movimiento (Días) --}}
                                                                 <td>
-                                                                    <input style="width:140px;" type="number" class="form-control" id="bd_tiempo_movimiento_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Tiempo_movimiento}}" disabled>
+                                                                    <input style="width:140px;" type="number" class="form-control d-none" id="bd_tiempo_movimiento_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Tiempo_movimiento}}" disabled>
+                                                                    <span style="width:140px;" class="form-control" readonly>{{$parametrizacion_calificacion_pcl_editar->Tiempo_movimiento}}</span>
                                                                 </td>
                                                                 {{-- Acción automática --}}
                                                                 <input type="hidden" id="bd_id_accion_automatica_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Accion_automatica}}">
                                                                 <td>
-                                                                    <select style="width:240px;" disabled class="custom-select bd_accion_automatica_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_accion_automatica_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
+                                                                    <select style="width:240px;" class="custom-select bd_accion_automatica_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_accion_automatica_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
                                                                         <option value="{{$parametrizacion_calificacion_pcl_editar->Accion_automatica}}" selected>{{$parametrizacion_calificacion_pcl_editar->Nombre_accion_automatica}}</option>
                                                                     </select>
                                                                 </td>
                                                                 {{-- tiempo alerta --}}
                                                                 <td>
-                                                                    <input style="width:140px;" type="text" class="form-control" id="bd_tiempo_alerta_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Tiempo_alerta}}" disabled>
+                                                                    <input style="width:140px;" type="text" class="form-control d-none" id="bd_tiempo_alerta_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Tiempo_alerta}}" disabled>
+                                                                    <span style="width:140px;" class="form-control" readonly>{{$parametrizacion_calificacion_pcl_editar->Tiempo_alerta}}</span>
                                                                 </td>
                                                                 {{-- porcentaje alerta naranja --}}
                                                                 <td>
-                                                                    <input style="width:140px;" type="text" class="form-control" id="bd_porcentaje_alerta_naranja_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Porcentaje_alerta_naranja}}" disabled>
+                                                                    <input style="width:140px;" type="text" class="form-control d-none" id="bd_porcentaje_alerta_naranja_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Porcentaje_alerta_naranja}}" disabled>
+                                                                    <span style="width:140px;" class="form-control" readonly>{{$parametrizacion_calificacion_pcl_editar->Porcentaje_alerta_naranja}}</span>
                                                                 </td>
                                                                 {{-- porcentaje alerta roja --}}
                                                                 <td>
-                                                                    <input style="width:140px;" type="text" class="form-control" id="bd_porcentaje_alerta_roja_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Porcentaje_alerta_roja}}" disabled>
+                                                                    <input style="width:140px;" type="text" class="form-control d-none" id="bd_porcentaje_alerta_roja_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Porcentaje_alerta_roja}}" disabled>
+                                                                    <span style="width:140px;" class="form-control" readonly>{{$parametrizacion_calificacion_pcl_editar->Porcentaje_alerta_roja}}</span>
                                                                 </td>
                                                                 
                                                                 {{-- status --}}
+                                                                <input type="hidden" id="bd_id_status_parametrico_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Status_parametrico}}">
                                                                 <td>
                                                                     <select style="width:140px;" class="custom-select bd_status_parametrico_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" id="bd_status_parametrico_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
-                                                                        <?php if($parametrizacion_calificacion_pcl_editar->Status_parametrico == "Activo"): ?>
-                                                                            <option value="Activo" selected>Activo</option>
-                                                                            <option value="Inactivo">Inactivo</option></select>
-                                                                        <?php elseif($parametrizacion_calificacion_pcl_editar->Status_parametrico == "Inactivo"): ?>
-                                                                            <option value="Activo">Activo</option>
-                                                                            <option value="Inactivo" selected>Inactivo</option></select>
-                                                                        <?php else: ?>
-                                                                            <option value="Activo">Activo</option>  
-                                                                            <option value="Inactivo">Inactivo</option></select>
-                                                                        <?php endif ?>
+                                                                        <option value="{{$parametrizacion_calificacion_pcl_editar->Status_parametrico}}" selected>{{$parametrizacion_calificacion_pcl_editar->Status_parametrico}}</option>                                                                        
+                                                                    </select> 
                                                                 </td>
                                                                 {{-- motivo descripcion --}}
                                                                 <td>
                                                                     <textarea style="width:140px;" class="form-control" id="bd_motivo_movimiento_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" cols="150" rows="4" disabled>{{$parametrizacion_calificacion_pcl_editar->Motivo_descripcion_movimiento}}</textarea>
                                                                 </td>
-                                                                {{-- usuairo --}}
+                                                                {{-- usuario --}}
                                                                 <td>
-                                                                    <input style="width:140px;" type="text" class="form-control" id="bd_nombre_usuario_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Nombre_usuario}}" disabled>
+                                                                    <input style="width:140px;" type="text" class="form-control d-none" id="bd_nombre_usuario_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Nombre_usuario}}" disabled>
+                                                                    <span style="width:200px; height: auto;" class="form-control" readonly>{{$parametrizacion_calificacion_pcl_editar->Nombre_usuario}}</span>
                                                                 </td>
                                                                 {{-- fecha actualizacion movimiento --}}
                                                                 <td>
-                                                                    <input type="date" class="form-control" id="bd_fecha_actualizacion_movimiento_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->F_actualizacion_movimiento}}" disabled>
+                                                                    <input type="date" class="form-control d-none" id="bd_fecha_actualizacion_movimiento_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->F_actualizacion_movimiento}}" disabled>
+                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d-m-Y", strtotime($parametrizacion_calificacion_pcl_editar->F_actualizacion_movimiento))}}</span>                                                                    
                                                                 </td>
                                                                 <td>
                                                                     <div style="text-align:center;">-<div>
@@ -1024,6 +1060,9 @@
                                                         <th>Enviar a</th>
                                                         <th>Bandeja de trabajo destino</th>
                                                         <th>Estado de Facturación</th>
+                                                        <th>Movimiento automático</th>
+                                                        <th>Tiempo para el movimiento (Días)</th>
+                                                        <th>Acción automática</th>
                                                         <th>Tiempo de  alerta (horas)</th>
                                                         <th>Porcentaje alerta (Naranja)</th>
                                                         <th>Porcentaje alerta (Rojo)</th>
@@ -1132,6 +1171,22 @@
                                                                 <td>
                                                                     {{$parametrizacion_juntas_editar->Estado_facturacion}}
                                                                 </td>
+                                                                {{-- movimiento automático --}}
+                                                                <td>
+                                                                    <?php if($parametrizacion_juntas_editar->Movimiento_automatico == "Si"):?>
+                                                                        Si
+                                                                    <?php else: ?>
+                                                                        No
+                                                                    <?php endif?>
+                                                                </td>
+                                                                {{-- Tiempo para el movimiento (Días) --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->Tiempo_movimiento}}
+                                                                </td>
+                                                                {{-- Acción automática --}}
+                                                                <td>
+                                                                    {{$parametrizacion_juntas_editar->Nombre_accion_automatica}}
+                                                                </td>
                                                                 {{-- tiempo alerta --}}
                                                                 <td>
                                                                     {{$parametrizacion_juntas_editar->Tiempo_alerta}}
@@ -1150,7 +1205,7 @@
                                                                     <?php if($parametrizacion_juntas_editar->Status_parametrico == "Activo"): ?>
                                                                         Activo
                                                                     <?php else: ?>
-                                                                        Inactivo
+                                                                        Inactivado
                                                                     <?php endif ?>
                                                                 </td>
                                                                 {{-- motivo descripcion --}}
@@ -1223,7 +1278,8 @@
                                                                 <td><div style="text-align:center;">{{$conteo_general_proceso_juntas}}<input type="hidden" id="contador_juntas_{{$conteo_general_proceso_juntas}}" value="{{$conteo_general_proceso_juntas}}"></div></td>
                                                                 {{-- fecha creacion movimiento --}}
                                                                 <td>
-                                                                    <input type="date" class="form-control" id="bd_fecha_creacion_movimiento_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->F_creacion_movimiento}}" readonly>
+                                                                    <input type="date" class="form-control d-none" id="bd_fecha_creacion_movimiento_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->F_creacion_movimiento}}" readonly>
+                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d-m-Y", strtotime($parametrizacion_juntas_editar->F_creacion_movimiento))}}</span>                                                                    
                                                                 </td>
                                                                 {{-- servicio asociado --}}
                                                                 <input type="hidden" id="bd_id_servicio_asociado_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Servicio_asociado}}">
@@ -1350,7 +1406,8 @@
                                                                         <?php endif?>
                                                                         disabled>
                                                                     </div> --}}
-                                                                    <input type="text" class="form-control" id="bd_estado_facturacion_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Estado_facturacion}}" disabled>
+                                                                    <input type="text" class="form-control d-none" id="bd_estado_facturacion_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Estado_facturacion}}" disabled>
+                                                                    <span style="width:156px; height:auto;" class="form-control" readonly>{{$parametrizacion_juntas_editar->Estado_facturacion}}</span>
                                                                 </td>
                                                                 {{-- movimiento automático --}}
                                                                 <td>
@@ -1364,54 +1421,53 @@
                                                                 </td>
                                                                 {{-- Tiempo para el movimiento (Días) --}}
                                                                 <td>
-                                                                    <input style="width:140px;" type="number" class="form-control" id="bd_tiempo_movimiento_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Tiempo_movimiento}}" disabled>
+                                                                    <input style="width:140px;" type="number" class="form-control d-none" id="bd_tiempo_movimiento_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Tiempo_movimiento}}" disabled>
+                                                                    <span style="width:140px;" class="form-control" readonly>{{$parametrizacion_juntas_editar->Tiempo_movimiento}}</span>                                                                    
                                                                 </td>
                                                                 {{-- Acción automática --}}
                                                                 <input type="hidden" id="bd_id_accion_automatica_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Accion_automatica}}">
                                                                 <td>
-                                                                    <select style="width:240px;" disabled class="custom-select bd_accion_automatica_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" id="bd_accion_automatica_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" disabled>
+                                                                    <select style="width:240px;" class="custom-select bd_accion_automatica_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" id="bd_accion_automatica_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
                                                                         <option value="{{$parametrizacion_juntas_editar->Accion_automatica}}" selected>{{$parametrizacion_juntas_editar->Nombre_accion_automatica}}</option>
                                                                     </select>
                                                                 </td>
                                                                 {{-- tiempo alerta --}}
                                                                 <td>
-                                                                    <input style="width:140px;" type="text" class="form-control" id="bd_tiempo_alerta_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Tiempo_alerta}}" disabled>
+                                                                    <input style="width:140px;" type="text" class="form-control d-none" id="bd_tiempo_alerta_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Tiempo_alerta}}" disabled>
+                                                                    <span style="width:140px;" class="form-control" readonly>{{$parametrizacion_juntas_editar->Tiempo_alerta}}</span>
                                                                 </td>
                                                                 {{-- porcentaje alerta naranja --}}
                                                                 <td>
-                                                                    <input style="width:140px;" type="text" class="form-control" id="bd_porcentaje_alerta_naranja_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Porcentaje_alerta_naranja}}" disabled>
+                                                                    <input style="width:140px;" type="text" class="form-control d-none" id="bd_porcentaje_alerta_naranja_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Porcentaje_alerta_naranja}}" disabled>
+                                                                    <span style="width:140px;" class="form-control" readonly>{{$parametrizacion_juntas_editar->Porcentaje_alerta_naranja}}</span>
                                                                 </td>
                                                                 {{-- porcentaje alerta roja --}}
                                                                 <td>
-                                                                    <input style="width:140px;" type="text" class="form-control" id="bd_porcentaje_alerta_roja_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Porcentaje_alerta_roja}}" disabled>
+                                                                    <input style="width:140px;" type="text" class="form-control d-none" id="bd_porcentaje_alerta_roja_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Porcentaje_alerta_roja}}" disabled>
+                                                                    <span style="width:140px;" class="form-control" readonly>{{$parametrizacion_juntas_editar->Porcentaje_alerta_roja}}</span>
                                                                 </td>
                                                                 {{-- status --}}
+                                                                <input type="hidden" id="bd_id_status_parametrico_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Status_parametrico}}">
                                                                 <td>
                                                                     <select style="width:140px;" class="custom-select bd_status_parametrico_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" id="bd_status_parametrico_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" disabled>
                                                                         <option></option>
-                                                                        <?php if($parametrizacion_juntas_editar->Status_parametrico == "Activo"): ?>
-                                                                            <option value="Activo" selected>Activo</option>
-                                                                            <option value="Inactivo">Inactivo</option></select>
-                                                                        <?php elseif($parametrizacion_juntas_editar->Status_parametrico == "Inactivo"): ?>
-                                                                            <option value="Activo">Activo</option>
-                                                                            <option value="Inactivo" selected>Inactivo</option></select>
-                                                                        <?php else: ?>
-                                                                            <option value="Activo">Activo</option>
-                                                                            <option value="Inactivo">Inactivo</option></select>
-                                                                        <?php endif ?>
+                                                                        <option value="{{$parametrizacion_juntas_editar->Status_parametrico}}" selected>{{$parametrizacion_juntas_editar->Status_parametrico}}</option>                                                                        
+                                                                    </select> 
                                                                 </td>
                                                                 {{-- motivo descripcion --}}
                                                                 <td>
                                                                     <textarea style="width:140px;" class="form-control" id="bd_motivo_movimiento_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" cols="150" rows="4" disabled>{{$parametrizacion_juntas_editar->Motivo_descripcion_movimiento}}</textarea>
                                                                 </td>
-                                                                {{-- usuairo --}}
+                                                                {{-- usuario --}}
                                                                 <td>
-                                                                    <input style="width:140px;" type="text" class="form-control" id="bd_nombre_usuario_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Nombre_usuario}}" disabled>
+                                                                    <input style="width:140px;" type="text" class="form-control d-none" id="bd_nombre_usuario_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Nombre_usuario}}" disabled>
+                                                                    <span style="width:200px; height: auto;" class="form-control" readonly>{{$parametrizacion_juntas_editar->Nombre_usuario}}</span>
                                                                 </td>
                                                                 {{-- fecha actualizacion movimiento --}}
                                                                 <td>
-                                                                    <input type="date" class="form-control" id="bd_fecha_actualizacion_movimiento_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->F_actualizacion_movimiento}}" disabled>
+                                                                    <input type="date" class="form-control d-none" id="bd_fecha_actualizacion_movimiento_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->F_actualizacion_movimiento}}" disabled>
+                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d-m-Y", strtotime($parametrizacion_juntas_editar->F_actualizacion_movimiento))}}</span>
                                                                 </td>
                                                                 <td>
                                                                     <div style="text-align:center;">-<div>
@@ -1451,6 +1507,15 @@
 @stop
 
 @section('js')
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.templates.min.js"></script>
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>
     <script src="/js/parametrizacion.js"></script>
 @stop

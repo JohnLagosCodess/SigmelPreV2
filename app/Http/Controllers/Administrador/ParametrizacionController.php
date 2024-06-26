@@ -106,7 +106,7 @@ class ParametrizacionController extends Controller
 
         // Conteo de movimientos activos e inactivos del proceso origen atel
         $conteo_activos_inactivos_parametrizaciones_origen_atel = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes')
-        ->select(DB::raw("COUNT(IF(Status_parametrico = 'Activo', 1, NULL)) AS 'Activos'"), DB::raw("COUNT(IF(Status_parametrico = 'Inactivo', 1, NULL)) AS 'Inactivos'"))
+        ->select(DB::raw("COUNT(IF(Status_parametrico = 'Activo', 1, NULL)) AS 'Activos'"), DB::raw("COUNT(IF(Status_parametrico = 'Inactivado', 1, NULL)) AS 'Inactivos'"))
         ->where([
             ['Id_cliente', $Id_cliente],
             ['Id_proceso', '1']
@@ -167,7 +167,7 @@ class ParametrizacionController extends Controller
 
         // Conteo de movimientos activos e inactivos del proceso calificacion pcl
         $conteo_activos_inactivos_parametrizaciones_calificacion_pcl = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes')
-        ->select(DB::raw("COUNT(IF(Status_parametrico = 'Activo', 1, NULL)) AS 'Activos'"), DB::raw("COUNT(IF(Status_parametrico = 'Inactivo', 1, NULL)) AS 'Inactivos'"))
+        ->select(DB::raw("COUNT(IF(Status_parametrico = 'Activo', 1, NULL)) AS 'Activos'"), DB::raw("COUNT(IF(Status_parametrico = 'Inactivado', 1, NULL)) AS 'Inactivos'"))
         ->where([
             ['Id_cliente', $Id_cliente],
             ['Id_proceso', '2']
@@ -228,7 +228,7 @@ class ParametrizacionController extends Controller
 
         // Conteo de movimientos activos e inactivos del proceso juntas
         $conteo_activos_inactivos_parametrizaciones_juntas = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes')
-        ->select(DB::raw("COUNT(IF(Status_parametrico = 'Activo', 1, NULL)) AS 'Activos'"), DB::raw("COUNT(IF(Status_parametrico = 'Inactivo', 1, NULL)) AS 'Inactivos'"))
+        ->select(DB::raw("COUNT(IF(Status_parametrico = 'Activo', 1, NULL)) AS 'Activos'"), DB::raw("COUNT(IF(Status_parametrico = 'Inactivado', 1, NULL)) AS 'Inactivos'"))
         ->where([
             ['Id_cliente', $Id_cliente],
             ['Id_proceso', '3']
@@ -596,6 +596,18 @@ class ParametrizacionController extends Controller
 
             $informacion_listado_profesionales_proceso_juntas = json_decode(json_encode($listado_profesionales_proceso_juntas), true);
             return response()->json($informacion_listado_profesionales_proceso_juntas);
+        }
+
+        // Listado de estatus parametrico
+
+        if ($parametro == "estatus_parametrica") {
+            $listado_estatus_parametrica = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Nombre_parametro')
+            ->where([['Tipo_lista', '=', 'Estatus_Parametrica'], ['Estado', '=', 'activo']])
+            ->get();   
+
+            $informacion_listado_estatus_parametrica = json_decode(json_encode($listado_estatus_parametrica), true);
+            return response()->json($informacion_listado_estatus_parametrica);
         }
 
     }
