@@ -1831,7 +1831,10 @@ $(document).ready(function(){
             url:'/registrarComunicadoOrigen',
             data: formData,   
             processData: false,
-            contentType: false,         
+            contentType: false,       
+            beforeSend:  function() {
+                $("#cargarComunicado").addClass("descarga-deshabilitada");
+            },   
             success:function(response){
                 if (response.parametro == 'agregar_comunicado') {
                     $('.alerta_externa_comunicado').removeClass('d-none');
@@ -1842,6 +1845,9 @@ $(document).ready(function(){
                         location.reload();
                     }, 3000);
                 }
+            },
+            complete:function(){
+                $("#cargarComunicado").removeClass("descarga-deshabilitada");
             }
         });  
     }); 
@@ -1893,6 +1899,9 @@ $(document).ready(function(){
                 data: formData,
                 processData: false,
                 contentType: false,
+                beforeSend:  function() {
+                    $("#cargarComunicadoModal").addClass("descarga-deshabilitada");
+                },
                 success:function(response){
                     if (response.parametro == 'reemplazar_comunicado') {
                         $('.alerta_externa_comunicado_modal').removeClass('d-none');
@@ -1904,6 +1913,9 @@ $(document).ready(function(){
                             location.reload();
                         }, 3000);
                     }
+                },
+                complete:function(){
+                    $("#cargarComunicadoModal").removeClass("descarga-deshabilitada");
                 }
             });
         }

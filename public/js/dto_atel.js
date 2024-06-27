@@ -1156,10 +1156,10 @@ $(document).ready(function(){
         
         if (btn_seccion_info_evento == "Guardar" || btn_seccion_info_evento == "Actualizar") {
             // campos sección Justificación para revisión del Origen
-            $("#justificacion_revision_origen").prop("required", false);
+            $("#justificacion_revision_origen").prop("required", true);
             // campos sección Calificación del Origen
-            $("#sustentacion_califi_origen").prop("required", false);
-            $("#origen_dto_atel").prop("required", false);
+            $("#sustentacion_califi_origen").prop("required", true);
+            $("#origen_dto_atel").prop("required", true);
 
             btn_guardar_info_evento = 1; 
         }
@@ -1181,8 +1181,8 @@ $(document).ready(function(){
             $("#fecha_fallecimiento").prop("required", false);
             $("#descripcion_FURAT").prop("required", false);
             // campos sección Calificación del Origen
-            $("#sustentacion_califi_origen").prop("required", false);
-            $("#origen_dto_atel").prop("required", false);
+            $("#sustentacion_califi_origen").prop("required", true);
+            $("#origen_dto_atel").prop("required", true);
 
             btn_guardar_justi_revi_ori = 1;
         }
@@ -1204,10 +1204,10 @@ $(document).ready(function(){
             $("#fecha_fallecimiento").prop("required", false);
             $("#descripcion_FURAT").prop("required", false);
             // campos sección Justificación para revisión del Origen
-            $("#justificacion_revision_origen").prop("required", false);
+            $("#justificacion_revision_origen").prop("required", true);
             // campos sección Calificación del Origen
-            $("#sustentacion_califi_origen").prop("required", false);
-            $("#origen_dto_atel").prop("required", false);
+            $("#sustentacion_califi_origen").prop("required", true);
+            $("#origen_dto_atel").prop("required", true);
 
             btn_guardar_relacion_docs = 1;
         }
@@ -1229,10 +1229,10 @@ $(document).ready(function(){
             $("#fecha_fallecimiento").prop("required", false);
             $("#descripcion_FURAT").prop("required", false);
             // campos sección Justificación para revisión del Origen
-            $("#justificacion_revision_origen").prop("required", false);
+            $("#justificacion_revision_origen").prop("required", true);
             // campos sección Calificación del Origen
-            $("#sustentacion_califi_origen").prop("required", false);
-            $("#origen_dto_atel").prop("required", false);
+            $("#sustentacion_califi_origen").prop("required", true);
+            $("#origen_dto_atel").prop("required", true);
 
             btn_guardar_diagnosticos_mot_cali = 1;
         }
@@ -1282,7 +1282,10 @@ $(document).ready(function(){
             url:'/registrarComunicadoOrigen',
             data: formData,   
             processData: false,
-            contentType: false,         
+            contentType: false,   
+            beforeSend:  function() {
+                $("#cargarComunicado").addClass("descarga-deshabilitada");
+            },      
             success:function(response){
                 if (response.parametro == 'agregar_comunicado') {
                     $('.alerta_externa_comunicado').removeClass('d-none');
@@ -1293,6 +1296,9 @@ $(document).ready(function(){
                         location.reload();
                     }, 3000);
                 }
+            },
+            complete:function(){
+                $("#cargarComunicado").removeClass("descarga-deshabilitada");
             }
         });  
     }); 
@@ -2374,6 +2380,9 @@ $(document).ready(function(){
                     data: formData,
                     processData: false,
                     contentType: false,
+                    beforeSend:  function() {
+                        $("#cargarComunicadoModal").addClass("descarga-deshabilitada");
+                    },
                     success:function(response){
                         if (response.parametro == 'reemplazar_comunicado') {
                             $('.alerta_externa_comunicado_modal').removeClass('d-none');
@@ -2385,6 +2394,9 @@ $(document).ready(function(){
                                 location.reload();
                             }, 3000);
                         }
+                    },
+                    complete:function(){
+                        $("#cargarComunicadoModal").removeClass("descarga-deshabilitada");
                     }
                 });
             }

@@ -723,7 +723,13 @@ class AdicionDxDTO extends Controller
 
         $Id_Adiciones_Dx = $request->Id_Adiciones_Dx;
 
-        if ($Id_Adiciones_Dx == "") {
+        //SOLUCIÓN PROVISIONAL PARA CORREGIR ERROR DE MULTIPLES DX, EN LOS CUALES NO GENERA DICTAMEN DEBIDO A QUE LA LOGICA ACTUAL SOLO PERMITE UN DX
+        $documentos = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$request->ID_Evento], ['Id_Asignacion',$request->Id_Asignacion], ['T_documento','N/A'], ['Modulo_creacion','adicionDxDtoOrigen']])->get();
+        
+
+
+        if ($Id_Adiciones_Dx == "" || count($documentos) == 0) {
             sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')->insert($datos_formulario);
             
             $datos_info_comunicado_eventos = [
