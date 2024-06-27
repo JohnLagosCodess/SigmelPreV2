@@ -2449,45 +2449,57 @@ $(document).ready(function(){
             'origen': origen,
             'id_comunicado' : infoComunicado.Id_Comunicado,
         };
-
-        $.ajax({    
-            type:'POST',
-            url:'/DescargaProformaDMLPrev',
-            data: datos_generacion_proforma_dml_previsional,
-            xhrFields: {
-                responseType: 'blob' // Indica que la respuesta es un blob
-            },
-            beforeSend:  function() {
-                $("#btn_enviar_dictamen_previsional").addClass("descarga-deshabilitada");
-            },
-            success: function (response, status, xhr) {
-                var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-        
-                // Crear un enlace de descarga similar al ejemplo anterior
-                var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
-                var link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
-        
-                // Adjuntar el enlace al documento y activar el evento de clic
-                document.body.appendChild(link);
-                link.click();
-        
-                // Eliminar el enlace del documento
-                document.body.removeChild(link);
-            },
-            error: function (error) {
-                // Manejar casos de error
-                console.error('Error al descargar el PDF:', error);
-            },
-            complete:  function() {
-                $("#btn_enviar_dictamen_previsional").removeClass("descarga-deshabilitada");
-                if(infoComunicado.Nombre_documento == null){
-                    location.reload();
-                }
-            },       
-        });
-
+        if(infoComunicado.Reemplazado == 1){
+            var nombre_doc = infoComunicado.Nombre_documento;
+            var idEvento = infoComunicado.ID_evento;
+            var enlaceDescarga = document.createElement('a');
+            enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+            enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+            enlaceDescarga.style.display = 'none';
+            document.body.appendChild(enlaceDescarga);
+            enlaceDescarga.click();
+            setTimeout(function() {
+                document.body.removeChild(enlaceDescarga);
+            }, 1000);
+        }else{
+            $.ajax({    
+                type:'POST',
+                url:'/DescargaProformaDMLPrev',
+                data: datos_generacion_proforma_dml_previsional,
+                xhrFields: {
+                    responseType: 'blob' // Indica que la respuesta es un blob
+                },
+                beforeSend:  function() {
+                    $("#btn_enviar_dictamen_previsional").addClass("descarga-deshabilitada");
+                },
+                success: function (response, status, xhr) {
+                    var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+            
+                    // Crear un enlace de descarga similar al ejemplo anterior
+                    var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
+            
+                    // Adjuntar el enlace al documento y activar el evento de clic
+                    document.body.appendChild(link);
+                    link.click();
+            
+                    // Eliminar el enlace del documento
+                    document.body.removeChild(link);
+                },
+                error: function (error) {
+                    // Manejar casos de error
+                    console.error('Error al descargar el PDF:', error);
+                },
+                complete:  function() {
+                    $("#btn_enviar_dictamen_previsional").removeClass("descarga-deshabilitada");
+                    if(infoComunicado.Nombre_documento == null){
+                        location.reload();
+                    }
+                },       
+            });
+        }
     });
     
     // Captura Formulario PDF Notificación del DML previsional (OFICIO)
