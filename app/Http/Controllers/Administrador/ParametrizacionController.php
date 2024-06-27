@@ -58,6 +58,7 @@ class ParametrizacionController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'sipc.Estado', '=', 'slp.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia', 'sipc.Accion_ejecutar', '=', 'sia.Id_Accion')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia2', 'sipc.Accion_antecesora', '=', 'sia2.Id_Accion')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia3', 'sipc.Accion_automatica', '=', 'sia3.Id_Accion')
         ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slps2', 'sipc.Bandeja_trabajo_destino', '=', 'slps2.Id_proceso')
         ->leftJoin('sigmel_gestiones.sigmel_grupos_trabajos as sgt', 'sipc.Equipo_trabajo', '=', 'sgt.id')
         ->leftJoin('sigmel_sys.users as u', 'sipc.Profesional_asignado', '=', 'u.id')
@@ -87,6 +88,10 @@ class ParametrizacionController extends Controller
             'sipc.Bandeja_trabajo_destino',
             'slps2.Nombre_proceso as Nombre_bandeja_trabajo_destino',
             'sipc.Estado_facturacion',
+            'sipc.Movimiento_automatico',
+            'sipc.Tiempo_movimiento',
+            'sipc.Accion_automatica',
+            'sia3.Accion as Nombre_accion_automatica',
             'sipc.Tiempo_alerta',
             'sipc.Porcentaje_alerta_naranja',
             'sipc.Porcentaje_alerta_roja',
@@ -101,7 +106,7 @@ class ParametrizacionController extends Controller
 
         // Conteo de movimientos activos e inactivos del proceso origen atel
         $conteo_activos_inactivos_parametrizaciones_origen_atel = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes')
-        ->select(DB::raw("COUNT(IF(Status_parametrico = 'Activo', 1, NULL)) AS 'Activos'"), DB::raw("COUNT(IF(Status_parametrico = 'Inactivo', 1, NULL)) AS 'Inactivos'"))
+        ->select(DB::raw("COUNT(IF(Status_parametrico = 'Activo', 1, NULL)) AS 'Activos'"), DB::raw("COUNT(IF(Status_parametrico = 'Inactivado', 1, NULL)) AS 'Inactivos'"))
         ->where([
             ['Id_cliente', $Id_cliente],
             ['Id_proceso', '1']
@@ -114,6 +119,7 @@ class ParametrizacionController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'sipc.Estado', '=', 'slp.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia', 'sipc.Accion_ejecutar', '=', 'sia.Id_Accion')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia2', 'sipc.Accion_antecesora', '=', 'sia2.Id_Accion')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia3', 'sipc.Accion_automatica', '=', 'sia3.Id_Accion')
         ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slps2', 'sipc.Bandeja_trabajo_destino', '=', 'slps2.Id_proceso')
         ->leftJoin('sigmel_gestiones.sigmel_grupos_trabajos as sgt', 'sipc.Equipo_trabajo', '=', 'sgt.id')
         ->leftJoin('sigmel_sys.users as u', 'sipc.Profesional_asignado', '=', 'u.id')
@@ -143,6 +149,10 @@ class ParametrizacionController extends Controller
             'sipc.Bandeja_trabajo_destino',
             'slps2.Nombre_proceso as Nombre_bandeja_trabajo_destino',
             'sipc.Estado_facturacion',
+            'sipc.Movimiento_automatico',
+            'sipc.Tiempo_movimiento',
+            'sipc.Accion_automatica',
+            'sia3.Accion as Nombre_accion_automatica',
             'sipc.Tiempo_alerta',
             'sipc.Porcentaje_alerta_naranja',
             'sipc.Porcentaje_alerta_roja',
@@ -157,7 +167,7 @@ class ParametrizacionController extends Controller
 
         // Conteo de movimientos activos e inactivos del proceso calificacion pcl
         $conteo_activos_inactivos_parametrizaciones_calificacion_pcl = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes')
-        ->select(DB::raw("COUNT(IF(Status_parametrico = 'Activo', 1, NULL)) AS 'Activos'"), DB::raw("COUNT(IF(Status_parametrico = 'Inactivo', 1, NULL)) AS 'Inactivos'"))
+        ->select(DB::raw("COUNT(IF(Status_parametrico = 'Activo', 1, NULL)) AS 'Activos'"), DB::raw("COUNT(IF(Status_parametrico = 'Inactivado', 1, NULL)) AS 'Inactivos'"))
         ->where([
             ['Id_cliente', $Id_cliente],
             ['Id_proceso', '2']
@@ -170,6 +180,7 @@ class ParametrizacionController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'sipc.Estado', '=', 'slp.Id_Parametro')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia', 'sipc.Accion_ejecutar', '=', 'sia.Id_Accion')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia2', 'sipc.Accion_antecesora', '=', 'sia2.Id_Accion')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia3', 'sipc.Accion_automatica', '=', 'sia3.Id_Accion')
         ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slps2', 'sipc.Bandeja_trabajo_destino', '=', 'slps2.Id_proceso')
         ->leftJoin('sigmel_gestiones.sigmel_grupos_trabajos as sgt', 'sipc.Equipo_trabajo', '=', 'sgt.id')
         ->leftJoin('sigmel_sys.users as u', 'sipc.Profesional_asignado', '=', 'u.id')
@@ -199,6 +210,10 @@ class ParametrizacionController extends Controller
             'sipc.Bandeja_trabajo_destino',
             'slps2.Nombre_proceso as Nombre_bandeja_trabajo_destino',
             'sipc.Estado_facturacion',
+            'sipc.Movimiento_automatico',
+            'sipc.Tiempo_movimiento',
+            'sipc.Accion_automatica',
+            'sia3.Accion as Nombre_accion_automatica',
             'sipc.Tiempo_alerta',
             'sipc.Porcentaje_alerta_naranja',
             'sipc.Porcentaje_alerta_roja',
@@ -213,7 +228,7 @@ class ParametrizacionController extends Controller
 
         // Conteo de movimientos activos e inactivos del proceso juntas
         $conteo_activos_inactivos_parametrizaciones_juntas = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes')
-        ->select(DB::raw("COUNT(IF(Status_parametrico = 'Activo', 1, NULL)) AS 'Activos'"), DB::raw("COUNT(IF(Status_parametrico = 'Inactivo', 1, NULL)) AS 'Inactivos'"))
+        ->select(DB::raw("COUNT(IF(Status_parametrico = 'Activo', 1, NULL)) AS 'Activos'"), DB::raw("COUNT(IF(Status_parametrico = 'Inactivado', 1, NULL)) AS 'Inactivos'"))
         ->where([
             ['Id_cliente', $Id_cliente],
             ['Id_proceso', '3']
@@ -290,6 +305,23 @@ class ParametrizacionController extends Controller
 
             $informacion_acciones_antecesoras_proceso_origen_atel = json_decode(json_encode($acciones_antecesoras_origen_atel), true);
             return response()->json($informacion_acciones_antecesoras_proceso_origen_atel);
+        }
+
+        // Acciones automaticas origen
+        if($parametro == "acciones_automaticas_proceso_origen_atel"){
+            $Servicio_asociado_origen = $request->Servicio_asociado_origen;
+            $acciones_automaticas_origen_atel = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia', 'sia.Id_Accion', '=', 'sipc.Accion_ejecutar')
+            ->select('sipc.Accion_ejecutar', 'sia.Accion')
+            ->where([
+                ['sipc.Id_cliente', '=', $Id_cliente],
+                ['sipc.Id_proceso', '=', 1],
+                ['sipc.Servicio_asociado', '=', $Servicio_asociado_origen],
+                ['sipc.Status_parametrico', '=', 'Activo']
+            ])->whereNotNull('sipc.Profesional_asignado')->get();
+
+            $informacion_acciones_automaticas_proceso_origen_atel = json_decode(json_encode($acciones_automaticas_origen_atel), true);
+            return response()->json($informacion_acciones_automaticas_proceso_origen_atel);
         }
         
         // Bandeja de trabajo destino
@@ -391,6 +423,23 @@ class ParametrizacionController extends Controller
             $informacion_acciones_antecesoras_proceso_calificacion_pcl = json_decode(json_encode($acciones_antecesoras_calificacion_pcl), true);
             return response()->json($informacion_acciones_antecesoras_proceso_calificacion_pcl);
         }
+
+        // Acciones automaticas pcl
+        if($parametro == "acciones_automaticas_proceso_calificacion_pcl"){
+            $Servicio_asociado_pcl = $request->Servicio_asociado_pcl;
+            $acciones_automaticas_calificacion_pcl = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia', 'sia.Id_Accion', '=', 'sipc.Accion_ejecutar')
+            ->select('sipc.Accion_ejecutar', 'sia.Accion')
+            ->where([
+                ['sipc.Id_cliente', '=', $Id_cliente],
+                ['sipc.Id_proceso', '=', 2],
+                ['sipc.Servicio_asociado', '=', $Servicio_asociado_pcl],
+                ['sipc.Status_parametrico', '=', 'Activo']
+            ])->whereNotNull('sipc.Profesional_asignado')->get();
+
+            $informacion_acciones_automaticas_proceso_calificacion_pcl = json_decode(json_encode($acciones_automaticas_calificacion_pcl), true);
+            return response()->json($informacion_acciones_automaticas_proceso_calificacion_pcl);
+        }
         
         // Bandeja de trabajo destino
         if ($parametro == "bandeja_trabajo_destino_proceso_calificacion_pcl") {
@@ -491,6 +540,23 @@ class ParametrizacionController extends Controller
             $informacion_acciones_antecesoras_proceso_juntas = json_decode(json_encode($acciones_antecesoras_juntas), true);
             return response()->json($informacion_acciones_antecesoras_proceso_juntas);
         }
+
+        // Acciones automaticas origen
+        if($parametro == "acciones_automaticas_proceso_juntas"){
+            $Servicio_asociado_juntas = $request->Servicio_asociado_juntas;
+            $acciones_automaticas_juntas = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia', 'sia.Id_Accion', '=', 'sipc.Accion_ejecutar')
+            ->select('sipc.Accion_ejecutar', 'sia.Accion')
+            ->where([
+                ['sipc.Id_cliente', '=', $Id_cliente],
+                ['sipc.Id_proceso', '=', 3],
+                ['sipc.Servicio_asociado', '=', $Servicio_asociado_juntas],
+                ['sipc.Status_parametrico', '=', 'Activo']
+            ])->whereNotNull('sipc.Profesional_asignado')->get();
+
+            $informacion_acciones_automaticas_juntas = json_decode(json_encode($acciones_automaticas_juntas), true);
+            return response()->json($informacion_acciones_automaticas_juntas);
+        }
         
         // Bandeja de trabajo destino
         if ($parametro == "bandeja_trabajo_destino_proceso_juntas") {
@@ -532,6 +598,18 @@ class ParametrizacionController extends Controller
             return response()->json($informacion_listado_profesionales_proceso_juntas);
         }
 
+        // Listado de estatus parametrico
+
+        if ($parametro == "estatus_parametrica") {
+            $listado_estatus_parametrica = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Nombre_parametro')
+            ->where([['Tipo_lista', '=', 'Estatus_Parametrica'], ['Estado', '=', 'activo']])
+            ->get();   
+
+            $informacion_listado_estatus_parametrica = json_decode(json_encode($listado_estatus_parametrica), true);
+            return response()->json($informacion_listado_estatus_parametrica);
+        }
+
     }
 
     public function EnvioParametrizacionOrigenAtel(Request $request){
@@ -565,8 +643,8 @@ class ParametrizacionController extends Controller
             $array_tabla_parametrizaciones_cliente = ['Id_cliente','Id_proceso','F_creacion_movimiento','Servicio_asociado',
             'Estado','Accion_ejecutar','Accion_antecesora','Modulo_nuevo','Modulo_consultar','Bandeja_trabajo',
             'Modulo_principal','Detiene_tiempo_gestion','Equipo_trabajo','Profesional_asignado','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
-            'Estado_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
-            'Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
+            'Estado_facturacion','Movimiento_automatico','Tiempo_movimiento','Accion_automatica','Tiempo_alerta','Porcentaje_alerta_naranja',
+            'Porcentaje_alerta_roja','Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
             ];
 
             // Realizamos la combinación del array de datos y los nombres de las columnas de la tabla
@@ -622,18 +700,14 @@ class ParametrizacionController extends Controller
             $date = date("Y-m-d", $time);
 
             
-            $array_datos_organizados_parametrizacion_origen_atel[22] = $date;
-
-            /* echo "<pre>";
-            print_r($array_datos_organizados_parametrizacion_origen_atel);
-            echo "</pre>"; */
+            $array_datos_organizados_parametrizacion_origen_atel[26] = $date;
 
             // Creamos el array con el nombre de las columnas de la tabla sigmel_informacion_parametrizaciones_clientes
             $array_tabla_parametrizaciones_cliente = ['Id_cliente','Id_proceso','F_creacion_movimiento','Servicio_asociado',
             'Estado','Accion_ejecutar','Accion_antecesora','Modulo_nuevo','Modulo_consultar','Bandeja_trabajo',
             'Modulo_principal','Detiene_tiempo_gestion','Equipo_trabajo','Profesional_asignado','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
-            'Estado_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
-            'Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
+            'Estado_facturacion','Movimiento_automatico','Tiempo_movimiento','Accion_automatica','Tiempo_alerta','Porcentaje_alerta_naranja',
+            'Porcentaje_alerta_roja','Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
             ];
 
             // Realizamos la combinación del array de datos y los nombres de las columnas de la tabla
@@ -701,8 +775,8 @@ class ParametrizacionController extends Controller
             $array_tabla_parametrizaciones_cliente = ['Id_cliente','Id_proceso','F_creacion_movimiento','Servicio_asociado',
             'Estado','Accion_ejecutar','Accion_antecesora','Modulo_nuevo','Modulo_consultar','Bandeja_trabajo',
             'Modulo_principal','Detiene_tiempo_gestion','Equipo_trabajo','Profesional_asignado','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
-            'Estado_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
-            'Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
+            'Estado_facturacion','Movimiento_automatico','Tiempo_movimiento','Accion_automatica','Tiempo_alerta','Porcentaje_alerta_naranja',
+            'Porcentaje_alerta_roja','Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
             ];
     
             // Realizamos la combinación del array de datos y los nombres de las columnas de la tabla
@@ -758,18 +832,14 @@ class ParametrizacionController extends Controller
             $date = date("Y-m-d", $time);
     
             
-            $array_datos_organizados_parametrizacion_calificacion_pcl[22] = $date;
-    
-            /* echo "<pre>";
-            print_r($array_datos_organizados_parametrizacion_calificacion_pcl);
-            echo "</pre>"; */
-    
+            $array_datos_organizados_parametrizacion_calificacion_pcl[26] = $date;
+        
             // Creamos el array con el nombre de las columnas de la tabla sigmel_informacion_parametrizaciones_clientes
             $array_tabla_parametrizaciones_cliente = ['Id_cliente','Id_proceso','F_creacion_movimiento','Servicio_asociado',
             'Estado','Accion_ejecutar','Accion_antecesora','Modulo_nuevo','Modulo_consultar','Bandeja_trabajo',
             'Modulo_principal','Detiene_tiempo_gestion','Equipo_trabajo','Profesional_asignado','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
-            'Estado_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
-            'Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
+            'Estado_facturacion','Movimiento_automatico','Tiempo_movimiento','Accion_automatica','Tiempo_alerta','Porcentaje_alerta_naranja',
+            'Porcentaje_alerta_roja','Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
             ];
     
             // Realizamos la combinación del array de datos y los nombres de las columnas de la tabla
@@ -837,8 +907,8 @@ class ParametrizacionController extends Controller
             $array_tabla_parametrizaciones_cliente = ['Id_cliente','Id_proceso','F_creacion_movimiento','Servicio_asociado',
             'Estado','Accion_ejecutar','Accion_antecesora','Modulo_nuevo','Modulo_consultar','Bandeja_trabajo',
             'Modulo_principal','Detiene_tiempo_gestion','Equipo_trabajo','Profesional_asignado','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
-            'Estado_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
-            'Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
+            'Estado_facturacion','Movimiento_automatico','Tiempo_movimiento','Accion_automatica','Tiempo_alerta','Porcentaje_alerta_naranja',
+            'Porcentaje_alerta_roja','Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
             ];
         
             // Realizamos la combinación del array de datos y los nombres de las columnas de la tabla
@@ -894,18 +964,14 @@ class ParametrizacionController extends Controller
             $date = date("Y-m-d", $time);
     
             
-            $array_datos_organizados_parametrizacion_juntas[22] = $date;
-    
-            /* echo "<pre>";
-            print_r($array_datos_organizados_parametrizacion_juntas);
-            echo "</pre>"; */
-    
+            $array_datos_organizados_parametrizacion_juntas[26] = $date;
+        
             // Creamos el array con el nombre de las columnas de la tabla sigmel_informacion_parametrizaciones_clientes
             $array_tabla_parametrizaciones_cliente = ['Id_cliente','Id_proceso','F_creacion_movimiento','Servicio_asociado',
             'Estado','Accion_ejecutar','Accion_antecesora','Modulo_nuevo','Modulo_consultar','Bandeja_trabajo',
             'Modulo_principal','Detiene_tiempo_gestion','Equipo_trabajo','Profesional_asignado','Enviar_a_bandeja_trabajo_destino','Bandeja_trabajo_destino',
-            'Estado_facturacion','Tiempo_alerta','Porcentaje_alerta_naranja','Porcentaje_alerta_roja',
-            'Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
+            'Estado_facturacion','Movimiento_automatico','Tiempo_movimiento','Accion_automatica','Tiempo_alerta','Porcentaje_alerta_naranja',
+            'Porcentaje_alerta_roja','Status_parametrico','Motivo_descripcion_movimiento','Nombre_usuario','F_actualizacion_movimiento'
             ];
     
             // Realizamos la combinación del array de datos y los nombres de las columnas de la tabla

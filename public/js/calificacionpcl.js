@@ -586,15 +586,15 @@ $(document).ready(function(){
                 if (response.parametro == 'agregarCalificacionPcl') {
                     $('.alerta_calificacion').removeClass('d-none');
                     if (response.parametro_1 == "guardo") {
-                        $('.alerta_calificacion').append('<strong>'+response.mensaje_1+'</strong>');
+                        $('.alerta_calificacion').append('<strong>'+response.mensaje_1+' Y '+response.mensaje_2+'</strong>');
                     } else {
-                        $('.alerta_calificacion').append('<strong>'+response.mensaje+'</strong>');
+                        $('.alerta_calificacion').append('<strong>'+response.mensaje+' Y '+response.mensaje_2+'</strong>');
                     }
                     setTimeout(function(){
                         $('.alerta_calificacion').addClass('d-none');
                         $('.alerta_calificacion').empty(); 
                         location.reload();                      
-                    }, 3000);
+                    }, 15000);
                 }                
             }
         })        

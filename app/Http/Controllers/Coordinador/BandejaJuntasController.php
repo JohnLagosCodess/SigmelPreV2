@@ -14,6 +14,7 @@ use App\Models\sigmel_informacion_asignacion_eventos;
 
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
+use App\Models\sigmel_informacion_alertas_automaticas_eventos;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 
 class BandejaJuntasController extends Controller
@@ -485,6 +486,13 @@ class BandejaJuntasController extends Controller
         }
     
         
+    }
+
+    public function alertaNaranjasRojasJuntas(Request $request) {
+        $alertas = sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')
+        ->where([['Estado_alerta_automatica', '=', 'Ejecucion']])
+        ->get();
+        return response()->json(['data' => $alertas]);
     }
 
     public function actualizarBandejaJuntas(Request $request){

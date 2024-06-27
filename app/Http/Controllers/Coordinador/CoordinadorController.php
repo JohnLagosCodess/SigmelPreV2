@@ -16,6 +16,7 @@ use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_historial_acciones_eventos;
 
 use App\Models\sigmel_informacion_acciones;
+use App\Models\sigmel_informacion_alertas_automaticas_eventos;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_comunicado_eventos;
@@ -1029,6 +1030,13 @@ class CoordinadorController extends Controller
         }
     
         
+    }
+
+    public function alertaNaranjasRojasPCL(Request $request) {
+        $alertas = sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')
+        ->where([['Estado_alerta_automatica', '=', 'Ejecucion']])
+        ->get();
+        return response()->json(['data' => $alertas]);
     }
 
     public function actualizarBandejaPCL(Request $request){

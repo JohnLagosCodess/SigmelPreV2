@@ -642,50 +642,156 @@ $(document).ready(function () {
     });
 });
 
-function renderizarRegistros(data, inicio, fin, bandejaPclTable) {
+// Función para obtener las alertas naranjas
 
-    var f_radicacion = '';
-    for (let a = inicio; a < fin; a++) {
-
-        if (data[a].Nueva_F_radicacion === null) {
-            f_radicacion = data[a].F_radicacion;
-        } else {
-            f_radicacion = data[a].Nueva_F_radicacion;
-        };
-
-        var datos = [
-            data[a].actualizarproser+data[a].moduloPCL,
-            data[a].Nombre_Cliente,
-            data[a].Nombre_afiliado,
-            data[a].Nro_identificacion,
-            data[a].Nombre_servicio,
-            data[a].Nombre_estado,
-            data[a].Accion,
-            data[a].Nombre_profesional,
-            data[a].Nombre_evento,
-            data[a].ID_evento,
-            data[a].F_evento,
-            f_radicacion,
-            data[a].Tiempo_de_gestion,
-            data[a].Dias_transcurridos_desde_el_evento,
-            data[a].Empresa,
-            data[a].Nombre_proceso_actual,
-            data[a].Nombre_proceso_anterior,
-            data[a].Fecha_asignacion_al_proceso,
-            data[a].Asignado_por,
-            data[a].F_alerta,
-            data[a].Fecha_alerta,
-            data[a].F_solicitud_documento,
-            data[a].F_recepcion_documento,
-            data[a].Fecha_asignacion_calif,
-            data[a].Fecha_devolucion_comite,
-            data[a].F_accion,
-        ];
-        
-        bandejaPclTable.row.add(datos).draw(false).node();
-        datos = [];
-    }
+function obtenerAlertasNaranja() {
+    var token = $('meta[name="csrf-token"]').attr('content');
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '/alertasNaranjasRojasPCL',
+            method: 'POST',
+            data: {
+                _token: token
+            },
+            success: function(response) {
+                resolve(response.data); 
+            },
+            // error: function(xhr, status, error) {
+            //     console.error('Error:', status, error);
+            //     reject({ status, error });
+            // }
+        });
+    });
 }
+
+// Función principal para renderizar registros
+
+function renderizarRegistros(data, inicio, fin, bandejaPclTable) {
+    obtenerAlertasNaranja().then(alertasNaranja => {
+        const alertasNaranjaMap = new Map(alertasNaranja.map(alerta => [
+            alerta.Id_Asignacion, 
+            {
+                naranja: alerta.F_accion_alerta_naranja,
+                roja: alerta.F_accion_alerta_roja
+            }
+        ]));
+
+        var f_radicacion = '';
+
+        for (let a = inicio; a < fin; a++) {
+            if (data[a].Nueva_F_radicacion === null) {
+                f_radicacion = data[a].F_radicacion;
+            } else {
+                f_radicacion = data[a].Nueva_F_radicacion;
+            }
+
+            var datos = [
+                data[a].actualizarproser+data[a].moduloPCL,
+                data[a].Nombre_Cliente,
+                data[a].Nombre_afiliado,
+                data[a].Nro_identificacion,
+                data[a].Nombre_servicio,
+                data[a].Nombre_estado,
+                data[a].Accion,
+                data[a].Nombre_profesional,
+                data[a].Nombre_evento,
+                data[a].ID_evento,
+                data[a].F_evento,
+                f_radicacion,
+                data[a].Tiempo_de_gestion,
+                data[a].Dias_transcurridos_desde_el_evento,
+                data[a].Empresa,
+                data[a].Nombre_proceso_actual,
+                data[a].Nombre_proceso_anterior,
+                data[a].Fecha_asignacion_al_proceso,
+                data[a].Asignado_por,
+                data[a].F_alerta,
+                data[a].Fecha_alerta,
+                data[a].F_solicitud_documento,
+                data[a].F_recepcion_documento,
+                data[a].Fecha_asignacion_calif,
+                data[a].Fecha_devolucion_comite,
+                data[a].F_accion,
+            ];
+
+            let rowNode = bandejaPclTable.row.add(datos).draw(false).node();
+
+            if (alertasNaranjaMap.has(data[a].Id_Asignacion)) {
+                let alertaFechas = alertasNaranjaMap.get(data[a].Id_Asignacion);
+                let currentTime = new Date();
+
+                // Verificar alerta naranja
+                if (alertaFechas.naranja) {
+                    let alertaFechaNaranja = new Date(alertaFechas.naranja);
+                    // let diferenciaNaranja = Math.abs(currentTime - alertaFechaNaranja);
+
+                    if (currentTime >= alertaFechaNaranja) {  
+                        $(rowNode).find('td').css('color', 'orange');
+                    }
+                }
+
+                // Verificar alerta roja
+                if (alertaFechas.roja) {
+                    let alertaFechaRoja = new Date(alertaFechas.roja);
+                    // let diferenciaRoja = Math.abs(currentTime - alertaFechaRoja);
+
+                    if (currentTime >= alertaFechaRoja) { 
+                        $(rowNode).find('td').css('color', 'red');
+                    }
+                }
+            }
+
+            datos = [];
+        }
+    }).catch(error => {
+        console.error('Error al obtener alertas naranja:', error);
+    });
+}
+
+// function renderizarRegistros(data, inicio, fin, bandejaPclTable) {
+
+//     var f_radicacion = '';
+//     for (let a = inicio; a < fin; a++) {
+
+//         if (data[a].Nueva_F_radicacion === null) {
+//             f_radicacion = data[a].F_radicacion;
+//         } else {
+//             f_radicacion = data[a].Nueva_F_radicacion;
+//         };
+
+//         var datos = [
+//             data[a].actualizarproser+data[a].moduloPCL,
+//             data[a].Nombre_Cliente,
+//             data[a].Nombre_afiliado,
+//             data[a].Nro_identificacion,
+//             data[a].Nombre_servicio,
+//             data[a].Nombre_estado,
+//             data[a].Accion,
+//             data[a].Nombre_profesional,
+//             data[a].Nombre_evento,
+//             data[a].ID_evento,
+//             data[a].F_evento,
+//             f_radicacion,
+//             data[a].Tiempo_de_gestion,
+//             data[a].Dias_transcurridos_desde_el_evento,
+//             data[a].Empresa,
+//             data[a].Nombre_proceso_actual,
+//             data[a].Nombre_proceso_anterior,
+//             data[a].Fecha_asignacion_al_proceso,
+//             data[a].Asignado_por,
+//             data[a].F_alerta,
+//             data[a].Fecha_alerta,
+//             data[a].F_solicitud_documento,
+//             data[a].F_recepcion_documento,
+//             data[a].Fecha_asignacion_calif,
+//             data[a].Fecha_devolucion_comite,
+//             data[a].F_accion,
+//         ];
+        
+//         bandejaPclTable.row.add(datos).draw(false).node();
+//         datos = [];
+//     }
+// }
 
 function cargarDatosBandejaPcl(bandejaPclTable, tipo_consulta, consultar_f_desde, consultar_f_hasta, consultar_g_dias){
     var token = $('input[name=_token]').val();

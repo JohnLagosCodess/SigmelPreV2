@@ -3539,10 +3539,36 @@ function calculosDeficienciasAlteracionesSistemas(id_fila_insertar_dato, id_tabl
                     //     $("#Deficiencia_fila_alteraciones_"+id_fila_insertar_dato).append(parseInt(valor_FU_tabla_7_6));
                     // }
                 }else{
-                    $("#resultado_FU_"+id_fila_insertar_dato).empty();
-                    selectTabla7_6.append('<option value="">Seleccione</option>');
-                    $("#guardar_FU_fila_"+id_fila_insertar_dato).val("");
-                    $("#resultado_FU_"+id_fila_insertar_dato).prop("disabled", true);
+                    if ((parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 3) && (parseInt(valor_CFM2_tabla_7_6) == 2) ||
+                    (parseInt(valor_FP_tabla_7_6) == 3) && (parseInt(valor_CFM1_tabla_7_6) == 2) && (parseInt(valor_CFM2_tabla_7_6) == 3)) {
+                        //Habilitar y Deshabilitar el FU
+                        $("#resultado_FU_"+id_fila_insertar_dato).prop("disabled", false);  
+                        // nuevas Opciones
+                        var nuevasOpciones = [
+                            { value: '', text: 'Seleccione' },                        
+                            { value: '55', text: '55' },
+                            { value: '65', text: '65' },
+                        ];
+                        // Obtener las opciones existentes (si las hay)
+                        var opcionesExist = selectTabla7_6.children('option');
+
+                        // Filtrar las nuevas opciones para incluir solo las que no existen aún
+                        var nuevasOpcionesFiltradas = nuevasOpciones.filter(function (nuevaOpcion) {
+                            return !opcionesExist.filter(function () {
+                            return this.value === nuevaOpcion.value;
+                            }).length;
+                        });
+
+                        // Agregar solo las nuevas opciones al select
+                        nuevasOpcionesFiltradas.forEach(function (nuevaOpcion) {
+                            selectTabla7_6.append('<option value="' + nuevaOpcion.value + '">' + nuevaOpcion.text + '</option>');
+                        }); 
+                    } else {
+                        $("#resultado_FU_"+id_fila_insertar_dato).empty();
+                        selectTabla7_6.append('<option value="">Seleccione</option>');
+                        $("#guardar_FU_fila_"+id_fila_insertar_dato).val("");
+                        $("#resultado_FU_"+id_fila_insertar_dato).prop("disabled", true);
+                    }
 
                     let datos_consulta_deficiencia_tabla_7_6 = {
                         '_token': token,
