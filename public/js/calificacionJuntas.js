@@ -3227,7 +3227,8 @@ $(document).ready(function(){
                             $('.alerta_externa_comunicado_modal').empty();
                             localStorage.setItem("#Generar_comunicados", true);
                             location.reload();
-                        }, 3000);
+                            $("#modalReemplazarArchivos").modal('hide');
+                        }, 1000);
                     }
                 },
                 complete:function(){
