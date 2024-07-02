@@ -5625,7 +5625,7 @@ class CalificacionJuntasController extends Controller
 
             $mensaje = 'Registro agregado satisfactoriamente.';
         }else{
-            $mensaje = 'Registro actualizado satisfactoriamente. Parado poder visualizar la lista de chequeo en el historial de comunicaciones debe recargar la pagina.';
+            $mensaje = 'Registro actualizado satisfactoriamente. Para poder visualizar la lista de chequeo en el historial de comunicaciones debe recargar la pagina.';
         }
 
         $mensajes = array(
