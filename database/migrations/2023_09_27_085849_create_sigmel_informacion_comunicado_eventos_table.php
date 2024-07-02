@@ -45,6 +45,7 @@ return new class extends Migration
             $table->text('Modulo_creacion')->nullable();
             $table->integer('Reemplazado')->default(0);
             $table->text('Nombre_documento')->nullable();
+            $table->enum('Lista_chequeo',['Si','No'])->nullable()->default('No');
             $table->string('Nombre_usuario', 100);
             $table->date('F_registro');
         });

@@ -692,6 +692,10 @@ Route::post('/registrarCausalSeguimientoJuntas', [CalificacionJuntasController::
 // Acción: Traer historial de acciones del evento de la tabla sigmel_informacion_historial_accion_eventos
 Route::post('/historialAccionesEventosJun', [CalificacionJuntasController::class, 'historialAccionesEventoJun']);
 
+/** Creacion de expediente y lista de chequeo */
+//Accion: Generar lista chequeo
+Route::post('/registrarListaChequeo', [CalificacionJuntasController::class, 'generarListaChequeo']);
+
 //18/11/2023
 // Vista: Módulo Controversia Juntas
 Route::post('/calificacionJuntas/controversiaJuntas', [ControversiaJuntasController::class, 'mostrarVistaPronunciamientoJuntas'])->name('controversiaJuntas');
@@ -799,7 +803,6 @@ Route::post('/ActualizarParametrizacionCalificacionPcl', [ParametrizacionControl
 Route::post('/EnvioParametrizacionJuntas', [ParametrizacionController::class, 'EnvioParametrizacionJuntas']);
 // Acción: Actualizar la parametrización del proceso juntas
 Route::post('/ActualizarParametrizacionJuntas', [ParametrizacionController::class, 'ActualizarParametrizacionJuntas']);
-
 
 /* DESCARGA DE PROFORMAS */
 

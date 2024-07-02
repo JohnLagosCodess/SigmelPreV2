@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('Formato_documento', 7);
             $table->integer('Id_servicio')->nullable();
             $table->enum('Estado', ['activo', 'inactivo'])->default('activo');
+            $table->enum('Lista_chequeo',['Si','No'])->nullable()->default('No');
             $table->text('Tipo')->nullable();
             $table->date('F_cargue_documento');
             $table->text('Descripcion')->nullable();
