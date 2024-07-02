@@ -30,10 +30,13 @@ return new class extends Migration
             $table->enum('Enviar_a_bandeja_trabajo_destino', ['Si', 'No'])->nullable();
             $table->integer('Bandeja_trabajo_destino')->nullable();
             $table->text('Estado_facturacion')->nullable();
+            $table->text('Movimiento_automatico')->nullable();
+            $table->text('Tiempo_movimiento')->nullable();
+            $table->text('Accion_automatica')->nullable();
             $table->text('Tiempo_alerta')->nullable();
             $table->text('Porcentaje_alerta_naranja')->nullable();
             $table->text('Porcentaje_alerta_roja')->nullable();
-            $table->enum('Status_parametrico', ['Activo', 'Inactivo'])->nullable();
+            $table->enum('Status_parametrico', ['Activo', 'Inactivado'])->nullable();
             $table->text('Motivo_descripcion_movimiento')->nullable();
             $table->text('Nombre_usuario')->nullable();
             $table->date('F_actualizacion_movimiento')->nullable();

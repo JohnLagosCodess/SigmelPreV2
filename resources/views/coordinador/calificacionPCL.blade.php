@@ -334,7 +334,8 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="fecha_alerta">Fecha de alerta</label>
-                                                    <input type="date" class="form-control" name="fecha_alerta" id="fecha_alerta" min="{{now()->format('Y-m-d')}}" value="{{$array_datos_calificacionPcl[0]->F_alerta}}">
+                                                    <input type="datetime-local" class="form-control" name="fecha_alerta" id="fecha_alerta" min="{{now()->format('Y-m-d H:i:s')}}" value="<?php if(!empty($array_datos_calificacionPcl[0]->F_alerta)){echo $array_datos_calificacionPcl[0]->F_alerta;}?>">                                                    
+                                                    {{-- <input type="date" class="form-control" name="fecha_alerta" id="fecha_alerta" min="{{now()->format('Y-m-d')}}" value="{{$array_datos_calificacionPcl[0]->F_alerta}}"> --}}
                                                 </div>
                                             </div>
                                             <div class="col-4">

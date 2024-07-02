@@ -352,12 +352,12 @@ $(document).ready(function () {
     /* TODO LO CORRESPONDIENTE A LA PARAMETRIZACION */
     $(document).on('keyup', "input[id^='tiempo_alerta_origen_atel_']", function(){
         var inputId = this.id;
-        Maximo1Decimal(inputId);
+        Maximo2Decimales(inputId);
     });
 
     $(document).on('keyup', "input[id^='bd_tiempo_alerta_origen_atel_']", function(){
         var inputId = this.id;
-        Maximo1Decimal(inputId);
+        Maximo2Decimales(inputId);
     });
 
     $(document).on('keyup', "textarea[id^='motivo_movimiento_origen_atel_']", function(){
@@ -372,12 +372,12 @@ $(document).ready(function () {
 
     $(document).on('keyup', "input[id^='tiempo_alerta_calificacion_pcl_']", function(){
         var inputId = this.id;
-        Maximo1Decimal(inputId);
+        Maximo2Decimales(inputId);
     });
 
     $(document).on('keyup', "input[id^='bd_tiempo_alerta_calificacion_pcl_']", function(){
         var inputId = this.id;
-        Maximo1Decimal(inputId);
+        Maximo2Decimales(inputId);
     });
 
     $(document).on('keyup', "textarea[id^='motivo_movimiento_calificacion_pcl_']", function(){
@@ -393,12 +393,12 @@ $(document).ready(function () {
 
     $(document).on('keyup', "input[id^='tiempo_alerta_juntas_']", function(){
         var inputId = this.id;
-        Maximo1Decimal(inputId);
+        Maximo2Decimales(inputId);
     });
 
     $(document).on('keyup', "input[id^='bd_tiempo_alerta_juntas_']", function(){
         var inputId = this.id;
-        Maximo1Decimal(inputId);
+        Maximo2Decimales(inputId);
     });
 
     $(document).on('keyup', "textarea[id^='motivo_movimiento_juntas_']", function(){

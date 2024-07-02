@@ -648,60 +648,176 @@ $(document).ready(function () {
 
 });
 
-function renderizarRegistros(data, inicio, fin, bandejaJuntasTable) {
+// Función para obtener las alertas naranjas
 
-    var f_radicacion = '';
-    for (let a = inicio; a < fin; a++) {
-
-        if (data[a].Nueva_F_radicacion === null) {
-            f_radicacion = data[a].F_radicacion;
-        } else {
-            f_radicacion = data[a].Nueva_F_radicacion;
-        };
-
-        var datos = [
-            data[a].actualizarproser+data[a].moduloJuntas,
-            data[a].Nombre_Cliente,
-            data[a].Nombre_afiliado,
-            data[a].Nro_identificacion,
-            data[a].Nombre_servicio,
-            data[a].Nombre_estado,
-            data[a].Accion,
-            data[a].Nombre_profesional,
-            data[a].Nombre_evento,
-            data[a].ID_evento,
-            data[a].F_evento,
-            f_radicacion,
-            data[a].Tiempo_de_gestion,
-            data[a].Dias_transcurridos_desde_el_evento,
-            data[a].Empresa,
-            data[a].Nombre_proceso_actual,
-            data[a].Nombre_proceso_anterior,
-            data[a].Fecha_asignacion_al_proceso,
-            data[a].Asignado_por,
-            data[a].F_alerta,
-            data[a].Fecha_alerta,
-            data[a].Enfermedad_heredada,
-            data[a].Parte_controvierte_primera_califi,
-            data[a].Tipo_controversia_primera_califi,
-            data[a].Termino_controversia_primera_califi,
-            data[a].Junta_regional_califi_invalidez,
-            data[a].N_dictamen_Jrci,
-            data[a].F_radicado_entrada_dictamen_Jrci,
-            data[a].F_asignacion_pronuncia_junta,
-            data[a].Decision_dictamen_jrci,
-            data[a].N_acta_ejecutoria_emitida_Jrci,
-            data[a].N_radicado_de_recurso_Jrci,
-            data[a].Termino_controversia_propia_Jrci,
-            data[a].Parte_controversia_ante_Jrci,
-            data[a].Tipo_controversia_por_otra_Jrci,
-            data[a].F_accion,
-        ];
-        
-        bandejaJuntasTable.row.add(datos).draw(false).node();
-        datos = [];
-    }
+function obtenerAlertasNaranja() {
+    var token = $('meta[name="csrf-token"]').attr('content');
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '/alertasNaranjasRojasJuntas',
+            method: 'POST',
+            data: {
+                _token: token
+            },
+            success: function(response) {
+                resolve(response.data); 
+            },
+            // error: function(xhr, status, error) {
+            //     console.error('Error:', status, error);
+            //     reject({ status, error });
+            // }
+        });
+    });
 }
+
+// Función principal para renderizar registros
+
+function renderizarRegistros(data, inicio, fin, bandejaJuntasTable) {
+    obtenerAlertasNaranja().then(alertasNaranja => {
+        const alertasNaranjaMap = new Map(alertasNaranja.map(alerta => [
+            alerta.Id_Asignacion, 
+            {
+                naranja: alerta.F_accion_alerta_naranja,
+                roja: alerta.F_accion_alerta_roja
+            }
+        ]));
+
+        var f_radicacion = '';
+
+        for (let a = inicio; a < fin; a++) {
+            if (data[a].Nueva_F_radicacion === null) {
+                f_radicacion = data[a].F_radicacion;
+            } else {
+                f_radicacion = data[a].Nueva_F_radicacion;
+            }
+
+            var datos = [
+                data[a].actualizarproser+data[a].moduloJuntas,
+                data[a].Nombre_Cliente,
+                data[a].Nombre_afiliado,
+                data[a].Nro_identificacion,
+                data[a].Nombre_servicio,
+                data[a].Nombre_estado,
+                data[a].Accion,
+                data[a].Nombre_profesional,
+                data[a].Nombre_evento,
+                data[a].ID_evento,
+                data[a].F_evento,
+                f_radicacion,
+                data[a].Tiempo_de_gestion,
+                data[a].Dias_transcurridos_desde_el_evento,
+                data[a].Empresa,
+                data[a].Nombre_proceso_actual,
+                data[a].Nombre_proceso_anterior,
+                data[a].Fecha_asignacion_al_proceso,
+                data[a].Asignado_por,
+                data[a].F_alerta,
+                data[a].Fecha_alerta,
+                data[a].Enfermedad_heredada,
+                data[a].Parte_controvierte_primera_califi,
+                data[a].Tipo_controversia_primera_califi,
+                data[a].Termino_controversia_primera_califi,
+                data[a].Junta_regional_califi_invalidez,
+                data[a].N_dictamen_Jrci,
+                data[a].F_radicado_entrada_dictamen_Jrci,
+                data[a].F_asignacion_pronuncia_junta,
+                data[a].Decision_dictamen_jrci,
+                data[a].N_acta_ejecutoria_emitida_Jrci,
+                data[a].N_radicado_de_recurso_Jrci,
+                data[a].Termino_controversia_propia_Jrci,
+                data[a].Parte_controversia_ante_Jrci,
+                data[a].Tipo_controversia_por_otra_Jrci,
+                data[a].F_accion,
+            ];
+
+            let rowNode = bandejaJuntasTable.row.add(datos).draw(false).node();
+
+            if (alertasNaranjaMap.has(data[a].Id_Asignacion)) {
+                let alertaFechas = alertasNaranjaMap.get(data[a].Id_Asignacion);
+                let currentTime = new Date();
+
+                // Verificar alerta naranja
+                if (alertaFechas.naranja) {
+                    let alertaFechaNaranja = new Date(alertaFechas.naranja);
+                    // let diferenciaNaranja = Math.abs(currentTime - alertaFechaNaranja);
+
+                    if (currentTime >= alertaFechaNaranja) {  
+                        $(rowNode).find('td').css('color', 'orange');
+                    }
+                }
+
+                // Verificar alerta roja
+                if (alertaFechas.roja) {
+                    let alertaFechaRoja = new Date(alertaFechas.roja);
+                    // let diferenciaRoja = Math.abs(currentTime - alertaFechaRoja);
+
+                    if (currentTime >= alertaFechaRoja) { 
+                        $(rowNode).find('td').css('color', 'red');
+                    }
+                }
+            }
+
+            datos = [];
+        }
+    }).catch(error => {
+        console.error('Error al obtener alertas naranja:', error);
+    });
+}
+
+// function renderizarRegistros(data, inicio, fin, bandejaJuntasTable) {
+
+//     var f_radicacion = '';
+//     for (let a = inicio; a < fin; a++) {
+
+//         if (data[a].Nueva_F_radicacion === null) {
+//             f_radicacion = data[a].F_radicacion;
+//         } else {
+//             f_radicacion = data[a].Nueva_F_radicacion;
+//         };
+
+//         var datos = [
+//             data[a].actualizarproser+data[a].moduloJuntas,
+//             data[a].Nombre_Cliente,
+//             data[a].Nombre_afiliado,
+//             data[a].Nro_identificacion,
+//             data[a].Nombre_servicio,
+//             data[a].Nombre_estado,
+//             data[a].Accion,
+//             data[a].Nombre_profesional,
+//             data[a].Nombre_evento,
+//             data[a].ID_evento,
+//             data[a].F_evento,
+//             f_radicacion,
+//             data[a].Tiempo_de_gestion,
+//             data[a].Dias_transcurridos_desde_el_evento,
+//             data[a].Empresa,
+//             data[a].Nombre_proceso_actual,
+//             data[a].Nombre_proceso_anterior,
+//             data[a].Fecha_asignacion_al_proceso,
+//             data[a].Asignado_por,
+//             data[a].F_alerta,
+//             data[a].Fecha_alerta,
+//             data[a].Enfermedad_heredada,
+//             data[a].Parte_controvierte_primera_califi,
+//             data[a].Tipo_controversia_primera_califi,
+//             data[a].Termino_controversia_primera_califi,
+//             data[a].Junta_regional_califi_invalidez,
+//             data[a].N_dictamen_Jrci,
+//             data[a].F_radicado_entrada_dictamen_Jrci,
+//             data[a].F_asignacion_pronuncia_junta,
+//             data[a].Decision_dictamen_jrci,
+//             data[a].N_acta_ejecutoria_emitida_Jrci,
+//             data[a].N_radicado_de_recurso_Jrci,
+//             data[a].Termino_controversia_propia_Jrci,
+//             data[a].Parte_controversia_ante_Jrci,
+//             data[a].Tipo_controversia_por_otra_Jrci,
+//             data[a].F_accion,
+//         ];
+        
+//         bandejaJuntasTable.row.add(datos).draw(false).node();
+//         datos = [];
+//     }
+// }
 
 function cargarDatosBandejaJuntas(bandejaJuntasTable, tipo_consulta, consultar_f_desde, consultar_f_hasta, consultar_g_dias){
     var token = $('input[name=_token]').val();
