@@ -899,7 +899,7 @@
                             </div>
                             <div class="col-3 text-center" <?php if(!empty($arrayinfo_controvertido[0]->Termino_contro_califi) && $arrayinfo_controvertido[0]->Termino_contro_califi=='Fuera de términos'){ ?> style="display:none" <?php } ?>>
                                 <div class="form-group">
-                                    <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalAgregarExpediente"><i class="fas fa-archive text-info"></i> <strong>Crear Expediente</strong></a>
+                                    <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalCrearExpediente" id="crearExpediente"><i class="fas fa-archive text-info"></i> <strong>Crear Expediente</strong></a>
                                 </div>
                             </div>
                             <div class="col-3 text-center" <?php if(!empty($arrayinfo_controvertido[0]->Termino_contro_califi) && $arrayinfo_controvertido[0]->Termino_contro_califi=='Fuera de términos'){ ?> style="display:none" <?php } ?>>
@@ -1907,6 +1907,7 @@
     </div>
     <?php $aperturaModal = 'Edicion'; ?>
     @include('//.administrador.modalcarguedocumentos')
+    @include('//.coordinador.modalCrearExpediente')
     @include('//.coordinador.modalReemplazarArchivos')
 @stop
 @section('js')

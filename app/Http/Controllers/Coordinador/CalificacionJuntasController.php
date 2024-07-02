@@ -29,6 +29,8 @@ use App\Models\sigmel_lista_departamentos_municipios;
 use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_laboral_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
+use App\Models\sigmel_registro_documentos_eventos;
+use App\Models\sigmel_lista_documentos;
 
 use App\Models\sigmel_clientes;
 use App\Models\sigmel_informacion_acciones_automaticas_eventos;
@@ -489,6 +491,58 @@ class CalificacionJuntasController extends Controller
             return response()->json($info_datos_tipos_documentos_familia);
         }
 
+        if($parametro == "listado_documentos"){
+            $match = ['Orden de pago honorarios', 'Dictamen de Calificación', 'Notificación al usuario', 'Apelación al dictamen', 'Anexo G (Datos Generales)', 'Fotocopia Documento Identidad', 'Autorización historia clínica', 'Historia clínica completa', 'Concepto de rehabilitación', 'Conceptos o recomendaciones y/o restricciones ocupacionales', 'Registro civil de defunción', 'Acta de levantamiento del cadáver', 'Protocolo de necropsia', 'Exámenes complementarios', 'Relación de incapacidades', 'Dictamen Junta Regional', 'Origen de la patología', 'Guía Afiliado', 'Guía Empleador', 'Guía ARL', 'Guía AFP', 'Guía EPS', 'Lista de chequeo'];
+
+            if (empty($request->Id_servicio)) {
+                return;
+            }
+            $Id_servicio = $request->Id_servicio;
+            $newIdEvento = $request->Id_evento;
+            $documentos = DB::select('CALL psrvistadocumentos(?,?)',array((string)$newIdEvento , (int) $Id_servicio));
+        
+            $lista_chequeo = [];
+
+            foreach($documentos as $documento){
+                if(in_array($documento->Nombre_documento,$match))
+                    $lista_chequeo[] = [
+                        'Id_Documento' => $documento->Id_Documento,
+                        'doc_nombre' => $documento->Nombre_documento,
+                        'archivo' => $documento->nombre_Documento,
+                        'ext' => $documento->formato_documento,
+                        'status_doc' => $documento->estado_documento,
+                        'check' => $documento->Lista_chequeo
+                    ];
+            }
+
+            // Creamos un array asociativo para obtener los índices de $match
+            $matchIndex = array_flip($match);
+
+            // Función de comparación para ordenar según el orden de $match
+            usort($lista_chequeo, function($a, $b) use ($matchIndex) {
+                return $matchIndex[$a['doc_nombre']] - $matchIndex[$b['doc_nombre']];
+            });
+
+            //Comunicados 
+            $comunicados = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos')
+            ->select('Asunto as Nombre','Id_Comunicado', 'Lista_chequeo')
+            ->where([
+                ['ID_evento', $request->Id_evento],
+                ['Id_Asignacion', $request->Id_asignacion],
+                ['Asunto', 'not like', '%Lista_chequeo%'],
+                ['Modulo_creacion', 'calificacionJuntas']
+            ])->get()->toArray();
+
+            foreach($comunicados as $comunicado){
+                $lista_chequeo['comunicados'][] = [
+                    'nombre' =>preg_replace("/\.[^.]*$/", '', $comunicado->Nombre), //Le quitamos cualquier ext al archivo
+                    'Id_Comunicado' => $comunicado->Id_Comunicado,
+                    'Lista_chequeo' => $comunicado->Lista_chequeo,
+                ];
+            }
+
+            return response()->json($lista_chequeo);
+        }
     }
 
     //Guardar informacion del modulo de Juntas
@@ -5419,6 +5473,202 @@ class CalificacionJuntasController extends Controller
        
         return response()->json($array_datos_historial_accion_eventos);
     }
+
+    // Funcion para procesar y generar la lista de chequeo requeridos para este de avuerdo a los documentos generales - pbs 036
+    public  function generarListaChequeo(Request $request)
+    {
+        $request->validate([
+            'Id_evento' => 'required',
+            'Id_servicio' => 'required',
+            'afiliado' => 'required',
+            'identificacion' => 'required',
+            'lista_chequeo' => 'required|array',
+            'lista_chequeo.*.id_doc' => 'required',
+            'lista_chequeo.*.statusDoc' => 'required',
+            'lista_chequeo.*.nombreDoc' => 'required'
+        ], [
+            '*.required' => 'hacen falta datos para poder procesar la solicitud.'
+        ]);
+
+        //Documentos necesarios para lista de de chequeo, (Homologación de documentos - PBS 036) 
+        $lista_documentos = ['Registro civil de defunción' ,'Protocolo de necropsia' ,'Lista de chequeo' ,'Guía EPS' ,'Guía Empleador' ,'Guía ARL' ,'Guía AFP' ,'Guía Afiliado' ,'Fotocopia Documento Identidad' ,'Anexo G (Datos Generales)' ,'Exámenes complementarios' ,'Dictamen Junta Regional' ,'Conceptos o recomendaciones y/o restricciones ocupacionales' ,'Relación de incapacidades' ,'Concepto de rehabilitación' ,'Origen de la patología' ,'Dictamen de Calificación' ,'Autorización historia clínica' ,'Apelación al dictamen' ,'Acta de levantamiento del cadáver' ,'Historia clínica completa' ,'Orden de pago honorarios' ,'Notificación al usuario'];
+
+        $documentos = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_documentos')
+        ->select('Id_Documento', 'Nombre_documento', 'Descripcion_documento')
+        ->whereIn('Nombre_documento', $lista_documentos)->get();
+
+        /** @var $lista_chequeo documentos generales, los cuales fueron o no chequeados por el usuario */
+        $lista_chequeo = [];
+
+        /** @var $comunicados Comunicados chequeados por el usuario para ser incluido en la lista de chequeo */
+        // $comunicados = [];
+
+        //Validamos si de los documentos requeridos, alguno fue checkeado para marcarlo como incluido en la lista de chequeo
+        foreach ($documentos as $documento) {
+            $documento_incluido = false;
+
+            foreach ($request->lista_chequeo as $lista) {
+                if ($lista['id_doc'] == $documento->Id_Documento) {
+                    $documento_incluido = true;
+
+                    //Actualizamos la tabla sigmel_registro_documentos_eventos para chequearlo
+                    $this->actualizarListaChequeo($request->Id_evento, $documento->Id_Documento, 'Si','registro_documentos');
+                    break;
+                } else {
+                    $this->actualizarListaChequeo($request->Id_evento, $documento->Id_Documento, 'No','registro_documentos');
+                }
+            }
+
+            $lista_chequeo[$documento->Nombre_documento] = [
+                'Descripcion_documento' => $documento->Descripcion_documento,
+                'Incluido' => $documento_incluido
+            ];
+        }
+
+        //Caso comunicados: Cuando el usuario chequea alguno de los comunicados en Historial de comunicados y expedientes para incluirlo en la lista de chequeo
+        /*foreach ($request->lista_chequeo as $lista) {
+            if (isset($lista['idComunicado'])) {
+                if($lista['statusDoc'] == 'Comunicado'){
+                    $comunicados[] = ['Descripcion_documento' => $lista['nombreDoc']];
+
+                    $this->actualizarListaChequeo($request->Id_evento, $lista['idComunicado'], 'Si','info_comunicados');
+                }
+            }else{
+                $this->actualizarListaChequeo($request->Id_evento, null, 'No','info_comunicados');
+            }
+        }*/
+       // $lista_chequeo['comunicados'] = $comunicados;
+
+        //Obtenemos el id del documento general para ' lista de chequeo'
+        $indice_lista_chequeo = $documentos->search(function ($documento) {
+            return $documento->Nombre_documento === 'Lista de chequeo';
+        });
+
+        $indice_lista_chequeo = $documentos[$indice_lista_chequeo]->Id_Documento;
+
+
+        /* datos del logo que va en el header */
+        $dato_logo_header = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Logo_cliente', 'Footer_cliente', 'Id_cliente')
+        ->where([['Nombre_cliente', $request->cliente]])
+            ->limit(1)->get();
+
+        // Datos de la proforma
+        $data = [
+            'afiliado' => $request->afiliado,
+            'identificacion' => $request->identificacion,
+            'logo_header' => $dato_logo_header[0]->Logo_cliente,
+            'footer' => $dato_logo_header[0]->Footer_cliente,
+            'id_cliente' => $dato_logo_header[0]->Id_cliente,
+            'lista_chequeo' => $lista_chequeo
+        ];
+
+        $n_radicado = getRadicado('Juntas'); //Para cada lista de chequeo se le debe generar un radicado
+
+        $extension_proforma = "pdf";
+        $ruta_proforma = '/Proformas/Proformas_Prev/Juntas/lista_chequeo';
+        $nombre_documento = "Lista_chequeo";
+
+        /* Creación del pdf */
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView($ruta_proforma, $data);
+
+        $nombre_pdf = "{$nombre_documento}.{$extension_proforma}";
+
+        //Obtener el contenido del PDF
+        $output = $pdf->output();
+        //Guardar el PDF en un archivo
+        file_put_contents(public_path("Documentos_Eventos/{$request->Id_evento}/{$nombre_pdf}"), $output);
+
+        //Registramos una unica vez la lista de chequeo
+        if ($request->bandera == 'Guardar' && !empty($indice_lista_chequeo)) {
+
+            $fecha_actual = date("Y-m-d", time());
+            
+            // datps sigmel_registro_documentos_eventos
+            $registro_documento = [
+                'Id_Documento' => $indice_lista_chequeo , //id Lista de chequeo
+                'ID_evento' => $request->Id_evento,
+                'Nombre_documento' => $nombre_pdf,
+                'Formato_documento' => 'pdf',
+                'Id_servicio' => $request->Id_servicio,
+                'Lista_chequeo' => 'Si',
+                'Estado' => 'activo',
+                'F_cargue_documento' => $fecha_actual,
+                'Nombre_usuario' => Auth::user()->name,
+                'F_registro'  => $fecha_actual
+            ];
+
+            // datos sigmel_informacion_comunicado_eventos
+            $data_comunicado_eventos = [
+                'ID_evento' => $request->Id_evento,
+                'Id_Asignacion' => $request->Id_asignacion,
+                'Id_proceso' => $request->Id_proceso,
+                'F_comunicado' => $fecha_actual,
+                'N_radicado' => $n_radicado,
+                'Cliente' => $request->cliente,
+                'Nombre_afiliado' => $request->afiliado,
+                'T_documento'  => $request->t_documento,
+                'N_identificacion' => $request->identificacion,
+                'Tipo_descarga' => 'Manual',
+                'Modulo_creacion' => 'calificacionJuntas',
+                'Asunto' => $nombre_pdf,
+                'Nombre_documento' => $nombre_pdf,
+                'Elaboro' => Auth::user()->name,
+                'Nombre_usuario' => Auth::user()->name,
+                'F_registro'  => $fecha_actual
+            ];
+
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($data_comunicado_eventos);
+
+            sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($registro_documento);
+
+            $mensaje = 'Registro agregado satisfactoriamente.';
+        }else{
+            $mensaje = 'Registro actualizado satisfactoriamente. Para poder visualizar la lista de chequeo en el historial de comunicaciones debe recargar la pagina.';
+        }
+
+        $mensajes = array(
+            "parametro" => 'agregar_lista_chequeo',
+            'nombre_proforma' => $nombre_pdf,
+            "message" => $mensaje,
+        );
+
+        return json_decode(json_encode($mensajes, true));
+    }
+
+    /**
+    * Actualiza el estado de Lista_chequeo
+    *
+    * @param int $id_evento
+    * @param int $id_documento
+    * @param string $estado
+    * @return void
+    */
+    function actualizarListaChequeo($id_evento, $id_documento, $estado, $tabla) {
+        switch($tabla){
+            case 'registro_documentos' :
+                    sigmel_registro_documentos_eventos::on('sigmel_gestiones')
+                    ->where([
+                        ['ID_evento', $id_evento],
+                        ['Id_Documento', $id_documento]
+                    ])->update(['Lista_chequeo' => $estado]);
+                break;
+            case 'info_comunicados' :
+
+                $condicion = [['ID_evento', $id_evento]];
+
+                if ($id_documento != null) {
+                    $condicion[] = ['Id_Comunicado', $id_documento];
+                }
+
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+                    ->where($condicion)->update(['Lista_chequeo' => $estado]);
+
+                break;
+        }
+    }
+
 }
 
 function reemplazarStyleImg($html, $nuevoStyle)
