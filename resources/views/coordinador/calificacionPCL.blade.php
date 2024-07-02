@@ -736,6 +736,12 @@
                                                 <input hidden="hidden" class="form-control" type="text" name="id_evento_comunicado2" id="id_evento_comunicado2" value="{{$array_datos_calificacionPcl[0]->ID_evento}}">
                                             </div>
                                         </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="n_siniestro">N° de Siniestro</label>
+                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro">        
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-3">
@@ -1063,6 +1069,12 @@
                                                 <label for="id_evento_comunicado_act">ID evento</label>
                                                 <input class="form-control" type="text" name="id_evento_comunicado_act" id="id_evento_comunicado_editar"  disabled>
                                                 <input hidden="hidden" class="form-control" type="text" name="id_evento_comunicado2_act" id="id_evento_comunicado2_editar">
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="n_siniestro_proforma_editar">N° de Siniestro</label>
+                                                <input type="text" class="n_siniestro_proforma_editar form-control" id="n_siniestro_proforma_editar" name="n_siniestro_proforma_editar">        
                                             </div>
                                         </div>
                                     </div>

@@ -2368,6 +2368,7 @@ class CalificacionJuntasController extends Controller
                 'Modulo_creacion' => $request->modulo_creacion,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'N_siniestro' => $request->N_siniestro,
             ];
             
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
@@ -2628,6 +2629,7 @@ class CalificacionJuntasController extends Controller
             'Reemplazado' => 0,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
+            'N_siniestro' => $request->N_siniestro,
         ];
 
         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado_editar)
@@ -3085,12 +3087,8 @@ class CalificacionJuntasController extends Controller
                     'Firma_cliente' => $Firma_cliente,
                     'logo_header' => $logo_header,
                     'footer' => $footer,
-                    // 'footer_dato_1' => $footer_dato_1,
-                    // 'footer_dato_2' => $footer_dato_2,
-                    // 'footer_dato_3' => $footer_dato_3,
-                    // 'footer_dato_4' => $footer_dato_4,
-                    // 'footer_dato_5' => $footer_dato_5,
                     'nombre_usuario' => $nombre_usuario,
+                    'N_siniestro' => $request->n_siniestro_proforma_editar,
                 ];
 
                 $extension_proforma = "pdf";
@@ -3414,6 +3412,7 @@ class CalificacionJuntasController extends Controller
                     'manual_calificacion' => $manual_calificacion,
                     'nombre_usuario' => $nombre_usuario,
                     'cargo_usuario' => $cargo_usuario,
+                    'N_siniestro' => $request->n_siniestro_proforma_editar,
                 ];
 
                 $extension_proforma = "pdf";
@@ -4025,6 +4024,7 @@ class CalificacionJuntasController extends Controller
                     'Firma_cliente' => $Firma_cliente,
                     'nombre_usuario' => $nombre_usuario,
                     'footer' => $footer,
+                    'N_siniestro' => $request->n_siniestro_proforma_editar,
                     // 'footer_dato_1' => $footer_dato_1,
                     // 'footer_dato_2' => $footer_dato_2,
                     // 'footer_dato_3' => $footer_dato_3,
@@ -4534,7 +4534,7 @@ class CalificacionJuntasController extends Controller
                                         <td>
                                             <p><b>Nro. Radicado: '.$nro_radicado.'</b></p>  
                                             <p><b>'.$tipo_doc_afiliado." ".$num_identificacion_afiliado.'</b></p>
-                                            <p><b>Siniestro: '.$ID_evento.'</b></p>
+                                            <p><b>Siniestro: '.$request->n_siniestro_proforma_editar.'</b></p>
                                         </td>
                                     </tr>
                                 </table>
@@ -4546,7 +4546,7 @@ class CalificacionJuntasController extends Controller
 
                     $section->addText('Asunto: '.$request->asunto_act, array('bold' => true));
                     $section->addTextBreak();
-                    $section->addText('Siniestro: '.$ID_evento." ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." ".$nombre_afiliado, array('bold' => true));
+                    $section->addText('Siniestro: '.$request->n_siniestro_proforma_editar." ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." ".$nombre_afiliado, array('bold' => true));
 
                     // Configuramos el reemplazo de las etiquetas del cuerpo del comunicado
                     $patron1 = '/\{\{\$nombre_junta\}\}/';
@@ -4656,7 +4656,7 @@ class CalificacionJuntasController extends Controller
                     $section->addTextBreak();
 
                     // Configuramos el footer
-                    $info = $nombre_afiliado." - ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." - Siniestro: ".$ID_evento;
+                    $info = $nombre_afiliado." - ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." - Siniestro: ".$request->n_siniestro_proforma_editar;
                     $footer = $section->addFooter();
                     $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
                     
@@ -5175,7 +5175,7 @@ class CalificacionJuntasController extends Controller
                                         <td>
                                             <p><b>Nro. Radicado: '.$nro_radicado.'</b></p>  
                                             <p><b>'.$tipo_doc_afiliado." ".$num_identificacion_afiliado.'</b></p>
-                                            <p><b>Siniestro: '.$ID_evento.'</b></p>
+                                            <p><b>Siniestro: '.$request->n_siniestro_proforma_editar.'</b></p>
                                         </td>
                                     </tr>
                                 </table>
@@ -5297,7 +5297,7 @@ class CalificacionJuntasController extends Controller
                     $section->addTextBreak();
 
                     // Configuramos el footer
-                    $info = $nombre_afiliado." - ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." - Siniestro: ".$ID_evento;
+                    $info = $nombre_afiliado." - ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." - Siniestro: ".$request->n_siniestro_proforma_editar;
                     $footer = $section->addFooter();
                     $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
                     if($ruta_logo_footer != null){

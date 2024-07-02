@@ -2561,6 +2561,7 @@ $(document).ready(function(){
         var afp_comunicado = $('#afp_comunicado').prop('checked');
         var arl_comunicado = $('#arl_comunicado').prop('checked');
         var Otro = $('#Otro').prop('checked');
+        var N_siniestro = $("#n_siniestro_comunicado").val();
 
         var radiojrci_comunicado, radiojnci_comunicado, radioafiliado_comunicado,
         radioempresa_comunicado, radioeps_comunicado, radioafp_comunicado,
@@ -2681,7 +2682,8 @@ $(document).ready(function(){
             'JRCI_copia': JRCI_copia,
             'firmarcomunicado':firmarcomunicado,
             'tipo_descarga': tipo_descarga,
-            'modulo_creacion':'calificacionJuntas'
+            'modulo_creacion':'calificacionJuntas',
+            'N_siniestro':N_siniestro,
         }
         
         document.querySelector("#Generar_comunicados").disabled = true;   
@@ -2750,9 +2752,9 @@ $(document).ready(function(){
                     data-reviso_comunicado="'+data[i]["Reviso"]+'" data-revisonombre_comunicado="'+data[i]["Nombre_lider"]+'"\
                     data-firmar_comunicado="'+data[i]["Firmar_Comunicado"]+'"\
                     data-jrci_copia="'+data[i]["JRCI_copia"]+'"\
-                   data-agregar_copia="'+data[i]["Agregar_copia"]+'"data-tipo_descarga="'+data[i]["Tipo_descarga"]+'"\
+                    data-agregar_copia="'+data[i]["Agregar_copia"]+'"data-tipo_descarga="'+data[i]["Tipo_descarga"]+'"\
                     data-modulo_creacion="'+data[i]["Modulo_creacion"]+'" data-reemplazado="'+data[i]["Reemplazado"]+'" data-nombre_documento="'+data[i]["Nombre_documento"] + '"\
-                    ><i class="fa fa-pen text-info"></i></a>\
+                    data-numero_siniestro="'+data[i]["N_siniestro"]+'"><i class="fa fa-pen text-info"></i></a>\
                     <a href="javascript:void(0);" class="text-dark" id="verDocumento_'+data[i]["Id_Comunicado"]+'"\
                     title="Descargar Comunicado"\
                     id_comunicado="'+data[i]["Id_Comunicado"]+'" id_evento="'+data[i]["ID_evento"]+'"\
@@ -2774,7 +2776,7 @@ $(document).ready(function(){
                     firmar_comunicado="'+data[i]["Firmar_Comunicado"]+'"\
                     jrci_copia="'+data[i]["JRCI_copia"]+'" agregar_copia="'+data[i]["Agregar_copia"]+'"tipo_descarga="'+data[i]["Tipo_descarga"]+'"\
                     modulo_creacion="'+data[i]["Modulo_creacion"]+'" reemplazado="'+data[i]["Reemplazado"]+'" nombre_documento="'+data[i]["Nombre_documento"] + '"\
-                    ><i style="cursor:pointer" id="comunicado_boton" class="far fa-eye text-info"></i></a>';
+                    numero_siniestro="'+data[i]["N_siniestro"]+'"><i style="cursor:pointer" id="comunicado_boton" class="far fa-eye text-info"></i></a>';
                     if(data[i]['Existe'] && data[i]['Nombre_documento'] != null){
                         comunicadoNradico += '<a href="javascript:void(0);" id="replace_file" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalReemplazarArchivos"\
                             data-id_evento="' + data[i]["ID_evento"] + '" data-id_comunicado="'+ data[i]["Id_Comunicado"] + '"\
@@ -3002,6 +3004,7 @@ $(document).ready(function(){
                 'edit_copia_arl':edit_copia_arl,
                 'edit_copia_jrci':edit_copia_jrci,
                 'edit_copia_jnci':edit_copia_jnci,
+                'n_siniestro_proforma_editar': this.getAttribute('numero_siniestro') !== 'null' ? this.getAttribute('numero_siniestro') : null,
             };
         }
         else{
@@ -3049,7 +3052,8 @@ $(document).ready(function(){
                 'edit_copia_afp':edit_copia_afp,
                 'edit_copia_arl':edit_copia_arl,
                 'edit_copia_jrci':edit_copia_jrci,
-                'edit_copia_jnci':edit_copia_jnci
+                'edit_copia_jnci':edit_copia_jnci,
+                'n_siniestro_proforma_editar': this.getAttribute('numero_siniestro') !== 'null' ? this.getAttribute('numero_siniestro') : null,
             };
             }
 
@@ -3377,6 +3381,7 @@ $(document).ready(function(){
         var jrci_copia = $(this).data("jrci_copia");
         var firmar_comunicado =  $(this).data("firmar_comunicado");
         var tipo_descarga = $(this).data("tipo_descarga");
+        var N_siniestro = $(this).data("numero_siniestro");
         document.getElementById('ciudad_comunicado_editar').value=ciudad_comunicado;
         document.getElementById('Id_comunicado_act').value=id_comunicado;
         document.getElementById('Id_evento_act').value=id_evento;
@@ -3396,6 +3401,7 @@ $(document).ready(function(){
         document.getElementById('identificacion_comunicado2_editar').value=numero_identificacion;
         document.getElementById('id_evento_comunicado_editar').value=id_evento;
         document.getElementById('id_evento_comunicado2_editar').value=id_evento;  
+        document.getElementById('n_siniestro_proforma_editar').value = N_siniestro; 
         let datos_destinatario_principal ={
             '_token':token,
             'destinatario_principal': destinatario_principal,
@@ -5565,6 +5571,7 @@ $(document).ready(function(){
         var reviso = $('#reviso_editar').val();
         var firmarcomunicado_editar = $('#firmarcomunicado_editar').filter(":checked").val();
         var tipo_descarga = $("[name='tipo_de_preforma_editar']").filter(":checked").val();
+        var N_siniestro = $("#n_siniestro_proforma_editar").val();
        //Copias Interesadas Origen
        var EditComunicadoTotal = [];
 
@@ -5631,10 +5638,11 @@ $(document).ready(function(){
             'JRCI_copia_editar': JRCI_copia,
             'firmarcomunicado_editar':firmarcomunicado_editar,
             'tipo_descarga': tipo_descarga,
-            'modulo_creacion':'calificacionJuntas'
+            'modulo_creacion':'calificacionJuntas',
+            'N_siniestro':N_siniestro,
         }
 
-        document.querySelector("#Editar_comunicados").disabled = true;     
+        document.querySelector("#Editar_comunicados").disabled = true; 
         $.ajax({
             type:'POST',
             url:'/actualizarComunicadoJuntas',
