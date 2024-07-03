@@ -52,7 +52,7 @@
                                 @foreach ($listado_usuarios as $usuario)
                                     <tr>
                                         <td>
-                                            <a href="javascript:void(0);" id="btn_modal_edicion_usuario_{{$usuario->id}}" data-toggle="modal" data-target="#modalEdicionUsuario_{{$usuario->id}}" data-id_editar_usuario="{{$usuario->id}}" data-nombre_editar_usuario="{{$usuario->name}}"><i class="fa fa-pen text-primary"></i></a>
+                                            <a href="javascript:void(0);" class="editar_usuario" id="btn_modal_edicion_usuario_{{$usuario->id}}" data-toggle="modal" data-target="#modalEdicionUsuario_{{$usuario->id}}" data-id_editar_usuario="{{$usuario->id}}" data-nombre_editar_usuario="{{$usuario->name}}"><i class="fa fa-pen text-primary"></i></a>
                                         </td>
                                         <td><?php echo $iterar = $iterar + 1; ?></td>
                                         <td>{{$usuario->name}}</td>
