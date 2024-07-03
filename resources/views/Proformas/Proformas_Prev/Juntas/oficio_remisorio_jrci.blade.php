@@ -159,7 +159,7 @@
                         <div class="cuadro">
                             <span class="negrita">Nro. Radicado {{$nro_radicado}}</span><br>
                             <span class="negrita">{{$tipo_doc_afiliado}} {{$num_identificacion_afiliado}}</span><br>
-                            <span class="negrita">Siniestro: {{$ID_evento}}</span><br>
+                            <span class="negrita">Siniestro: {{$N_siniestro}}</span><br>
                         </div>
                     </td>
                 </tr>

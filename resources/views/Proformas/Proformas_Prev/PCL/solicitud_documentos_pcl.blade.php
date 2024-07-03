@@ -169,7 +169,7 @@
                         <div class="cuadro">
                             <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$nro_radicado}}</span></span><br>
                             <span class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion.' '.$num_identificacion}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$nro_siniestro}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
                         </div>
                     </td>
                 </tr>
@@ -182,7 +182,7 @@
                         <span class="negrita">Asunto: {{$asunto}}</span><br>  
                         <span class="negrita">Ramo:</span> Previsionales<br>
                         {{$tipo_identificacion.' '.$num_identificacion}}<br>
-                        <span class="negrita">Siniestro: </span>{{$nro_siniestro}}
+                        <span class="negrita">Siniestro: </span>{{$N_siniestro}}
                     </td>
                 </tr>
             </tbody>

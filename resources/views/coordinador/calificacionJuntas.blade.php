@@ -1031,6 +1031,12 @@
                                                 <input hidden="hidden" class="form-control" type="text" name="id_evento_comunicado2" id="id_evento_comunicado2" value="{{$array_datos_calificacionJuntas[0]->ID_evento}}">
                                             </div>
                                         </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="n_siniestro">N° de Siniestro</label>
+                                                <input type="text" class="n_siniestro_comunicado form-control" id="n_siniestro_comunicado" name="n_siniestro_comunicado">        
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
                                         <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de cambiar el destinatario
@@ -1440,6 +1446,12 @@
                                                 <label for="id_evento_comunicado_act">ID evento</label>
                                                 <input class="form-control" type="text" name="id_evento_comunicado_act" id="id_evento_comunicado_editar"  disabled>
                                                 <input hidden="hidden" class="form-control" type="text" name="id_evento_comunicado2_act" id="id_evento_comunicado2_editar">
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="n_siniestro">N° de Siniestro</label>
+                                                <input type="text" class="n_siniestro_comunicado_editar form-control" id="n_siniestro_proforma_editar" name="n_siniestro_proforma_editar">        
                                             </div>
                                         </div>
                                     </div>

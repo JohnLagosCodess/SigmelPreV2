@@ -168,7 +168,7 @@
                         <div class="cuadro">
                             <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$nro_radicado}}</span></span><br>
                             <span class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$ID_evento}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
                         </div>
                     </td>
                 </tr>
@@ -194,7 +194,7 @@
                             </span>
                         </span>
                         <br>
-                        <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$ID_evento}} {{$tipo_identificacion}} {{$num_identificacion}} {{$nombre_afiliado}}</span></span>
+                        <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}} {{$tipo_identificacion}} {{$num_identificacion}} {{$nombre_afiliado}}</span></span>
                     </td>
                 </tr>
             </tbody>
