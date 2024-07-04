@@ -384,147 +384,147 @@ $(document).ready(function(){
     });
     
     $('#listado_usuarios').on('click','.editar_usuario', function() {
-                // SETEAR CAMPOS FORMULARIO EDICIÓN USUARIO.
-                $(".modal-title").empty();
-                $(".modal-footer").remove();
-                let id_editar_usuario = $(this).data("id_editar_usuario");
-                let nombre_editar_usuario = $(this).data("nombre_editar_usuario");
+        // SETEAR CAMPOS FORMULARIO EDICIÓN USUARIO.
+        $(".modal-title").empty();
+        $(".modal-footer").remove();
+        let id_editar_usuario = $(this).data("id_editar_usuario");
+        let nombre_editar_usuario = $(this).data("nombre_editar_usuario");
+
+        $(".habilitar_modal_edicion_usuario").attr("id", "modalEdicionUsuario_"+id_editar_usuario);
+        $(".modal-title").append("<i class='fa fa-pen mr-2'></i> Edición Usuario: "+nombre_editar_usuario);
+
+        $(".actualizar_usuario").attr("id", "form_actualizar_usuario_"+id_editar_usuario);
+        $('#captura_id_usuario').val(id_editar_usuario);
+
+        var consulta = {
+            'id_usuario': id_editar_usuario,
+            '_token': $('input[name=_token]').val()
+        };
+        $.ajax({
+            type:'POST',
+            url: $('#ruta_ed_evento').val(),
+            data: consulta,
+            success:function(data) {
+                // Añadir el nombre del usuario.
+                $("#editar_nombre_usuario").empty();
+                $("#editar_nombre_usuario").val(data[0]["name"]);
+                // Añadir la opción de tipo de identificación para el selector de tipos de identificación en el formulario de edición
+                $("#editar_tipo_identificacion_usuario").empty();
+                $("#editar_tipo_identificacion_usuario").append('<option value="'+data[0]["tipo_identificacion"]+'">'+data[0]["tipo_identificacion"]+'</option>')
+                // Añadir el numero de identificacion.
+                $("#editar_nro_identificacion_usuario").empty();
+                $("#editar_nro_identificacion_usuario").val(data[0]["nro_identificacion"]);
+                // Añadir el E-MAIL.
+                $("#editar_correo_contacto_usuario").empty();
+                $("#editar_correo_contacto_usuario").val(data[0]["email_contacto"]);
+                // Añadir la opción de tipo de identificación para el selector de tipos de colaborador en el formulario de edición
+                $("#editar_tipo_colaborador").empty();
+                $("#editar_tipo_colaborador").append('<option value="'+data[0]["tipo_colaborador"]+'">'+data[0]["tipo_colaborador"]+'</option>');
+                // Añadir la empresa.
+                $("#editar_empresa_usuario").empty();
+                $("#editar_empresa_usuario").val(data[0]["empresa"]);
+                // Añadir el cargo.
+                $("#editar_cargo_usuario").empty();
+                $("#editar_cargo_usuario").val(data[0]["cargo"]);
+                // Añadir el numero de contacto.
+                $("#editar_telefono_contacto_usuario").empty();
+                $("#editar_telefono_contacto_usuario").val(data[0]["telefono_contacto"]);
+                // Añadir el correo por usuario
+                $("#editar_correo_usuario").empty();
+                $("#editar_correo_usuario").val(data[0]["email"]);
+                // Añadir ids de procesos
+                $("#string_id_procesos").val(data[0]["id_procesos_usuario"]);
+                // Añadir el status
+                $("#editar_status_crear_usuario").empty();
+                if (data[0]["estado"] == "Activo") {
+                    $("#editar_status_crear_usuario").append('<option value="'+data[0]["estado"]+'" selected>'+data[0]["estado"]+'</option>');
+                    $("#editar_status_crear_usuario").append('<option value="Inactivo">Inactivo</option>');
+                }else{
+                    $("#editar_status_crear_usuario").append('<option value="'+data[0]["estado"]+'" selected>'+data[0]["estado"]+'</option>');
+                    $("#editar_status_crear_usuario").append('<option value="Activo">Activo</option>');
+                }
+               
+            }
+        });
         
-                $(".habilitar_modal_edicion_usuario").attr("id", "modalEdicionUsuario_"+id_editar_usuario);
-                $(".modal-title").append("<i class='fa fa-pen mr-2'></i> Edición Usuario: "+nombre_editar_usuario);
-        
-                $(".actualizar_usuario").attr("id", "form_actualizar_usuario_"+id_editar_usuario);
-                $('#captura_id_usuario').val(id_editar_usuario);
-        
-                var consulta = {
-                    'id_usuario': id_editar_usuario,
-                    '_token': $('input[name=_token]').val()
+        setTimeout(() => {
+            /* CARGA LISTADO DE TIPOS DE IDENTIFICACIÓN EDICION USUARIO */
+            var datos_tipo_ident = {
+                'tipo_identificacion': $('#editar_tipo_identificacion_usuario').val(),
+                '_token': $('input[name=_token]').val()
+            };
+            $.ajax({
+                type:'POST',
+                url:'/listadoTiposIdentificacionEditar',
+                data: datos_tipo_ident,
+                success:function(data) {
+                    let claves = Object.keys(data);
+                    for (let i = 0; i < claves.length; i++) {
+                        $('#editar_tipo_identificacion_usuario').append('<option value="'+data[claves[i]]["tipo_identificacion"]+'">'+data[claves[i]]["tipo_identificacion"]+'</option>');
+                    }
+                }
+            });
+
+            /* CARGA LISTADO DE TIPOS DE IDENTIFICACIÓN EDICION USUARIO */
+            var datos_tipos_colaborador = {
+                'tipo_colaborador': $('#editar_tipo_colaborador').val(),
+                '_token': $('input[name=_token]').val()
+            };
+            $.ajax({
+                type:'POST',
+                url:'/listadotiposColaboradorEditar',
+                data: datos_tipos_colaborador,
+                success:function(data) {
+                    let claves = Object.keys(data);
+                    for (let i = 0; i < claves.length; i++) {
+                        $('#editar_tipo_colaborador').append('<option value="'+data[claves[i]]["tipo_colaborador"]+'">'+data[claves[i]]["tipo_colaborador"]+'</option>');
+                    }
+                }
+            });
+
+            /* CARGA LISTADO DE PROCESOS */
+            $('#editar_listado_procesos_crear_usuario').empty(); 
+            if ($("#string_id_procesos").val() != "") {
+                var datos_procesos_usuario = {
+                    '_token': $('input[name=_token]').val(),
+                    'id_procesos': $("#string_id_procesos").val(),
+                    'parametro': 'listado_proceso_edicion_usuario'
+                };
+
+                $.ajax({
+                    type:'POST',
+                    url:'/cargarselectores',
+                    data: datos_procesos_usuario,
+                    success:function(data) {
+                        // console.log(data);
+                        let claves = Object.keys(data);
+                        for (let i = 0; i < claves.length; i++) {
+                            if (data[claves[i]]['seleccionado'] == "si") {
+                                $('#editar_listado_procesos_crear_usuario').append('<option value="'+data[claves[i]]["Id_proceso"]+'" selected>'+data[claves[i]]["Nombre_proceso"]+'</option>');
+                            }else{
+                                $('#editar_listado_procesos_crear_usuario').append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
+                            }
+                        }
+                    }
+                });
+            }else{
+                var datos = {
+                    '_token': $('input[name=_token]').val(),
+                    'parametro': 'listado_proceso'
                 };
                 $.ajax({
                     type:'POST',
-                    url: $('#ruta_ed_evento').val(),
-                    data: consulta,
+                    url:'/cargarselectores',
+                    data: datos,
                     success:function(data) {
-                        // Añadir el nombre del usuario.
-                        $("#editar_nombre_usuario").empty();
-                        $("#editar_nombre_usuario").val(data[0]["name"]);
-                        // Añadir la opción de tipo de identificación para el selector de tipos de identificación en el formulario de edición
-                        $("#editar_tipo_identificacion_usuario").empty();
-                        $("#editar_tipo_identificacion_usuario").append('<option value="'+data[0]["tipo_identificacion"]+'">'+data[0]["tipo_identificacion"]+'</option>')
-                        // Añadir el numero de identificacion.
-                        $("#editar_nro_identificacion_usuario").empty();
-                        $("#editar_nro_identificacion_usuario").val(data[0]["nro_identificacion"]);
-                        // Añadir el E-MAIL.
-                        $("#editar_correo_contacto_usuario").empty();
-                        $("#editar_correo_contacto_usuario").val(data[0]["email_contacto"]);
-                        // Añadir la opción de tipo de identificación para el selector de tipos de colaborador en el formulario de edición
-                        $("#editar_tipo_colaborador").empty();
-                        $("#editar_tipo_colaborador").append('<option value="'+data[0]["tipo_colaborador"]+'">'+data[0]["tipo_colaborador"]+'</option>');
-                        // Añadir la empresa.
-                        $("#editar_empresa_usuario").empty();
-                        $("#editar_empresa_usuario").val(data[0]["empresa"]);
-                        // Añadir el cargo.
-                        $("#editar_cargo_usuario").empty();
-                        $("#editar_cargo_usuario").val(data[0]["cargo"]);
-                        // Añadir el numero de contacto.
-                        $("#editar_telefono_contacto_usuario").empty();
-                        $("#editar_telefono_contacto_usuario").val(data[0]["telefono_contacto"]);
-                        // Añadir el correo por usuario
-                        $("#editar_correo_usuario").empty();
-                        $("#editar_correo_usuario").val(data[0]["email"]);
-                        // Añadir ids de procesos
-                        $("#string_id_procesos").val(data[0]["id_procesos_usuario"]);
-                        // Añadir el status
-                        $("#editar_status_crear_usuario").empty();
-                        if (data[0]["estado"] == "Activo") {
-                            $("#editar_status_crear_usuario").append('<option value="'+data[0]["estado"]+'" selected>'+data[0]["estado"]+'</option>');
-                            $("#editar_status_crear_usuario").append('<option value="Inactivo">Inactivo</option>');
-                        }else{
-                            $("#editar_status_crear_usuario").append('<option value="'+data[0]["estado"]+'" selected>'+data[0]["estado"]+'</option>');
-                            $("#editar_status_crear_usuario").append('<option value="Activo">Activo</option>');
+                        let claves = Object.keys(data);
+                        for (let i = 0; i < claves.length; i++) {
+                            $('#editar_listado_procesos_crear_usuario').append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
                         }
-                       
                     }
                 });
-                
-                setTimeout(() => {
-                    /* CARGA LISTADO DE TIPOS DE IDENTIFICACIÓN EDICION USUARIO */
-                    var datos_tipo_ident = {
-                        'tipo_identificacion': $('#editar_tipo_identificacion_usuario').val(),
-                        '_token': $('input[name=_token]').val()
-                    };
-                    $.ajax({
-                        type:'POST',
-                        url:'/listadoTiposIdentificacionEditar',
-                        data: datos_tipo_ident,
-                        success:function(data) {
-                            let claves = Object.keys(data);
-                            for (let i = 0; i < claves.length; i++) {
-                                $('#editar_tipo_identificacion_usuario').append('<option value="'+data[claves[i]]["tipo_identificacion"]+'">'+data[claves[i]]["tipo_identificacion"]+'</option>');
-                            }
-                        }
-                    });
-        
-                    /* CARGA LISTADO DE TIPOS DE IDENTIFICACIÓN EDICION USUARIO */
-                    var datos_tipos_colaborador = {
-                        'tipo_colaborador': $('#editar_tipo_colaborador').val(),
-                        '_token': $('input[name=_token]').val()
-                    };
-                    $.ajax({
-                        type:'POST',
-                        url:'/listadotiposColaboradorEditar',
-                        data: datos_tipos_colaborador,
-                        success:function(data) {
-                            let claves = Object.keys(data);
-                            for (let i = 0; i < claves.length; i++) {
-                                $('#editar_tipo_colaborador').append('<option value="'+data[claves[i]]["tipo_colaborador"]+'">'+data[claves[i]]["tipo_colaborador"]+'</option>');
-                            }
-                        }
-                    });
-        
-                    /* CARGA LISTADO DE PROCESOS */
-                    $('#editar_listado_procesos_crear_usuario').empty(); 
-                    if ($("#string_id_procesos").val() != "") {
-                        var datos_procesos_usuario = {
-                            '_token': $('input[name=_token]').val(),
-                            'id_procesos': $("#string_id_procesos").val(),
-                            'parametro': 'listado_proceso_edicion_usuario'
-                        };
-        
-                        $.ajax({
-                            type:'POST',
-                            url:'/cargarselectores',
-                            data: datos_procesos_usuario,
-                            success:function(data) {
-                                // console.log(data);
-                                let claves = Object.keys(data);
-                                for (let i = 0; i < claves.length; i++) {
-                                    if (data[claves[i]]['seleccionado'] == "si") {
-                                        $('#editar_listado_procesos_crear_usuario').append('<option value="'+data[claves[i]]["Id_proceso"]+'" selected>'+data[claves[i]]["Nombre_proceso"]+'</option>');
-                                    }else{
-                                        $('#editar_listado_procesos_crear_usuario').append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
-                                    }
-                                }
-                            }
-                        });
-                    }else{
-                        var datos = {
-                            '_token': $('input[name=_token]').val(),
-                            'parametro': 'listado_proceso'
-                        };
-                        $.ajax({
-                            type:'POST',
-                            url:'/cargarselectores',
-                            data: datos,
-                            success:function(data) {
-                                let claves = Object.keys(data);
-                                for (let i = 0; i < claves.length; i++) {
-                                    $('#editar_listado_procesos_crear_usuario').append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
-                                }
-                            }
-                        });
-                    }
-                }, 200);
-            });
-    }); 
+            }
+        }, 200);
+    });
+ 
 });
