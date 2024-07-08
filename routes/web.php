@@ -277,6 +277,7 @@ Route::post('/eliminarDocumentoComplementario', [AdministradorController::class,
 
 // Acción: Descargar Documentos
 Route::get('/descargar-archivo/{nombreArchivo}/{id_evento}', [AdministradorController::class, 'DescargarDocumentos']);
+Route::post('/descargar-documentos', [AdministradorController::class, 'descargaMasiva']);
 
 Route::post('/registrarOtraEmpresa', [AdministradorController::class, 'registrarOtraEmpresa']);
 // Acción: Traer el listado de historicos de empresa dependiendo del numero de identificacion del afiliado

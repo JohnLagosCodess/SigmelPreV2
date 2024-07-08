@@ -16,6 +16,7 @@ use App\Models\sigmel_numero_orden_eventos;
 use App\Models\sigmel_informacion_eventos;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_informacion_pronunciamiento_eventos;
+use App\Models\sigmel_registro_documentos_eventos;
 
 class BuscarEventoController extends Controller
 {
@@ -2406,7 +2407,7 @@ class BuscarEventoController extends Controller
         sleep(2);
 
         //Procesamos la informacion del formulario asociado al nuevo servicio
-        $this->procesarFormulariosJuntas($request->id_evento, $Id_Asignacion,$request->selector_nuevo_servicio,$request->tupla_proceso_escogido,$request->selector_nuevo_proceso);
+        $this->procesarFormulariosJuntas($request->id_evento, $Id_Asignacion,$request->selector_nuevo_servicio,$request->tupla_proceso_escogido,$request->selector_nuevo_proceso,$request->id_servicio_actual_nuevo_proceso);
         
         $mensajes = array(
             "parametro" => 'creo_proceso',
@@ -2428,7 +2429,7 @@ class BuscarEventoController extends Controller
     *   @param proceso Corresponde al proceso asociado al nuevo servicio
     *   @return void
     */
-    public function procesarFormulariosJuntas($evento, $nuevo_id_asignacion,$servicioNuevo,$Id_Asignacion_origen,$proceso) {
+    public function procesarFormulariosJuntas($evento, $nuevo_id_asignacion,$servicioNuevo,$Id_Asignacion_origen,$proceso,$servicioOrigen) {
         /**
          *  Reglas sobre las cuales se estaran insertado los datos en el nuevo servicio siempre y cuando se cumplan las condiciones
          *  @var servico_nuevo corresponde a Controversia origen o Controversia pcl
@@ -2437,12 +2438,12 @@ class BuscarEventoController extends Controller
         $reglas = [
             [
                 'servicio_origen' => ['Determinación del Origen (DTO) ATEL', 'Adición DX'],
-                'servicio_nuevo' => 12,
+                'servicio_nuevo' => 12, //Origen
                 'accion' => 'traer_informacion',
             ],
             [
                 'servicio_origen' => ['Calificación técnica', 'Recalificación', 'Revisión pensión','Controversia PCL'],
-                'servicio_nuevo' => 13,
+                'servicio_nuevo' => 13, //PCL
                 'accion' => 'traer_informacion',
             ],
         ];
@@ -2559,6 +2560,12 @@ class BuscarEventoController extends Controller
                     $Controvertido['Total_minusvalia'] = optional($informacionComite)->Total_minusvalia;
                     $Controvertido['Porcentaje_pcl'] = optional($informacionComite)->_pcl;
                     $Controvertido['F_estructuracion_contro'] = optional($informacionComite)->F_estructuracion;
+
+                    //Se copian los documentos siempre y cuando no se una controversia y cumpla las reglas.
+                    if($servicio['Nombre_servicio'] != 'Controversia PCL'){
+                        $this->copiarLisdatoGeneralDocumentos($evento,$servicioNuevo,$servicioOrigen);
+                    }
+
                 } elseif ($regla['servicio_nuevo'] == 12) {
                     //Caso Origen
                     //Informacion diagonostico
@@ -2594,6 +2601,9 @@ class BuscarEventoController extends Controller
                     $Controvertido['F_dictamen_controvertido'] = optional($origen[0])->F_registro;
                     $Controvertido['N_siniestro'] = optional($origen[0])->N_siniestro;
                 }
+
+                $this->copiarLisdatoGeneralDocumentos($evento,$servicioNuevo,$servicioOrigen);
+
                 break;
             }
         }
@@ -2609,6 +2619,53 @@ class BuscarEventoController extends Controller
             DB::table('sigmel_gestiones.sigmel_informacion_diagnosticos_eventos')->insert($diagnostico);
         }
     }
+
+    /**
+     * Copia todos los documentos cargados a partir del servicio origen del cual fue creado
+     * @param string $evento Id del evento
+     * @param int $servicio Id del nuevo sercio que se esta creando.
+     * @param int $servicioOrigen Id del servico origen del cual se esta creando el nuvo proceso.
+     */
+    public function copiarLisdatoGeneralDocumentos(string $evento,int $servicio,int $servicioOrigen){
+        $documentos = DB::select('CALL psrvistadocumentos(?,?)', array($evento,$servicioOrigen));
+        
+        $contador = 0;
+
+        foreach($documentos as $documento){
+            if($documento->estado_documento == 'Cargado'){
+                $doc = sigmel_registro_documentos_eventos::on('sigmel_gestiones')->select('*')->where('Id_Registro_Documento',$documento->id_Registro_Documento)->get()->toArray();
+
+                $infoDocumento[$contador] =  $doc[0];
+            
+                $infoDocumento[$contador]['Id_servicio'] = $servicio;
+
+                unset($infoDocumento[$contador]['Id_Registro_Documento']);
+
+                $nombrePdf = "{$infoDocumento[$contador]['Nombre_documento']}";
+                $documentoOrigen = public_path("Documentos_Eventos/$evento/$nombrePdf.{$infoDocumento[$contador]['Formato_documento']}");
+                $directorioDestino = public_path("Documentos_Eventos/$evento");
+                
+                $nombrePdf = substr($nombrePdf,0,strlen($nombrePdf)-13);
+                $nuevoNombre = "{$nombrePdf}_IdServicio_{$servicio}";
+
+                $documentoDestino = "$directorioDestino/{$nuevoNombre}.{$infoDocumento[$contador]['Formato_documento']}";
+                
+                // Copia el archivo si existe en el origen
+                if (file_exists($documentoOrigen)) {
+                    copy($documentoOrigen, $documentoDestino);
+                }
+
+                $infoDocumento[$contador]['Nombre_documento'] = $nuevoNombre;
+                $contador++;
+            }
+        }
+
+        if(isset($infoDocumento)){
+            sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($infoDocumento);
+        }
+        
+    }
+
     // Mantener o Borrar datos de búsqueda del formulario de buscador de eventos
     public function mantenerDatosBusquedaEvento(Request $request){
         // Obtén la instancia del objeto de sesión

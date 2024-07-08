@@ -70,6 +70,7 @@ use App\Models\sigmel_informacion_entidades;
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
 use App\Models\sigmel_informacion_historial_accion_eventos;
+use ZipArchive;
 
 class AdministradorController extends Controller
 {
@@ -5240,6 +5241,81 @@ class AdministradorController extends Controller
             return response()->json(['error' => 'Archivo no encontrado.'], 404);
         }
     }
+
+    /**
+     * Busca todos los documentos cargados dentro del listado general de documentos, los comprime y los descarga.
+     */
+    public function descargaMasiva(Request $request){
+        $request->validate([
+            'parametro' => 'required',
+            'IdEvento' => 'required',
+            'IdServicio' => 'required'
+        ]);
+
+        //Lugar que contiene los archivos a comprimir.
+        $path = public_path("Documentos_Eventos/{$request->IdEvento}");
+
+        if (!file_exists($path)){
+            mkdir($path, 0775, true);
+        }
+
+        $documentos = DB::select('CALL psrvistadocumentos(?,?)', array($request->IdEvento,$request->IdServicio));
+
+        $documentosZip = [];
+
+        //Cualquier documento que este cargado se comprimira para poder descargarlo
+        foreach($documentos as $documento){
+            if($documento->estado_documento == 'Cargado'){
+                //Limpiamos el nombre de manera que sea legible para el sistema
+                $nombreDoc = preg_replace('/[^\p{L}\p{N}_\-\.()]/u', '_', $documento->Nombre_documento);
+                $documentosZip[] = "{$nombreDoc}_IdEvento_{$request->IdEvento}_IdServicio_{$request->IdServicio}.{$documento->formato_documento}";
+            }
+        }
+        
+        if(empty($documentosZip)){
+            http_response_code(400);
+            return null;
+        }
+        $tmpZip = $this->comprimirArchivos($documentosZip,$path,'ListadoDocumentos');
+
+        $headers = [
+            'Content-Type' => 'application/zip',
+            'Content-Disposition' => "attachment; filename=\"{$tmpZip['nombreZip']}\""
+        ];
+
+        //La descarga se efectua principalmente desde js mediante un blob ya que la peticcion se hizo mediante ajax, posterior a esto se elimina el doc generaod.
+        return response()->download($tmpZip['path'], $tmpZip['nombreZip'],$headers)->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Genera un archivo zip con los documentos indicados.
+     * @param mixed $archivos Listado de documentos a incluir en el zip
+     * @param string $pathTMP Ubicacion de los documentos a zipear, en la misma ubicacion se creara el zip.
+     * @param string $nombreZip Nombre del zip a generar
+     * @return mixed path del zip generado y el nombre de dicho zip
+     */
+    public function comprimirArchivos(array $archivos,string $pathTMP,string $nombreZip){
+
+        $nombreZip = "{$nombreZip}.zip";
+        $objZip = new ZipArchive;
+        $tmp = "{$pathTMP}/{$nombreZip}";
+
+        //Si el zip no existe lo crea, sino lo sobre escribe.
+        if($objZip->open($tmp,ZipArchive::CREATE | ZipArchive::OVERWRITE)){
+            foreach($archivos as $archivo){
+                if(file_exists("{$pathTMP}/{$archivo}")){
+                    $objZip->addFile("{$pathTMP}/{$archivo}",$archivo);
+                }
+            }
+            $objZip->close();
+        }
+
+        return [
+            'path' => $tmp,
+            'nombreZip' => $nombreZip
+        ];
+    }
+
 
     public function consultaHistorialAcciones (Request $request){
         $array_datos_historial_acciones = sigmel_historial_acciones_eventos::on('sigmel_gestiones')
