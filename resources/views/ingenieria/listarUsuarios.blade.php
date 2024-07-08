@@ -149,9 +149,9 @@
                                 </div>
                                 <div class="col-3">
                                     <div class="form-group">
-                                        <label  class="col-form-label">¿A qué procesos pertenece?</label>
+                                        <label  class="col-form-label">¿A qué procesos pertenece? <span style="color:red;">(*)</span></label>
                                         <input type="hidden" id="string_id_procesos">
-                                        <select class="editar_listado_procesos_crear_usuario custom-select" name="editar_listado_procesos_crear_usuario[]" id="editar_listado_procesos_crear_usuario" style="width:100%;"></select>
+                                        <select class="editar_listado_procesos_crear_usuario custom-select" name="editar_listado_procesos_crear_usuario[]" id="editar_listado_procesos_crear_usuario" style="width:100%;" required></select>
                                     </div>
                                 </div>
                                 <div class="col-3">
