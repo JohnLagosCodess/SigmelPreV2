@@ -25,6 +25,7 @@ return new class extends Migration
             $table->date('F_adicion_CIE10')->nullable();
             $table->enum('Estado', ['Activo','Inactivo'])->default('Activo')->nullable();
             $table->enum('Estado_Recalificacion', ['Activo','Inactivo'])->default('Activo')->nullable();
+            $table->enum('Dx_Adicionado', ['Si','No'])->nullable();
             $table->text('Item_servicio')->nullable();            
             $table->text('Nombre_usuario');
             $table->date('F_registro');

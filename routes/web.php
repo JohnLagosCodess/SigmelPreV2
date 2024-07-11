@@ -846,6 +846,9 @@ Route::get('/Sigmel/ReporteFacturacionJuntas', [ReporteFacturacionJuntasControll
 // Acción: Consulta de Reporte Facturación Juntas
 Route::post('/consultaReporteFactuJuntas', [ReporteFacturacionJuntasController::class, 'consultaReporteFactuJuntas']);
 
+// 18-06-2024
+// Validación creación de un nuevo servicio de Adición Dx, Calificacion técnica, Reacalificación y Revisión Pensión desde la modal Nuevo Proceso
+Route::post('/ValidarNuevosServiciosNuevoProceso', [BuscarEventoController::class, 'ValidarNuevosServiciosNuevoProceso']);
 
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */

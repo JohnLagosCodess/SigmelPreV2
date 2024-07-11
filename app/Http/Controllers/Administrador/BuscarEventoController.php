@@ -2418,6 +2418,225 @@ class BuscarEventoController extends Controller
 
     }
 
+    // Función para validar la creación de un servicio ADX, CALIFICACIÓN TÉCNICA, RECALIFICACIÓN Y REVISIÓN PENSIÓN
+    // Desde la modal de Nuevo Proceso
+    public function ValidarNuevosServiciosNuevoProceso (Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        // Captura de datos del formulario
+        $id_proceso_seleccionado = $request->Id_proceso;
+        $id_servicio_seleccionado = $request->Id_servicio;
+        $id_evento_seleccionado = $request->nro_evento;
+
+        // Caso 1: Validación de creación de servicio de Determinación del Origen (DTO) ATEl
+        // Caso 2: Validación de creación de servicio Adición Dx
+        // Caso 3: Validación de creación de servicio Recalificación PCL
+        // Caso 4: Validación de creación de servicio Revisión Pensión PCL
+        // Caso 5: Validación de creación de servicio Calificación Técnica
+        switch (true) {
+            case ($id_servicio_seleccionado == 1):
+                /*  Extraemos los id de asignación del o las Adiciones Dx  creadas para
+                    el id evento seleccionado
+                */
+                $informacion_adx = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_Asignacion')
+                ->where([
+                    ['ID_evento', $id_evento_seleccionado],
+                    ['Id_proceso', $id_proceso_seleccionado]
+                ])
+                ->whereIn('Id_servicio', [2])
+                ->get();
+
+                // creamos el array con la información del o las Adiciones Dx
+                $array_informacion_adx = json_decode(json_encode($informacion_adx, true));
+                $total_datos_adx = count($array_informacion_adx);
+
+                /*  Extraemos los id de asignación del o los DTO  creados para
+                    el id evento seleccionado
+                */
+                $informacion_dto = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_Asignacion')
+                ->where([
+                    ['ID_evento', $id_evento_seleccionado],
+                    ['Id_proceso', $id_proceso_seleccionado]
+                ])
+                ->whereIn('Id_servicio', [1])
+                ->get();
+
+                // creamos el array con la información de DTO
+                $array_informacion_dto = json_decode(json_encode($informacion_dto, true));
+                $total_datos_dto = count($array_informacion_dto);
+
+                // Si ya existe almenos una DTO o Adición Dx no se le permite crear el servicio
+                if ($total_datos_dto > 0 || $total_datos_adx > 0) {
+                    $mensajes = array(
+                        "parametro" => 'fallo',
+                        "mensaje" => 'No puede crear el servicio de Determinación del Origen (DTO) ATEl debido a que ya se cuenta con un servicio de Adición DX o Determinación del Origen (DTO) ATEl creado.'
+                    );
+                    return json_decode(json_encode($mensajes, true));
+                } else {
+                    $mensajes = array(
+                        "parametro" => 'exito'
+                    );
+                    return json_decode(json_encode($mensajes, true));
+                }
+            break;
+            case ($id_servicio_seleccionado == 2):
+
+                /*  Extraemos los id de asignación del o las Adiciones Dx  creadas para
+                    el id evento seleccionado
+                */
+                $informacion_adx = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_Asignacion')
+                ->where([
+                    ['ID_evento', $id_evento_seleccionado],
+                    ['Id_proceso', $id_proceso_seleccionado]
+                ])
+                ->whereIn('Id_servicio', [2])
+                ->get();
+
+                // creamos el array con la información del o las Adiciones Dx
+                $array_informacion_adx = json_decode(json_encode($informacion_adx, true));
+                $total_datos_adx = count($array_informacion_adx);
+
+                /*  Extraemos los id de asignación del o los DTO  creados para
+                    el id evento seleccionado
+                */
+                $informacion_dto = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_Asignacion')
+                ->where([
+                    ['ID_evento', $id_evento_seleccionado],
+                    ['Id_proceso', $id_proceso_seleccionado]
+                ])
+                ->whereIn('Id_servicio', [1])
+                ->get();
+
+                // creamos el array con la información de DTO
+                $array_informacion_dto = json_decode(json_encode($informacion_dto, true));
+                $total_datos_dto = count($array_informacion_dto);
+
+                /* Escenario 1: Validar que si existe almenos un Adición Dx creada no deja crear el servicio */
+                /* Escenario 2: Validar que si existe un DTO creado no deja crear el servicio */
+                switch (true) {
+                    case ($total_datos_adx > 0):
+                        $mensajes = array(
+                            "parametro" => 'fallo',
+                            "mensaje" => 'No puede crear el servicio de Adición DX debido a que ya se cuenta con un servicio de Adición DX creado.'
+                        );
+                        return json_decode(json_encode($mensajes, true));
+                    break;
+
+                    case ($total_datos_dto > 0):
+                        $mensajes = array(
+                            "parametro" => 'fallo',
+                            "mensaje" => 'No puede crear el servicio de Adición DX debido a que ya se cuenta con un servicio de Determinación del Origen (DTO) ATEL creado.'
+                        );
+                        return json_decode(json_encode($mensajes, true));
+                    break;
+
+                    default:
+                        $mensajes = array(
+                            "parametro" => 'exito'
+                        );
+                        return json_decode(json_encode($mensajes, true));
+                    break;
+                }
+
+            break;                        
+            case ($id_servicio_seleccionado == 7):
+                //  PASO 1: Extracción del id de asignacion de la calficación técnica y recalificación
+                //  que han sido creados para el id evento seleccioando 
+                $informacion_recalificacion_pcl = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_Asignacion')
+                ->where([
+                    ['ID_evento', $id_evento_seleccionado],
+                    ['Id_proceso', $id_proceso_seleccionado]
+                ])
+                ->whereIn('Id_servicio', [6, 7])
+                ->get();     
+                
+                // se convierte el object a array
+                $array_informacion_recalificacion_pcl = json_decode(json_encode($informacion_recalificacion_pcl, true));                
+                // print_r($array_informacion_recalificacion_pcl);
+                
+                // Escenario 1: Validar si cuenta con una Calificación técnica o Recalificación creada.
+                if (count($array_informacion_recalificacion_pcl) > 0) {
+
+                    $mensajes = array(
+                        "parametro" => 'fallo',
+                        "mensaje" => 'No puede crear el servicio de Recalificación debido a que ya se cuenta con un servicio de Calificación Técnica creada.'
+                    );
+                    return json_decode(json_encode($mensajes, true));
+                }                                             
+                
+            break;
+            case ($id_servicio_seleccionado == 8):                
+                // PASO 1: Extracción del id de asignacion de la calficación técnica y revisión pensión
+                //  que han sido creados para el id evento seleccioando 
+
+                $informacion_revision_pension_pcl = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_Asignacion')
+                ->where([
+                    ['ID_evento', $id_evento_seleccionado],
+                    ['Id_proceso', $id_proceso_seleccionado]
+                ])
+                ->whereIn('Id_servicio', [6, 8])
+                ->get(); 
+
+                // se convierte el object a array
+
+                $array_informacion_revision_pension_pcl = json_decode(json_encode($informacion_revision_pension_pcl, true));
+                // print_r($array_informacion_revision_pension_pcl);
+                
+                // Escenario 1: Validar si cuenta con una Calificación técnica o Revisión pensión creada.
+                if (count($array_informacion_revision_pension_pcl) > 0) {                  
+
+                    $mensajes = array(
+                        "parametro" => 'fallo',
+                        "mensaje" => 'No puede crear el servicio de Revisión Pensión debido a que ya se cuenta con un servicio de Calificación Técnica creada.'
+                    );
+                    return json_decode(json_encode($mensajes, true));
+                }                                             
+                
+            break;
+            case ($id_servicio_seleccionado == 6):                
+                // PASO 1: Extracción del id de asignacion de la calficación técnica y revisión pensión
+                //  que han sido creados para el id evento seleccioando 
+
+                $informacion_calificacion_tecnica_pcl = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_Asignacion')
+                ->where([
+                    ['ID_evento', $id_evento_seleccionado],
+                    ['Id_proceso', $id_proceso_seleccionado]
+                ])
+                ->whereIn('Id_servicio', [6, 7, 8])
+                ->get(); 
+
+                // se convierte el object a array
+
+                $array_informacion_calificacion_tecnica_pcl = json_decode(json_encode($informacion_calificacion_tecnica_pcl, true));
+                // print_r($array_informacion_revision_pension_pcl);
+                
+                // Escenario 1: Validar si cuenta con una Calificación técnica o Recalificación creada.
+                if (count($array_informacion_calificacion_tecnica_pcl) > 0) {                
+
+                    $mensajes = array(
+                        "parametro" => 'fallo',
+                        "mensaje" => 'No puede crear el servicio de Calificación técnica debido a que ya se cuenta con un servicio de Recalificación o Revisión Pensión creada.'
+                    );
+                    return json_decode(json_encode($mensajes, true));
+                }                                             
+                
+            break;
+            default:
+                # code...
+            break;
+        }
+
+    }
+
     /**
     *   Ficha: PSB023 - En funcion del servicio origen a partir del cual se creara el nuevo proceso extraemos la informacion relevante segun aplique
     *   para las reglas en @var $reglas
@@ -2604,6 +2823,7 @@ class BuscarEventoController extends Controller
             DB::table('sigmel_gestiones.sigmel_informacion_diagnosticos_eventos')->insert($diagnostico);
         }
     }
+
     // Mantener o Borrar datos de búsqueda del formulario de buscador de eventos
     public function mantenerDatosBusquedaEvento(Request $request){
         // Obtén la instancia del objeto de sesión
