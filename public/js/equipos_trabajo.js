@@ -129,8 +129,60 @@ $(document).ready(function(){
         }
     });
 
-    /* FUNCIONES ASOCIADAS AL BOTÓN QUE HABILITA EL MODAL */
-    $(document).on('mouseover', "a[id^='btn_modal_edicion_equipo_']", function(){
+
+    /* ENVÍO DE FORMULARIO PARA GUARDAR EDICIÓN DE EQUIPO DE TRABAJO */
+    $(document).on('submit', "form[id^='form_actualizar_equipo_']", function(e){
+        e.preventDefault();
+    
+        var formData = new FormData($(this)[0]);
+        // for (var pair of formData.entries()) {
+        //     console.log(pair[0]+" - "+ pair[1]);
+        // }
+
+        $.ajax({
+            url: $('#ruta_guardar_edicion_equipo').val(),
+            type: "post",
+            dataType: "json",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success:function(response){
+                if (response.parametro == "exito") {
+                    $("button[id^='btn_actualizar_consulta_']").removeClass('d-none');
+                    
+                    $("div[id^='mostrar_mensaje_act_equipo_']").removeClass('d-none');
+                    $("div[id^='mostrar_mensaje_act_equipo_']").addClass('alert-success');
+                    $("div[id^='mostrar_mensaje_act_equipo_']").append('<strong>'+response.mensaje+'</strong>');
+
+                    setTimeout(() => {
+                        $("div[id^='mostrar_mensaje_act_equipo_']").addClass('d-none');
+                        $("div[id^='mostrar_mensaje_act_equipo_']").removeClass('alert-success');
+                        $("div[id^='mostrar_mensaje_act_equipo_']").empty();
+                    }, 9000);
+                }else{
+                    $("div[id^='mostrar_mensaje_act_equipo_']").removeClass('d-none');
+                    $("div[id^='mostrar_mensaje_act_equipo_']").addClass('alert-danger');
+                    $("div[id^='mostrar_mensaje_act_equipo_']").append('<strong>'+response.mensaje+'</strong>');
+
+                    setTimeout(() => {
+                        $("div[id^='mostrar_mensaje_act_equipo_']").addClass('d-none');
+                        $("div[id^='mostrar_mensaje_act_equipo_']").removeClass('alert-danger');
+                        $("div[id^='mostrar_mensaje_act_equipo_']").empty();
+                    }, 9000);
+                }
+            }         
+        });
+
+    });
+
+    /* FUNCIONALIDAD ACTUALIZAR PÁGINA DE CONSULTA */
+    $(document).on('click', "button[id^='btn_actualizar_consulta_']", function(){
+        location.reload();
+    });
+
+    /* FUNCIONES ASOCIADAS AL BOTÓN QUE HABILITA EL MODAL */    
+    $("#listado_grupos_trabajo").on('click','.editar_grupo_trabajo',function(){
 
         $(".modal-footer").remove();
         $("button[id^='btn_actualizar_consulta_']").addClass('d-none');
@@ -141,13 +193,13 @@ $(document).ready(function(){
         var id_accion = $(this).data("id_accion");
 
         /* INICIALIZACIÓN DEL SELECT2 DE LISTADO PROCESOS */
-        $(".editar_proceso_"+id_proceso).select2({
+        $(".editar_proceso").select2({
             placeholder: "Seleccione una opción",
             allowClear: false
         });
 
         /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE LIDERES PARA EDICIÓN  */
-        $(".editar_listado_lider_"+id_proceso).select2({
+        $(".editar_listado_lider").select2({
             placeholder: "Listado Usuarios",
             allowClear: false
         });
@@ -179,13 +231,13 @@ $(document).ready(function(){
             data: datos_listado_proceso_edicion,
             success:function(data) {
                 // console.log(data);
-                $("#editar_proceso_"+id_proceso).empty();
+                $(".editar_proceso").empty();
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
                     if (data[claves[i]]["Id_proceso"] == id_proceso) {
-                        $("#editar_proceso_"+id_proceso).append('<option value="'+data[claves[i]]["Id_proceso"]+'" selected>'+data[claves[i]]["Nombre_proceso"]+'</option>');
+                        $(".editar_proceso").append('<option value="'+data[claves[i]]["Id_proceso"]+'" selected>'+data[claves[i]]["Nombre_proceso"]+'</option>');
                     } else {
-                        $("#editar_proceso_"+id_proceso).append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
+                        $(".editar_proceso").append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
                     }
                 }
             }
@@ -201,15 +253,15 @@ $(document).ready(function(){
             url:'/ListaLideresXProceso',
             data: datos_lideres_proceso,
             success:function(data) {
-                $('#editar_listado_lider_'+id_proceso).empty();
+                $('.editar_listado_lider').empty();
                 if (data.length > 0) {
                     // $('#editar_listado_lider_'+id_proceso).append('<option value="" selected>Seleccione</option>');
                     let claves = Object.keys(data);
                     for (let i = 0; i < claves.length; i++) {
                         if (data[claves[i]]["id"] == id_lider_trabajo) {
-                            $('#editar_listado_lider_'+id_proceso).append('<option value="'+data[claves[i]]["id"]+'" selected>'+data[claves[i]]["name"]+' ('+data[claves[i]]["email"]+')</option>');
+                            $('.editar_listado_lider').append('<option value="'+data[claves[i]]["id"]+'" selected>'+data[claves[i]]["name"]+' ('+data[claves[i]]["email"]+')</option>');
                         } else {
-                            $('#editar_listado_lider_'+id_proceso).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["name"]+' ('+data[claves[i]]["email"]+')</option>');
+                            $('.editar_listado_lider').append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["name"]+' ('+data[claves[i]]["email"]+')</option>');
                         }
                     }
                     $('.mensaje_no_hay_usuarios_edicion').addClass('d-none');
@@ -235,13 +287,13 @@ $(document).ready(function(){
                 url:'/ListaLideresXProceso',
                 data: datos_consulta_edicion,
                 success:function(data) {
-                    $('#editar_listado_lider_'+id_proceso).empty();
+                    $('.editar_listado_lider').empty();
                     $('#editar_listado_usuarios_equipo_'+id_equipo_trabajo).empty();
                     if (data.length > 0) {
-                        $('#editar_listado_lider_'+id_proceso).append('<option value="" selected>Seleccione</option>');
+                        $('.editar_listado_lider').append('<option value="" selected>Seleccione</option>');
                         let claves = Object.keys(data);
                         for (let i = 0; i < claves.length; i++) {
-                            $('#editar_listado_lider_'+id_proceso).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["name"]+' ('+data[claves[i]]["email"]+')</option>');
+                            $('.editar_listado_lider').append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["name"]+' ('+data[claves[i]]["email"]+')</option>');
 
                             $('#editar_listado_usuarios_equipo_'+id_equipo_trabajo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["name"]+' ('+data[claves[i]]["email"]+')</option>');
                             $('#editar_listado_usuarios_equipo_'+id_equipo_trabajo).bootstrapDualListbox('refresh', true);
@@ -320,57 +372,5 @@ $(document).ready(function(){
         }
 
     });
-
-    /* ENVÍO DE FORMULARIO PARA GUARDAR EDICIÓN DE EQUIPO DE TRABAJO */
-    $(document).on('submit', "form[id^='form_actualizar_equipo_']", function(e){
-        e.preventDefault();
-    
-        var formData = new FormData($(this)[0]);
-        // for (var pair of formData.entries()) {
-        //     console.log(pair[0]+" - "+ pair[1]);
-        // }
-
-        $.ajax({
-            url: $('#ruta_guardar_edicion_equipo').val(),
-            type: "post",
-            dataType: "json",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success:function(response){
-                if (response.parametro == "exito") {
-                    $("button[id^='btn_actualizar_consulta_']").removeClass('d-none');
-                    
-                    $("div[id^='mostrar_mensaje_act_equipo_']").removeClass('d-none');
-                    $("div[id^='mostrar_mensaje_act_equipo_']").addClass('alert-success');
-                    $("div[id^='mostrar_mensaje_act_equipo_']").append('<strong>'+response.mensaje+'</strong>');
-
-                    setTimeout(() => {
-                        $("div[id^='mostrar_mensaje_act_equipo_']").addClass('d-none');
-                        $("div[id^='mostrar_mensaje_act_equipo_']").removeClass('alert-success');
-                        $("div[id^='mostrar_mensaje_act_equipo_']").empty();
-                    }, 9000);
-                }else{
-                    $("div[id^='mostrar_mensaje_act_equipo_']").removeClass('d-none');
-                    $("div[id^='mostrar_mensaje_act_equipo_']").addClass('alert-danger');
-                    $("div[id^='mostrar_mensaje_act_equipo_']").append('<strong>'+response.mensaje+'</strong>');
-
-                    setTimeout(() => {
-                        $("div[id^='mostrar_mensaje_act_equipo_']").addClass('d-none');
-                        $("div[id^='mostrar_mensaje_act_equipo_']").removeClass('alert-danger');
-                        $("div[id^='mostrar_mensaje_act_equipo_']").empty();
-                    }, 9000);
-                }
-            }         
-        });
-
-    });
-
-    /* FUNCIONALIDAD ACTUALIZAR PÁGINA DE CONSULTA */
-    $(document).on('click', "button[id^='btn_actualizar_consulta_']", function(){
-        location.reload();
-    });
-    
     
 });

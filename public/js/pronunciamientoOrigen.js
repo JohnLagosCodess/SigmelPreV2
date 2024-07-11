@@ -751,7 +751,10 @@ $(document).ready(function(){
             url:'/registrarComunicadoOrigen',
             data: formData,   
             processData: false,
-            contentType: false,         
+            contentType: false,   
+            beforeSend:  function() {
+                $("#cargarComunicado").addClass("descarga-deshabilitada");
+            },       
             success:function(response){
                 if (response.parametro == 'agregar_comunicado') {
                     $('.alerta_externa_comunicado').removeClass('d-none');
@@ -762,6 +765,9 @@ $(document).ready(function(){
                         location.reload();
                     }, 3000);
                 }
+            },
+            complete:function(){
+                $("#cargarComunicado").removeClass("descarga-deshabilitada");
             }
         });  
     }); 
@@ -1002,6 +1008,9 @@ $(document).ready(function(){
                 data: formData,
                 processData: false,
                 contentType: false,
+                beforeSend:  function() {
+                    $("#cargarComunicadoModal").addClass("descarga-deshabilitada");
+                },
                 success:function(response){
                     if (response.parametro == 'reemplazar_comunicado') {
                         $('.alerta_externa_comunicado_modal').removeClass('d-none');
@@ -1011,8 +1020,12 @@ $(document).ready(function(){
                             $('.alerta_externa_comunicado_modal').empty();
                             localStorage.setItem("#Generar_comunicados", true);
                             location.reload();
-                        }, 3000);
+                            $("#modalReemplazarArchivos").modal('hide');
+                        }, 1000);
                     }
+                },
+                complete:function(){
+                    $("#cargarComunicadoModal").removeClass("descarga-deshabilitada");
                 }
             });
         }
@@ -1223,6 +1236,11 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
         placeholder: "Seleccione",
         allowClear: false
     });
+    $("#lista_lateralidadCie10_fila_"+num_consecutivo).select2({
+        width: '100%',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
 
     //Carga de datos en los selectores
 
@@ -1257,6 +1275,23 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
                 $("#lista_origenCie10_fila_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+            }
+        }
+    });
+
+    let listado_LateralidadCIE10 = {
+        '_token': token,
+        'parametro' : "listado_LateralidadCIE10",
+    };
+    $.ajax({
+        type:'POST',
+        url:'/selectoresCalificacionTecnicaPCL',
+        data: listado_LateralidadCIE10,
+        success:function(data){
+            // $("select[id^='lista_origenCie10_fila_']").empty();
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $("#lista_lateralidadCie10_fila_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
             }
         }
     });

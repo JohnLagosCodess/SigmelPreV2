@@ -514,7 +514,7 @@
                                     <div class="card-footer">
                                         <div class="row">
                                             <div class="col-12">
-                                                @if (empty($info_adicion_dx[0]->ID_evento))
+                                                @if (empty($info_adicion_dx[0]->ID_evento) || count($array_comunicados_correspondencia) === 0)
                                                     <input type="submit" class="btn btn-info" id="btn_guardar_info_evento" value="Guardar">    
                                                 @else
                                                     <input type="submit" class="btn btn-info" id="btn_guardar_info_evento" value="Actualizar">    
@@ -701,7 +701,7 @@
                                     <div class="card-footer">
                                         <div class="row">
                                             <div class="col-12">
-                                                @if (empty($info_adicion_dx[0]->ID_evento))
+                                                @if (empty($info_adicion_dx[0]->ID_evento) || count($array_comunicados_correspondencia) === 0)
                                                     <input type="submit" class="btn btn-info" id="btn_guardar_relacion_docs" value="Guardar">    
                                                 @else
                                                     <input type="submit" class="btn btn-info" id="btn_guardar_relacion_docs" value="Actualizar">    
@@ -851,7 +851,7 @@
                                     <div class="card-footer">
                                         <div class="row">
                                             <div class="col-12">
-                                                @if (empty($info_adicion_dx[0]->ID_evento))
+                                                @if (empty($info_adicion_dx[0]->ID_evento) || count($array_comunicados_correspondencia) === 0)
                                                     <input type="submit" class="btn btn-info" id="btn_guardar_diagnosticos_adicionados" value="Guardar">    
                                                 @else
                                                     <input type="submit" class="btn btn-info" id="btn_guardar_diagnosticos_adicionados" value="Actualizar">    

@@ -190,7 +190,7 @@
                         <div class="cuadro">
                             <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$nro_radicado}}</span></span><br>
                             <span class="fuente_todo_texto"><span class="negrita">{{$tipo_doc_afiliado}} {{$num_identificacion_afiliado}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$ID_evento}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
                         </div>
                     </td>
                 </tr>
@@ -202,7 +202,7 @@
                     <td>
                         <span class="fuente_todo_texto"><span class="negrita">Asunto: <?php echo $asunto;?></span></span>
                         <br>
-                        <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$ID_evento}} {{$tipo_doc_afiliado}} {{$num_identificacion_afiliado}} {{$nombre_afiliado}}</span></span>
+                        <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}} {{$tipo_doc_afiliado}} {{$num_identificacion_afiliado}} {{$nombre_afiliado}}</span></span>
                     </td>
                 </tr>
             </tbody>

@@ -649,8 +649,8 @@
                                             </div>
                                             <div class="col-4 columna_nombre_solicitante">
                                                 <div class="form-group">
-                                                    <label for="nombre_solicitante" class="col-form label">Nombre de solicitante</label>
-                                                    <select class="nombre_solicitante custom-select" name="nombre_solicitante" id="nombre_solicitante" disabled></select>
+                                                    <label for="nombre_solicitante" class="col-form label">Nombre de solicitante <span style="color:red;">(*)</span></label>
+                                                    <select class="nombre_solicitante custom-select" name="nombre_solicitante" id="nombre_solicitante" requiered disabled></select>
                                                 </div>
                                             </div>
                                             <div class="col-4 columna_otro_nombre_solicitante d-none">

@@ -277,6 +277,7 @@ Route::post('/eliminarDocumentoComplementario', [AdministradorController::class,
 
 // Acción: Descargar Documentos
 Route::get('/descargar-archivo/{nombreArchivo}/{id_evento}', [AdministradorController::class, 'DescargarDocumentos']);
+Route::post('/descargar-documentos', [AdministradorController::class, 'descargaMasiva']);
 
 Route::post('/registrarOtraEmpresa', [AdministradorController::class, 'registrarOtraEmpresa']);
 // Acción: Traer el listado de historicos de empresa dependiendo del numero de identificacion del afiliado
@@ -698,6 +699,10 @@ Route::post('/registrarCausalSeguimientoJuntas', [CalificacionJuntasController::
 // Acción: Traer historial de acciones del evento de la tabla sigmel_informacion_historial_accion_eventos
 Route::post('/historialAccionesEventosJun', [CalificacionJuntasController::class, 'historialAccionesEventoJun']);
 
+/** Creacion de expediente y lista de chequeo */
+//Accion: Generar lista chequeo
+Route::post('/registrarListaChequeo', [CalificacionJuntasController::class, 'generarListaChequeo']);
+
 //18/11/2023
 // Vista: Módulo Controversia Juntas
 Route::post('/calificacionJuntas/controversiaJuntas', [ControversiaJuntasController::class, 'mostrarVistaPronunciamientoJuntas'])->name('controversiaJuntas');
@@ -805,7 +810,6 @@ Route::post('/ActualizarParametrizacionCalificacionPcl', [ParametrizacionControl
 Route::post('/EnvioParametrizacionJuntas', [ParametrizacionController::class, 'EnvioParametrizacionJuntas']);
 // Acción: Actualizar la parametrización del proceso juntas
 Route::post('/ActualizarParametrizacionJuntas', [ParametrizacionController::class, 'ActualizarParametrizacionJuntas']);
-
 
 /* DESCARGA DE PROFORMAS */
 

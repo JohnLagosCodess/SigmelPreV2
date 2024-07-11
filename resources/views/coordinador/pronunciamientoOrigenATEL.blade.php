@@ -276,6 +276,7 @@
                                                         <tr class="bg-info">
                                                             <th style="width: 340px !important;">CIE10</th>
                                                             <th style="width: 340px !important;">Nombre CIE10</th>
+                                                            <th style="width: 140px !important;">Lateralidad Dx</th>
                                                             <th style="width: 340px !important;">Origen CIE10</th>
                                                             <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_cie10_fila"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                         </tr>
@@ -285,6 +286,7 @@
                                                         <tr class="fila_diagnosticos_{{$diagnostico->Id_Diagnosticos_motcali}}" id="datos_diagnostico">
                                                             <td>{{$diagnostico->Codigo}}</td>
                                                             <td>{{$diagnostico->Nombre_CIE10}}</td>
+                                                            <td>{{$diagnostico->Nombre_parametro_lateralidad}}</td>
                                                             <td>{{$diagnostico->Nombre_parametro}}</td>
                                                             <td>
                                                                 <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_diagnosticos_moticalifi{{$diagnostico->Id_Diagnosticos_motcali}}" data-id_fila_quitar="{{$diagnostico->Id_Diagnosticos_motcali}}" data-clase_fila="fila_diagnosticos_{{$diagnostico->Id_Diagnosticos_motcali}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
@@ -829,6 +831,7 @@
                 var nueva_fila_cie10 = [
                     '<select id="lista_Cie10_fila_'+contador_cie10+'" class="custom-select lista_Cie10_fila_'+contador_cie10+'" name="lista_Cie10"><option></option></select>',
                     '<input type="text" class="form-control" id="nombre_cie10_fila_'+contador_cie10+'" name="nombre_cie10"/>',
+                    '<select id="lista_lateralidadCie10_fila_'+contador_cie10+'" class="custom-select lista_lateralidadCie10_fila_'+contador_cie10+'" name="lista_lateralidadCie10"><option></option></select>',
                     '<select id="lista_origenCie10_fila_'+contador_cie10+'" class="custom-select lista_origenCie10_fila_'+contador_cie10+'" name="lista_origenCie10"><option></option></select>',
                     '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_cie10_fila" class="text-info" data-fila="fila_'+contador_cie10+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
                     'fila_'+contador_cie10

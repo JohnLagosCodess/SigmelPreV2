@@ -162,7 +162,7 @@
                         <td class="justificado">{{$T_documento}}: {{$N_identificacion}}</td>
                     </tr>
                     <tr>
-                        <td class="justificado"><b>Siniestro: </b>{{$ID_evento}}</td>
+                        <td class="justificado"><b>Siniestro: </b>{{$N_siniestro}}</td>
                     </tr>
                 </table>
             </div>

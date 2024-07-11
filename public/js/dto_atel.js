@@ -1156,10 +1156,10 @@ $(document).ready(function(){
         
         if (btn_seccion_info_evento == "Guardar" || btn_seccion_info_evento == "Actualizar") {
             // campos sección Justificación para revisión del Origen
-            $("#justificacion_revision_origen").prop("required", false);
+            $("#justificacion_revision_origen").prop("required", true);
             // campos sección Calificación del Origen
-            $("#sustentacion_califi_origen").prop("required", false);
-            $("#origen_dto_atel").prop("required", false);
+            $("#sustentacion_califi_origen").prop("required", true);
+            $("#origen_dto_atel").prop("required", true);
 
             btn_guardar_info_evento = 1; 
         }
@@ -1181,8 +1181,8 @@ $(document).ready(function(){
             $("#fecha_fallecimiento").prop("required", false);
             $("#descripcion_FURAT").prop("required", false);
             // campos sección Calificación del Origen
-            $("#sustentacion_califi_origen").prop("required", false);
-            $("#origen_dto_atel").prop("required", false);
+            $("#sustentacion_califi_origen").prop("required", true);
+            $("#origen_dto_atel").prop("required", true);
 
             btn_guardar_justi_revi_ori = 1;
         }
@@ -1204,10 +1204,10 @@ $(document).ready(function(){
             $("#fecha_fallecimiento").prop("required", false);
             $("#descripcion_FURAT").prop("required", false);
             // campos sección Justificación para revisión del Origen
-            $("#justificacion_revision_origen").prop("required", false);
+            $("#justificacion_revision_origen").prop("required", true);
             // campos sección Calificación del Origen
-            $("#sustentacion_califi_origen").prop("required", false);
-            $("#origen_dto_atel").prop("required", false);
+            $("#sustentacion_califi_origen").prop("required", true);
+            $("#origen_dto_atel").prop("required", true);
 
             btn_guardar_relacion_docs = 1;
         }
@@ -1229,10 +1229,10 @@ $(document).ready(function(){
             $("#fecha_fallecimiento").prop("required", false);
             $("#descripcion_FURAT").prop("required", false);
             // campos sección Justificación para revisión del Origen
-            $("#justificacion_revision_origen").prop("required", false);
+            $("#justificacion_revision_origen").prop("required", true);
             // campos sección Calificación del Origen
-            $("#sustentacion_califi_origen").prop("required", false);
-            $("#origen_dto_atel").prop("required", false);
+            $("#sustentacion_califi_origen").prop("required", true);
+            $("#origen_dto_atel").prop("required", true);
 
             btn_guardar_diagnosticos_mot_cali = 1;
         }
@@ -1282,7 +1282,10 @@ $(document).ready(function(){
             url:'/registrarComunicadoOrigen',
             data: formData,   
             processData: false,
-            contentType: false,         
+            contentType: false,   
+            beforeSend:  function() {
+                $("#cargarComunicado").addClass("descarga-deshabilitada");
+            },      
             success:function(response){
                 if (response.parametro == 'agregar_comunicado') {
                     $('.alerta_externa_comunicado').removeClass('d-none');
@@ -1293,6 +1296,9 @@ $(document).ready(function(){
                         location.reload();
                     }, 3000);
                 }
+            },
+            complete:function(){
+                $("#cargarComunicado").removeClass("descarga-deshabilitada");
             }
         });  
     }); 
@@ -2374,6 +2380,9 @@ $(document).ready(function(){
                     data: formData,
                     processData: false,
                     contentType: false,
+                    beforeSend:  function() {
+                        $("#cargarComunicadoModal").addClass("descarga-deshabilitada");
+                    },
                     success:function(response){
                         if (response.parametro == 'reemplazar_comunicado') {
                             $('.alerta_externa_comunicado_modal').removeClass('d-none');
@@ -2383,8 +2392,12 @@ $(document).ready(function(){
                                 $('.alerta_externa_comunicado_modal').empty();
                                 localStorage.setItem("#Generar_comunicados", true);
                                 location.reload();
-                            }, 3000);
+                                $("#modalReemplazarArchivos").modal('hide');
+                            }, 1000);
                         }
+                    },
+                    complete:function(){
+                        $("#cargarComunicadoModal").removeClass("descarga-deshabilitada");
                     }
                 });
             }
@@ -2437,45 +2450,57 @@ $(document).ready(function(){
             'origen': origen,
             'id_comunicado' : infoComunicado.Id_Comunicado,
         };
-
-        $.ajax({    
-            type:'POST',
-            url:'/DescargaProformaDMLPrev',
-            data: datos_generacion_proforma_dml_previsional,
-            xhrFields: {
-                responseType: 'blob' // Indica que la respuesta es un blob
-            },
-            beforeSend:  function() {
-                $("#btn_enviar_dictamen_previsional").addClass("descarga-deshabilitada");
-            },
-            success: function (response, status, xhr) {
-                var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-        
-                // Crear un enlace de descarga similar al ejemplo anterior
-                var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
-                var link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
-        
-                // Adjuntar el enlace al documento y activar el evento de clic
-                document.body.appendChild(link);
-                link.click();
-        
-                // Eliminar el enlace del documento
-                document.body.removeChild(link);
-            },
-            error: function (error) {
-                // Manejar casos de error
-                console.error('Error al descargar el PDF:', error);
-            },
-            complete:  function() {
-                $("#btn_enviar_dictamen_previsional").removeClass("descarga-deshabilitada");
-                if(infoComunicado.Nombre_documento == null){
-                    location.reload();
-                }
-            },       
-        });
-
+        if(infoComunicado.Reemplazado == 1){
+            var nombre_doc = infoComunicado.Nombre_documento;
+            var idEvento = infoComunicado.ID_evento;
+            var enlaceDescarga = document.createElement('a');
+            enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+            enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+            enlaceDescarga.style.display = 'none';
+            document.body.appendChild(enlaceDescarga);
+            enlaceDescarga.click();
+            setTimeout(function() {
+                document.body.removeChild(enlaceDescarga);
+            }, 1000);
+        }else{
+            $.ajax({    
+                type:'POST',
+                url:'/DescargaProformaDMLPrev',
+                data: datos_generacion_proforma_dml_previsional,
+                xhrFields: {
+                    responseType: 'blob' // Indica que la respuesta es un blob
+                },
+                beforeSend:  function() {
+                    $("#btn_enviar_dictamen_previsional").addClass("descarga-deshabilitada");
+                },
+                success: function (response, status, xhr) {
+                    var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+            
+                    // Crear un enlace de descarga similar al ejemplo anterior
+                    var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
+            
+                    // Adjuntar el enlace al documento y activar el evento de clic
+                    document.body.appendChild(link);
+                    link.click();
+            
+                    // Eliminar el enlace del documento
+                    document.body.removeChild(link);
+                },
+                error: function (error) {
+                    // Manejar casos de error
+                    console.error('Error al descargar el PDF:', error);
+                },
+                complete:  function() {
+                    $("#btn_enviar_dictamen_previsional").removeClass("descarga-deshabilitada");
+                    if(infoComunicado.Nombre_documento == null){
+                        location.reload();
+                    }
+                },       
+            });
+        }
     });
     
     // Captura Formulario PDF Notificación del DML previsional (OFICIO)

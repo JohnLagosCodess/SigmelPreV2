@@ -2517,7 +2517,10 @@ $(document).ready(function(){
             url:'/registrarComunicadoJuntas',
             data: formData,   
             processData: false,
-            contentType: false,         
+            contentType: false,    
+            beforeSend:  function() {
+                $("#cargarComunicado").addClass("descarga-deshabilitada");
+            },      
             success:function(response){
                 if (response.parametro == 'agregar_comunicado') {
                     $('.alerta_externa_comunicado').removeClass('d-none');
@@ -2529,6 +2532,9 @@ $(document).ready(function(){
                         location.reload();
                     }, 3000);
                 }
+            },
+            complete:function(){
+                $("#cargarComunicado").removeClass("descarga-deshabilitada");
             }
         });  
     }); 
@@ -2555,6 +2561,7 @@ $(document).ready(function(){
         var afp_comunicado = $('#afp_comunicado').prop('checked');
         var arl_comunicado = $('#arl_comunicado').prop('checked');
         var Otro = $('#Otro').prop('checked');
+        var N_siniestro = $("#n_siniestro_comunicado").val();
 
         var radiojrci_comunicado, radiojnci_comunicado, radioafiliado_comunicado,
         radioempresa_comunicado, radioeps_comunicado, radioafp_comunicado,
@@ -2675,7 +2682,8 @@ $(document).ready(function(){
             'JRCI_copia': JRCI_copia,
             'firmarcomunicado':firmarcomunicado,
             'tipo_descarga': tipo_descarga,
-            'modulo_creacion':'calificacionJuntas'
+            'modulo_creacion':'calificacionJuntas',
+            'N_siniestro':N_siniestro,
         }
         
         document.querySelector("#Generar_comunicados").disabled = true;   
@@ -2744,9 +2752,9 @@ $(document).ready(function(){
                     data-reviso_comunicado="'+data[i]["Reviso"]+'" data-revisonombre_comunicado="'+data[i]["Nombre_lider"]+'"\
                     data-firmar_comunicado="'+data[i]["Firmar_Comunicado"]+'"\
                     data-jrci_copia="'+data[i]["JRCI_copia"]+'"\
-                   data-agregar_copia="'+data[i]["Agregar_copia"]+'"data-tipo_descarga="'+data[i]["Tipo_descarga"]+'"\
+                    data-agregar_copia="'+data[i]["Agregar_copia"]+'"data-tipo_descarga="'+data[i]["Tipo_descarga"]+'"\
                     data-modulo_creacion="'+data[i]["Modulo_creacion"]+'" data-reemplazado="'+data[i]["Reemplazado"]+'" data-nombre_documento="'+data[i]["Nombre_documento"] + '"\
-                    ><i class="fa fa-pen text-info"></i></a>\
+                    data-numero_siniestro="'+data[i]["N_siniestro"]+'"><i class="fa fa-pen text-info"></i></a>\
                     <a href="javascript:void(0);" class="text-dark" id="verDocumento_'+data[i]["Id_Comunicado"]+'"\
                     title="Descargar Comunicado"\
                     id_comunicado="'+data[i]["Id_Comunicado"]+'" id_evento="'+data[i]["ID_evento"]+'"\
@@ -2768,7 +2776,7 @@ $(document).ready(function(){
                     firmar_comunicado="'+data[i]["Firmar_Comunicado"]+'"\
                     jrci_copia="'+data[i]["JRCI_copia"]+'" agregar_copia="'+data[i]["Agregar_copia"]+'"tipo_descarga="'+data[i]["Tipo_descarga"]+'"\
                     modulo_creacion="'+data[i]["Modulo_creacion"]+'" reemplazado="'+data[i]["Reemplazado"]+'" nombre_documento="'+data[i]["Nombre_documento"] + '"\
-                    ><i style="cursor:pointer" id="comunicado_boton" class="far fa-eye text-info"></i></a>';
+                    numero_siniestro="'+data[i]["N_siniestro"]+'"><i style="cursor:pointer" id="comunicado_boton" class="far fa-eye text-info"></i></a>';
                     if(data[i]['Existe'] && data[i]['Nombre_documento'] != null){
                         comunicadoNradico += '<a href="javascript:void(0);" id="replace_file" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalReemplazarArchivos"\
                             data-id_evento="' + data[i]["ID_evento"] + '" data-id_comunicado="'+ data[i]["Id_Comunicado"] + '"\
@@ -2806,7 +2814,7 @@ $(document).ready(function(){
                     agregar_copia="'+data[i]["Agregar_copia"]+'"tipo_descarga="'+data[i]["Tipo_descarga"]+ '"\
                     modulo_creacion="'+data[i]["Modulo_creacion"]+'" reemplazado="'+data[i]["Reemplazado"]+'" nombre_documento="'+data[i]["Nombre_documento"] + '"\
                     ><i style="cursor:pointer" id="comunicado_manual_boton" class="far fa-eye text-info"></i></a>';
-                    if(data[i]['Existe']){
+                    if(data[i]['Existe'] && !data[i]["Asunto"].includes('Lista_chequeo')){
                         comunicadoNradico += '<a href="javascript:void(0);" id="replace_file" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalReemplazarArchivos"\
                             data-id_evento="' + data[i]["ID_evento"] + '" data-id_comunicado="'+ data[i]["Id_Comunicado"] + '"\
                             data-numero_radicado="'+ data[i]["N_radicado"] + '" data-fecha_comunicado="' + data[i]["F_comunicado"] + '"\
@@ -2814,6 +2822,11 @@ $(document).ready(function(){
                             data-id_asignacion="'+ data[i]["Id_Asignacion"] + '" data-id_proceso="' + data[i]["Id_proceso"] +'"\
                             data-numero_identificacion="'+data[i]["N_identificacion"] + '" data-nombre_documento="'+data[i]["Nombre_documento"] +'"\
                             ><i class="fas fa-sync-alt text-info"></i></a>';
+                    }
+
+                    //Accion editar lista de chequeo
+                    if(data[i]["Asunto"].includes('Lista_chequeo')){
+                        comunicadoNradico += '<a href="javascript:void(0);" class="text-dark" data-toggle="modal" data-target="#modalCrearExpediente" title="Editar expediente" id="editarExpediente"><i style="cursor:pointer" class="fa fa-pen text-info"></i></a>';
                     }
                     comunicadoNradico += '</div>';
                     data[i]['Editarcomunicado'] = comunicadoNradico;
@@ -2996,6 +3009,7 @@ $(document).ready(function(){
                 'edit_copia_arl':edit_copia_arl,
                 'edit_copia_jrci':edit_copia_jrci,
                 'edit_copia_jnci':edit_copia_jnci,
+                'n_siniestro_proforma_editar': this.getAttribute('numero_siniestro') !== 'null' ? this.getAttribute('numero_siniestro') : null,
             };
         }
         else{
@@ -3043,7 +3057,8 @@ $(document).ready(function(){
                 'edit_copia_afp':edit_copia_afp,
                 'edit_copia_arl':edit_copia_arl,
                 'edit_copia_jrci':edit_copia_jrci,
-                'edit_copia_jnci':edit_copia_jnci
+                'edit_copia_jnci':edit_copia_jnci,
+                'n_siniestro_proforma_editar': this.getAttribute('numero_siniestro') !== 'null' ? this.getAttribute('numero_siniestro') : null,
             };
             }
 
@@ -3209,6 +3224,9 @@ $(document).ready(function(){
                 data: formData,
                 processData: false,
                 contentType: false,
+                beforeSend:  function() {
+                    $("#cargarComunicadoModal").addClass("descarga-deshabilitada");
+                },
                 success:function(response){
                     if (response.parametro == 'reemplazar_comunicado') {
                         $('.alerta_externa_comunicado_modal').removeClass('d-none');
@@ -3218,8 +3236,12 @@ $(document).ready(function(){
                             $('.alerta_externa_comunicado_modal').empty();
                             localStorage.setItem("#Generar_comunicados", true);
                             location.reload();
-                        }, 3000);
+                            $("#modalReemplazarArchivos").modal('hide');
+                        }, 1000);
                     }
+                },
+                complete:function(){
+                    $("#cargarComunicadoModal").removeClass("descarga-deshabilitada");
                 }
             });
         }
@@ -3364,6 +3386,7 @@ $(document).ready(function(){
         var jrci_copia = $(this).data("jrci_copia");
         var firmar_comunicado =  $(this).data("firmar_comunicado");
         var tipo_descarga = $(this).data("tipo_descarga");
+        var N_siniestro = $(this).data("numero_siniestro");
         document.getElementById('ciudad_comunicado_editar').value=ciudad_comunicado;
         document.getElementById('Id_comunicado_act').value=id_comunicado;
         document.getElementById('Id_evento_act').value=id_evento;
@@ -3383,6 +3406,7 @@ $(document).ready(function(){
         document.getElementById('identificacion_comunicado2_editar').value=numero_identificacion;
         document.getElementById('id_evento_comunicado_editar').value=id_evento;
         document.getElementById('id_evento_comunicado2_editar').value=id_evento;  
+        document.getElementById('n_siniestro_proforma_editar').value = N_siniestro; 
         let datos_destinatario_principal ={
             '_token':token,
             'destinatario_principal': destinatario_principal,
@@ -5552,6 +5576,7 @@ $(document).ready(function(){
         var reviso = $('#reviso_editar').val();
         var firmarcomunicado_editar = $('#firmarcomunicado_editar').filter(":checked").val();
         var tipo_descarga = $("[name='tipo_de_preforma_editar']").filter(":checked").val();
+        var N_siniestro = $("#n_siniestro_proforma_editar").val();
        //Copias Interesadas Origen
        var EditComunicadoTotal = [];
 
@@ -5618,10 +5643,11 @@ $(document).ready(function(){
             'JRCI_copia_editar': JRCI_copia,
             'firmarcomunicado_editar':firmarcomunicado_editar,
             'tipo_descarga': tipo_descarga,
-            'modulo_creacion':'calificacionJuntas'
+            'modulo_creacion':'calificacionJuntas',
+            'N_siniestro':N_siniestro,
         }
 
-        document.querySelector("#Editar_comunicados").disabled = true;     
+        document.querySelector("#Editar_comunicados").disabled = true; 
         $.ajax({
             type:'POST',
             url:'/actualizarComunicadoJuntas',
@@ -5876,7 +5902,24 @@ $(document).ready(function(){
         $("#firmarcomunicado").prop('disabled', true);
         $("#firmarcomunicado_editar").prop('disabled', true);
     }
-  
+
+    //Cargamos el historial de comunicados - Proceso para crear y generar lista de chequeo - PBS036
+    let  get_comunicados = {
+        '_token':token,
+        'HistorialComunicadosOrigen': "CargarComunicados",
+        'newId_evento':$('#newId_evento').val(),
+        'newId_asignacion':$('#newId_asignacion').val(),
+    }
+
+    $.ajax({
+        type:'POST',
+        url:'/historialComunicadoJuntas',
+        data: get_comunicados,
+        success:function(data){
+            crear_Expediente(data);
+        }
+    });
+
 
 });
 /**
@@ -5931,4 +5974,271 @@ function funciones_elementos_fila(num_consecutivo) {
             }
         }
     });
+}
+
+// Habilita los botones de acciones de acuerdo si hay algo chequeado o no.
+function verificarCheckboxes() {
+    let hayCheckboxMarcado = false;
+    
+    // Iterar sobre cada checkbox
+    $("#lista_documentos_check :checkbox").each(function() {
+        if ($(this).is(':checked')  &&  $(this).data('nombre') !== 'Lista de chequeo') {
+            hayCheckboxMarcado = true;
+            return false; // Salir del bucle una vez que se encuentre al menos uno marcado
+        }
+    });
+
+    // Habilitar o deshabilitar los botones según la variable hayCheckboxMarcado
+    $(".actualizar_chequeo, .guardar_chequeo").prop('disabled', !hayCheckboxMarcado);
+}
+
+/**
+ * Funcion para procesar el flujo de la creacion de un expediente y la lista de chequeo
+ * @param {Array} data Comunicados de Historial de comunicados y expedientes
+ */
+function crear_Expediente(data) {
+    // Configurar select2
+    $("#historial_comunicados").select2({
+        width: '100%',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
+
+    // Abrimos el modal de crear expediente, si data no esta definimo mostramos la alerta
+    $("#crearExpediente, #editarExpediente").on('click', function() {
+ 
+        if ($.isEmptyObject(data)) {
+            $("#form_crear_ExpedientesJuntas, #info_expediente").addClass('d-none');
+            $("#alert_expediente").removeClass('d-none');
+        } else {
+            // Actualizar la lista de comunicados
+            actualizarComunicados(data);
+    
+        }
+    });    
+
+    // Desactiva el boton de generar chequeo si no hay nada chequeado
+    $("#lista_documentos_check").on('change', ':checkbox', function() {
+        verificarCheckboxes();
+    });
+
+    // Disparamos el proceso para crear la lista de chequeo
+    $(".actualizar_chequeo, .guardar_chequeo").on('click', function() { 
+        let accion = $(this).attr('data-accion');
+        procesarListaChequeo(accion);
+    });
+
+}
+
+// Función para limpiar y agregar comunicados al select2
+function actualizarComunicados(data) {
+    
+    //Quita cualquier extension del comunicado.
+    let nombre_proforma = data.map(item => {
+        // Verifica si el asunto incluye 'Lista_chequeo'
+        if (item.Asunto.includes('Lista_chequeo')) {
+            return {
+                nombre: item.Asunto,
+                id_comunicado: item.Id_Comunicado
+            };
+        } else {
+            // Si el asunto no incluye 'Lista_chequeo', retorna null para filtrarlo después
+            return null;
+        }
+    }).filter(item => item !== null);
+
+    // Limpiar opciones existentes antes de agregar nuevas
+    $("#historial_comunicados").empty();
+
+    // Agregar las opciones al select2
+    //comunicados.forEach(item => {
+       // $("#historial_comunicados").append(`<option value='${item.id_comunicado}'>${item.nombre}</option>`);
+    //});
+
+    // Actualizar select2 después de agregar opciones
+    $("#historial_comunicados").trigger('change');
+
+    //Cargamos la tabla con la lista de chequeo
+    get_documentos_para_check();
+
+    if(nombre_proforma == ''){
+        return null;
+    }
+
+    //habilitamos la lista de chequeo en caso de que ya exista una en las comunicaciones
+    $('#ver_chequeo').removeClass('d-none');
+    $('#ver_chequeo a').attr('id','generar_descarga_archivo_' + $('#newId_evento').val());
+    $('#ver_chequeo a').attr('asunto_comunicado',nombre_proforma[0].nombre);
+    $('#ver_chequeo a').attr('id_evento',$('#newId_evento').val());
+
+    $(".actualizar_chequeo").removeClass('d-none');
+    $(".guardar_chequeo").addClass('d-none');
+
+}
+/**
+ * Funcion para setear los documentos para chequear en la tabla Lista de chequeo
+ * @param {Array} comunicados Comunicados cargados en Historial de comunicados y expedientes
+ */
+function get_documentos_para_check() {
+
+    const get_documentos = {
+        '_token': $("input[name='_token']").val(),
+        'parametro': "listado_documentos",
+        'Id_evento': $('#newId_evento').val(),
+        'Id_servicio': $("#Id_servicio").val(),
+        'Id_asignacion' : $('#newId_asignacion').val(),
+    };
+
+    // Limpiamos la tabla antes de agregar nuevos elementos
+    $("#lista_documentos_check").empty();
+
+    $.ajax({
+        type: 'POST',
+        url: '/selectoresJuntas',
+        data: get_documentos,
+        success: function (data) {
+            let n_documentos = 0;
+
+            // Iterar sobre los documentos
+            $.each(data, function(key, item) {
+                if (key !== "comunicados" ) {
+                    n_documentos++;
+                    let status_doc, checkbox;
+
+                    if (item.status_doc === "No Cargado") {
+                        status_doc = `<strong class="text-danger">${item.status_doc}</strong>`;
+                        checkbox = '<input class="scales" type="checkbox" disabled>';
+
+                    } else if (item.status_doc === "Cargado") {
+                        status_doc = `<strong class="text-success">${item.status_doc}</strong>`;
+                        checkbox = `<input class="scales" type="checkbox" data-id='${item.Id_Documento}' data-nombre='${item.doc_nombre}'>`;
+
+                        if(item.check == 'Si'){
+                            checkbox = `<input class="scales" type="checkbox" data-id='${item.Id_Documento}' data-nombre='${item.doc_nombre}' checked>`;
+                        }
+
+                        if(item.doc_nombre ==  'Lista de chequeo'){
+                            checkbox = `<input class="scales" type="checkbox" data-id='${item.Id_Documento}' data-nombre='${item.doc_nombre}' checked disabled>`;
+                        }
+                    }
+
+                    let html_documentos = `<tr>
+                        <td>${n_documentos}</td>
+                        <td>${item.doc_nombre}</td>
+                        <td>${status_doc}</td>
+                        <td>${checkbox}</td>
+                    </tr>`;
+
+                    $("#lista_documentos_check").append(html_documentos);
+                }
+            });
+
+            // Iterar sobre los comunicados
+            $.each(data.comunicados, function(index, item) {
+                n_documentos++;
+                checkbox = `<input class="scales" type="checkbox" data-id='${n_documentos}' data-nombre='${item.nombre}' data-idcomunicado='${item.Id_Comunicado}' disabled>`;
+                let html_comunicado = `<tr>
+                    <td>${n_documentos}</td>
+                    <td>${item.nombre}</td>
+                    <td><strong class="text-info">Comunicado</strong></td>
+                    <td>${checkbox}</td>
+                </tr>`;
+
+                $("#lista_documentos_check").append(html_comunicado);
+            });
+
+            // Disparar evento de cambio después de actualizar la tabla
+            $("#lista_documentos_check").trigger('change');
+
+            verificarCheckboxes();
+        }
+    });
+}
+
+/**
+ * Procesa y registra todos los comunicados que esten chequeados.
+ * @param {string} accion Accion a ejecutar (Actualizar, Guardar) 
+ */
+function procesarListaChequeo(accion){
+
+    let registrarChequeo = {
+        '_token': $("input[name='_token']").val(),
+        'Id_evento' : $('#newId_evento').val(),
+        'Id_proceso' : $('#Id_proceso').val(),
+        'bandera' : accion,
+        'Id_asignacion' : $('#newId_asignacion').val(),
+        'Id_servicio': $("#Id_servicio").val(),
+        'cliente': $("#cliente").val(),
+        'afiliado': $("#nombre_afiliado").val(),
+        'identificacion':  $("#identificacion").val(),
+        't_documento' :  $("#tipo_documento_comunicado").val(),
+    }
+    let datos = [];
+
+    $(".actualizar_chequeo, .guardar_chequeo").prop('disabled',true);
+
+    $('#lista_documentos_check :checkbox').each(function() {
+        if ($(this).is(':checked') &&  $(this).data('nombre') !== 'Lista de chequeo') {
+
+            //Documentos generales que esten check
+            let lista_chequeo = {
+                'id_doc' : $(this).data('id'),
+                'statusDoc' :  'Cargado',
+                'nombreDoc' : $(this).data('nombre'),
+            };
+
+            if($(this).data('idcomunicado')){
+                lista_chequeo['idComunicado'] = $(this).data('idcomunicado');
+                lista_chequeo['statusDoc'] = 'Comunicado';
+            }
+            datos.push(lista_chequeo);
+        }
+    });
+
+    registrarChequeo['lista_chequeo'] = datos;
+    
+    $.ajax({
+        type: 'POST',
+        url: '/registrarListaChequeo',
+        data: registrarChequeo,
+        dataType: 'json',
+        success: function(response){
+            if (response.parametro == 'agregar_lista_chequeo') {
+
+                $('.alerta_chequeo').removeClass('d-none');
+                $('.alerta_chequeo').append('<strong>'+response.message+'</strong>');
+
+                //Agregamos los atributos necesarios para poder descargar el archivo mediante el proceso de 'generar_descarga_archivo_'
+                $('#ver_chequeo').removeClass('d-none');
+                $('#ver_chequeo a').attr('id','generar_descarga_archivo_' + $('#newId_evento').val());
+                $('#ver_chequeo a').attr('asunto_comunicado',response.nombre_proforma);
+                $('#ver_chequeo a').attr('id_evento',$('#newId_evento').val());
+
+                $(".actualizar_chequeo").prop('disabled',false);
+                $(".guardar_chequeo").addClass('d-none');
+                $(".actualizar_chequeo").removeClass('d-none');
+                setTimeout(function(){
+                    $('.alerta_chequeo').addClass('d-none');
+                    $('.alerta_chequeo').empty(); 
+                   
+                }, 3000);
+            } 
+        },
+        error: function(response){
+            //Muestra un mensaje en caso de error, ya sea mediante el coontroaldor o fallse en algun proceso de laravel
+            response = response.responseJSON;
+
+            $('.error_chequeo').removeClass('d-none');
+            $('.error_chequeo').append('<strong>'+response.message+'</strong>');
+
+            $(".actualizar_chequeo, .guardar_chequeo").prop('disabled',false);
+
+            setTimeout(function(){
+                $('.error_chequeo').addClass('d-none');
+                $('.error_chequeo').empty();                  
+            }, 3000);
+        }
+    })
+
 }
