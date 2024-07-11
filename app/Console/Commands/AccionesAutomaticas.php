@@ -141,7 +141,7 @@ class AccionesAutomaticas extends Command
         // sleep(3);
         // print_r($array_info_acciones_automati);       
 
-        // Funcion para realizar consulta a la tabla sigmel_informacion_parametrizaciones_clientes 
+        // Funciones para realizar consulta a la tabla sigmel_informacion_parametrizaciones_clientes 
         // si existe un valor en el intem Accion_automatica del array array_info_acciones_automati se realiza la consulta
         // si no no realiza nada o cero
 
@@ -164,7 +164,26 @@ class AccionesAutomaticas extends Command
             }
         }
 
-        // Recorremos nuevamente el array_info_acciones_auto para consulta el profesional con la funcion consultaParametrizaciones_cliente
+        function consultaParametrizaciones_clientes($valorAccionAutomatica, $valorId_cliente, $valorId_proceso, $valorServicio_asociado) {
+            
+            $consultaParametrica_clientes = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+            ->select('Estado')
+            ->where([
+                ['Accion_ejecutar', $valorAccionAutomatica],
+                ['Id_cliente', $valorId_cliente],
+                ['Id_proceso', $valorId_proceso],
+                ['Servicio_asociado', $valorServicio_asociado]
+            ])
+            ->get();
+            // Validar si la consulta viene falsa o no
+            if ($consultaParametrica_clientes->isNotEmpty()) {
+                return $consultaParametrica_clientes[0]->Estado;
+            } else {
+                return 0; // en caso donde la consulta no devuelve resultados
+            }
+        }
+
+        // Recorremos nuevamente el array_info_acciones_automati para consulta el profesional con la funcion consultaParametrizaciones_cliente
 
         foreach ($array_info_acciones_automati as &$item) {
             if (!empty($item['Accion_automatica']) and !empty($item['Tiempo_movimiento'])) {
@@ -180,9 +199,26 @@ class AccionesAutomaticas extends Command
         }
 
         unset($item); // Romper la referencia para finalizar el bucle cuando ya este listo
+
+        // Recorremos nuevamente el array_info_acciones_automati para consulta el profesional con la funcion consultaParametrizaciones_cliente
+
+        foreach ($array_info_acciones_automati as &$item) {
+            if (!empty($item['Accion_automatica']) and !empty($item['Tiempo_movimiento'])) {
+                // Realizar la consulta con el valor de Accion_automatica
+                $Id_Estado_evento_automatico = consultaParametrizaciones_clientes($item['Accion_automatica'], $item['Id_cliente'], $item['Id_proceso'], $item['Servicio_asociado']);
+                // Agregar $Id_Estado_evento_automatico al array actual usando una referencia
+                $item['Id_Estado_evento_automatico'] = $Id_Estado_evento_automatico;
+            } else {
+                $item['Id_Estado_evento_automatico'] = 0;
+                // No hacer nada si Accion_automatica está vacío
+                // echo "Accion_automatica está vacío para Id_Asignacion " . $item['Id_Asignacion'] . "\n";
+            }
+        }
+
+        unset($item); // Romper la referencia para finalizar el bucle cuando ya este listo
         // sleep(3);
 
-        // Array definitivo array_info_acciones_automati
+        // ARRAY DEFINITIVO array_info_acciones_automati
 
         // print_r($array_info_acciones_automati);
 
@@ -304,6 +340,7 @@ class AccionesAutomaticas extends Command
             'Servicio_asociado',
             'Id_cliente',
             'Accion_automatica',
+            'Id_Estado_evento_automatico',
             'F_accion',
             'Id_profesional_automatico',
             'Nombre_profesional_automatico',
@@ -578,7 +615,8 @@ class AccionesAutomaticas extends Command
             'Accion_automatica',
             'Movimiento_automatico',
             'Tiempo_movimiento',
-            'Id_profesional_automatico'           
+            'Id_profesional_automatico',
+            'Id_Estado_evento_automatico'      
         ];
 
         // Recorremos  el array array_tiempo_alertaNaranja nuevamente y eliminamos los items especificados
@@ -961,6 +999,7 @@ class AccionesAutomaticas extends Command
                 'Id_servicio' => $item['Servicio_asociado'],
                 'Id_cliente' => $item['Id_cliente'],
                 'Accion_automatica' => $item['Accion_automatica'],
+                'Id_Estado_evento_automatico' => $item['Id_Estado_evento_automatico'],
                 'F_accion' => $item['F_accion'],
                 'Id_profesional_automatico' => $item['Id_profesional_automatico'],
                 'Nombre_profesional_automatico' => $item['Nombre_profesional_automatico'],

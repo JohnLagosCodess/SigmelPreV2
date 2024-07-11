@@ -4998,7 +4998,7 @@ class RecalificacionPCLController extends Controller
                     'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
                     'Justificacion_dependencia' => $justi_dependencia,
                     'N_radicado'=> $radicado_dictamen,
-                    'Estado_decreto' => 'Abierto',
+                    'Estado_decreto' => 'Cerrado',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
@@ -5071,7 +5071,7 @@ class RecalificacionPCLController extends Controller
                     'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
                     'Justificacion_dependencia' => $justi_dependencia,
                     'N_radicado'=> $radicado_dictamen,
-                    'Estado_decreto' => 'Abierto',
+                    'Estado_decreto' => 'Cerrado',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
@@ -5150,7 +5150,7 @@ class RecalificacionPCLController extends Controller
                     'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
                     'Justificacion_dependencia' => $justi_dependencia,
                     'N_radicado'=> $radicado_dictamen,
-                    'Estado_decreto' => 'Abierto',
+                    'Estado_decreto' => 'Cerrado',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
@@ -5190,7 +5190,7 @@ class RecalificacionPCLController extends Controller
                     'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
                     'Justificacion_dependencia' => $justi_dependencia,
                     'N_radicado'=> $radicado_dictamen,
-                    'Estado_decreto' => 'Abierto',
+                    'Estado_decreto' => 'Cerrado',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];

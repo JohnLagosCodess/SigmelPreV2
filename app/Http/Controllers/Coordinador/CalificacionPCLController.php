@@ -655,7 +655,7 @@ class CalificacionPCLController extends Controller
                 case (!empty($Movimiento_automatico) and $Movimiento_automatico == 'Si' and !empty($Tiempo_movimiento) and !empty($Accion_automatica)):
                         $info_datos_accion_automatica = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_parametrizaciones_clientes as sipc')
                         ->leftJoin('sigmel_sys.users as u', 'u.id', '=', 'sipc.Profesional_asignado')
-                        ->select('sipc.Accion_ejecutar', 'sipc.Profesional_asignado', 'u.name')
+                        ->select('sipc.Accion_ejecutar', 'sipc.Estado', 'sipc.Profesional_asignado', 'u.name')
                         ->where([
                             ['sipc.Accion_ejecutar', $Accion_automatica],
                             ['sipc.Id_cliente', $id_cliente],
@@ -667,7 +667,8 @@ class CalificacionPCLController extends Controller
                             $Accion_ejecutar_automatica = $info_datos_accion_automatica[0]->Accion_ejecutar;
                             $Profesional_asignado_automatico = $info_datos_accion_automatica[0]->Profesional_asignado;
                             $NombreProfesional_asignado_automatico = $info_datos_accion_automatica[0]->name;
-                            
+                            $Id_Estado_evento_automatico = $info_datos_accion_automatica[0]->Estado;
+
                             // Se suman los dias a la fecha actual para saber la fecha del movimiento automatico
                             $dateTime = new DateTime($date_time);
                             $dias = $Tiempo_movimiento; // Número de días que quieres sumar
@@ -681,6 +682,7 @@ class CalificacionPCLController extends Controller
                                 'Id_servicio' => $Id_servicio,
                                 'Id_cliente' =>$id_cliente,
                                 'Accion_automatica' => $Accion_ejecutar_automatica,
+                                'Id_Estado_evento_automatico' => $Id_Estado_evento_automatico,                            
                                 'F_accion' => $date_time,
                                 'Id_profesional_automatico' => $Profesional_asignado_automatico,
                                 'Nombre_profesional_automatico' => $NombreProfesional_asignado_automatico,
@@ -708,7 +710,7 @@ class CalificacionPCLController extends Controller
                 default:       
                         $mensaje_2 = 'la acción parametrizada NO tiene Movimiento Automático';
                     break;
-            } 
+            }  
 
             sleep(2);
 
@@ -1192,7 +1194,7 @@ class CalificacionPCLController extends Controller
                 case (!empty($Movimiento_automatico) and $Movimiento_automatico == 'Si' and !empty($Tiempo_movimiento) and !empty($Accion_automatica)):
                         $info_datos_accion_automatica = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_parametrizaciones_clientes as sipc')
                         ->leftJoin('sigmel_sys.users as u', 'u.id', '=', 'sipc.Profesional_asignado')
-                        ->select('sipc.Accion_ejecutar', 'sipc.Profesional_asignado', 'u.name')
+                        ->select('sipc.Accion_ejecutar', 'sipc.Estado', 'sipc.Profesional_asignado', 'u.name')
                         ->where([
                             ['sipc.Accion_ejecutar', $Accion_automatica],
                             ['sipc.Id_cliente', $id_cliente],
@@ -1204,6 +1206,7 @@ class CalificacionPCLController extends Controller
                             $Accion_ejecutar_automatica = $info_datos_accion_automatica[0]->Accion_ejecutar;
                             $Profesional_asignado_automatico = $info_datos_accion_automatica[0]->Profesional_asignado;
                             $NombreProfesional_asignado_automatico = $info_datos_accion_automatica[0]->name;
+                            $Id_Estado_evento_automatico = $info_datos_accion_automatica[0]->Estado;
 
                             // Se suman los dias a la fecha actual para saber la fecha del movimiento automatico
                             $dateTime = new DateTime($date_time);
@@ -1224,6 +1227,7 @@ class CalificacionPCLController extends Controller
                                     'Id_servicio' => $Id_servicio,
                                     'Id_cliente' =>$id_cliente,
                                     'Accion_automatica' => $Accion_ejecutar_automatica,
+                                    'Id_Estado_evento_automatico' => $Id_Estado_evento_automatico,                                    
                                     'F_accion' => $date_time,
                                     'Id_profesional_automatico' => $Profesional_asignado_automatico,
                                     'Nombre_profesional_automatico' => $NombreProfesional_asignado_automatico,
@@ -1249,6 +1253,7 @@ class CalificacionPCLController extends Controller
                                     'Id_servicio' => $Id_servicio,
                                     'Id_cliente' =>$id_cliente,
                                     'Accion_automatica' => $Accion_ejecutar_automatica,
+                                    'Id_Estado_evento_automatico' => $Id_Estado_evento_automatico,
                                     'F_accion' => $date_time,
                                     'Id_profesional_automatico' => $Profesional_asignado_automatico,
                                     'Nombre_profesional_automatico' => $NombreProfesional_asignado_automatico,
@@ -7436,7 +7441,7 @@ class CalificacionPCLController extends Controller
                     'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
                     'Justificacion_dependencia' => $justi_dependencia,
                     'N_radicado'=> $radicado_dictamen,
-                    'Estado_decreto' => 'Abierto',
+                    'Estado_decreto' => 'Cerrado',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
@@ -7510,7 +7515,7 @@ class CalificacionPCLController extends Controller
                     'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
                     'Justificacion_dependencia' => $justi_dependencia,
                     'N_radicado'=> $radicado_dictamen,
-                    'Estado_decreto' => 'Abierto',
+                    'Estado_decreto' => 'Cerrado',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
@@ -7590,7 +7595,7 @@ class CalificacionPCLController extends Controller
                     'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
                     'Justificacion_dependencia' => $justi_dependencia,
                     'N_radicado'=> $radicado_dictamen,
-                    'Estado_decreto' => 'Abierto',
+                    'Estado_decreto' => 'Cerrado',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
@@ -7630,7 +7635,7 @@ class CalificacionPCLController extends Controller
                     'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
                     'Justificacion_dependencia' => $justi_dependencia,
                     'N_radicado'=> $radicado_dictamen,
-                    'Estado_decreto' => 'Abierto',
+                    'Estado_decreto' => 'Cerrado',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
