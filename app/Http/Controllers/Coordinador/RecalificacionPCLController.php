@@ -4998,7 +4998,7 @@ class RecalificacionPCLController extends Controller
                     'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
                     'Justificacion_dependencia' => $justi_dependencia,
                     'N_radicado'=> $radicado_dictamen,
-                    'Estado_decreto' => 'Abierto',
+                    'Estado_decreto' => 'Cerrado',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
@@ -5071,7 +5071,7 @@ class RecalificacionPCLController extends Controller
                     'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
                     'Justificacion_dependencia' => $justi_dependencia,
                     'N_radicado'=> $radicado_dictamen,
-                    'Estado_decreto' => 'Abierto',
+                    'Estado_decreto' => 'Cerrado',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
@@ -5150,7 +5150,7 @@ class RecalificacionPCLController extends Controller
                     'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
                     'Justificacion_dependencia' => $justi_dependencia,
                     'N_radicado'=> $radicado_dictamen,
-                    'Estado_decreto' => 'Abierto',
+                    'Estado_decreto' => 'Cerrado',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
@@ -5190,7 +5190,7 @@ class RecalificacionPCLController extends Controller
                     'Requiere_dispositivo_apoyo' => $requiere_dispositivo_apoyo,
                     'Justificacion_dependencia' => $justi_dependencia,
                     'N_radicado'=> $radicado_dictamen,
-                    'Estado_decreto' => 'Abierto',
+                    'Estado_decreto' => 'Cerrado',
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
@@ -8102,8 +8102,9 @@ class RecalificacionPCLController extends Controller
         $array_diagnosticos_fc = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
         ->select('side.CIE10', 'slcd.CIE10 as Codigo_cie10', 'side.Nombre_CIE10', 'side.Origen_CIE10', 'slp.Nombre_parametro as Nombre_origen', 
-        'side.Deficiencia_motivo_califi_condiciones')
+        'side.Deficiencia_motivo_califi_condiciones','slp2.Nombre_parametro as LateralidadDx')
         ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Estado_Recalificacion', 'Activo']])->get();  
 
         $array_deficiencias_alteraciones = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')

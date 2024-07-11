@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('Fuente_informacion',25)->nullable();            
             $table->datetime('F_accion');
             $table->string('Accion',40);
-            $table->date('F_Alerta')->nullable();
+            $table->datetime('F_Alerta')->nullable();
             $table->string('Enviar',40);
             $table->text('Estado_Facturacion')->nullable();
             $table->string('Causal_devolucion_comite',40)->nullable();

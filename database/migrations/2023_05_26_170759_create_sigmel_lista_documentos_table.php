@@ -15,6 +15,7 @@ return new class extends Migration
             $table->increments('Id_Documento');
             $table->string('Nro_documento', 3);
             $table->text('Nombre_documento');
+            $table->text('Descripcion_documento')->nullable();
             $table->enum('Requerido', ['Si', 'No']);
             $table->enum('Estado', ['activo', 'inactivo'])->default('activo');
             $table->date('F_registro_documento');

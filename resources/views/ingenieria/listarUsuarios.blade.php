@@ -52,7 +52,7 @@
                                 @foreach ($listado_usuarios as $usuario)
                                     <tr>
                                         <td>
-                                            <a href="javascript:void(0);" id="btn_modal_edicion_usuario_{{$usuario->id}}" data-toggle="modal" data-target="#modalEdicionUsuario_{{$usuario->id}}" data-id_editar_usuario="{{$usuario->id}}" data-nombre_editar_usuario="{{$usuario->name}}"><i class="fa fa-pen text-primary"></i></a>
+                                            <a href="javascript:void(0);" class="editar_usuario" id="btn_modal_edicion_usuario_{{$usuario->id}}" data-toggle="modal" data-target="#modalEdicionUsuario_{{$usuario->id}}" data-id_editar_usuario="{{$usuario->id}}" data-nombre_editar_usuario="{{$usuario->name}}"><i class="fa fa-pen text-primary"></i></a>
                                         </td>
                                         <td><?php echo $iterar = $iterar + 1; ?></td>
                                         <td>{{$usuario->name}}</td>
@@ -149,9 +149,9 @@
                                 </div>
                                 <div class="col-3">
                                     <div class="form-group">
-                                        <label  class="col-form-label">¿A qué procesos pertenece?</label>
+                                        <label  class="col-form-label">¿A qué procesos pertenece? <span style="color:red;">(*)</span></label>
                                         <input type="hidden" id="string_id_procesos">
-                                        <select class="editar_listado_procesos_crear_usuario custom-select" name="editar_listado_procesos_crear_usuario[]" id="editar_listado_procesos_crear_usuario" style="width:100%;"></select>
+                                        <select class="editar_listado_procesos_crear_usuario custom-select" name="editar_listado_procesos_crear_usuario[]" id="editar_listado_procesos_crear_usuario" style="width:100%;" required></select>
                                     </div>
                                 </div>
                                 <div class="col-3">

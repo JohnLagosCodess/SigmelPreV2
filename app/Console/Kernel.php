@@ -13,6 +13,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+        // $schedule->command('app:acciones-automaticas')->cron('*/2 * * * *'); // Ejecuta cada 2 minutos
+        $schedule->command('app:acciones-automaticas')->dailyAt('00:10');
+
     }
 
     /**

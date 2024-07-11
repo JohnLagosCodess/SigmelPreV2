@@ -1579,8 +1579,8 @@ class AdicionDxDTO extends Controller
         ->where([['ID_evento',$request->ID_Evento], ['Id_Asignacion',$request->Id_Asignacion], ['T_documento','N/A'], ['Modulo_creacion','adicionDxDtoOrigen']])->get();
         
 
-        if ($Id_Adiciones_Dx == "" || count($documentos) == 0) {
 
+        if ($Id_Adiciones_Dx == "" || count($documentos) == 0) {
             sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')->insert($datos_formulario);
 
             $datos_info_comunicado_eventos = [

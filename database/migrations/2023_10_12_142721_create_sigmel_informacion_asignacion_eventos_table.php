@@ -20,9 +20,9 @@ return new class extends Migration
             $table->enum('Visible_Nuevo_Servicio', ['Si','No'])->default('Si')->nullable();
             $table->integer('Id_accion');
             $table->text('Descripcion')->nullable();
-            $table->date('F_alerta')->nullable();
+            $table->datetime('F_alerta')->nullable();
             $table->integer('Id_Estado_evento')->nullable();
-            $table->date('F_accion')->nullable();
+            $table->datetime('F_accion')->nullable();
             $table->date('F_radicacion')->nullable();
             $table->date('Nueva_F_radicacion')->nullable();
             $table->string('N_de_orden', 20)->nullable();
@@ -37,6 +37,7 @@ return new class extends Migration
             $table->date('F_ajuste_calificacion')->nullable();            
             $table->enum('Detener_tiempo_gestion', ['Si','No'])->nullable();
             $table->date('F_detencion_tiempo_gestion')->nullable();
+            $table->text('Fuente_info_juntas')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

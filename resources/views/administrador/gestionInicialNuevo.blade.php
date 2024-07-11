@@ -619,26 +619,26 @@
                                         <div class="row">
                                             <div class="col-4">
                                                 <div class="form-group">
-                                                    <label for="motivo_solicitud" class="col-form label">Motivo solicitud</label>
-                                                    <select class="motivo_solicitud custom-select" name="motivo_solicitud" id="motivo_solicitud"></select>
+                                                    <label for="motivo_solicitud" class="col-form label">Motivo solicitud <span style="color:red;">(*)</span></label>
+                                                    <select class="motivo_solicitud custom-select" name="motivo_solicitud" id="motivo_solicitud" required></select>
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
-                                                    <label for="tipovinculo" class="col-form label">Tipo de vinculación</label>
-                                                    <select class="tipovinculo custom-select" name="tipovinculo" id="tipovinculo"></select>
+                                                    <label for="tipovinculo" class="col-form label">Tipo de vinculación <span style="color:red;">(*)</span></label>
+                                                    <select class="tipovinculo custom-select" name="tipovinculo" id="tipovinculo" required></select>
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
-                                                    <label for="regimen" class="col-form label">Régimen en salud</label>
-                                                    <select class="regimen custom-select" name="regimen" id="regimen"></select>
+                                                    <label for="regimen" class="col-form label">Régimen en salud <span style="color:red;">(*)</span></label>
+                                                    <select class="regimen custom-select" name="regimen" id="regimen" required></select>
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
-                                                    <label for="solicitante" class="col-form label">Solicitante</label>
-                                                    <select class="solicitante custom-select" name="solicitante" id="solicitante"></select>
+                                                    <label for="solicitante" class="col-form label">Solicitante <span style="color:red;">(*)</span></label>
+                                                    <select class="solicitante custom-select" name="solicitante" id="solicitante" required></select>
                                                 </div>
                                             </div>     
                                             <div class="col-4 columna_otro_solicitante d-none">
@@ -649,8 +649,8 @@
                                             </div>
                                             <div class="col-4 columna_nombre_solicitante">
                                                 <div class="form-group">
-                                                    <label for="nombre_solicitante" class="col-form label">Nombre de solicitante</label>
-                                                    <select class="nombre_solicitante custom-select" name="nombre_solicitante" id="nombre_solicitante" disabled></select>
+                                                    <label for="nombre_solicitante" class="col-form label">Nombre de solicitante <span style="color:red;">(*)</span></label>
+                                                    <select class="nombre_solicitante custom-select" name="nombre_solicitante" id="nombre_solicitante" requiered disabled></select>
                                                 </div>
                                             </div>
                                             <div class="col-4 columna_otro_nombre_solicitante d-none">

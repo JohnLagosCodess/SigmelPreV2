@@ -586,15 +586,15 @@ $(document).ready(function(){
                 if (response.parametro == 'agregarCalificacionPcl') {
                     $('.alerta_calificacion').removeClass('d-none');
                     if (response.parametro_1 == "guardo") {
-                        $('.alerta_calificacion').append('<strong>'+response.mensaje_1+'</strong>');
+                        $('.alerta_calificacion').append('<strong>'+response.mensaje_1+' Y '+response.mensaje_2+'</strong>');
                     } else {
-                        $('.alerta_calificacion').append('<strong>'+response.mensaje+'</strong>');
+                        $('.alerta_calificacion').append('<strong>'+response.mensaje+' Y '+response.mensaje_2+'</strong>');
                     }
                     setTimeout(function(){
                         $('.alerta_calificacion').addClass('d-none');
                         $('.alerta_calificacion').empty(); 
                         location.reload();                      
-                    }, 3000);
+                    }, 15000);
                 }                
             }
         })        
@@ -693,7 +693,7 @@ $(document).ready(function(){
                     data-reviso_comunicado="'+data[i]["Reviso"]+'" data-revisonombre_comunicado="'+data[i]["Nombre_lider"]+'"\
                     data-firma_cliente="'+data[i]["Firmar_Comunicado"]+'" data-agregar_copia="'+data[i]["Agregar_copia"]+'"\
                     data-tipo_descarga="'+ data[i]["Tipo_descarga"] +'" data-modulo_creacion="'+data[i]["Modulo_creacion"]+'"\
-                    data-reemplazado="'+data[i]["Reemplazado"]+'"><i class="fa fa-pen text-info"></i></a>\
+                    data-reemplazado="'+data[i]["Reemplazado"]+'"data-numero_siniestro="'+data[i]["N_siniestro"]+'"><i class="fa fa-pen text-info"></i></a>\
                     <a href="javascript:void(0);" class="text-dark" id="verDocumento_'+data[i]["Id_Comunicado"]+'"\
                     title="Descargar Comunicado"\
                     id_comunicado="'+ data[i]["Id_Comunicado"] + '" id_evento="' + data[i]["ID_evento"] + '"\
@@ -714,7 +714,7 @@ $(document).ready(function(){
                     firmar_comunicado="'+ data[i]["Firmar_Comunicado"] + '"\
                     agregar_copia="'+ data[i]["Agregar_copia"] + '"\
                     tipo_descarga="'+ data[i]["Tipo_descarga"] + '" modulo_creacion="'+data[i]["Modulo_creacion"]+'" reemplazado="'+data[i]["Reemplazado"]+'"\
-                    nombre_documento="'+data[i]["Nombre_documento"] + '"><i style="cursor:pointer" class="far fa-eye text-info"></i></a>';
+                    nombre_documento="'+data[i]["Nombre_documento"] + '"numero_siniestro="'+data[i]["N_siniestro"]+'"><i style="cursor:pointer" class="far fa-eye text-info"></i></a>';
                     if(data[i]['Existe'] && data[i]['Nombre_documento'] != null){
                         comunicadoNradico += '<a href="javascript:void(0);" id="replace_file" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalReemplazarArchivos"\
                             data-id_evento="' + data[i]["ID_evento"] + '" data-id_comunicado="'+ data[i]["Id_Comunicado"] + '"\
@@ -802,6 +802,9 @@ $(document).ready(function(){
                 data: formData,
                 processData: false,
                 contentType: false,
+                beforeSend:  function() {
+                    $("#cargarComunicadoModal").addClass("descarga-deshabilitada");
+                },
                 success:function(response){
                     if (response.parametro == 'reemplazar_comunicado') {
                         $('.alerta_externa_comunicado_modal').removeClass('d-none');
@@ -811,8 +814,12 @@ $(document).ready(function(){
                             $('.alerta_externa_comunicado_modal').empty();
                             localStorage.setItem("#Generar_comunicados", true);
                             location.reload();
-                        }, 3000);
+                            $("#modalReemplazarArchivos").modal('hide');
+                        }, 1000);
                     }
+                },
+                complete:function(){
+                    $("#cargarComunicadoModal").removeClass("descarga-deshabilitada");
                 }
             });
         }
@@ -976,6 +983,7 @@ $(document).ready(function(){
                 'edit_copia_eps':edit_copia_eps,
                 'edit_copia_afp':edit_copia_afp,
                 'edit_copia_arl':edit_copia_arl,
+                'n_siniestro_proforma_editar': this.getAttribute('numero_siniestro') !== 'null' ? this.getAttribute('numero_siniestro') : null,
             };
         }
         else{
@@ -1022,6 +1030,7 @@ $(document).ready(function(){
                 'edit_copia_eps':edit_copia_eps,
                 'edit_copia_afp':edit_copia_afp,
                 'edit_copia_arl':edit_copia_arl,
+                'n_siniestro_proforma_editar': this.getAttribute('numero_siniestro') !== 'null' ? this.getAttribute('numero_siniestro') : null,
             };
         }
         if(parseInt(Reemplazado) == 1){
@@ -1189,6 +1198,7 @@ $(document).ready(function(){
         var firma_cliente = $(this).data("firma_cliente");
         var agregar_copia =  $(this).data("agregar_copia");
         var tipo_descarga = $(this).data("tipo_descarga");
+        var N_siniestro = $(this).data("numero_siniestro");
         document.getElementById('ciudad_comunicado_editar').value=ciudad_comunicado;
         document.getElementById('Id_comunicado_act').value=id_comunicado;
         document.getElementById('Id_evento_act').value=id_evento;
@@ -1207,7 +1217,8 @@ $(document).ready(function(){
         document.getElementById('identificacion_comunicado_editar').value=numero_identificacion;
         document.getElementById('identificacion_comunicado2_editar').value=numero_identificacion;
         document.getElementById('id_evento_comunicado_editar').value=id_evento;
-        document.getElementById('id_evento_comunicado2_editar').value=id_evento;  
+        document.getElementById('id_evento_comunicado2_editar').value=id_evento; 
+        document.getElementById('n_siniestro_proforma_editar').value = N_siniestro;   
         //console.log(agregar_copia);
         let datos_destinatario_principal ={
             '_token':token,
@@ -1991,6 +2002,7 @@ $(document).ready(function(){
         var forma_envio = $('#forma_envio_editar').val();
         var elaboro2 = $('#elaboro2_editar').val();
         var reviso = $('#reviso_editar').val();
+        var N_siniestro = $("#n_siniestro_proforma_editar").val();
         var firmarcomunicadoPcl = [];
         $('input[type="checkbox"]').each(function() {
             var firmarcomunicado = $(this).attr('id');   
@@ -2066,6 +2078,7 @@ $(document).ready(function(){
             'reviso_editar':reviso,
             'firmarcomunicado_editar':firmarcomunicadoPcl,
             'agregar_copia_editar':EditComunicadosPcl,
+            'N_siniestro':N_siniestro,
         }
 
         document.querySelector("#Editar_comunicados").disabled = true;     
@@ -2685,7 +2698,10 @@ $(document).ready(function(){
             url:'/registrarComunicado',
             data: formData,   
             processData: false,
-            contentType: false,         
+            contentType: false,
+            beforeSend:  function() {
+                $("#cargarComunicado").addClass("descarga-deshabilitada");
+            },           
             success:function(response){
                 if (response.parametro == 'agregar_comunicado') {
                     $('.alerta_externa_comunicado').removeClass('d-none');
@@ -2697,6 +2713,9 @@ $(document).ready(function(){
                         location.reload();
                     }, 3000);
                 }
+            },
+            complete:function(){
+                $("#cargarComunicado").removeClass("descarga-deshabilitada");
             }
         });  
     });
@@ -2743,6 +2762,7 @@ $(document).ready(function(){
         var elaboro2 = $('#elaboro2').val();
         var reviso = $('#reviso').val();
         var firmarcomunicadoPcl = [];
+        var N_siniestro = $("#n_siniestro").val();
         $('input[type="checkbox"]').each(function() {
             var firmarcomunicado = $(this).attr('id');   
             if (firmarcomunicado === 'firmarcomunicado') {                
@@ -2817,6 +2837,7 @@ $(document).ready(function(){
             'firmarcomunicado':firmarcomunicadoPcl,
             'agregar_copia':copiaComunicadosPcl,
             'tipo_descarga':tipo_descarga,
+            'N_siniestro':N_siniestro,
         }
         
         document.querySelector("#Generar_comunicados").disabled = true;   

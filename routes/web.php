@@ -277,6 +277,7 @@ Route::post('/eliminarDocumentoComplementario', [AdministradorController::class,
 
 // Acción: Descargar Documentos
 Route::get('/descargar-archivo/{nombreArchivo}/{id_evento}', [AdministradorController::class, 'DescargarDocumentos']);
+Route::post('/descargar-documentos', [AdministradorController::class, 'descargaMasiva']);
 
 Route::post('/registrarOtraEmpresa', [AdministradorController::class, 'registrarOtraEmpresa']);
 // Acción: Traer el listado de historicos de empresa dependiendo del numero de identificacion del afiliado
@@ -304,6 +305,8 @@ Route::post('/selectoresBandejaPCL', [CoordinadorController::class, 'cargueLista
 Route::post('/sinfiltrosBandejaPCL', [CoordinadorController::class, 'sinFiltroBandejaPCL']);
 // Accion: Capturar data según los filtros
 Route::post('/filtrosBandejaPCL', [CoordinadorController::class, 'filtroBandejaPCl']);
+// Accion: Capturar Id_Asignacion para las alertar naranjas y rojas
+Route::post('/alertasNaranjasRojasPCL', [CoordinadorController::class, 'alertaNaranjasRojasPCL']);
 // Accion: Actualizar el profesional y redireccionar el servicio
 Route::post('/actualizarProfesionalServicio', [CoordinadorController::class, 'actualizarBandejaPCL']);
 // Acción: Reemplazar Documentos
@@ -567,6 +570,8 @@ Route::post('/selectoresBandejaOrigen', [BandejaOrigenController::class, 'cargue
 Route::post('/sinfiltrosBandejaOrigen', [BandejaOrigenController::class, 'sinFiltroBandejaOrigen']);
 // Accion: Capturar data según los filtros
 Route::post('/filtrosBandejaOrigen', [BandejaOrigenController::class, 'filtrosBandejaOrigen']);
+// Accion: Capturar Id_Asignacion para las alertar naranjas y rojas
+Route::post('/alertasNaranjasRojasOrigen', [BandejaOrigenController::class, 'alertaNaranjasRojasOrigen']);
 // Accion: Actualizar el profesional y redireccionar el servicio
 Route::post('/actualizarProfesionalServicioOrigen', [BandejaOrigenController::class, 'actualizarBandejaOrigen']);
 
@@ -657,6 +662,8 @@ Route::post('/selectoresBandejaJuntas', [BandejaJuntasController::class, 'cargue
 Route::post('/sinfiltrosBandejaJuntas', [BandejaJuntasController::class, 'sinFiltroBandejaJuntas']);
 // Accion: Capturar data según los filtros
 Route::post('/filtrosBandejaJuntas', [BandejaJuntasController::class, 'filtrosBandejaJuntas']);
+// Accion: Capturar Id_Asignacion para las alertar naranjas y rojas
+Route::post('/alertasNaranjasRojasJuntas', [BandejaJuntasController::class, 'alertaNaranjasRojasJuntas']);
 // Accion: Actualizar el profesional y redireccionar el servicio
 Route::post('/actualizarProfesionalServicioJuntas', [BandejaJuntasController::class, 'actualizarBandejaJuntas']);
 //17/10/2023
@@ -691,6 +698,10 @@ Route::post('/actualizarComunicadoJuntas', [CalificacionJuntasController::class,
 Route::post('/registrarCausalSeguimientoJuntas', [CalificacionJuntasController::class, 'guardarAgregarSeguimientoJuntas']);
 // Acción: Traer historial de acciones del evento de la tabla sigmel_informacion_historial_accion_eventos
 Route::post('/historialAccionesEventosJun', [CalificacionJuntasController::class, 'historialAccionesEventoJun']);
+
+/** Creacion de expediente y lista de chequeo */
+//Accion: Generar lista chequeo
+Route::post('/registrarListaChequeo', [CalificacionJuntasController::class, 'generarListaChequeo']);
 
 //18/11/2023
 // Vista: Módulo Controversia Juntas
@@ -799,7 +810,6 @@ Route::post('/ActualizarParametrizacionCalificacionPcl', [ParametrizacionControl
 Route::post('/EnvioParametrizacionJuntas', [ParametrizacionController::class, 'EnvioParametrizacionJuntas']);
 // Acción: Actualizar la parametrización del proceso juntas
 Route::post('/ActualizarParametrizacionJuntas', [ParametrizacionController::class, 'ActualizarParametrizacionJuntas']);
-
 
 /* DESCARGA DE PROFORMAS */
 

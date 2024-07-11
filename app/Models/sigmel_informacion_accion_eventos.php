@@ -16,6 +16,7 @@ class sigmel_informacion_accion_eventos extends Model
     protected $fillable = [
     'ID_evento',
     'Id_Asignacion',
+    'Id_proceso',
     'Modalidad_calificacion',
     'Fuente_informacion',
     'F_accion',

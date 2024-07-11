@@ -276,6 +276,7 @@
                                                         <tr class="bg-info">
                                                             <th style="width: 340px !important;">CIE10</th>
                                                             <th style="width: 340px !important;">Nombre CIE10</th>
+                                                            <th style="width: 140px !important;">Lateralidad Dx</th>
                                                             <th style="width: 340px !important;">Origen CIE10</th>
                                                             <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_cie10_fila"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                         </tr>
@@ -285,6 +286,7 @@
                                                         <tr class="fila_diagnosticos_{{$diagnostico->Id_Diagnosticos_motcali}}" id="datos_diagnostico">
                                                             <td>{{$diagnostico->Codigo}}</td>
                                                             <td>{{$diagnostico->Nombre_CIE10}}</td>
+                                                            <td>{{$diagnostico->Nombre_parametro_lateralidad}}</td>
                                                             <td>{{$diagnostico->Nombre_parametro}}</td>
                                                             <td>
                                                                 <div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_diagnosticos_moticalifi{{$diagnostico->Id_Diagnosticos_motcali}}" data-id_fila_quitar="{{$diagnostico->Id_Diagnosticos_motcali}}" data-clase_fila="fila_diagnosticos_{{$diagnostico->Id_Diagnosticos_motcali}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
@@ -357,7 +359,7 @@
                                             </span>
                                         </div>
                                         <div class="form-group">
-                                            <label for="asunto_cali">Asunto<span style="color: red;">(*)</span></label>
+                                            <label for="asunto_cali" id='label_asunto_cali'>Asunto<span style="color: red;">(*)</span></label>
                                             <br>
                                             <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nro_dictamen_pri_cali">N° Dictamen Primer Calificador</button>
                                             <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_fecha_dictamen_pri_cali">Fecha Dictamen Primer Calificador</button>
@@ -829,6 +831,7 @@
                 var nueva_fila_cie10 = [
                     '<select id="lista_Cie10_fila_'+contador_cie10+'" class="custom-select lista_Cie10_fila_'+contador_cie10+'" name="lista_Cie10"><option></option></select>',
                     '<input type="text" class="form-control" id="nombre_cie10_fila_'+contador_cie10+'" name="nombre_cie10"/>',
+                    '<select id="lista_lateralidadCie10_fila_'+contador_cie10+'" class="custom-select lista_lateralidadCie10_fila_'+contador_cie10+'" name="lista_lateralidadCie10"><option></option></select>',
                     '<select id="lista_origenCie10_fila_'+contador_cie10+'" class="custom-select lista_origenCie10_fila_'+contador_cie10+'" name="lista_origenCie10"><option></option></select>',
                     '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_cie10_fila" class="text-info" data-fila="fila_'+contador_cie10+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
                     'fila_'+contador_cie10
@@ -849,6 +852,22 @@
             $(document).on('click', "a[id^='btn_remover_diagnosticos_moticalifi']", function(){
                 var nombre_cie10_fila = $(this).data("clase_fila");
                 listado_diagnostico_cie10.row("."+nombre_cie10_fila).remove().draw();
+            });
+
+            //PBS 045 se solicita desactivar la obligatoriedad del campo asunto cuando se selecione un silencio.
+            if($("#di_silencio_pr").prop('checked',true)){
+                $("#asunto_cali").prop("required",false);
+                $("#label_asunto_cali span").addClass('d-none');
+            }
+
+            $("#di_silencio_pr").focus(function() {
+                $("#asunto_cali").prop("required",false);
+                $("#label_asunto_cali span").addClass('d-none');
+            });
+
+            $("input[type='radio']:not(#di_silencio_pr)").change(function(){
+                $("#asunto_cali").prop("required",true);
+                $("#label_asunto_cali span").removeClass('d-none');
             });
             
         });

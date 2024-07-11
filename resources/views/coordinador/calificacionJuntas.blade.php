@@ -290,7 +290,8 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="fecha_alerta">Fecha de alerta</label>
-                                                    <input type="date" class="form-control" name="fecha_alerta" id="fecha_alerta" min="{{now()->format('Y-m-d')}}" value="{{$array_datos_calificacionJuntas[0]->F_alerta}}">
+                                                    <input type="datetime-local" class="form-control" name="fecha_alerta" id="fecha_alerta" min="{{now()->format('Y-m-d H:i:s')}}" value="<?php if(!empty($array_datos_calificacionJuntas[0]->F_alerta)){echo $array_datos_calificacionJuntas[0]->F_alerta;}?>">
+                                                    {{-- <input type="date" class="form-control" name="fecha_alerta" id="fecha_alerta" min="{{now()->format('Y-m-d')}}" value="{{$array_datos_calificacionJuntas[0]->F_alerta}}"> --}}
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -898,7 +899,7 @@
                             </div>
                             <div class="col-3 text-center" <?php if(!empty($arrayinfo_controvertido[0]->Termino_contro_califi) && $arrayinfo_controvertido[0]->Termino_contro_califi=='Fuera de términos'){ ?> style="display:none" <?php } ?>>
                                 <div class="form-group">
-                                    <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalAgregarExpediente"><i class="fas fa-archive text-info"></i> <strong>Crear Expediente</strong></a>
+                                    <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalCrearExpediente" id="crearExpediente"><i class="fas fa-archive text-info"></i> <strong>Crear Expediente</strong></a>
                                 </div>
                             </div>
                             <div class="col-3 text-center" <?php if(!empty($arrayinfo_controvertido[0]->Termino_contro_califi) && $arrayinfo_controvertido[0]->Termino_contro_califi=='Fuera de términos'){ ?> style="display:none" <?php } ?>>
@@ -1028,6 +1029,12 @@
                                                 <label for="id_evento_comunicado">ID evento</label>
                                                 <input class="form-control" type="text" name="id_evento_comunicado" id="id_evento_comunicado" value="{{$array_datos_calificacionJuntas[0]->ID_evento}}" disabled>
                                                 <input hidden="hidden" class="form-control" type="text" name="id_evento_comunicado2" id="id_evento_comunicado2" value="{{$array_datos_calificacionJuntas[0]->ID_evento}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="n_siniestro">N° de Siniestro</label>
+                                                <input type="text" class="n_siniestro_comunicado form-control" id="n_siniestro_comunicado" name="n_siniestro_comunicado">        
                                             </div>
                                         </div>
                                     </div>
@@ -1439,6 +1446,12 @@
                                                 <label for="id_evento_comunicado_act">ID evento</label>
                                                 <input class="form-control" type="text" name="id_evento_comunicado_act" id="id_evento_comunicado_editar"  disabled>
                                                 <input hidden="hidden" class="form-control" type="text" name="id_evento_comunicado2_act" id="id_evento_comunicado2_editar">
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <label for="n_siniestro">N° de Siniestro</label>
+                                                <input type="text" class="n_siniestro_comunicado_editar form-control" id="n_siniestro_proforma_editar" name="n_siniestro_proforma_editar">        
                                             </div>
                                         </div>
                                     </div>
@@ -1894,6 +1907,7 @@
     </div>
     <?php $aperturaModal = 'Edicion'; ?>
     @include('//.administrador.modalcarguedocumentos')
+    @include('//.coordinador.modalCrearExpediente')
     @include('//.coordinador.modalReemplazarArchivos')
 @stop
 @section('js')

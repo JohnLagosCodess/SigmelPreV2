@@ -29,10 +29,15 @@ use App\Models\sigmel_lista_departamentos_municipios;
 use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_laboral_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
+use App\Models\sigmel_registro_documentos_eventos;
+use App\Models\sigmel_lista_documentos;
 
 use App\Models\sigmel_clientes;
+use App\Models\sigmel_informacion_acciones_automaticas_eventos;
+use App\Models\sigmel_informacion_alertas_automaticas_eventos;
 use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_historial_accion_eventos;
+use DateTime;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
 use PhpOffice\PhpWord\Shared\Html;
@@ -486,6 +491,58 @@ class CalificacionJuntasController extends Controller
             return response()->json($info_datos_tipos_documentos_familia);
         }
 
+        if($parametro == "listado_documentos"){
+            $match = ['Orden de pago honorarios', 'Dictamen de Calificación', 'Notificación al usuario', 'Apelación al dictamen', 'Anexo G (Datos Generales)', 'Fotocopia Documento Identidad', 'Autorización historia clínica', 'Historia clínica completa', 'Concepto de rehabilitación', 'Conceptos o recomendaciones y/o restricciones ocupacionales', 'Registro civil de defunción', 'Acta de levantamiento del cadáver', 'Protocolo de necropsia', 'Exámenes complementarios', 'Relación de incapacidades', 'Dictamen Junta Regional', 'Origen de la patología', 'Guía Afiliado', 'Guía Empleador', 'Guía ARL', 'Guía AFP', 'Guía EPS', 'Lista de chequeo'];
+
+            if (empty($request->Id_servicio)) {
+                return;
+            }
+            $Id_servicio = $request->Id_servicio;
+            $newIdEvento = $request->Id_evento;
+            $documentos = DB::select('CALL psrvistadocumentos(?,?)',array((string)$newIdEvento , (int) $Id_servicio));
+        
+            $lista_chequeo = [];
+
+            foreach($documentos as $documento){
+                if(in_array($documento->Nombre_documento,$match))
+                    $lista_chequeo[] = [
+                        'Id_Documento' => $documento->Id_Documento,
+                        'doc_nombre' => $documento->Nombre_documento,
+                        'archivo' => $documento->nombre_Documento,
+                        'ext' => $documento->formato_documento,
+                        'status_doc' => $documento->estado_documento,
+                        'check' => $documento->Lista_chequeo
+                    ];
+            }
+
+            // Creamos un array asociativo para obtener los índices de $match
+            $matchIndex = array_flip($match);
+
+            // Función de comparación para ordenar según el orden de $match
+            usort($lista_chequeo, function($a, $b) use ($matchIndex) {
+                return $matchIndex[$a['doc_nombre']] - $matchIndex[$b['doc_nombre']];
+            });
+
+            //Comunicados 
+            $comunicados = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos')
+            ->select('Asunto as Nombre','Id_Comunicado', 'Lista_chequeo')
+            ->where([
+                ['ID_evento', $request->Id_evento],
+                ['Id_Asignacion', $request->Id_asignacion],
+                ['Asunto', 'not like', '%Lista_chequeo%'],
+                ['Modulo_creacion', 'calificacionJuntas']
+            ])->get()->toArray();
+
+            foreach($comunicados as $comunicado){
+                $lista_chequeo['comunicados'][] = [
+                    'nombre' =>preg_replace("/\.[^.]*$/", '', $comunicado->Nombre), //Le quitamos cualquier ext al archivo
+                    'Id_Comunicado' => $comunicado->Id_Comunicado,
+                    'Lista_chequeo' => $comunicado->Lista_chequeo,
+                ];
+            }
+
+            return response()->json($lista_chequeo);
+        }
     }
 
     //Guardar informacion del modulo de Juntas
@@ -605,15 +662,102 @@ class CalificacionJuntasController extends Controller
                 'F_registro' => $date,
             ];
 
-            sigmel_informacion_accion_eventos::on('sigmel_gestiones')->insert($datos_info_registrarCalifcacionJuntas);
+            $Id_Accion_eventos = sigmel_informacion_accion_eventos::on('sigmel_gestiones')->insertGetId($datos_info_registrarCalifcacionJuntas);
+            // Capturar el id accion para validar la accion que se acabo de guardar
+            $info_accion_evento = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
+            ->select('Accion', 'F_accion')
+            ->where([
+                ['Id_Accion', $Id_Accion_eventos],
+            ])
+            ->get();
+            // accion a realizar
+            $AccionEvento = $info_accion_evento[0]->Accion;            
+            // captura de movimiento automatico, tiempo de movimiento (dias) y accion automatica segun la accion a realizar 
+            // segun al servicio asosciado
+            $info_accion_automatica = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+            ->select('Movimiento_automatico','Tiempo_movimiento','Accion_automatica')
+            ->where([
+                ['Accion_ejecutar', $AccionEvento],
+                ['Id_cliente', $id_cliente],
+                ['Id_proceso', $Id_proceso],
+                ['Servicio_asociado', $Id_servicio],
+                ['Status_parametrico', 'Activo']
+            ])->get();
+            $Movimiento_automatico = $info_accion_automatica[0]->Movimiento_automatico;
+            $Tiempo_movimiento = $info_accion_automatica[0]->Tiempo_movimiento;
+            $Accion_automatica = $info_accion_automatica[0]->Accion_automatica;
+            // case 1: si hay movimiento automatico, tiempo movimiento y accion automatica 
+            // Case 2: Si hay movimiento automatico y tiempo movimiento pero no accion automatica
+            // Case 3: Si hay movimiento automatico, accion automatica y no hay tiempo movimiento
+            // Case 4: Si hay movimiento automatico y no hay tiempo movimiento y accion automatica
+            switch (true) {
+                case (!empty($Movimiento_automatico) and $Movimiento_automatico == 'Si' and !empty($Tiempo_movimiento) and !empty($Accion_automatica)):
+                        $info_datos_accion_automatica = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_parametrizaciones_clientes as sipc')
+                        ->leftJoin('sigmel_sys.users as u', 'u.id', '=', 'sipc.Profesional_asignado')
+                        ->select('sipc.Accion_ejecutar', 'sipc.Estado', 'sipc.Profesional_asignado', 'u.name')
+                        ->where([
+                            ['sipc.Accion_ejecutar', $Accion_automatica],
+                            ['sipc.Id_cliente', $id_cliente],
+                            ['sipc.Id_proceso', $Id_proceso],
+                            ['sipc.Servicio_asociado', $Id_servicio],
+                            ['sipc.Status_parametrico', 'Activo']
+                        ])->get();
+                        
+                            $Accion_ejecutar_automatica = $info_datos_accion_automatica[0]->Accion_ejecutar;
+                            $Profesional_asignado_automatico = $info_datos_accion_automatica[0]->Profesional_asignado;
+                            $NombreProfesional_asignado_automatico = $info_datos_accion_automatica[0]->name;
+                            $Id_Estado_evento_automatico = $info_datos_accion_automatica[0]->Estado;
+                            
+                            // Se suman los dias a la fecha actual para saber la fecha del movimiento automatico
+                            $dateTime = new DateTime($date_time);
+                            $dias = $Tiempo_movimiento; // Número de días que quieres sumar
+                            $dateTime->modify("+$dias days");
+                            $F_movimiento_automatico = $dateTime->format('Y-m-d');                            
+                            
+                            $array_info_datos_accion_automatica = [
+                                'Id_Asignacion' => $newIdAsignacion,
+                                'ID_evento' => $newIdEvento,
+                                'Id_proceso' => $Id_proceso,
+                                'Id_servicio' => $Id_servicio,
+                                'Id_cliente' =>$id_cliente,
+                                'Accion_automatica' => $Accion_ejecutar_automatica,
+                                'Id_Estado_evento_automatico' => $Id_Estado_evento_automatico,
+                                'F_accion' => $date_time,
+                                'Id_profesional_automatico' => $Profesional_asignado_automatico,
+                                'Nombre_profesional_automatico' => $NombreProfesional_asignado_automatico,
+                                'F_movimiento_automatico' => $F_movimiento_automatico,
+                                'Estado_accion_automatica' => 'Pendiente',
+                                'Nombre_usuario' => $nombre_usuario,
+                                'F_registro' => $date,
 
+                            ];
+
+                            sigmel_informacion_acciones_automaticas_eventos::on('sigmel_gestiones')->insert($array_info_datos_accion_automatica);
+                            
+                            $mensaje_2 = 'la acción parametrizada tiene una Acción automática y se ejecutará en '.$Tiempo_movimiento.' día(s)';
+                        
+                    break;
+                case (!empty($Movimiento_automatico) and $Movimiento_automatico == 'Si' and !empty($Tiempo_movimiento) and empty($Accion_automatica)):
+                        $mensaje_2 = 'la acción parametrizada tiene movimiento automático, Tiempo de moviemiento (Días) pero no cuenta con una Acción automática';
+                    break;
+                case (!empty($Movimiento_automatico) and $Movimiento_automatico == 'Si' and empty($Tiempo_movimiento) and !empty($Accion_automatica)):
+                    $mensaje_2 = 'la acción parametrizada tiene movimiento automático, Acción automatica pero no cuenta con Tiempo de moviemiento (Días)';
+                    break;
+                case (!empty($Movimiento_automatico) and $Movimiento_automatico == 'Si' and empty($Tiempo_movimiento) and empty($Accion_automatica)):
+                        $mensaje_2 = 'la acción parametrizada tiene movimiento automático, pero no cuenta con un Tiempo de moviemiento (Días) y Acción automática';
+                    break;                
+                default:       
+                        $mensaje_2 = 'la acción parametrizada NO tiene Movimiento Automático';
+                    break;
+            }  
             sleep(2);
 
             // Actualizacion tabla sigmel_informacion_asignacion_eventos
             $datos_info_actualizarAsignacionEvento= [ 
                 'Id_accion' => $request->accion,
                 'Id_Estado_evento' => $Id_Estado_evento,             
-                'F_alerta' => $request->fecha_alerta,   
+                'F_alerta' => $request->fecha_alerta,
+                'F_accion' => $date_time,
                 'Id_profesional' => $id_profesional,
                 'Nombre_profesional' => $asignacion_profesional,
                 'Nueva_F_radicacion' => $Nueva_fecha_radicacion,         
@@ -626,6 +770,242 @@ class CalificacionJuntasController extends Controller
             sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_actualizarAsignacionEvento);
 
+            sleep(2);
+
+            $F_accionEvento = $info_accion_evento[0]->F_accion;
+            $info_datos_alertar_accion_ejecutar = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+            ->select('Tiempo_alerta', 'Porcentaje_alerta_naranja', 'Porcentaje_alerta_roja')
+            ->where([
+                ['Accion_ejecutar', $AccionEvento],
+                ['Id_cliente', $id_cliente],
+                ['Id_proceso', $Id_proceso],
+                ['Servicio_asociado', $Id_servicio],
+                ['Status_parametrico', 'Activo']
+            ])
+            ->get();
+            $Tiempo_alerta = $info_datos_alertar_accion_ejecutar[0]->Tiempo_alerta;
+            $Porcentaje_alerta_naranja = $info_datos_alertar_accion_ejecutar[0]->Porcentaje_alerta_naranja;
+            $Porcentaje_alerta_roja = $info_datos_alertar_accion_ejecutar[0]->Porcentaje_alerta_roja;
+            // case 1: Validar si hay tiempo de alerta para crear la nueva fecha de alerta segun la fecha de accion
+                // formula FA= FC+TA (FA = fecha alerta, FC = fecha accion y TA = tiempo de alerta)
+            // case 2: Validar si hay tiempo de alerta y porcentaje de alerta naraja para crear la alerta naranja
+                // formula FA= FC+TA (FA = fecha alerta, FC = fecha accion y TA = tiempo de alerta)
+                // formula AN = (TA*PN)/100 (AN= Alerta naranja, TA = tiempo de alerta y PN = porcentaje de alerta naranja)
+            // case 3: Validar si hay tiempo de alerta y porcentaje de alerta roja para crear la alerta roja
+                // formula FA= FC+TA (FA = fecha alerta, FC = fecha accion y TA = tiempo de alerta)
+                // formula AR = (TA*PR)/100 (AR= Alerta roja, TA = tiempo de alerta y PR = porcentaje de alerta roja)
+            // case 4: Validar si hay tiempo de alerta, porcentaje de alerta naraja y porcentaje de alerta roja para crear todas las alertas
+                // formula FA= FC+TA (FA = fecha alerta, FC = fecha accion y TA = tiempo de alerta)
+                // formula AN = (TA*PN)/100 (AN= Alerta naranja, TA = tiempo de alerta y PN = porcentaje de alerta naranja)
+                // formula AR = (TA*PR)/100 (AR= Alerta roja, TA = tiempo de alerta y PR = porcentaje de alerta roja)
+            switch (true) {
+                case (!empty($Tiempo_alerta) and empty($Porcentaje_alerta_naranja) and empty($Porcentaje_alerta_roja)):
+                        $Nueva_F_Alerta = new DateTime($F_accionEvento);
+                        $horas = $Tiempo_alerta;
+                        $minutosAdicionales = ($horas - floor($horas)) * 60;
+                        $horas = floor($horas);
+                        $Nueva_F_Alerta->modify("+$horas hours");
+                        $Nueva_F_Alerta->modify("+$minutosAdicionales minutes");
+                        $Nueva_F_AlertaEvento = $Nueva_F_Alerta->format('Y-m-d H:i:s');
+                        
+                        $infoNueva_F_AlertaEvento_accion = [
+                            'F_Alerta' => $Nueva_F_AlertaEvento
+                        ];
+
+                        $infoNueva_F_AlertaEvento_asignacion = [
+                            'F_alerta' => $Nueva_F_AlertaEvento
+                        ];
+                        
+                        sigmel_informacion_accion_eventos::on('sigmel_gestiones')
+                        ->where([['Id_Asignacion', $newIdAsignacion]])
+                        ->update($infoNueva_F_AlertaEvento_accion);
+
+                        sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                        ->where([['Id_Asignacion', $newIdAsignacion]])
+                        ->update($infoNueva_F_AlertaEvento_asignacion);
+                    break;
+                case (!empty($Tiempo_alerta) and !empty($Porcentaje_alerta_naranja)  and empty($Porcentaje_alerta_roja)):
+                        $Nueva_F_Alerta = new DateTime($F_accionEvento);
+                        $horas = $Tiempo_alerta;
+                        $minutosAdicionales = ($horas - floor($horas)) * 60;
+                        $horas = floor($horas);
+                        $Nueva_F_Alerta->modify("+$horas hours");
+                        $Nueva_F_Alerta->modify("+$minutosAdicionales minutes");
+                        $Nueva_F_AlertaEvento = $Nueva_F_Alerta->format('Y-m-d H:i:s');
+                        
+                        $infoNueva_F_AlertaEvento_accion = [
+                            'F_Alerta' => $Nueva_F_AlertaEvento
+                        ];
+
+                        $infoNueva_F_AlertaEvento_asignacion = [
+                            'F_alerta' => $Nueva_F_AlertaEvento
+                        ];
+                        
+                        sigmel_informacion_accion_eventos::on('sigmel_gestiones')
+                        ->where([['Id_Asignacion', $newIdAsignacion]])
+                        ->update($infoNueva_F_AlertaEvento_accion);
+
+                        sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                        ->where([['Id_Asignacion', $newIdAsignacion]])
+                        ->update($infoNueva_F_AlertaEvento_asignacion);
+
+                        $Alerta_Naranja = ($Tiempo_alerta * $Porcentaje_alerta_naranja) / 100;
+
+                        $Nueva_F_Alerta_Naranja = new DateTime($F_accionEvento);
+                        $horas = $Alerta_Naranja;
+                        $minutosAdicionales_naranja = ($horas - floor($horas)) * 60;
+                        $horas = floor($horas);
+                        $Nueva_F_Alerta_Naranja->modify("+$horas hours");
+                        $minutosAdicionales_naranja_entero = round($minutosAdicionales_naranja);
+                        $Nueva_F_Alerta_Naranja->modify("+$minutosAdicionales_naranja_entero minutes");
+                        $Nueva_F_Alerta_NaranjaEvento = $Nueva_F_Alerta_Naranja->format('Y-m-d H:i:s');
+
+                        $array_info_datos_alertas_automatica = [
+                            'Id_Asignacion' => $newIdAsignacion,
+                            'ID_evento' => $newIdEvento,
+                            'Id_proceso' => $Id_proceso,
+                            'Id_servicio' => $Id_servicio,
+                            'Id_cliente' =>$id_cliente,
+                            'Accion_ejecutar' => $AccionEvento,
+                            'F_accion' => $date_time,
+                            'Tiempo_alerta' => $Tiempo_alerta,
+                            'Porcentaje_alerta_naranja' => $Porcentaje_alerta_naranja,
+                            'F_accion_alerta_naranja' => $Nueva_F_Alerta_NaranjaEvento,                            
+                            'Estado_alerta_automatica' => 'Ejecucion',
+                            'Nombre_usuario' => $nombre_usuario,
+                            'F_registro' => $date,
+                        ];
+
+                        sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')->insert($array_info_datos_alertas_automatica);
+                        
+                    break;
+                case (!empty($Tiempo_alerta) and empty($Porcentaje_alerta_naranja) and !empty($Porcentaje_alerta_roja)):
+                        $Nueva_F_Alerta = new DateTime($F_accionEvento);
+                        $horas = $Tiempo_alerta;
+                        $minutosAdicionales = ($horas - floor($horas)) * 60;
+                        $horas = floor($horas);
+                        $Nueva_F_Alerta->modify("+$horas hours");
+                        $Nueva_F_Alerta->modify("+$minutosAdicionales minutes");
+                        $Nueva_F_AlertaEvento = $Nueva_F_Alerta->format('Y-m-d H:i:s');
+                        
+                        $infoNueva_F_AlertaEvento_accion = [
+                            'F_Alerta' => $Nueva_F_AlertaEvento
+                        ];
+
+                        $infoNueva_F_AlertaEvento_asignacion = [
+                            'F_alerta' => $Nueva_F_AlertaEvento
+                        ];
+                        
+                        sigmel_informacion_accion_eventos::on('sigmel_gestiones')
+                        ->where([['Id_Asignacion', $newIdAsignacion]])
+                        ->update($infoNueva_F_AlertaEvento_accion);
+
+                        sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                        ->where([['Id_Asignacion', $newIdAsignacion]])
+                        ->update($infoNueva_F_AlertaEvento_asignacion);
+
+                        $Alerta_Roja = ($Tiempo_alerta * $Porcentaje_alerta_roja) / 100;
+
+                        $Nueva_F_Alerta_Roja = new DateTime($F_accionEvento);
+                        $horas_roja = $Alerta_Roja;
+                        $minutosAdicionales_roja = ($horas_roja - floor($horas_roja)) * 60;
+                        $horas_roja = floor($horas_roja);
+                        $Nueva_F_Alerta_Roja->modify("+$horas_roja hours");
+                        $minutosAdicionales_roja_entero = round($minutosAdicionales_roja);
+                        $Nueva_F_Alerta_Roja->modify("+$minutosAdicionales_roja_entero minutes");
+                        $Nueva_F_Alerta_RojaEvento = $Nueva_F_Alerta_Roja->format('Y-m-d H:i:s');
+
+                        $array_info_datos_alertas_automatica = [
+                            'Id_Asignacion' => $newIdAsignacion,
+                            'ID_evento' => $newIdEvento,
+                            'Id_proceso' => $Id_proceso,
+                            'Id_servicio' => $Id_servicio,
+                            'Id_cliente' =>$id_cliente,
+                            'Accion_ejecutar' => $AccionEvento,
+                            'F_accion' => $date_time,
+                            'Tiempo_alerta' => $Tiempo_alerta,                            
+                            'Porcentaje_alerta_roja' => $Porcentaje_alerta_roja,
+                            'F_accion_alerta_roja' => $Nueva_F_Alerta_RojaEvento,
+                            'Estado_alerta_automatica' => 'Ejecucion',
+                            'Nombre_usuario' => $nombre_usuario,
+                            'F_registro' => $date,
+                        ];
+
+                        sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')->insert($array_info_datos_alertas_automatica);                        
+
+                    break;
+                case (!empty($Tiempo_alerta) and !empty($Porcentaje_alerta_naranja) and !empty($Porcentaje_alerta_roja)):
+                        $Nueva_F_Alerta = new DateTime($F_accionEvento);
+                        $horas = $Tiempo_alerta;
+                        $minutosAdicionales = ($horas - floor($horas)) * 60;
+                        $horas = floor($horas);
+                        $Nueva_F_Alerta->modify("+$horas hours");
+                        $Nueva_F_Alerta->modify("+$minutosAdicionales minutes");
+                        $Nueva_F_AlertaEvento = $Nueva_F_Alerta->format('Y-m-d H:i:s');
+                        
+                        $infoNueva_F_AlertaEvento_accion = [
+                            'F_Alerta' => $Nueva_F_AlertaEvento
+                        ];
+
+                        $infoNueva_F_AlertaEvento_asignacion = [
+                            'F_alerta' => $Nueva_F_AlertaEvento
+                        ];
+                        
+                        sigmel_informacion_accion_eventos::on('sigmel_gestiones')
+                        ->where([['Id_Asignacion', $newIdAsignacion]])
+                        ->update($infoNueva_F_AlertaEvento_accion);
+
+                        sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                        ->where([['Id_Asignacion', $newIdAsignacion]])
+                        ->update($infoNueva_F_AlertaEvento_asignacion);
+
+                        $Alerta_Naranja = ($Tiempo_alerta * $Porcentaje_alerta_naranja) / 100;
+
+                        $Nueva_F_Alerta_Naranja = new DateTime($F_accionEvento);
+                        $horas_naranja = $Alerta_Naranja;
+                        $minutosAdicionales_naranja = ($horas_naranja - floor($horas_naranja)) * 60;
+                        $horas_naranja = floor($horas_naranja);
+                        $Nueva_F_Alerta_Naranja->modify("+$horas_naranja hours");
+                        $minutosAdicionales_naranja_entero = round($minutosAdicionales_naranja);
+                        $Nueva_F_Alerta_Naranja->modify("+$minutosAdicionales_naranja_entero minutes");
+                        $Nueva_F_Alerta_NaranjaEvento = $Nueva_F_Alerta_Naranja->format('Y-m-d H:i:s');
+
+                        $Alerta_Roja = ($Tiempo_alerta * $Porcentaje_alerta_roja) / 100;
+
+                        $Nueva_F_Alerta_Roja = new DateTime($F_accionEvento);
+                        $horas_roja = $Alerta_Roja;
+                        $minutosAdicionales_roja = ($horas_roja - floor($horas_roja)) * 60;
+                        $horas_roja = floor($horas_roja);
+                        $Nueva_F_Alerta_Roja->modify("+$horas_roja hours");
+                        $minutosAdicionales_roja_entero = round($minutosAdicionales_roja);
+                        $Nueva_F_Alerta_Roja->modify("+$minutosAdicionales_roja_entero minutes");
+                        $Nueva_F_Alerta_RojaEvento = $Nueva_F_Alerta_Roja->format('Y-m-d H:i:s');
+
+                        $array_info_datos_alertas_automatica = [
+                            'Id_Asignacion' => $newIdAsignacion,
+                            'ID_evento' => $newIdEvento,
+                            'Id_proceso' => $Id_proceso,
+                            'Id_servicio' => $Id_servicio,
+                            'Id_cliente' =>$id_cliente,
+                            'Accion_ejecutar' => $AccionEvento,
+                            'F_accion' => $date_time,
+                            'Tiempo_alerta' => $Tiempo_alerta,
+                            'Porcentaje_alerta_naranja' => $Porcentaje_alerta_naranja,
+                            'F_accion_alerta_naranja' => $Nueva_F_Alerta_NaranjaEvento,
+                            'Porcentaje_alerta_roja' => $Porcentaje_alerta_roja,
+                            'F_accion_alerta_roja' => $Nueva_F_Alerta_RojaEvento,
+                            'Estado_alerta_automatica' => 'Ejecucion',
+                            'Nombre_usuario' => $nombre_usuario,
+                            'F_registro' => $date,
+                        ];
+
+                        sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')->insert($array_info_datos_alertas_automatica);
+                        
+                    break;
+                default:
+                    
+                    break;
+            }
             sleep(2);
 
             $datos_info_historial_acciones = [
@@ -690,12 +1070,29 @@ class CalificacionJuntasController extends Controller
             $mensajes = array(
                 "parametro" => 'agregarCalificacionJuntas',
                 "parametro_1" => 'guardo',
-                "mensaje_1" => 'Registro agregado satisfactoriamente.'
+                "mensaje_1" => 'Registro agregado satisfactoriamente.',
+                "mensaje_2" => $mensaje_2
             );
 
             return json_decode(json_encode($mensajes, true));
 
         }elseif ($request->banderaguardar == 'Actualizar') {
+
+            $datos_estado_acciones_automaticas = [
+                'Estado_accion_automatica' => 'Ejecutada'
+            ];
+
+            sigmel_informacion_acciones_automaticas_eventos::on('sigmel_gestiones')
+            ->where('Id_Asignacion', $newIdAsignacion)
+            ->update($datos_estado_acciones_automaticas);
+
+            $datos_estado_alertas_automaticas = [
+                'Estado_alerta_automatica' => 'Finalizada'
+            ];
+
+            sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')
+            ->where('Id_Asignacion', $newIdAsignacion)
+            ->update($datos_estado_alertas_automaticas);
             
             // Extraemos el id estado de la tabla de parametrizaciones dependiendo del
             // id del cliente, id proceso, id servicio, id accion. Este id irá como estado inicial
@@ -783,13 +1180,136 @@ class CalificacionJuntasController extends Controller
             sigmel_informacion_accion_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_registrarCalifcacionJuntas);
 
+            //Capturar el id accion para validar la accion que se acabo de guardar
+            $info_accion_evento = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
+            ->select('Accion', 'F_accion')
+            ->where([
+                ['Id_Asignacion', $newIdAsignacion],
+            ])
+            ->get();
+            // accion a realizar
+            $AccionEvento = $info_accion_evento[0]->Accion;            
+            // captura de movimiento automatico, tiempo de movimiento (dias) y accion automatica segun la accion a realizar 
+            // segun al servicio asosciado
+            $info_accion_automatica = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+            ->select('Movimiento_automatico','Tiempo_movimiento','Accion_automatica')
+            ->where([
+                ['Accion_ejecutar', $AccionEvento],
+                ['Id_cliente', $id_cliente],
+                ['Id_proceso', $Id_proceso],
+                ['Servicio_asociado', $Id_servicio],
+                ['Status_parametrico', 'Activo']
+            ])->get(); 
+            $Movimiento_automatico = $info_accion_automatica[0]->Movimiento_automatico;
+            $Tiempo_movimiento = $info_accion_automatica[0]->Tiempo_movimiento;
+            $Accion_automatica = $info_accion_automatica[0]->Accion_automatica;
+            // case 1: si hay movimiento automatico, tiempo movimiento y accion automatica 
+            // Case 2: Si hay movimiento automatico y tiempo movimiento pero no accion automatica
+            // Case 3: Si hay movimiento automatico, accion automatica y no hay tiempo movimiento
+            // Case 4: Si hay movimiento automatico y no hay tiempo movimiento y accion automatica
+            switch (true) {
+                case (!empty($Movimiento_automatico) and $Movimiento_automatico == 'Si' and !empty($Tiempo_movimiento) and !empty($Accion_automatica)):
+                        $info_datos_accion_automatica = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_parametrizaciones_clientes as sipc')
+                        ->leftJoin('sigmel_sys.users as u', 'u.id', '=', 'sipc.Profesional_asignado')
+                        ->select('sipc.Accion_ejecutar', 'sipc.Estado', 'sipc.Profesional_asignado', 'u.name')
+                        ->where([
+                            ['sipc.Accion_ejecutar', $Accion_automatica],
+                            ['sipc.Id_cliente', $id_cliente],
+                            ['sipc.Id_proceso', $Id_proceso],
+                            ['sipc.Servicio_asociado', $Id_servicio],
+                            ['sipc.Status_parametrico', 'Activo']
+                        ])->get();
+                        
+                            $Accion_ejecutar_automatica = $info_datos_accion_automatica[0]->Accion_ejecutar;
+                            $Profesional_asignado_automatico = $info_datos_accion_automatica[0]->Profesional_asignado;
+                            $NombreProfesional_asignado_automatico = $info_datos_accion_automatica[0]->name;
+                            $Id_Estado_evento_automatico = $info_datos_accion_automatica[0]->Estado;
+
+                            // Se suman los dias a la fecha actual para saber la fecha del movimiento automatico
+                            $dateTime = new DateTime($date_time);
+                            $dias = $Tiempo_movimiento; // Número de días que quieres sumar
+                            $dateTime->modify("+$dias days");
+                            $F_movimiento_automatico = $dateTime->format('Y-m-d');   
+
+                            // Validar si existe el Id_Asignacion en la tabla sigmel_informacion_acciones_automaticas_eventos para insert o update
+                            $info_datos_acciones_automaticas_eventos = sigmel_informacion_acciones_automaticas_eventos::on('sigmel_gestiones')
+                            ->where([['Id_Asignacion', $newIdAsignacion]])->get();
+
+                            if (count($info_datos_acciones_automaticas_eventos) > 0) {
+                                
+                                $array_info_datos_accion_automatica = [
+                                    'Id_Asignacion' => $newIdAsignacion,
+                                    'ID_evento' => $newIdEvento,
+                                    'Id_proceso' => $Id_proceso,
+                                    'Id_servicio' => $Id_servicio,
+                                    'Id_cliente' =>$id_cliente,
+                                    'Accion_automatica' => $Accion_ejecutar_automatica,
+                                    'Id_Estado_evento_automatico' => $Id_Estado_evento_automatico,
+                                    'F_accion' => $date_time,
+                                    'Id_profesional_automatico' => $Profesional_asignado_automatico,
+                                    'Nombre_profesional_automatico' => $NombreProfesional_asignado_automatico,
+                                    'F_movimiento_automatico' => $F_movimiento_automatico,
+                                    'Estado_accion_automatica' => 'Pendiente',
+                                    'Nombre_usuario' => $nombre_usuario,
+                                    'F_registro' => $date,
+    
+                                ];
+    
+                                sigmel_informacion_acciones_automaticas_eventos::on('sigmel_gestiones')
+                                ->where([['Id_Asignacion', $newIdAsignacion]])
+                                ->update($array_info_datos_accion_automatica);
+                                
+                                $mensaje_2 = 'la acción parametrizada tiene una Acción automatica y se ejecutará en '.$Tiempo_movimiento.' día(s)';
+
+                            } else {
+                                
+                                $array_info_datos_accion_automatica = [
+                                    'Id_Asignacion' => $newIdAsignacion,
+                                    'ID_evento' => $newIdEvento,
+                                    'Id_proceso' => $Id_proceso,
+                                    'Id_servicio' => $Id_servicio,
+                                    'Id_cliente' =>$id_cliente,
+                                    'Accion_automatica' => $Accion_ejecutar_automatica,
+                                    'Id_Estado_evento_automatico' => $Id_Estado_evento_automatico,
+                                    'F_accion' => $date_time,
+                                    'Id_profesional_automatico' => $Profesional_asignado_automatico,
+                                    'Nombre_profesional_automatico' => $NombreProfesional_asignado_automatico,
+                                    'F_movimiento_automatico' => $F_movimiento_automatico,
+                                    'Estado_accion_automatica' => 'Pendiente',
+                                    'Nombre_usuario' => $nombre_usuario,
+                                    'F_registro' => $date,
+    
+                                ];
+    
+                                sigmel_informacion_acciones_automaticas_eventos::on('sigmel_gestiones')->insert($array_info_datos_accion_automatica);
+                                
+                                $mensaje_2 = 'la acción parametrizada tiene una Acción automatica y se ejecutará en '.$Tiempo_movimiento.' día(s)';
+                                                               
+                            }                            
+                        
+                    break;
+                case (!empty($Movimiento_automatico) and $Movimiento_automatico == 'Si' and !empty($Tiempo_movimiento) and empty($Accion_automatica)):
+                        $mensaje_2 = 'la acción parametrizada tiene movimiento automatico, Tiempo de movimiento (Días) pero no cuenta con una Acción automatica';
+                    break;
+                case (!empty($Movimiento_automatico) and $Movimiento_automatico == 'Si' and empty($Tiempo_movimiento) and !empty($Accion_automatica)):
+                        $mensaje_2 = 'la acción parametrizada tiene movimiento automatico, Acción automatica pero no cuenta con Tiempo de movimiento (Días)';
+                    break;
+                case (!empty($Movimiento_automatico) and $Movimiento_automatico == 'Si' and empty($Tiempo_movimiento) and empty($Accion_automatica)):
+                        $mensaje_2 = 'la acción parametrizada tiene movimiento automatico, pero no cuenta con un Tiempo de movimiento (Días) y Acción automatica';
+                    break;                    
+                default:   
+                        $mensaje_2 = 'la acción parametrizada NO tiene Movimiento Automático';
+                    break;
+            } 
+
             sleep(2);
 
             // Actualizar tabla sigmel_informacion_asignacion_eventos
             $datos_info_actualizarAsignacionEvento= [      
                 'Id_accion' => $request->accion,
                 'Id_Estado_evento' => $Id_Estado_evento,        
-                'F_alerta' => $request->fecha_alerta, 
+                'F_alerta' => $request->fecha_alerta,
+                'F_accion' => $date_time,
                 'Id_profesional' => $id_profesional,
                 'Nombre_profesional' => $asignacion_profesional,
                 'Nueva_F_radicacion' => $Nueva_fecha_radicacion,             
@@ -801,6 +1321,334 @@ class CalificacionJuntasController extends Controller
 
             sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_actualizarAsignacionEvento);
+
+            sleep(2);
+
+            $F_accionEvento = $info_accion_evento[0]->F_accion;
+            $info_datos_alertar_accion_ejecutar = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+            ->select('Tiempo_alerta', 'Porcentaje_alerta_naranja', 'Porcentaje_alerta_roja')
+            ->where([
+                ['Accion_ejecutar', $AccionEvento],
+                ['Id_cliente', $id_cliente],
+                ['Id_proceso', $Id_proceso],
+                ['Servicio_asociado', $Id_servicio],
+                ['Status_parametrico', 'Activo']
+            ])
+            ->get();
+            $Tiempo_alerta = $info_datos_alertar_accion_ejecutar[0]->Tiempo_alerta;
+            $Porcentaje_alerta_naranja = $info_datos_alertar_accion_ejecutar[0]->Porcentaje_alerta_naranja;
+            $Porcentaje_alerta_roja = $info_datos_alertar_accion_ejecutar[0]->Porcentaje_alerta_roja;
+            // case 1: Validar si hay tiempo de alerta para crear la nueva fecha de alerta segun la fecha de accion
+                // formula FA= FC+TA (FA = fecha alerta, FC = fecha accion y TA = tiempo de alerta)
+            // case 2: Validar si hay tiempo de alerta y porcentaje de alerta naraja para crear la alerta naranja
+                // formula FA= FC+TA (FA = fecha alerta, FC = fecha accion y TA = tiempo de alerta)
+                // formula AN = (TA*PN)/100 (AN= Alerta naranja, TA = tiempo de alerta y PN = porcentaje de alerta naranja)
+            // case 3: Validar si hay tiempo de alerta y porcentaje de alerta roja para crear la alerta roja
+                // formula FA= FC+TA (FA = fecha alerta, FC = fecha accion y TA = tiempo de alerta)
+                // formula AR = (TA*PR)/100 (AR= Alerta roja, TA = tiempo de alerta y PR = porcentaje de alerta roja)
+            // case 4: Validar si hay tiempo de alerta, porcentaje de alerta naraja y porcentaje de alerta roja para crear todas las alertas
+                // formula FA= FC+TA (FA = fecha alerta, FC = fecha accion y TA = tiempo de alerta)
+                // formula AN = (TA*PN)/100 (AN= Alerta naranja, TA = tiempo de alerta y PN = porcentaje de alerta naranja)
+                // formula AR = (TA*PR)/100 (AR= Alerta roja, TA = tiempo de alerta y PR = porcentaje de alerta roja)
+            switch (true) {
+                case (!empty($Tiempo_alerta) and empty($Porcentaje_alerta_naranja) and empty($Porcentaje_alerta_roja)):
+                        $Nueva_F_Alerta = new DateTime($F_accionEvento);
+                        $horas = $Tiempo_alerta;
+                        $minutosAdicionales = ($horas - floor($horas)) * 60;
+                        $horas = floor($horas);
+                        $Nueva_F_Alerta->modify("+$horas hours");
+                        $Nueva_F_Alerta->modify("+$minutosAdicionales minutes");
+                        $Nueva_F_AlertaEvento = $Nueva_F_Alerta->format('Y-m-d H:i:s');
+                        
+                        $infoNueva_F_AlertaEvento_accion = [
+                            'F_Alerta' => $Nueva_F_AlertaEvento
+                        ];
+
+                        $infoNueva_F_AlertaEvento_asignacion = [
+                            'F_alerta' => $Nueva_F_AlertaEvento
+                        ];
+                        
+                        sigmel_informacion_accion_eventos::on('sigmel_gestiones')
+                        ->where([['Id_Asignacion', $newIdAsignacion]])
+                        ->update($infoNueva_F_AlertaEvento_accion);
+
+                        sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                        ->where([['Id_Asignacion', $newIdAsignacion]])
+                        ->update($infoNueva_F_AlertaEvento_asignacion);                       
+                    break;
+                case (!empty($Tiempo_alerta) and !empty($Porcentaje_alerta_naranja)  and empty($Porcentaje_alerta_roja)):
+                        $Nueva_F_Alerta = new DateTime($F_accionEvento);
+                        $horas = $Tiempo_alerta;
+                        $minutosAdicionales = ($horas - floor($horas)) * 60;
+                        $horas = floor($horas);
+                        $Nueva_F_Alerta->modify("+$horas hours");
+                        $Nueva_F_Alerta->modify("+$minutosAdicionales minutes");
+                        $Nueva_F_AlertaEvento = $Nueva_F_Alerta->format('Y-m-d H:i:s');
+                        
+                        $infoNueva_F_AlertaEvento_accion = [
+                            'F_Alerta' => $Nueva_F_AlertaEvento
+                        ];
+
+                        $infoNueva_F_AlertaEvento_asignacion = [
+                            'F_alerta' => $Nueva_F_AlertaEvento
+                        ];
+                        
+                        sigmel_informacion_accion_eventos::on('sigmel_gestiones')
+                        ->where([['Id_Asignacion', $newIdAsignacion]])
+                        ->update($infoNueva_F_AlertaEvento_accion);
+
+                        sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                        ->where([['Id_Asignacion', $newIdAsignacion]])
+                        ->update($infoNueva_F_AlertaEvento_asignacion);
+
+                        $Alerta_Naranja = ($Tiempo_alerta * $Porcentaje_alerta_naranja) / 100;
+
+                        $Nueva_F_Alerta_Naranja = new DateTime($F_accionEvento);
+                        $horas = $Alerta_Naranja;
+                        $minutosAdicionales_naranja = ($horas - floor($horas)) * 60;
+                        $horas = floor($horas);
+                        $Nueva_F_Alerta_Naranja->modify("+$horas hours");
+                        $minutosAdicionales_naranja_entero = round($minutosAdicionales_naranja);
+                        $Nueva_F_Alerta_Naranja->modify("+$minutosAdicionales_naranja_entero minutes");
+                        $Nueva_F_Alerta_NaranjaEvento = $Nueva_F_Alerta_Naranja->format('Y-m-d H:i:s');
+
+                        // Validar si existe el Id_Asignacion en la tabla sigmel_informacion_alertas_automaticas_eventos para insert o update
+                        $info_datos_alertar_automaticas_eventos = sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')
+                        ->where([['Id_Asignacion', $newIdAsignacion]])->get();
+
+                        if (count($info_datos_alertar_automaticas_eventos) > 0) {
+                            $array_info_datos_alertas_automatica = [
+                                'Id_Asignacion' => $newIdAsignacion,
+                                'ID_evento' => $newIdEvento,
+                                'Id_proceso' => $Id_proceso,
+                                'Id_servicio' => $Id_servicio,
+                                'Id_cliente' =>$id_cliente,
+                                'Accion_ejecutar' => $AccionEvento,
+                                'F_accion' => $date_time,
+                                'Tiempo_alerta' => $Tiempo_alerta,
+                                'Porcentaje_alerta_naranja' => $Porcentaje_alerta_naranja,
+                                'F_accion_alerta_naranja' => $Nueva_F_Alerta_NaranjaEvento,   
+                                'Porcentaje_alerta_roja' => null,
+                                'F_accion_alerta_roja' => null,                           
+                                'Estado_alerta_automatica' => 'Ejecucion',
+                                'Nombre_usuario' => $nombre_usuario,
+                                'F_registro' => $date,
+                            ];
+    
+                            sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')
+                            ->where('Id_Asignacion', $newIdAsignacion)
+                            ->update($array_info_datos_alertas_automatica);                            
+                        } else {
+                            $array_info_datos_alertas_automatica = [
+                                'Id_Asignacion' => $newIdAsignacion,
+                                'ID_evento' => $newIdEvento,
+                                'Id_proceso' => $Id_proceso,
+                                'Id_servicio' => $Id_servicio,
+                                'Id_cliente' =>$id_cliente,
+                                'Accion_ejecutar' => $AccionEvento,
+                                'F_accion' => $date_time,
+                                'Tiempo_alerta' => $Tiempo_alerta,
+                                'Porcentaje_alerta_naranja' => $Porcentaje_alerta_naranja,
+                                'F_accion_alerta_naranja' => $Nueva_F_Alerta_NaranjaEvento, 
+                                'Porcentaje_alerta_roja' => null,
+                                'F_accion_alerta_roja' => null,                           
+                                'Estado_alerta_automatica' => 'Ejecucion',
+                                'Nombre_usuario' => $nombre_usuario,
+                                'F_registro' => $date,
+                            ];
+    
+                            sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')                            
+                            ->insert($array_info_datos_alertas_automatica); 
+                        }                        
+                    break;
+                case (!empty($Tiempo_alerta) and empty($Porcentaje_alerta_naranja) and !empty($Porcentaje_alerta_roja)):
+                    $Nueva_F_Alerta = new DateTime($F_accionEvento);
+                    $horas = $Tiempo_alerta;
+                    $minutosAdicionales = ($horas - floor($horas)) * 60;
+                    $horas = floor($horas);
+                    $Nueva_F_Alerta->modify("+$horas hours");
+                    $Nueva_F_Alerta->modify("+$minutosAdicionales minutes");
+                    $Nueva_F_AlertaEvento = $Nueva_F_Alerta->format('Y-m-d H:i:s');
+                    
+                    $infoNueva_F_AlertaEvento_accion = [
+                        'F_Alerta' => $Nueva_F_AlertaEvento
+                    ];
+
+                    $infoNueva_F_AlertaEvento_asignacion = [
+                        'F_alerta' => $Nueva_F_AlertaEvento
+                    ];
+                    
+                    sigmel_informacion_accion_eventos::on('sigmel_gestiones')
+                    ->where([['Id_Asignacion', $newIdAsignacion]])
+                    ->update($infoNueva_F_AlertaEvento_accion);
+
+                    sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                    ->where([['Id_Asignacion', $newIdAsignacion]])
+                    ->update($infoNueva_F_AlertaEvento_asignacion);                    
+
+                    $Alerta_Roja = ($Tiempo_alerta * $Porcentaje_alerta_roja) / 100;
+
+                    $Nueva_F_Alerta_Roja = new DateTime($F_accionEvento);
+                    $horas_roja = $Alerta_Roja;
+                    $minutosAdicionales_roja = ($horas_roja - floor($horas_roja)) * 60;
+                    $horas_roja = floor($horas_roja);
+                    $Nueva_F_Alerta_Roja->modify("+$horas_roja hours");
+                    $minutosAdicionales_roja_entero = round($minutosAdicionales_roja);
+                    $Nueva_F_Alerta_Roja->modify("+$minutosAdicionales_roja_entero minutes");
+                    $Nueva_F_Alerta_RojaEvento = $Nueva_F_Alerta_Roja->format('Y-m-d H:i:s');
+
+                    // Validar si existe el Id_Asignacion en la tabla sigmel_informacion_alertas_automaticas_eventos para insert o update
+                    $info_datos_alertar_automaticas_eventos = sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')
+                    ->where([['Id_Asignacion', $newIdAsignacion]])->get();                    
+                    if (count($info_datos_alertar_automaticas_eventos) > 0) {
+                        $array_info_datos_alertas_automatica = [
+                            'Id_Asignacion' => $newIdAsignacion,
+                            'ID_evento' => $newIdEvento,
+                            'Id_proceso' => $Id_proceso,
+                            'Id_servicio' => $Id_servicio,
+                            'Id_cliente' =>$id_cliente,
+                            'Accion_ejecutar' => $AccionEvento,
+                            'F_accion' => $date_time,
+                            'Tiempo_alerta' => $Tiempo_alerta,
+                            'Porcentaje_alerta_naranja' => null,
+                            'F_accion_alerta_naranja' => null,
+                            'Porcentaje_alerta_roja' => $Porcentaje_alerta_roja,
+                            'F_accion_alerta_roja' => $Nueva_F_Alerta_RojaEvento,
+                            'Estado_alerta_automatica' => 'Ejecucion',
+                            'Nombre_usuario' => $nombre_usuario,
+                            'F_registro' => $date,
+                        ];
+    
+                        sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')
+                        ->where('Id_Asignacion', $newIdAsignacion)
+                        ->update($array_info_datos_alertas_automatica);
+                        
+                    } else {
+                        $array_info_datos_alertas_automatica = [
+                            'Id_Asignacion' => $newIdAsignacion,
+                            'ID_evento' => $newIdEvento,
+                            'Id_proceso' => $Id_proceso,
+                            'Id_servicio' => $Id_servicio,
+                            'Id_cliente' =>$id_cliente,
+                            'Accion_ejecutar' => $AccionEvento,
+                            'F_accion' => $date_time,
+                            'Tiempo_alerta' => $Tiempo_alerta,
+                            'Porcentaje_alerta_naranja' => null,
+                            'F_accion_alerta_naranja' => null,
+                            'Porcentaje_alerta_roja' => $Porcentaje_alerta_roja,
+                            'F_accion_alerta_roja' => $Nueva_F_Alerta_RojaEvento,
+                            'Estado_alerta_automatica' => 'Ejecucion',
+                            'Nombre_usuario' => $nombre_usuario,
+                            'F_registro' => $date,
+                        ];
+    
+                        sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')                        
+                        ->insert($array_info_datos_alertas_automatica);
+                    }
+                    break;
+
+                case (!empty($Tiempo_alerta) and !empty($Porcentaje_alerta_naranja) and !empty($Porcentaje_alerta_roja)):
+                    $Nueva_F_Alerta = new DateTime($F_accionEvento);
+                    $horas = $Tiempo_alerta;
+                    $minutosAdicionales = ($horas - floor($horas)) * 60;
+                    $horas = floor($horas);
+                    $Nueva_F_Alerta->modify("+$horas hours");
+                    $Nueva_F_Alerta->modify("+$minutosAdicionales minutes");
+                    $Nueva_F_AlertaEvento = $Nueva_F_Alerta->format('Y-m-d H:i:s');
+                    
+                    $infoNueva_F_AlertaEvento_accion = [
+                        'F_Alerta' => $Nueva_F_AlertaEvento
+                    ];
+
+                    $infoNueva_F_AlertaEvento_asignacion = [
+                        'F_alerta' => $Nueva_F_AlertaEvento
+                    ];
+                    
+                    sigmel_informacion_accion_eventos::on('sigmel_gestiones')
+                    ->where([['Id_Asignacion', $newIdAsignacion]])
+                    ->update($infoNueva_F_AlertaEvento_accion);
+
+                    sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                    ->where([['Id_Asignacion', $newIdAsignacion]])
+                    ->update($infoNueva_F_AlertaEvento_asignacion);
+
+                    $Alerta_Naranja = ($Tiempo_alerta * $Porcentaje_alerta_naranja) / 100;
+                    
+                    $Nueva_F_Alerta_Naranja = new DateTime($F_accionEvento);
+                    $horas_naranja = $Alerta_Naranja;
+                    $minutosAdicionales_naranja = ($horas_naranja - floor($horas_naranja)) * 60;                    
+                    $horas_naranja = floor($horas_naranja);                   
+                    $Nueva_F_Alerta_Naranja->modify("+$horas_naranja hours");
+                    $minutosAdicionales_naranja_entero = round($minutosAdicionales_naranja);
+                    $Nueva_F_Alerta_Naranja->modify("+$minutosAdicionales_naranja_entero minutes");
+                    $Nueva_F_Alerta_NaranjaEvento = $Nueva_F_Alerta_Naranja->format('Y-m-d H:i:s');
+                    
+                    $Alerta_Roja = ($Tiempo_alerta * $Porcentaje_alerta_roja) / 100;
+                    
+                    $Nueva_F_Alerta_Roja = new DateTime($F_accionEvento);
+                    $horas_roja = $Alerta_Roja;
+                    $minutosAdicionales_roja = ($horas_roja - floor($horas_roja)) * 60;                    
+                    $horas_roja = floor($horas_roja);                    
+                    $Nueva_F_Alerta_Roja->modify("+$horas_roja hours");
+                    $minutosAdicionales_roja_entero = round($minutosAdicionales_roja);
+                    $Nueva_F_Alerta_Roja->modify("+$minutosAdicionales_roja_entero minutes");
+                    $Nueva_F_Alerta_RojaEvento = $Nueva_F_Alerta_Roja->format('Y-m-d H:i:s');
+                    
+                    // Validar si existe el Id_Asignacion en la tabla sigmel_informacion_alertas_automaticas_eventos para insert o update
+                    $info_datos_alertar_automaticas_eventos = sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')
+                    ->where([['Id_Asignacion', $newIdAsignacion]])->get();
+
+                    if (count($info_datos_alertar_automaticas_eventos) > 0) {
+                        $array_info_datos_alertas_automatica = [
+                            'Id_Asignacion' => $newIdAsignacion,
+                            'ID_evento' => $newIdEvento,
+                            'Id_proceso' => $Id_proceso,
+                            'Id_servicio' => $Id_servicio,
+                            'Id_cliente' =>$id_cliente,
+                            'Accion_ejecutar' => $AccionEvento,
+                            'F_accion' => $date_time,
+                            'Tiempo_alerta' => $Tiempo_alerta,
+                            'Porcentaje_alerta_naranja' => $Porcentaje_alerta_naranja,
+                            'F_accion_alerta_naranja' => $Nueva_F_Alerta_NaranjaEvento,
+                            'Porcentaje_alerta_roja' => $Porcentaje_alerta_roja,
+                            'F_accion_alerta_roja' => $Nueva_F_Alerta_RojaEvento,
+                            'Estado_alerta_automatica' => 'Ejecucion',
+                            'Nombre_usuario' => $nombre_usuario,
+                            'F_registro' => $date,
+                        ];
+    
+                        sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')
+                        ->where('Id_Asignacion', $newIdAsignacion)
+                        ->update($array_info_datos_alertas_automatica);
+                        
+                    } else {
+                        $array_info_datos_alertas_automatica = [
+                            'Id_Asignacion' => $newIdAsignacion,
+                            'ID_evento' => $newIdEvento,
+                            'Id_proceso' => $Id_proceso,
+                            'Id_servicio' => $Id_servicio,
+                            'Id_cliente' =>$id_cliente,
+                            'Accion_ejecutar' => $AccionEvento,
+                            'F_accion' => $date_time,
+                            'Tiempo_alerta' => $Tiempo_alerta,
+                            'Porcentaje_alerta_naranja' => $Porcentaje_alerta_naranja,
+                            'F_accion_alerta_naranja' => $Nueva_F_Alerta_NaranjaEvento,
+                            'Porcentaje_alerta_roja' => $Porcentaje_alerta_roja,
+                            'F_accion_alerta_roja' => $Nueva_F_Alerta_RojaEvento,
+                            'Estado_alerta_automatica' => 'Ejecucion',
+                            'Nombre_usuario' => $nombre_usuario,
+                            'F_registro' => $date,
+                        ];
+    
+                        sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')                        
+                        ->insert($array_info_datos_alertas_automatica);
+                    }
+                    
+                    break;
+                default:
+                    
+                    break;
+            }
 
             sleep(2);
 
@@ -865,7 +1713,8 @@ class CalificacionJuntasController extends Controller
 
             $mensajes = array(
                 "parametro" => 'agregarCalificacionJuntas',
-                "mensaje" => 'Registro actualizado satisfactoriamente.'
+                "mensaje" => 'Registro actualizado satisfactoriamente.',
+                "mensaje_2" => $mensaje_2
             );
     
             return json_decode(json_encode($mensajes, true));            
@@ -1578,6 +2427,7 @@ class CalificacionJuntasController extends Controller
                 'Modulo_creacion' => $request->modulo_creacion,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'N_siniestro' => $request->N_siniestro,
             ];
             
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
@@ -1838,6 +2688,7 @@ class CalificacionJuntasController extends Controller
             'Reemplazado' => 0,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
+            'N_siniestro' => $request->N_siniestro,
         ];
 
         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado_editar)
@@ -2295,12 +3146,8 @@ class CalificacionJuntasController extends Controller
                     'Firma_cliente' => $Firma_cliente,
                     'logo_header' => $logo_header,
                     'footer' => $footer,
-                    // 'footer_dato_1' => $footer_dato_1,
-                    // 'footer_dato_2' => $footer_dato_2,
-                    // 'footer_dato_3' => $footer_dato_3,
-                    // 'footer_dato_4' => $footer_dato_4,
-                    // 'footer_dato_5' => $footer_dato_5,
                     'nombre_usuario' => $nombre_usuario,
+                    'N_siniestro' => $request->n_siniestro_proforma_editar,
                 ];
 
                 $extension_proforma = "pdf";
@@ -2624,6 +3471,7 @@ class CalificacionJuntasController extends Controller
                     'manual_calificacion' => $manual_calificacion,
                     'nombre_usuario' => $nombre_usuario,
                     'cargo_usuario' => $cargo_usuario,
+                    'N_siniestro' => $request->n_siniestro_proforma_editar,
                 ];
 
                 $extension_proforma = "pdf";
@@ -3235,6 +4083,7 @@ class CalificacionJuntasController extends Controller
                     'Firma_cliente' => $Firma_cliente,
                     'nombre_usuario' => $nombre_usuario,
                     'footer' => $footer,
+                    'N_siniestro' => $request->n_siniestro_proforma_editar,
                     // 'footer_dato_1' => $footer_dato_1,
                     // 'footer_dato_2' => $footer_dato_2,
                     // 'footer_dato_3' => $footer_dato_3,
@@ -3744,7 +4593,7 @@ class CalificacionJuntasController extends Controller
                                         <td>
                                             <p><b>Nro. Radicado: '.$nro_radicado.'</b></p>  
                                             <p><b>'.$tipo_doc_afiliado." ".$num_identificacion_afiliado.'</b></p>
-                                            <p><b>Siniestro: '.$ID_evento.'</b></p>
+                                            <p><b>Siniestro: '.$request->n_siniestro_proforma_editar.'</b></p>
                                         </td>
                                     </tr>
                                 </table>
@@ -3756,7 +4605,7 @@ class CalificacionJuntasController extends Controller
 
                     $section->addText('Asunto: '.$request->asunto_act, array('bold' => true));
                     $section->addTextBreak();
-                    $section->addText('Siniestro: '.$ID_evento." ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." ".$nombre_afiliado, array('bold' => true));
+                    $section->addText('Siniestro: '.$request->n_siniestro_proforma_editar." ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." ".$nombre_afiliado, array('bold' => true));
 
                     // Configuramos el reemplazo de las etiquetas del cuerpo del comunicado
                     $patron1 = '/\{\{\$nombre_junta\}\}/';
@@ -3866,7 +4715,7 @@ class CalificacionJuntasController extends Controller
                     $section->addTextBreak();
 
                     // Configuramos el footer
-                    $info = $nombre_afiliado." - ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." - Siniestro: ".$ID_evento;
+                    $info = $nombre_afiliado." - ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." - Siniestro: ".$request->n_siniestro_proforma_editar;
                     $footer = $section->addFooter();
                     $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
                     
@@ -4385,7 +5234,7 @@ class CalificacionJuntasController extends Controller
                                         <td>
                                             <p><b>Nro. Radicado: '.$nro_radicado.'</b></p>  
                                             <p><b>'.$tipo_doc_afiliado." ".$num_identificacion_afiliado.'</b></p>
-                                            <p><b>Siniestro: '.$ID_evento.'</b></p>
+                                            <p><b>Siniestro: '.$request->n_siniestro_proforma_editar.'</b></p>
                                         </td>
                                     </tr>
                                 </table>
@@ -4507,7 +5356,7 @@ class CalificacionJuntasController extends Controller
                     $section->addTextBreak();
 
                     // Configuramos el footer
-                    $info = $nombre_afiliado." - ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." - Siniestro: ".$ID_evento;
+                    $info = $nombre_afiliado." - ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." - Siniestro: ".$request->n_siniestro_proforma_editar;
                     $footer = $section->addFooter();
                     $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
                     if($ruta_logo_footer != null){
@@ -4629,6 +5478,202 @@ class CalificacionJuntasController extends Controller
        
         return response()->json($array_datos_historial_accion_eventos);
     }
+
+    // Funcion para procesar y generar la lista de chequeo requeridos para este de avuerdo a los documentos generales - pbs 036
+    public  function generarListaChequeo(Request $request)
+    {
+        $request->validate([
+            'Id_evento' => 'required',
+            'Id_servicio' => 'required',
+            'afiliado' => 'required',
+            'identificacion' => 'required',
+            'lista_chequeo' => 'required|array',
+            'lista_chequeo.*.id_doc' => 'required',
+            'lista_chequeo.*.statusDoc' => 'required',
+            'lista_chequeo.*.nombreDoc' => 'required'
+        ], [
+            '*.required' => 'hacen falta datos para poder procesar la solicitud.'
+        ]);
+
+        //Documentos necesarios para lista de de chequeo, (Homologación de documentos - PBS 036) 
+        $lista_documentos = ['Registro civil de defunción' ,'Protocolo de necropsia' ,'Lista de chequeo' ,'Guía EPS' ,'Guía Empleador' ,'Guía ARL' ,'Guía AFP' ,'Guía Afiliado' ,'Fotocopia Documento Identidad' ,'Anexo G (Datos Generales)' ,'Exámenes complementarios' ,'Dictamen Junta Regional' ,'Conceptos o recomendaciones y/o restricciones ocupacionales' ,'Relación de incapacidades' ,'Concepto de rehabilitación' ,'Origen de la patología' ,'Dictamen de Calificación' ,'Autorización historia clínica' ,'Apelación al dictamen' ,'Acta de levantamiento del cadáver' ,'Historia clínica completa' ,'Orden de pago honorarios' ,'Notificación al usuario'];
+
+        $documentos = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_documentos')
+        ->select('Id_Documento', 'Nombre_documento', 'Descripcion_documento')
+        ->whereIn('Nombre_documento', $lista_documentos)->get();
+
+        /** @var $lista_chequeo documentos generales, los cuales fueron o no chequeados por el usuario */
+        $lista_chequeo = [];
+
+        /** @var $comunicados Comunicados chequeados por el usuario para ser incluido en la lista de chequeo */
+        // $comunicados = [];
+
+        //Validamos si de los documentos requeridos, alguno fue checkeado para marcarlo como incluido en la lista de chequeo
+        foreach ($documentos as $documento) {
+            $documento_incluido = false;
+
+            foreach ($request->lista_chequeo as $lista) {
+                if ($lista['id_doc'] == $documento->Id_Documento) {
+                    $documento_incluido = true;
+
+                    //Actualizamos la tabla sigmel_registro_documentos_eventos para chequearlo
+                    $this->actualizarListaChequeo($request->Id_evento, $documento->Id_Documento, 'Si','registro_documentos');
+                    break;
+                } else {
+                    $this->actualizarListaChequeo($request->Id_evento, $documento->Id_Documento, 'No','registro_documentos');
+                }
+            }
+
+            $lista_chequeo[$documento->Nombre_documento] = [
+                'Descripcion_documento' => $documento->Descripcion_documento,
+                'Incluido' => $documento_incluido
+            ];
+        }
+
+        //Caso comunicados: Cuando el usuario chequea alguno de los comunicados en Historial de comunicados y expedientes para incluirlo en la lista de chequeo
+        /*foreach ($request->lista_chequeo as $lista) {
+            if (isset($lista['idComunicado'])) {
+                if($lista['statusDoc'] == 'Comunicado'){
+                    $comunicados[] = ['Descripcion_documento' => $lista['nombreDoc']];
+
+                    $this->actualizarListaChequeo($request->Id_evento, $lista['idComunicado'], 'Si','info_comunicados');
+                }
+            }else{
+                $this->actualizarListaChequeo($request->Id_evento, null, 'No','info_comunicados');
+            }
+        }*/
+       // $lista_chequeo['comunicados'] = $comunicados;
+
+        //Obtenemos el id del documento general para ' lista de chequeo'
+        $indice_lista_chequeo = $documentos->search(function ($documento) {
+            return $documento->Nombre_documento === 'Lista de chequeo';
+        });
+
+        $indice_lista_chequeo = $documentos[$indice_lista_chequeo]->Id_Documento;
+
+
+        /* datos del logo que va en el header */
+        $dato_logo_header = sigmel_clientes::on('sigmel_gestiones')
+        ->select('Logo_cliente', 'Footer_cliente', 'Id_cliente')
+        ->where([['Nombre_cliente', $request->cliente]])
+            ->limit(1)->get();
+
+        // Datos de la proforma
+        $data = [
+            'afiliado' => $request->afiliado,
+            'identificacion' => $request->identificacion,
+            'logo_header' => $dato_logo_header[0]->Logo_cliente,
+            'footer' => $dato_logo_header[0]->Footer_cliente,
+            'id_cliente' => $dato_logo_header[0]->Id_cliente,
+            'lista_chequeo' => $lista_chequeo
+        ];
+
+        $n_radicado = getRadicado('Juntas'); //Para cada lista de chequeo se le debe generar un radicado
+
+        $extension_proforma = "pdf";
+        $ruta_proforma = '/Proformas/Proformas_Prev/Juntas/lista_chequeo';
+        $nombre_documento = "Lista_chequeo";
+
+        /* Creación del pdf */
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView($ruta_proforma, $data);
+
+        $nombre_pdf = "{$nombre_documento}.{$extension_proforma}";
+
+        //Obtener el contenido del PDF
+        $output = $pdf->output();
+        //Guardar el PDF en un archivo
+        file_put_contents(public_path("Documentos_Eventos/{$request->Id_evento}/{$nombre_pdf}"), $output);
+
+        //Registramos una unica vez la lista de chequeo
+        if ($request->bandera == 'Guardar' && !empty($indice_lista_chequeo)) {
+
+            $fecha_actual = date("Y-m-d", time());
+            
+            // datps sigmel_registro_documentos_eventos
+            $registro_documento = [
+                'Id_Documento' => $indice_lista_chequeo , //id Lista de chequeo
+                'ID_evento' => $request->Id_evento,
+                'Nombre_documento' => $nombre_pdf,
+                'Formato_documento' => 'pdf',
+                'Id_servicio' => $request->Id_servicio,
+                'Lista_chequeo' => 'Si',
+                'Estado' => 'activo',
+                'F_cargue_documento' => $fecha_actual,
+                'Nombre_usuario' => Auth::user()->name,
+                'F_registro'  => $fecha_actual
+            ];
+
+            // datos sigmel_informacion_comunicado_eventos
+            $data_comunicado_eventos = [
+                'ID_evento' => $request->Id_evento,
+                'Id_Asignacion' => $request->Id_asignacion,
+                'Id_proceso' => $request->Id_proceso,
+                'F_comunicado' => $fecha_actual,
+                'N_radicado' => $n_radicado,
+                'Cliente' => $request->cliente,
+                'Nombre_afiliado' => $request->afiliado,
+                'T_documento'  => $request->t_documento,
+                'N_identificacion' => $request->identificacion,
+                'Tipo_descarga' => 'Manual',
+                'Modulo_creacion' => 'calificacionJuntas',
+                'Asunto' => $nombre_pdf,
+                'Nombre_documento' => $nombre_pdf,
+                'Elaboro' => Auth::user()->name,
+                'Nombre_usuario' => Auth::user()->name,
+                'F_registro'  => $fecha_actual
+            ];
+
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($data_comunicado_eventos);
+
+            sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($registro_documento);
+
+            $mensaje = 'Registro agregado satisfactoriamente.';
+        }else{
+            $mensaje = 'Registro actualizado satisfactoriamente. Para poder visualizar la lista de chequeo en el historial de comunicaciones debe recargar la pagina.';
+        }
+
+        $mensajes = array(
+            "parametro" => 'agregar_lista_chequeo',
+            'nombre_proforma' => $nombre_pdf,
+            "message" => $mensaje,
+        );
+
+        return json_decode(json_encode($mensajes, true));
+    }
+
+    /**
+    * Actualiza el estado de Lista_chequeo
+    *
+    * @param int $id_evento
+    * @param int $id_documento
+    * @param string $estado
+    * @return void
+    */
+    function actualizarListaChequeo($id_evento, $id_documento, $estado, $tabla) {
+        switch($tabla){
+            case 'registro_documentos' :
+                    sigmel_registro_documentos_eventos::on('sigmel_gestiones')
+                    ->where([
+                        ['ID_evento', $id_evento],
+                        ['Id_Documento', $id_documento]
+                    ])->update(['Lista_chequeo' => $estado]);
+                break;
+            case 'info_comunicados' :
+
+                $condicion = [['ID_evento', $id_evento]];
+
+                if ($id_documento != null) {
+                    $condicion[] = ['Id_Comunicado', $id_documento];
+                }
+
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+                    ->where($condicion)->update(['Lista_chequeo' => $estado]);
+
+                break;
+        }
+    }
+
 }
 
 function reemplazarStyleImg($html, $nuevoStyle)

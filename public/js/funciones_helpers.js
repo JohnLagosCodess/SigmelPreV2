@@ -352,12 +352,12 @@ $(document).ready(function () {
     /* TODO LO CORRESPONDIENTE A LA PARAMETRIZACION */
     $(document).on('keyup', "input[id^='tiempo_alerta_origen_atel_']", function(){
         var inputId = this.id;
-        Maximo1Decimal(inputId);
+        Maximo2Decimales(inputId);
     });
 
     $(document).on('keyup', "input[id^='bd_tiempo_alerta_origen_atel_']", function(){
         var inputId = this.id;
-        Maximo1Decimal(inputId);
+        Maximo2Decimales(inputId);
     });
 
     $(document).on('keyup', "textarea[id^='motivo_movimiento_origen_atel_']", function(){
@@ -372,12 +372,12 @@ $(document).ready(function () {
 
     $(document).on('keyup', "input[id^='tiempo_alerta_calificacion_pcl_']", function(){
         var inputId = this.id;
-        Maximo1Decimal(inputId);
+        Maximo2Decimales(inputId);
     });
 
     $(document).on('keyup', "input[id^='bd_tiempo_alerta_calificacion_pcl_']", function(){
         var inputId = this.id;
-        Maximo1Decimal(inputId);
+        Maximo2Decimales(inputId);
     });
 
     $(document).on('keyup', "textarea[id^='motivo_movimiento_calificacion_pcl_']", function(){
@@ -393,12 +393,12 @@ $(document).ready(function () {
 
     $(document).on('keyup', "input[id^='tiempo_alerta_juntas_']", function(){
         var inputId = this.id;
-        Maximo1Decimal(inputId);
+        Maximo2Decimales(inputId);
     });
 
     $(document).on('keyup', "input[id^='bd_tiempo_alerta_juntas_']", function(){
         var inputId = this.id;
-        Maximo1Decimal(inputId);
+        Maximo2Decimales(inputId);
     });
 
     $(document).on('keyup', "textarea[id^='motivo_movimiento_juntas_']", function(){
@@ -649,4 +649,62 @@ function Validarfecha(IdSelector,operador = '>',fecha = null,info = 'La fecha no
 
     });
 
+}
+/**
+ * Funcion para descargar los documentos generales
+ * @returns void
+ */
+function descargarDocumentos(){
+    let evento =  $('#newId_evento').val();
+    let servicio =  $(".Id_servicio").val();
+    let token = $("input[name='_token']").val();
+
+    let datos = {
+        '_token': token,
+        'parametro': 'descargaCompleta',
+        'IdEvento': evento,
+        'IdServicio': servicio,
+
+    };
+    
+    if (evento === undefined || evento === '' || servicio === undefined || servicio === '') {
+        console.error('Debe suministrar un evento y el servicio asignado para poder descargar los documentos');
+        return;
+    }
+
+    $("#descargar_documentos").prop('disabled',true);
+    $("#status_spinner").removeClass('d-none');  
+
+    $.ajax({
+        url: '/descargar-documentos',
+        type: 'POST',
+        data: datos,
+        xhrFields: {
+            responseType: 'blob' // El archivo al venir en la respuesta necesitamos construir el archivo desde el lado del cliente
+        },
+        success:function(response,status, jqXHR){
+            const blob = new Blob([response], { type: 'application/zip' });
+
+            //Se crea un enlace temporal para poder descargar el archivo devuelto
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.setAttribute('download', 'ListadoDocumentos.zip'); // Corresponde al nombre del archivo al descargarse
+            document.body.appendChild(link);
+            link.click();
+
+            $("#status_spinner").addClass('d-none');  
+            $('.mostrar_exito').removeClass('d-none');
+            $('.mostrar_exito').empty();
+            $('.mostrar_exito').append('<strong>Archivo generado de manera correcta.</strong>');
+
+            // Eliminamos el enlace despues de descargarse y los mensajes de estado.
+            setTimeout(function() {
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+                $('.mostrar_exito').addClass('d-none');
+                $("#descargar_documentos").prop('disabled',false);
+            }, 3000);
+        },
+    });
 }

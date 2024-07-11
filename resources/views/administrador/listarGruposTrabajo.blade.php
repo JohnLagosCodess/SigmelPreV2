@@ -48,7 +48,7 @@
                             @foreach ($listado_equipos_trabajo as $editar_info_equipo)
                                 <tr>
                                     <td>
-                                        <a href="javascript:void(0);" id="btn_modal_edicion_equipo_{{$editar_info_equipo->id}}" data-id_proceso="{{$editar_info_equipo->Id_proceso}}" data-id_lider="{{$editar_info_equipo->lider}}" data-id_equipo_trabajo="{{$editar_info_equipo->id}}" data-id_accion="{{$editar_info_equipo->Accion}}" data-toggle="modal" data-target="#modalEdicionEquipo_{{$editar_info_equipo->id}}"><i class="fa fa-pen text-primary"></i></a>
+                                        <a href="javascript:void(0);" class="editar_grupo_trabajo" id="btn_modal_edicion_equipo_{{$editar_info_equipo->id}}" data-id_proceso="{{$editar_info_equipo->Id_proceso}}" data-id_lider="{{$editar_info_equipo->lider}}" data-id_equipo_trabajo="{{$editar_info_equipo->id}}" data-id_accion="{{$editar_info_equipo->Accion}}" data-toggle="modal" data-target="#modalEdicionEquipo_{{$editar_info_equipo->id}}"><i class="fa fa-pen text-primary"></i></a>
                                         <x-adminlte-modal id="modalEdicionEquipo_{{$editar_info_equipo->id}}" title="Formulario para editar Equipo de Trabajo: {{$editar_info_equipo->Nombre_equipo}}" theme="info" icon="fa fa-pen" size='xl' scrollable="yes" disable-animations>
                                             <div class="row">
                                                 <div class="col-12">
@@ -63,7 +63,7 @@
                                                             <div class="col-3">
                                                                 <div class="form-group">
                                                                     <label  class="col-form-label">Proceso <span style="color:red;">(*)</span></label>
-                                                                    <select class="editar_proceso_{{$editar_info_equipo->Id_proceso}} custom-select" name="editar_proceso" id="editar_proceso_{{$editar_info_equipo->Id_proceso}}" style="width:100%;" requierd></select>
+                                                                    <select class="editar_proceso" custom-select" name="editar_proceso" id="editar_proceso_{{$editar_info_equipo->Id_proceso}}" style="width:100%;" requierd></select>
                                                                 </div>
                                                             </div>
                                                             <div class="col-3">
@@ -75,7 +75,7 @@
                                                             <div class="col-3">
                                                                 <div class="form-group">
                                                                     <label for="editar_listado_lider" class="col-form-label">Lider del equipo de trabajo <span style="color:red;">(*)</span></label>
-                                                                    <select class="editar_listado_lider_{{$editar_info_equipo->Id_proceso}} custom-select" id="editar_listado_lider_{{$editar_info_equipo->Id_proceso}}" name="editar_listado_lider" style="width:100%;" required>
+                                                                    <select class="editar_listado_lider custom-select" id="editar_listado_lider_{{$editar_info_equipo->Id_proceso}}" name="editar_listado_lider" style="width:100%;" required>
                                                                     </select>
                                                                     <strong class="mensaje_no_hay_usuarios_edicion text-danger text-sm d-none" role="alert">No hay usuarios relacionados al proceso seleccionado.</strong>
                                                                 </div>
