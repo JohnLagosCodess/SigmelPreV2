@@ -996,7 +996,13 @@ $(document).ready(function(){
                 $('#servicio').append('<option value="" selected>Seleccione</option>');
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
-                    $('#servicio').append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
+                    if($("#tipo_evento").val() == 2){
+                        if (data[claves[i]]["Id_Servicio"] != 2) {
+                            $('#servicio').append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
+                        }
+                    }else{
+                        $('#servicio').append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
+                    }
                 }
             }
         });

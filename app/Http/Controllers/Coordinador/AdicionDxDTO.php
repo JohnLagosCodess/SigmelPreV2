@@ -36,6 +36,349 @@ use Carbon\Carbon;
 
 class AdicionDxDTO extends Controller
 {
+    // public function mostrarVistaAdicionDxDTO(Request $request){
+    //     if(!Auth::check()){
+    //         return redirect('/');
+    //     }
+    //     $user = Auth::user();
+    //     $time = time();
+    //     $date = date("Y-m-d", $time);
+    //     $Id_evento = $request->Id_evento_calitec;
+    //     $Id_asignacion = $request->Id_asignacion_calitec;
+    //     $Id_proceso = $request->Id_proceso_calitec;
+
+    //     // traer informacion de la tabla sigmel_informacion_adiciones_dx_eventos
+    //     $info_adicion_dx = sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')
+    //     ->where('ID_evento', $Id_evento)->get();
+
+    //     $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion));
+
+    //     // Validación: Validar si existe un dto atel antes de hacer todo
+    //     $datos_bd_DTO_ATEL = sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
+    //     ->where('ID_evento', $Id_evento)->get();
+
+    //     $bandera_hay_dto = null;
+    //     $bandera_tipo_evento = null;
+    //     if (count($datos_bd_DTO_ATEL) == 0) {
+    //         $bandera_hay_dto = "no_hay_dto_atel";
+    //         $nombre_del_evento_guardado = "";
+    //     }else{
+
+    //         $bandera_hay_dto = "hay_dto_atel";
+
+    //         // Validación: Validar que el tipo de evento sea Accidente o Sin Cobertura
+    //         $id_evento_guardado_dto_atel = $datos_bd_DTO_ATEL[0]->Tipo_evento;
+
+    //         if ($id_evento_guardado_dto_atel == 1 || $id_evento_guardado_dto_atel == 4) {
+    //             $bandera_tipo_evento = "tipo_evento_correcto";
+    //         } else {
+    //             $bandera_tipo_evento = "tipo_evento_incorrecto";
+    //         }
+            
+
+    //         $array_nombre_del_evento_guardado = sigmel_lista_tipo_eventos::on('sigmel_gestiones')
+    //         ->select('Nombre_evento')
+    //         ->where('Id_Evento', $id_evento_guardado_dto_atel)->get();
+    //         $nombre_del_evento_guardado = $array_nombre_del_evento_guardado[0]->Nombre_evento;
+    //     }
+
+    //     $consecutivo_dto_atel = sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
+    //     ->max('Numero_dictamen');
+        
+    //     if ($consecutivo_dto_atel > 0) {
+    //         $numero_consecutivo = $consecutivo_dto_atel + 1;
+    //     }else{
+    //         $numero_consecutivo = 0000000 + 1;
+    //     }
+
+    //     //Traer Motivo de solicitud,
+    //     $motivo_solicitud_actual = cndatos_eventos::on('sigmel_gestiones')
+    //     ->select('Id_motivo_solicitud','Nombre_solicitud')
+    //     ->where('ID_evento', $Id_evento)
+    //     ->get();
+
+    //     //Traer Información apoderado 
+    //     $datos_apoderado_actual = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+    //     ->select('Nombre_apoderado','Nro_identificacion_apoderado')
+    //     ->where('ID_evento', $Id_evento)
+    //     ->get();
+
+    //     // Traer Información laboral
+    //     $array_datos_info_laboral=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+    //     ->leftJoin('sigmel_gestiones.sigmel_lista_arls as sla', 'sla.Id_arl', '=', 'sile.Id_arl')
+    //     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'sile.Id_departamento')
+    //     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldms', 'sldms.Id_municipios', '=', 'sile.Id_municipio')
+    //     ->leftJoin('sigmel_gestiones.sigmel_lista_actividad_economicas as slae', 'slae.Id_ActEco', '=', 'sile.Id_actividad_economica')
+    //     ->leftJoin('sigmel_gestiones.sigmel_lista_clase_riesgos as slcr', 'slcr.Id_Riesgo', '=', 'sile.Id_clase_riesgo')
+    //     ->leftJoin('sigmel_gestiones.sigmel_lista_ciuo_codigos as slcc', 'slcc.Id_Codigo', '=', 'sile.Id_codigo_ciuo')
+    //     ->select('sile.ID_evento', 'sile.Tipo_empleado','sile.Id_arl', 'sla.Nombre_arl', 'sile.Empresa', 'sile.Nit_o_cc', 'sile.Telefono_empresa',
+    //     'sile.Email', 'sile.Direccion', 'sile.Id_departamento', 'sldm.Nombre_departamento', 'sile.Id_municipio', 
+    //     'sldms.Nombre_municipio', 'sile.Id_actividad_economica', 'slae.Nombre_actividad', 'sile.Id_clase_riesgo', 
+    //     'slcr.Nombre_riesgo', 'sile.Persona_contacto', 'sile.Telefono_persona_contacto', 'sile.Id_codigo_ciuo', 'slcc.Nombre_ciuo', 
+    //     'sile.F_ingreso', 'sile.Cargo', 'sile.Funciones_cargo', 'sile.Antiguedad_empresa', 'sile.Antiguedad_cargo_empresa', 
+    //     'sile.F_retiro', 'sile.Descripcion')
+    //     ->where([['sile.ID_evento','=', $Id_evento]])
+    //     ->orderBy('sile.F_registro', 'desc')
+    //     ->limit(1)
+    //     ->get();
+
+    //     //Trae Documentos Solicitados del proceso origen solamente
+    //     $listado_documentos_solicitados = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
+    //     ->select('Id_Documento_Solicitado', 'F_solicitud_documento', 'Nombre_documento', 
+    //     'Descripcion', 'Nombre_solicitante', 'F_recepcion_documento')
+    //     ->where([
+    //         ['ID_evento',$Id_evento],
+    //         ['Estado','Activo'],
+    //         ['Id_proceso','1']
+    //      ])
+    //     ->get();
+
+    //     //Trae si ya marco Articulo 12
+    //     $dato_articulo_12= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_documentos_solicitados_eventos')
+    //    ->select('Articulo_12')
+    //    ->where([
+    //             ['ID_evento', $Id_evento],
+    //             ['Id_Asignacion', $Id_asignacion], 
+    //             ['Id_proceso', '1'], 
+    //             ['Articulo_12','=','No_mas_seguimiento']
+    //         ])
+    //     ->orderBy('Id_Documento_Solicitado', 'desc')
+    //     ->limit(1)
+    //     ->get();
+
+    //     // Traer datos 
+    //     if(count($datos_bd_DTO_ATEL) > 0){
+
+    //         $nombre_tipo_accidente = sigmel_lista_parametros::on('sigmel_gestiones')
+    //         ->select('Nombre_parametro')
+    //         ->where([
+    //             ['Tipo_lista', '=', 'Tipo de accidiente'],
+    //             ['Id_Parametro', $datos_bd_DTO_ATEL[0]->Tipo_accidente],
+    //             ['Estado', '=' ,'activo']
+    //         ])->get();            
+            
+    //         if (count($nombre_tipo_accidente) > 0) {
+    //             $nombre_tipo_accidente = $nombre_tipo_accidente[0]['Nombre_parametro'];
+    //         }else{
+    //             $nombre_tipo_accidente = '';
+    //         }
+
+    //         $nombre_grado_severidad = sigmel_lista_parametros::on('sigmel_gestiones')
+    //         ->select('Nombre_parametro')
+    //         ->where([
+    //             ['Tipo_lista', '=', 'Grado de Severidad'],
+    //             ['Id_Parametro', $datos_bd_DTO_ATEL[0]->Grado_severidad],
+    //             ['Estado', '=' ,'activo']
+    //         ])->get();
+
+    //         if (count($nombre_grado_severidad) > 0) {
+    //             $nombre_grado_severidad = $nombre_grado_severidad[0]['Nombre_parametro'];                
+    //         } else {
+    //             $nombre_grado_severidad = '';                                
+    //         }
+            
+    //         $nombre_factor_riesgo = sigmel_lista_parametros::on('sigmel_gestiones')
+    //         ->select('Nombre_parametro')
+    //         ->where([
+    //             ['Tipo_lista', '=', 'Factor de Riesgo'],
+    //             ['Id_Parametro', $datos_bd_DTO_ATEL[0]->Factor_riesgo],
+    //             ['Estado', '=' ,'activo']
+    //         ])->get();
+
+    //         if (count($nombre_factor_riesgo) > 0 ) {
+    //             $nombre_factor_riesgo = $nombre_factor_riesgo[0]['Nombre_parametro'];
+    //         } else {
+    //             $nombre_factor_riesgo = '';
+    //         }
+            
+
+    //         $nombre_tipo_lesion = sigmel_lista_parametros::on('sigmel_gestiones')
+    //         ->select('Nombre_parametro')
+    //         ->where([
+    //             ['Tipo_lista', '=', 'Tipo de Lesion'],
+    //             ['Id_Parametro', $datos_bd_DTO_ATEL[0]->Tipo_lesion],
+    //             ['Estado', '=' ,'activo']
+    //         ])->get();
+
+    //         if (count($nombre_tipo_lesion) > 0) {
+    //             $nombre_tipo_lesion = $nombre_tipo_lesion[0]['Nombre_parametro'];                
+    //         } else {
+    //             $nombre_tipo_lesion = '';                                
+    //         }            
+
+    //         $nombre_parte_cuerpo_afectada = sigmel_lista_parametros::on('sigmel_gestiones')
+    //         ->select('Nombre_parametro')
+    //         ->where([
+    //             ['Tipo_lista', '=', 'Parte Cuerpo Afectada'],
+    //             ['Id_Parametro', $datos_bd_DTO_ATEL[0]->Parte_cuerpo_afectada],
+    //             ['Estado', '=' ,'activo']
+    //         ])->get();
+
+    //         if (count($nombre_parte_cuerpo_afectada) > 0) {
+    //             $nombre_parte_cuerpo_afectada = $nombre_parte_cuerpo_afectada[0]['Nombre_parametro'];                
+    //         } else {
+    //             $nombre_parte_cuerpo_afectada = '';                                
+    //         }
+
+    //         // TRAER DATOS EXAMENES E INTERCONSULTAS DEL DTO ATEL
+    //         if (count($info_adicion_dx) > 0) {
+    //             $array_datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+    //             ->whereIn('Id_Asignacion', [$datos_bd_DTO_ATEL[0]->Id_Asignacion, $info_adicion_dx[0]->Id_Asignacion])
+    //             ->where([
+    //                 ['ID_evento',$Id_evento],
+    //                 ['Id_proceso',$Id_proceso],
+    //                 ['Estado', 'Activo']
+    //             ])->get();
+    //         } else {
+    //             $array_datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+    //             ->where([
+    //                 ['ID_evento',$Id_evento],
+    //                 ['Id_Asignacion', $datos_bd_DTO_ATEL[0]->Id_Asignacion],
+    //                 ['Id_proceso',$Id_proceso],
+    //                 ['Estado', 'Activo']
+    //             ])->get();
+    //         }
+            
+    
+    //         // TRAER DATOS CIE10 (Diagnóstico motivo de calificación) Visuales
+    //         $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+    //         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+    //         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+    //         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
+    //         ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.Id_proceso', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
+    //         'slp.Nombre_parametro as Nombre_parametro_origen', 'side.Deficiencia_motivo_califi_condiciones', 'side.Lateralidad_CIE10', 'slp2.Nombre_parametro as Nombre_parametro_lateralidad', 'side.Principal')
+    //         ->where([['side.ID_evento',$datos_bd_DTO_ATEL[0]->ID_evento],
+    //             ['side.Id_Asignacion',$datos_bd_DTO_ATEL[0]->Id_Asignacion],
+    //             ['side.Id_proceso',$datos_bd_DTO_ATEL[0]->Id_proceso],
+    //             ['side.Estado', '=', 'Activo']
+    //         ])->get(); 
+
+    //         if (count($info_adicion_dx) > 0) {
+    //             // TRAER DATOS CIE10 (Diagnóstico motivo de calificación) Adicionales
+    //             $array_datos_diagnostico_adicionales =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+    //             ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+    //             ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+    //             ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
+    //             ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.Id_proceso', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
+    //             'slp.Nombre_parametro as Nombre_parametro_origen', 'side.Deficiencia_motivo_califi_condiciones', 'side.Lateralidad_CIE10',
+    //             'slp2.Nombre_parametro as Nombre_parametro_lateralidad', 'side.Principal', 'side.F_adicion_CIE10')
+    //             ->where([['side.ID_evento',$info_adicion_dx[0]->ID_evento],
+    //                 ['side.Id_Asignacion',$info_adicion_dx[0]->Id_Asignacion],
+    //                 ['side.Id_proceso',$info_adicion_dx[0]->Id_proceso],
+    //                 ['side.Estado', '=', 'Activo']
+    //             ])->get(); 
+    //         }else{
+    //             $array_datos_diagnostico_adicionales = "";
+    //         }
+            
+    //     }else{
+    //         $nombre_tipo_accidente = "";
+    //         $nombre_grado_severidad = "";
+    //         $nombre_factor_riesgo = "";
+    //         $nombre_tipo_lesion = "";
+    //         $nombre_parte_cuerpo_afectada = "";
+    //         $array_datos_examenes_interconsultas = "";
+    //         $array_datos_diagnostico_motcalifi = "";
+    //         $array_datos_diagnostico_adicionales = "";
+    //     }
+
+    //     $array_comite_interdisciplinario = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+    //     ->where([
+    //         ['ID_evento',$Id_evento],
+    //         ['Id_Asignacion',$Id_asignacion]
+    //     ])
+    //     ->get(); 
+
+    //     // creación de consecutivo para el comunicado
+    //     $radicadocomunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+    //     ->select('N_radicado')
+    //     ->where([
+    //         ['ID_evento',$Id_evento],
+    //         ['F_comunicado',$date],
+    //         ['Id_proceso','1']
+    //     ])
+    //     ->orderBy('N_radicado', 'desc')
+    //     ->limit(1)
+    //     ->get();
+            
+    //     if(count($radicadocomunicado)==0){
+    //         $fechaActual = date("Ymd");
+    //         // Obtener el último valor de la base de datos o archivo
+    //         $consecutivoP1 = "SAL-ORI";
+    //         $consecutivoP2 = $fechaActual;
+    //         $consecutivoP3 = '000000';
+    //         $ultimoDigito = substr($consecutivoP3, -6);
+    //         $consecutivoInicial = $consecutivoP1.$consecutivoP2.$consecutivoP3; 
+    //         $nuevoConsecutivo = $ultimoDigito + 1;
+    //         // Reiniciar el consecutivo si es un nuevo día
+    //         if (date("Ymd") != $fechaActual) {
+    //             $nuevoConsecutivo = 0;
+    //         }
+    //         // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
+    //         $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
+    //         $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted;            
+    //     }else{
+    //         $fechaActual = date("Ymd");
+    //         $ultimoConsecutivo = $radicadocomunicado[0]->N_radicado;
+    //         $ultimoDigito = substr($ultimoConsecutivo, -6);
+    //         $nuevoConsecutivo = $ultimoDigito + 1;
+    //         // Reiniciar el consecutivo si es un nuevo día
+    //         if (date("Ymd") != $fechaActual) {
+    //             $nuevoConsecutivo = 0;
+    //         }
+    //         // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
+    //         $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
+    //         $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted;
+    //     }
+        
+    //     $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+    //     ->where([['ID_evento',$Id_evento], ['Id_Asignacion',$Id_asignacion], ['T_documento','N/A'], ['Modulo_creacion','adicionDxDtoOrigen']])->get();
+    //     foreach ($array_comunicados_correspondencia as $comunicado) {
+    //         if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
+    //             $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
+    //             if(File::exists($filePath)){
+    //                 $comunicado['Existe'] = true;
+    //             }
+    //             else{
+    //                 $comunicado['Existe'] = false;
+    //             }
+    //         }
+    //         else if($comunicado['Tipo_descarga'] === 'Manual'){
+    //             $filePath = public_path('Documentos_Eventos/'.$comunicado['ID_evento'].'/'.$comunicado['Asunto']);
+    //             if(File::exists($filePath)){
+    //                 $comunicado['Existe'] = true;
+    //             }
+    //             else{
+    //                 $comunicado['Existe'] = false;
+    //             }
+    //         }
+    //         else{
+    //             $comunicado['Existe'] = false;
+    //         }
+    //     }
+    //     /* Nombre Afp */
+    //     $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
+    //     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
+    //     ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad')
+    //     ->where([['Id_Entidad', $array_datos_calificacion_origen[0]->Id_afp]])
+    //     ->get();
+
+    //     /* Traer datos de la AFP de Conocimiento */
+    //     $info_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
+    //     ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp_entidad_conocimiento', '=', 'sie.Id_Entidad')
+    //     ->select('siae.Entidad_conocimiento')
+    //     ->where([['siae.ID_evento', $Id_evento]])
+    //     ->get();
+
+    //     return view('coordinador.adicionDxDtoOrigen', compact('user', 'datos_bd_DTO_ATEL', 'bandera_hay_dto', 'array_datos_calificacion_origen', 
+    //     'bandera_tipo_evento', 'nombre_del_evento_guardado', 'numero_consecutivo', 'motivo_solicitud_actual',
+    //     'datos_apoderado_actual', 'array_datos_info_laboral', 'nombre_tipo_accidente','nombre_grado_severidad',
+    //     'nombre_factor_riesgo','nombre_tipo_lesion','nombre_parte_cuerpo_afectada',
+    //     'listado_documentos_solicitados', 'dato_articulo_12', 'array_datos_examenes_interconsultas',
+    //     'array_datos_diagnostico_motcalifi', 'info_adicion_dx', 'array_datos_diagnostico_adicionales','array_comite_interdisciplinario', 
+    //     'consecutivo', 'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento'));
+    // }
+
     public function mostrarVistaAdicionDxDTO(Request $request){
         if(!Auth::check()){
             return redirect('/');
@@ -44,43 +387,404 @@ class AdicionDxDTO extends Controller
         $time = time();
         $date = date("Y-m-d", $time);
         $Id_evento = $request->Id_evento_calitec;
-        $Id_asignacion = $request->Id_asignacion_calitec;
+        $Id_asignacion_actual = $request->Id_asignacion_calitec;
         $Id_proceso = $request->Id_proceso_calitec;
 
-        // traer informacion de la tabla sigmel_informacion_adiciones_dx_eventos
-        $info_adicion_dx = sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')
-        ->where('ID_evento', $Id_evento)->get();
+        $bandera_hay_dto = "hay_dto_atel";
 
-        $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion));
+        // Escenario N°1: Mostrar el formulario vacío cuando se crea una Adición Dx por primera
+        // vez desde el módulo nuevo o desde un servicio distinto al de DTO
+        $info_adicion_dx_actual = sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')
+        ->where([
+            ['ID_evento', $Id_evento],
+            ['Id_Asignacion', $Id_asignacion_actual]
+        ])->get();
+        
+        if(count($info_adicion_dx_actual) > 0){
+            // echo "DX ACTUAL";
+            // Consultamos la información de la Adición Dx
+            $info_adicion_dx = sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento', $Id_evento],
+                ['Id_Asignacion', $Id_asignacion_actual]
+            ])->get();
 
-        // Validación: Validar si existe un dto atel antes de hacer todo
-        $datos_bd_DTO_ATEL = sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
-        ->where('ID_evento', $Id_evento)->get();
+            // TRAER DATOS EXAMENES E INTERCONSULTAS DEL ADX
+            $array_datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+            ->whereIn('Id_Asignacion', [$info_adicion_dx[0]->Id_Asignacion])
+            ->where([
+                ['ID_evento',$Id_evento],
+                ['Id_proceso',$Id_proceso],
+                ['Estado', 'Activo']
+            ])->get();
 
-        $bandera_hay_dto = null;
-        $bandera_tipo_evento = null;
-        if (count($datos_bd_DTO_ATEL) == 0) {
-            $bandera_hay_dto = "no_hay_dto_atel";
-            $nombre_del_evento_guardado = "";
-        }else{
+            // $array_datos_diagnostico_motcalifi = "";
+            // TRAER DATOS CIE10 (Diagnóstico motivo de calificación) Visuales
+            $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
+            ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.Id_proceso', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
+            'slp.Nombre_parametro as Nombre_parametro_origen', 'side.Deficiencia_motivo_califi_condiciones', 'side.Lateralidad_CIE10', 'slp2.Nombre_parametro as Nombre_parametro_lateralidad', 'side.Principal')
+            ->where([['side.ID_evento',$info_adicion_dx[0]->ID_evento],
+                ['side.Id_Asignacion',$info_adicion_dx[0]->Id_Asignacion],
+                ['side.Id_proceso',$info_adicion_dx[0]->Id_proceso],
+                ['side.Estado', '=', 'Activo'],
+                ['side.Dx_Adicionado', '=', 'No']
+            ])->get();
 
-            $bandera_hay_dto = "hay_dto_atel";
+            // TRAER DATOS CIE10 (Diagnóstico motivo de calificación) Adicionales
+            $array_datos_diagnostico_adicionales = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
+            ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.Id_proceso', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
+            'slp.Nombre_parametro as Nombre_parametro_origen', 'side.Deficiencia_motivo_califi_condiciones', 'side.Lateralidad_CIE10',
+            'slp2.Nombre_parametro as Nombre_parametro_lateralidad', 'side.Principal', 'side.F_adicion_CIE10')
+            ->where([['side.ID_evento',$info_adicion_dx[0]->ID_evento],
+                ['side.Id_Asignacion',$info_adicion_dx[0]->Id_Asignacion],
+                ['side.Id_proceso',$info_adicion_dx[0]->Id_proceso],
+                ['side.Estado', '=', 'Activo'],
+                ['side.Dx_Adicionado', '=', 'Si']
+            ])->get(); 
 
-            // Validación: Validar que el tipo de evento sea Accidente o Sin Cobertura
-            $id_evento_guardado_dto_atel = $datos_bd_DTO_ATEL[0]->Tipo_evento;
-
-            if ($id_evento_guardado_dto_atel == 1 || $id_evento_guardado_dto_atel == 4) {
+            // Validar si el tipo de evento es Accidente o Sin Cobertura
+            $id_evento_guardado = $info_adicion_dx[0]->Tipo_evento;
+            if ($id_evento_guardado == 1 || $id_evento_guardado == 4) {
                 $bandera_tipo_evento = "tipo_evento_correcto";
             } else {
                 $bandera_tipo_evento = "tipo_evento_incorrecto";
             }
-            
 
+            // Nombre del evento guardado
             $array_nombre_del_evento_guardado = sigmel_lista_tipo_eventos::on('sigmel_gestiones')
             ->select('Nombre_evento')
-            ->where('Id_Evento', $id_evento_guardado_dto_atel)->get();
+            ->where('Id_Evento', $id_evento_guardado)->get();
+
             $nombre_del_evento_guardado = $array_nombre_del_evento_guardado[0]->Nombre_evento;
+
+            //Trae si ya marco Articulo 12
+            $dato_articulo_12= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_documentos_solicitados_eventos')
+            ->select('Articulo_12')
+            ->where([
+                ['ID_evento', $Id_evento],
+                ['Id_Asignacion', $info_adicion_dx[0]->Id_Asignacion], 
+                ['Id_proceso', '1'], 
+                ['Articulo_12','=','No_mas_seguimiento']
+            ])
+            ->orderBy('Id_Documento_Solicitado', 'desc')
+            ->limit(1)
+            ->get();
+
+            // Comite interdisciplinario
+            $array_comite_interdisciplinario = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento',$Id_evento],
+                ['Id_Asignacion',$info_adicion_dx[0]->Id_Asignacion]
+            ])
+            ->get(); 
+            
+            // Comunicados
+            $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$Id_evento], ['Id_Asignacion',$info_adicion_dx[0]->Id_Asignacion], ['T_documento','N/A'], ['Modulo_creacion','adicionDxDtoOrigen']])->get();
+
+            foreach ($array_comunicados_correspondencia as $comunicado) {
+                if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
+                    $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
+                    if(File::exists($filePath)){
+                        $comunicado['Existe'] = true;
+                    }
+                    else{
+                        $comunicado['Existe'] = false;
+                    }
+                }
+                else if($comunicado['Tipo_descarga'] === 'Manual'){
+                    $filePath = public_path('Documentos_Eventos/'.$comunicado['ID_evento'].'/'.$comunicado['Asunto']);
+                    if(File::exists($filePath)){
+                        $comunicado['Existe'] = true;
+                    }
+                    else{
+                        $comunicado['Existe'] = false;
+                    }
+                }
+                else{
+                    $comunicado['Existe'] = false;
+                }
+            };
+
+            $datos_bd_DTO_ATEL = array();
+
+            $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($info_adicion_dx[0]->Id_Asignacion));
+            
+        }else{
+
+            // Consultamos la información de la dto
+            $datos_bd_DTO_ATEL = sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
+            ->where('ID_evento', $Id_evento)
+            ->get();
+
+            // traemos la informacion de la adición dx más reciente
+            $info_adicion_dx_reciente = sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')
+            ->where('ID_evento', $Id_evento)
+            ->orderBy('Id_Asignacion', 'desc')
+            ->limit(1)
+            ->get();
+
+            // Escenario N°2: Cuando hay una DTO mostrar la información de la DTO
+            if(count($datos_bd_DTO_ATEL) > 0 && count($info_adicion_dx_reciente) == 0){
+                // echo "SOLO DTO";
+                // TRAER DATOS EXAMENES E INTERCONSULTAS DEL DTO ATEL
+                $array_datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['ID_evento',$Id_evento],
+                    ['Id_Asignacion', $datos_bd_DTO_ATEL[0]->Id_Asignacion],
+                    ['Id_proceso',$Id_proceso],
+                    ['Estado', 'Activo']
+                ])->get();
+
+                $array_datos_diagnostico_adicionales = "";
+
+                // TRAER DATOS CIE10 (Diagnóstico motivo de calificación) Visuales
+                $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
+                ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.Id_proceso', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
+                'slp.Nombre_parametro as Nombre_parametro_origen', 'side.Deficiencia_motivo_califi_condiciones', 'side.Lateralidad_CIE10', 'slp2.Nombre_parametro as Nombre_parametro_lateralidad', 'side.Principal')
+                ->where([['side.ID_evento',$datos_bd_DTO_ATEL[0]->ID_evento],
+                    ['side.Id_Asignacion',$datos_bd_DTO_ATEL[0]->Id_Asignacion],
+                    ['side.Id_proceso',$datos_bd_DTO_ATEL[0]->Id_proceso],
+                    ['side.Estado', '=', 'Activo']
+                ])->get();
+
+                // Validación: Validar que el tipo de evento sea Accidente o Sin Cobertura
+                $id_evento_guardado_dto_atel = $datos_bd_DTO_ATEL[0]->Tipo_evento;
+
+                if ($id_evento_guardado_dto_atel == 1 || $id_evento_guardado_dto_atel == 4) {
+                    $bandera_tipo_evento = "tipo_evento_correcto";
+                } else {
+                    $bandera_tipo_evento = "tipo_evento_incorrecto";
+                }
+
+                // Nombre del evento guardado
+                $array_nombre_del_evento_guardado = sigmel_lista_tipo_eventos::on('sigmel_gestiones')
+                ->select('Nombre_evento')
+                ->where('Id_Evento', $id_evento_guardado_dto_atel)->get();
+                $nombre_del_evento_guardado = $array_nombre_del_evento_guardado[0]->Nombre_evento;
+
+                //Trae si ya marco Articulo 12
+                $dato_articulo_12= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_documentos_solicitados_eventos')
+                ->select('Articulo_12')
+                ->where([
+                    ['ID_evento', $Id_evento],
+                    ['Id_Asignacion', $datos_bd_DTO_ATEL[0]->Id_Asignacion], 
+                    ['Id_proceso', '1'], 
+                    ['Articulo_12','=','No_mas_seguimiento']
+                ])
+                ->orderBy('Id_Documento_Solicitado', 'desc')
+                ->limit(1)
+                ->get();
+
+                // Comite interdisciplinario
+                $array_comite_interdisciplinario = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['ID_evento',$Id_evento],
+                    ['Id_Asignacion',$Id_asignacion_actual]
+                ])
+                ->get(); 
+                
+                // Comunicados
+                $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$Id_evento], ['Id_Asignacion',$Id_asignacion_actual], ['T_documento','N/A'], ['Modulo_creacion','adicionDxDtoOrigen']])->get(); 
+
+                foreach ($array_comunicados_correspondencia as $comunicado) {
+                    if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
+                        $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
+                        if(File::exists($filePath)){
+                            $comunicado['Existe'] = true;
+                        }
+                        else{
+                            $comunicado['Existe'] = false;
+                        }
+                    }
+                    else if($comunicado['Tipo_descarga'] === 'Manual'){
+                        $filePath = public_path('Documentos_Eventos/'.$comunicado['ID_evento'].'/'.$comunicado['Asunto']);
+                        if(File::exists($filePath)){
+                            $comunicado['Existe'] = true;
+                        }
+                        else{
+                            $comunicado['Existe'] = false;
+                        }
+                    }
+                    else{
+                        $comunicado['Existe'] = false;
+                    }
+                };
+
+                $info_adicion_dx = array();
+                $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion_actual));
+
+            }
+            // Escenario N°3: Cuando hay una Adición Dx mostrar la información de la Adición Dx más reciente
+            elseif((count($datos_bd_DTO_ATEL) > 0 && count($info_adicion_dx_reciente) > 0) || (count($datos_bd_DTO_ATEL) == 0 && count($info_adicion_dx_reciente) > 0)){
+                // echo "DX MÁS RECIENTE";
+                // Consultamos la información de la Adición Dx
+                $info_adicion_dx = sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')
+                ->where('ID_evento', $Id_evento)
+                ->orderBy('Id_Asignacion', 'desc')
+                ->limit(1)
+                ->get();
+
+
+                // TRAER DATOS EXAMENES E INTERCONSULTAS DEL ADX
+                $array_datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+                ->whereIn('Id_Asignacion', [$info_adicion_dx[0]->Id_Asignacion])
+                ->where([
+                    ['ID_evento',$Id_evento],
+                    ['Id_proceso',$Id_proceso],
+                    ['Estado', 'Activo']
+                ])->get();
+
+                // $array_datos_diagnostico_motcalifi = "";
+                // TRAER DATOS CIE10 (Diagnóstico motivo de calificación) Visuales
+                $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
+                ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.Id_proceso', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
+                'slp.Nombre_parametro as Nombre_parametro_origen', 'side.Deficiencia_motivo_califi_condiciones', 'side.Lateralidad_CIE10', 'slp2.Nombre_parametro as Nombre_parametro_lateralidad', 'side.Principal')
+                ->where([['side.ID_evento',$info_adicion_dx[0]->ID_evento],
+                    ['side.Id_Asignacion',$info_adicion_dx[0]->Id_Asignacion],
+                    ['side.Id_proceso',$info_adicion_dx[0]->Id_proceso],
+                    ['side.Estado', '=', 'Activo'],
+                    ['side.Dx_Adicionado', '=', 'No']
+                ])->get();
+
+                // TRAER DATOS CIE10 (Diagnóstico motivo de calificación) Adicionales
+                $array_datos_diagnostico_adicionales = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
+                ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.Id_proceso', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
+                'slp.Nombre_parametro as Nombre_parametro_origen', 'side.Deficiencia_motivo_califi_condiciones', 'side.Lateralidad_CIE10',
+                'slp2.Nombre_parametro as Nombre_parametro_lateralidad', 'side.Principal', 'side.F_adicion_CIE10')
+                ->where([['side.ID_evento',$info_adicion_dx[0]->ID_evento],
+                    ['side.Id_Asignacion',$info_adicion_dx[0]->Id_Asignacion],
+                    ['side.Id_proceso',$info_adicion_dx[0]->Id_proceso],
+                    ['side.Estado', '=', 'Activo'],
+                    ['side.Dx_Adicionado', '=', 'Si']
+                ])->get(); 
+
+                // Validar si el tipo de evento es Accidente o Sin Cobertura
+                $id_evento_guardado = $info_adicion_dx[0]->Tipo_evento;
+                if ($id_evento_guardado == 1 || $id_evento_guardado == 4) {
+                    $bandera_tipo_evento = "tipo_evento_correcto";
+                } else {
+                    $bandera_tipo_evento = "tipo_evento_incorrecto";
+                }
+
+                // Nombre del evento guardado
+                $array_nombre_del_evento_guardado = sigmel_lista_tipo_eventos::on('sigmel_gestiones')
+                ->select('Nombre_evento')
+                ->where('Id_Evento', $id_evento_guardado)->get();
+
+                $nombre_del_evento_guardado = $array_nombre_del_evento_guardado[0]->Nombre_evento;
+
+                //Trae si ya marco Articulo 12
+                $dato_articulo_12= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_documentos_solicitados_eventos')
+                ->select('Articulo_12')
+                ->where([
+                    ['ID_evento', $Id_evento],
+                    ['Id_Asignacion', $info_adicion_dx[0]->Id_Asignacion], 
+                    ['Id_proceso', '1'], 
+                    ['Articulo_12','=','No_mas_seguimiento']
+                ])
+                ->orderBy('Id_Documento_Solicitado', 'desc')
+                ->limit(1)
+                ->get();
+
+                // Comite interdisciplinario
+                $array_comite_interdisciplinario = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['ID_evento',$Id_evento],
+                    ['Id_Asignacion',$Id_asignacion_actual]
+                ])
+                ->get(); 
+                
+                // Comunicados
+                $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$Id_evento], ['Id_Asignacion',$Id_asignacion_actual], ['T_documento','N/A'], ['Modulo_creacion','adicionDxDtoOrigen']])->get();
+
+                foreach ($array_comunicados_correspondencia as $comunicado) {
+                    if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
+                        $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
+                        if(File::exists($filePath)){
+                            $comunicado['Existe'] = true;
+                        }
+                        else{
+                            $comunicado['Existe'] = false;
+                        }
+                    }
+                    else if($comunicado['Tipo_descarga'] === 'Manual'){
+                        $filePath = public_path('Documentos_Eventos/'.$comunicado['ID_evento'].'/'.$comunicado['Asunto']);
+                        if(File::exists($filePath)){
+                            $comunicado['Existe'] = true;
+                        }
+                        else{
+                            $comunicado['Existe'] = false;
+                        }
+                    }
+                    else{
+                        $comunicado['Existe'] = false;
+                    }
+                };
+                // $datos_bd_DTO_ATEL = array();
+                $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion_actual));
+            }
+            // Escenario N°4: Mostrar el formulario vacío para llenar la Adición Dx
+            elseif(count($datos_bd_DTO_ATEL) == 0 && count($info_adicion_dx_reciente) == 0){
+                // echo "FORMULARIO VACÍO";
+                // $info_adicion_dx = sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')
+                // ->where([
+                //     ['ID_evento', $Id_evento],
+                //     ['Id_Asignacion', $Id_asignacion_actual]
+                // ])->get();
+                
+                // $datos_bd_DTO_ATEL = sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
+                // ->where('ID_evento', $Id_evento)
+                // ->get();
+
+                // $info_adicion_dx = "";
+                // $datos_bd_DTO_ATEL = "";
+                $info_adicion_dx = array();
+                $datos_bd_DTO_ATEL = array();
+                $array_datos_examenes_interconsultas = "";
+                $array_datos_diagnostico_motcalifi = "";
+                $array_datos_diagnostico_adicionales = "";
+                $dato_articulo_12 = "";
+                $array_comite_interdisciplinario = "";
+                $nombre_del_evento_guardado = "";
+                $array_comunicados_correspondencia = array();
+
+                $info_tipo_evento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_tipo_eventos as slte')
+                ->leftJoin('sigmel_gestiones.sigmel_informacion_eventos as sie', 'slte.Id_Evento', '=', 'sie.Tipo_evento')
+                ->select('slte.Nombre_evento', 'slte.Id_Evento')
+                ->where('sie.ID_evento', $Id_evento)->get();
+
+                $id_evento_guardado = $info_tipo_evento[0]->Id_Evento;
+                if ($id_evento_guardado == 1 || $id_evento_guardado == 4) {
+                    $bandera_tipo_evento = "tipo_evento_correcto";
+                } else {
+                    $bandera_tipo_evento = "tipo_evento_incorrecto";
+                }
+
+                $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion_actual));
+            }
+
+            
         }
+
+        // $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion_actual));
 
         $consecutivo_dto_atel = sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
         ->max('Numero_dictamen');
@@ -93,209 +797,53 @@ class AdicionDxDTO extends Controller
 
         //Traer Motivo de solicitud,
         $motivo_solicitud_actual = cndatos_eventos::on('sigmel_gestiones')
-        ->select('Id_motivo_solicitud','Nombre_solicitud')
-        ->where('ID_evento', $Id_evento)
+            ->select('Id_motivo_solicitud','Nombre_solicitud')
+            ->where('ID_evento', $Id_evento)
         ->get();
 
         //Traer Información apoderado 
         $datos_apoderado_actual = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-        ->select('Nombre_apoderado','Nro_identificacion_apoderado')
-        ->where('ID_evento', $Id_evento)
+            ->select('Nombre_apoderado','Nro_identificacion_apoderado')
+            ->where('ID_evento', $Id_evento)
         ->get();
 
         // Traer Información laboral
         $array_datos_info_laboral=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_arls as sla', 'sla.Id_arl', '=', 'sile.Id_arl')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'sile.Id_departamento')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldms', 'sldms.Id_municipios', '=', 'sile.Id_municipio')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_actividad_economicas as slae', 'slae.Id_ActEco', '=', 'sile.Id_actividad_economica')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_clase_riesgos as slcr', 'slcr.Id_Riesgo', '=', 'sile.Id_clase_riesgo')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_ciuo_codigos as slcc', 'slcc.Id_Codigo', '=', 'sile.Id_codigo_ciuo')
-        ->select('sile.ID_evento', 'sile.Tipo_empleado','sile.Id_arl', 'sla.Nombre_arl', 'sile.Empresa', 'sile.Nit_o_cc', 'sile.Telefono_empresa',
-        'sile.Email', 'sile.Direccion', 'sile.Id_departamento', 'sldm.Nombre_departamento', 'sile.Id_municipio', 
-        'sldms.Nombre_municipio', 'sile.Id_actividad_economica', 'slae.Nombre_actividad', 'sile.Id_clase_riesgo', 
-        'slcr.Nombre_riesgo', 'sile.Persona_contacto', 'sile.Telefono_persona_contacto', 'sile.Id_codigo_ciuo', 'slcc.Nombre_ciuo', 
-        'sile.F_ingreso', 'sile.Cargo', 'sile.Funciones_cargo', 'sile.Antiguedad_empresa', 'sile.Antiguedad_cargo_empresa', 
-        'sile.F_retiro', 'sile.Descripcion')
-        ->where([['sile.ID_evento','=', $Id_evento]])
-        ->orderBy('sile.F_registro', 'desc')
-        ->limit(1)
+            ->leftJoin('sigmel_gestiones.sigmel_lista_arls as sla', 'sla.Id_arl', '=', 'sile.Id_arl')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'sile.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldms', 'sldms.Id_municipios', '=', 'sile.Id_municipio')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_actividad_economicas as slae', 'slae.Id_ActEco', '=', 'sile.Id_actividad_economica')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_clase_riesgos as slcr', 'slcr.Id_Riesgo', '=', 'sile.Id_clase_riesgo')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_ciuo_codigos as slcc', 'slcc.Id_Codigo', '=', 'sile.Id_codigo_ciuo')
+            ->select('sile.ID_evento', 'sile.Tipo_empleado','sile.Id_arl', 'sla.Nombre_arl', 'sile.Empresa', 'sile.Nit_o_cc', 'sile.Telefono_empresa',
+            'sile.Email', 'sile.Direccion', 'sile.Id_departamento', 'sldm.Nombre_departamento', 'sile.Id_municipio', 
+            'sldms.Nombre_municipio', 'sile.Id_actividad_economica', 'slae.Nombre_actividad', 'sile.Id_clase_riesgo', 
+            'slcr.Nombre_riesgo', 'sile.Persona_contacto', 'sile.Telefono_persona_contacto', 'sile.Id_codigo_ciuo', 'slcc.Nombre_ciuo', 
+            'sile.F_ingreso', 'sile.Cargo', 'sile.Funciones_cargo', 'sile.Antiguedad_empresa', 'sile.Antiguedad_cargo_empresa', 
+            'sile.F_retiro', 'sile.Descripcion')
+            ->where([['sile.ID_evento','=', $Id_evento]])
+            ->orderBy('sile.F_registro', 'desc')
+            ->limit(1)
         ->get();
 
         //Trae Documentos Solicitados del proceso origen solamente
         $listado_documentos_solicitados = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
-        ->select('Id_Documento_Solicitado', 'F_solicitud_documento', 'Nombre_documento', 
-        'Descripcion', 'Nombre_solicitante', 'F_recepcion_documento')
-        ->where([
-            ['ID_evento',$Id_evento],
-            ['Estado','Activo'],
-            ['Id_proceso','1']
-         ])
-        ->get();
-
-        //Trae si ya marco Articulo 12
-        $dato_articulo_12= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_documentos_solicitados_eventos')
-       ->select('Articulo_12')
-       ->where([
-                ['ID_evento', $Id_evento],
-                ['Id_Asignacion', $Id_asignacion], 
-                ['Id_proceso', '1'], 
-                ['Articulo_12','=','No_mas_seguimiento']
+            ->select('Id_Documento_Solicitado', 'F_solicitud_documento', 'Nombre_documento', 
+            'Descripcion', 'Nombre_solicitante', 'F_recepcion_documento')
+            ->where([
+                ['ID_evento',$Id_evento],
+                ['Estado','Activo'],
+                ['Id_proceso','1']
             ])
-        ->orderBy('Id_Documento_Solicitado', 'desc')
-        ->limit(1)
         ->get();
-
-        // Traer datos 
-        if(count($datos_bd_DTO_ATEL) > 0){
-
-            $nombre_tipo_accidente = sigmel_lista_parametros::on('sigmel_gestiones')
-            ->select('Nombre_parametro')
-            ->where([
-                ['Tipo_lista', '=', 'Tipo de accidiente'],
-                ['Id_Parametro', $datos_bd_DTO_ATEL[0]->Tipo_accidente],
-                ['Estado', '=' ,'activo']
-            ])->get();            
-            
-            if (count($nombre_tipo_accidente) > 0) {
-                $nombre_tipo_accidente = $nombre_tipo_accidente[0]['Nombre_parametro'];
-            }else{
-                $nombre_tipo_accidente = '';
-            }
-
-            $nombre_grado_severidad = sigmel_lista_parametros::on('sigmel_gestiones')
-            ->select('Nombre_parametro')
-            ->where([
-                ['Tipo_lista', '=', 'Grado de Severidad'],
-                ['Id_Parametro', $datos_bd_DTO_ATEL[0]->Grado_severidad],
-                ['Estado', '=' ,'activo']
-            ])->get();
-
-            if (count($nombre_grado_severidad) > 0) {
-                $nombre_grado_severidad = $nombre_grado_severidad[0]['Nombre_parametro'];                
-            } else {
-                $nombre_grado_severidad = '';                                
-            }
-            
-            $nombre_factor_riesgo = sigmel_lista_parametros::on('sigmel_gestiones')
-            ->select('Nombre_parametro')
-            ->where([
-                ['Tipo_lista', '=', 'Factor de Riesgo'],
-                ['Id_Parametro', $datos_bd_DTO_ATEL[0]->Factor_riesgo],
-                ['Estado', '=' ,'activo']
-            ])->get();
-
-            if (count($nombre_factor_riesgo) > 0 ) {
-                $nombre_factor_riesgo = $nombre_factor_riesgo[0]['Nombre_parametro'];
-            } else {
-                $nombre_factor_riesgo = '';
-            }
-            
-
-            $nombre_tipo_lesion = sigmel_lista_parametros::on('sigmel_gestiones')
-            ->select('Nombre_parametro')
-            ->where([
-                ['Tipo_lista', '=', 'Tipo de Lesion'],
-                ['Id_Parametro', $datos_bd_DTO_ATEL[0]->Tipo_lesion],
-                ['Estado', '=' ,'activo']
-            ])->get();
-
-            if (count($nombre_tipo_lesion) > 0) {
-                $nombre_tipo_lesion = $nombre_tipo_lesion[0]['Nombre_parametro'];                
-            } else {
-                $nombre_tipo_lesion = '';                                
-            }            
-
-            $nombre_parte_cuerpo_afectada = sigmel_lista_parametros::on('sigmel_gestiones')
-            ->select('Nombre_parametro')
-            ->where([
-                ['Tipo_lista', '=', 'Parte Cuerpo Afectada'],
-                ['Id_Parametro', $datos_bd_DTO_ATEL[0]->Parte_cuerpo_afectada],
-                ['Estado', '=' ,'activo']
-            ])->get();
-
-            if (count($nombre_parte_cuerpo_afectada) > 0) {
-                $nombre_parte_cuerpo_afectada = $nombre_parte_cuerpo_afectada[0]['Nombre_parametro'];                
-            } else {
-                $nombre_parte_cuerpo_afectada = '';                                
-            }
-
-            // TRAER DATOS EXAMENES E INTERCONSULTAS DEL DTO ATEL
-            if (count($info_adicion_dx) > 0) {
-                $array_datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
-                ->whereIn('Id_Asignacion', [$datos_bd_DTO_ATEL[0]->Id_Asignacion, $info_adicion_dx[0]->Id_Asignacion])
-                ->where([
-                    ['ID_evento',$Id_evento],
-                    ['Id_proceso',$Id_proceso],
-                    ['Estado', 'Activo']
-                ])->get();
-            } else {
-                $array_datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
-                ->where([
-                    ['ID_evento',$Id_evento],
-                    ['Id_Asignacion', $datos_bd_DTO_ATEL[0]->Id_Asignacion],
-                    ['Id_proceso',$Id_proceso],
-                    ['Estado', 'Activo']
-                ])->get();
-            }
-            
-    
-            // TRAER DATOS CIE10 (Diagnóstico motivo de calificación) Visuales
-            $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
-            ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.Id_proceso', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
-            'slp.Nombre_parametro as Nombre_parametro_origen', 'side.Deficiencia_motivo_califi_condiciones', 'side.Lateralidad_CIE10', 'slp2.Nombre_parametro as Nombre_parametro_lateralidad', 'side.Principal')
-            ->where([['side.ID_evento',$datos_bd_DTO_ATEL[0]->ID_evento],
-                ['side.Id_Asignacion',$datos_bd_DTO_ATEL[0]->Id_Asignacion],
-                ['side.Id_proceso',$datos_bd_DTO_ATEL[0]->Id_proceso],
-                ['side.Estado', '=', 'Activo']
-            ])->get(); 
-
-            if (count($info_adicion_dx) > 0) {
-                // TRAER DATOS CIE10 (Diagnóstico motivo de calificación) Adicionales
-                $array_datos_diagnostico_adicionales =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
-                ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
-                ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
-                ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
-                ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.Id_proceso', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
-                'slp.Nombre_parametro as Nombre_parametro_origen', 'side.Deficiencia_motivo_califi_condiciones', 'side.Lateralidad_CIE10',
-                'slp2.Nombre_parametro as Nombre_parametro_lateralidad', 'side.Principal', 'side.F_adicion_CIE10')
-                ->where([['side.ID_evento',$info_adicion_dx[0]->ID_evento],
-                    ['side.Id_Asignacion',$info_adicion_dx[0]->Id_Asignacion],
-                    ['side.Id_proceso',$info_adicion_dx[0]->Id_proceso],
-                    ['side.Estado', '=', 'Activo']
-                ])->get(); 
-            }else{
-                $array_datos_diagnostico_adicionales = "";
-            }
-            
-        }else{
-            $nombre_tipo_accidente = "";
-            $nombre_grado_severidad = "";
-            $nombre_factor_riesgo = "";
-            $nombre_tipo_lesion = "";
-            $nombre_parte_cuerpo_afectada = "";
-            $array_datos_examenes_interconsultas = "";
-            $array_datos_diagnostico_motcalifi = "";
-            $array_datos_diagnostico_adicionales = "";
-        }
-
-        $array_comite_interdisciplinario = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
-        ->where([
-            ['ID_evento',$Id_evento],
-            ['Id_Asignacion',$Id_asignacion]
-        ])
-        ->get(); 
 
         // creación de consecutivo para el comunicado
         $radicadocomunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-        ->select('N_radicado')
-        ->where([
-            ['ID_evento',$Id_evento],
-            ['F_comunicado',$date],
-            ['Id_proceso','1']
+            ->select('N_radicado')
+            ->where([
+                ['ID_evento',$Id_evento],
+                ['F_comunicado',$date],
+                ['Id_proceso','1']
         ])
         ->orderBy('N_radicado', 'desc')
         ->limit(1)
@@ -329,54 +877,16 @@ class AdicionDxDTO extends Controller
             // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
             $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
             $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted;
-        }
+        };
+
+        return view('coordinador.adicionDxDtoOrigen', compact('user', 'Id_asignacion_actual', 'datos_bd_DTO_ATEL', 'bandera_hay_dto', 'array_datos_calificacion_origen', 
+            'bandera_tipo_evento', 'nombre_del_evento_guardado', 'numero_consecutivo', 'motivo_solicitud_actual',
+            'datos_apoderado_actual', 'array_datos_info_laboral','listado_documentos_solicitados', 'dato_articulo_12', 'array_datos_examenes_interconsultas',
+            'array_datos_diagnostico_motcalifi', 'info_adicion_dx', 'array_datos_diagnostico_adicionales','array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia'
+            )
+        );
         
-        $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$Id_evento], ['Id_Asignacion',$Id_asignacion], ['T_documento','N/A'], ['Modulo_creacion','adicionDxDtoOrigen']])->get();
-        foreach ($array_comunicados_correspondencia as $comunicado) {
-            if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
-                $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
-                if(File::exists($filePath)){
-                    $comunicado['Existe'] = true;
-                }
-                else{
-                    $comunicado['Existe'] = false;
-                }
-            }
-            else if($comunicado['Tipo_descarga'] === 'Manual'){
-                $filePath = public_path('Documentos_Eventos/'.$comunicado['ID_evento'].'/'.$comunicado['Asunto']);
-                if(File::exists($filePath)){
-                    $comunicado['Existe'] = true;
-                }
-                else{
-                    $comunicado['Existe'] = false;
-                }
-            }
-            else{
-                $comunicado['Existe'] = false;
-            }
-        }
-        /* Nombre Afp */
-        $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
-        ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad')
-        ->where([['Id_Entidad', $array_datos_calificacion_origen[0]->Id_afp]])
-        ->get();
-
-        /* Traer datos de la AFP de Conocimiento */
-        $info_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
-        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp_entidad_conocimiento', '=', 'sie.Id_Entidad')
-        ->select('siae.Entidad_conocimiento')
-        ->where([['siae.ID_evento', $Id_evento]])
-        ->get();
-
-        return view('coordinador.adicionDxDtoOrigen', compact('user', 'datos_bd_DTO_ATEL', 'bandera_hay_dto', 'array_datos_calificacion_origen', 
-        'bandera_tipo_evento', 'nombre_del_evento_guardado', 'numero_consecutivo', 'motivo_solicitud_actual',
-        'datos_apoderado_actual', 'array_datos_info_laboral', 'nombre_tipo_accidente','nombre_grado_severidad',
-        'nombre_factor_riesgo','nombre_tipo_lesion','nombre_parte_cuerpo_afectada',
-        'listado_documentos_solicitados', 'dato_articulo_12', 'array_datos_examenes_interconsultas',
-        'array_datos_diagnostico_motcalifi', 'info_adicion_dx', 'array_datos_diagnostico_adicionales','array_comite_interdisciplinario', 
-        'consecutivo', 'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento'));
+       
     }
 
     public function cargueListadoSelectoresAdicionDx(Request $request){
@@ -577,12 +1087,239 @@ class AdicionDxDTO extends Controller
 
     }
 
+    // public function GuardaroActualizarInfoAdicionDX(Request $request){
+    //     if(!Auth::check()){
+    //         return redirect('/');
+    //     }
+    //     $time = time();
+    //     $datetime = date("Y-m-d H:i:s");
+    //     $date = date("Y-m-d", $time);
+    //     $nombre_usuario = Auth::user()->name;
+
+    //     // Paso N°1: Actualizar el motivo de solicitud y tipo de evento
+    //     $datos_actualizar_motivo_solicitud = [
+    //         'Id_motivo_solicitud' => $request->motivo_solicitud
+    //     ];
+
+    //     sigmel_informacion_pericial_eventos::on('sigmel_gestiones')
+    //     ->where('ID_evento', $request->ID_Evento)->update($datos_actualizar_motivo_solicitud);
+
+    //     $datos_actualizar_tipo_evento = [
+    //         'Tipo_evento' => $request->Tipo_evento
+    //     ];
+
+    //     sigmel_informacion_eventos::on('sigmel_gestiones')
+    //     ->where('ID_evento', $request->ID_Evento)->update($datos_actualizar_tipo_evento);
+
+    //     // Paso N°2: Guardar los datos de Examenes interconsultas
+
+    //     // Seteo del autoincrement para mantener el primary key siempre consecutivo.
+    //     $max_id = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+    //     ->max('Id_Examenes_interconsultas');
+    //     if ($max_id <> "") {
+    //         DB::connection('sigmel_gestiones')
+    //         ->statement("ALTER TABLE sigmel_informacion_examenes_interconsultas_eventos AUTO_INCREMENT = ".($max_id));
+    //     }
+
+    //     if (!empty($request->Examenes_interconsultas)) {
+    //         if (count($request->Examenes_interconsultas) > 0) {
+    //             // Captura del array de los datos de la tabla
+    //             $array_examenes_interconsultas = $request->Examenes_interconsultas;
+    
+    //             // Iteración para extraer los datos de la tabla y adicionar los datos de Id evento, Id asignacion y Id proceso
+    //             $array_datos_organizados_examenes_interconsultas = [];
+    //             foreach ($array_examenes_interconsultas as $subarray_datos) {
+    
+    //                 array_unshift($subarray_datos, $request->Id_proceso);
+    //                 array_unshift($subarray_datos, $request->Id_Asignacion);
+    //                 array_unshift($subarray_datos, $request->ID_Evento);
+    
+    //                 $subarray_datos[] = $nombre_usuario;
+    //                 $subarray_datos[] = $date;
+    
+    //                 array_push($array_datos_organizados_examenes_interconsultas, $subarray_datos);
+    //             }
+    
+    //             // Creación de array con los campos de la tabla: sigmel_informacion_examenes_interconsultas_eventos
+    //             $array_tabla_examen_interconsulta = ['ID_evento','Id_Asignacion','Id_proceso',
+    //             'F_examen_interconsulta','Nombre_examen_interconsulta','Descripcion_resultado',
+    //             'Nombre_usuario','F_registro'];
+    
+    //             // Combinación de los campos de la tabla con los datos
+    //             $array_datos_con_keys_examenes_interconsultas = [];
+    //             foreach ($array_datos_organizados_examenes_interconsultas as $subarray_datos_organizados_examenes_interconsultas) {
+    //                 array_push($array_datos_con_keys_examenes_interconsultas, array_combine($array_tabla_examen_interconsulta, $subarray_datos_organizados_examenes_interconsultas));
+    //             }
+    
+    //             // Inserción de la información
+    //             foreach ($array_datos_con_keys_examenes_interconsultas as $insertar_examen) {
+    //                 sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')->insert($insertar_examen);
+    //             } 
+    //         }
+    //     }
+
+    //     // Paso N°3: Guardar los datos de Adiciones de Diagnósticos
+    //     $max_id = sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
+    //     ->max('Id_Diagnosticos_motcali');
+    //     if ($max_id <> "") {
+    //         DB::connection('sigmel_gestiones')
+    //         ->statement("ALTER TABLE sigmel_informacion_diagnosticos_eventos AUTO_INCREMENT = ".($max_id));
+    //     }
+ 
+    //     if (!empty($request->Adicion_motivo_calificacion)) {
+    //         if (count($request->Adicion_motivo_calificacion) > 0) {
+    //             // Captura del array de los datos de la tabla
+    //             $array_diagnosticos_motivo_calificacion = $request->Adicion_motivo_calificacion;
+    //             $array_datos_organizados_motivo_calificacion = [];
+    //             foreach ($array_diagnosticos_motivo_calificacion as $subarray_datos_motivo_calificacion) {
+    
+    //                 array_unshift($subarray_datos_motivo_calificacion, $request->Id_proceso);
+    //                 array_unshift($subarray_datos_motivo_calificacion, $request->Id_Asignacion);
+    //                 array_unshift($subarray_datos_motivo_calificacion, $request->ID_Evento);
+    
+    //                 $subarray_datos_motivo_calificacion[] = $nombre_usuario;
+    //                 $subarray_datos_motivo_calificacion[] = $date;
+    
+    //                 array_push($array_datos_organizados_motivo_calificacion, $subarray_datos_motivo_calificacion);
+    //             }
+    
+    //             // Creación de array con los campos de la tabla: sigmel_informacion_diagnosticos_eventos
+    //             $array_tabla_diagnosticos_motivo_calificacion = ['ID_evento','Id_Asignacion','Id_proceso',
+    //             'F_adicion_CIE10', 'CIE10','Nombre_CIE10', 'Deficiencia_motivo_califi_condiciones', 'Lateralidad_CIE10', 'Origen_CIE10', 
+    //             'Principal', 'Nombre_usuario','F_registro'];
+    //             // Combinación de los campos de la tabla con los datos
+    //             $array_datos_con_keys_motivo_calificacion = [];
+    //             foreach ($array_datos_organizados_motivo_calificacion as $subarray_datos_organizados_motivo_calificacion) {
+    //                 array_push($array_datos_con_keys_motivo_calificacion, array_combine($array_tabla_diagnosticos_motivo_calificacion, $subarray_datos_organizados_motivo_calificacion));
+    //             }
+
+
+    //             // Inserción de la información
+    //             foreach ($array_datos_con_keys_motivo_calificacion as $insertar_diagnostico) {
+    //                 sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')->insert($insertar_diagnostico);
+    //             }
+    //         }
+    //     }
+
+    //     // Paso N° 4: Guardar los datos del formulario en la  tabla sigmel_informacion_adiciones_dx_eventos
+    //     $Tipo_evento = $request->Tipo_evento;
+    //     if (!empty($request->Relacion_documentos)) {
+    //         $total_relacion_documentos = implode(", ", $request->Relacion_documentos);                
+    //     }else{
+    //         $total_relacion_documentos = '';
+    //     }
+
+
+    //     // Tipo de formulario: Accidente
+    //     if ($Tipo_evento == 1) {
+    //         $datos_formulario = [
+    //             'ID_evento' => $request->ID_Evento,
+    //             'Id_Asignacion' => $request->Id_Asignacion,
+    //             'Id_proceso' => $request->Id_proceso,
+    //             'Id_Dto_ATEL' => $request->Id_Dto_ATEL,
+    //             'Activo' => $request->Activo,
+    //             'Tipo_evento' => $request->Tipo_evento,
+    //             'N_siniestro' => $request->N_siniestro,
+    //             'Relacion_documentos' => $total_relacion_documentos,
+    //             'Otros_relacion_documentos' => $request->Otros_relacion_documentos,
+    //             'Sustentacion_Adicion_Dx' => $request->Sustentacion_Adicion_Dx,
+    //             'Origen' => $request->Origen,
+    //             'N_radicado' => $request->radicado_dictamen,
+    //             'Nombre_usuario' => $nombre_usuario,
+    //             'F_registro' => $date
+    //         ];
+
+    //     }
+
+    //     $Id_Adiciones_Dx = $request->Id_Adiciones_Dx;
+
+    //     if ($Id_Adiciones_Dx == "") {
+    //         sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')->insert($datos_formulario);
+            
+    //         $datos_info_comunicado_eventos = [
+    //             'ID_Evento' => $request->ID_Evento,
+    //             'Id_proceso' => $request->Id_proceso,
+    //             'Id_Asignacion' => $request->Id_Asignacion,
+    //             'Ciudad' => 'N/A',
+    //             'F_comunicado' => $date,
+    //             'N_radicado' => $request->radicado_dictamen,
+    //             'Cliente' => 'N/A',
+    //             'Nombre_afiliado' => 'N/A',
+    //             'T_documento' => 'N/A',
+    //             'N_identificacion' => 'N/A',
+    //             'Destinatario' => 'N/A',
+    //             'Nombre_destinatario' => 'N/A',
+    //             'Nit_cc' => 'N/A',
+    //             'Direccion_destinatario' => 'N/A',
+    //             'Telefono_destinatario' => '001',
+    //             'Email_destinatario' => 'N/A',
+    //             'Id_departamento' => '001',
+    //             'Id_municipio' => '001',
+    //             'Asunto'=> 'N/A',
+    //             'Cuerpo_comunicado' => 'N/A',
+    //             'Forma_envio' => '0',
+    //             'Elaboro' => $nombre_usuario,
+    //             'Reviso' => 'N/A',
+    //             'Anexos' => 'N/A',
+    //             'Tipo_descarga' => 'Dictamen',
+    //             'Modulo_creacion' => 'adicionDxDtoOrigen',
+    //             'Reemplazado' => 0,
+    //             'Nombre_usuario' => $nombre_usuario,
+    //             'F_registro' => $date,
+    //         ];
+    
+    //         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+
+    //         $mensaje = 'Información guardada satisfactoriamente.';
+    //     } else {
+    //         sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')
+    //         ->where('Id_Adiciones_Dx', $Id_Adiciones_Dx)->update($datos_formulario);
+    //         $mensaje = 'Información actualizada satisfactoriamente.';
+
+    //         $comunicado_reemplazado = [
+    //             'Reemplazado' => 0
+    //         ];
+    //         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+    //             ->where([
+    //                 ['ID_evento',$request->ID_Evento],
+    //                 ['Id_Asignacion',$request->Id_Asignacion],
+    //                 ['N_radicado',$request->radicado_dictamen]
+    //                 ])
+    //         ->update($comunicado_reemplazado);
+    //     }
+
+    //     // Actualizacion del profesional calificador
+    //     $datos_profesional_calificador = [
+    //         'Id_profesional' => Auth::user()->id,
+    //         'Nombre_profesional' => $nombre_usuario
+    //     ];
+
+    //     sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+    //     ->where('Id_Asignacion', $request->Id_Asignacion)->update($datos_profesional_calificador);
+
+    //     sleep(2);
+    //     $datos_info_accion_evento= [    
+    //         'F_calificacion_servicio' => $datetime
+    //     ];
+
+    //     sigmel_informacion_accion_eventos::on('sigmel_gestiones')
+    //     ->where('ID_evento',$request->ID_Evento)->update($datos_info_accion_evento);
+        
+    //     $mensajes = array(
+    //         "parametro" => 'agregar_dto_atel',
+    //         "mensaje" => $mensaje
+    //     ); 
+
+    //     return json_decode(json_encode($mensajes, true));
+
+    // }
+
     public function GuardaroActualizarInfoAdicionDX(Request $request){
         if(!Auth::check()){
             return redirect('/');
         }
         $time = time();
-        $datetime = date("Y-m-d H:i:s");
+		$datetime = date("Y-m-d H:i:s");
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
 
@@ -601,7 +1338,25 @@ class AdicionDxDTO extends Controller
         sigmel_informacion_eventos::on('sigmel_gestiones')
         ->where('ID_evento', $request->ID_Evento)->update($datos_actualizar_tipo_evento);
 
-        // Paso N°2: Guardar los datos de Examenes interconsultas
+        // Paso N° 2: Guardar los datos de Examenes interconsultas que vienen de una dto o de otra adx.
+        $IdExamenesInterconsultas = $request->IdExamenesInterconsultas;
+        if(!empty($IdExamenesInterconsultas)){
+            $registrosDataExamenesInteconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+            ->select('ID_evento', 'Id_Asignacion', 'Id_proceso', 'F_examen_interconsulta', 'Nombre_examen_interconsulta', 'Descripcion_resultado')
+            ->whereIn('Id_Examenes_interconsultas', $IdExamenesInterconsultas)->get();             
+            if (!empty($registrosDataExamenesInteconsultas[0]->ID_evento)) {
+                sleep(3);
+                foreach ($registrosDataExamenesInteconsultas as $registro) { 
+                    $registro->Id_Asignacion = $request->Id_Asignacion;
+                    $registro->Nombre_usuario = $nombre_usuario;
+                    $registro->F_registro = $date;
+                    sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+                    ->insert($registro->toArray());
+                }
+            } 
+        }
+
+        // Paso N° 2.1: Guardar los datos de Examenes interconsultas Nuevos que se inserten nuevos
 
         // Seteo del autoincrement para mantener el primary key siempre consecutivo.
         $max_id = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
@@ -648,7 +1403,88 @@ class AdicionDxDTO extends Controller
             }
         }
 
-        // Paso N°3: Guardar los datos de Adiciones de Diagnósticos
+        // Paso N°3: Guardar los datos de los Diagnosticos Motivo Calificación que vienen de una dto otra adx.
+        $IdDiagMotCali = $request->IdDiagMotCali;
+        if (!empty($IdDiagMotCali)) {
+            $registrosDataDiagMotCali = sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
+            ->select('ID_evento','Id_Asignacion','Id_proceso','F_adicion_CIE10', 'CIE10','Nombre_CIE10', 'Deficiencia_motivo_califi_condiciones', 'Lateralidad_CIE10', 'Origen_CIE10','Principal', 'Dx_Adicionado')
+            ->whereIn('Id_Diagnosticos_motcali', $IdDiagMotCali)->get();
+            if (!empty($registrosDataDiagMotCali[0]->ID_evento)) {
+                sleep(3);
+                foreach ($registrosDataDiagMotCali as $registro) {
+                    $registro->Id_Asignacion = $request->Id_Asignacion;
+                    $registro->Dx_Adicionado = 'No';
+                    $registro->Nombre_usuario = $nombre_usuario;
+                    $registro->F_registro = $date;
+                    sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
+                    ->insert($registro->toArray());
+                }
+            }
+        }
+
+        // Paso N° 3.1: Guardar los datos de Diagnosticos Motivo Calificación que se inserten nuevos
+        $max_id = sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
+        ->max('Id_Diagnosticos_motcali');
+        if ($max_id <> "") {
+            DB::connection('sigmel_gestiones')
+            ->statement("ALTER TABLE sigmel_informacion_diagnosticos_eventos AUTO_INCREMENT = ".($max_id));
+        }
+
+        if(!empty($request->datos_finales_mot_calificacion)){
+            if (count($request->datos_finales_mot_calificacion) > 0) {
+                // Captura del array de los datos de la tabla
+                $array_diagnosticos_motivo_calificacion = $request->datos_finales_mot_calificacion;
+                $array_datos_organizados_motivo_calificacion = [];
+                foreach ($array_diagnosticos_motivo_calificacion as $subarray_datos_motivo_calificacion) {
+
+                    array_unshift($subarray_datos_motivo_calificacion, $request->Id_proceso);
+                    array_unshift($subarray_datos_motivo_calificacion, $request->Id_Asignacion);
+                    array_unshift($subarray_datos_motivo_calificacion, $request->ID_Evento);
+
+                    $subarray_datos_motivo_calificacion[] = "No";
+                    $subarray_datos_motivo_calificacion[] = $nombre_usuario;
+                    $subarray_datos_motivo_calificacion[] = $date;
+
+                    array_push($array_datos_organizados_motivo_calificacion, $subarray_datos_motivo_calificacion);
+                }
+
+                // Creación de array con los campos de la tabla: sigmel_informacion_diagnosticos_eventos
+                $array_tabla_diagnosticos_motivo_calificacion = ['ID_evento','Id_Asignacion','Id_proceso','CIE10','Nombre_CIE10', 'Deficiencia_motivo_califi_condiciones', 'Lateralidad_CIE10', 'Origen_CIE10', 
+                'Principal', 'Dx_Adicionado','Nombre_usuario','F_registro'];
+                // Combinación de los campos de la tabla con los datos
+                $array_datos_con_keys_motivo_calificacion = [];
+                foreach ($array_datos_organizados_motivo_calificacion as $subarray_datos_organizados_motivo_calificacion) {
+                    array_push($array_datos_con_keys_motivo_calificacion, array_combine($array_tabla_diagnosticos_motivo_calificacion, $subarray_datos_organizados_motivo_calificacion));
+                }
+
+
+                // Inserción de la información
+                foreach ($array_datos_con_keys_motivo_calificacion as $insertar_diagnostico) {
+                    sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')->insert($insertar_diagnostico);
+                }
+            }
+        }
+
+        // Paso N°4: Guardar los datos de Adiciones de Diagnósticos que vienen de otras adx
+        $IdDiagMotCaliAdi = $request->IdDiagMotCaliAdi;
+        if (!empty($IdDiagMotCaliAdi)) {
+            $registrosDataDiagMotCali = sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
+            ->select('ID_evento','Id_Asignacion','Id_proceso','F_adicion_CIE10', 'CIE10','Nombre_CIE10', 'Deficiencia_motivo_califi_condiciones', 'Lateralidad_CIE10', 'Origen_CIE10','Principal','Dx_Adicionado')
+            ->whereIn('Id_Diagnosticos_motcali', $IdDiagMotCaliAdi)->get();
+            if (!empty($registrosDataDiagMotCali[0]->ID_evento)) {
+                sleep(3);
+                foreach ($registrosDataDiagMotCali as $registro) {
+                    $registro->Id_Asignacion = $request->Id_Asignacion;
+                    $registro->Dx_Adicionado = 'Si';
+                    $registro->Nombre_usuario = $nombre_usuario;
+                    $registro->F_registro = $date;
+                    sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
+                    ->insert($registro->toArray());
+                }
+            }
+        }
+
+        // Paso N°4.1 : Guardar los datos de Adiciones de Diagnósticos que se inserten nuevos
         $max_id = sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
         ->max('Id_Diagnosticos_motcali');
         if ($max_id <> "") {
@@ -667,6 +1503,7 @@ class AdicionDxDTO extends Controller
                     array_unshift($subarray_datos_motivo_calificacion, $request->Id_Asignacion);
                     array_unshift($subarray_datos_motivo_calificacion, $request->ID_Evento);
     
+                    $subarray_datos_motivo_calificacion[] = "Si";
                     $subarray_datos_motivo_calificacion[] = $nombre_usuario;
                     $subarray_datos_motivo_calificacion[] = $date;
     
@@ -676,13 +1513,16 @@ class AdicionDxDTO extends Controller
                 // Creación de array con los campos de la tabla: sigmel_informacion_diagnosticos_eventos
                 $array_tabla_diagnosticos_motivo_calificacion = ['ID_evento','Id_Asignacion','Id_proceso',
                 'F_adicion_CIE10', 'CIE10','Nombre_CIE10', 'Deficiencia_motivo_califi_condiciones', 'Lateralidad_CIE10', 'Origen_CIE10', 
-                'Principal', 'Nombre_usuario','F_registro'];
+                'Principal', 'Dx_Adicionado','Nombre_usuario','F_registro'];
                 // Combinación de los campos de la tabla con los datos
                 $array_datos_con_keys_motivo_calificacion = [];
                 foreach ($array_datos_organizados_motivo_calificacion as $subarray_datos_organizados_motivo_calificacion) {
                     array_push($array_datos_con_keys_motivo_calificacion, array_combine($array_tabla_diagnosticos_motivo_calificacion, $subarray_datos_organizados_motivo_calificacion));
                 }
 
+                // echo "<pre>";
+                // print_r($array_datos_con_keys_motivo_calificacion);
+                // echo "</pre>";
 
                 // Inserción de la información
                 foreach ($array_datos_con_keys_motivo_calificacion as $insertar_diagnostico) {
@@ -691,14 +1531,13 @@ class AdicionDxDTO extends Controller
             }
         }
 
-        // Paso N° 4: Guardar los datos del formulario en la  tabla sigmel_informacion_adiciones_dx_eventos
+        // Paso N° 5: Guardar los datos del formulario en la  tabla sigmel_informacion_adiciones_dx_eventos
         $Tipo_evento = $request->Tipo_evento;
         if (!empty($request->Relacion_documentos)) {
             $total_relacion_documentos = implode(", ", $request->Relacion_documentos);                
         }else{
             $total_relacion_documentos = '';
         }
-
 
         // Tipo de formulario: Accidente
         if ($Tipo_evento == 1) {
@@ -715,6 +1554,18 @@ class AdicionDxDTO extends Controller
                 'Sustentacion_Adicion_Dx' => $request->Sustentacion_Adicion_Dx,
                 'Origen' => $request->Origen,
                 'N_radicado' => $request->radicado_dictamen,
+                'Tipo_accidente' => $request->Tipo_accidente,
+                'Fecha_evento' => $request->Fecha_evento,
+                'Hora_evento' => $request->Hora_evento,
+                'Grado_severidad' => $request->Grado_severidad,
+                'Mortal' => $request->Mortal,
+                'Fecha_fallecimiento' => $request->Fecha_fallecimiento,
+                'Descripcion_FURAT' => $request->Descripcion_FURAT,
+                'Factor_riesgo' => $request->Factor_riesgo,
+                'Tipo_lesion' => $request->Tipo_lesion,
+                'Parte_cuerpo_afectada' => $request->Parte_cuerpo_afectada,
+                'Justificacion_revision_origen' => $request->Justificacion_revision_origen,
+                'Sustentacion' => $request->Sustentacion,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date
             ];
@@ -731,7 +1582,7 @@ class AdicionDxDTO extends Controller
 
         if ($Id_Adiciones_Dx == "" || count($documentos) == 0) {
             sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')->insert($datos_formulario);
-            
+
             $datos_info_comunicado_eventos = [
                 'ID_Evento' => $request->ID_Evento,
                 'Id_proceso' => $request->Id_proceso,
@@ -766,7 +1617,17 @@ class AdicionDxDTO extends Controller
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
 
+            // Actualizacion del profesional calificador
+            $datos_profesional_calificador = [
+                'Id_profesional' => Auth::user()->id,
+                'Nombre_profesional' => $nombre_usuario
+            ];
+    
+            sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            ->where('Id_Asignacion', $request->Id_Asignacion)->update($datos_profesional_calificador);
+            
             $mensaje = 'Información guardada satisfactoriamente.';
+            
         } else {
             sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')
             ->where('Id_Adiciones_Dx', $Id_Adiciones_Dx)->update($datos_formulario);
@@ -784,48 +1645,43 @@ class AdicionDxDTO extends Controller
             ->update($comunicado_reemplazado);
         }
 
-        // Actualizacion del profesional calificador
-        $datos_profesional_calificador = [
-            'Id_profesional' => Auth::user()->id,
-            'Nombre_profesional' => $nombre_usuario
-        ];
-
-        sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-        ->where('Id_Asignacion', $request->Id_Asignacion)->update($datos_profesional_calificador);
-
-        sleep(2);
+		
+		sleep(2);
         $datos_info_accion_evento= [    
             'F_calificacion_servicio' => $datetime
         ];
 
         sigmel_informacion_accion_eventos::on('sigmel_gestiones')
         ->where('ID_evento',$request->ID_Evento)->update($datos_info_accion_evento);
+        
+        /* Aqui se realizaba la actualización de cierta información del DTO, debido a la ficha PBS051 esto ya no se realiza */
 
-        if($request->bandera_info_evento == 'Actualizar' || !empty($request->Justificacion_revision_origen)){
-            //Informacion del evento
-            $datos_formulario = [
-                'Tipo_accidente' => $request->Tipo_accidente,
-                'Fecha_evento' => $request->Fecha_evento,
-                'N_siniestro' => $request->N_siniestro,
-                'Hora_evento' => $request->Hora_evento,
-                'Grado_severidad' => $request->Grado_severidad,
-                'Mortal' => $request->Mortal,
-                'Fecha_fallecimiento' => $request->Fecha_fallecimiento,
-                'Descripcion_FURAT' => $request->Descripcion_FURAT,
-                'Factor_riesgo' => $request->Factor_riesgo,
-                'Tipo_lesion' => $request->Tipo_lesion,
-                'Parte_cuerpo_afectada' => $request->Parte_cuerpo_afectada,
-                'Justificacion_revision_origen' => $request->Justificacion_revision_origen,
-                ];
-
-            sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
-                ->where('ID_evento',$request->ID_Evento)->update($datos_formulario);
-        }
-
+        // if($request->bandera_info_evento == 'Actualizar' || !empty($request->Justificacion_revision_origen)){
+        //     //Informacion del evento
+        //     $datos_formulario = [
+        //         'Tipo_accidente' => $request->Tipo_accidente,
+        //         'Fecha_evento' => $request->Fecha_evento,
+        //         'N_siniestro' => $request->N_siniestro,
+        //         'Hora_evento' => $request->Hora_evento,
+        //         'Grado_severidad' => $request->Grado_severidad,
+        //         'Mortal' => $request->Mortal,
+        //         'Fecha_fallecimiento' => $request->Fecha_fallecimiento,
+        //         'Descripcion_FURAT' => $request->Descripcion_FURAT,
+        //         'Factor_riesgo' => $request->Factor_riesgo,
+        //         'Tipo_lesion' => $request->Tipo_lesion,
+        //         'Parte_cuerpo_afectada' => $request->Parte_cuerpo_afectada,
+        //         'Justificacion_revision_origen' => $request->Justificacion_revision_origen,
+        //     ];
+                
+        //     sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
+        //         ->where('ID_evento',$request->ID_Evento)->update($datos_formulario);
+        // }
+        
         $mensajes = array(
             "parametro" => 'agregar_dto_atel',
             "mensaje" => $mensaje
         ); 
+		
 
         return json_decode(json_encode($mensajes, true));
 

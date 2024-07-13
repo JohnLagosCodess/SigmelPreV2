@@ -25,6 +25,18 @@ class sigmel_informacion_adiciones_dx_eventos extends Model
         'Origen',
         'N_radicado',
         'N_siniestro',
+        'Tipo_accidente',
+        'Fecha_evento',
+        'Hora_evento',
+        'Grado_severidad',
+        'Mortal',
+        'Fecha_fallecimiento',
+        'Descripcion_FURAT',
+        'Factor_riesgo',
+        'Tipo_lesion',
+        'Parte_cuerpo_afectada',
+        'Justificacion_revision_origen',
+        'Sustentacion',
         'Nombre_usuario',
         'F_registro'
     ];
