@@ -474,7 +474,10 @@ $(document).ready(function () {
         });
     }
 
-    
+    $(document).on("input", '[id^="pcl_anterior"]', function() {
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
 
     $(document).on("input", '[id^="suma_combinada"]', function() {
         var inputId = this.id;
