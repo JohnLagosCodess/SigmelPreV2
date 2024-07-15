@@ -253,15 +253,20 @@ class PronunciamientoOrigenController extends Controller
 
         //Lista lider grupos
         if($parametro == "lista_lider_grupo"){
-            $datos_lider_grupo = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_usuarios_grupos_trabajos as ug')
-                ->select('ug.id_equipo_trabajo','li.name')
-                ->leftJoin('sigmel_sys.users as g', 'ug.id_usuarios_asignados', '=', 'g.id')
-                ->leftJoin('sigmel_gestiones.sigmel_grupos_trabajos as gr', 'ug.id_equipo_trabajo', '=', 'gr.id')
-                ->leftJoin('sigmel_sys.users as li', 'gr.lider', '=', 'li.id')
-                ->where([
-                    ['g.name', $request->nom_usuario_session]
-                ])
-                ->get();
+            // $datos_lider_grupo = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_usuarios_grupos_trabajos as ug')
+            //     ->select('ug.id_equipo_trabajo','li.name')
+            //     ->leftJoin('sigmel_sys.users as g', 'ug.id_usuarios_asignados', '=', 'g.id')
+            //     ->leftJoin('sigmel_gestiones.sigmel_grupos_trabajos as gr', 'ug.id_equipo_trabajo', '=', 'gr.id')
+            //     ->leftJoin('sigmel_sys.users as li', 'gr.lider', '=', 'li.id')
+            //     ->where([
+            //         ['g.name', $request->nom_usuario_session]
+            //     ])
+            //     ->get();
+        
+            $datos_lider_grupo =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+            ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+            ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
+            ->where([['sgt.Id_proceso_equipo', '=', '1']])->get();
 
             $informacion_datos_lider_grupo = json_decode(json_encode($datos_lider_grupo, true));
             return response()->json($informacion_datos_lider_grupo);
