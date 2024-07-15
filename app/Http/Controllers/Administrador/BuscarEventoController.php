@@ -1025,27 +1025,29 @@ class BuscarEventoController extends Controller
                         }
                     }
                     if (count($posicionPclRevi) > 0) {
-                        $ID_eventoRevi = $posicionPclRevi[0]['ID_evento'];
-                        $Id_procesoRevi = $posicionPclRevi[0]['Id_proceso'];
-                        $Id_ServicioRevi = $posicionPclRevi[0]['Id_Servicio'];
-                        $Id_AsignacionRevi = $posicionPclRevi[0]['Id_Asignacion'];
-    
-                        $resultadoReviPcl = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
-                        ->select('ID_Evento','Id_Asignacion','Porcentaje_pcl')
-                        ->where([['Id_Asignacion',$Id_AsignacionRevi], ['Id_proceso',$Id_procesoRevi], ['ID_Evento',$ID_eventoRevi]])
-                        ->get(); 
-                        if (count($resultadoReviPcl) > 0) {
-                            $ProcentajePClReviResultado = $resultadoReviPcl[0]->Porcentaje_pcl;
-                            $IdAsignacionResultado = $resultadoReviPcl[0]->Id_Asignacion;
-                            $ID_eventoResultado = $resultadoReviPcl[0]->ID_Evento;
-            
-                            foreach ($posicionPclRevi as &$elemento) {
-                                // Verificar si Id_Asignacion es igual a $IdAsignacionResultado
-                                if ($elemento['Id_Asignacion'] == $IdAsignacionResultado && $elemento['ID_evento'] == $ID_eventoResultado) {
-                                    // Agregar $OrigenResultado al array
-                                    $elemento['ProcentajePClReviResultado'] = $ProcentajePClReviResultado;
-                                }
-                            }
+                        $resultadoReviPcl =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                        ->select('side.ID_Evento','side.Id_Asignacion','side.Porcentaje_pcl');
+                        foreach ($posicionPclRevi as $item) {
+                            $resultadoReviPcl->orWhere([
+                                ['side.Id_Asignacion', $item['Id_Asignacion']],
+                                ['side.Id_proceso', $item['Id_proceso']],
+                                ['side.ID_evento', $item['ID_evento']]
+                            ]);
+                        }
+                        $resulRevPcl = $resultadoReviPcl->get();  
+                        if (count($resulRevPcl) > 0) {
+                            $ArrayresulRevPcl = $resulRevPcl->toArray();                                                 
+                            foreach ($posicionPclRevi as &$item) {
+                                // Buscar el elemento correspondiente en los resultados de la consulta
+                                $resultado = array_filter($ArrayresulRevPcl, function ($result) use ($item) {
+                                    return $result->Id_Asignacion == $item['Id_Asignacion'];
+                                });                    
+                                // Si se encuentra una coincidencia, agregar la información al array original
+                                if (!empty($resultado)) {
+                                    $resultado = reset($resultado); // Obtener el primer elemento del array de resultados
+                                    $item['ProcentajePClReviResultado'] = $resultado->Porcentaje_pcl;
+                                } 
+                            }                                                         
                             // Filtrar los elementos que contienen [ProcentajePClReviResultado]
                             $posicionPclReviFiltrado = array_filter($posicionPclRevi, function ($item) {
                                 return isset($item['ProcentajePClReviResultado']);
@@ -1062,7 +1064,7 @@ class BuscarEventoController extends Controller
                                         break; // Romper el bucle interno una vez que se encuentra la coincidencia
                                     }
                                 }
-                            }                            
+                            }                              
                         }                        
                     }
 
@@ -1705,34 +1707,36 @@ class BuscarEventoController extends Controller
                         }
                     }
                     if (count($posicionPclRevi) > 0) {
-                        $ID_eventoRevi = $posicionPclRevi[0]['ID_evento'];
-                        $Id_procesoRevi = $posicionPclRevi[0]['Id_proceso'];
-                        $Id_ServicioRevi = $posicionPclRevi[0]['Id_Servicio'];
-                        $Id_AsignacionRevi = $posicionPclRevi[0]['Id_Asignacion'];
-    
-                        $resultadoReviPcl = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
-                        ->select('ID_Evento','Id_Asignacion','Porcentaje_pcl')
-                        ->where([['Id_Asignacion',$Id_AsignacionRevi], ['Id_proceso',$Id_procesoRevi], ['ID_Evento',$ID_eventoRevi]])
-                        ->get(); 
-                        if (count($resultadoReviPcl) > 0) {
-                            $ProcentajePClReviResultado = $resultadoReviPcl[0]->Porcentaje_pcl;
-                            $IdAsignacionResultado = $resultadoReviPcl[0]->Id_Asignacion;
-                            $ID_eventoResultado = $resultadoReviPcl[0]->ID_Evento;
-            
-                            foreach ($posicionPclRevi as &$elemento) {
-                                // Verificar si Id_Asignacion es igual a $IdAsignacionResultado
-                                if ($elemento['Id_Asignacion'] == $IdAsignacionResultado && $elemento['ID_evento'] == $ID_eventoResultado) {
-                                    // Agregar $OrigenResultado al array
-                                    $elemento['ProcentajePClReviResultado'] = $ProcentajePClReviResultado;
-                                }
-                            }
+                        $resultadoReviPcl =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                        ->select('side.ID_Evento','side.Id_Asignacion','side.Porcentaje_pcl');
+                        foreach ($posicionPclRevi as $item) {
+                            $resultadoReviPcl->orWhere([
+                                ['side.Id_Asignacion', $item['Id_Asignacion']],
+                                ['side.Id_proceso', $item['Id_proceso']],
+                                ['side.ID_evento', $item['ID_evento']]
+                            ]);
+                        }
+                        $resulRevPcl = $resultadoReviPcl->get();  
+                        if (count($resulRevPcl) > 0) {
+                            $ArrayresulRevPcl = $resulRevPcl->toArray();                                                 
+                            foreach ($posicionPclRevi as &$item) {
+                                // Buscar el elemento correspondiente en los resultados de la consulta
+                                $resultado = array_filter($ArrayresulRevPcl, function ($result) use ($item) {
+                                    return $result->Id_Asignacion == $item['Id_Asignacion'];
+                                });                    
+                                // Si se encuentra una coincidencia, agregar la información al array original
+                                if (!empty($resultado)) {
+                                    $resultado = reset($resultado); // Obtener el primer elemento del array de resultados
+                                    $item['ProcentajePClReviResultado'] = $resultado->Porcentaje_pcl;
+                                } 
+                            }                                                         
                             // Filtrar los elementos que contienen [ProcentajePClReviResultado]
                             $posicionPclReviFiltrado = array_filter($posicionPclRevi, function ($item) {
                                 return isset($item['ProcentajePClReviResultado']);
                             }); 
                             // Reorganizar los índices del array filtrado
                             $posicionPclReviFiltrado = array_values($posicionPclReviFiltrado);
-                            //Combinar el array object con el array                             
+                            //Combinar el array object con el array 
                             foreach ($array_informacion_eventos as $key2 => $item2) {
                                 foreach ($posicionPclReviFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
@@ -1742,7 +1746,7 @@ class BuscarEventoController extends Controller
                                         break; // Romper el bucle interno una vez que se encuentra la coincidencia
                                     }
                                 }
-                            }                            
+                            }                              
                         }                        
                     }
                     // Resultado Pronunciamiento Pcl
@@ -2555,7 +2559,7 @@ class BuscarEventoController extends Controller
                     ['ID_evento', $id_evento_seleccionado],
                     ['Id_proceso', $id_proceso_seleccionado]
                 ])
-                ->whereIn('Id_servicio', [6, 7])
+                ->whereIn('Id_servicio', [6, 7, 8])
                 ->get();     
                 
                 // se convierte el object a array
@@ -2567,7 +2571,7 @@ class BuscarEventoController extends Controller
 
                     $mensajes = array(
                         "parametro" => 'fallo',
-                        "mensaje" => 'No puede crear el servicio de Recalificación debido a que ya se cuenta con un servicio de Calificación Técnica creada.'
+                        "mensaje" => 'No se puede crear el servicio de Recalificación debido a que ya se cuenta con un servicio de Recalificación, Revisión de Pensión o Calificación Técnica creada.'
                     );
                     return json_decode(json_encode($mensajes, true));
                 }                                             
@@ -2583,7 +2587,7 @@ class BuscarEventoController extends Controller
                     ['ID_evento', $id_evento_seleccionado],
                     ['Id_proceso', $id_proceso_seleccionado]
                 ])
-                ->whereIn('Id_servicio', [6, 8])
+                ->whereIn('Id_servicio', [6, 7, 8])
                 ->get(); 
 
                 // se convierte el object a array
@@ -2596,7 +2600,7 @@ class BuscarEventoController extends Controller
 
                     $mensajes = array(
                         "parametro" => 'fallo',
-                        "mensaje" => 'No puede crear el servicio de Revisión Pensión debido a que ya se cuenta con un servicio de Calificación Técnica creada.'
+                        "mensaje" => 'No se puede crear el servicio de Revisión de Pensión debido a que ya se cuenta con un servicio de Recalificación, Revisión de Pensión o Calificación Técnica creada.'
                     );
                     return json_decode(json_encode($mensajes, true));
                 }                                             
@@ -2625,7 +2629,7 @@ class BuscarEventoController extends Controller
 
                     $mensajes = array(
                         "parametro" => 'fallo',
-                        "mensaje" => 'No puede crear el servicio de Calificación técnica debido a que ya se cuenta con un servicio de Recalificación o Revisión Pensión creada.'
+                        "mensaje" => 'No se puede crear el servicio de Calificación técnica debido a que ya se cuenta con un servicio de Recalificación o Revisión Pensión creada.'
                     );
                     return json_decode(json_encode($mensajes, true));
                 }                                             

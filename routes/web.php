@@ -860,7 +860,6 @@ Route::post('/consultaReporteFactuJuntas', [ReporteFacturacionJuntasController::
 // Validación creación de un nuevo servicio de Adición Dx, Calificacion técnica, Reacalificación y Revisión Pensión desde la modal Nuevo Proceso
 Route::post('/ValidarNuevosServiciosNuevoProceso', [BuscarEventoController::class, 'ValidarNuevosServiciosNuevoProceso']);
 
-
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 

@@ -143,7 +143,7 @@ $(document).ready(function () {
                             // Validación para crear el modal del formulario de nuevo servicio
                             if(data[i]['Visar'] == "Si"){
                                 if(data[i]['Nombre_servicio'] == 'Determinación del Origen (DTO) ATEL' || data[i]['Nombre_servicio'] == 'Adición DX' || data[i]['Nombre_servicio'] == 'Calificación técnica' || data[i]['Nombre_servicio'] == 'Recalificación' || data[i]['Nombre_servicio'] == 'Revisión pensión'){
-                                    if(data[i]['Visible_Nuevo_Servicio'] == 'Si' && data[i]['Nombre_estado'] == 'Gestionado' || data[i]['Nombre_estado'] == 'Notificado'){
+                                    if(data[i]['Visible_Nuevo_Servicio'] == 'Si' && data[i]['Nombre_estado'] == 'Gestionado'  || data[i]['Nombre_estado'] == 'Notificado'){
                                         if (data[i]['Nombre_servicio'] == 'Determinación del Origen (DTO) ATEL' && data[i]['Nombre_evento'] != 'Enfermedad') {
                                             agregar_nuevo_servicio = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoServicio_'+data[i]["ID_evento"]+'" id="btn_nuevo_servicio_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Servicio"\
                                             data-id_evento_nuevo_servicio="'+data[i]["ID_evento"]+'" data-id_proceso_nuevo_servicio="'+data[i]["Id_proceso"]+'" data-nombre_proceso_nuevo_servicio="'+data[i]["Nombre_proceso"]+'" \
@@ -156,15 +156,14 @@ $(document).ready(function () {
                                             data-id_servicio_nuevo_servicio="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_servicio="'+data[i]["Id_Asignacion"]+'" data-id_cliente="'+data[i]["Id_cliente"]+'"><i class="fa fa-puzzle-piece text-info"></i></a>';
                                             data[i]['agregar_nuevo_servicio'] = agregar_nuevo_servicio;
                                         }
-                                        else{
+                                        else {
                                             data[i]['agregar_nuevo_servicio'] = "";
                                         }
-
                                     }else{
-                                        data[i]['agregar_nuevo_servicio'] = ""; 
+                                        data[i]['agregar_nuevo_servicio'] = "";
                                     }
                                 }else{
-                                    data[i]['agregar_nuevo_servicio'] = ""; 
+                                    data[i]['agregar_nuevo_servicio'] = "";
                                 }
                             }else{
                                 data[i]['agregar_nuevo_servicio'] = "";
