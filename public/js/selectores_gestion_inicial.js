@@ -27,6 +27,7 @@ $(document).ready(function(){
 
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE TIPO DE DOCUMENTO BENEFICIARIO */
     $(".afi_tipo_documento").select2({
+        width: '100%',
         placeholder: "Seleccione una opción",
         allowClear: false
     });
@@ -69,12 +70,14 @@ $(document).ready(function(){
 
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE DEPARTAMENOS (INFORMACIÓN AFILIADO) */
     $(".afi_departamento_info_afiliado").select2({
+        width: '100%',
         placeholder: "Seleccione una opción",
         allowClear: false
     });
 
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE MUNCIPIOS (INFORMACIÓN AFILIADO) */
     $(".afi_municipio_info_afiliado").select2({
+        width: '100%',
         placeholder: "Seleccione una opción",
         allowClear: false
     });

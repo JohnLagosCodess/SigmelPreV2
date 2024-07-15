@@ -50,6 +50,10 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    $(".grado_severidad").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
     
     $(".tipo_accidente").select2({
         placeholder:"Seleccione una opción",
