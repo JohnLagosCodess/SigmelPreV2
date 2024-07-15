@@ -891,6 +891,7 @@ class PronunciamientoPCLController extends Controller
         $Iden_afiliado_corre = $request->Iden_afiliado_corre;
         $Firma_corre = $request->Firma_corre;
         $desicion_proforma = $request->desicion_proforma;
+        $N_siniestro = $request->N_siniestro;
 
         $datos = $Id_Evento_pronuncia_corre;
         // Codigo QR y Logo del Header
@@ -937,7 +938,7 @@ class PronunciamientoPCLController extends Controller
         ,'pr.Id_tipo_pronunciamiento','p.Nombre_parametro as Tpronuncia','pr.Id_tipo_evento','ti.Nombre_evento','pr.Id_tipo_origen','or.Nombre_parametro as T_origen'
         ,'pr.Fecha_evento','pr.Dictamen_calificador','pr.Fecha_calificador','pr.Fecha_estruturacion','pr.Porcentaje_pcl','pr.Rango_pcl'
         ,'pr.Decision','pr.Fecha_pronuncia','pr.Asunto_cali','pr.Sustenta_cali','pr.Destinatario_principal','pr.Tipo_entidad', 
-        'pr.Nombre_entidad as Id_Nombre_entidad', 'en.Nombre_entidad as Nombre_entidades', 'en.Direccion', 'en.Telefonos', 'en.Id_Ciudad', 
+        'pr.Nombre_entidad as Id_Nombre_entidad', 'en.Nombre_entidad as Nombre_entidades', 'en.Emails as Email_entidad','en.Direccion', 'en.Telefonos', 'en.Id_Ciudad', 
         'sldm.Nombre_municipio as Nombre_ciudad', 'sldm.Id_departamento', 'sldm.Nombre_departamento', 'pr.Copia_afiliado','pr.copia_empleador',
         'pr.Copia_eps' ,'pr.Copia_afp','pr.Copia_arl','pr.Copia_junta_regional','pr.Copia_junta_nacional','pr.Junta_regional_cual',
         'j.Ciudad_Junta' ,'pr.N_anexos','pr.Elaboro_pronuncia','pr.Reviso_Pronuncia','pr.Ciudad_correspon','pr.N_radicado','pr.Firmar',
@@ -955,7 +956,6 @@ class PronunciamientoPCLController extends Controller
             ['pr.Id_Asignacion', '=', $Asignacion_Pronuncia_corre]
         ])
         ->get();
-
         $Ciudad_correspon = $info_pronunciamiento[0]->Ciudad_correspon;
         $Fecha_correspondencia = $info_pronunciamiento[0]->Fecha_correspondencia;
         $N_radicado = $info_pronunciamiento[0]->N_radicado;
@@ -969,7 +969,8 @@ class PronunciamientoPCLController extends Controller
 
 
         if ($Destinatario_principal == 'Si' && $Decision == 'Acuerdo') {
-            $Nombre_entidades = $info_pronunciamiento[0]->Nombre_entidades;       
+            $Nombre_entidades = $info_pronunciamiento[0]->Nombre_entidades;  
+            $Email_enti = $info_pronunciamiento[0]->Email_entidad;     
             $Direccion_enti = $info_pronunciamiento[0]->Direccion;
             $Telefonos_enti = $info_pronunciamiento[0]->Telefonos;
             $Nombre_ciudad_enti = $info_pronunciamiento[0]->Nombre_ciudad;
@@ -985,13 +986,14 @@ class PronunciamientoPCLController extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Departamento', '=', 'sldm1.Id_departamento')
-            ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm1.Nombre_departamento')
+            ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sie.Emails as Email_entidad', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm1.Nombre_departamento')
             ->where([['siae.ID_evento','=', $Id_Evento_pronuncia_corre]])
             ->get();
 
             $array_datos = json_decode(json_encode($datos), true);
             if (count($array_datos) > 0) {
-                $Nombre_entidades = $array_datos[0]["Nombre_entidad"];;       
+                $Nombre_entidades = $array_datos[0]["Nombre_entidad"];
+                $Email_enti = $array_datos[0]["Email_entidad"];      
                 $Direccion_enti = $array_datos[0]["Direccion"];
                 $Telefonos_enti = $array_datos[0]["Telefonos"];
                 $Nombre_ciudad_enti = $array_datos[0]["Nombre_ciudad"];
@@ -999,18 +1001,21 @@ class PronunciamientoPCLController extends Controller
             }else{
                 $Nombre_entidades = "";       
                 $Direccion_enti = "";
+                $Email_enti = "";
                 $Telefonos_enti = "";
                 $Nombre_ciudad_enti = "";
                 $Nombre_departamento_enti = "";
             }
 
         }elseif($Destinatario_principal == 'Si' && $Decision == 'Desacuerdo') {
+            $Email_calificador = $info_pronunciamiento[0]->Email_calificador;
             $Entidad_calificador = $info_pronunciamiento[0]->Nombre_entidades;       
             $Dir_calificador = $info_pronunciamiento[0]->Direccion;
             $Telefono_calificador = $info_pronunciamiento[0]->Telefonos;
             $Ciudad_calificador = $info_pronunciamiento[0]->Nombre_ciudad;
             $Nombre_departamento_enti = $info_pronunciamiento[0]->Nombre_departamento;  
         }elseif($Destinatario_principal == 'No' && $Decision == 'Desacuerdo') {
+            $Email_calificador = $info_pronunciamiento[0]->Email_calificador;
             $Entidad_calificador = $info_pronunciamiento[0]->Nombre_calificador;
             $Dir_calificador = $info_pronunciamiento[0]->Dir_calificador;
             $Telefono_calificador = $info_pronunciamiento[0]->Telefono_calificador;
@@ -1080,15 +1085,22 @@ class PronunciamientoPCLController extends Controller
         
         // Conversión de las key en variables con sus respectivos datos
         extract($total_copias);
-        
         $Agregar_copias = [];
         if (isset($copia_afiliado)) {
-            $emailAfiliado = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-            ->select('Email')
-            ->where([['Nro_identificacion', $Iden_afiliado_corre],['ID_evento', $Id_Evento_pronuncia_corre]])
+
+            $AfiliadoData = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->select('siae.Nombre_afiliado', 'siae.Direccion', 'siae.Telefono_contacto', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio', 'siae.Email')
+            ->where([['siae.Nro_identificacion', $Iden_afiliado_corre],['siae.ID_evento', $Id_Evento_pronuncia_corre]])
             ->get();
-            $afiliadoEmail = $emailAfiliado[0]->Email;            
-            $Agregar_copias['Afiliado'] = $afiliadoEmail;            
+            $nombreAfiliado = $AfiliadoData[0]->Nombre_afiliado;
+            $direccionAfiliado = $AfiliadoData[0]->Direccion;
+            $telefonoAfiliado = $AfiliadoData[0]->Telefono_contacto;
+            $ciudadAfiliado = $AfiliadoData[0]->Nombre_ciudad;
+            $municipioAfiliado = $AfiliadoData[0]->Nombre_municipio;
+            $emailAfiliado = $AfiliadoData[0]->Email;            
+            $Agregar_copias['Afiliado'] = $nombreAfiliado."; ".$direccionAfiliado."; ".$emailAfiliado."; ".$telefonoAfiliado."; ".$ciudadAfiliado."; ".$municipioAfiliado."."; 
         }
 
         if(isset($copia_empleador)){
@@ -1096,7 +1108,7 @@ class PronunciamientoPCLController extends Controller
             $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
-            ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+            ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sile.Email','sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['sile.Nro_identificacion', $Iden_afiliado_corre],['sile.ID_evento', $Id_Evento_pronuncia_corre]])
             ->get();
 
@@ -1110,9 +1122,10 @@ class PronunciamientoPCLController extends Controller
             $direccion_empleador = $datos_empleador[0]->Direccion;
             $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
             $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
+            $email_empleador = $datos_empleador[0]->Email;
             $municipio_empleador = $datos_empleador[0]->Nombre_municipio;
 
-            $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$telefono_empleador."; ".$ciudad_empleador."; ".$municipio_empleador.".";   
+            $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$email_empleador."; ".$telefono_empleador."; ".$ciudad_empleador."; ".$municipio_empleador.".";   
         }
 
         if (isset($copia_eps)) {
@@ -1120,13 +1133,14 @@ class PronunciamientoPCLController extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-            ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 
+            ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Emails as Email','sie.Otros_Telefonos', 
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $Iden_afiliado_corre],['ID_evento', $Id_Evento_pronuncia_corre]])
             ->get();
 
             $nombre_eps = $datos_eps[0]->Nombre_eps;
             $direccion_eps = $datos_eps[0]->Direccion;
+            $email_eps = $datos_eps[0]->Email;
             if ($datos_eps[0]->Otros_Telefonos != "") {
                 $telefonos_eps = $datos_eps[0]->Telefonos.",".$datos_eps[0]->Otros_Telefonos;
             } else {
@@ -1135,7 +1149,7 @@ class PronunciamientoPCLController extends Controller
             $ciudad_eps = $datos_eps[0]->Nombre_ciudad;
             $minucipio_eps = $datos_eps[0]->Nombre_municipio;
 
-            $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$telefonos_eps."; ".$ciudad_eps."; ".$minucipio_eps;
+            $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$email_eps."; ".$telefonos_eps."; ".$ciudad_eps."; ".$minucipio_eps;
         }
 
         if (isset($copia_afp)) {
@@ -1143,13 +1157,14 @@ class PronunciamientoPCLController extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-            ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+            ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Emails as Email','sie.Otros_Telefonos',
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $Iden_afiliado_corre],['ID_evento', $Id_Evento_pronuncia_corre]])
             ->get();
 
             $nombre_afp = $datos_afp[0]->Nombre_afp;
             $direccion_afp = $datos_afp[0]->Direccion;
+            $email_afp = $datos_afp[0]->Email;
             if ($datos_afp[0]->Otros_Telefonos != "") {
                 $telefonos_afp = $datos_afp[0]->Telefonos.",".$datos_afp[0]->Otros_Telefonos;
             } else {
@@ -1158,7 +1173,7 @@ class PronunciamientoPCLController extends Controller
             $ciudad_afp = $datos_afp[0]->Nombre_ciudad;
             $minucipio_afp = $datos_afp[0]->Nombre_municipio;
 
-            $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$telefonos_afp."; ".$ciudad_afp."; ".$minucipio_afp;
+            $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$email_afp."; ".$telefonos_afp."; ".$ciudad_afp."; ".$minucipio_afp;
         }
 
         if(isset($copia_arl)){
@@ -1166,13 +1181,14 @@ class PronunciamientoPCLController extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-            ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+            ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Emails as Email', 'sie.Otros_Telefonos',
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $Iden_afiliado_corre],['ID_evento', $Id_Evento_pronuncia_corre]])
             ->get();
 
             $nombre_arl = $datos_arl[0]->Nombre_arl;
             $direccion_arl = $datos_arl[0]->Direccion;
+            $email_arl = $datos_arl[0]->Email;
             if ($datos_arl[0]->Otros_Telefonos != "") {
                 $telefonos_arl = $datos_arl[0]->Telefonos.",".$datos_arl[0]->Otros_Telefonos;
             } else {
@@ -1182,7 +1198,7 @@ class PronunciamientoPCLController extends Controller
             $ciudad_arl = $datos_arl[0]->Nombre_ciudad;
             $minucipio_arl = $datos_arl[0]->Nombre_municipio;
 
-            $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+            $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
         }        
         // validamos la firma esta marcado para la Captura de la firma del cliente           
         if ($Firma_corre == 'firmar') {            
@@ -1255,6 +1271,7 @@ class PronunciamientoPCLController extends Controller
                 'Nombre_entidades' => $Nombre_entidades,
                 'Direccion_enti' => $Direccion_enti,
                 'Telefonos_enti' => $Telefonos_enti,
+                'Email_enti' => $Email_enti,
                 'Nombre_ciudad_enti' => $Nombre_ciudad_enti,
                 'Nombre_departamento_enti' => $Nombre_departamento_enti,
                 'Asunto_cali' => $Asunto_cali,
@@ -1268,6 +1285,7 @@ class PronunciamientoPCLController extends Controller
                 'Elaboro_pronuncia' => $Elaboro_pronuncia,            
                 'Agregar_copia' => $Agregar_copias,
                 'footer' => $footer,
+                'N_siniestro' => $N_siniestro
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
                 // 'footer_dato_3' => $footer_dato_3,
@@ -1397,31 +1415,82 @@ class PronunciamientoPCLController extends Controller
             $header = $section->addHeader();
             $imagenPath_header = public_path($ruta_logo);
             $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
-            // $header->addImage($imagenPath_vigilado, $imageStyle);
-            
-            
-            
-            
+            $test = $header->addTextRun(['alignment' => 'right']);
+            $test->addText('Página ');
+            $test->addField('PAGE');
+            $test->addText(' de ');
+            $test->addField('NUMPAGES');
+            $header->addTextBreak();
+                      
             // Creación de Contenido
             $section->addText($Ciudad_correspon.' '.$Fecha_correspondencia, array('bold' => true));
             $section->addTextBreak();
-            $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
-                <tr>
-                    <td>
-                        <p><b>Señores: </b>'.$Entidad_calificador.'</p>
-                        <p style="margin-top: 1px;"><b>Dirección: </b>'.$Dir_calificador.'</p>
-                        <p><b>Teléfono: </b>'.$Telefono_calificador.'</p>
-                        <p><b>Ciudad: </b>'.$Ciudad_calificador.'</p>
-                    </td>                    
-                </tr>
-            </table>';
-        
-            Html::addHtml($section, $htmltabla1, false, true);
 
-            $section->addText('Asunto: '.$Asunto_cali, array('bold' => true));
-            $section->addText('PACIENTE: '.$Nombre_afiliado_corre." ".$Tipo_documento_afi." ".$Iden_afiliado_corre, array('bold' => false));
-            $section->addText('Ramo: Previsionales', array('bold' => false));
-            $section->addText('Siniestro '.$Id_Evento_pronuncia_corre, array('bold' => true));
+            $table = $section->addTable();
+
+    
+            $table->addRow();
+
+
+            $cell1 = $table->addCell(6000);
+
+
+            $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
+            $textRun1->addText('Señores: ',array('bold' => true));
+            $textRun1->addTextBreak();
+            $textRun1->addText($Email_calificador);
+            $textRun1->addTextBreak();
+            $textRun1->addText($Entidad_calificador);
+            $textRun1->addTextBreak();
+            $textRun1->addText($Dir_calificador);
+            $textRun1->addTextBreak();
+            $textRun1->addText($Telefono_calificador);
+            $textRun1->addTextBreak();
+            $textRun1->addText($Ciudad_calificador);
+
+            $cell2 = $table->addCell(4000);
+
+            $nestedTable = $cell2->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80 * 60, 'alignment'=>'right'));
+            $nestedTable->addRow();
+            $nestedCell = $nestedTable->addCell();
+            $nestedTextRun = $nestedCell->addTextRun(array('alignment'=>'left'));
+            $nestedTextRun->addText('Nro. Radicado: ', array('bold' => true));
+            $nestedTextRun->addTextBreak();
+            $nestedTextRun->addText($nro_radicado, array('bold' => true));
+            $nestedTextRun->addTextBreak();
+            $nestedTextRun->addText($Tipo_documento_afi . ' ' . $Iden_afiliado_corre, array('bold' => true));
+            $nestedTextRun->addTextBreak();
+            $nestedTextRun->addText('Siniestro: ' . $N_siniestro, array('bold' => true));
+            
+            $section->addTextBreak();
+            $section->addTextBreak();
+
+            $table = $section->addTable(array('alignment'=>'center'));
+
+    
+            $table->addRow();
+
+
+            $cell1 = $table->addCell(8000);
+
+            $asuntoyafiliado = $cell1->addTextRun(array('alignment'=>'left'));
+            $asuntoyafiliado->addText('Asunto: ', array('bold' => true));
+            $asuntoyafiliado->addText($Asunto_cali, array('bold' => true));
+            $asuntoyafiliado->addTextBreak();
+            $asuntoyafiliado->addText('Paciente: ', array('bold' => true));
+            $asuntoyafiliado->addText($Nombre_afiliado_corre." ".$Tipo_documento_afi." ".$Iden_afiliado_corre);
+            $asuntoyafiliado->addTextBreak();
+            $asuntoyafiliado->addText('Ramo: ', array('bold' => true));
+            $asuntoyafiliado->addText('Previsionales');
+            $asuntoyafiliado->addTextBreak();
+            $asuntoyafiliado->addText('Siniestro: ', array('bold' => true));
+            $asuntoyafiliado->addText($N_siniestro);
+            $section->addTextBreak();
+
+            // $section->addText('Asunto: '.$Asunto_cali, array('bold' => true));
+            // $section->addText('PACIENTE: '.$Nombre_afiliado_corre." ".$Tipo_documento_afi." ".$Iden_afiliado_corre, array('bold' => false));
+            // $section->addText('Ramo: Previsionales', array('bold' => false));
+            // $section->addText('Siniestro '.$Id_Evento_pronuncia_corre, array('bold' => true));
 
             // Configuramos el reemplazo de la variable de los cie 10
             $Sustenta_cali = str_replace(['<br>', '<br/>', '<br />', '</br>'], '', $Sustenta_cali);
@@ -1468,15 +1537,15 @@ class PronunciamientoPCLController extends Controller
                 
                 Html::addHtml($section, $htmlModificado, false, true);
             }else{
-                $section->addText($Firma_cliente);
+                // $section->addText($Firma_cliente);
             }
             $section->addTextBreak();
             $section->addText('HUGO IGNACIO GÓMEZ DAZA', array('bold' => true));
             $section->addText('Representante Legal para Asuntos de Seguridad Social', array('bold' => true));
             $section->addText('Convenio Codess - Seguros de Vida Alfa S.A', array('bold' => true));
             $section->addTextBreak();
-            $section->addText('Elaboró: '.Auth::user()->name, array('bold' => true));
-            $section->addTextBreak();
+            // $section->addText('Elaboró: '.Auth::user()->name, array('bold' => true));
+            // $section->addTextBreak();
             // Configuramos la tabla de copias a partes interesadas
             $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
             if (count($Agregar_copias) == 0) {
@@ -1522,17 +1591,13 @@ class PronunciamientoPCLController extends Controller
             
             // Configuramos el footer
             $footer = $section->addFooter();
-            $footer-> addText($Nombre_afiliado_corre." - ".$Tipo_documento_afi." "."(".$Iden_afiliado_corre.")".' - Siniestro '."(".$Id_Evento_pronuncia_corre.")", array('size' => 10, 'bold' => true), array('align' => 'center'));
+            $footer-> addText($Nombre_afiliado_corre." - ".$Tipo_documento_afi." "."$Iden_afiliado_corre".' - Siniestro '."$N_siniestro", array('size' => 10, 'bold' => true), array('align' => 'center'));
             if($ruta_logo_footer != null){
                 $imagenPath_footer = public_path($ruta_logo_footer);
                 $footer->addImage($imagenPath_footer, array('width' => 450, 'height' => 70, 'alignment' => 'left'));
             }
             $table = $footer->addTable('myTable');
-            $table->addRow();
-            $cell1 = $table->addCell(80000, ['gridSpan' => 2]);
-            $textRun = $cell1->addTextRun(['alignment' => 'center']);
-            $textRun->addText('Página ');
-            $textRun->addField('PAGE');
+
 
             // Generamos el documento y luego se guarda
             $writer = new Word2007($phpWord);

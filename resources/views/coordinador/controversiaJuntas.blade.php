@@ -1908,6 +1908,7 @@
                                                                             ><i class="far fa-eye text-info"></i>
                                                                             </a>
                                                                             <a href="javascript:void(0);" id="generar_proforma_desacuerdo_{{$comunicados->Id_Comunicado}}"
+                                                                                data-archivo = "{{$comunicados}}"
                                                                                 data-tupla_nro_radicado="{{$comunicados->N_radicado}}"
                                                                                 data-id_comite_inter={{$comite_inter->Id_com_inter}}
                                                                                 data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 

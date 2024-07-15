@@ -249,7 +249,7 @@
             <tbody>
                 <tr>                    
                     <td>
-                        <p class="centrar">{{$Nombre_afiliado_pre}} - {{$Documento_afiliado}} {{$Numero_documento_afiliado}} - SINIESTRO {{$ID_evento}}</p>
+                        <p class="centrar">{{$Nombre_afiliado_pre}} - {{$Documento_afiliado}} {{$Numero_documento_afiliado}} - SINIESTRO {{$N_siniestro}}</p>
                     </td>
                     <td>
                         <p class="page">Página </p>

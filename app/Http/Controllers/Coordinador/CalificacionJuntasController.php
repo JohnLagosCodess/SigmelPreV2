@@ -2780,6 +2780,7 @@ class CalificacionJuntasController extends Controller
         $asunto = "<b>".strtoupper($request->asunto_act)."</b>";
         $cuerpo = $request->cuerpo_comunicado_act;
         $Cliente = $request->cliente_comunicado2_act;
+        $Email_destinatario = $request->email_destinatario_act2;
 
         /* DATOS VARIABLES */
         $tipo_de_preforma = $request->tipo_de_preforma_editar;
@@ -3143,6 +3144,7 @@ class CalificacionJuntasController extends Controller
                     'footer' => $footer,
                     'nombre_usuario' => $nombre_usuario,
                     'N_siniestro' => $request->n_siniestro_proforma_editar,
+                    'email_destinatario' => $Email_destinatario
                 ];
 
                 $extension_proforma = "pdf";
@@ -3374,9 +3376,11 @@ class CalificacionJuntasController extends Controller
                 }
 
                 /* 4. MOTIVO DE LA REMISIÓN */
-                $informacion_motivo_remision = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-                ->select('Contro_pcl', 'Contro_origen', 'Contro_diagnostico', 'Contro_f_estructura', 'Contro_m_califi')
-                ->where([['ID_evento', $ID_evento]])
+
+                $informacion_motivo_remision = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_controversia_juntas_eventos as sicje')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'sicje.Parte_controvierte_califi', '=', 'slp.Id_Parametro')
+                ->select('sicje.Contro_pcl', 'sicje.Contro_origen', 'sicje.Contro_diagnostico', 'sicje.Contro_f_estructura', 'sicje.Contro_m_califi', 'slp.Nombre_parametro')
+                ->where([['ID_evento', $ID_evento],['Id_Asignacion',$Id_Asignacion]])
                 ->get();
 
                 if (count($informacion_motivo_remision) > 0) {
@@ -3385,12 +3389,14 @@ class CalificacionJuntasController extends Controller
                     $diagnosticos = $informacion_motivo_remision[0]->Contro_diagnostico;
                     $fecha_estructuracion = $informacion_motivo_remision[0]->Contro_f_estructura;
                     $manual_calificacion = $informacion_motivo_remision[0]->Contro_m_califi;
+                    $parte_controvierte_califi = $informacion_motivo_remision[0]->Nombre_parametro;
                 } else {
                     $pcl = "";
                     $origen = "";
                     $diagnosticos = "";
                     $fecha_estructuracion = "";
                     $manual_calificacion = "";
+                    $parte_controvierte_califi = "";
                 }
 
                 /* datos del logo que va en el header */
@@ -3442,6 +3448,7 @@ class CalificacionJuntasController extends Controller
                     'nombre_afiliado' => $nombre_afiliado,
                     'tipo_doc_afiliado' => $tipo_doc_afiliado,
                     'num_identificacion_afiliado' => $num_identificacion_afiliado,
+                    'parte_controvierte_califi' => $parte_controvierte_califi,
                     'edad_afiliado' => $edad_afiliado,
                     'genero_afiliado' => $genero_afiliado,
                     'fecha_nacimiento_afiliado' => $fecha_nacimiento_afiliado,
@@ -3708,9 +3715,21 @@ class CalificacionJuntasController extends Controller
                 
                 // Tipos de controversia
                 $informacion_tipos_controversia = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-                ->select('Contro_origen', 'Contro_pcl', 'Contro_diagnostico', 'Contro_f_estructura', 'Contro_m_califi')
-                ->where([['ID_evento', $ID_evento]])
+                ->select('Contro_origen', 'Contro_pcl', 'Contro_diagnostico', 'Contro_f_estructura', 'Contro_m_califi', 'Observaciones', 'Porcentaje_pcl','F_estructuracion_contro')
+                ->where([['ID_evento', $ID_evento],['Id_Asignacion',$Id_Asignacion]])
                 ->get();
+
+                if (count($informacion_tipos_controversia) > 0) {
+                    $observaciones_controversia = $informacion_tipos_controversia[0]->Observaciones;
+                    $fecha_estructuración = $informacion_tipos_controversia[0]->F_estructuracion_contro;
+                    $porcentaje_pcl = $informacion_tipos_controversia[0]->Porcentaje_pcl;
+                } else {
+                    $observaciones_controversia = "";
+                    $fecha_estructuración = "";
+                    $porcentaje_pcl = "";
+                }
+
+                // dd("INFORMACIÓN TIPOS CONTROVERSIA : ",$informacion_tipos_controversia);
 
                 $array_informacion_tipos_controversia = json_decode(json_encode($informacion_tipos_controversia), true);
 
@@ -4079,6 +4098,9 @@ class CalificacionJuntasController extends Controller
                     'nombre_usuario' => $nombre_usuario,
                     'footer' => $footer,
                     'N_siniestro' => $request->n_siniestro_proforma_editar,
+                    'observaciones_controversia' => $observaciones_controversia,
+                    'fecha_estructuración' => $fecha_estructuración,
+                    'porcentaje_pcl' => $porcentaje_pcl
                     // 'footer_dato_1' => $footer_dato_1,
                     // 'footer_dato_2' => $footer_dato_2,
                     // 'footer_dato_3' => $footer_dato_3,
@@ -4569,38 +4591,91 @@ class CalificacionJuntasController extends Controller
                 $header = $section->addHeader();
                 $imagenPath_header = public_path($ruta_logo);
                 $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
+                $test = $header->addTextRun(['alignment' => 'right']);
+                $test->addText('Página ');
+                $test->addField('PAGE');
+                $test->addText(' de ');
+                $test->addField('NUMPAGES');
+                $header->addTextBreak();
 
                 // Creación de Contenido
                 $section->addText('Bogotá D.C, '.$date, array('bold' => true));
-
                 $section->addTextBreak();
-                    $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
-                        <tr>
-                            <td>
-                                <p><b>Señores: </b>'.$nombre_junta.'</p>
-                                <p><b>Dirección: </b>'.$direccion_junta.'</p>
-                                <p><b>Teléfono: </b>'.$telefono_junta.'</p>
-                                <p><b>Ciudad: </b>'.$ciudad_junta.' - '.$departamento_junta.'</p>
-                            </td>
-                            <td>
-                                <table style="width: 60%; border: 3px black solid;">
-                                    <tr>
-                                        <td>
-                                            <p><b>Nro. Radicado: '.$nro_radicado.'</b></p>  
-                                            <p><b>'.$tipo_doc_afiliado." ".$num_identificacion_afiliado.'</b></p>
-                                            <p><b>Siniestro: '.$request->n_siniestro_proforma_editar.'</b></p>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>';
 
-                    Html::addHtml($section, $htmltabla1, false, true);
+                $table = $section->addTable();
 
-                    $section->addText('Asunto: '.$request->asunto_act, array('bold' => true));
-                    $section->addTextBreak();
-                    $section->addText('Siniestro: '.$request->n_siniestro_proforma_editar." ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." ".$nombre_afiliado, array('bold' => true));
+    
+                $table->addRow();
+
+
+                $cell1 = $table->addCell(5000);
+
+                $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
+                $textRun1->addText('Señores: ',array('bold' => true));
+                $textRun1->addTextBreak();
+                $textRun1->addText($nombre_junta);
+                $textRun1->addTextBreak();
+                $textRun1->addText($direccion_junta);
+                $textRun1->addTextBreak();
+                $textRun1->addText($telefono_junta);
+                $textRun1->addTextBreak();
+                $textRun1->addText($ciudad_junta);
+
+                $cell2 = $table->addCell(5000);
+
+                $nestedTable = $cell2->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80 * 60, 'alignment'=>'right'));
+                $nestedTable->addRow();
+                $nestedCell = $nestedTable->addCell();
+                $nestedTextRun = $nestedCell->addTextRun(array('alignment'=>'left'));
+                $nestedTextRun->addText('Nro. Radicado: ', array('bold' => true));
+                $nestedTextRun->addTextBreak();
+                $nestedTextRun->addText($nro_radicado, array('bold' => true));
+                $nestedTextRun->addTextBreak();
+                $nestedTextRun->addText($tipo_doc_afiliado . ' ' . $num_identificacion_afiliado, array('bold' => true));
+                $nestedTextRun->addTextBreak();
+                $nestedTextRun->addText('Siniestro: ' . $request->n_siniestro_proforma_editar, array('bold' => true));
+                
+                $section->addTextBreak();
+                $section->addTextBreak();
+
+                    // $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
+                    //     <tr>
+                    //         <td>
+                    //             <p><b>Señores: </b>'.$nombre_junta.'</p>
+                    //             <p><b>Dirección: </b>'.$direccion_junta.'</p>
+                    //             <p><b>Teléfono: </b>'.$telefono_junta.'</p>
+                    //             <p><b>Ciudad: </b>'.$ciudad_junta.' - '.$departamento_junta.'</p>
+                    //         </td>
+                    //         <td>
+                    //             <table style="width: 60%; border: 3px black solid;">
+                    //                 <tr>
+                    //                     <td>
+                    //                         <p><b>Nro. Radicado: '.$nro_radicado.'</b></p>  
+                    //                         <p><b>'.$tipo_doc_afiliado." ".$num_identificacion_afiliado.'</b></p>
+                    //                         <p><b>Siniestro: '.$request->n_siniestro_proforma_editar.'</b></p>
+                    //                     </td>
+                    //                 </tr>
+                    //             </table>
+                    //         </td>
+                    //     </tr>
+                    // </table>';
+
+                    // Html::addHtml($section, $htmltabla1, false, true);
+                    $table = $section->addTable(array('alignment'=>'center'));
+    
+                    $table->addRow();
+
+                    $cell1 = $table->addCell(10000);
+
+                    $asuntoyafiliado = $cell1->addTextRun(array('alignment'=>'left'));
+                    $asuntoyafiliado->addText('Asunto: ', array('bold' => true));
+                    $asuntoyafiliado->addText($request->asunto_act, array('bold' => true));
+                    $asuntoyafiliado->addTextBreak();
+                    $asuntoyafiliado->addText($tipo_doc_afiliado." ".$num_identificacion_afiliado." ".$nombre_afiliado);
+                    $asuntoyafiliado->addTextBreak();
+                    $asuntoyafiliado->addText('Siniestro: ', array('bold' => true));
+                    $asuntoyafiliado->addText($request->n_siniestro_proforma_editar);
+
 
                     // Configuramos el reemplazo de las etiquetas del cuerpo del comunicado
                     $patron1 = '/\{\{\$nombre_junta\}\}/';
@@ -4652,62 +4727,62 @@ class CalificacionJuntasController extends Controller
                     $section->addTextBreak();
                     $section->addText('Convenio Codess - Seguros de Vida Alfa S.A', array('bold' => true));
                     $section->addTextBreak();
-                    $section->addText('Elaboró: '.$nombre_usuario, array('bold' => true));
-                    $section->addTextBreak();
+                    // $section->addText('Elaboró: '.$nombre_usuario, array('bold' => true));
+                    // $section->addTextBreak();
 
                     // Configuramos la tabla de copias a partes interesadas
-                    $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
-                    if (count($Agregar_copias) == 0) {
-                        $htmltabla2 .= '
-                            <tr>
-                                <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
-                            </tr>';
-                    } else {
-                        $htmltabla2 .= '
-                            <tr>
-                                <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
-                            </tr>';
+                    // $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
+                    // if (count($Agregar_copias) == 0) {
+                    //     $htmltabla2 .= '
+                    //         <tr>
+                    //             <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
+                    //         </tr>';
+                    // } else {
+                    //     $htmltabla2 .= '
+                    //         <tr>
+                    //             <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
+                    //         </tr>';
 
-                        $Afiliado = 'Afiliado';
-                        $Empleador = 'Empleador';
-                        $EPS = 'EPS';
-                        $AFP = 'AFP';
-                        $ARL = 'ARL';
-                        $JRCI = 'JRCI';
-                        $JNCI = 'JNCI';
+                    //     $Afiliado = 'Afiliado';
+                    //     $Empleador = 'Empleador';
+                    //     $EPS = 'EPS';
+                    //     $AFP = 'AFP';
+                    //     $ARL = 'ARL';
+                    //     $JRCI = 'JRCI';
+                    //     $JNCI = 'JNCI';
 
-                        if (isset($Agregar_copias[$Afiliado])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$Afiliado])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$Empleador])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$Empleador])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$EPS])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$EPS])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$AFP])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$AFP])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$ARL])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$ARL])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$JRCI])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$JRCI])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$JNCI])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
-                        }
-                    }
+                    //     if (isset($Agregar_copias[$JNCI])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
+                    //     }
+                    // }
 
-                    $htmltabla2 .= '</table>';
-                    Html::addHtml($section, $htmltabla2, false, true);
-                    $section->addTextBreak();
+                    // $htmltabla2 .= '</table>';
+                    // Html::addHtml($section, $htmltabla2, false, true);
+                    // $section->addTextBreak();
 
                     // Configuramos el footer
                     $info = $nombre_afiliado." - ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." - Siniestro: ".$request->n_siniestro_proforma_editar;
@@ -5210,39 +5285,92 @@ class CalificacionJuntasController extends Controller
                 $header = $section->addHeader();
                 $imagenPath_header = public_path($ruta_logo);
                 $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
+                $test = $header->addTextRun(['alignment' => 'right']);
+                $test->addText('Página ');
+                $test->addField('PAGE');
+                $test->addText(' de ');
+                $test->addField('NUMPAGES');
+                $header->addTextBreak();
 
                 // Creación de Contenido
                 $section->addText('Bogotá D.C, '.$date, array('bold' => true));
-
                 $section->addTextBreak();
-                    $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
-                        <tr>
-                            <td>
-                                <p><b>Señores: </b>'.$nombre_junta.'</p>
-                                <p><b>Dirección: </b>'.$direccion_junta.'</p>
-                                <p><b>Teléfono: </b>'.$telefono_junta.'</p>
-                                <p><b>Ciudad: </b>'.$ciudad_junta.' - '.$departamento_junta.'</p>
-                            </td>
-                            <td>
-                                <table style="width: 60%; border: 3px black solid;">
-                                    <tr>
-                                        <td>
-                                            <p><b>Nro. Radicado: '.$nro_radicado.'</b></p>  
-                                            <p><b>'.$tipo_doc_afiliado." ".$num_identificacion_afiliado.'</b></p>
-                                            <p><b>Siniestro: '.$request->n_siniestro_proforma_editar.'</b></p>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>';
 
-                    Html::addHtml($section, $htmltabla1, false, true);
+                $table = $section->addTable();
 
-                    $section->addText('Asunto: '.$request->asunto_act, array('bold' => true));
+    
+                $table->addRow();
+    
+    
+                $cell1 = $table->addCell(5000);
+    
+    
+                $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
+                $textRun1->addText('Señores: ',array('bold' => true));
+                $textRun1->addTextBreak();
+                $textRun1->addText($nombre_junta);
+                $textRun1->addTextBreak();
+                $textRun1->addText($direccion_junta);
+                $textRun1->addTextBreak();
+                $textRun1->addText($telefono_junta);
+                $textRun1->addTextBreak();
+                $textRun1->addText($ciudad_junta.' - '.$departamento_junta);
+    
+                $cell2 = $table->addCell(5000);
+    
+                $nestedTable = $cell2->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80 * 60, 'alignment'=>'right'));
+                $nestedTable->addRow();
+                $nestedCell = $nestedTable->addCell();
+                $nestedTextRun = $nestedCell->addTextRun(array('alignment'=>'left'));
+                $nestedTextRun->addText('Nro. Radicado: ', array('bold' => true));
+                $nestedTextRun->addTextBreak();
+                $nestedTextRun->addText($nro_radicado, array('bold' => true));
+                $nestedTextRun->addTextBreak();
+                $nestedTextRun->addText($tipo_doc_afiliado . ' ' . $num_identificacion_afiliado, array('bold' => true));
+                $nestedTextRun->addTextBreak();
+                $nestedTextRun->addText('Siniestro: ' . $request->n_siniestro_proforma_editar, array('bold' => true));
+                
+                $section->addTextBreak();
+                $section->addTextBreak();
+                    // $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
+                    //     <tr>
+                    //         <td>
+                    //             <p><b>Señores: </b>'.$nombre_junta.'</p>
+                    //             <p><b>Dirección: </b>'.$direccion_junta.'</p>
+                    //             <p><b>Teléfono: </b>'.$telefono_junta.'</p>
+                    //             <p><b>Ciudad: </b>'.$ciudad_junta.' - '.$departamento_junta.'</p>
+                    //         </td>
+                    //         <td>
+                    //             <table style="width: 60%; border: 3px black solid;">
+                    //                 <tr>
+                    //                     <td>
+                    //                         <p><b>Nro. Radicado: '.$nro_radicado.'</b></p>  
+                    //                         <p><b>'.$tipo_doc_afiliado." ".$num_identificacion_afiliado.'</b></p>
+                    //                         <p><b>Siniestro: '.$request->n_siniestro_proforma_editar.'</b></p>
+                    //                     </td>
+                    //                 </tr>
+                    //             </table>
+                    //         </td>
+                    //     </tr>
+                    // </table>';
+
+                    // Html::addHtml($section, $htmltabla1, false, true);
+
+                    $table = $section->addTable(array('alignment'=>'center'));
+
+    
+                    $table->addRow();
+        
+        
+                    $cell1 = $table->addCell(10000);
+        
+                    $asuntoyafiliado = $cell1->addTextRun(array('alignment'=>'left'));
+                    $asuntoyafiliado->addText('Asunto: ', array('bold' => true));
+                    $asuntoyafiliado->addText($request->asunto_act, array('bold' => true));
+                    $asuntoyafiliado->addTextBreak();
+                    $asuntoyafiliado->addText('Paciente: ', array('bold' => true));
+                    $asuntoyafiliado->addText($nombre_afiliado." ".$tipo_doc_afiliado." ".$num_identificacion_afiliado);
                     $section->addTextBreak();
-                    $section->addText('PACIENTE: '.$nombre_afiliado." ".$tipo_doc_afiliado." ".$num_identificacion_afiliado, array('bold' => true));
-
                     // Configuramos el reemplazo de las etiquetas del cuerpo del comunicado
                     $patron1 = '/\{\{\$nombre_afiliado\}\}/';
                     $patron2 = '/\{\{\$correo_solicitud_informacion\}\}/';
@@ -5293,62 +5421,62 @@ class CalificacionJuntasController extends Controller
                     $section->addTextBreak();
                     $section->addText('Convenio Codess -  Seguros de Vida Alfa S.A', array('bold' => true));
                     $section->addTextBreak();
-                    $section->addText('Elaboró: '.$nombre_usuario, array('bold' => true));
-                    $section->addTextBreak();
+                    // $section->addText('Elaboró: '.$nombre_usuario, array('bold' => true));
+                    // $section->addTextBreak();
 
-                    // Configuramos la tabla de copias a partes interesadas
-                    $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
-                    if (count($Agregar_copias) == 0) {
-                        $htmltabla2 .= '
-                            <tr>
-                                <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
-                            </tr>';
-                    } else {
-                        $htmltabla2 .= '
-                            <tr>
-                                <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
-                            </tr>';
+                    // // Configuramos la tabla de copias a partes interesadas
+                    // $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
+                    // if (count($Agregar_copias) == 0) {
+                    //     $htmltabla2 .= '
+                    //         <tr>
+                    //             <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
+                    //         </tr>';
+                    // } else {
+                    //     $htmltabla2 .= '
+                    //         <tr>
+                    //             <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
+                    //         </tr>';
 
-                        $Afiliado = 'Afiliado';
-                        $Empleador = 'Empleador';
-                        $EPS = 'EPS';
-                        $AFP = 'AFP';
-                        $ARL = 'ARL';
-                        $JRCI = 'JRCI';
-                        $JNCI = 'JNCI';
+                    //     $Afiliado = 'Afiliado';
+                    //     $Empleador = 'Empleador';
+                    //     $EPS = 'EPS';
+                    //     $AFP = 'AFP';
+                    //     $ARL = 'ARL';
+                    //     $JRCI = 'JRCI';
+                    //     $JNCI = 'JNCI';
 
-                        if (isset($Agregar_copias[$Afiliado])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$Afiliado])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$Empleador])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$Empleador])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$EPS])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$EPS])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$AFP])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$AFP])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$ARL])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$ARL])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$JRCI])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$JRCI])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$JNCI])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
-                        }
-                    }
+                    //     if (isset($Agregar_copias[$JNCI])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
+                    //     }
+                    // }
 
-                    $htmltabla2 .= '</table>';
-                    Html::addHtml($section, $htmltabla2, false, true);
-                    $section->addTextBreak();
+                    // $htmltabla2 .= '</table>';
+                    // Html::addHtml($section, $htmltabla2, false, true);
+                    // $section->addTextBreak();
 
                     // Configuramos el footer
                     $info = $nombre_afiliado." - ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." - Siniestro: ".$request->n_siniestro_proforma_editar;
@@ -5358,12 +5486,12 @@ class CalificacionJuntasController extends Controller
                         $imagenPath_footer = public_path($ruta_logo_footer);
                         $footer->addImage($imagenPath_footer, array('width' => 450, 'height' => 70, 'alignment' => 'left'));
                     }
-                    $table = $footer->addTable('myTable');
-                    $table->addRow();
-                    $cell1 = $table->addCell(80000, ['gridSpan' => 2]);
-                    $textRun = $cell1->addTextRun(['alignment' => 'center']);
-                    $textRun->addText('Página ');
-                    $textRun->addField('PAGE');
+                    // $table = $footer->addTable('myTable');
+                    // $table->addRow();
+                    // $cell1 = $table->addCell(80000, ['gridSpan' => 2]);
+                    // $textRun = $cell1->addTextRun(['alignment' => 'center']);
+                    // $textRun->addText('Página ');
+                    // $textRun->addField('PAGE');
 
                     // Generamos el documento y luego se guarda
                     $writer = new Word2007($phpWord);

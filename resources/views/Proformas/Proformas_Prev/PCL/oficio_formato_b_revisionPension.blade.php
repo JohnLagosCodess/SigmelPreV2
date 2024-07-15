@@ -8,11 +8,11 @@
     
     <style>
         @page{
-            margin: 2.5cm 1.3cm 2.5cm 1.3cm;
+            margin: 3cm 1.3cm 2.5cm 1.3cm;
         }
         #header {
             position: fixed; 
-            top: -2.2cm;
+            top: -2.8cm;
             left: 0cm;
             width: 100%;
             text-align: right; 
@@ -44,7 +44,7 @@
         #footer{
             position: fixed;
             /* esta ligado con el tercer valor del margin */
-            bottom: -2.4cm;
+            bottom: -3cm;
             left: 0cm;
             width: 100%;
             height: 14%;
@@ -132,6 +132,8 @@
         .cuadro{
             border: 3px solid black;
             padding-left: 6px;  
+            width: 5cm;
+            height: 2cm;
         }        
     </style>
 </head>
@@ -162,7 +164,9 @@
     </div>
     <div id="footer">        
         <?php if($footer == null): ?>
-            <p class="page" style="color: black;">Página </p>
+            <div style="text-align:center;">
+                <span style="color: #3C3C3C; margin-top:2px;">{{$nombre}} - {{$tipo_identificacion}} {{$num_identificacion}} - Siniestro: {{$N_siniestro}} </span>
+            </div>
         <?php else: ?>
             <?php 
                 $ruta_footer = "/footer_clientes/{$id_cliente}/{$footer}";
@@ -171,8 +175,8 @@
                 $footer_base64 = base64_encode($footer_data);
             ?>
             <div class="footer_content">
+                <span style="color: #3C3C3C; margin-top:2px;">{{$nombre}} - {{$tipo_identificacion}} {{$num_identificacion}} - Siniestro: {{$N_siniestro}} </span>
                 <img src="data:image/png;base64,{{ $footer_base64 }}" class="footer_image">
-                <p class="page" style="color: black;">Página </p>
             </div>
         <?php endif ?>
     </div>
@@ -189,30 +193,34 @@
         <table class="tabla2">                        
             <tbody>
                 <tr>
-                    <td>
-                        <span class="fuente_todo_texto"><span class="negrita">Señor(a): </span>{{$nombre}}</span><br>
-                        <span class="fuente_todo_texto"><span class="negrita">Dirección: </span>{{$direccion}}</span><br>
-                        <span class="fuente_todo_texto"><span class="negrita">Teléfono: </span>{{$telefono}}</span><br>
-                        <span class="fuente_todo_texto"><span class="negrita">Ciudad: </span>{{$municipio.' - '.$departamento}}</span>
+                    <td style="width:100%;">
+                        <span class="fuente_todo_texto"><span class="negrita">Señor(a): </span><br>{{$nombre}}</span><br>
+                        <span class="fuente_todo_texto">{{$email_destinatario}}</span><br>
+                        <span class="fuente_todo_texto">{{$direccion}}</span><br>
+                        <span class="fuente_todo_texto">{{$telefono}}</span><br>
+                        <span class="fuente_todo_texto">{{$municipio.' - '.$departamento}}</span>
                     </td>
                     <td>
                         <div class="cuadro">
-                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$nro_radicado}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado: <br>{{$nro_radicado}}</span></span><br>
                             <span class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion.' '.$num_identificacion}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$nro_siniestro}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
+        <br>
         <table class="tabla1">
             <tbody>
                 <tr>
                     <td class="fuente_todo_texto">
-                        <span class="negrita">Asunto: {{$asunto}}</span><br> 
-                        <span class="negrita">Ramo:</span> Previsionales<br>                        
-                        {{$tipo_identificacion.' '.$num_identificacion}}<br>
-                        <span class="negrita">Siniestro: </span>{{$nro_siniestro}}
+                        <div style="margin-left: 3cm;"> 
+                            <span class="negrita">Asunto: {{$asunto}}</span><br> 
+                            <span class="negrita">Ramo:</span> Previsionales<br>                        
+                            {{$tipo_identificacion.' '.$num_identificacion}}<br>
+                            <span class="negrita">Siniestro: </span>{{$N_siniestro}}
+                        </div>
                     </td>
                 </tr>
             </tbody>
@@ -247,13 +255,13 @@
             Convenio Seguro de Vida Alfa <br>
             Seguro alfa S.A. y Seguro de Vida Alfa S.A.
         </p>
-        <section>        
+        {{-- <section>        
             <div class="fuente_todo_texto">                
                 <b>Anexos:</b> {{$Anexos}}
                 <br>
                 <b>Elaboró:</b> {{$nombre_usuario}}
             </div>
-        </section>          
+        </section>           --}}
         <section class="fuente_todo_texto">
             <table class="tabla1" style="text-align: justify;">                               
                 @if (count($Agregar_copia) == 0)
@@ -325,5 +333,13 @@
             </table>
         </section>               
     </div>
+    <script type="text/php">
+        if ( isset($pdf) ) {
+            $pdf->page_script('
+                $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
+                $pdf->text(485, 70, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
+            ');
+        }
+	</script>
 </body>
 </html>

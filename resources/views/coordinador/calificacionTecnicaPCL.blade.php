@@ -7225,6 +7225,44 @@
                                             </div>
                                         </div>
                                     </div> 
+                                    {{-- <div class="col-3" style="display: flex; flex-direction: row; justify-content:space-between;">
+                                        <div>
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    @if (!empty($array_comite_interdisciplinario[0]->Oficio_incapacidad) && $array_comite_interdisciplinario[0]->Oficio_incapacidad == 'Si')
+                                                        <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" checked>
+                                                    @else
+                                                        <input class="custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" required>                                                    
+                                                    @endif
+                                                    <label for="oficioinca" class="custom-control-label">Formato C</label>
+                                                </div>
+                                            </div>
+                                        </div> 
+                                        <div>
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    @if (!empty($array_comite_interdisciplinario[0]->Oficio_incapacidad) && $array_comite_interdisciplinario[0]->Oficio_incapacidad == 'Si')
+                                                        <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" checked>
+                                                    @else
+                                                        <input class="custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" required>                                                    
+                                                    @endif
+                                                    <label for="oficioinca" class="custom-control-label">Formato D</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    @if (!empty($array_comite_interdisciplinario[0]->Oficio_incapacidad) && $array_comite_interdisciplinario[0]->Oficio_incapacidad == 'Si')
+                                                        <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" checked>
+                                                    @else
+                                                        <input class="custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" required>                                                    
+                                                    @endif
+                                                    <label for="oficioinca" class="custom-control-label">Formato E</label>
+                                                </div>
+                                            </div>
+                                        </div>  
+                                    </div> --}}
                                 </div>
                                 <div class="row">
                                     <div class="col-3">
@@ -7670,6 +7708,7 @@
                                                                                     <input type="hidden"  name="Id_Proceso_comuni" value="{{$comunicados['Id_proceso']}}">     
                                                                                     <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}">
                                                                                     <input type="hidden"  name="Id_Comunicado" value="{{$comunicados['Id_Comunicado']}}">
+                                                                                    <input type="hidden"  name="N_siniestro" value="{{$comunicados['N_siniestro']}}">
                                                                                     <label for="ver_dictamenesPcl"><i class="far fa-eye text-info" style="cursor: pointer;"></i></i></label>
                                                                                     <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
                                                                             </form> 
@@ -7716,6 +7755,7 @@
                                                                         <input type="hidden" name="Radicado_comuni_comite" value="{{$comite_inter->N_radicado}}"> 
                                                                         <input type="hidden" name="Firma_comuni_comite" value="{{$comite_inter->Firmar}}">
                                                                         <input type="hidden" name="Id_Comunicado" value="{{$comite_inter->Id_Comunicado}}">
+                                                                        <input type="hidden"  name="N_siniestro" value="{{$comite_inter->N_siniestro}}">
                                                                         <label for="ver_notificacionesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
                                                                         <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold; cursor: pointer;" value="">
                                                                     </form>
@@ -7749,6 +7789,7 @@
                                                                                 <input type="hidden"  name="Id_Proceso_comuni" value="{{$comunicados['Id_proceso']}}">     
                                                                                 <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}">
                                                                                 <input type="hidden"  name="Id_Comunicado" value="{{$comunicados['Id_Comunicado']}}">
+                                                                                <input type="hidden"  name="N_siniestro" value="{{$comunicados['N_siniestro']}}">
                                                                                 <label for="ver_dictamenesPcl"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
                                                                                 <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
                                                                             </form>
@@ -7795,6 +7836,7 @@
                                                                         <input type="hidden"  name="Radicado_comuni_comite" value="{{$comite_inter->N_radicado}}"> 
                                                                         <input type="hidden"  name="Firma_comuni_comite" value="{{$comite_inter->Firmar}}">
                                                                         <input type="hidden"  name="Id_Comunicado" value="{{$comite_inter->Id_Comunicado}}">
+                                                                        <input type="hidden"  name="N_siniestro" value="{{$comite_inter->N_siniestro}}">
                                                                         <label for="ver_notificacionesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
                                                                         <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold; cursor:pointer;" value="">
                                                                     </form>
@@ -7828,6 +7870,7 @@
                                                                                     <input type="hidden"  name="Id_Proceso_comuni" value="{{$comunicados['Id_proceso']}}">     
                                                                                     <input type="hidden"  name="Radicado_comuni" value="{{$comunicados['N_radicado']}}"> 
                                                                                     <input type="hidden"  name="Id_Comunicado" value="{{$comunicados['Id_Comunicado']}}">
+                                                                                    <input type="hidden"  name="N_siniestro" value="{{$comunicados['N_siniestro']}}">
                                                                                     <label for="ver_dictamenesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></i></label>
                                                                                     <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
                                                                             </form>
@@ -7874,6 +7917,7 @@
                                                                         <input type="hidden"  name="Radicado_comuni_comite" value="{{$comite_inter->N_radicado}}"> 
                                                                         <input type="hidden"  name="Firma_comuni_comite" value="{{$comite_inter->Firmar}}">
                                                                         <input type="hidden"  name="Id_Comunicado" value="{{$comite_inter->Id_Comunicado}}">
+                                                                        <input type="hidden"  name="N_siniestro" value="{{$comite_inter->N_siniestro}}">
                                                                         <label for="ver_notificacionesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
                                                                         <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold; cursor: pointer;" value="">
                                                                     </form>

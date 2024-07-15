@@ -1298,7 +1298,14 @@ $(document).ready(function(){
     /* Funcionalidad para insertar la etiqueta de pruebas solicitadas */
     $("#cuerpo_comunicado").summernote({
         height: 'auto',
-        toolbar: false
+        toolbar: false,
+        callbacks: {
+            onPaste: function (e) {
+                var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+                e.preventDefault();
+                document.execCommand('insertText', false, bufferText);
+            }
+        }
     });
     $('.note-editing-area').css("background", "white");
     $('.note-editor').css("border", "1px solid black");
@@ -1409,7 +1416,7 @@ $(document).ready(function(){
         var N_siniestro = $("#n_siniestro").val();
         //Copias Interesadas Origen
         var copiaComunicadoTotal = [];
-
+        cuerpo_comunicado = cuerpo_comunicado ? cuerpo_comunicado.replace(/"/g, "'") : '';
         $('input[type="checkbox"]').each(function() {
             var copiaComunicado = $(this).attr('id');            
             if (copiaComunicado === 'copia_afiliado' || copiaComunicado === 'copia_empleador' || 
@@ -2543,7 +2550,14 @@ $(document).ready(function(){
     /* Funcionalidad para insertar la etiqueta de pruebas solicitadas (edición) */
     $("#cuerpo_comunicado_editar").summernote({
         height: 'auto',
-        toolbar: false
+        toolbar: false,
+        callbacks: {
+            onPaste: function (e) {
+                var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+                e.preventDefault();
+                document.execCommand('insertText', false, bufferText);
+            }
+        }
     });
     $('.note-editing-area').css("background", "white");
     $('.note-editor').css("border", "1px solid black");
@@ -2689,7 +2703,7 @@ $(document).ready(function(){
         var N_siniestro = $("#n_siniestro_editar").val();
        //Copias Interesadas Origen
        var EditComunicadoTotal = [];
-
+       cuerpo_comunicado = cuerpo_comunicado ? cuerpo_comunicado.replace(/"/g, "'") : '';
        $('input[type="checkbox"]').each(function() {
             var copiaComunicado2 = $(this).attr('id');            
             if (copiaComunicado2 === 'edit_copia_afiliado' || copiaComunicado2 === 'edit_copia_empleador' || 
