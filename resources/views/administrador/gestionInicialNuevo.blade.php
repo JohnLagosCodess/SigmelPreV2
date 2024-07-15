@@ -362,10 +362,10 @@
                                                         <select class="medio_notificacion_afiliado custom-select" name="medio_notificacion_afiliado" id="medio_notificacion_afiliado" required></select>
                                                     </div>
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="col-3 mt-4 text-center">
                                                     <div class="form-group">
                                                         <input class="form-contol scalesR" type="checkbox" id="entidad_conocimiento" name="entidad_conocimiento" value="Si">
-                                                        <label for="entidad_conocimiento" class="col-form-label">Entidad de Conocimiento (AFP)</label>
+                                                        <label for="entidad_conocimiento" class="col-form-label">&nbsp; Entidad de Conocimiento (AFP)</label>
                                                         <div id="div_afp_conocimiento" class="d-none">
                                                             <select class="afp_conocimiento custom-select" name="afp_conocimiento" id="afp_conocimiento"></select>
                                                         </div>
@@ -649,8 +649,8 @@
                                             </div>
                                             <div class="col-4 columna_nombre_solicitante">
                                                 <div class="form-group">
-                                                    <label for="nombre_solicitante" class="col-form label">Nombre de solicitante</label>
-                                                    <select class="nombre_solicitante custom-select" name="nombre_solicitante" id="nombre_solicitante" disabled></select>
+                                                    <label for="nombre_solicitante" class="col-form label">Nombre de solicitante <span style="color:red;">(*)</span></label>
+                                                    <select class="nombre_solicitante custom-select" name="nombre_solicitante" id="nombre_solicitante" requiered disabled></select>
                                                 </div>
                                             </div>
                                             <div class="col-4 columna_otro_nombre_solicitante d-none">

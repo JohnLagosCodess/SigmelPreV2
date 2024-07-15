@@ -599,6 +599,43 @@ $(document).ready(function(){
         iniciarIntervalo_correspon();
     });
     
+
+    /* aqui se deja el cargue de informacion del selector de revisó para solucionar la incidencia */
+    let datos_lista_lider_grupo = {
+        '_token': token,
+        'parametro':"lista_lider_grupo",
+    };
+    $.ajax({
+        type:'POST',
+        url:'/selectoresPronunciamientoOrigen',
+        data: datos_lista_lider_grupo,
+        success:function(data) {
+            let Nreviso = $('select[name=reviso]').val();
+            let lidergru = Object.keys(data);
+            var bd_quien_reviso = $('#bd_quien_reviso').val();
+
+            if (bd_quien_reviso != undefined) {
+                for (let i = 0; i < lidergru.length; i++) {
+                    if (data[lidergru[i]]['name'] != Nreviso) {
+                        if(data[lidergru[i]]["name"] == bd_quien_reviso){
+                            $('#reviso').append('<option value="'+data[lidergru[i]]["name"]+'" selected>'+data[lidergru[i]]["name"]+'</option>');
+                        }else{
+                            $('#reviso').append('<option value="'+data[lidergru[i]]["name"]+'">'+data[lidergru[i]]["name"]+'</option>');
+                        }
+                    }
+                }
+            }else{
+                for (let i = 0; i < lidergru.length; i++) {
+                    if (data[lidergru[i]]['name'] != Nreviso) {
+                        $('#reviso').append('<option value="'+data[lidergru[i]]["name"]+'">'+data[lidergru[i]]["name"]+'</option>');
+                    }
+                }
+                $("#reviso").prop("selectedIndex", 1);
+            }
+
+        }
+    });
+
     // Función para validar items a mostrar
     const tiempoDeslizamiento2 = 'slow';
     function iniciarIntervalo_correspon() {
@@ -610,26 +647,26 @@ $(document).ready(function(){
         $("#elaboro").empty();
         $("#elaboro").val(elaboro2);
         //Listado de lideres grupo trabajo
-        let datos_lista_lider_grupo = {
-                '_token': token,
-                'parametro':"lista_lider_grupo",
-                'nom_usuario_session':elaboro2
-        };
-        $.ajax({
-            type:'POST',
-            url:'/selectoresPronunciamiento',
-            data: datos_lista_lider_grupo,
-            success:function(data) {
-                let Nreviso = $('select[name=reviso]').val();
-                let lidergru = Object.keys(data);
-                for (let i = 0; i < lidergru.length; i++) {
-                    if (data[lidergru[i]]['name'] != Nreviso) {  
-                        $('#reviso').append('<option value="'+data[lidergru[i]]["name"]+'">'+data[lidergru[i]]["name"]+'</option>');
-                    }
-                }
-                $("#reviso").prop("selectedIndex", 1);
-            }
-        });
+        // let datos_lista_lider_grupo = {
+        //         '_token': token,
+        //         'parametro':"lista_lider_grupo",
+        //         'nom_usuario_session':elaboro2
+        // };
+        // $.ajax({
+        //     type:'POST',
+        //     url:'/selectoresPronunciamiento',
+        //     data: datos_lista_lider_grupo,
+        //     success:function(data) {
+        //         let Nreviso = $('select[name=reviso]').val();
+        //         let lidergru = Object.keys(data);
+        //         for (let i = 0; i < lidergru.length; i++) {
+        //             if (data[lidergru[i]]['name'] != Nreviso) {  
+        //                 $('#reviso').append('<option value="'+data[lidergru[i]]["name"]+'">'+data[lidergru[i]]["name"]+'</option>');
+        //             }
+        //         }
+        //         $("#reviso").prop("selectedIndex", 1);
+        //     }
+        // });
         if(!info_pronuncia){
             intervaloCo = setInterval(() => {
                 switch (opt_correspondencia) {
@@ -1245,6 +1282,11 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
         placeholder: "Seleccione",
         allowClear: false
     });
+    $("#lista_lateralidadCie10_fila_"+num_consecutivo).select2({
+        width: '100%',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
 
     //Carga de datos en los selectores
 
@@ -1279,6 +1321,23 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
                 $("#lista_origenCie10_fila_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+            }
+        }
+    });
+
+    let listado_LateralidadCIE10 = {
+        '_token': token,
+        'parametro' : "listado_LateralidadCIE10",
+    };
+    $.ajax({
+        type:'POST',
+        url:'/selectoresCalificacionTecnicaPCL',
+        data: listado_LateralidadCIE10,
+        success:function(data){
+            // $("select[id^='lista_origenCie10_fila_']").empty();
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $("#lista_lateralidadCie10_fila_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
             }
         }
     });

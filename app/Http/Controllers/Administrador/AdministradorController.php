@@ -70,6 +70,7 @@ use App\Models\sigmel_informacion_entidades;
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
 use App\Models\sigmel_informacion_historial_accion_eventos;
+use ZipArchive;
 
 class AdministradorController extends Controller
 {
@@ -2414,26 +2415,26 @@ class AdministradorController extends Controller
                 ->where([
                     ['ID_evento', '=', $request->nro_evento],
                     ['Id_proceso', '=',  $request->id_proceso_actual]
-                ])->get();
+                ])->get();            
 
             $string_ids_servicios = array();
 
-             /* Quitar los servicios no contratados */
-             $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
-             ->select('Id_servicio')
-             ->where([
-                 ['Id_proceso',$request->id_proceso_actual],
-                 ['Id_cliente',$request->id_cliente]
-             ])
-             ->get();
+            /* Quitar los servicios no contratados */
+            $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+                    ->select('Id_servicio')
+                    ->where([
+                        ['Id_proceso',$request->id_proceso_actual],
+                        ['Id_cliente',$request->id_cliente]
+                    ])
+                    ->get();
 
             for ($i=0; $i < count($listado_id_servicios_evento); $i++) { 
                 array_push($string_ids_servicios, $listado_id_servicios_evento[$i]->Id_servicio);
                 array_push($string_ids_servicios, 3); // Se agrega pronunciamiento Origen para no mostrar
                 array_push($string_ids_servicios, 9); // Se agrega pronunciamiento PCL para no mostrar
             }
-            
-            /* MODIFICACIÓN PARA QUE SE PUEDA CREAR MUCHOS SERVICIOS DE RECALIFICACIÓN y Adición DX 06-02-2024 
+
+            /* MODIFICACIÓN PARA QUE SE PUEDA CREAR MUCHOS SERVICIOS DE RECALIFICACIÓN y Adición y Juntas DX 06-02-2024 
                 EL SERVICIO DE Recalificación TIENE EL ID 7 O EL 8 Revision Pension
                 o 2 DX  en la tabla sigmel_lista_procesos_servicios
             */
@@ -2472,21 +2473,72 @@ class AdministradorController extends Controller
                     $string_ids_servicios = array_values($string_ids_servicios);
                     // Actualizar el tamaño del array
                     $tamanio = count($string_ids_servicios);
-                } else {
+                }else {
                     // Si el valor 7,8,2 ya no está en el array, salimos del bucle
                     break;
                 }
-            }
+            }          
             
-            $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
-            ->select('Id_Servicio', 'Nombre_servicio')
-            ->where([
-                ['Id_proceso', '=', $request->id_proceso_actual],
-                ['Estado', '=', 'activo']
-            ])
-            ->whereIn('Id_Servicio', $servicios_contratados)
-            ->whereNotIn('Id_Servicio', $string_ids_servicios)
-            ->get();
+            switch(true)
+            {
+                case($request->id_proceso_actual == 1):
+                    $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                    ->select('Id_Servicio', 'Nombre_servicio')
+                    ->where([
+                        ['Id_proceso', '=', $request->id_proceso_actual],
+                        ['Estado', '=', 'activo']
+                    ])
+                    ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                    ->where('Id_Servicio', '<>', 1)
+                    ->get();
+                break;
+                case($request->id_proceso_actual == 2):
+                    $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                    ->select('Id_Servicio', 'Nombre_servicio')
+                    ->where([
+                        ['Id_proceso', '=', $request->id_proceso_actual],
+                        ['Estado', '=', 'activo']
+                    ])
+                    ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                    ->where('Id_Servicio', '<>', 6)
+                    ->get();
+                break;
+                // case($request->id_proceso_escogido == 3):
+                //     $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+                //     ->select('Id_servicio')
+                //     ->where([
+                //         ['Id_proceso',$request->id_proceso_escogido],
+                //         ['Id_cliente',$request->id_cliente]
+                //     ])->get();
+
+                //     $servicio_cliente = array();
+                //     for ($i=0; $i < count($servicios_contratados); $i++) { 
+                //         array_push($servicio_cliente, $servicios_contratados[$i]->Id_servicio);
+                //     }
+
+                //     $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                //     ->select('Id_Servicio', 'Nombre_servicio')
+                //     ->where([
+                //         ['Id_proceso', '=', $request->id_proceso_escogido],
+                //         ['Estado', '=', 'activo']
+                //     ])
+                //     ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                //     ->whereIn('Id_Servicio', $servicio_cliente)
+                //     ->get();
+
+                // break;
+                default:
+                    $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                    ->select('Id_Servicio', 'Nombre_servicio')
+                    ->where([
+                        ['Id_proceso', '=', $request->id_proceso_actual],
+                        ['Estado', '=', 'activo']
+                    ])
+                    ->whereIn('Id_Servicio', $servicios_contratados)
+                    ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                    ->get();
+                break;
+            }  
 
             $info_listado_servicios = json_decode(json_encode($listado_servicios, true));
             return response()->json(($info_listado_servicios));
@@ -2647,23 +2699,18 @@ class AdministradorController extends Controller
         if($parametro == 'listado_servicios_nuevo_proceso'){
             
             $listado_id_servicios_evento = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-                ->select('Id_servicio')
-                ->where([
-                    ['ID_evento', '=', $request->nro_evento],
-                    ['Id_proceso', '=',  $request->id_proceso_escogido]
-                ])->get();
+            ->select('Id_servicio')
+            ->where([
+                ['ID_evento', '=', $request->nro_evento],
+                ['Id_proceso', '=',  $request->id_proceso_escogido]
+            ])->get();            
 
             $string_ids_servicios = array();
 
             for ($i=0; $i < count($listado_id_servicios_evento); $i++) { 
                 array_push($string_ids_servicios, $listado_id_servicios_evento[$i]->Id_servicio);
             }
-
-            // Despues de obtener los servicios de cada proceso se realiza las siguiente validaciones 
-            // segun el caso
-            // CASO 1: traer servicios del proceso Origen distintos a la Adicion Dx
-            // CASO 2: traer servicios del proceso PCL distintos a Recalificacion y Revision pension
-            // CASO 3: traer servicios del proceso Juntas segun los contratados
+            
             $tamanio = count($string_ids_servicios);
             for ($a = 0; $a < $tamanio; $a++) { 
                 if (in_array(12, $string_ids_servicios)) {
@@ -2687,6 +2734,12 @@ class AdministradorController extends Controller
                     break;
                 }
             }
+            // Despues de obtener los servicios de cada proceso se realiza las siguiente validaciones 
+            // segun el caso
+            // CASO 1: traer servicios del proceso Origen distintos a la Adicion Dx (ESTO YA NO VA DEBIDO A LA FICHA PBS-051)
+            // CASO 2: traer servicios del proceso PCL distintos a Recalificacion y Revision pension (ESTO YA NO VA DEBIDO A LA FICHA PBS-051)
+            // CASO 3: traer servicios del proceso Juntas segun los contratados
+            
             switch(true)
             {
                 case($request->id_proceso_escogido == 1):
@@ -2697,7 +2750,7 @@ class AdministradorController extends Controller
                         ['Estado', '=', 'activo']
                     ])
                     ->whereNotIn('Id_Servicio', $string_ids_servicios)
-                    ->where('Id_Servicio', '<>', 2)
+                    // ->where('Id_Servicio', '<>', 2)
                     ->get();
                 break;
                 case($request->id_proceso_escogido == 2):
@@ -2708,7 +2761,7 @@ class AdministradorController extends Controller
                         ['Estado', '=', 'activo']
                     ])
                     ->whereNotIn('Id_Servicio', $string_ids_servicios)
-                    ->whereNotIn('Id_Servicio', [7,8])
+                    // ->whereNotIn('Id_Servicio', [7,8])
                     ->get();
                 break;
                 case($request->id_proceso_escogido == 3):
@@ -2745,7 +2798,7 @@ class AdministradorController extends Controller
                     ->whereNotIn('Id_Servicio', $string_ids_servicios)
                     ->get();
                 break;
-            }     
+            }                     
 
             $info_listado_servicios = json_decode(json_encode($listado_servicios, true));
             return response()->json(($info_listado_servicios));
@@ -5240,6 +5293,81 @@ class AdministradorController extends Controller
             return response()->json(['error' => 'Archivo no encontrado.'], 404);
         }
     }
+
+    /**
+     * Busca todos los documentos cargados dentro del listado general de documentos, los comprime y los descarga.
+     */
+    public function descargaMasiva(Request $request){
+        $request->validate([
+            'parametro' => 'required',
+            'IdEvento' => 'required',
+            'IdServicio' => 'required'
+        ]);
+
+        //Lugar que contiene los archivos a comprimir.
+        $path = public_path("Documentos_Eventos/{$request->IdEvento}");
+
+        if (!file_exists($path)){
+            mkdir($path, 0775, true);
+        }
+
+        $documentos = DB::select('CALL psrvistadocumentos(?,?)', array($request->IdEvento,$request->IdServicio));
+
+        $documentosZip = [];
+
+        //Cualquier documento que este cargado se comprimira para poder descargarlo
+        foreach($documentos as $documento){
+            if($documento->estado_documento == 'Cargado'){
+                //Limpiamos el nombre de manera que sea legible para el sistema
+                $nombreDoc = preg_replace('/[^\p{L}\p{N}_\-\.()]/u', '_', $documento->Nombre_documento);
+                $documentosZip[] = "{$nombreDoc}_IdEvento_{$request->IdEvento}_IdServicio_{$request->IdServicio}.{$documento->formato_documento}";
+            }
+        }
+        
+        if(empty($documentosZip)){
+            http_response_code(400);
+            return null;
+        }
+        $tmpZip = $this->comprimirArchivos($documentosZip,$path,'ListadoDocumentos');
+
+        $headers = [
+            'Content-Type' => 'application/zip',
+            'Content-Disposition' => "attachment; filename=\"{$tmpZip['nombreZip']}\""
+        ];
+
+        //La descarga se efectua principalmente desde js mediante un blob ya que la peticcion se hizo mediante ajax, posterior a esto se elimina el doc generaod.
+        return response()->download($tmpZip['path'], $tmpZip['nombreZip'],$headers)->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Genera un archivo zip con los documentos indicados.
+     * @param mixed $archivos Listado de documentos a incluir en el zip
+     * @param string $pathTMP Ubicacion de los documentos a zipear, en la misma ubicacion se creara el zip.
+     * @param string $nombreZip Nombre del zip a generar
+     * @return mixed path del zip generado y el nombre de dicho zip
+     */
+    public function comprimirArchivos(array $archivos,string $pathTMP,string $nombreZip){
+
+        $nombreZip = "{$nombreZip}.zip";
+        $objZip = new ZipArchive;
+        $tmp = "{$pathTMP}/{$nombreZip}";
+
+        //Si el zip no existe lo crea, sino lo sobre escribe.
+        if($objZip->open($tmp,ZipArchive::CREATE | ZipArchive::OVERWRITE)){
+            foreach($archivos as $archivo){
+                if(file_exists("{$pathTMP}/{$archivo}")){
+                    $objZip->addFile("{$pathTMP}/{$archivo}",$archivo);
+                }
+            }
+            $objZip->close();
+        }
+
+        return [
+            'path' => $tmp,
+            'nombreZip' => $nombreZip
+        ];
+    }
+
 
     public function consultaHistorialAcciones (Request $request){
         $array_datos_historial_acciones = sigmel_historial_acciones_eventos::on('sigmel_gestiones')

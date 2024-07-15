@@ -70,9 +70,10 @@ class PronunciamientoOrigenController extends Controller
         ->get();
         $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
         ->select('side.Id_Diagnosticos_motcali', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
-        'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones')
+        'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones','slp2.Nombre_parametro as Nombre_parametro_lateralidad')
         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
         ->where([
             ['side.Estado', '=', 'Activo'],
             ['side.ID_evento', '=', $Id_evento_calitec],
@@ -252,15 +253,20 @@ class PronunciamientoOrigenController extends Controller
 
         //Lista lider grupos
         if($parametro == "lista_lider_grupo"){
-            $datos_lider_grupo = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_usuarios_grupos_trabajos as ug')
-                ->select('ug.id_equipo_trabajo','li.name')
-                ->leftJoin('sigmel_sys.users as g', 'ug.id_usuarios_asignados', '=', 'g.id')
-                ->leftJoin('sigmel_gestiones.sigmel_grupos_trabajos as gr', 'ug.id_equipo_trabajo', '=', 'gr.id')
-                ->leftJoin('sigmel_sys.users as li', 'gr.lider', '=', 'li.id')
-                ->where([
-                    ['g.name', $request->nom_usuario_session]
-                ])
-                ->get();
+            // $datos_lider_grupo = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_usuarios_grupos_trabajos as ug')
+            //     ->select('ug.id_equipo_trabajo','li.name')
+            //     ->leftJoin('sigmel_sys.users as g', 'ug.id_usuarios_asignados', '=', 'g.id')
+            //     ->leftJoin('sigmel_gestiones.sigmel_grupos_trabajos as gr', 'ug.id_equipo_trabajo', '=', 'gr.id')
+            //     ->leftJoin('sigmel_sys.users as li', 'gr.lider', '=', 'li.id')
+            //     ->where([
+            //         ['g.name', $request->nom_usuario_session]
+            //     ])
+            //     ->get();
+        
+            $datos_lider_grupo =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+            ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+            ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
+            ->where([['sgt.Id_proceso_equipo', '=', '1']])->get();
 
             $informacion_datos_lider_grupo = json_decode(json_encode($datos_lider_grupo, true));
             return response()->json($informacion_datos_lider_grupo);
@@ -325,7 +331,7 @@ class PronunciamientoOrigenController extends Controller
             }
             // Creación de array con los campos de la tabla: sigmel_informacion_diagnosticos_eventos
             $array_tabla_diagnosticos_motivo_calificacion = ['ID_evento','Id_Asignacion','Id_proceso',
-            'CIE10','Nombre_CIE10','Origen_CIE10',
+            'CIE10','Nombre_CIE10','Lateralidad_CIE10','Origen_CIE10',
             'Nombre_usuario','F_registro'];
             // Combinación de los campos de la tabla con los datos
             $array_datos_con_keys = [];

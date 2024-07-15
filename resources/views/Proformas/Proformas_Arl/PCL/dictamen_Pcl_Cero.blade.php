@@ -506,6 +506,7 @@
                         <td colspan="1" class="dato_dinamico"><?php echo $conteo_diagnostico?></td>
                         <td colspan="2" class="dato_dinamico"><?php echo $diagnosticos_fc->Codigo_cie10?></td>
                         <td colspan="3" class="dato_dinamico"><?php echo $diagnosticos_fc->Nombre_CIE10?></td>
+                        <td colspan="3" class="dato_dinamico">{{$diagnosticos_fc->LateralidadDx}}</td>
                         <td colspan="1" class="dato_dinamico"><?php echo $diagnosticos_fc->Nombre_origen?></td>
                         <td colspan="10" class="dato_dinamico"><?php echo $diagnosticos_fc->Deficiencia_motivo_califi_condiciones?></td>
                     </tr>              

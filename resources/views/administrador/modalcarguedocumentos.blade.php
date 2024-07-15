@@ -87,8 +87,8 @@
                                                         <input type="text" name="Nombre_documento" value="{{$documento->Nombre_documento}}">
                                                     <?php endif?>
 
-                                                    <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">
-                                                    <input type="text" name="Id_servicio" id="Id_servicio_{{$documento->Id_Documento}}" value="{{$Id_servicio}}">
+                                                    <input  type="text" class="EventoID" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">
+                                                    <input type="text" class="Id_servicio" name="Id_servicio" id="Id_servicio_{{$documento->Id_Documento}}" value="{{$Id_servicio}}">
                                                     <input type="text" name="bandera_nombre_otro_doc" value="{{$documento->nombre_Documento}}">
                                                 </div>
                                                 <div class="row">
@@ -206,10 +206,22 @@
                 </div>
             </div>
             <x-slot name="footerSlot">
-                <div class="mostrar_fallo alert alert-danger mt-2 mr-auto d-none"role="alert"></div>
-                <div class="mostrar_exito alert alert-success mt-2 mr-auto d-none" role="alert"></div>
-                <button class="btn btn-info" id="recargar_ventana">Actualizar</button>
-                <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
+                <div class="col-12 d-flex">
+                    <div class="col-4">
+                        <button class="btn btn-info" id="descargar_documentos" onclick="descargarDocumentos()">Descargar todo</button>
+                    </div>
+                    <div class="col-4">
+                        <div class="mostrar_fallo alert alert-danger mt-2 mr-auto d-none" role="alert"></div>
+                        <div class="mostrar_exito alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                        <div class="bg-info form-control d-none" id="status_spinner" type="button" disabled>
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Comprimiendo documentos, por favor espere...
+                        </div>
+                    </div>
+                    <div class="col-4 d-flex justify-content-end">
+                        <button class="btn btn-info mr-2" id="recargar_ventana">Actualizar</button>
+                        <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
+                    </div>
+                </div>
             </x-slot>
         </x-adminlte-modal>
         {{-- MODAL OTRO DOCUMENTO --}}
