@@ -5162,6 +5162,7 @@ class RecalificacionPCLController extends Controller
         $arl = $request->arl;
         $jrci = $request->jrci;        
         $cual = $request->cual;
+        $N_siniestro = $request->N_siniestro;
         if($cual == ''){
             $cual = null;
         }
@@ -5281,6 +5282,7 @@ class RecalificacionPCLController extends Controller
                 'Reemplazado' => 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'N_siniestro' => $N_siniestro
             ];
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -5346,6 +5348,7 @@ class RecalificacionPCLController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
                 'Reemplazado' => 0,
+                'N_siniestro' => $N_siniestro
             ];   
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
@@ -5478,7 +5481,8 @@ class RecalificacionPCLController extends Controller
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                     'Tipo_descarga' => 'Dictamen',
-                    'Modulo_creacion' => 'recalificacionPCL'
+                    'Modulo_creacion' => 'recalificacionPCL',
+                    'N_siniestro' => $n_siniestro,
                 ];
         
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -5552,7 +5556,8 @@ class RecalificacionPCLController extends Controller
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                     'Tipo_descarga' => 'Dictamen',
-                    'Modulo_creacion' => 'recalificacionPCL'
+                    'Modulo_creacion' => 'recalificacionPCL',
+                    'N_siniestro' => $n_siniestro,
                 ];
         
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -5644,7 +5649,8 @@ class RecalificacionPCLController extends Controller
                 ->where('Id_Asignacion', $Id_Asignacion_Dcreto)->update($datos_profesional_calificador);
             }
             $comunicado_reemplazado = [
-                'Reemplazado' => 0
+                'Reemplazado' => 0,
+                'N_siniestro' => $n_siniestro,
             ];
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
                 ->where([
@@ -5653,6 +5659,7 @@ class RecalificacionPCLController extends Controller
                     ['N_radicado',$radicado_dictamen]
                     ])
             ->update($comunicado_reemplazado);
+            // dd($comunicado_reemplazado);
             $mensajes = array(
                 "parametro" => 'insertar_dictamen_pericial',
                 "mensaje" => 'Concepto final del dictamen pericial actualizado satisfactoriamente.'
@@ -5677,6 +5684,7 @@ class RecalificacionPCLController extends Controller
         $Id_Proceso_comuni = $request->Id_Proceso_comuni;
         $Radicado_comuni = $request->Radicado_comuni;
         $Id_Comunicado = $request->Id_Comunicado;
+        $N_siniestro = $request->N_siniestro;
         
         $formattedData = "";
 
@@ -6191,7 +6199,8 @@ class RecalificacionPCLController extends Controller
             'Numero_documento_afiliado' => $Numero_documento_afiliado,
             'Documento_afiliado' => $Documento_afiliado,
             'Nombre_afiliado_pre' => $Nombre_afiliado_pre,
-            'validacion_visado' => $validacion_visado
+            'validacion_visado' => $validacion_visado,
+            'N_siniestro' => $N_siniestro
         ];
 
         // Crear una instancia de Dompdf
@@ -6271,6 +6280,7 @@ class RecalificacionPCLController extends Controller
         $Id_Proceso_comuni = $request->Id_Proceso_comuni;
         $Radicado_comuni = $request->Radicado_comuni;
         $Id_Comunicado = $request->Id_Comunicado;
+        $N_siniestro = $request->N_siniestro;
         
         $formattedData = "";
 
@@ -6604,7 +6614,8 @@ class RecalificacionPCLController extends Controller
             'Numero_documento_afiliado' => $Numero_documento_afiliado,
             'Documento_afiliado' => $Documento_afiliado,
             'Nombre_afiliado_pre' => $Nombre_afiliado_pre,
-            'validacion_visado' => $validacion_visado
+            'validacion_visado' => $validacion_visado,
+            'N_siniestro' => $N_siniestro
         ];
 
         // Crear una instancia de Dompdf
@@ -6685,6 +6696,7 @@ class RecalificacionPCLController extends Controller
         $Radicado_comuni_comite = $request->Radicado_comuni_comite;
         $Firma_comuni_comite = $request->Firma_comuni_comite;
         $Id_Comunicado = $request->Id_Comunicado;
+        $N_siniestro = $request->N_siniestro;
 
         $formattedData = "";
 
@@ -6798,12 +6810,12 @@ class RecalificacionPCLController extends Controller
         'siae.Estado_civil', 'slpar.Nombre_parametro as Estado_civi', 'siae.Nivel_escolar', 'slpa.Nombre_parametro as Escolaridad', 
         'siae.Apoderado', 'siae.Nombre_apoderado', 'siae.Nro_identificacion_apoderado', 'siae.Id_dominancia', 'siae.Direccion', 
         'siae.Id_departamento', 'slde.Nombre_departamento as Nombre_departamento', 'siae.Id_municipio', 'sldm.Nombre_municipio as Nombre_municipio', 
-        'siae.Ocupacion', 'siae.Tipo_afiliado', 'siae.Ibc', 'siae.Id_eps', 'sie.Nombre_entidad as Entidad_eps', 'sie.Direccion as Direccion_eps', 
+        'siae.Ocupacion', 'siae.Tipo_afiliado', 'siae.Ibc', 'siae.Id_eps', 'sie.Nombre_entidad as Entidad_eps','sie.Emails as Email_eps', 'sie.Direccion as Direccion_eps', 
         'sie.Telefonos as Telefono_eps', 'sie.Id_Departamento', 'sldepa.Nombre_departamento as Nombre_departamento_eps', 'sie.Id_Ciudad', 
-        'sldmun.Nombre_municipio as Nombre_municipio_eps', 'siae.Id_afp', 'sien.Nombre_entidad as Entidad_afp', 
+        'sldmun.Nombre_municipio as Nombre_municipio_eps', 'siae.Id_afp', 'sien.Nombre_entidad as Entidad_afp', 'sien.Emails as Email_afp', 
         'sien.Direccion as Direccion_afp', 'sien.Telefonos as Telefono_afp', 'sien.Id_Departamento', 
         'sldepar.Nombre_departamento as Nombre_departamento_afp', 'sien.Id_Ciudad', 
-        'sldmuni.Nombre_municipio as Nombre_municipio_afp', 'siae.Id_arl', 'sient.Nombre_entidad as Entidad_arl', 
+        'sldmuni.Nombre_municipio as Nombre_municipio_afp', 'siae.Id_arl', 'sient.Nombre_entidad as Entidad_arl', 'sient.Emails as Email_arl', 
         'sient.Direccion as Direccion_arl', 'sient.Telefonos as Telefono_arl', 'sient.Id_Departamento', 
         'sldepart.Nombre_departamento as Nombre_departamento_arl', 'sient.Id_Ciudad',
         'sldmunic.Nombre_municipio as Nombre_municipio_arl',
@@ -6843,11 +6855,13 @@ class RecalificacionPCLController extends Controller
             $Nombre_eps = $array_datos_info_afiliado[0]->Entidad_eps;
             $Direccion_eps = $array_datos_info_afiliado[0]->Direccion_eps;
             $Telefono_eps = $array_datos_info_afiliado[0]->Telefono_eps;        
+            $Email_eps = $array_datos_info_afiliado[0]->Email_eps;    
             $Ciudad_departamento_eps = $array_datos_info_afiliado[0]->Nombre_municipio_eps.'-'.$array_datos_info_afiliado[0]->Nombre_departamento_eps;            
         }else{
             $Nombre_eps = '';
             $Direccion_eps = '';
             $Telefono_eps = '';
+            $Email_eps = '';
             $Ciudad_departamento_eps = '';
         }
         
@@ -6855,11 +6869,13 @@ class RecalificacionPCLController extends Controller
             $Nombre_afp = $array_datos_info_afiliado[0]->Entidad_afp;
             $Direccion_afp = $array_datos_info_afiliado[0]->Direccion_afp;
             $Telefono_afp = $array_datos_info_afiliado[0]->Telefono_afp;
+            $Email_afp = $array_datos_info_afiliado[0]->Email_afp;
             $Ciudad_departamento_afp = $array_datos_info_afiliado[0]->Nombre_municipio_afp.'-'.$array_datos_info_afiliado[0]->Nombre_departamento_afp;
         }else{
             $Nombre_afp = '';
             $Direccion_afp = '';
             $Telefono_afp = '';
+            $Email_afp = '';
             $Ciudad_departamento_afp = '';
         }
 
@@ -6876,13 +6892,14 @@ class RecalificacionPCLController extends Controller
                 $datos_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos','sie.Emails as Email', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
                 ->where([['sie.Id_Entidad', $id_afp_conocimiento]])
                 ->get();
     
                 $Nombre_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_entidad;
                 $Direccion_afp_conocimiento = $datos_afp_conocimiento[0]->Direccion;
                 $Telefonos_afp_conocimiento = $datos_afp_conocimiento[0]->Telefonos;
+                $Email_afp_conocimiento = $datos_afp_conocimiento[0]->Email;
                 $Ciudad_departamento_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_ciudad.'-'.$datos_afp_conocimiento[0]->Nombre_departamento;
             } else {
                 $Copia_afp_conocimiento_correspondencia = '';
@@ -6890,6 +6907,7 @@ class RecalificacionPCLController extends Controller
                 $Nombre_afp_conocimiento = '';
                 $Direccion_afp_conocimiento = '';
                 $Telefonos_afp_conocimiento = '';
+                $Email_afp_conocimiento = '';
                 $Ciudad_departamento_afp_conocimiento = '';
             }
 
@@ -6897,6 +6915,7 @@ class RecalificacionPCLController extends Controller
             $Nombre_afp_conocimiento = '';
             $Direccion_afp_conocimiento = '';
             $Telefonos_afp_conocimiento = '';
+            $Email_afp_conocimiento = '';
             $Ciudad_departamento_afp_conocimiento = '';
         }
 
@@ -6904,11 +6923,13 @@ class RecalificacionPCLController extends Controller
             $Nombre_arl = $array_datos_info_afiliado[0]->Entidad_arl;
             $Direccion_arl = $array_datos_info_afiliado[0]->Direccion_arl;
             $Telefono_arl = $array_datos_info_afiliado[0]->Telefono_arl;
+            $Email_arl = $array_datos_info_afiliado[0]->Email_arl;
             $Ciudad_departamento_arl = $array_datos_info_afiliado[0]->Nombre_municipio_arl.'-'.$array_datos_info_afiliado[0]->Nombre_departamento_arl;
         }else{
             $Nombre_arl = '';   
             $Direccion_arl = '';
             $Telefono_arl = '';
+            $Email_arl = '';
             $Ciudad_departamento_arl = '';
         }
         
@@ -6989,22 +7010,25 @@ class RecalificacionPCLController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as slde', 'slde.Id_departamento', '=', 'sile.Id_departamento')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sile.Id_municipio')
         ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sile.Id_departamento', 'slde.Nombre_departamento', 
-        'sile.Id_municipio', 'sldm.Nombre_municipio')->where([['ID_Evento',$ID_Evento_comuni_comite]])->limit(1)->get();
+        'sile.Id_municipio', 'sldm.Nombre_municipio', 'sile.Email')->where([['ID_Evento',$ID_Evento_comuni_comite]])->limit(1)->get();
 
         $Nombre_empresa_noti = $array_datos_info_laboral[0]->Empresa;
         $Direccion_empresa_noti = $array_datos_info_laboral[0]->Direccion;
         $Telefono_empresa_noti = $array_datos_info_laboral[0]->Telefono_empresa;
+        $Email_empresa_noti = $array_datos_info_laboral[0]->Email;
         $Ciudad_departamento_empresa_noti = $array_datos_info_laboral[0]->Nombre_municipio.'-'.$array_datos_info_laboral[0]->Nombre_departamento;        
 
         if(!empty($Copia_empleador_correspondecia) && $Copia_empleador_correspondecia == 'Empleador'){
             $copiaNombre_empresa_noti = $Nombre_empresa_noti;
             $copiaDireccion_empresa_noti = $Direccion_empresa_noti;
             $copiaTelefono_empresa_noti = $Telefono_empresa_noti;
+            $copiaEmail_empresa_noti = $Email_empresa_noti;
             $copiaCiudad_departamento_empresa_noti = $Ciudad_departamento_empresa_noti;
         }else{
             $copiaNombre_empresa_noti = '';
             $copiaDireccion_empresa_noti = '';
             $copiaTelefono_empresa_noti = '';
+            $copiaEmail_empresa_noti = '';
             $copiaCiudad_departamento_empresa_noti = '';
         }
 
@@ -7220,6 +7244,7 @@ class RecalificacionPCLController extends Controller
                 'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
                 'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
+                'copiaEmail_empresa_noti'=> $copiaEmail_empresa_noti,
                 'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
                 'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
                 'Nombre_eps' => $Nombre_eps,
@@ -7237,8 +7262,13 @@ class RecalificacionPCLController extends Controller
                 'Nombre_arl' => $Nombre_arl,
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
+                'Email_eps' => $Email_eps,
+                'Email_afp' => $Email_afp,
+                'Email_afp_conocimiento' => $Email_afp_conocimiento,
+                'Email_arl' => $Email_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
                 'footer' => $footer,
+                'N_siniestro' => $N_siniestro,
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
                 // 'footer_dato_3' => $footer_dato_3,
@@ -7381,6 +7411,7 @@ class RecalificacionPCLController extends Controller
                 'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
                 'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
+                'copiaEmail_empresa_noti' => $copiaEmail_empresa_noti,
                 'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
                 'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
                 'Nombre_eps' => $Nombre_eps,
@@ -7399,7 +7430,12 @@ class RecalificacionPCLController extends Controller
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
-                'footer' => $footer
+                'footer' => $footer,
+                'N_siniestro' => $N_siniestro,
+                'Email_eps' => $Email_eps,
+                'Email_afp' => $Email_afp,
+                'Email_afp_conocimiento' => $Email_afp_conocimiento,
+                'Email_arl' => $Email_arl,
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
                 // 'footer_dato_3' => $footer_dato_3,
@@ -7543,6 +7579,7 @@ class RecalificacionPCLController extends Controller
                 'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
                 'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
+                'copiaEmail_empresa_noti' => $copiaEmail_empresa_noti,
                 'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
                 'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
                 'Nombre_eps' => $Nombre_eps,
@@ -7558,6 +7595,11 @@ class RecalificacionPCLController extends Controller
                 'Telefono_arl' => $Telefono_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
                 'footer' => $footer,
+                'N_siniestro' => $N_siniestro,
+                'Email_eps' => $Email_eps,
+                'Email_afp' => $Email_afp,
+                'Email_afp_conocimiento' => $Email_afp_conocimiento,
+                'Email_arl' => $Email_arl,
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
                 // 'footer_dato_3' => $footer_dato_3,
@@ -7709,6 +7751,7 @@ class RecalificacionPCLController extends Controller
                 'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
                 'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
+                'copiaEmail_empresa_noti' => $copiaEmail_empresa_noti,
                 'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
                 'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
                 'Nombre_eps' => $Nombre_eps,
@@ -7724,12 +7767,18 @@ class RecalificacionPCLController extends Controller
                 'Telefono_arl' => $Telefono_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
                 'footer' => $footer,
+                'N_siniestro' => $N_siniestro,
+                'Email_eps' => $Email_eps,
+                'Email_afp' => $Email_afp,
+                'Email_afp_conocimiento' => $Email_afp_conocimiento,
+                'Email_arl' => $Email_arl,
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
                 // 'footer_dato_3' => $footer_dato_3,
                 // 'footer_dato_4' => $footer_dato_4,
                 // 'footer_dato_5' => $footer_dato_5,
             ];
+            // dd("Formato C : ",$data);
             // Crear una instancia de Dompdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_formato_c_revisionPension', $data);            
@@ -7866,6 +7915,7 @@ class RecalificacionPCLController extends Controller
                 'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
                 'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
+                'copiaEmail_empresa_noti' => $copiaEmail_empresa_noti,
                 'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
                 'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
                 'Nombre_eps' => $Nombre_eps,
@@ -7881,6 +7931,11 @@ class RecalificacionPCLController extends Controller
                 'Telefono_arl' => $Telefono_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
                 'footer' => $footer,
+                'N_siniestro' => $N_siniestro,
+                'Email_eps' => $Email_eps,
+                'Email_afp' => $Email_afp,
+                'Email_afp_conocimiento' => $Email_afp_conocimiento,
+                'Email_arl' => $Email_arl,
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
                 // 'footer_dato_3' => $footer_dato_3,
@@ -8032,6 +8087,7 @@ class RecalificacionPCLController extends Controller
                 'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
                 'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
+                'copiaEmail_empresa_noti' => $copiaEmail_empresa_noti,
                 'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
                 'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
                 'Nombre_eps' => $Nombre_eps,
@@ -8047,6 +8103,11 @@ class RecalificacionPCLController extends Controller
                 'Telefono_arl' => $Telefono_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
                 'footer' => $footer,
+                'N_siniestro' => $N_siniestro,
+                'Email_eps' => $Email_eps,
+                'Email_afp' => $Email_afp,
+                'Email_afp_conocimiento' => $Email_afp_conocimiento,
+                'Email_arl' => $Email_arl,
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
                 // 'footer_dato_3' => $footer_dato_3,

@@ -97,7 +97,6 @@ class CalificacionPCLController extends Controller
             $newIdEvento = $request->Id_evento_pcl;
             $Id_servicio = $request->Id_servicio_pcl;     
         }
-
         $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newIdAsignacion));
         $Nro_ident_afiliado = $array_datos_calificacionPcl[0]->Nro_identificacion;
         $array_datos_destinatarios = DB::select('CALL psrcomunicados(?,?)', array($newIdEvento,$Nro_ident_afiliado));
@@ -2914,17 +2913,18 @@ class CalificacionPCLController extends Controller
                 $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
-                ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+                ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sile.Email','sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
                 ->where([['sile.Nro_identificacion', $N_identificacion],['sile.ID_evento', $ID_evento]])
                 ->get();
 
                 $nombre_empleador = $datos_empleador[0]->Empresa;
                 $direccion_empleador = $datos_empleador[0]->Direccion;
+                $email_empleador = $datos_empleador[0]->Email;
                 $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
                 $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
                 $municipio_empleador = $datos_empleador[0]->Nombre_municipio;
 
-                $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$telefono_empleador."; ".$ciudad_empleador."; ".$municipio_empleador.".";   
+                $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$email_empleador."; ".$telefono_empleador."; ".$ciudad_empleador."; ".$municipio_empleador.".";   
             }
 
             if (isset($copia_eps)) {
@@ -2932,13 +2932,14 @@ class CalificacionPCLController extends Controller
                 ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-                ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 
+                ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Emails as Email','sie.Otros_Telefonos', 
                 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
                 ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
                 ->get();
 
                 $nombre_eps = $datos_eps[0]->Nombre_eps;
                 $direccion_eps = $datos_eps[0]->Direccion;
+                $email_eps = $datos_eps[0]->Email;
                 if ($datos_eps[0]->Otros_Telefonos != "") {
                     $telefonos_eps = $datos_eps[0]->Telefonos.",".$datos_eps[0]->Otros_Telefonos;
                 } else {
@@ -2947,7 +2948,7 @@ class CalificacionPCLController extends Controller
                 $ciudad_eps = $datos_eps[0]->Nombre_ciudad;
                 $minucipio_eps = $datos_eps[0]->Nombre_municipio;
 
-                $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$telefonos_eps."; ".$ciudad_eps."; ".$minucipio_eps;
+                $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$email_eps."; ".$telefonos_eps."; ".$ciudad_eps."; ".$minucipio_eps;
             }
 
             if (isset($copia_afp)) {
@@ -2956,12 +2957,13 @@ class CalificacionPCLController extends Controller
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
                 ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
-                'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+                'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio', 'sie.Emails as Email')
                 ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
                 ->get();
 
                 $nombre_afp = $datos_afp[0]->Nombre_afp;
                 $direccion_afp = $datos_afp[0]->Direccion;
+                $email_afp = $datos_afp[0]->Email;
                 if ($datos_afp[0]->Otros_Telefonos != "") {
                     $telefonos_afp = $datos_afp[0]->Telefonos.",".$datos_afp[0]->Otros_Telefonos;
                 } else {
@@ -2970,7 +2972,7 @@ class CalificacionPCLController extends Controller
                 $ciudad_afp = $datos_afp[0]->Nombre_ciudad;
                 $minucipio_afp = $datos_afp[0]->Nombre_municipio;
 
-                $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$telefonos_afp."; ".$ciudad_afp."; ".$minucipio_afp;
+                $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$email_afp."; ".$telefonos_afp."; ".$ciudad_afp."; ".$minucipio_afp;
             }
 
             if(isset($copia_arl)){
@@ -2979,12 +2981,13 @@ class CalificacionPCLController extends Controller
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
                 ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
-                'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+                'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio', 'sie.Emails as Email')
                 ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
                 ->get();
 
                 $nombre_arl = $datos_arl[0]->Nombre_arl;
                 $direccion_arl = $datos_arl[0]->Direccion;
+                $email_arl = $datos_arl[0]->Email;
                 if ($datos_arl[0]->Otros_Telefonos != "") {
                     $telefonos_arl = $datos_arl[0]->Telefonos.",".$datos_arl[0]->Otros_Telefonos;
                 } else {
@@ -2994,7 +2997,7 @@ class CalificacionPCLController extends Controller
                 $ciudad_arl = $datos_arl[0]->Nombre_ciudad;
                 $minucipio_arl = $datos_arl[0]->Nombre_municipio;
 
-                $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+                $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
             }
 
             /* Extraer el id del cliente */
@@ -3055,6 +3058,7 @@ class CalificacionPCLController extends Controller
                 'ciudad' => $request->ciudad_comunicado_act,
                 'fecha' => $request->fecha_comunicado2_act,
                 'Nombre_afiliado' => $Nombre_afiliado,
+                'Email_afiliado' => $email_destinatario,
                 'T_documento' => $T_documento,
                 'N_identificacion'  => $N_identificacion,
                 'nombre' => $Nombre_destinatario,
@@ -3377,6 +3381,7 @@ class CalificacionPCLController extends Controller
                 'Anexos' => $Anexos,
                 'Agregar_copia' => $Agregar_copias,
                 'footer' => $footer,
+                'email_destinatario' => $email_destinatario,
                 'N_siniestro' => $request->n_siniestro_proforma_editar,
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
@@ -3501,15 +3506,28 @@ class CalificacionPCLController extends Controller
             
             // Conversión de las key en variables con sus respectivos datos
             extract($total_copias);
+
+            $email_afiliado = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+            ->select('Email')
+            ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+            ->get();
+
             
             $Agregar_copias = [];
             if (isset($copia_afiliado)) {
-                $emailAfiliado = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-                ->select('Email')
-                ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+                $AfiliadoData = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                ->select('siae.Nombre_afiliado', 'siae.Direccion', 'siae.Telefono_contacto', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio', 'siae.Email')
+                ->where([['siae.Nro_identificacion', $N_identificacion],['siae.ID_evento', $ID_evento]])
                 ->get();
-                $afiliadoEmail = $emailAfiliado[0]->Email;            
-                $Agregar_copias['Afiliado'] = $afiliadoEmail;            
+                $nombreAfiliado = $AfiliadoData[0]->Nombre_afiliado;
+                $direccionAfiliado = $AfiliadoData[0]->Direccion;
+                $telefonoAfiliado = $AfiliadoData[0]->Telefono_contacto;
+                $ciudadAfiliado = $AfiliadoData[0]->Nombre_ciudad;
+                $municipioAfiliado = $AfiliadoData[0]->Nombre_municipio;
+                $emailAfiliado = $AfiliadoData[0]->Email;            
+                $Agregar_copias['Afiliado'] = $nombreAfiliado."; ".$direccionAfiliado."; ".$emailAfiliado."; ".$telefonoAfiliado."; ".$ciudadAfiliado."; ".$municipioAfiliado.".";          
             }
 
             if(isset($copia_empleador)){
@@ -3517,17 +3535,18 @@ class CalificacionPCLController extends Controller
                 $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
-                ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+                ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa','sile.Email', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
                 ->where([['sile.Nro_identificacion', $N_identificacion],['sile.ID_evento', $ID_evento]])
                 ->get();
 
                 $nombre_empleador = $datos_empleador[0]->Empresa;
                 $direccion_empleador = $datos_empleador[0]->Direccion;
+                $email_empleador = $datos_empleador[0]->Email;
                 $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
                 $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
                 $municipio_empleador = $datos_empleador[0]->Nombre_municipio;
 
-                $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$telefono_empleador."; ".$ciudad_empleador."; ".$municipio_empleador.".";   
+                $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$email_empleador."; ".$telefono_empleador."; ".$ciudad_empleador."; ".$municipio_empleador.".";   
             }
 
             if (isset($copia_eps)) {
@@ -3535,13 +3554,14 @@ class CalificacionPCLController extends Controller
                 ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-                ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 
+                ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sie.Emails as Email',
                 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
                 ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
                 ->get();
 
                 $nombre_eps = $datos_eps[0]->Nombre_eps;
                 $direccion_eps = $datos_eps[0]->Direccion;
+                $email_eps = $datos_eps[0]->Email;
                 if ($datos_eps[0]->Otros_Telefonos != "") {
                     $telefonos_eps = $datos_eps[0]->Telefonos.",".$datos_eps[0]->Otros_Telefonos;
                 } else {
@@ -3550,7 +3570,7 @@ class CalificacionPCLController extends Controller
                 $ciudad_eps = $datos_eps[0]->Nombre_ciudad;
                 $minucipio_eps = $datos_eps[0]->Nombre_municipio;
 
-                $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$telefonos_eps."; ".$ciudad_eps."; ".$minucipio_eps;
+                $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$email_eps."; ".$telefonos_eps."; ".$ciudad_eps."; ".$minucipio_eps;
             }
 
             if (isset($copia_afp)) {
@@ -3558,13 +3578,14 @@ class CalificacionPCLController extends Controller
                 ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-                ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+                ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sie.Emails as Email',
                 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
                 ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
                 ->get();
 
                 $nombre_afp = $datos_afp[0]->Nombre_afp;
                 $direccion_afp = $datos_afp[0]->Direccion;
+                $email_afp = $datos_afp[0]->Email;
                 if ($datos_afp[0]->Otros_Telefonos != "") {
                     $telefonos_afp = $datos_afp[0]->Telefonos.",".$datos_afp[0]->Otros_Telefonos;
                 } else {
@@ -3573,7 +3594,7 @@ class CalificacionPCLController extends Controller
                 $ciudad_afp = $datos_afp[0]->Nombre_ciudad;
                 $minucipio_afp = $datos_afp[0]->Nombre_municipio;
 
-                $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$telefonos_afp."; ".$ciudad_afp."; ".$minucipio_afp;
+                $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$email_afp."; ".$telefonos_afp."; ".$ciudad_afp."; ".$minucipio_afp;
             }
 
             if(isset($copia_arl)){
@@ -3581,13 +3602,14 @@ class CalificacionPCLController extends Controller
                 ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-                ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+                ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sie.Emails as Email',
                 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
                 ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
                 ->get();
 
                 $nombre_arl = $datos_arl[0]->Nombre_arl;
                 $direccion_arl = $datos_arl[0]->Direccion;
+                $email_arl = $datos_arl[0]->Email;
                 if ($datos_arl[0]->Otros_Telefonos != "") {
                     $telefonos_arl = $datos_arl[0]->Telefonos.",".$datos_arl[0]->Otros_Telefonos;
                 } else {
@@ -3597,7 +3619,7 @@ class CalificacionPCLController extends Controller
                 $ciudad_arl = $datos_arl[0]->Nombre_ciudad;
                 $minucipio_arl = $datos_arl[0]->Nombre_municipio;
 
-                $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+                $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
             }
 
             /* Extraer el id del cliente */
@@ -3656,6 +3678,7 @@ class CalificacionPCLController extends Controller
             $data = [
                 'logo_header' => $logo_header,
                 'id_cliente' => $id_cliente,
+                'email_destinatario' => $email_destinatario,
                 'ciudad' => $request->ciudad_comunicado_act,
                 'fecha' => $request->fecha_comunicado2_act,
                 'Nombre_afiliado' => $Nombre_afiliado,
@@ -3804,13 +3827,20 @@ class CalificacionPCLController extends Controller
             extract($total_copias);
             
             $Agregar_copias = [];
-            if (isset($copia_afiliado)) {
-                $emailAfiliado = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-                ->select('Email')
-                ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+            if (isset($copia_afiliado)) {              
+                $AfiliadoData = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                ->select('siae.Nombre_afiliado', 'siae.Direccion', 'siae.Telefono_contacto', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio', 'siae.Email')
+                ->where([['siae.Nro_identificacion', $N_identificacion],['siae.ID_evento', $ID_evento]])
                 ->get();
-                $afiliadoEmail = $emailAfiliado[0]->Email;            
-                $Agregar_copias['Afiliado'] = $afiliadoEmail;            
+                $nombreAfiliado = $AfiliadoData[0]->Nombre_afiliado;
+                $direccionAfiliado = $AfiliadoData[0]->Direccion;
+                $telefonoAfiliado = $AfiliadoData[0]->Telefono_contacto;
+                $ciudadAfiliado = $AfiliadoData[0]->Nombre_ciudad;
+                $municipioAfiliado = $AfiliadoData[0]->Nombre_municipio;
+                $emailAfiliado = $AfiliadoData[0]->Email;            
+                $Agregar_copias['Afiliado'] = $nombreAfiliado."; ".$direccionAfiliado."; ".$emailAfiliado."; ".$telefonoAfiliado."; ".$ciudadAfiliado."; ".$municipioAfiliado."."; 
             }
 
             if(isset($copia_empleador)){
@@ -3818,7 +3848,7 @@ class CalificacionPCLController extends Controller
                 $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
-                ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+                ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio','sile.Email')
                 ->where([['sile.Nro_identificacion', $N_identificacion],['sile.ID_evento', $ID_evento]])
                 ->get();
 
@@ -3827,8 +3857,9 @@ class CalificacionPCLController extends Controller
                 $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
                 $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
                 $municipio_empleador = $datos_empleador[0]->Nombre_municipio;
+                $email_empleador = $datos_empleador[0]->Email;
 
-                $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$telefono_empleador."; ".$ciudad_empleador."; ".$municipio_empleador.".";   
+                $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$email_empleador."; ".$telefono_empleador."; ".$ciudad_empleador."; ".$municipio_empleador.".";   
             }
 
             if (isset($copia_eps)) {
@@ -3836,13 +3867,14 @@ class CalificacionPCLController extends Controller
                 ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-                ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 
+                ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sie.Emails as Email',
                 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
                 ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
                 ->get();
 
                 $nombre_eps = $datos_eps[0]->Nombre_eps;
                 $direccion_eps = $datos_eps[0]->Direccion;
+                $email_eps = $datos_eps[0]->Email;
                 if ($datos_eps[0]->Otros_Telefonos != "") {
                     $telefonos_eps = $datos_eps[0]->Telefonos.",".$datos_eps[0]->Otros_Telefonos;
                 } else {
@@ -3851,7 +3883,7 @@ class CalificacionPCLController extends Controller
                 $ciudad_eps = $datos_eps[0]->Nombre_ciudad;
                 $minucipio_eps = $datos_eps[0]->Nombre_municipio;
 
-                $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$telefonos_eps."; ".$ciudad_eps."; ".$minucipio_eps;
+                $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$email_eps."; ".$telefonos_eps."; ".$ciudad_eps."; ".$minucipio_eps;
             }
 
             if (isset($copia_afp)) {
@@ -3859,13 +3891,14 @@ class CalificacionPCLController extends Controller
                 ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-                ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+                ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sie.Emails as Email',
                 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
                 ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
                 ->get();
 
                 $nombre_afp = $datos_afp[0]->Nombre_afp;
                 $direccion_afp = $datos_afp[0]->Direccion;
+                $email_afp = $datos_afp[0]->Email;
                 if ($datos_afp[0]->Otros_Telefonos != "") {
                     $telefonos_afp = $datos_afp[0]->Telefonos.",".$datos_afp[0]->Otros_Telefonos;
                 } else {
@@ -3874,7 +3907,7 @@ class CalificacionPCLController extends Controller
                 $ciudad_afp = $datos_afp[0]->Nombre_ciudad;
                 $minucipio_afp = $datos_afp[0]->Nombre_municipio;
 
-                $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$telefonos_afp."; ".$ciudad_afp."; ".$minucipio_afp;
+                $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$email_afp."; ".$telefonos_afp."; ".$ciudad_afp."; ".$minucipio_afp;
             }
 
             if(isset($copia_arl)){
@@ -3883,12 +3916,13 @@ class CalificacionPCLController extends Controller
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
                 ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
-                'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+                'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio', 'sie.Emails as Email')
                 ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
                 ->get();
 
                 $nombre_arl = $datos_arl[0]->Nombre_arl;
                 $direccion_arl = $datos_arl[0]->Direccion;
+                $email_arl = $datos_arl[0]->Email;
                 if ($datos_arl[0]->Otros_Telefonos != "") {
                     $telefonos_arl = $datos_arl[0]->Telefonos.",".$datos_arl[0]->Otros_Telefonos;
                 } else {
@@ -3898,7 +3932,7 @@ class CalificacionPCLController extends Controller
                 $ciudad_arl = $datos_arl[0]->Nombre_ciudad;
                 $minucipio_arl = $datos_arl[0]->Nombre_municipio;
 
-                $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+                $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
             }
 
             /* Extraer el id del cliente */
@@ -4019,6 +4053,7 @@ class CalificacionPCLController extends Controller
                 'telefono' => $Telefono_destinatario,
                 'municipio' => $nombre_ciudad,
                 'departamento' => $nombre_departamento,
+                'email_destinatario' => $email_destinatario,
                 'nro_radicado' => $request->radicado2_act,
                 'tipo_identificacion' => $T_documento,
                 'num_identificacion' =>  $N_identificacion,
@@ -5052,7 +5087,7 @@ class CalificacionPCLController extends Controller
         })
         ->where('sicie.ID_evento', $Id_evento_calitec)
         ->where('sicie.Id_Asignacion', $Id_asignacion_calitec)
-        ->select('sicie.*', 'sice.Id_Comunicado', 'sice.Reemplazado', 'sice.Nombre_documento')
+        ->select('sicie.*', 'sice.Id_Comunicado', 'sice.Reemplazado', 'sice.Nombre_documento', 'sice.N_siniestro')
         ->get();
 
         foreach ($array_comunicados_comite_inter as $comunicado_inter) {
@@ -7185,6 +7220,7 @@ class CalificacionPCLController extends Controller
         $arl = $request->arl;
         $jrci = $request->jrci;        
         $cual = $request->cual;
+        $N_siniestro = $request->N_siniestro;
         if($cual == ''){
             $cual = null;
         }
@@ -7302,6 +7338,7 @@ class CalificacionPCLController extends Controller
                 'Reemplazado' => 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
+                'N_siniestro' => $N_siniestro
             ];
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -7364,6 +7401,7 @@ class CalificacionPCLController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
                 'Reemplazado' => 0,
+                'N_siniestro' => $N_siniestro
             ];   
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
@@ -7496,6 +7534,7 @@ class CalificacionPCLController extends Controller
                     'Reemplazado' => 0,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
+                    'N_siniestro' => $n_siniestro,
                 ];
         
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -7571,6 +7610,7 @@ class CalificacionPCLController extends Controller
                     'Reemplazado' => 0,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
+                    'N_siniestro' => $n_siniestro,
                 ];
         
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -7662,7 +7702,8 @@ class CalificacionPCLController extends Controller
                 ->where('Id_Asignacion', $Id_Asignacion_Dcreto)->update($datos_profesional_calificador);
             }    
             $comunicado_reemplazado = [
-                'Reemplazado' => 0
+                'Reemplazado' => 0,
+                'N_siniestro' => $n_siniestro,
             ];
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
                 ->where([
@@ -7853,6 +7894,7 @@ class CalificacionPCLController extends Controller
         $Id_Proceso_comuni = $request->Id_Proceso_comuni;
         $Radicado_comuni = $request->Radicado_comuni;
         $Id_Comunicado = $request->Id_Comunicado;
+        $N_siniestro = $request->N_siniestro;
 
         
         $formattedData = "";
@@ -8368,7 +8410,8 @@ class CalificacionPCLController extends Controller
             'Numero_documento_afiliado' => $Numero_documento_afiliado,
             'Documento_afiliado' => $Documento_afiliado,
             'Nombre_afiliado_pre' => $Nombre_afiliado_pre,
-            'validacion_visado' => $validacion_visado
+            'validacion_visado' => $validacion_visado,
+            'N_siniestro' => $N_siniestro
         ];
 
         // Crear una instancia de Dompdf
@@ -8450,7 +8493,7 @@ class CalificacionPCLController extends Controller
         $Id_Proceso_comuni = $request->Id_Proceso_comuni;
         $Radicado_comuni = $request->Radicado_comuni;
         $Id_Comunicado = $request->Id_Comunicado;
-
+        $N_siniestro = $request->N_siniestro;
         
         $formattedData = "";
 
@@ -8784,7 +8827,8 @@ class CalificacionPCLController extends Controller
             'Numero_documento_afiliado' => $Numero_documento_afiliado,
             'Documento_afiliado' => $Documento_afiliado,
             'Nombre_afiliado_pre' => $Nombre_afiliado_pre,
-            'validacion_visado' => $validacion_visado
+            'validacion_visado' => $validacion_visado,
+            'N_siniestro' => $N_siniestro
         ];
 
         // Crear una instancia de Dompdf
@@ -8860,14 +8904,13 @@ class CalificacionPCLController extends Controller
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
         $cargo_profesional = Auth::user()->cargo;
-
         $ID_Evento_comuni_comite = $request->ID_Evento_comuni_comite;
         $Id_Asignacion_comuni_comite = $request->Id_Asignacion_comuni_comite;
         $Id_Proceso_comuni_comite = $request->Id_Proceso_comuni_comite;
         $Radicado_comuni_comite = $request->Radicado_comuni_comite;
         $Firma_comuni_comite = $request->Firma_comuni_comite;
         $Id_Comunicado = $request->Id_Comunicado;
-
+        $N_siniestro = $request->N_siniestro;
         $formattedData = "";
 
         $dictamenPclQr = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
@@ -8979,12 +9022,12 @@ class CalificacionPCLController extends Controller
         'siae.Apoderado', 'siae.Nombre_apoderado', 'siae.Nro_identificacion_apoderado', 'siae.Id_dominancia', 'siae.Direccion', 
         'siae.Id_departamento', 'slde.Nombre_departamento as Nombre_departamento', 'siae.Id_municipio', 'sldm.Nombre_municipio as Nombre_municipio', 
         'siae.Ocupacion', 'siae.Tipo_afiliado', 'siae.Ibc', 'siae.Id_eps', 'sie.Nombre_entidad as Entidad_eps', 'sie.Direccion as Direccion_eps', 
-        'sie.Telefonos as Telefono_eps', 'sie.Id_Departamento', 'sldepa.Nombre_departamento as Nombre_departamento_eps', 'sie.Id_Ciudad', 
+        'sie.Telefonos as Telefono_eps', 'sie.Emails as Email_eps', 'sie.Id_Departamento', 'sldepa.Nombre_departamento as Nombre_departamento_eps', 'sie.Id_Ciudad', 
         'sldmun.Nombre_municipio as Nombre_municipio_eps', 'siae.Id_afp', 'sien.Nombre_entidad as Entidad_afp', 
-        'sien.Direccion as Direccion_afp', 'sien.Telefonos as Telefono_afp', 'sien.Id_Departamento', 
+        'sien.Direccion as Direccion_afp', 'sien.Telefonos as Telefono_afp', 'sien.Emails as Email_afp', 'sien.Id_Departamento', 
         'sldepar.Nombre_departamento as Nombre_departamento_afp', 'sien.Id_Ciudad', 
         'sldmuni.Nombre_municipio as Nombre_municipio_afp', 'siae.Id_arl', 'sient.Nombre_entidad as Entidad_arl', 
-        'sient.Direccion as Direccion_arl', 'sient.Telefonos as Telefono_arl', 'sient.Id_Departamento', 
+        'sient.Direccion as Direccion_arl', 'sient.Telefonos as Telefono_arl', 'sient.Emails as Email_arl','sient.Id_Departamento', 
         'sldepart.Nombre_departamento as Nombre_departamento_arl', 'sient.Id_Ciudad',
         'sldmunic.Nombre_municipio as Nombre_municipio_arl',
         'siae.Activo',
@@ -9022,11 +9065,13 @@ class CalificacionPCLController extends Controller
             $Nombre_afiliado = $array_datos_info_afiliado[0]->Nombre_afiliado;
             $Direccion_afiliado = $array_datos_info_afiliado[0]->Direccion;
             $Telefono_afiliado = $array_datos_info_afiliado[0]->Telefono_contacto;
+            $Email_afiliado = $array_datos_info_afiliado[0]->Email;
             $Ciudad_departamento_afiliado = $array_datos_info_afiliado[0]->Nombre_municipio.'-'.$array_datos_info_afiliado[0]->Nombre_departamento;
         } else {
             $Nombre_afiliado = '';
             $Direccion_afiliado = '';
             $Telefono_afiliado = '';
+            $Email_afiliado = '';
             $Ciudad_departamento_afiliado = '';
         }
 
@@ -9034,11 +9079,13 @@ class CalificacionPCLController extends Controller
             $Nombre_eps = $array_datos_info_afiliado[0]->Entidad_eps;
             $Direccion_eps = $array_datos_info_afiliado[0]->Direccion_eps;
             $Telefono_eps = $array_datos_info_afiliado[0]->Telefono_eps;        
+            $Email_eps = $array_datos_info_afiliado[0]->Email_eps;     
             $Ciudad_departamento_eps = $array_datos_info_afiliado[0]->Nombre_municipio_eps.'-'.$array_datos_info_afiliado[0]->Nombre_departamento_eps;            
         }else{
             $Nombre_eps = '';
             $Direccion_eps = '';
             $Telefono_eps = '';
+            $Email_eps = '';
             $Ciudad_departamento_eps = '';
         }
         
@@ -9046,11 +9093,13 @@ class CalificacionPCLController extends Controller
             $Nombre_afp = $array_datos_info_afiliado[0]->Entidad_afp;
             $Direccion_afp = $array_datos_info_afiliado[0]->Direccion_afp;
             $Telefono_afp = $array_datos_info_afiliado[0]->Telefono_afp;
+            $Email_afp = $array_datos_info_afiliado[0]->Email_afp;
             $Ciudad_departamento_afp = $array_datos_info_afiliado[0]->Nombre_municipio_afp.'-'.$array_datos_info_afiliado[0]->Nombre_departamento_afp;
         }else{
             $Nombre_afp = '';
             $Direccion_afp = '';
             $Telefono_afp = '';
+            $Email_afp = '';
             $Ciudad_departamento_afp = '';
         }
 
@@ -9067,13 +9116,13 @@ class CalificacionPCLController extends Controller
                 $datos_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sie.Emails as Email','sie.Otros_Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
                 ->where([['sie.Id_Entidad', $id_afp_conocimiento]])
                 ->get();
-    
                 $Nombre_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_entidad;
                 $Direccion_afp_conocimiento = $datos_afp_conocimiento[0]->Direccion;
                 $Telefonos_afp_conocimiento = $datos_afp_conocimiento[0]->Telefonos;
+                $Email_afp_conocimiento = $datos_afp_conocimiento[0]->Email;
                 $Ciudad_departamento_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_ciudad.'-'.$datos_afp_conocimiento[0]->Nombre_departamento;
             } else {
                 $Copia_afp_conocimiento_correspondencia = '';
@@ -9081,6 +9130,7 @@ class CalificacionPCLController extends Controller
                 $Nombre_afp_conocimiento = '';
                 $Direccion_afp_conocimiento = '';
                 $Telefonos_afp_conocimiento = '';
+                $Email_afp_conocimiento = '';
                 $Ciudad_departamento_afp_conocimiento = '';
             }
 
@@ -9088,6 +9138,7 @@ class CalificacionPCLController extends Controller
             $Nombre_afp_conocimiento = '';
             $Direccion_afp_conocimiento = '';
             $Telefonos_afp_conocimiento = '';
+            $Email_afp_conocimiento = '';
             $Ciudad_departamento_afp_conocimiento = '';
         }
         
@@ -9096,11 +9147,13 @@ class CalificacionPCLController extends Controller
             $Nombre_arl = $array_datos_info_afiliado[0]->Entidad_arl;
             $Direccion_arl = $array_datos_info_afiliado[0]->Direccion_arl;
             $Telefono_arl = $array_datos_info_afiliado[0]->Telefono_arl;
+            $Email_arl = $array_datos_info_afiliado[0]->Email_arl;
             $Ciudad_departamento_arl = $array_datos_info_afiliado[0]->Nombre_municipio_arl.'-'.$array_datos_info_afiliado[0]->Nombre_departamento_arl;
         }else{
             $Nombre_arl = '';   
             $Direccion_arl = '';
             $Telefono_arl = '';
+            $Email_arl = '';
             $Ciudad_departamento_arl = '';
         }
         
@@ -9175,25 +9228,27 @@ class CalificacionPCLController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as slde', 'slde.Id_departamento', '=', 'sile.Id_departamento')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sile.Id_municipio')
         ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sile.Id_departamento', 'slde.Nombre_departamento', 
-        'sile.Id_municipio', 'sldm.Nombre_municipio')->where([['ID_Evento',$ID_Evento_comuni_comite]])->limit(1)->get();
+        'sile.Id_municipio', 'sldm.Nombre_municipio', 'sile.Email')->where([['ID_Evento',$ID_Evento_comuni_comite]])->limit(1)->get();
 
         $Nombre_empresa_noti = $array_datos_info_laboral[0]->Empresa;
         $Direccion_empresa_noti = $array_datos_info_laboral[0]->Direccion;
         $Telefono_empresa_noti = $array_datos_info_laboral[0]->Telefono_empresa;
+        $Email_empresa_noti = $array_datos_info_laboral[0]->Email;
         $Ciudad_departamento_empresa_noti = $array_datos_info_laboral[0]->Nombre_municipio.'-'.$array_datos_info_laboral[0]->Nombre_departamento;        
 
         if(!empty($Copia_empleador_correspondecia) && $Copia_empleador_correspondecia == 'Empleador'){
             $copiaNombre_empresa_noti = $Nombre_empresa_noti;
             $copiaDireccion_empresa_noti = $Direccion_empresa_noti;
             $copiaTelefono_empresa_noti = $Telefono_empresa_noti;
+            $copiaEmail_empresa_noti = $Email_empresa_noti;
             $copiaCiudad_departamento_empresa_noti = $Ciudad_departamento_empresa_noti;
         }else{
             $copiaNombre_empresa_noti = '';
             $copiaDireccion_empresa_noti = '';
             $copiaTelefono_empresa_noti = '';
+            $copiaEmail_empresa_noti = '';
             $copiaCiudad_departamento_empresa_noti = '';
         }
-
         // Validación información Destinatario Principal
         $checkbox_otro_destinatario = $array_datos_comite_inter[0]->Otro_destinatario;
 
@@ -9310,7 +9365,7 @@ class CalificacionPCLController extends Controller
 
         //Obtener los datos del formulario IF para el Oficio PCL y else para Oficio Incapacidad
 
-        if ($Oficio_pcl ==  'Si') {            
+        if ($Oficio_pcl ==  'Si') { 
             $data = [
                 'codigoQR' => $codigoQR,
                 'logo_header' => $logo_header,
@@ -9343,12 +9398,14 @@ class CalificacionPCLController extends Controller
                 'Telefono_empresa_noti' => $Telefono_empresa_noti,
                 'Ciudad_departamento_empresa_noti' => $Ciudad_departamento_empresa_noti,
                 'Copia_afiliado_correspondencia' => $Copia_afiliado_correspondencia,
+                'Copia_afiliado_correo' => $Email_afiliado,
                 'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
                 'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
                 'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
                 'Copia_afp_conocimiento_correspondencia' => $Copia_afp_conocimiento_correspondencia,
                 'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
                 'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
+                'copiaEmail_empresa_noti' => $copiaEmail_empresa_noti,
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
                 'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
                 'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
@@ -9359,10 +9416,12 @@ class CalificacionPCLController extends Controller
                 'Nombre_eps' => $Nombre_eps,
                 'Direccion_eps' => $Direccion_eps,
                 'Telefono_eps' => $Telefono_eps,
+                'Email_eps' => $Email_eps,
                 'Ciudad_departamento_eps' => $Ciudad_departamento_eps,
                 'Nombre_afp' => $Nombre_afp,
                 'Direccion_afp' => $Direccion_afp,
                 'Telefono_afp' => $Telefono_afp,
+                'Email_afp' => $Email_afp,
                 'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
                 'Nombre_afp_conocimiento' => $Nombre_afp_conocimiento,
                 'Direccion_afp_conocimiento' => $Direccion_afp_conocimiento,
@@ -9372,7 +9431,10 @@ class CalificacionPCLController extends Controller
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
+                'Email_arl' => $Email_arl,
                 'footer' => $footer,
+                'N_siniestro' => $N_siniestro,
+                'Email_afp_conocimiento' => $Email_afp_conocimiento
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
                 // 'footer_dato_3' => $footer_dato_3,
@@ -9508,12 +9570,14 @@ class CalificacionPCLController extends Controller
                 'Telefono_empresa_noti' => $Telefono_empresa_noti,
                 'Ciudad_departamento_empresa_noti' => $Ciudad_departamento_empresa_noti,
                 'Copia_afiliado_correspondencia' => $Copia_afiliado_correspondencia,
+                'Copia_afiliado_correo' => $Email_afiliado,
                 'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
                 'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
                 'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
                 'Copia_afp_conocimiento_correspondencia' => $Copia_afp_conocimiento_correspondencia,
                 'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
                 'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
+                'copiaEmail_empresa_noti' => $copiaEmail_empresa_noti,
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
                 'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
                 'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
@@ -9538,6 +9602,11 @@ class CalificacionPCLController extends Controller
                 'Telefono_arl' => $Telefono_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
                 'footer' => $footer,
+                'N_siniestro' => $N_siniestro,
+                'Email_eps' => $Email_eps,
+                'Email_afp' => $Email_afp,
+                'Email_arl' => $Email_arl,
+                'Email_afp_conocimiento' => $Email_afp_conocimiento
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
                 // 'footer_dato_3' => $footer_dato_3,
@@ -9659,7 +9728,7 @@ class CalificacionPCLController extends Controller
         $Id_Proceso_comuni = $request->Id_Proceso_comuni;
         $Radicado_comuni = $request->Radicado_comuni;
         $Id_Comunicado = $request->Id_Comunicado;
-
+        $N_siniestro = $request->N_siniestro;
         
         $formattedData = "";
 
@@ -10171,7 +10240,8 @@ class CalificacionPCLController extends Controller
             'Numero_documento_afiliado' => $Numero_documento_afiliado,
             'Documento_afiliado' => $Documento_afiliado,
             'Nombre_afiliado_pre' => $Nombre_afiliado_pre,
-            'validacion_visado' => $validacion_visado
+            'validacion_visado' => $validacion_visado,
+            'N_siniestro' => $N_siniestro
         ];
 
         // Crear una instancia de Dompdf
@@ -10254,6 +10324,7 @@ class CalificacionPCLController extends Controller
         $Radicado_comuni_comite = $request->Radicado_comuni_comite;
         $Firma_comuni_comite = $request->Firma_comuni_comite;
         $Id_Comunicado = $request->Id_Comunicado;
+        $N_siniestro = $request->N_siniestro;
 
 
         // Captura de datos para logo del cliente y informacion de las entidades
@@ -10474,22 +10545,25 @@ class CalificacionPCLController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as slde', 'slde.Id_departamento', '=', 'sile.Id_departamento')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sile.Id_municipio')
         ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sile.Id_departamento', 'slde.Nombre_departamento', 
-        'sile.Id_municipio', 'sldm.Nombre_municipio')->where([['ID_Evento',$ID_Evento_comuni_comite]])->limit(1)->get();
+        'sile.Id_municipio', 'sldm.Nombre_municipio','sile.Email')->where([['ID_Evento',$ID_Evento_comuni_comite]])->limit(1)->get();
 
         $Nombre_empresa_noti = $array_datos_info_laboral[0]->Empresa;
         $Direccion_empresa_noti = $array_datos_info_laboral[0]->Direccion;
         $Telefono_empresa_noti = $array_datos_info_laboral[0]->Telefono_empresa;
+        $Email_empresa_noti = $array_datos_info_laboral[0]->Email;
         $Ciudad_departamento_empresa_noti = $array_datos_info_laboral[0]->Nombre_municipio.'-'.$array_datos_info_laboral[0]->Nombre_departamento;        
 
         if(!empty($Copia_empleador_correspondecia) && $Copia_empleador_correspondecia == 'Empleador'){
             $copiaNombre_empresa_noti = $Nombre_empresa_noti;
             $copiaDireccion_empresa_noti = $Direccion_empresa_noti;
             $copiaTelefono_empresa_noti = $Telefono_empresa_noti;
+            $copiaEmail_empresa_noti = $Email_empresa_noti;
             $copiaCiudad_departamento_empresa_noti = $Ciudad_departamento_empresa_noti;
         }else{
             $copiaNombre_empresa_noti = '';
             $copiaDireccion_empresa_noti = '';
             $copiaTelefono_empresa_noti = '';
+            $copiaEmail_empresa_noti = '';
             $copiaCiudad_departamento_empresa_noti = '';
         }
 
@@ -10548,6 +10622,7 @@ class CalificacionPCLController extends Controller
             'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
             'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
             'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
+            'copiaEmail_empresa_noti' => $copiaEmail_empresa_noti,
             'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
             'copiaTelefono_empresa_noti' => $copiaTelefono_empresa_noti,
             'copiaCiudad_departamento_empresa_noti' => $copiaCiudad_departamento_empresa_noti,
@@ -10564,6 +10639,7 @@ class CalificacionPCLController extends Controller
             'Telefono_arl' => $Telefono_arl,
             'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
             'footer' => $footer,
+            'N_siniestro' => $N_siniestro
             // 'footer_dato_1' => $footer_dato_1,
             // 'footer_dato_2' => $footer_dato_2,
             // 'footer_dato_3' => $footer_dato_3,

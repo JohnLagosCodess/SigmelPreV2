@@ -1984,7 +1984,6 @@ class AdicionDxDTO extends Controller
         if(!Auth::check()){
             return redirect('/');
         }
-        
         $user= Auth::user();
         $time = time();
         $date = date("Y-m-d", $time);
@@ -1992,7 +1991,7 @@ class AdicionDxDTO extends Controller
 
         /* captura de variables del formulario */
         $id_cliente = $request->id_cliente;
-        $nro_siniestro = $request->nro_siniestro;
+        $id_evento = $request->id_evento;
         $Id_Asignacion = $request->Id_Asignacion;
         $Id_Proceso = $request->Id_Proceso;
         $Id_comunicado = $request->id_comunicado;
@@ -2010,7 +2009,7 @@ class AdicionDxDTO extends Controller
         } else {
             $f_fallecimiento = "";
         }
-        
+        $N_siniestro = $request->N_siniestro;
         $sustentacion_califi_origen = $request->sustentacion_califi_origen;
         $origen = $request->origen;
 
@@ -2044,9 +2043,8 @@ class AdicionDxDTO extends Controller
             'sie1.Nombre_entidad as Nombre_arl',
             'sie2.Nombre_entidad as Nombre_afp',
             'sldm.Nombre_municipio as Nombre_ciudad'
-        )->where([['siae.ID_evento', $nro_siniestro]])
+        )->where([['siae.ID_evento', $id_evento]])
         ->get();
-
         $nombre_afiliado = $informacion_del_afiliado[0]->Nombre_afiliado;
         $tipo_doc_afiliado = $informacion_del_afiliado[0]->Tipo_documento;
         $nro_ident_afiliado = $informacion_del_afiliado[0]->Nro_identificacion;
@@ -2064,7 +2062,7 @@ class AdicionDxDTO extends Controller
         $datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
         ->select('F_examen_interconsulta', 'Nombre_examen_interconsulta', 'Descripcion_resultado')
         ->where([
-            ['ID_evento',$nro_siniestro],
+            ['ID_evento',$id_evento],
             ['Id_Asignacion',$Id_Asignacion],
             ['Id_proceso',$Id_Proceso],
             ['Estado', 'Activo']
@@ -2105,7 +2103,7 @@ class AdicionDxDTO extends Controller
         $datos_finales_dml_origen_previsional = [
             'id_cliente' => $id_cliente,
             'logo_header' => $logo_header,
-            'nro_siniestro' => $nro_siniestro,
+            'id_evento' => $id_evento,
             'fecha_solicitud' => $fecha_solicitud,
             'fecha_concepto' => $f_dictamen,
             'ciudad' => $ciudad_afiliado,
@@ -2133,7 +2131,8 @@ class AdicionDxDTO extends Controller
             'fecha_fallecimiento' => $f_fallecimiento,
             'sustentacion_califi_origen' => $sustentacion_califi_origen,
             'nombre_usuario' => $nombre_usuario,
-            'validacion_visado' => $validacion_visado
+            'validacion_visado' => $validacion_visado,
+            'N_siniestro' => $N_siniestro
         ];
 
         /* Creación del pdf */
@@ -2145,7 +2144,7 @@ class AdicionDxDTO extends Controller
         //Obtener el contenido del PDF
         $output = $pdf->output();
         //Guardar el PDF en un archivo
-        file_put_contents(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_pdf}"), $output);
+        file_put_contents(public_path("Documentos_Eventos/{$id_evento}/{$nombre_pdf}"), $output);
 
         $actualizar_nombre_documento = [
             'Nombre_documento' => $nombre_pdf
@@ -2159,7 +2158,7 @@ class AdicionDxDTO extends Controller
         ->select('siae.Id_servicio')
         ->where([
             ['siae.Id_Asignacion', $Id_Asignacion],
-            ['siae.ID_evento', $nro_siniestro],
+            ['siae.ID_evento', $id_evento],
             ['siae.Id_proceso', $Id_Proceso],
         ])->get();
 
@@ -2169,7 +2168,7 @@ class AdicionDxDTO extends Controller
         $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
         ->select('sice.F_comunicado', 'sice.N_radicado')
         ->where([
-            ['sice.ID_evento', $nro_siniestro],
+            ['sice.ID_evento', $id_evento],
             ['sice.Id_Asignacion', $Id_Asignacion],
             ['sice.Id_proceso', $Id_Proceso],
             ['sice.T_documento', 'N/A'],
@@ -2192,7 +2191,7 @@ class AdicionDxDTO extends Controller
                 'Id_Asignacion' => $Id_Asignacion,
                 'Id_proceso' => $Id_Proceso,
                 'Id_servicio' => $Id_servicio,
-                'ID_evento' => $nro_siniestro,
+                'ID_evento' => $id_evento,
                 'Nombre_documento' => $nombre_pdf,
                 'N_radicado_documento' => $N_radicado_documento,
                 'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
@@ -2230,12 +2229,17 @@ class AdicionDxDTO extends Controller
         $num_identificacion = $request->num_identificacion;
         $nro_siniestro = $request->nro_siniestro;
         $nombre_afiliado = $request->nombre_afiliado;
+        $nombre_afp = $request->nombre_afp;
+        $email_afp = $request->email_afp;
         $direccion_afiliado = $request->direccion_afiliado;
+        $direccionAfp = $request->direccion_afp;
         $telefono_afiliado = $request->telefono_afiliado;
+        $telefono_afp = $request->telefono_afp;
         $ciudad_afiliado = $request->ciudad_afiliado;
+        $ciudad_afp = $request->ciudad_afp;
         $Id_asignacion = $request->Id_asignacion;
         $Id_cliente_firma = $request->Id_cliente_firma;
-        $origen = "<b>".$request->origen."</b>";
+        $origen = $request->origen;
         $copia_beneficiario = $request->copia_beneficiario;
         $copia_empleador = $request->copia_empleador;
         $copia_eps = $request->copia_eps;
@@ -2244,7 +2248,8 @@ class AdicionDxDTO extends Controller
         $copia_arl = $request->copia_arl;
         $firmar = $request->firmar;
         $anexos = $request->anexos;
-
+        $tipo_evento = $request->tipo_evento;
+        $N_siniestro = $request->N_siniestro;
         /* Creación de las variables faltantes que no están en el formulario */
         $dato_nro_radicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
         ->select('N_radicado')
@@ -2274,16 +2279,17 @@ class AdicionDxDTO extends Controller
 
                     $datos_entidad = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
-                    ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad')
+                    ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Emails', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm.Nombre_departamento')
                     ->where([
                         ['sie.Id_Entidad', $id_entidad],
                         ['sie.IdTipo_entidad', $tipo_destinatario]
                     ])->get();
 
                     $nombre_destinatario_principal = $datos_entidad[0]->Nombre_entidad;
+                    $email_destinatario_principal = $datos_entidad[0]->Emails;
                     $direccion_destinatario_principal = $datos_entidad[0]->Direccion;
                     $telefono_destinatario_principal = $datos_entidad[0]->Telefonos;
-                    $ciudad_destinatario_principal = $datos_entidad[0]->Nombre_ciudad;
+                    $ciudad_destinatario_principal = $datos_entidad[0]->Nombre_ciudad.' ('.$datos_entidad[0]->Nombre_departamento.')';
                 break;
                 
                 // Si escoge la opción Afiliado: Se sacan los datos del destinatario principal pero del afiliado
@@ -2297,23 +2303,25 @@ class AdicionDxDTO extends Controller
         
                     $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
         
-                    $nombre_destinatario_principal = $nombre_afiliado;
-                    $direccion_destinatario_principal = $direccion_afiliado;
-                    $telefono_destinatario_principal = $telefono_afiliado;
-                    $ciudad_destinatario_principal = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
+                    $nombre_destinatario_principal = $nombre_afp;
+                    $email_destinatario_principal = $email_afp;
+                    $direccion_destinatario_principal = $direccionAfp;
+                    $telefono_destinatario_principal = $telefono_afp;
+                    $ciudad_destinatario_principal = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"].' ('.$array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"].')';
                 break;
 
                 // Si escoge la opción Empleador: Se sacan los datos del destinatario principal pero del Empleador
                 case ($tipo_destinatario == 5):
                     $datos_entidad_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_municipio', '=', 'sldm.Id_municipios')
-                    ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_municipio as Nombre_ciudad')
+                    ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sile.Email','sldm.Nombre_municipio as Nombre_ciudad','sldm.Nombre_departamento')
                     ->where([['sile.ID_evento', $nro_siniestro]])->get();
 
                     $nombre_destinatario_principal = $datos_entidad_empleador[0]->Empresa;
+                    $email_destinatario_principal = $datos_entidad_empleador[0]->Email;
                     $direccion_destinatario_principal = $datos_entidad_empleador[0]->Direccion;
                     $telefono_destinatario_principal = $datos_entidad_empleador[0]->Telefono_empresa;
-                    $ciudad_destinatario_principal = $datos_entidad_empleador[0]->Nombre_ciudad;
+                    $ciudad_destinatario_principal = $datos_entidad_empleador[0]->Nombre_ciudad.' ('.$datos_entidad_empleador[0]->Nombre_departamento.')';
                 break;
                 
                 // Si escoge la opción Otro: se sacan los datos del destinatario de la tabla sigmel_informacion_comite_interdisciplinario_eventos
@@ -2323,6 +2331,12 @@ class AdicionDxDTO extends Controller
                         $nombre_destinatario_principal = $array_datos_para_destinatario_principal[0]["Nombre_destinatario"];
                     } else {
                         $nombre_destinatario_principal = "";
+                    };
+
+                    if (!empty($array_datos_para_destinatario_principal[0]["Email_destinatario"])) {
+                        $email_destinatario_principal = $array_datos_para_destinatario_principal[0]["Email_destinatario"];
+                    } else {
+                        $email_destinatario_principal = "";
                     };
 
                     if (!empty($array_datos_para_destinatario_principal[0]["Direccion_destinatario"])) {
@@ -2338,7 +2352,7 @@ class AdicionDxDTO extends Controller
                     };
 
                     if (!empty($array_datos_para_destinatario_principal[0]["Ciudad_destinatario"])) {
-                        $ciudad_destinatario_principal = $array_datos_para_destinatario_principal[0]["Ciudad_destinatario"];
+                        $ciudad_destinatario_principal = $array_datos_para_destinatario_principal[0]["Ciudad_destinatario"].' ('.$array_datos_para_destinatario_principal[0]["Departamento_destinatario"].')';
                     } else {
                         $ciudad_destinatario_principal = "";
                     };
@@ -2360,11 +2374,12 @@ class AdicionDxDTO extends Controller
 
             // $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
 
-            $nombre_destinatario_principal = $nombre_afiliado;
-            $direccion_destinatario_principal = $direccion_afiliado;
-            $telefono_destinatario_principal = $telefono_afiliado;
+            $nombre_destinatario_principal = $nombre_afp;
+            $email_destinatario_principal = $email_afp;
+            $direccion_destinatario_principal = $direccionAfp;
+            $telefono_destinatario_principal = $telefono_afp;
             // $ciudad_destinatario_principal = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
-            $ciudad_destinatario_principal = $ciudad_afiliado;
+            $ciudad_destinatario_principal = $ciudad_afiliado === 'Bogotá D.C.' ? $ciudad_afiliado.' ('.$ciudad_afiliado.')' : $ciudad_afiliado;
         }
         
         $ramo = "Previsionales";
@@ -2398,7 +2413,7 @@ class AdicionDxDTO extends Controller
             $datos_beneficiario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento_benefi', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio_benefi', '=', 'sldm2.Id_municipios')
-            ->select('siae.Nombre_afiliado_benefi', 'siae.Direccion_benefi', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+            ->select('siae.Nombre_afiliado_benefi', 'siae.Direccion_benefi','siae.Email', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
             ->where([['siae.ID_evento', $nro_siniestro ]])
             ->get();
 
@@ -2406,9 +2421,10 @@ class AdicionDxDTO extends Controller
             $direccion_beneficiario = $datos_beneficiario[0]->Direccion_benefi;
             $departamento_beneficiario = $datos_beneficiario[0]->Nombre_departamento;
             $ciudad_beneficiario = $datos_beneficiario[0]->Nombre_ciudad;
+            $email_beneficiario = $datos_beneficiario[0]->Email;
 
 
-            $Agregar_copias['Beneficiario'] = $nombre_beneficiario."; ".$direccion_beneficiario."; ".$departamento_beneficiario."; ".$ciudad_beneficiario.".";
+            $Agregar_copias['Beneficiario'] = $nombre_beneficiario."; ".$direccion_beneficiario."; ".$email_beneficiario."; ".$departamento_beneficiario."; ".$ciudad_beneficiario.".";
         }
 
         if(isset($copia_empleador)){
@@ -2416,7 +2432,7 @@ class AdicionDxDTO extends Controller
             $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
-            ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+            ->select('sile.Empresa', 'sile.Direccion','sile.Email', 'sile.Telefono_empresa', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['sile.Nro_identificacion', $num_identificacion],['sile.ID_evento', $nro_siniestro]])
             ->get();
 
@@ -2425,8 +2441,9 @@ class AdicionDxDTO extends Controller
             $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
             $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
             $municipio_empleador = $datos_empleador[0]->Nombre_municipio;
+            $email_empleador = $datos_empleador[0]->Email;
 
-            $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$telefono_empleador."; ".$ciudad_empleador." - ".$municipio_empleador.".";   
+            $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$email_empleador."; ".$telefono_empleador."; ".$ciudad_empleador." - ".$municipio_empleador.".";   
         }
 
         if (isset($copia_eps)) {
@@ -2434,7 +2451,7 @@ class AdicionDxDTO extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-            ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 
+            ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sie.Emails as Email',
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $nro_siniestro]])
             ->get();
@@ -2447,9 +2464,10 @@ class AdicionDxDTO extends Controller
                 $telefonos_eps = $datos_eps[0]->Telefonos;
             }
             $ciudad_eps = $datos_eps[0]->Nombre_ciudad;
+            $email_eps = $datos_eps[0]->Email;
             $municipio_eps = $datos_eps[0]->Nombre_municipio;
 
-            $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$telefonos_eps."; ".$ciudad_eps." - ".$municipio_eps;
+            $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$email_eps."; ".$telefonos_eps."; ".$ciudad_eps." - ".$municipio_eps;
         }
 
         if (isset($copia_afp)) {
@@ -2457,7 +2475,7 @@ class AdicionDxDTO extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-            ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+            ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Emails as Email','sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $nro_siniestro]])
             ->get();
@@ -2470,9 +2488,10 @@ class AdicionDxDTO extends Controller
                 $telefonos_afp = $datos_afp[0]->Telefonos;
             }
             $ciudad_afp = $datos_afp[0]->Nombre_ciudad;
+            $email_afp = $datos_afp[0]->Email;
             $municipio_afp = $datos_afp[0]->Nombre_municipio;
 
-            $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$telefonos_afp."; ".$ciudad_afp." - ".$municipio_afp;
+            $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$email_afp."; ".$telefonos_afp."; ".$ciudad_afp." - ".$municipio_afp;
         }
 
         if (isset($copia_afp_conocimiento)) {
@@ -2491,7 +2510,7 @@ class AdicionDxDTO extends Controller
                     $datos_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-                    ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+                    ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Emails as Email','sie.Telefonos', 'sie.Otros_Telefonos', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
                     ->where([['sie.Id_Entidad', $id_afp_conocimiento]])
                     ->get();
     
@@ -2502,10 +2521,11 @@ class AdicionDxDTO extends Controller
                     } else {
                         $telefonos_afp_conocimiento = $datos_afp_conocimiento[0]->Telefonos;
                     }
+                    $email_afp_conocimiento = $datos_afp_conocimiento[0]->Email;
                     $ciudad_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_ciudad;
                     $municipio_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_municipio;
     
-                    $Agregar_copias['AFP_Conocimiento'] = $nombre_afp_conocimiento."; ".$direccion_afp_conocimiento."; ".$telefonos_afp_conocimiento."; ".$ciudad_afp_conocimiento." - ".$municipio_afp_conocimiento;
+                    $Agregar_copias['AFP_Conocimiento'] = $nombre_afp_conocimiento."; ".$direccion_afp_conocimiento."; ".$email_afp_conocimiento."; ".$telefonos_afp_conocimiento."; ".$ciudad_afp_conocimiento." - ".$municipio_afp_conocimiento;
                 } else {
                     // $Agregar_copias['AFP_Conocimiento'] = '';
                 }
@@ -2521,7 +2541,7 @@ class AdicionDxDTO extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-            ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+            ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Emails as Email', 'sie.Otros_Telefonos',
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $nro_siniestro]])
             ->get();
@@ -2533,11 +2553,11 @@ class AdicionDxDTO extends Controller
             } else {
                 $telefonos_arl = $datos_arl[0]->Telefonos;
             }
-            
+            $email_arl = $datos_arl[0]->Email;
             $ciudad_arl = $datos_arl[0]->Nombre_ciudad;
             $municipio_arl = $datos_arl[0]->Nombre_municipio;
 
-            $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl." - ".$municipio_arl;
+            $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$ciudad_arl." - ".$municipio_arl;
         }
 
         /* Validación Firma Cliente */
@@ -2619,6 +2639,7 @@ class AdicionDxDTO extends Controller
             'nro_radicado' => $nro_radicado,
             'anexos' => $anexos,
             'nombre_destinatario_principal' => $nombre_destinatario_principal,
+            'email_destinatario_principal' => $email_destinatario_principal,
             'direccion_destinatario_principal' => $direccion_destinatario_principal,
             'telefono_destinatario_principal' => $telefono_destinatario_principal,
             'ciudad_destinatario_principal' => $ciudad_destinatario_principal,
@@ -2627,13 +2648,14 @@ class AdicionDxDTO extends Controller
             'Firma_cliente' => $Firma_cliente,
             'nombre_usuario' => $nombre_usuario,
             'footer' => $footer,
+            'N_siniestro' => $N_siniestro,
+            'tipo_evento' => $tipo_evento,
             // 'footer_dato_1' => $footer_dato_1,
             // 'footer_dato_2' => $footer_dato_2,
             // 'footer_dato_3' => $footer_dato_3,
             // 'footer_dato_4' => $footer_dato_4,
             // 'footer_dato_5' => $footer_dato_5,
         ];
-
         /* Creación del pdf */
         $pdf = app('dompdf.wrapper');
         $pdf->loadView('/Proformas/Proformas_Prev/Origen_Atel/notificacion_dml_origen', $datos_finales_noti_dml_origen);

@@ -126,13 +126,13 @@
         <table class="tabla_dictamen">
             <tbody>
                 <tr>
-                    <td colspan="8" class="titulo_tablas">CONCEPTO DE PRESUNTO ORIGEN DE EVENTO</td>
+                    <td colspan="8" class="titulo_tablas">DICTAMEN DE ORIGEN</td>
                 </tr>
                 <tr>
                     <td colspan="8" class="titulo_tablas">1. INFORMACIÓN GENERAL</td>
                 </tr>
                 <tr>
-                    <td colspan="3"><span class="titulo_labels">No Siniestro. </span><span class="dato_dinamico">{{$nro_siniestro}}</span></td>
+                    <td colspan="3"><span class="titulo_labels">No Siniestro. </span><span class="dato_dinamico">{{$N_siniestro}}</span></td>
                     <td colspan="2"><span class="titulo_labels">Fecha de solicitud: </span><span class="dato_dinamico">{{$fecha_solicitud}}</span></td>
                     <td colspan="3"><span class="titulo_labels">Fecha concepto: </span><span class="dato_dinamico">{{$fecha_concepto}}</span></td>
                 </tr>
@@ -236,10 +236,14 @@
                 </tr>
                 @if (count($validacion_visado) > 0)
                     <tr>
-                        <td colspan="4" class="dato_dinamico" style="text-align: center;">LINA MARCELA MAYORGA CULMA</td>
+                        <td colspan="4" class="dato_dinamico" style="text-align: center;">
+                            <span style="font-weight: 700;">LINA MARCELA MAYORGA CULMA</span><br>
+                            <span>Medicina Fisica Y Rehabilitación - E.S.O<br>
+                            RM 250623/09 - LSO 16640/22</span>
+                        </td>
                         <td colspan="4" class="dato_dinamico">
                             <?php 
-                                $ruta_firma_1 = "/Firmas_provisionales/firma_lina.png";
+                                $ruta_firma_1 = "/Firmas_provisionales/firma_lina_sin_texto.png";
                                 $imagenPath_firma_1 = public_path($ruta_firma_1);
                                 $imagenData_firma_1 = file_get_contents($imagenPath_firma_1);
                                 $imagenBase64_firma_1 = base64_encode($imagenData_firma_1);
@@ -250,10 +254,14 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="4" class="dato_dinamico" style="text-align: center;">JULIAN ENRIQUE CAMACHO GONZALEZ</td>
+                        <td colspan="4" class="dato_dinamico" style="text-align: center;">
+                            <span style="font-weight: 700;">JULIAN ENRIQUE CAMACHO GONZALEZ</span><br>
+                            <span>MÉDICO LABORAL<br>
+                                RM. 04036/2010 - Lic. S.O 28239 del 13/12/2022</span>
+                        </td>
                         <td colspan="4" class="dato_dinamico">
                             <?php 
-                                $ruta_firma_2 = "/Firmas_provisionales/firma_julian.png";
+                                $ruta_firma_2 = "/Firmas_provisionales/firma_julian_sin_texto.png";
                                 $imagenPath_firma_2 = public_path($ruta_firma_2);
                                 $imagenData_firma_2 = file_get_contents($imagenPath_firma_2);
                                 $imagenBase64_firma_2 = base64_encode($imagenData_firma_2);
@@ -264,10 +272,14 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="4" class="dato_dinamico" style="text-align: center;">LILIANA MONTES CASTAÑEDA</td>
+                        <td colspan="4" class="dato_dinamico" style="text-align: center;">
+                            <span style="font-weight: 700;">LILIANA MONTES CASTAÑEDA</span><br>
+                            <span>FISIOTERAPEUTA<br>
+                            LSO Resolución 4919 del 08/05/2012</span>
+                        </td>
                         <td colspan="4" class="dato_dinamico">
                             <?php 
-                                $ruta_firma_3 = "/Firmas_provisionales/firma_liliana.png";
+                                $ruta_firma_3 = "/Firmas_provisionales/firma_liliana_sin_texto.png";
                                 $imagenPath_firma_3 = public_path($ruta_firma_3);
                                 $imagenData_firma_3 = file_get_contents($imagenPath_firma_3);
                                 $imagenBase64_firma_3 = base64_encode($imagenData_firma_3);

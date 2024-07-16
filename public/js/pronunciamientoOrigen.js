@@ -370,7 +370,14 @@ $(document).ready(function(){
     // Funcionalidad para insertar las etiquetas
     $("#sustenta_cali").summernote({
         height: 'auto',
-        toolbar: false
+        toolbar: false,
+        callbacks: {
+            onPaste: function (e) {
+                var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+                e.preventDefault();
+                document.execCommand('insertText', false, bufferText);
+            }
+        }
     });
     $('.note-editing-area').css("background", "white");
     $('.note-editor').css("border", "1px solid black");
@@ -870,6 +877,8 @@ $(document).ready(function(){
                 });
             }
         });
+        var sustenta_cali = $('#sustenta_cali').val();
+        sustenta_cali = sustenta_cali ? sustenta_cali.replace(/"/g, "'") : '';
         var formData = new FormData($('form')[0]);
         formData.append('datos_finales_diagnosticos_moticalifi', JSON.stringify(datos_finales_diagnosticos_moticalifi));
         //const arrayData = JSON.parse(formData.get('datos_finales_diagnosticos_moticalifi'));
@@ -894,7 +903,7 @@ $(document).ready(function(){
         formData.append('n_siniestro', $('#n_siniestro').val());
         formData.append('decision_pr', $("[id^='di_']").filter(":checked").val());
         formData.append('asunto_cali', $('#asunto_cali').val());
-        formData.append('sustenta_cali', $('#sustenta_cali').val());
+        formData.append('sustenta_cali', sustenta_cali);
         formData.append('destinatario_principal', $('#destinatario_principal').filter(":checked").val());
         formData.append('tipo_entidad', $("#tipo_entidad").val());
         formData.append('nombre_entidad', $("#nombre_entidad").val());
@@ -1100,7 +1109,7 @@ $(document).ready(function(){
         }else{
             var destinatario_principal = "No";
         }
-
+        sustentacion = sustentacion ? sustentacion.replace(/"/g, "'") : '';
         var tipo_entidad_correspon = $("#tipo_entidad").val();
         var nombre_entidad_correspon = $("#nombre_entidad").val();
         

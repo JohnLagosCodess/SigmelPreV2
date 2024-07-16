@@ -9,15 +9,15 @@
     <style>
         @page{
             /* arriba  derecha  abajo  izquierda */
-            margin: 2.5cm 1.3cm 2.5cm 1.3cm;
+            margin: 3cm 1.3cm 2.5cm 1.3cm;
         }
         #header {
             position: fixed; 
             /* esta ligado con el primer valor del margin */
-            top: -2.2cm;
+            top: -2.8cm;
             left: 0cm;
             width: 100%;
-            text-align: right; 
+            text-align: right;
         }
         .logo_header{
             width: 150px;
@@ -26,7 +26,7 @@
         #footer{
             position: fixed;
             /* esta ligado con el tercer valor del margin */
-            bottom: -2.4cm;
+            bottom: -3cm;
             left: 0cm;
             width: 100%;
             height: 14%;
@@ -101,6 +101,8 @@
         .cuadro{
             border: 3px solid black;
             padding-left: 6px;
+            width: 5cm;
+            height: 2cm;
         }
 
         .tabla_cuerpo_remision_expediente {
@@ -150,7 +152,9 @@
     </div>
     <div id="footer">
         <?php if($footer == null): ?>
-            <p class="page" style="color: black;">Página </p>
+            <div style="text-align:center;">
+                <span style="color: #3C3C3C; margin-top:2px;">{{$nombre_afiliado}} - {{$tipo_doc_afiliado}} {{$num_identificacion_afiliado}} - Siniestro: {{$N_siniestro}} </span>
+            </div>
         <?php else: ?>
             <?php 
                 $ruta_footer = "/footer_clientes/{$id_cliente}/{$footer}";
@@ -159,8 +163,8 @@
                 $footer_base64 = base64_encode($footer_data);
             ?>
             <div class="footer_content">
+                <span style="color: #3C3C3C; margin-top:2px;">{{$nombre_afiliado}} - {{$tipo_doc_afiliado}} {{$num_identificacion_afiliado}} - Siniestro: {{$N_siniestro}} </span>
                 <img src="data:image/png;base64,{{ $footer_base64 }}" class="footer_image">
-                <p class="page" style="color: black;">Página </p>
             </div>
         <?php endif ?>
     </div>
@@ -180,15 +184,15 @@
         <table class="tabla2">
             <tbody>
                 <tr>
-                    <td>
-                        <span class="fuente_todo_texto"><span class="negrita">Señores: {{$nombre_junta}}</span></span><br>
-                        <span class="fuente_todo_texto"><span class="negrita">Dirección: {{$direccion_junta}}</span></span><br>
-                        <span class="fuente_todo_texto"><span class="negrita">Teléfono: {{$telefono_junta}}</span></span><br>
-                        <span class="fuente_todo_texto"><span class="negrita">{{$ciudad_junta}} - {{$departamento_junta}}</span></span>
+                    <td style="width: 100%;">
+                        <span class="fuente_todo_texto"><span class="negrita">Señores: <br>{{$nombre_junta}}</span></span><br>
+                        <span class="fuente_todo_texto">{{$direccion_junta}}</span><br>
+                        <span class="fuente_todo_texto">{{$telefono_junta}}</span><br>
+                        <span class="fuente_todo_texto">{{$ciudad_junta}} - {{$departamento_junta}}</span>
                     </td>
                     <td>
                         <div class="cuadro">
-                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$nro_radicado}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado: <br> {{$nro_radicado}}</span></span><br>
                             <span class="fuente_todo_texto"><span class="negrita">{{$tipo_doc_afiliado}} {{$num_identificacion_afiliado}}</span></span><br>
                             <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
                         </div>
@@ -196,6 +200,7 @@
                 </tr>
             </tbody>
         </table>
+        <br>
         <table class="tabla1">
             <tbody>
                 <tr>
@@ -221,30 +226,37 @@
                 $patron10 = '/\{\{\$tipo_controversia_primera_calificacion\}\}/';
                 $patron11 = '/\{\{\$direccion_afiliado\}\}/';
                 $patron12 = '/\{\{\$telefono_afiliado\}\}/';
-                
+                $patron13 = '/\{\{\$observaciones\}\}/';
+                $patron14 = '/\{\{\$porcentaje_pcl\}\}/';
 
                 if (preg_match($patron1,$cuerpo) && preg_match($patron2,$cuerpo) && preg_match($patron3,$cuerpo)
                     && preg_match($patron4,$cuerpo) && preg_match($patron5,$cuerpo) && preg_match($patron6,$cuerpo) 
                     && preg_match($patron7,$cuerpo) && preg_match($patron8,$cuerpo) && preg_match($patron9,$cuerpo)
                     && preg_match($patron10,$cuerpo) && preg_match($patron11,$cuerpo) && preg_match($patron12,$cuerpo)
+                    && preg_match($patron13,$cuerpo)
                 ) {
-
                     $texto_modificado = str_replace('{{$nro_orden_pago}}', "<b>".$nro_orden_pago."</b>", $cuerpo);
                     $texto_modificado = str_replace('{{$fecha_notificacion_afiliado}}', "<b>".$f_notifi_afiliado_act."</b>", $texto_modificado);
                     $texto_modificado = str_replace('{{$fecha_radicacion_controversia_primera_calificacion}}', "<b>".$f_radicacion_contro_pri_cali_act."</b>", $texto_modificado);
                     $texto_modificado = str_replace('{{$tipo_documento_afiliado}}', $tipo_doc_afiliado, $texto_modificado);
                     $texto_modificado = str_replace('{{$documento_afiliado}}', $num_identificacion_afiliado, $texto_modificado);
                     $texto_modificado = str_replace('{{$nombre_afiliado}}', $nombre_afiliado, $texto_modificado);
-                    $texto_modificado = str_replace('{{$fecha_estructuracion}}', $f_estructuracion_act, $texto_modificado);
-                    $texto_modificado = str_replace('{{$tipo_evento}}', $tipo_evento, $texto_modificado);
+                    $texto_modificado = str_replace('{{$fecha_estructuracion}}', $fecha_estructuración, $texto_modificado);
+                    $texto_modificado = str_replace('{{$tipo_evento}}', strtoupper($tipo_evento), $texto_modificado);
                     $texto_modificado = str_replace('{{$nombres_cie10}}', $string_diagnosticos_cie10_jrci, $texto_modificado);
                     $texto_modificado = str_replace('{{$tipo_controversia_primera_calificacion}}', $string_tipos_controversia, $texto_modificado);
                     $texto_modificado = str_replace('{{$direccion_afiliado}}', $direccion_afiliado, $texto_modificado);
                     $texto_modificado = str_replace('{{$telefono_afiliado}}', $telefono_afiliado, $texto_modificado);
+                    $texto_modificado = str_replace('{{$observaciones}}', $observaciones_controversia, $texto_modificado);
 
                     $texto_modificado = str_replace('PÉRDIDA DE CAPACIDAD LABORAL', "<b>PÉRDIDA DE CAPACIDAD LABORAL</b>", $texto_modificado);
+                    if(preg_match($patron14,$cuerpo)){
+                        $texto_modificado = str_replace('{{$porcentaje_pcl}}', $porcentaje_pcl.'%', $texto_modificado);
+                    }
+                    else{
+                        $texto_modificado = str_replace('{{$porcentaje_pcl}}','', $texto_modificado);
+                    }
                     $cuerpo = $texto_modificado;
-
                 } else {
                     $cuerpo = "";
                 }
@@ -266,7 +278,7 @@
             </div>
         </section>
         <br>
-        <section class="fuente_todo_texto">
+        {{-- <section class="fuente_todo_texto">
             <span class="negrita">Elboró:</span> {{$nombre_usuario}}
             <table style="text-align: justify; width:100%; margin-left: -3px;">
                 @if (count($Agregar_copia) == 0)
@@ -358,7 +370,15 @@
                     ?>
                 @endif
             </table>
-        </section>
+        </section> --}}
     </div>
+    <script type="text/php">
+        if ( isset($pdf) ) {
+            $pdf->page_script('
+                $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
+                $pdf->text(485, 63, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
+            ');
+        }
+	</script>
 </body>
 </html>

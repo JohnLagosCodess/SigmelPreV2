@@ -1680,7 +1680,14 @@ $(document).ready(function(){
     /* Funcionalidad para insertar la etiqueta de pruebas solicitadas (edición) */
     $("#cuerpo_comunicado_editar").summernote({
         height: 'auto',
-        toolbar: false
+        toolbar: false,
+        callbacks: {
+            onPaste: function (e) {
+                var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+                e.preventDefault();
+                document.execCommand('insertText', false, bufferText);
+            }
+        }
     });
     $('.note-editing-area').css("background", "white");
     $('.note-editor').css("border", "1px solid black");
@@ -1722,8 +1729,14 @@ $(document).ready(function(){
                         var listado = '<ul>';
                         let listado_solicitud_documentos = Object.keys(data);
                         for (let i = 0; i < listado_solicitud_documentos.length; i++) {
-                            var sumar = i+1;
-                            listado += '<li>'+sumar+'. '+data[listado_solicitud_documentos[i]]['Nombre_documento']+' '+data[listado_solicitud_documentos[i]]['Descripcion']+'</li>';
+                            var documento = data[listado_solicitud_documentos[i]];
+                            var nombre = documento['Nombre_documento'] ? documento['Nombre_documento'] : '';
+                            var descripcion = documento['Descripcion'] ? documento['Descripcion'] : '';
+                            
+                            if (nombre || descripcion) {
+                                var sumar = i + 1;
+                                listado += '<li>' + sumar + '. ' + nombre + ' ' + descripcion + '</li>';
+                            }
                         }
     
                         listado += '</ul>';
@@ -1731,7 +1744,6 @@ $(document).ready(function(){
                     } else {
                         listado = '';
                     }
-
                     var texto_insertar = "<p>En Seguros de Vida Alfa S.A. siempre buscamos la protección y satisfacción de nuestros clientes. De acuerdo a tu solicitud de "+
                     "calificación de pérdida de capacidad laboral (PCL) radicada en la AFP Porvenir S.A., te informamos que el historial médico aportado "+
                     "ha sido revisado por el grupo interdisciplinario de calificación de Seguros de Vida Alfa S.A.</p>"+
@@ -1744,7 +1756,7 @@ $(document).ready(function(){
                     "actualizada, se considerará desistimiento de tu solicitud por parte de esta aseguradora.</p>"+
                     "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 "+
                     "70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o "+
-                    "escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose Maria Cordoba, Bogota D.C.</p>";
+                    "escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
                     $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
                 }
             });
@@ -1773,10 +1785,10 @@ $(document).ready(function(){
             "en virtud del contrato de Renta Vitalicia Inmediata suscrito por encargo de la Administradora de Fondos de "+
             "Pensiones Porvenir S.A.</p>"+
             "<p>En forma sucinta la revisión de invalidez, se fundamenta en: </p>"+
-            "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras l íneas de atención al "+
-            "cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes, de "+
-            "8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a "+
-            "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
+            "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al "+
+            "cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de "+
+            "8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a "+
+            "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
             $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
 
             // Auto selección de la opción Afiliado (Destinatario Principal)
@@ -1816,8 +1828,8 @@ $(document).ready(function(){
             '<p>Los documentos anteriormente mencionados deben ser solicitados en su EPS con su médico tratante; por otra parte aclaramos que los '+
             'mismos se deben radicar en papelería física. No se aceptan medios magnéticos como CD o correos electrónicos.</p>'+
             '<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 '+
-            '70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o '+
-            'escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose Maria Cordoba, Bogota D.C.</p>';
+            '70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o '+
+            'escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>';
             $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
             // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
 
@@ -2040,6 +2052,7 @@ $(document).ready(function(){
         var reviso = $('#reviso_editar').val();
         var N_siniestro = $("#n_siniestro_proforma_editar").val();
         var firmarcomunicadoPcl = [];
+        cuerpo_comunicado = cuerpo_comunicado ? cuerpo_comunicado.replace(/"/g, "'"): '';
         $('input[type="checkbox"]').each(function() {
             var firmarcomunicado = $(this).attr('id');   
             if (firmarcomunicado === 'firmarcomunicado_editar') {                
@@ -2068,19 +2081,19 @@ $(document).ready(function(){
         //console.log(arrayinputs); 
         var EditComunicadosPcl = [];
 
-       $('input[type="checkbox"]').each(function() {
-            var copiaComunicado2 = $(this).attr('id');            
-            if (copiaComunicado2 === 'edit_copia_afiliado' || copiaComunicado2 === 'edit_copia_empleador' || 
-                copiaComunicado2 === 'edit_copia_eps' || copiaComunicado2 === 'edit_copia_afp' || 
-                copiaComunicado2 === 'edit_copia_arl') {                
-                if ($(this).is(':checked')) {                
-                var relacionCopiaValor2 = $(this).val();
-                EditComunicadosPcl.push(relacionCopiaValor2);
+        $('input[type="checkbox"]').each(function() {
+                var copiaComunicado2 = $(this).attr('id');            
+                if (copiaComunicado2 === 'edit_copia_afiliado' || copiaComunicado2 === 'edit_copia_empleador' || 
+                    copiaComunicado2 === 'edit_copia_eps' || copiaComunicado2 === 'edit_copia_afp' || 
+                    copiaComunicado2 === 'edit_copia_arl') {                
+                    if ($(this).is(':checked')) {                
+                    var relacionCopiaValor2 = $(this).val();
+                    EditComunicadosPcl.push(relacionCopiaValor2);
+                    }
                 }
-            }
-       });       
-       var tipo_descarga = $("[name='tipo_documento_descarga_califi_editar']").filter(":checked").val();
-       
+        });       
+        var tipo_descarga = $("[name='tipo_documento_descarga_califi_editar']").filter(":checked").val();
+        cuerpo_comunicado = cuerpo_comunicado ? cuerpo_comunicado.replace(/"/g, "'") : '';
         let token = $('input[name=_token]').val();        
         var datos_actualizarComunicado = {
             '_token': token,
@@ -2437,7 +2450,14 @@ $(document).ready(function(){
     /* Funcionalidad para insertar la etiqueta de pruebas solicitadas */
     $("#cuerpo_comunicado").summernote({
         height: 'auto',
-        toolbar: false
+        toolbar: false,
+        callbacks: {
+            onPaste: function (e) {
+                var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+                e.preventDefault();
+                document.execCommand('insertText', false, bufferText);
+            },
+        }
     });
     $('.note-editing-area').css("background", "white");
     $('.note-editor').css("border", "1px solid black");
@@ -2479,8 +2499,14 @@ $(document).ready(function(){
                         var listado = '<ul>';
                         let listado_solicitud_documentos = Object.keys(data);
                         for (let i = 0; i < listado_solicitud_documentos.length; i++) {
-                            var sumar = i+1;
-                            listado += '<li>'+sumar+'. '+data[listado_solicitud_documentos[i]]['Nombre_documento']+' '+data[listado_solicitud_documentos[i]]['Descripcion']+'</li>';
+                            var documento = data[listado_solicitud_documentos[i]];
+                            var nombre = documento['Nombre_documento'] ? documento['Nombre_documento'] : '';
+                            var descripcion = documento['Descripcion'] ? documento['Descripcion'] : '';
+                            
+                            if (nombre || descripcion) {
+                                var sumar = i + 1;
+                                listado += '<li>' + sumar + '. ' + nombre + ' ' + descripcion + '</li>';
+                            }
                         }
     
                         listado += '</ul>';
@@ -2497,9 +2523,9 @@ $(document).ready(function(){
                     "servicioalcliente@segurosalfa.com.co en un término de tres (3) meses contados a partir del recibido de la presente comunicación, y a "+
                     "partir de ese momento se inicia nuevamente el estudio de tu solicitud. En el evento de no recibir la documentación medica "+
                     "actualizada, se considerará desistimiento de tu solicitud por parte de esta aseguradora.</p>"+
-                    "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras l íneas de atención al cliente en Bogotá (601) 3 07 "+
-                    "70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o "+
-                    "escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
+                    "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 "+
+                    "70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o "+
+                    "escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
                     $('#cuerpo_comunicado').summernote('code', texto_insertar);
                 }
             });
@@ -2530,10 +2556,10 @@ $(document).ready(function(){
             "en virtud del contrato de Renta Vitalicia Inmediata suscrito por encargo de la Administradora de Fondos de "+
             "Pensiones Porvenir S.A.</p>"+
             "<p>En forma sucinta la revisión de invalidez, se fundamenta en: </p>"+
-            "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras l íneas de atención al "+
-            "cliente en Bogotá (601) 3 07 70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes, de "+
-            "8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a "+
-            "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>";
+            "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al "+
+            "cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de "+
+            "8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a "+
+            "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
             // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
 
@@ -2574,8 +2600,8 @@ $(document).ready(function(){
             '<p>Los documentos anteriormente mencionados deben ser solicitados en su EPS con su médico tratante; por otra parte aclaramos que los '+
             'mismos se deben radicar en papelería física. No se aceptan medios magnéticos como CD o correos electrónicos.</p>'+
             '<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 '+
-            '70 32 o a la línea naciona gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o '+
-            'escribanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>';
+            '70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o '+
+            'escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>';
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
             // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
 
@@ -2808,6 +2834,7 @@ $(document).ready(function(){
                 }
             }
         });
+        cuerpo_comunicado = cuerpo_comunicado ? cuerpo_comunicado.replace(/"/g, "'") : '';
         //console.log(firmarcomunicadoPcl);
         // var arrayinputs = [];
         // // Función para capturar los valores de todos los inputs de Agregar copia
@@ -2841,7 +2868,7 @@ $(document).ready(function(){
         });
         var tipo_descarga = $("[name='tipo_documento_descarga_califi']").filter(":checked").val();
         
-        let token = $('input[name=_token]').val();        
+        let token = $('input[name=_token]').val();  
         var datos_generarComunicado = {
             '_token': token,
             'ciudad':ciudad,
@@ -2875,7 +2902,7 @@ $(document).ready(function(){
             'tipo_descarga':tipo_descarga,
             'N_siniestro':N_siniestro,
         }
-        
+        console.log("Cuerpo comunicado : ", cuerpo_comunicado);
         document.querySelector("#Generar_comunicados").disabled = true;   
         $.ajax({
             type:'POST',
