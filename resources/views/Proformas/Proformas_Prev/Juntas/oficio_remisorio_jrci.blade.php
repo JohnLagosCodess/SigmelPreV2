@@ -46,7 +46,7 @@
 
         .content{
             /* position: fixed;  */
-            margin-top: 10px;
+            /* margin-top: 10px; */
         }
         .tabla_dictamen{
             font-family: sans-serif;
@@ -121,8 +121,8 @@
     </style>
 </head>
 <body>
-    <div id="header">
-        {{-- <img src="data:image/png;base64,{{ base64_encode($codigoQR) }}" class="codigo_qr" alt="Código QR"> --}}
+    {{-- <div id="header">
+        <img src="data:image/png;base64,{{ base64_encode($codigoQR) }}" class="codigo_qr" alt="Código QR"> 
         <?php if($logo_header == "Sin logo"): ?>
             <p>No logo</p>
         <?php else: ?>
@@ -134,7 +134,7 @@
             ?>
             <img src="data:image/png;base64,{{ $imagenBase64_header }}" class="logo_header">
         <?php endif ?>
-    </div>
+    </div> --}}
     <div id="footer">
         <table class="tabla_footer">
             <tbody>
@@ -151,17 +151,17 @@
         <table class="tabla_inicio_documento">
             <tbody>
                 <tr>
-                    <td style="text-align: center;">
+                    <td style="text-align: center; width: 100%;">
                        <span class="titulo_documento">JUNTA REGIONAL DE CALIFICACIÓN DE INVALIDEZ</span><br>
                        <span class="titulo_documento">Solicitud de calificación de invalidez</span>
                     </td>
-                    <td>
+                    {{-- <td>
                         <div class="cuadro">
                             <span class="negrita">Nro. Radicado {{$nro_radicado}}</span><br>
                             <span class="negrita">{{$tipo_doc_afiliado}} {{$num_identificacion_afiliado}}</span><br>
                             <span class="negrita">Siniestro: {{$N_siniestro}}</span><br>
                         </div>
-                    </td>
+                    </td> --}}
                 </tr>
                 <tr>
                     <td><span class="titulo_labels">Fecha de solicitud: </span><span class="dato_dinamico">{{$fecha}}</span></td>
@@ -294,10 +294,10 @@
                     <td colspan="2" class="underline"><span class="dato_dinamico"><?php if($origen == "Origen"){echo "X";}?></span></td>
                     <td colspan="6" class="titulo_labels"> Calificación de origen</td>
                 </tr>
-                <tr>
+                {{-- <tr>
                     <td colspan="2" class="underline"><span class="dato_dinamico"><?php if($diagnosticos == "Diagnósticos"){echo "X";}?></span></td>
                     <td colspan="6" class="titulo_labels"> Diagnósticos</td>
-                </tr>
+                </tr> --}}
                 <tr>
                     <td colspan="2" class="underline"><span class="dato_dinamico"><?php if($fecha_estructuracion == "Fecha estructuración"){echo "X";}?></span></td>
                     <td colspan="6" class="titulo_labels"> Fecha estructuración</td>
@@ -308,7 +308,7 @@
                 </tr>
                 <tr>
                     <td colspan="2"><span class="titulo_labels">Especifique:</span></td>
-                    <td colspan="6" class="dato_dinamico"></td>
+                    <td colspan="6" class="titulo_labels">Controversia {{$parte_controvierte_califi}}</td>
                 </tr>
                 <br>
                 <tr>
@@ -317,7 +317,7 @@
                 <br>
                 <tr>
                     <td colspan="2"><span class="titulo_labels">Nombres:</span></td>
-                    <td colspan="6" class="dato_dinamico">{{$nombre_usuario}}</td>
+                    <td colspan="6" class="dato_dinamico">Liliana Montes Castañeda</td> {{-- {{$nombre_usuario}} --}}
                 </tr>
                 <tr>
                     <td colspan="2"><span class="titulo_labels">Documento identificación:</span></td>
@@ -325,7 +325,7 @@
                 </tr>
                 <tr>
                     <td colspan="2"><span class="titulo_labels">Cargo:</span></td>
-                    <td colspan="6" class="dato_dinamico">{{$cargo_usuario}}</td>
+                    <td colspan="6" class="dato_dinamico">Médico Laboral</td> {{-- {{$cargo_usuario}} --}}
                 </tr>
                 <tr>
                     <td colspan="2"><span class="titulo_labels">Firma:</span></td>

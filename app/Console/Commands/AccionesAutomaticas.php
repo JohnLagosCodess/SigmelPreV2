@@ -52,7 +52,7 @@ class AccionesAutomaticas extends Command
     {   
         $time = time();
         $date = date("Y-m-d", $time);
-        $date_time = date("Y-m-d H:i:s");
+        $date_time = date("Y-m-d 00:00:00");
 
         // se Captura la info de las acciones automaticas que se acabaron de ejecutar en el dia actual a  las 00:05:00 del job de Mysql
         $datos_info_acciones_automaticas = sigmel_informacion_acciones_automaticas_eventos::on('sigmel_gestiones')
@@ -273,8 +273,8 @@ class AccionesAutomaticas extends Command
 
         // Funcion para calcular la Fecha de movimiento automatico
 
-        function movimiento_automatico($valor_tiempo_movimiento){
-            $date_time = date("Y-m-d H:i:s");
+        function movimiento_automatico($valor_tiempo_movimiento){            
+            $date_time = date("Y-m-d 00:00:00");
             // Se suman los dias a la fecha actual para saber la fecha del movimiento automatico
             $dateTime = new DateTime($date_time);
             $dias = $valor_tiempo_movimiento; // Número de días que quieres sumar
