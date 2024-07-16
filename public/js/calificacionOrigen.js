@@ -2606,7 +2606,43 @@ $(document).ready(function(){
         }
     });
 
-     // Función para verificar si todos los campos están llenos
+     // Función para verificar si todos los campos están llenos al momento de guardar el comunicado
+    function verificarCamposLlenosGuardar() {
+        var todosLlenos = true;
+        // Lista de IDs de los campos que quieres verificar
+        var camposIDs = ['#nombre_destinatario', '#nic_cc', '#direccion_destinatario', '#telefono_destinatario',
+        '#email_destinatario', '#departamento_destinatario_editar', '#departamento_destinatario', '#asunto', 
+        '#cuerpo_comunicado', '#forma_envio', '#reviso'];
+        
+        // Verifica cada campo por su ID
+        camposIDs.forEach(function(id) {
+            var campo = $(id);
+            if (campo.is('input, select, textarea') && campo.val() === '') {
+                todosLlenos = false;
+                return false; // Sale del bucle si encuentra un campo vacío
+            }
+        });
+        return todosLlenos;
+    }
+
+    // Temporizador que se ejecuta cada segundo
+    setInterval(function() {
+        if (verificarCamposLlenosGuardar()) {
+            // Si todos los campos están llenos, habilita el botón
+            if (idRol == 7) {
+                $('#Generar_comunicados').prop('disabled', true); 
+            } else {
+                $('#Generar_comunicados').prop('disabled', false); 
+            }
+            // $('#Pdf').prop('disabled', false);           
+        } else {
+            // Si hay campos vacíos, deshabilita el botón
+            $('#Generar_comunicados').prop('disabled', true); 
+            // $('#Pdf').prop('disabled', true);           
+        }
+    }, 1000); // 1000 milisegundos = 1 segundo
+
+    // Función para verificar si todos los campos están llenos al momento de actualizar el comunicado
      function verificarCamposLlenos() {
         var todosLlenos = true;
         // Lista de IDs de los campos que quieres verificar
