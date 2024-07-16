@@ -1984,7 +1984,6 @@ class AdicionDxDTO extends Controller
         if(!Auth::check()){
             return redirect('/');
         }
-        
         $user= Auth::user();
         $time = time();
         $date = date("Y-m-d", $time);
@@ -1992,7 +1991,7 @@ class AdicionDxDTO extends Controller
 
         /* captura de variables del formulario */
         $id_cliente = $request->id_cliente;
-        $nro_siniestro = $request->nro_siniestro;
+        $id_evento = $request->id_evento;
         $Id_Asignacion = $request->Id_Asignacion;
         $Id_Proceso = $request->Id_Proceso;
         $Id_comunicado = $request->id_comunicado;
@@ -2044,9 +2043,8 @@ class AdicionDxDTO extends Controller
             'sie1.Nombre_entidad as Nombre_arl',
             'sie2.Nombre_entidad as Nombre_afp',
             'sldm.Nombre_municipio as Nombre_ciudad'
-        )->where([['siae.ID_evento', $nro_siniestro]])
+        )->where([['siae.ID_evento', $id_evento]])
         ->get();
-
         $nombre_afiliado = $informacion_del_afiliado[0]->Nombre_afiliado;
         $tipo_doc_afiliado = $informacion_del_afiliado[0]->Tipo_documento;
         $nro_ident_afiliado = $informacion_del_afiliado[0]->Nro_identificacion;
@@ -2064,7 +2062,7 @@ class AdicionDxDTO extends Controller
         $datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
         ->select('F_examen_interconsulta', 'Nombre_examen_interconsulta', 'Descripcion_resultado')
         ->where([
-            ['ID_evento',$nro_siniestro],
+            ['ID_evento',$id_evento],
             ['Id_Asignacion',$Id_Asignacion],
             ['Id_proceso',$Id_Proceso],
             ['Estado', 'Activo']
@@ -2105,7 +2103,7 @@ class AdicionDxDTO extends Controller
         $datos_finales_dml_origen_previsional = [
             'id_cliente' => $id_cliente,
             'logo_header' => $logo_header,
-            'nro_siniestro' => $nro_siniestro,
+            'id_evento' => $id_evento,
             'fecha_solicitud' => $fecha_solicitud,
             'fecha_concepto' => $f_dictamen,
             'ciudad' => $ciudad_afiliado,
@@ -2146,7 +2144,7 @@ class AdicionDxDTO extends Controller
         //Obtener el contenido del PDF
         $output = $pdf->output();
         //Guardar el PDF en un archivo
-        file_put_contents(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_pdf}"), $output);
+        file_put_contents(public_path("Documentos_Eventos/{$id_evento}/{$nombre_pdf}"), $output);
 
         $actualizar_nombre_documento = [
             'Nombre_documento' => $nombre_pdf
@@ -2160,7 +2158,7 @@ class AdicionDxDTO extends Controller
         ->select('siae.Id_servicio')
         ->where([
             ['siae.Id_Asignacion', $Id_Asignacion],
-            ['siae.ID_evento', $nro_siniestro],
+            ['siae.ID_evento', $id_evento],
             ['siae.Id_proceso', $Id_Proceso],
         ])->get();
 
@@ -2170,7 +2168,7 @@ class AdicionDxDTO extends Controller
         $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
         ->select('sice.F_comunicado', 'sice.N_radicado')
         ->where([
-            ['sice.ID_evento', $nro_siniestro],
+            ['sice.ID_evento', $id_evento],
             ['sice.Id_Asignacion', $Id_Asignacion],
             ['sice.Id_proceso', $Id_Proceso],
             ['sice.T_documento', 'N/A'],
@@ -2193,7 +2191,7 @@ class AdicionDxDTO extends Controller
                 'Id_Asignacion' => $Id_Asignacion,
                 'Id_proceso' => $Id_Proceso,
                 'Id_servicio' => $Id_servicio,
-                'ID_evento' => $nro_siniestro,
+                'ID_evento' => $id_evento,
                 'Nombre_documento' => $nombre_pdf,
                 'N_radicado_documento' => $N_radicado_documento,
                 'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,

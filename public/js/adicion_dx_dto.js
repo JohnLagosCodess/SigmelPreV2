@@ -2217,13 +2217,14 @@ $(document).ready(function(){
         }, 1000);
     });
     // Captura Formulario DML ORIGEN PREVISIONAL (DICTAMEN)
-    $("form[id^='Form_dml_origen_previsional_']").submit(function (e){
+    $("form[id^='Form_dml_origen_pdf_']").submit(function (e){
         e.preventDefault();              
         var tupla_comunicado = $(this).data("tupla_comunicado");
         var infoComunicado = $(this).data("archivo");
         var id_cliente = $("#Id_cliente_"+tupla_comunicado).val();
         var num_identificacion = $("#num_identificacion_"+tupla_comunicado).val();
-        var nro_siniestro = $("#nro_siniestro_"+tupla_comunicado).val();
+        var fecha_dictamen = $("#f_dictamen_"+tupla_comunicado).val();
+        var id_evento = $("#id_evento_"+tupla_comunicado).val();
         var Id_Asignacion = $("#Id_Asignacion_"+tupla_comunicado).val();
         var Id_Proceso = $("#Id_Proceso_"+tupla_comunicado).val();
         var f_dictamen = $("#f_dictamen_"+tupla_comunicado).val();
@@ -2243,7 +2244,7 @@ $(document).ready(function(){
         datos_generacion_proforma_dml_previsional = {
             '_token': token,
             'id_cliente': id_cliente,
-            'nro_siniestro': nro_siniestro,
+            'id_evento': id_evento,
             'Id_Asignacion': Id_Asignacion,
             'Id_Proceso': Id_Proceso,
             'f_dictamen': f_dictamen,
@@ -2261,6 +2262,7 @@ $(document).ready(function(){
             'id_comunicado': infoComunicado.Id_Comunicado,
             'N_siniestro': N_siniestro,
         };
+        console.log("datos_generacion_proforma_dml_previsional : ",datos_generacion_proforma_dml_previsional);
         if(infoComunicado.Reemplazado == 1){
             var nombre_doc = infoComunicado.Nombre_documento;
             var idEvento = infoComunicado.ID_evento;
