@@ -1543,8 +1543,8 @@ class PronunciamientoOrigenController extends Controller
                 // Quitamos el style y agregamos los atributos width y height
                 $patronstyle = '/<img[^>]+style="width:\s*([\d.]+)px;\s*height:\s*([\d.]+)px[^"]*"[^>]*>/';
                 preg_match($patronstyle, $Firma_cliente, $coincidencias);
-                $width = $coincidencias[1]; // Valor de width
-                $height = $coincidencias[2]; // Valor de height
+                $width = count($coincidencias)>0 ? $coincidencias[1] : '100px'; // Valor de width
+                $height = count($coincidencias)>0 ? $coincidencias[2] : '70px'; // Valor de height
             
                 $nuevoStyle = 'width="'.$width.'" height="'.$height.'"';
                 $htmlModificado = reemplazarStyleImg($Firma_cliente, $nuevoStyle);

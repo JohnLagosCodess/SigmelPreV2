@@ -2710,8 +2710,8 @@ class ControversiaJuntasController extends Controller
                 $width = "119.075";
                 $height = "69.9062";
             }else{
-                $width = $coincidencias[1]; // Valor de width
-                $height = $coincidencias[2]; // Valor de height
+                $width = count($coincidencias)>0 ? $coincidencias[1] : '100px'; // Valor de width
+                $height = count($coincidencias)>0 ? $coincidencias[2] : '70px'; // Valor de height
             }
         
             $nuevoStyle = 'width="'.$width.'" height="'.$height.'"';
