@@ -1525,7 +1525,7 @@ $(document).ready(function(){
 
 
     if ($('#ActualizarAdicionDx').length) {
-        // $('#div_comite_interdisciplinario').removeClass('d-none');
+        $('#div_comite_interdisciplinario').removeClass('d-none');
         $('#div_comunicado_dictamen_oficioremisorio').removeClass('d-none');
     }
 
@@ -2262,7 +2262,7 @@ $(document).ready(function(){
             'id_comunicado': infoComunicado.Id_Comunicado,
             'N_siniestro': N_siniestro,
         };
-        console.log("datos_generacion_proforma_dml_previsional : ",datos_generacion_proforma_dml_previsional);
+        // console.log("datos_generacion_proforma_dml_previsional : ",datos_generacion_proforma_dml_previsional);
         if(infoComunicado.Reemplazado == 1){
             var nombre_doc = infoComunicado.Nombre_documento;
             var idEvento = infoComunicado.ID_evento;

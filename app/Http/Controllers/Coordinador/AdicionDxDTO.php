@@ -515,6 +515,14 @@ class AdicionDxDTO extends Controller
             $datos_bd_DTO_ATEL = array();
 
             $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($info_adicion_dx[0]->Id_Asignacion));
+
+            /* Nombre Afp */
+            $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
+            ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad')
+            ->where([['Id_Entidad', $array_datos_calificacion_origen[0]->Id_afp]])
+            ->get();
+
             
         }else{
 
@@ -623,6 +631,13 @@ class AdicionDxDTO extends Controller
 
                 $info_adicion_dx = array();
                 $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion_actual));
+
+                /* Nombre Afp */
+                $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
+                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad')
+                ->where([['Id_Entidad', $array_datos_calificacion_origen[0]->Id_afp]])
+                ->get();
 
             }
             // Escenario N°3: Cuando hay una Adición Dx mostrar la información de la Adición Dx más reciente
@@ -740,6 +755,13 @@ class AdicionDxDTO extends Controller
                 };
                 // $datos_bd_DTO_ATEL = array();
                 $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion_actual));
+
+                /* Nombre Afp */
+                $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
+                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad')
+                ->where([['Id_Entidad', $array_datos_calificacion_origen[0]->Id_afp]])
+                ->get();
             }
             // Escenario N°4: Mostrar el formulario vacío para llenar la Adición Dx
             elseif(count($datos_bd_DTO_ATEL) == 0 && count($info_adicion_dx_reciente) == 0){
@@ -779,9 +801,14 @@ class AdicionDxDTO extends Controller
                 }
 
                 $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion_actual));
-            }
 
-            
+                /* Nombre Afp */
+                $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
+                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad')
+                ->where([['Id_Entidad', $array_datos_calificacion_origen[0]->Id_afp]])
+                ->get();
+            }
         }
 
         // $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion_actual));
@@ -879,10 +906,18 @@ class AdicionDxDTO extends Controller
             $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted;
         };
 
+        /* Traer datos de la AFP de Conocimiento */
+        $info_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp_entidad_conocimiento', '=', 'sie.Id_Entidad')
+        ->select('siae.Entidad_conocimiento')
+        ->where([['siae.ID_evento', $Id_evento]])
+        ->get();
+
         return view('coordinador.adicionDxDtoOrigen', compact('user', 'Id_asignacion_actual', 'datos_bd_DTO_ATEL', 'bandera_hay_dto', 'array_datos_calificacion_origen', 
             'bandera_tipo_evento', 'nombre_del_evento_guardado', 'numero_consecutivo', 'motivo_solicitud_actual',
             'datos_apoderado_actual', 'array_datos_info_laboral','listado_documentos_solicitados', 'dato_articulo_12', 'array_datos_examenes_interconsultas',
-            'array_datos_diagnostico_motcalifi', 'info_adicion_dx', 'array_datos_diagnostico_adicionales','array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia'
+            'array_datos_diagnostico_motcalifi', 'info_adicion_dx', 'array_datos_diagnostico_adicionales','array_comite_interdisciplinario', 'consecutivo', 
+            'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento'
             )
         );
         
