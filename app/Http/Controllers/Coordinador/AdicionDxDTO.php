@@ -519,7 +519,7 @@ class AdicionDxDTO extends Controller
             /* Nombre Afp */
             $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
-            ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad')
+            ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sie.Emails as Email')
             ->where([['Id_Entidad', $array_datos_calificacion_origen[0]->Id_afp]])
             ->get();
 
@@ -635,7 +635,7 @@ class AdicionDxDTO extends Controller
                 /* Nombre Afp */
                 $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
-                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad')
+                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sie.Emails as Email')
                 ->where([['Id_Entidad', $array_datos_calificacion_origen[0]->Id_afp]])
                 ->get();
 
@@ -759,7 +759,7 @@ class AdicionDxDTO extends Controller
                 /* Nombre Afp */
                 $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
-                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad')
+                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sie.Emails as Email')
                 ->where([['Id_Entidad', $array_datos_calificacion_origen[0]->Id_afp]])
                 ->get();
             }
@@ -805,7 +805,7 @@ class AdicionDxDTO extends Controller
                 /* Nombre Afp */
                 $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
-                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad')
+                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sie.Emails as Email')
                 ->where([['Id_Entidad', $array_datos_calificacion_origen[0]->Id_afp]])
                 ->get();
             }
@@ -905,7 +905,7 @@ class AdicionDxDTO extends Controller
             $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
             $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted;
         };
-
+        // dd($array_comite_interdisciplinario);
         /* Traer datos de la AFP de Conocimiento */
         $info_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp_entidad_conocimiento', '=', 'sie.Id_Entidad')
@@ -2023,10 +2023,9 @@ class AdicionDxDTO extends Controller
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
-
         /* captura de variables del formulario */
         $id_cliente = $request->id_cliente;
-        $id_evento = $request->id_evento;
+        $id_evento = $request->nro_siniestro;
         $Id_Asignacion = $request->Id_Asignacion;
         $Id_Proceso = $request->Id_Proceso;
         $Id_comunicado = $request->id_comunicado;
@@ -2053,7 +2052,6 @@ class AdicionDxDTO extends Controller
         // fecha solicitud
         $array_datos_calificacionOrigen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_Asignacion));
         $fecha_solicitud = date("d-m-Y", strtotime($array_datos_calificacionOrigen[0]->F_radicacion));
-
         /* 2. DATOS PERSONALES */
         $informacion_del_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'siae.Tipo_documento', '=', 'slp.Id_Parametro')
@@ -2414,7 +2412,7 @@ class AdicionDxDTO extends Controller
             $direccion_destinatario_principal = $direccionAfp;
             $telefono_destinatario_principal = $telefono_afp;
             // $ciudad_destinatario_principal = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
-            $ciudad_destinatario_principal = $ciudad_afiliado === 'Bogotá D.C.' ? $ciudad_afiliado.' ('.$ciudad_afiliado.')' : $ciudad_afiliado;
+            $ciudad_destinatario_principal = $ciudad_afp === 'Bogotá D.C.' ? $ciudad_afp.' ('.$ciudad_afp.')' : $ciudad_afp;
         }
         
         $ramo = "Previsionales";

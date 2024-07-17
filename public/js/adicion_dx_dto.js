@@ -1581,15 +1581,15 @@ $(document).ready(function(){
         })
     }) 
 
-    // var profesional_comite = $("#profesional_comite").val();
-    // if (profesional_comite !== '') {
-    //     $("#GuardarComiteInter").prop('disabled', true);
-    //     $("#btn_guardar_info_evento").prop('disabled', true);
-    //     $("#btn_guardar_relacion_docs").prop('disabled', true);
-    //     $("#btn_guardar_diagnosticos_adicionados").prop('disabled', true);
-    //     $("#ActualizarAdicionDx").prop('disabled', true);       
-    //     $("#div_correspondecia").removeClass('d-none');
-    // }
+    var profesional_comite = $("#profesional_comite").val();
+    if (profesional_comite !== '') {
+        $("#GuardarComiteInter").prop('disabled', true);
+        $("#btn_guardar_info_evento").prop('disabled', true);
+        $("#btn_guardar_relacion_docs").prop('disabled', true);
+        $("#btn_guardar_diagnosticos_adicionados").prop('disabled', true);
+        $("#ActualizarAdicionDx").prop('disabled', true);       
+        // $("#div_correspondecia").removeClass('d-none');
+    }
 
     // Desabilitar los botones si ya esta visado
     var visar_servicio = $("#visar_servicio").val();
@@ -2217,14 +2217,14 @@ $(document).ready(function(){
         }, 1000);
     });
     // Captura Formulario DML ORIGEN PREVISIONAL (DICTAMEN)
-    $("form[id^='Form_dml_origen_pdf_']").submit(function (e){
+    $("form[id^='Form_dml_origen_previsional_']").submit(function (e){
         e.preventDefault();              
         var tupla_comunicado = $(this).data("tupla_comunicado");
         var infoComunicado = $(this).data("archivo");
         var id_cliente = $("#Id_cliente_"+tupla_comunicado).val();
         var num_identificacion = $("#num_identificacion_"+tupla_comunicado).val();
         var fecha_dictamen = $("#f_dictamen_"+tupla_comunicado).val();
-        var id_evento = $("#id_evento_"+tupla_comunicado).val();
+        var nro_siniestro = $("#nro_siniestro_"+tupla_comunicado).val();
         var Id_Asignacion = $("#Id_Asignacion_"+tupla_comunicado).val();
         var Id_Proceso = $("#Id_Proceso_"+tupla_comunicado).val();
         var f_dictamen = $("#f_dictamen_"+tupla_comunicado).val();
@@ -2244,7 +2244,7 @@ $(document).ready(function(){
         datos_generacion_proforma_dml_previsional = {
             '_token': token,
             'id_cliente': id_cliente,
-            'id_evento': id_evento,
+            'nro_siniestro': nro_siniestro,
             'Id_Asignacion': Id_Asignacion,
             'Id_Proceso': Id_Proceso,
             'f_dictamen': f_dictamen,
@@ -2262,7 +2262,7 @@ $(document).ready(function(){
             'id_comunicado': infoComunicado.Id_Comunicado,
             'N_siniestro': N_siniestro,
         };
-        // console.log("datos_generacion_proforma_dml_previsional : ",datos_generacion_proforma_dml_previsional);
+        console.log("datos_generacion_proforma_dml_previsional : ",datos_generacion_proforma_dml_previsional);
         if(infoComunicado.Reemplazado == 1){
             var nombre_doc = infoComunicado.Nombre_documento;
             var idEvento = infoComunicado.ID_evento;
@@ -2310,7 +2310,7 @@ $(document).ready(function(){
                 complete:  function() {
                     $("#btn_enviar_dictamen_previsional").removeClass("descarga-deshabilitada");
                     if(infoComunicado.Nombre_documento == null){
-                        location.reload();
+                        // location.reload();
                     }
                 },       
             });
