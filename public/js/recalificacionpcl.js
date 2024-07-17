@@ -3912,8 +3912,6 @@ $(document).ready(function(){
         var Asunto = $('#Asunto').val();
         var cuerpo_comunicado = $('#cuerpo_comunicado').val();
         var cuerpo_comunicado_formatos_pension = $('#cuerpo_comunicado_formatos_pension').val();
-        cuerpo_comunicado = cuerpo_comunicado ? cuerpo_comunicado.replace(/"/g, "'") : '';
-        cuerpo_comunicado_formatos_pension = cuerpo_comunicado_formatos_pension.replace(/"/g, "'");
         if (cuerpo_comunicado == '' || cuerpo_comunicado == undefined) {
             var cuerpo_comunicadoPcl = cuerpo_comunicado_formatos_pension;
         } else {
