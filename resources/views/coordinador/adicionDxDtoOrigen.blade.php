@@ -22,7 +22,7 @@
                     <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Consultar Evento</a>
                 <?php else: ?>
                     <a href="{{route("bandejaOrigen")}}" class="btn btn-info" type="button"><i class="fas fa-archive"></i> Regresar Bandeja</a>
-                <?php endif ?>                
+                <?php endif ?> 
                 <a onclick="document.getElementById('botonEnvioVista').click();" style="cursor:pointer;" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Módulo Origen</a>
                 <p>
                     <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
@@ -413,7 +413,7 @@
                                         <div class="row" id="contenedor_forms_acci_inci_sincober">
                                             <div class="col-4">
                                                 <div class="form-group">
-                                                    <label for="tipo_accidente">Tipo de accidente <span style="color:red;">(*)</span></label>
+                                                    <label for="tipo_accidente">Tipo de accidente</label>
                                                     <?php if(!empty($info_adicion_dx[0]->Tipo_accidente)):?>
                                                         <input type="hidden" id="bd_tipo_accidente" value="<?php echo $info_adicion_dx[0]->Tipo_accidente;?>">
                                                     <?php else: ?>
@@ -424,7 +424,7 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
-                                                    <label for="fecha_evento">Fecha del evento <span style="color:red;">(*)</span></label>
+                                                    <label for="fecha_evento">Fecha del evento</label>
                                                     <input type="hidden" id="bd_fecha_evento" value="">
                                                     <?php if(!empty($info_adicion_dx[0]->Fecha_evento)):?>
                                                         <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" value="<?php echo $info_adicion_dx[0]->Fecha_evento;?>" required>
@@ -435,7 +435,7 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
-                                                    <label for="hora_evento">Hora del evento <span style="color:red;">(*)</span></label>
+                                                    <label for="hora_evento">Hora del evento</label>
                                                     <?php if(!empty($info_adicion_dx[0]->Hora_evento)):?>
                                                         <input type="time" class="form-control" name="hora_evento" id="hora_evento" value="<?php echo $info_adicion_dx[0]->Hora_evento;?>" required>
                                                     <?php else: ?>
@@ -457,7 +457,7 @@
                                             </div>
                                             <div class="col-4" id="contenedor_grado_severidad">
                                                 <div class="form-group">
-                                                    <label for="grado_severidad">Grado de severidad <span style="color:red;">(*)</span></label>
+                                                    <label for="grado_severidad">Grado de severidad</label>
                                                     <?php if(!empty($info_adicion_dx[0]->Grado_severidad)):?>
                                                         <input type="hidden" id="bd_grado_severidad" value="<?php echo $info_adicion_dx[0]->Grado_severidad;?>">
                                                     <?php else: ?>
@@ -504,7 +504,7 @@
                                             </div>
                                             <div class="col-4 d-none" id="mostrar_f_fallecimiento">
                                                 <div class="form-group">
-                                                    <label for="fecha_fallecimiento">Fecha de fallecimiento <span style="color:red;">(*)</span></label>
+                                                    <label for="fecha_fallecimiento">Fecha de fallecimiento</label>
                                                     <?php if(!empty($info_adicion_dx[0]->Fecha_fallecimiento)):?>
                                                         <input type="date" class="form-control" name="fecha_fallecimiento" id="fecha_fallecimiento" max="{{date("Y-m-d")}}" value="<?php echo $info_adicion_dx[0]->Fecha_fallecimiento;?>">
                                                     <?php else: ?>
@@ -516,7 +516,7 @@
                                         <div class="row" id="contenedor_descrip_FURAT">
                                             <div class="col-12">
                                                 <div class="form-group">
-                                                    <label for="descripcion_FURAT" class="col-form-label">Descripción Formato Único de Reporte de presunto Accidente de Trabajo (FURAT) <span style="color:red;">(*)</span></label>
+                                                    <label for="descripcion_FURAT" class="col-form-label">Descripción Formato Único de Reporte de presunto Accidente de Trabajo (FURAT)</label>
                                                     <?php if(!empty($info_adicion_dx[0]->Descripcion_FURAT)):?>
                                                         <textarea class="form-control descripcion_FURAT" name="descripcion_FURAT" id="descripcion_FURAT" rows="2" required><?php echo $info_adicion_dx[0]->Descripcion_FURAT;?></textarea>
                                                     <?php else: ?>
@@ -536,12 +536,6 @@
                                                     @elseif (count($datos_bd_DTO_ATEL) == 0 && count($info_adicion_dx) == 0)
                                                         <input type="hidden" id="bd_factor_riesgo" value="">
                                                     @endif
-
-                                                    {{-- <?php if(!empty($info_adicion_dx[0]->Factor_riesgo)):?>
-                                                        <input type="hidden" id="bd_factor_riesgo" value="<?php echo $info_adicion_dx[0]->Factor_riesgo;?>">
-                                                    <?php else: ?>
-                                                        <input type="hidden" id="bd_factor_riesgo" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Factor_riesgo)){echo $datos_bd_DTO_ATEL[0]->Factor_riesgo;}?>">
-                                                    <?php endif ?> --}}
                                                     <select class="custom-select factor_riesgo" name="factor_riesgo" id="factor_riesgo"></select>
                                                 </div>
                                             </div>
@@ -555,12 +549,6 @@
                                                     @elseif (count($datos_bd_DTO_ATEL) == 0 && count($info_adicion_dx) == 0)
                                                         <input type="hidden" id="bd_tipo_lesion" value="">
                                                     @endif
-
-                                                    {{-- <?php if(!empty($info_adicion_dx[0]->Tipo_lesion)):?>
-                                                        <input type="hidden" id="bd_tipo_lesion" value="<?php echo $info_adicion_dx[0]->Tipo_lesion;?>">
-                                                    <?php else: ?>
-                                                        <input type="hidden" id="bd_tipo_lesion" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Tipo_lesion)){echo $datos_bd_DTO_ATEL[0]->Tipo_lesion;}?>">
-                                                    <?php endif ?> --}}
                                                     <select class="custom-select tipo_lesion" name="tipo_lesion" id="tipo_lesion"></select>
                                                 </div>
                                             </div>
@@ -574,11 +562,6 @@
                                                     @elseif (count($datos_bd_DTO_ATEL) == 0 && count($info_adicion_dx) == 0)
                                                         <input type="hidden" id="bd_parte_cuerpo_afectada" value="">
                                                     @endif
-                                                    {{-- <?php if(!empty($info_adicion_dx[0]->Parte_cuerpo_afectada)):?>
-                                                        <input type="hidden" id="bd_parte_cuerpo_afectada" value="<?php echo $info_adicion_dx[0]->Parte_cuerpo_afectada;?>">
-                                                    <?php else: ?>
-                                                        <input type="hidden" id="bd_parte_cuerpo_afectada" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Parte_cuerpo_afectada)){echo $datos_bd_DTO_ATEL[0]->Parte_cuerpo_afectada;}?>">
-                                                    <?php endif ?> --}}
                                                     <select class="custom-select parte_cuerpo_afectada" name="parte_cuerpo_afectada" id="parte_cuerpo_afectada"></select>
                                                 </div>
                                             </div>
@@ -587,8 +570,6 @@
                                     <div class="card-footer">
                                         <div class="row">
                                             <div class="col-12">
-                                                {{-- {{$info_adicion_dx[0]->Id_Asignacion}} --}}
-                                                {{-- @if (empty($info_adicion_dx[0]->ID_evento) || count($array_comunicados_correspondencia) === 0) --}}
                                                 @if (!empty($datos_bd_DTO_ATEL[0]->Id_Asignacion) && $Id_asignacion_actual != $datos_bd_DTO_ATEL[0]->Id_Asignacion)
                                                     <input type="submit" class="btn btn-info" id="btn_guardar_info_evento" value="Guardar">
                                                 @else
@@ -626,7 +607,6 @@
                                             <div class="col-12">
                                                 <div class="form-group">
                                                     <label for="justificacion_revision_origen" class="col-form-label">Justificación para revisión del Origen</label>
-                                                    
                                                     @if (count($datos_bd_DTO_ATEL) > 0 && count($info_adicion_dx) == 0)
                                                         <textarea class="form-control justificacion_revision_origen" name="justificacion_revision_origen" id="justificacion_revision_origen" rows="2" ><?php if(!empty($datos_bd_DTO_ATEL[0]->Justificacion_revision_origen)){echo $datos_bd_DTO_ATEL[0]->Justificacion_revision_origen;}?></textarea>
                                                     @elseif ((count($datos_bd_DTO_ATEL) > 0 && count($info_adicion_dx) > 0) || (count($datos_bd_DTO_ATEL) == 0 && count($info_adicion_dx) > 0))
@@ -634,11 +614,6 @@
                                                     @elseif (count($datos_bd_DTO_ATEL) == 0 && count($info_adicion_dx) == 0)
                                                         <textarea class="form-control justificacion_revision_origen" name="justificacion_revision_origen" id="justificacion_revision_origen" rows="2" ></textarea>
                                                     @endif
-                                                    {{-- <?php if(!empty($info_adicion_dx[0]->Justificacion_revision_origen)):?>
-                                                        <textarea class="form-control justificacion_revision_origen" name="justificacion_revision_origen" id="justificacion_revision_origen" rows="2" ><?php echo $info_adicion_dx[0]->Justificacion_revision_origen;?></textarea>
-                                                    <?php else: ?>
-                                                        <textarea class="form-control justificacion_revision_origen" name="justificacion_revision_origen" id="justificacion_revision_origen" rows="2" ><?php if(!empty($datos_bd_DTO_ATEL[0]->Justificacion_revision_origen)){echo $datos_bd_DTO_ATEL[0]->Justificacion_revision_origen;}?></textarea>
-                                                    <?php endif ?> --}}
                                                 </div>
                                             </div>
                                         </div>
@@ -655,12 +630,8 @@
                                             <div class="form-group">
                                                 <h6 class="text-center"><b>Documentos tenidos en cuenta para la calificación</b></h6>
                                             </div>
-                                            {{-- @if (count($datos_bd_DTO_ATEL) > 0 && count($info_adicion_dx) == 0)
-                                            @elseif ((count($datos_bd_DTO_ATEL) > 0 && count($info_adicion_dx) > 0) || (count($datos_bd_DTO_ATEL) == 0 && count($info_adicion_dx) > 0))
-                                            @elseif (count($datos_bd_DTO_ATEL) == 0 && count($info_adicion_dx) == 0)
-                                            @endif --}}
-
                                             <?php 
+
                                                 $array_bd_documentos_relacion= array();
 
                                                 if (count($datos_bd_DTO_ATEL) > 0 && count($info_adicion_dx) == 0) {
@@ -672,7 +643,6 @@
                                                 elseif (count($datos_bd_DTO_ATEL) == 0 && count($info_adicion_dx) == 0) {
                                                     $array_bd_documentos_relacion= array();
                                                 }
-
                                                 // if (!empty($info_adicion_dx[0]->Relacion_documentos)) {
                                                 //     $array_bd_documentos_relacion = explode(", ", $info_adicion_dx[0]->Relacion_documentos);
                                                 // } else {
@@ -716,20 +686,6 @@
                                                         @elseif (count($datos_bd_DTO_ATEL) == 0 && count($info_adicion_dx) == 0)
                                                             <input class="custom-control-input" type="checkbox" id="historia_clinica_acci_inci_sincober" name="historia_clinica_acci_inci_sincober" value="Historia clínica completa">
                                                         @endif
-
-                                                        {{-- <?php if(!empty($info_adicion_dx[0]->Tipo_evento)):?>
-                                                            <input class="custom-control-input" type="checkbox" id="historia_clinica_acci_inci_sincober" name="historia_clinica_acci_inci_sincober" value="Historia clínica completa"
-                                                                <?php if(in_array("Historia clínica completa", $array_bd_documentos_relacion) && !empty($info_adicion_dx[0]->Tipo_evento) && $info_adicion_dx[0]->Tipo_evento != 2):?>
-                                                                    checked
-                                                                <?php endif?>
-                                                            >
-                                                        <?php else:?>
-                                                            <input class="custom-control-input" type="checkbox" id="historia_clinica_acci_inci_sincober" name="historia_clinica_acci_inci_sincober" value="Historia clínica completa"
-                                                                <?php if(in_array("Historia clínica completa", $array_bd_documentos_relacion) && !empty($datos_bd_DTO_ATEL[0]->Tipo_evento) && $datos_bd_DTO_ATEL[0]->Tipo_evento != 2):?>
-                                                                    checked
-                                                                <?php endif?>
-                                                            >
-                                                        <?php endif?> --}}
                                                         <label for="historia_clinica_acci_inci_sincober" class="custom-control-label">Historia clínica completa</label> 
                                                     </div>
                                                 </div>
@@ -745,12 +701,6 @@
                                                         @elseif (count($datos_bd_DTO_ATEL) == 0 && count($info_adicion_dx) == 0)
                                                             <input type="text" class="form-control otros_docs" name="otros_docs" id="otros_docs" value="">
                                                         @endif
-
-                                                        {{-- <?php if(!empty($info_adicion_dx[0]->Otros_relacion_documentos)):?>
-                                                            <input type="text" class="form-control otros_docs" name="otros_docs" id="otros_docs" value="<?php if(!empty($info_adicion_dx[0]->Otros_relacion_documentos)){echo $info_adicion_dx[0]->Otros_relacion_documentos;}?>">
-                                                        <?php else:?>
-                                                            <input type="text" class="form-control otros_docs" name="otros_docs" id="otros_docs" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Otros_relacion_documentos)){echo $datos_bd_DTO_ATEL[0]->Otros_relacion_documentos;}?>">
-                                                        <?php endif?> --}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -876,7 +826,7 @@
                                 {{-- Diagnóstico motivo de calificación --}}
                                 <div class="card-info" id="contenedor_diag_moti_califi">
                                     <div class="card-header text-center" style="border: 1.5px solid black;">
-                                        <h5>Diagnósticos Motivo de Calificación</h5>
+                                        <h5>Diagnóstico Motivo de Calificación</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
@@ -941,12 +891,6 @@
                                                     @elseif (count($datos_bd_DTO_ATEL) == 0 && count($info_adicion_dx) == 0)
                                                         <textarea class="form-control sustentacion_califi_origen" name="sustentacion_califi_origen" id="sustentacion_califi_origen" rows="2"></textarea>
                                                     @endif
-
-                                                    {{-- <?php if(!empty($info_adicion_dx[0]->Sustentacion)):?>
-                                                        <textarea class="form-control sustentacion_califi_origen" name="sustentacion_califi_origen" id="sustentacion_califi_origen" rows="2" disabled><?php echo $info_adicion_dx[0]->Sustentacion;?></textarea>
-                                                    <?php else: ?>
-                                                        <textarea class="form-control sustentacion_califi_origen" name="sustentacion_califi_origen" id="sustentacion_califi_origen" rows="2" disabled><?php if(!empty($datos_bd_DTO_ATEL[0]->Sustentacion)){echo $datos_bd_DTO_ATEL[0]->Sustentacion;}?></textarea>
-                                                    <?php endif ?> --}}
                                                 </div>
                                             </div>
                                         </div>
@@ -999,7 +943,7 @@
                                                                     <td>
                                                                         <?php if($diagnosticos_adicionales->F_adicion_CIE10 == date("Y-m-d")):?>
                                                                             <?php if($Id_asignacion_actual == $diagnosticos_adicionales->Id_Asignacion): ?>
-                                                                                <div class="centrar"><a href="javascript:void(0);" id="btn_remover_diagnosticos_moticalifi_{{$diagnosticos_adicionales->Id_Diagnosticos_motcali}}" data-id_fila_quitar="{{$diagnosticos_adicionales->Id_Diagnosticos_motcali}}" data-clase_fila="fila_diagnosticos_{{$diagnosticos_adicionales->Id_Diagnosticos_motcali}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
+                                                                                <div class="centrar"><a href="javascript:void(0);" id="btn_remover_diagnosticos_moticalifi{{$diagnosticos_adicionales->Id_Diagnosticos_motcali}}" data-id_fila_quitar="{{$diagnosticos_adicionales->Id_Diagnosticos_motcali}}" data-clase_fila="fila_diagnosticos_{{$diagnosticos_adicionales->Id_Diagnosticos_motcali}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
                                                                             <?php else: ?>
                                                                                 <div class="centrar">-</div>
                                                                             <?php endif ?>
@@ -1028,7 +972,6 @@
                                     <div class="card-footer">
                                         <div class="row">
                                             <div class="col-12">
-                                                {{-- @if (empty($info_adicion_dx[0]->ID_evento) || count($array_comunicados_correspondencia) === 0) --}}
                                                 @if (!empty($datos_bd_DTO_ATEL[0]->Id_Asignacion) && $Id_asignacion_actual != $datos_bd_DTO_ATEL[0]->Id_Asignacion)
                                                     <input type="submit" class="btn btn-info" id="btn_guardar_diagnosticos_adicionados" value="Guardar">
                                                 @else
@@ -1086,6 +1029,7 @@
                                                     @else
                                                         <input type="hidden" class="form-control" name="radicado_dictamen" id="radicado_dictamen" value="{{$consecutivo}}" disabled> 
                                                     @endif
+                                                        <input type="hidden" class="form-control" name="radicado_comunicado_manual" id="radicado_comunicado_manual" value="{{$consecutivo}}" disabled>
                                                     <label for="origen_dto_atel">Origen <span style="color:red;">(*)</span></label>
                                                     <?php if(!empty($info_adicion_dx[0]->Origen)):?>
                                                         <input type="hidden" id="bd_origen" value="<?php if(!empty($info_adicion_dx[0]->Origen)){echo $info_adicion_dx[0]->Origen;}?>">
@@ -1107,7 +1051,6 @@
                                 {{-- <?php if(!empty($info_adicion_dx[0]->Tipo_evento) && $info_adicion_dx[0]->Tipo_evento != 4):?>
                                 <?php else: ?>
                                 <?php endif?> --}}
-                                {{-- @if (empty($info_adicion_dx[0]->ID_evento) || count($array_comunicados_correspondencia) === 0) --}}
                                 @if (!empty($datos_bd_DTO_ATEL[0]->Id_Asignacion) && $Id_asignacion_actual != $datos_bd_DTO_ATEL[0]->Id_Asignacion)
                                     <input type="submit" class="btn btn-info" id="GuardarAdicionDx" value="Guardar">
                                 @else
@@ -1133,18 +1076,16 @@
                     </div>                    
                 </div>
             </form>
-
-
             <div class="card-body">
-                <!-- Comite Interdisciplinario -->                    
-                <?php if(!empty($info_adicion_dx)):?>
-                    <div class="card-info" id="div_comite_interdisciplinario">
+                <!-- Comite Interdisciplinario -->          
+                <?php if(!empty($info_adicion_dx)):?>   
+                    <div class="card-info d-none" id="div_comite_interdisciplinario">
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Comité Interdisciplinario</h5>
                             <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
                             <input type="hidden" id="visar_servicio"  value="<?php echo (!empty($array_comite_interdisciplinario[0]->Visar));?>">
                         </div>
-                        <form id="form_comite_interdisciplinario" action="POST">
+                        <form id="form_comite_interdisciplinario" action="POST">                            
                             <div class="card-body">
                                 <div class="row">   
                                     <div class="col-1">
@@ -1193,18 +1134,18 @@
                                 </div>                                                                
                             </div>
                         </form>
-                    </div>  
+                    </div>
                 <?php endif ?>
                 <!--  Correspondencia -->
                 @if(!empty($array_comite_interdisciplinario[0]->Visar) && $array_comite_interdisciplinario[0]->Visar == "Si")
-                    <div class="card-info <?php if(!empty($array_comite_interdisciplinario[0]->Asunto)):?> d-none <?php endif?>" id="div_correspondecia">
+                    <div class="card-info d-none" id="div_correspondecia">
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Correspondencia</h5>
                         </div>
                         <br>
                         <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
                             <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para mostrar todo el cuerpo del comunicado (dentro del pdf) que usted escriba, 
-                            debe incluir la etiqueta de los Diagnósticos CIE-10 dentro de la sección Cuerpo del Comunicado.
+                            debe incluir las etiquetas de Nombre afiliado y Origen de evento dentro de la sección Cuerpo del Comunicado.
                         </div>
                         <form id="form_correspondencia" action="POST">                            
                             <div class="card-body">
@@ -1238,7 +1179,8 @@
                                     <div class="col-3">
                                         <div class="form-group">
                                             <label for="destinatario_principal">Destinatario Principal</label>                                            
-                                            <input type="text" class="form-control" name="destinatario_principal" id="destinatario_principal" value="{{$array_datos_calificacion_origen[0]->Nombre_afiliado}}" disabled>
+                                            {{-- <input type="text" class="form-control" name="destinatario_principal" id="destinatario_principal" value="{{$array_datos_calificacion_origen[0]->Nombre_afiliado}}" disabled> --}}
+                                            <input type="text" class="form-control" name="destinatario_principal" id="destinatario_principal" value="{{$afp_afiliado[0]->Nombre_entidad}}" disabled>
                                         </div>
                                     </div>
                                     <div class="col-3">
@@ -1369,8 +1311,9 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label for="cuerpo_comunicado">Cuerpo del comunicado <span style="color: red;">(*)</label>
-                                                <br>
-                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_cie10">Diagnósticos CIE10</button>
+                                            <br>
+                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_nombre_afiliado">Nombre Afiliado</button>
+                                            <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_origen_evento">Origen Evento</button>
                                             @if(!empty($array_comite_interdisciplinario[0]->Cuerpo_comunicado))
                                                 <textarea class="form-control" name="cuerpo_comunicado" id="cuerpo_comunicado" required>{{$array_comite_interdisciplinario[0]->Cuerpo_comunicado}}</textarea>                                                                                                 
                                             @else
@@ -1382,16 +1325,16 @@
                                         <div class="form-group">
                                             <label for="tipo_clasificacion">Copia a partes interesadas</label>
                                         </div>
-                                    </div>
+                                    </div>  
                                     <div class="col-3">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
                                                 @if (!empty($array_comite_interdisciplinario[0]->Copia_afiliado))
-                                                    <input class="dependencia_justificacion custom-control-input" type="checkbox" id="afiliado" name="afiliado" value="Afiliado" checked>
+                                                    <input class="dependencia_justificacion custom-control-input" type="checkbox" id="beneficiario" name="beneficiario" value="Beneficiario" checked>
                                                 @else
-                                                    <input class="custom-control-input" type="checkbox" id="afiliado" name="afiliado" value="Afiliado">                                                    
+                                                    <input class="custom-control-input" type="checkbox" id="beneficiario" name="beneficiario" value="Beneficiario">                                                    
                                                 @endif
-                                                <label for="afiliado" class="custom-control-label">Afiliado</label>
+                                                <label for="beneficiario" class="custom-control-label">Beneficiario</label>
                                             </div>
                                         </div>
                                     </div>
@@ -1430,7 +1373,22 @@
                                                 <label for="afp" class="custom-control-label">AFP</label>
                                             </div>
                                         </div>
-                                    </div>   
+                                    </div>
+                                    <input type="hidden" name="entidad_conocimiento" id="entidad_conocimiento" value="<?php if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento)){echo $info_afp_conocimiento[0]->Entidad_conocimiento;}?>">
+                                    @if (!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si")
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    @if (!empty($array_comite_interdisciplinario[0]->Copia_afp_conocimiento))
+                                                        <input class="dependencia_justificacion custom-control-input" type="checkbox" id="afp_conocimiento" name="afp_conocimiento" value="AFP_Conocimiento" checked>
+                                                    @else
+                                                        <input class="custom-control-input" type="checkbox" id="afp_conocimiento" name="afp_conocimiento" value="AFP_Conocimiento">                                                    
+                                                    @endif
+                                                    <label for="afp_conocimiento" class="custom-control-label">AFP Conocimiento</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
                                     <div class="col-3">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
@@ -1559,7 +1517,6 @@
                                             @else
                                                 <input type="text" class="form-control" name="radicado" id="radicado" value="{{$consecutivo}}" disabled> 
                                             @endif
-                                            <input type="hidden" class="form-control" name="radicado_comunicado_manual" id="radicado_comunicado_manual" value="{{$consecutivo}}" disabled>
                                         </div>
                                     </div>                                                                                      
                                 </div>                                
@@ -1586,194 +1543,167 @@
                         </form>
                     </div>
                 @endif
-                <!-- Comunicados - Dictamen y Oficio remisorio -->                    
-                <div class="card-info" id="div_comunicado_dictamen_oficioremisorio">
-                    <div class="card-header text-center" style="border: 1.5px solid black;">
-                        <h5>Comunicados</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">  
-                            <div class="col-12">
-                                <div class="form-group">                                            
-                                    <div class="table-responsive">
-                                        <table id="listado_comunicados_clpcl" class="table table-striped table-bordered" width="100%">
-                                            <thead>
-                                                <tr class="bg-info">
-                                                    <th>N° de Radicado</th>
-                                                    <th>Elaboró</th>
-                                                    <th>Fecha de comunicado</th>
-                                                    <th>Documento</th>
-                                                    <th>Acción</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($array_comunicados_correspondencia as $comunicados)
-                                                <tr>
-                                                    <td>{{$comunicados->N_radicado}}</td>
-                                                    <td>{{$comunicados->Elaboro}}</td>
-                                                    <td>{{$comunicados->F_comunicado}}</td>
-                                                    <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>
-                                                    @if ($comunicados->Ciudad == 'N/A' && $comunicados->Tipo_descarga == "Dictamen")
-                                                        <td style="display: flex; flex-direction:row; justify-content:space-around;">
-                                                            {{-- formulario para descargar dml origen (dictamen) --}}
-                                                            <form id="Form_dml_origen_pdf_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
-                                                                @csrf
-                                                                <div class="d-none">
-                                                                    {{-- ID evento --}}
-                                                                    <input type="text" name="id_evento_{{$comunicados->Id_Comunicado}}" id="id_evento_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->ID_evento)){echo $array_datos_calificacion_origen[0]->ID_evento;} ?>">
-                                                                    {{-- Id asignacion --}}
-                                                                    <input type="text" name="Id_Asignacion_{{$comunicados->Id_Comunicado}}" id="Id_Asignacion_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_Asignacion)){echo $array_datos_calificacion_origen[0]->Id_Asignacion;}?>">
-                                                                    {{-- Id proceso --}}
-                                                                    <input type="text" name="Id_Proceso_{{$comunicados->Id_Comunicado}}" id="Id_Proceso_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_proceso)){echo $array_datos_calificacion_origen[0]->Id_proceso;}?>">
-                                                                    {{-- Fecha Dictamen --}}
-                                                                    <input type="text" name="f_dictamen_{{$comunicados->Id_Comunicado}}" id="f_dictamen_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->F_registro_asignacion)){echo $array_datos_calificacion_origen[0]->F_registro_asignacion;}?>">
-                                                                    {{-- N° Dictamen --}}
-                                                                    <input type="text"name="nro_dictamen_{{$comunicados->Id_Comunicado}}" id="nro_dictamen_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Consecutivo_dictamen)){echo $array_datos_calificacion_origen[0]->Consecutivo_dictamen;}?>">
-                                                                    {{-- motivo solicitud --}}
-                                                                    <input type="text" id="motivo_solicitud_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($motivo_solicitud_actual[0]->Nombre_solicitud)){echo $motivo_solicitud_actual[0]->Nombre_solicitud;}?>">
-                                                                    {{-- Id cliente --}}
-                                                                    <input type="text" name="Id_cliente_{{$comunicados->Id_Comunicado}}" id="Id_cliente_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_cliente)){echo $array_datos_calificacion_origen[0]->Id_cliente;}?>">
-                                                                    {{-- Justificacion para revision del origen del evento --}}
-                                                                    <?php if(!empty($info_adicion_dx[0]->Justificacion_revision_origen)): ?>
-                                                                        <textarea name="justi_revision_origen_{{$comunicados->Id_Comunicado}}" id="justi_revision_origen_{{$comunicados->Id_Comunicado}}" rows="2"><?php echo $info_adicion_dx[0]->Justificacion_revision_origen;?></textarea>
-                                                                    <?php else: ?>
-                                                                        <textarea name="justi_revision_origen_{{$comunicados->Id_Comunicado}}" id="justi_revision_origen_{{$comunicados->Id_Comunicado}}" rows="2"><?php if(!empty($datos_bd_DTO_ATEL[0]->Justificacion_revision_origen)){echo $datos_bd_DTO_ATEL[0]->Justificacion_revision_origen;}?></textarea>
-                                                                    <?php endif ?>
-                                                                    {{-- Tipo de evento --}}
-                                                                    <input type="text" name="nombre_evento_{{$comunicados->Id_Comunicado}}" id="nombre_evento_{{$comunicados->Id_Comunicado}}" value="{{$nombre_del_evento_guardado}}">
-                                                                    {{-- Mortal --}}
-                                                                    <?php if(!empty($info_adicion_dx[0]->Mortal)): ?>
-                                                                        <input type="text" name="mortal_{{$comunicados->Id_Comunicado}}" id="mortal_{{$comunicados->Id_Comunicado}}" value="<?php if($info_adicion_dx[0]->Mortal == "Si"){echo "Si";}else{echo "No";}?>">
-                                                                    <?php else: ?>
-                                                                        <input type="text" name="mortal_{{$comunicados->Id_Comunicado}}" id="mortal_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Mortal)){if($datos_bd_DTO_ATEL[0]->Mortal == "Si"){echo "Si";}else{echo "No";}}?>">
-                                                                    <?php endif ?>
-                                                                    {{-- Fecha fallecimiento --}}
-                                                                    <?php if(!empty($info_adicion_dx[0]->Fecha_fallecimiento)): ?>
-                                                                        <input type="text" name="f_fallecimiento_{{$comunicados->Id_Comunicado}}" id="f_fallecimiento_{{$comunicados->Id_Comunicado}}" value="<?php echo $info_adicion_dx[0]->Fecha_fallecimiento;?>">
-                                                                    <?php else: ?>
-                                                                        <input type="text" name="f_fallecimiento_{{$comunicados->Id_Comunicado}}" id="f_fallecimiento_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento)){echo $datos_bd_DTO_ATEL[0]->Fecha_fallecimiento;}?>">
-                                                                    <?php endif ?>
-                                                                    {{-- Fecha evento --}}
-                                                                    <?php if(!empty($info_adicion_dx[0]->Fecha_evento)): ?>
-                                                                        <input type="text" name="f_evento_{{$comunicados->Id_Comunicado}}" id="f_evento_{{$comunicados->Id_Comunicado}}" value="<?php echo $info_adicion_dx[0]->Fecha_evento;?>">
-                                                                    <?php else: ?>
-                                                                        <input type="text" name="f_evento_{{$comunicados->Id_Comunicado}}" id="f_evento_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_evento)){echo $datos_bd_DTO_ATEL[0]->Fecha_evento;}?>">
-                                                                    <?php endif ?>
-                                                                    {{-- Hora del evento --}}
-                                                                    <?php if(!empty($info_adicion_dx[0]->Hora_evento)): ?>
-                                                                        <input type="time" name="hora_evento_{{$comunicados->Id_Comunicado}}" id="hora_evento_{{$comunicados->Id_Comunicado}}" value="<?php echo $info_adicion_dx[0]->Hora_evento;?>">
-                                                                    <?php else: ?>
-                                                                        <input type="time" name="hora_evento_{{$comunicados->Id_Comunicado}}" id="hora_evento_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Hora_evento)){echo $datos_bd_DTO_ATEL[0]->Hora_evento;}?>">
-                                                                    <?php endif ?>
-                                                                    {{-- Descripción FURAT --}}
-                                                                    <?php if(!empty($info_adicion_dx[0]->Descripcion_FURAT)): ?>
-                                                                        <textarea name="descrip_FURAT_{{$comunicados->Id_Comunicado}}" id="descrip_FURAT_{{$comunicados->Id_Comunicado}}" rows="2"><?php echo $info_adicion_dx[0]->Descripcion_FURAT;?></textarea>
-                                                                    <?php else: ?>
-                                                                        <textarea name="descrip_FURAT_{{$comunicados->Id_Comunicado}}" id="descrip_FURAT_{{$comunicados->Id_Comunicado}}" rows="2"><?php if(!empty($datos_bd_DTO_ATEL[0]->Descripcion_FURAT)){echo $datos_bd_DTO_ATEL[0]->Descripcion_FURAT;}?></textarea>
-                                                                    <?php endif ?>
-                                                                    {{-- Sustentación --}}
-                                                                    {{-- <?php if(!empty($info_adicion_dx[0]->Sustentacion)): ?>
-                                                                        <textarea name="sustentacion_califi_origen_{{$comunicados->Id_Comunicado}}" id="sustentacion_califi_origen_{{$comunicados->Id_Comunicado}}" rows="2"><?php echo $info_adicion_dx[0]->Sustentacion;?></textarea>
-                                                                    <?php else: ?>
-                                                                        <textarea name="sustentacion_califi_origen_{{$comunicados->Id_Comunicado}}" id="sustentacion_califi_origen_{{$comunicados->Id_Comunicado}}" rows="2"><?php if(!empty($datos_bd_DTO_ATEL[0]->Sustentacion)){echo $datos_bd_DTO_ATEL[0]->Sustentacion;}?></textarea>
-                                                                    <?php endif ?> --}}
-                                                                    {{-- Nro de documento --}}
-                                                                    <input type="text" name="num_identificacion_{{$comunicados->Id_Comunicado}}" id="num_identificacion_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nro_identificacion)){echo $array_datos_calificacion_origen[0]->Nro_identificacion;}?>">
-                                                                </div>
-                                                                <button type="submit" id="btn_enviar_form1" style="border: none; background:transparent;">
-                                                                    <i class="far fa-eye text-info"></i>
+            <!-- Comunicados - Dictamen y Oficio remisorio -->                    
+            <div class="card-info" id="div_comunicado_dictamen_oficioremisorio">
+                <div class="card-header text-center" style="border: 1.5px solid black;">
+                    <h5>Comunicados</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">  
+                        <div class="col-12">
+                            <div class="form-group">                                            
+                                <div class="table-responsive">
+                                    <table id="listado_comunicados_clpcl" class="table table-striped table-bordered" width="100%">
+                                        <thead>
+                                            <tr class="bg-info">
+                                                <th>N° de Radicado</th>
+                                                <th>Elaboró</th>
+                                                <th>Fecha de comunicado</th>
+                                                <th>Documento</th>
+                                                <th>Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($array_comunicados_correspondencia as $comunicados)
+                                            <tr>
+                                                <td>{{$comunicados->N_radicado}}</td>
+                                                <td>{{$comunicados->Elaboro}}</td>
+                                                <td>{{$comunicados->F_comunicado}}</td>
+                                                <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>
+                                                @if ($comunicados->Ciudad == 'N/A' && $comunicados->Tipo_descarga == "Dictamen")
+                                                    <td style="display: flex; flex-direction:row; justify-content:space-around;">
+                                                       {{-- Formulario para descargar el dml origen atel previsional (dictamen) --}}
+                                                       <form id="Form_dml_origen_previsional_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
+                                                            @csrf
+                                                            <div class="d-none">
+                                                                {{-- Id cliente --}}
+                                                                <input type="text" name="Id_cliente_{{$comunicados->Id_Comunicado}}" id="Id_cliente_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_cliente)){echo $array_datos_calificacion_origen[0]->Id_cliente;}?>">
+                                                                {{-- Nro de documento --}}
+                                                                <input type="text" name="num_identificacion_{{$comunicados->Id_Comunicado}}" id="num_identificacion_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nro_identificacion)){echo $array_datos_calificacion_origen[0]->Nro_identificacion;}?>">
+                                                                {{-- Nro siniestro --}}
+                                                                <input type="text" name="nro_siniestro_{{$comunicados->Id_Comunicado}}" id="nro_siniestro_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->ID_evento)){echo $array_datos_calificacion_origen[0]->ID_evento;} ?>">
+                                                                {{-- Id asignacion --}}
+                                                                <input type="text" name="Id_Asignacion_{{$comunicados->Id_Comunicado}}" id="Id_Asignacion_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_Asignacion)){echo $array_datos_calificacion_origen[0]->Id_Asignacion;}?>">
+                                                                {{-- Id proceso --}}
+                                                                <input type="text" name="Id_Proceso_{{$comunicados->Id_Comunicado}}" id="Id_Proceso_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_proceso)){echo $array_datos_calificacion_origen[0]->Id_proceso;}?>">
+                                                                {{-- Fecha Concepto --}}
+                                                                <input type="text" name="f_dictamen_{{$comunicados->Id_Comunicado}}" id="f_dictamen_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->F_registro_asignacion)){echo $array_datos_calificacion_origen[0]->F_registro_asignacion;}?>">
+                                                                {{-- Empresa --}}
+                                                                <input type="text" name="empresa_laboral_{{$comunicados->Id_Comunicado}}" id="empresa_laboral_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_info_laboral[0]->Empresa)){ echo $array_datos_info_laboral[0]->Empresa;}?>">
+                                                                {{-- Nit o Cc --}}
+                                                                <input type="text" name="nit_cc_laboral_{{$comunicados->Id_Comunicado}}" id="nit_cc_laboral_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_info_laboral[0]->Nit_o_cc)){echo $array_datos_info_laboral[0]->Nit_o_cc;}?>">
+                                                                {{-- Cargo --}}
+                                                                <input type="text" name="cargo_laboral_{{$comunicados->Id_Comunicado}}" id="cargo_laboral_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_info_laboral[0]->Cargo)){echo $array_datos_info_laboral[0]->Cargo;}?>">
+                                                                {{-- Antiguedad en cargo --}}
+                                                                <input type="number" name="antiguedad_cargo_laboral_{{$comunicados->Id_Comunicado}}" id="antiguedad_cargo_laboral_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_info_laboral[0]->Antiguedad_cargo_empresa)){echo $array_datos_info_laboral[0]->Antiguedad_cargo_empresa;}?>">
+                                                                {{-- Actividad econmica --}}
+                                                                <input type="text" name="act_economica_laboral_{{$comunicados->Id_Comunicado}}" id="act_economica_laboral_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_info_laboral[0]->Id_actividad_economica) && !empty($array_datos_info_laboral[0]->Nombre_actividad)){echo $array_datos_info_laboral[0]->Id_actividad_economica." - ".$array_datos_info_laboral[0]->Nombre_actividad;}?>">
+                                                                {{-- Justificación para revisión del Origen --}}
+                                                                <textarea name="justificacion_revision_origen_{{$comunicados->Id_Comunicado}}" id="justificacion_revision_origen_{{$comunicados->Id_Comunicado}}" rows="2"><?php if(!empty($datos_bd_DTO_ATEL[0]->Justificacion_revision_origen)){echo $datos_bd_DTO_ATEL[0]->Justificacion_revision_origen;}?></textarea>
+                                                                {{-- Tipo de evento --}}
+                                                                <input type="text" name="nombre_evento_{{$comunicados->Id_Comunicado}}" id="nombre_evento_{{$comunicados->Id_Comunicado}}" value="{{$nombre_del_evento_guardado}}">
+                                                                {{-- Fecha evento --}}
+                                                                <input type="text" name="f_evento_{{$comunicados->Id_Comunicado}}" id="f_evento_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_evento)){echo $datos_bd_DTO_ATEL[0]->Fecha_evento;}?>">
+                                                                {{-- Fecha fallecimiento --}}
+                                                                <input type="text" name="f_fallecimiento_{{$comunicados->Id_Comunicado}}" id="f_fallecimiento_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento)){echo $datos_bd_DTO_ATEL[0]->Fecha_fallecimiento;}?>">
+                                                                {{-- Sustentación --}}
+                                                                <textarea name="sustentacion_califi_origen_{{$comunicados->Id_Comunicado}}" id="sustentacion_califi_origen_{{$comunicados->Id_Comunicado}}" rows="2"><?php if(!empty($datos_bd_DTO_ATEL[0]->Sustentacion)){echo $datos_bd_DTO_ATEL[0]->Sustentacion;}?></textarea>
+                                                            </div>
+                                                            <button type="submit" id="btn_enviar_dictamen_previsional" style="border: none; background:transparent;">
+                                                                <i class="far fa-eye text-info"></i>
+                                                            </button>
+                                                        </form>
+                                                        @if ($comunicados['Existe'])
+                                                            <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                    <i class="fas fa-sync-alt text-info"></i>
                                                                 </button>
                                                             </form>
-                                                            @if ($comunicados['Existe'])
-                                                                <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
-                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
-                                                                        <i class="fas fa-sync-alt text-info"></i>
-                                                                    </button>
-                                                                </form>
-                                                            @endif
-                                                        </td>                                                                
-                                                    @elseif ($comunicados->Tipo_descarga == "Manual")
-                                                        <td style="display: flex; flex-direction:row; justify-content:space-around;">
-                                                            <form id="form_descargar_archivo_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" method="POST">
-                                                                <button type="submit" id="btn_descargar_archivo_{{$comunicados->Id_Comunicado}}" style="border: none; background:transparent;">
-                                                                    <i class="far fa-eye text-info"></i>
+                                                        @endif
+                                                    </td>
+                                                @elseif ($comunicados->Tipo_descarga == "Manual")
+                                                    <td style="display: flex; flex-direction:row; justify-content:space-around;">
+                                                        <form id="form_descargar_archivo_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" method="POST">
+                                                            <button type="submit" id="btn_descargar_archivo_{{$comunicados->Id_Comunicado}}" style="border: none; background:transparent;">
+                                                                <i class="far fa-eye text-info"></i>
+                                                            </button>
+                                                        </form>
+                                                        @if ($comunicados['Existe'])
+                                                            <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                    <i class="fas fa-sync-alt text-info"></i>
                                                                 </button>
                                                             </form>
-                                                            @if ($comunicados['Existe'])
-                                                                <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
-                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
-                                                                        <i class="fas fa-sync-alt text-info"></i>
-                                                                    </button>
-                                                                </form>
-                                                            @endif
-                                                        </td>
-                                                    @else
-                                                        <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
-                                                            {{-- formulario para descargar notificacion dml origen (oficio remisorio) --}}
-                                                            <form  id="Form_noti_dml_origen_pdf_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
-                                                                @csrf
-                                                                <div class="d-none">
-                                                                    {{-- tupla tabla comunicados --}}
-                                                                    <input type="text" name="id_tupla_comunicado_{{$comunicados->Id_Comunicado}}" id="id_tupla_comunicado_{{$comunicados->Id_Comunicado}}" value="<?php echo $comunicados->Id_Comunicado;?>">
-                                                                    {{-- Asunto --}}
-                                                                    <input type="text" name="asunto_proforma_dml_{{$comunicados->Id_Comunicado}}" id="asunto_proforma_dml_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_comite_interdisciplinario[0]->Asunto)){echo strtoupper($array_comite_interdisciplinario[0]->Asunto);}else{echo "Sin Asunto";}?>">                                                
-                                                                    {{-- Tipo de documento --}}
-                                                                    <input type="text" name="tipo_identificacion_{{$comunicados->Id_Comunicado}}" id="tipo_identificacion_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nombre_tipo_documento)){echo $array_datos_calificacion_origen[0]->Nombre_tipo_documento;}?>">
-                                                                    {{-- Nro de documento --}}
-                                                                    <input type="text" name="num_identificacion_{{$comunicados->Id_Comunicado}}" id="num_identificacion_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nro_identificacion)){echo $array_datos_calificacion_origen[0]->Nro_identificacion;}?>">
-                                                                    {{-- Siniestro --}}
-                                                                    <input type="text" name="nro_siniestro_{{$comunicados->Id_Comunicado}}" id="nro_siniestro_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->ID_evento)){echo $array_datos_calificacion_origen[0]->ID_evento;} ?>">
-                                                                    {{-- Ciudad --}}
-                                                                    <input type="text" name="ciudad_{{$comunicados->Id_Comunicado}}" id="ciudad_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_comite_interdisciplinario[0]->Ciudad)){echo $array_comite_interdisciplinario[0]->Ciudad;}else{echo "Bogotá D.C.";}?>">       
-                                                                    {{-- Fecha --}}
-                                                                    <input type="date" name="fecha_{{$comunicados->Id_Comunicado}}" id="fecha_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_comite_interdisciplinario[0]->F_correspondecia)){echo $array_comite_interdisciplinario[0]->F_correspondecia;}else{echo now()->format('Y-m-d');}?>">
-                                                                    {{-- Nombre afiliado --}}
-                                                                    <input type="text" name="nombre_afiliado_{{$comunicados->Id_Comunicado}}" id="nombre_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nombre_afiliado)){echo $array_datos_calificacion_origen[0]->Nombre_afiliado;}?>">
-                                                                    {{-- Dirección afliado --}}
-                                                                    <input type="text" name="direccion_afiliado_{{$comunicados->Id_Comunicado}}" id="direccion_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Direccion)){echo $array_datos_calificacion_origen[0]->Direccion;}?>">
-                                                                    {{-- Telefono afiliado --}}
-                                                                    <input type="text" name="telefono_afiliado_{{$comunicados->Id_Comunicado}}" id="telefono_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Telefono_contacto)){echo $array_datos_calificacion_origen[0]->Telefono_contacto;}?>">
-                                                                    {{-- Id asignacion para consultar los diagnosticos --}}
-                                                                    <input type="text" name="Id_Asignacion_consulta_dx_{{$comunicados->Id_Comunicado}}" id="Id_Asignacion_consulta_dx_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_Asignacion)){echo $array_datos_calificacion_origen[0]->Id_Asignacion;}?>">
-                                                                    {{-- Id proceso para consultar los diagnosticos --}}
-                                                                    <input type="text" name="Id_Proceso_consulta_dx_{{$comunicados->Id_Comunicado}}" id="Id_Proceso_consulta_dx_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_proceso)){echo $array_datos_calificacion_origen[0]->Id_proceso;}?>">
-                                                                    {{-- Id del cliente para consultar el nombre del cliente --}}
-                                                                    <input type="text" name="Id_cliente_firma_{{$comunicados->Id_Comunicado}}" id="Id_cliente_firma_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_cliente)){echo $array_datos_calificacion_origen[0]->Id_cliente;}?>">
-                                                                    {{-- Tipo de evento --}}
-                                                                    <input type="text" name="nombre_evento_{{$comunicados->Id_Comunicado}}" id="nombre_evento_{{$comunicados->Id_Comunicado}}" value="{{$nombre_del_evento_guardado}}">
-                                                                </div>
-                                                                <button type="submit" id="btn_enviar_form" style="border: none; background:transparent;">
-                                                                    <i class="far fa-eye text-info"></i>
+                                                        @endif
+                                                    </td>                                                                
+                                                @else
+                                                    <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
+                                                        {{-- formulario Notificación del DML PREVISIONAL (oficio remisorio) --}}
+                                                        <form id="Form_noti_dml_previsional_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
+                                                            <div class="d-none">
+                                                                {{-- tupla tabla comunicados para extraer el nro radicado--}}
+                                                                <input type="text" name="id_tupla_comunicado_{{$comunicados->Id_Comunicado}}" id="id_tupla_comunicado_{{$comunicados->Id_Comunicado}}" value="<?php echo $comunicados->Id_Comunicado;?>">
+                                                                {{-- Id_com_inter --}}
+                                                                <input type="text" name="id_com_inter_{{$comunicados->Id_Comunicado}}" id="id_com_inter_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_comite_interdisciplinario[0]->Id_com_inter)){echo $array_comite_interdisciplinario[0]->Id_com_inter;}?>">
+                                                                {{-- Ciudad --}}
+                                                                <input type="text" name="ciudad_{{$comunicados->Id_Comunicado}}" id="ciudad_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_comite_interdisciplinario[0]->Ciudad)){echo $array_comite_interdisciplinario[0]->Ciudad;}else{echo "Bogotá D.C.";}?>">       
+                                                                {{-- Fecha --}}
+                                                                <input type="date" name="fecha_{{$comunicados->Id_Comunicado}}" id="fecha_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_comite_interdisciplinario[0]->F_correspondecia)){echo $array_comite_interdisciplinario[0]->F_correspondecia;}else{echo now()->format('Y-m-d');}?>">
+                                                                {{-- Asunto --}}
+                                                                <input type="text" name="asunto_proforma_dml_{{$comunicados->Id_Comunicado}}" id="asunto_proforma_dml_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_comite_interdisciplinario[0]->Asunto)){echo strtoupper($array_comite_interdisciplinario[0]->Asunto);}else{echo "Sin Asunto";}?>">                                                
+                                                                {{-- Tipo de documento --}}
+                                                                <input type="text" name="tipo_identificacion_{{$comunicados->Id_Comunicado}}" id="tipo_identificacion_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nombre_tipo_documento)){echo $array_datos_calificacion_origen[0]->Nombre_tipo_documento;}?>">
+                                                                {{-- Nro de documento --}}
+                                                                <input type="text" name="num_identificacion_{{$comunicados->Id_Comunicado}}" id="num_identificacion_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Nro_identificacion)){echo $array_datos_calificacion_origen[0]->Nro_identificacion;}?>">
+                                                                {{-- Siniestro --}}
+                                                                <input type="text" name="nro_siniestro_{{$comunicados->Id_Comunicado}}" id="nro_siniestro_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->ID_evento)){echo $array_datos_calificacion_origen[0]->ID_evento;} ?>">
+                                                                {{-- Nombre afiliado --}}
+                                                                <input type="text" name="nombre_afiliado_{{$comunicados->Id_Comunicado}}" id="nombre_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($afp_afiliado[0]->Nombre_entidad)){echo $afp_afiliado[0]->Nombre_entidad;}?>">
+                                                                {{-- Dirección afliado --}}
+                                                                <input type="text" name="direccion_afiliado_{{$comunicados->Id_Comunicado}}" id="direccion_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($afp_afiliado[0]->Direccion)){echo $afp_afiliado[0]->Direccion;}?>">
+                                                                {{-- Telefono afiliado --}}
+                                                                <input type="text" name="telefono_afiliado_{{$comunicados->Id_Comunicado}}" id="telefono_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($afp_afiliado[0]->Telefonos)){echo $afp_afiliado[0]->Telefonos;}?>">
+                                                                {{-- Ciudad afiliado --}}
+                                                                <input type="text" name="ciudad_afiliado_{{$comunicados->Id_Comunicado}}" id="ciudad_afiliado_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($afp_afiliado[0]->Nombre_ciudad)){echo $afp_afiliado[0]->Nombre_ciudad;}?>">
+                                                                {{-- Id asignacion --}}
+                                                                <input type="text" name="Id_Asignacion_consulta_{{$comunicados->Id_Comunicado}}" id="Id_Asignacion_consulta_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_Asignacion)){echo $array_datos_calificacion_origen[0]->Id_Asignacion;}?>">
+                                                                {{-- Id del cliente para consultar el nombre del cliente --}}
+                                                                <input type="text" name="Id_cliente_firma_{{$comunicados->Id_Comunicado}}" id="Id_cliente_firma_{{$comunicados->Id_Comunicado}}" value="<?php if(!empty($array_datos_calificacion_origen[0]->Id_cliente)){echo $array_datos_calificacion_origen[0]->Id_cliente;}?>">
+                                                            </div>
+
+                                                            <button type="submit" id="enviar_form_noti_previsional" style="border: none; background:transparent;">
+                                                                <i class="far fa-eye text-info"></i>
+                                                            </button>
+                                                        </form>
+                                                        <label for="editar_correspondencia"><i class="fa fa-pen text-info"></i></label>
+                                                        <input class="btn btn-icon-only text-info btn-sm" id="editar_correspondencia" type="button" style="font-weight: bold;">
+                                                        @if ($comunicados['Existe'])
+                                                            <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                    <i class="fas fa-sync-alt text-info"></i>
                                                                 </button>
                                                             </form>
-                                                            <i class="fa fa-pen text-info" id="editar_correspondencia" style="cursor: pointer;"></i>
-                                                            @if ($comunicados['Existe'])
-                                                                <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
-                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
-                                                                        <i class="fas fa-sync-alt text-info"></i>
-                                                                    </button>
-                                                                </form>
-                                                            @endif
-                                                        </td>
-                                                    @endif
-                                                </tr>                                                        
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                        <div class="alert alert-danger cargueundocumentoprimero d-none" role="alert">
-                                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Por favor, adjunta un documento antes de cargar. 
-                                        </div>
-                                        <div class="alerta_externa_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
-                                        <div style="display: flex; flex-direction:row; justify-content:flex-end; gap:2px;"> <!-- Alinea el contenido a la derecha -->
-                                            <input style="width:40%" type="file" class="form-control select-doc" name="cargue_comunicados" id="cargue_comunicados" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx"/>
-                                            <button class="btn-info" id="cargarComunicado">Cargar</button>
-                                        </div>
+                                                        @endif
+                                                    </td>
+                                                @endif
+                                            </tr>                                                        
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                    <div class="alert alert-danger cargueundocumentoprimero d-none" role="alert">
+                                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Por favor, adjunta un documento antes de cargar. 
+                                    </div>
+                                    <div class="alerta_externa_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                                    <div style="display: flex; flex-direction:row; justify-content:flex-end; gap:2px;"> <!-- Alinea el contenido a la derecha -->
+                                        <input style="width:40%" type="file" class="form-control select-doc" name="cargue_comunicados" id="cargue_comunicados" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx"/>
+                                        <button class="btn-info" id="cargarComunicado">Cargar</button>
                                     </div>
                                 </div>
-                            </div>                     
-                        </div>                                                                
-                    </div>
-                </div>  
+                            </div>
+                        </div>                     
+                    </div>                                                                
+                </div>
+            </div>  
             </div>
         </div>
         <?php endif?>
@@ -1799,7 +1729,6 @@
         <button type="submit" id="botonVerEdicionEvento" style="display:none !important;"></button>
    </form>
    @include('//.coordinador.modalReemplazarArchivos')
-
 @stop
 
 @section('js')
@@ -1916,7 +1845,7 @@
             listado_diagnostico_cie10_visual.row("."+nombre_cie10_fila_vis).remove().draw();
         });
 
-
+        
 
         //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE DIAGNOSTCO CIE10 ADICIONALES
         var listado_diagnostico_cie10 = $('#listado_diagnostico_cie10').DataTable({
@@ -1956,7 +1885,7 @@
             $(agregar_cie10_fila).addClass('fila_'+contador_cie10);
             $(agregar_cie10_fila).attr("id", 'fila_'+contador_cie10);
 
-            // Esta función realiza los controles de cada elemento por fila (está dentro del archivo adicion_dx_dto.js)
+            // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionpcl.js)
             funciones_elementos_fila_diagnosticos(contador_cie10);
             
             array_ids_checkboxes_nuevos.push("checkbox_dx_principal_Cie10_"+contador_cie10);
@@ -1968,7 +1897,7 @@
             listado_diagnostico_cie10.row("."+nombre_cie10_fila).remove().draw();
         });
 
-        $(document).on('click', "a[id^='btn_remover_diagnosticos_moticalifi_']", function(){
+        $(document).on('click', "a[id^='btn_remover_diagnosticos_moticalifi']", function(){
             var nombre_cie10_fila = $(this).data("clase_fila");
             listado_diagnostico_cie10.row("."+nombre_cie10_fila).remove().draw();
         });
