@@ -4787,7 +4787,7 @@ $(document).ready(function(){
         $(".columna_row1_dictamen").addClass('d-none');
         $("#div_comite_interdisciplinario").addClass('d-none');
         $("#div_correspondecia").addClass('d-none');
-        $("label[for='editar_correspondencia']").addClass('d-none');
+        $("#editar_correspondencia").addClass('d-none');
     }
 
     // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:

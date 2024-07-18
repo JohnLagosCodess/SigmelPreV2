@@ -934,7 +934,7 @@ class RecalificacionPCLController extends Controller
                 })
                 ->where('sicie.ID_evento', $Id_evento_recali)
                 ->where('sicie.Id_Asignacion', $Id_asignacion_recali)
-                ->select('sicie.*', 'sice.Id_Comunicado', 'sice.Reemplazado', 'sice.Nombre_documento')
+                ->select('sicie.*', 'sice.Id_Comunicado', 'sice.Reemplazado', 'sice.Nombre_documento','sice.N_siniestro')
                 ->get();
                 foreach ($array_comunicados_comite_interre as $comunicado_inter) {
                     if ($comunicado_inter->Nombre_documento != null) {
@@ -1559,7 +1559,7 @@ class RecalificacionPCLController extends Controller
                 })
                 ->where('sicie.ID_evento', $Id_evento_recali)
                 ->where('sicie.Id_Asignacion', $Id_asignacion_recali)
-                ->select('sicie.*', 'sice.Id_Comunicado', 'sice.Reemplazado', 'sice.Nombre_documento')
+                ->select('sicie.*', 'sice.Id_Comunicado', 'sice.Reemplazado', 'sice.Nombre_documento','sice.N_siniestro')
                 ->get();
                 foreach ($array_comunicados_comite_interre as $comunicado_inter) {
                     if ($comunicado_inter->Nombre_documento != null) {
@@ -2396,7 +2396,7 @@ class RecalificacionPCLController extends Controller
                 })
                 ->where('sicie.ID_evento', $Id_evento_recali)
                 ->where('sicie.Id_Asignacion', $Id_asignacion_recali)
-                ->select('sicie.*', 'sice.Id_Comunicado', 'sice.Reemplazado', 'sice.Nombre_documento')
+                ->select('sicie.*', 'sice.Id_Comunicado', 'sice.Reemplazado', 'sice.Nombre_documento','sice.N_siniestro')
                 ->get();
                 foreach ($array_comunicados_comite_interre as $comunicado_inter) {
                     if ($comunicado_inter->Nombre_documento != null) {
