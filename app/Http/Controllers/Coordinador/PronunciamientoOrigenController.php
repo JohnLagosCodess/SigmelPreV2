@@ -1058,13 +1058,21 @@ class PronunciamientoOrigenController extends Controller
         extract($total_copias);
         
         $Agregar_copias = [];
+
         if (isset($copia_afiliado)) {
-            $emailAfiliado = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-            ->select('Email')
-            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $nro_siniestro]])
+            $AfiliadoData = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->select('siae.Nombre_afiliado', 'siae.Direccion', 'siae.Telefono_contacto', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio', 'siae.Email')
+            ->where([['siae.Nro_identificacion', $num_identificacion],['siae.ID_evento', $nro_siniestro]])
             ->get();
-            $afiliadoEmail = $emailAfiliado[0]->Email;            
-            $Agregar_copias['Afiliado'] = $afiliadoEmail;            
+            $nombreAfiliado = $AfiliadoData[0]->Nombre_afiliado;
+            $direccionAfiliado = $AfiliadoData[0]->Direccion;
+            $telefonoAfiliado = $AfiliadoData[0]->Telefono_contacto;
+            $ciudadAfiliado = $AfiliadoData[0]->Nombre_ciudad;
+            $municipioAfiliado = $AfiliadoData[0]->Nombre_municipio;
+            $emailAfiliado = $AfiliadoData[0]->Email;            
+            $Agregar_copias['Afiliado'] = $nombreAfiliado."; ".$direccionAfiliado."; ".$emailAfiliado."; ".$telefonoAfiliado."; ".$ciudadAfiliado."; ".$municipioAfiliado.".";          
         }
 
         if(isset($copia_empleador)){
