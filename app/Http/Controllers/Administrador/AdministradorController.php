@@ -2482,6 +2482,17 @@ class AdministradorController extends Controller
             switch(true)
             {
                 case($request->id_proceso_actual == 1):
+                    $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+                    ->select('Id_servicio')
+                    ->where([
+                        ['Id_proceso',$request->id_proceso_actual],
+                        ['Id_cliente',$request->id_cliente]
+                    ])->get();
+
+                    $servicio_cliente = array();
+                    for ($i=0; $i < count($servicios_contratados); $i++) { 
+                        array_push($servicio_cliente, $servicios_contratados[$i]->Id_servicio);
+                    }
                     $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
                     ->select('Id_Servicio', 'Nombre_servicio')
                     ->where([
@@ -2489,10 +2500,22 @@ class AdministradorController extends Controller
                         ['Estado', '=', 'activo']
                     ])
                     ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                    ->whereIn('Id_Servicio', $servicio_cliente)
                     ->where('Id_Servicio', '<>', 1)
                     ->get();
                 break;
                 case($request->id_proceso_actual == 2):
+                    $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+                    ->select('Id_servicio')
+                    ->where([
+                        ['Id_proceso',$request->id_proceso_actual],
+                        ['Id_cliente',$request->id_cliente]
+                    ])->get();
+
+                    $servicio_cliente = array();
+                    for ($i=0; $i < count($servicios_contratados); $i++) { 
+                        array_push($servicio_cliente, $servicios_contratados[$i]->Id_servicio);
+                    }
                     $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
                     ->select('Id_Servicio', 'Nombre_servicio')
                     ->where([
@@ -2500,33 +2523,33 @@ class AdministradorController extends Controller
                         ['Estado', '=', 'activo']
                     ])
                     ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                    ->whereIn('Id_Servicio', $servicio_cliente)
                     ->where('Id_Servicio', '<>', 6)
                     ->get();
                 break;
-                // case($request->id_proceso_escogido == 3):
-                //     $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
-                //     ->select('Id_servicio')
-                //     ->where([
-                //         ['Id_proceso',$request->id_proceso_escogido],
-                //         ['Id_cliente',$request->id_cliente]
-                //     ])->get();
+                case($request->id_proceso_escogido == 3):
+                    $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+                    ->select('Id_servicio')
+                    ->where([
+                        ['Id_proceso',$request->id_proceso_escogido],
+                        ['Id_cliente',$request->id_cliente]
+                    ])->get();
 
-                //     $servicio_cliente = array();
-                //     for ($i=0; $i < count($servicios_contratados); $i++) { 
-                //         array_push($servicio_cliente, $servicios_contratados[$i]->Id_servicio);
-                //     }
+                    $servicio_cliente = array();
+                    for ($i=0; $i < count($servicios_contratados); $i++) { 
+                        array_push($servicio_cliente, $servicios_contratados[$i]->Id_servicio);
+                    }
 
-                //     $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
-                //     ->select('Id_Servicio', 'Nombre_servicio')
-                //     ->where([
-                //         ['Id_proceso', '=', $request->id_proceso_escogido],
-                //         ['Estado', '=', 'activo']
-                //     ])
-                //     ->whereNotIn('Id_Servicio', $string_ids_servicios)
-                //     ->whereIn('Id_Servicio', $servicio_cliente)
-                //     ->get();
-
-                // break;
+                    $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                    ->select('Id_Servicio', 'Nombre_servicio')
+                    ->where([
+                        ['Id_proceso', '=', $request->id_proceso_escogido],
+                        ['Estado', '=', 'activo']
+                    ])
+                    ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                    ->whereIn('Id_Servicio', $servicio_cliente)
+                    ->get();
+                break;
                 default:
                     $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
                     ->select('Id_Servicio', 'Nombre_servicio')
@@ -2538,7 +2561,7 @@ class AdministradorController extends Controller
                     ->whereNotIn('Id_Servicio', $string_ids_servicios)
                     ->get();
                 break;
-            }  
+            }
 
             $info_listado_servicios = json_decode(json_encode($listado_servicios, true));
             return response()->json(($info_listado_servicios));
@@ -2743,6 +2766,18 @@ class AdministradorController extends Controller
             switch(true)
             {
                 case($request->id_proceso_escogido == 1):
+                    $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+                    ->select('Id_servicio')
+                    ->where([
+                        ['Id_proceso',$request->id_proceso_escogido],
+                        ['Id_cliente',$request->id_cliente]
+                    ])->get();
+
+                    $servicio_cliente = array();
+                    for ($i=0; $i < count($servicios_contratados); $i++) { 
+                        array_push($servicio_cliente, $servicios_contratados[$i]->Id_servicio);
+                    }
+
                     $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
                     ->select('Id_Servicio', 'Nombre_servicio')
                     ->where([
@@ -2750,10 +2785,23 @@ class AdministradorController extends Controller
                         ['Estado', '=', 'activo']
                     ])
                     ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                    ->whereIn('Id_Servicio', $servicio_cliente)
                     // ->where('Id_Servicio', '<>', 2)
                     ->get();
                 break;
                 case($request->id_proceso_escogido == 2):
+                    $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+                    ->select('Id_servicio')
+                    ->where([
+                        ['Id_proceso',$request->id_proceso_escogido],
+                        ['Id_cliente',$request->id_cliente]
+                    ])->get();
+
+                    $servicio_cliente = array();
+                    for ($i=0; $i < count($servicios_contratados); $i++) { 
+                        array_push($servicio_cliente, $servicios_contratados[$i]->Id_servicio);
+                    }
+
                     $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
                     ->select('Id_Servicio', 'Nombre_servicio')
                     ->where([
@@ -2761,6 +2809,7 @@ class AdministradorController extends Controller
                         ['Estado', '=', 'activo']
                     ])
                     ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                    ->whereIn('Id_Servicio', $servicio_cliente)
                     // ->whereNotIn('Id_Servicio', [7,8])
                     ->get();
                 break;
