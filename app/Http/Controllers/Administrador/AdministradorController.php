@@ -2735,7 +2735,7 @@ class AdministradorController extends Controller
             }
             
             $tamanio = count($string_ids_servicios);
-            for ($a = 0; $a < $tamanio; $a++) { 
+            for ($a = 0; $a <= $tamanio || $a > $tamanio; $a++) {                 
                 if (in_array(12, $string_ids_servicios)) {
                     // Eliminar el valor 12 del array
                     $index = array_search(12, $string_ids_servicios);
@@ -2752,11 +2752,28 @@ class AdministradorController extends Controller
                     $string_ids_servicios = array_values($string_ids_servicios);
                     // Actualizar el tamaño del array
                     $tamanio = count($string_ids_servicios);
-                } else {
+                } else if (in_array(3, $string_ids_servicios)) {                    
+                    // Eliminar el valor 3 del array
+                    $index = array_search(3, $string_ids_servicios);
+                    unset($string_ids_servicios[$index]);
+                    // Reindexar el array después de eliminar un elemento
+                    $string_ids_servicios = array_values($string_ids_servicios);                    
+                    // Actualizar el tamaño del array
+                    $tamanio = count($string_ids_servicios);                    
+                } else if (in_array(9, $string_ids_servicios)) {
+                    // Eliminar el valor 9 del array
+                    $index = array_search(9, $string_ids_servicios);
+                    unset($string_ids_servicios[$index]);
+                    // Reindexar el array después de eliminar un elemento
+                    $string_ids_servicios = array_values($string_ids_servicios);
+                    // Actualizar el tamaño del array
+                    $tamanio = count($string_ids_servicios);
+                } 
+                else {
                     // Si el valor 12,12 ya no está en el array, salimos del bucle
                     break;
                 }
-            }
+            } 
             // Despues de obtener los servicios de cada proceso se realiza las siguiente validaciones 
             // segun el caso
             // CASO 1: traer servicios del proceso Origen distintos a la Adicion Dx (ESTO YA NO VA DEBIDO A LA FICHA PBS-051)
@@ -2838,14 +2855,7 @@ class AdministradorController extends Controller
 
                 break;
                 default:
-                    $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
-                    ->select('Id_Servicio', 'Nombre_servicio')
-                    ->where([
-                        ['Id_proceso', '=', $request->id_proceso_escogido],
-                        ['Estado', '=', 'activo']
-                    ])
-                    ->whereNotIn('Id_Servicio', $string_ids_servicios)
-                    ->get();
+                    
                 break;
             }                     
 
