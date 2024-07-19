@@ -1816,8 +1816,15 @@ $(document).ready(function(){
             formData.append('n_radicado', $(comunicado_reemplazar).data('numero_radicado'));
             formData.append('numero_identificacion', $(comunicado_reemplazar).data('numero_identificacion'))
             formData.append('modulo_creacion', 'calificacionOrigen');
-            formData.append('asunto', $(comunicado_reemplazar).data('asunto_comunicado'));
-            formData.append('nombre_documento', $(comunicado_reemplazar).data('nombre_documento'))
+            if($(comunicado_reemplazar).data('tipo_descarga') === 'Manual'){
+                formData.append('nombre_documento', archivo.name);
+                formData.append('asunto', archivo.name);
+                formData.append('nombre_anterior', $(comunicado_reemplazar).data('nombre_documento'));
+            }else{
+                formData.append('nombre_documento', $(comunicado_reemplazar).data('nombre_documento'));
+                formData.append('asunto', $(comunicado_reemplazar).data('asunto_comunicado'));
+                formData.append('nombre_anterior', '');
+            }
             $.ajax({
                 type:'POST',
                 url:'/reemplazarDocumento',
