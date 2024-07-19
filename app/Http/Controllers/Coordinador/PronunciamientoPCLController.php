@@ -1228,7 +1228,6 @@ class PronunciamientoPCLController extends Controller
         ->select('Footer_cliente')
         ->where([['Id_cliente', $Cliente]])
         ->limit(1)->get();
-
         if (count($dato_logo_footer) > 0 && $dato_logo_footer[0]->Footer_cliente != null) {
             $footer = $dato_logo_footer[0]->Footer_cliente;
             $ruta_logo_footer = "/footer_clientes/{$Cliente}/{$footer}";
