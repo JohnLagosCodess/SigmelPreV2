@@ -37,6 +37,8 @@ use App\Models\sigmel_informacion_acciones_automaticas_eventos;
 use App\Models\sigmel_informacion_alertas_automaticas_eventos;
 use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_historial_accion_eventos;
+use App\Models\sigmel_auditorias_informacion_accion_eventos;
+
 use DateTime;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
@@ -663,6 +665,28 @@ class CalificacionJuntasController extends Controller
             ];
 
             $Id_Accion_eventos = sigmel_informacion_accion_eventos::on('sigmel_gestiones')->insertGetId($datos_info_registrarCalifcacionJuntas);
+
+            // Realizamos la inserción a la tabla de auditoria sigmel_auditorias_informacion_accion_eventos
+            $aud_datos_info_registrarCalifcacionJuntas= [
+                'Aud_ID_evento' => $request->newId_evento,
+                'Aud_Id_Asignacion' => $request->newId_asignacion,
+                'Aud_Id_proceso' => $request->Id_proceso,
+                'Aud_Modalidad_calificacion' => 'N/A',
+                'Aud_F_accion' => $date_time,
+                'Aud_Accion' => $request->accion,
+                'Aud_F_Alerta' => $request->fecha_alerta,
+                'Aud_Enviar' => $request->enviar,
+                'Aud_Estado_Facturacion' => $request->estado_facturacion,
+                'Aud_Causal_devolucion_comite' => 'N/A',
+                'Aud_Descripcion_accion' => $request->descripcion_accion,
+                'Aud_F_cierre' => $request->fecha_cierre,
+                'Aud_Nombre_usuario' => $nombre_usuario,
+				'Aud_F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
+                'Aud_Fuente_informacion' => $request->fuente_info_juntas,
+                'Aud_F_registro' => $date,
+            ];
+            sigmel_auditorias_informacion_accion_eventos::on('sigmel_auditorias')->insert($aud_datos_info_registrarCalifcacionJuntas);
+
             // Capturar el id accion para validar la accion que se acabo de guardar
             $info_accion_evento = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
             ->select('Accion', 'F_accion')
@@ -1179,6 +1203,27 @@ class CalificacionJuntasController extends Controller
 
             sigmel_informacion_accion_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_registrarCalifcacionJuntas);
+
+            // Realizamos la inserción a la tabla de auditoria sigmel_auditorias_informacion_accion_eventos
+            $aud_datos_info_registrarCalifcacionJuntas= [
+                'Aud_ID_evento' => $request->newId_evento,
+                'Aud_Id_Asignacion' => $request->newId_asignacion,
+                'Aud_Id_proceso' => $request->Id_proceso,
+                'Aud_Modalidad_calificacion' => 'N/A',
+                'Aud_F_accion' => $date_time,
+                'Aud_Accion' => $request->accion,
+                'Aud_F_Alerta' => $request->fecha_alerta,
+                'Aud_Enviar' => $request->enviar,
+                'Aud_Estado_Facturacion' => $request->estado_facturacion,
+                'Aud_Causal_devolucion_comite' => 'N/A',
+                'Aud_Descripcion_accion' => $request->descripcion_accion,
+                'Aud_F_cierre' => $request->fecha_cierre,
+                'Aud_Nombre_usuario' => $nombre_usuario,
+				'Aud_F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
+                'Aud_Fuente_informacion' => $request->fuente_info_juntas,
+                'Aud_F_registro' => $date,
+            ];
+            sigmel_auditorias_informacion_accion_eventos::on('sigmel_auditorias')->insert($aud_datos_info_registrarCalifcacionJuntas);
 
             //Capturar el id accion para validar la accion que se acabo de guardar
             $info_accion_evento = sigmel_informacion_accion_eventos::on('sigmel_gestiones')

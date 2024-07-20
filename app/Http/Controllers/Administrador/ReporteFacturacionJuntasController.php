@@ -140,7 +140,7 @@ class ReporteFacturacionJuntasController extends Controller
                 'Fecha_Envio_Efectvio_A_La_Jr'
             )
             ->whereRaw('DATE(F_accion) BETWEEN ? AND ?', [$fecha_desde, $fecha_hasta])
-            ->orderBy('ID_evento', 'desc')
+            ->orderBy('F_accion', 'asc')
             ->get();
             $array_reporte_facturacion_juntas = json_decode(json_encode($reporte_facturacion_juntas, true)); 
             return response()->json($array_reporte_facturacion_juntas);

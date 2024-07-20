@@ -20,6 +20,7 @@ use App\Models\sigmel_lista_regional_juntas;
 use App\Models\sigmel_lista_solicitantes;
 use App\Models\sigmel_clientes;
 use App\Models\sigmel_informacion_firmas_clientes;
+use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
 
 use PhpOffice\PhpWord\PhpWord;
@@ -849,6 +850,17 @@ class ControversiaJuntasController extends Controller
                
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
             ->insert($datos_info_controvertido_juntas);
+
+            sleep(2);
+
+            // Actualizacion del profesional calificador
+            $datos_profesional_calificador = [
+                'Id_profesional' => Auth::user()->id,
+                'Nombre_profesional' => $nombre_usuario
+            ];
+
+            sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            ->where('Id_Asignacion', $newIdAsignacion)->update($datos_profesional_calificador);
     
             $mensajes = array(
                 "parametro" => 'registro_revision_jrci',
