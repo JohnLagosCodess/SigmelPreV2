@@ -934,7 +934,7 @@ class RecalificacionPCLController extends Controller
                 })
                 ->where('sicie.ID_evento', $Id_evento_recali)
                 ->where('sicie.Id_Asignacion', $Id_asignacion_recali)
-                ->select('sicie.*', 'sice.Id_Comunicado', 'sice.Reemplazado', 'sice.Nombre_documento')
+                ->select('sicie.*', 'sice.Id_Comunicado', 'sice.Reemplazado', 'sice.Nombre_documento','sice.N_siniestro')
                 ->get();
                 foreach ($array_comunicados_comite_interre as $comunicado_inter) {
                     if ($comunicado_inter->Nombre_documento != null) {
@@ -1559,7 +1559,7 @@ class RecalificacionPCLController extends Controller
                 })
                 ->where('sicie.ID_evento', $Id_evento_recali)
                 ->where('sicie.Id_Asignacion', $Id_asignacion_recali)
-                ->select('sicie.*', 'sice.Id_Comunicado', 'sice.Reemplazado', 'sice.Nombre_documento')
+                ->select('sicie.*', 'sice.Id_Comunicado', 'sice.Reemplazado', 'sice.Nombre_documento','sice.N_siniestro')
                 ->get();
                 foreach ($array_comunicados_comite_interre as $comunicado_inter) {
                     if ($comunicado_inter->Nombre_documento != null) {
@@ -2396,7 +2396,7 @@ class RecalificacionPCLController extends Controller
                 })
                 ->where('sicie.ID_evento', $Id_evento_recali)
                 ->where('sicie.Id_Asignacion', $Id_asignacion_recali)
-                ->select('sicie.*', 'sice.Id_Comunicado', 'sice.Reemplazado', 'sice.Nombre_documento')
+                ->select('sicie.*', 'sice.Id_Comunicado', 'sice.Reemplazado', 'sice.Nombre_documento','sice.N_siniestro')
                 ->get();
                 foreach ($array_comunicados_comite_interre as $comunicado_inter) {
                     if ($comunicado_inter->Nombre_documento != null) {
@@ -5684,7 +5684,7 @@ class RecalificacionPCLController extends Controller
         $Id_Proceso_comuni = $request->Id_Proceso_comuni;
         $Radicado_comuni = $request->Radicado_comuni;
         $Id_Comunicado = $request->Id_Comunicado;
-        $N_siniestro = $request->N_siniestro;
+        // $N_siniestro = $request->N_siniestro;
         
         $formattedData = "";
 
@@ -5738,9 +5738,10 @@ class RecalificacionPCLController extends Controller
         'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
         'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slpa.Nombre_parametro as Nombre_enfermedad', 'side.Requiere_tercera_persona', 
         'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.N_radicado', 
-        'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro')
+        'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro', 'side.N_siniestro')
         ->where([['side.ID_Evento',$ID_Evento_comuni], ['side.Id_Asignacion',$Id_Asignacion_comuni]])->get();        
         $DictamenNo = $array_datos_info_dictamen[0]->Numero_dictamen;
+        $N_siniestro = $array_datos_info_dictamen[0]->N_siniestro;
                 
         $motivo_solicitud_dictamen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_pericial_eventos as sipe')
         ->leftJoin('sigmel_gestiones.sigmel_lista_motivo_solicitudes as slms', 'slms.Id_Solicitud', '=', 'sipe.Id_motivo_solicitud')
@@ -6280,7 +6281,7 @@ class RecalificacionPCLController extends Controller
         $Id_Proceso_comuni = $request->Id_Proceso_comuni;
         $Radicado_comuni = $request->Radicado_comuni;
         $Id_Comunicado = $request->Id_Comunicado;
-        $N_siniestro = $request->N_siniestro;
+        // $N_siniestro = $request->N_siniestro;
         
         $formattedData = "";
 
@@ -6334,10 +6335,10 @@ class RecalificacionPCLController extends Controller
         'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
         'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slpa.Nombre_parametro as Nombre_enfermedad', 'side.Requiere_tercera_persona', 
         'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.N_radicado', 
-        'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro')
+        'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro','side.N_siniestro')
         ->where([['side.ID_Evento',$ID_Evento_comuni], ['side.Id_Asignacion',$Id_Asignacion_comuni]])->get();        
         $DictamenNo = $array_datos_info_dictamen[0]->Numero_dictamen;
-                
+        $N_siniestro = $array_datos_info_dictamen[0]->N_siniestro;
         $motivo_solicitud_dictamen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_pericial_eventos as sipe')
         ->leftJoin('sigmel_gestiones.sigmel_lista_motivo_solicitudes as slms', 'slms.Id_Solicitud', '=', 'sipe.Id_motivo_solicitud')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sipe.Regimen_salud')
@@ -6696,7 +6697,7 @@ class RecalificacionPCLController extends Controller
         $Radicado_comuni_comite = $request->Radicado_comuni_comite;
         $Firma_comuni_comite = $request->Firma_comuni_comite;
         $Id_Comunicado = $request->Id_Comunicado;
-        $N_siniestro = $request->N_siniestro;
+        // $N_siniestro = $request->N_siniestro;
 
         $formattedData = "";
 
@@ -6946,9 +6947,9 @@ class RecalificacionPCLController extends Controller
         'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
         'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slpa.Nombre_parametro as Nombre_enfermedad', 'side.Requiere_tercera_persona', 
         'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.N_radicado', 
-        'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro')
+        'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro','side.N_siniestro')
         ->where([['side.ID_Evento',$ID_Evento_comuni_comite], ['side.Id_Asignacion',$Id_Asignacion_comuni_comite]])->get(); 
-        
+        $N_siniestro = $array_datos_info_dictamen[0]->N_siniestro;
         $PorcentajePcl_dp = $array_datos_info_dictamen[0]->Porcentaje_pcl;
         $F_estructuracionPcl_dp = $array_datos_info_dictamen[0]->F_estructuracion;
         $OrigenPcl_dp = $array_datos_info_dictamen[0]->Nombre_origen;  
@@ -8282,9 +8283,11 @@ class RecalificacionPCLController extends Controller
         'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
         'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slpa.Nombre_parametro as Nombre_enfermedad', 'side.Requiere_tercera_persona', 
         'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.N_radicado', 
-        'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro')
-        ->where([['side.ID_Evento',$ID_Evento_comuni], ['side.Id_Asignacion',$Id_Asignacion_comuni]])->get();        
+        'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro', 'side.N_siniestro')
+        ->where([['side.ID_Evento',$ID_Evento_comuni], ['side.Id_Asignacion',$Id_Asignacion_comuni]])->get();  
+        $N_siniestro = $array_datos_info_dictamen[0]->N_siniestro;
         $DictamenNo = $array_datos_info_dictamen[0]->Numero_dictamen;
+        
                 
         $motivo_solicitud_dictamen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_pericial_eventos as sipe')
         ->leftJoin('sigmel_gestiones.sigmel_lista_motivo_solicitudes as slms', 'slms.Id_Solicitud', '=', 'sipe.Id_motivo_solicitud')
@@ -8741,7 +8744,8 @@ class RecalificacionPCLController extends Controller
             'Numero_documento_afiliado' => $Numero_documento_afiliado,
             'Documento_afiliado' => $Documento_afiliado,
             'Nombre_afiliado_pre' => $Nombre_afiliado_pre,
-            'validacion_visado' => $validacion_visado
+            'validacion_visado' => $validacion_visado,
+            'N_siniestro' => $N_siniestro
         ];
 
         // Crear una instancia de Dompdf
@@ -8983,9 +8987,9 @@ class RecalificacionPCLController extends Controller
         'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
         'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slpa.Nombre_parametro as Nombre_enfermedad', 'side.Requiere_tercera_persona', 
         'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.N_radicado', 
-        'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro')
+        'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro','side.N_siniestro')
         ->where([['side.ID_Evento',$ID_Evento_comuni_comite], ['side.Id_Asignacion',$Id_Asignacion_comuni_comite]])->get(); 
-        
+        $N_siniestro = $array_datos_info_dictamen[0]->N_siniestro;
         $PorcentajePcl_cero = 0;
 
         // Captura de los nombres CIE10
@@ -9130,6 +9134,7 @@ class RecalificacionPCLController extends Controller
             'Telefono_arl' => $Telefono_arl,
             'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
             'footer' => $footer,
+            'N_siniestro' => $N_siniestro,
             // 'footer_dato_1' => $footer_dato_1,
             // 'footer_dato_2' => $footer_dato_2,
             // 'footer_dato_3' => $footer_dato_3,

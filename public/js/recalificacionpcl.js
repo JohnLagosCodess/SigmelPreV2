@@ -1900,8 +1900,15 @@ $(document).ready(function(){
             formData.append('n_radicado', comunicado_reemplazar.N_radicado);
             formData.append('numero_identificacion', comunicado_reemplazar.N_identificacion);
             formData.append('modulo_creacion', 'recalificacionPCL');
-            formData.append('asunto', comunicado_reemplazar.Asunto);
-            formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
+            if(comunicado_reemplazar.Tipo_descarga === 'Manual'){
+                formData.append('nombre_documento', archivo.name);
+                formData.append('asunto', archivo.name);
+                formData.append('nombre_anterior', comunicado_reemplazar.Nombre_documento);
+            }else{
+                formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
+                formData.append('asunto', comunicado_reemplazar.Asunto);
+                formData.append('nombre_anterior', '');
+            }
             $.ajax({
                 type:'POST',
                 url:'/reemplazarDocumento',
@@ -3912,8 +3919,6 @@ $(document).ready(function(){
         var Asunto = $('#Asunto').val();
         var cuerpo_comunicado = $('#cuerpo_comunicado').val();
         var cuerpo_comunicado_formatos_pension = $('#cuerpo_comunicado_formatos_pension').val();
-        cuerpo_comunicado = cuerpo_comunicado ? cuerpo_comunicado.replace(/"/g, "'") : '';
-        cuerpo_comunicado_formatos_pension = cuerpo_comunicado_formatos_pension.replace(/"/g, "'");
         if (cuerpo_comunicado == '' || cuerpo_comunicado == undefined) {
             var cuerpo_comunicadoPcl = cuerpo_comunicado_formatos_pension;
         } else {
@@ -4789,7 +4794,7 @@ $(document).ready(function(){
         $(".columna_row1_dictamen").addClass('d-none');
         $("#div_comite_interdisciplinario").addClass('d-none');
         $("#div_correspondecia").addClass('d-none');
-        $("label[for='editar_correspondencia']").addClass('d-none');
+        $("#editar_correspondencia").addClass('d-none');
     }
 
     // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:

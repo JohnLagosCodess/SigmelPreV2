@@ -474,6 +474,49 @@ $(document).ready(function(){
 
     });
 
+    // Funcion para que permitirá que el usuario seleccione cualquier hora a partir de la 
+    //fecha actual, sin restricciones de hora, minutos o segundos específicos,
+    //pero que la fecha no sea inferior a al actual
+
+    var Fecha_alerta_capturada = $('#fecha_alerta');
+    var hoyactual = new Date();
+    var diaactual = hoyactual.getDate();
+    var mesactual = hoyactual.getMonth() + 1; // Los meses empiezan en 0
+    var anioactual = hoyactual.getFullYear();
+    // Añadir un cero al día y al mes si son menores de 10
+    if(diaactual < 10) {
+        diaactual = '0' + diaactual;
+    }
+    if(mesactual < 10) {
+        mesactual = '0' + mesactual;
+    }
+    var fechaActual_alerta = anioactual + '-' + mesactual + '-' + diaactual;
+    Fecha_alerta_capturada.change(function() {
+        var valor_Fecha_alerta_capturada = $(this).val();        
+        // Se saca solo la fecha de la F_alerta_capturada
+        var F_alerta_capturada = valor_Fecha_alerta_capturada.split('T')[0];        
+        if (F_alerta_capturada == ''){
+            $('#Edicion').prop('disabled', false)
+            $('#alerta_fecha_alerta').addClass('d-none');
+        }else if (F_alerta_capturada < fechaActual_alerta) {
+            $('#Edicion').prop('disabled', true)
+            $('#alerta_fecha_alerta').removeClass('d-none');
+        }else if (F_alerta_capturada >= fechaActual_alerta){
+            $('#Edicion').prop('disabled', false)
+            $('#alerta_fecha_alerta').addClass('d-none');
+        }
+    });
+    console.log(Fecha_alerta_capturada.val());
+    if (Fecha_alerta_capturada.val() == '') {
+        console.log('if');
+        $('#Edicion').prop('disabled', false)
+        $('#alerta_fecha_alerta').addClass('d-none');
+    }else if (Fecha_alerta_capturada.val() < fechaActual_alerta){
+        console.log('else');
+        $('#Edicion').prop('disabled', true) 
+        $('#alerta_fecha_alerta').removeClass('d-none');
+    }
+
     // llenado del formulario para la captura de datos del modulo de Juntas
     $('#form_calificacionJuntas').submit(function (e) {
         e.preventDefault();  
@@ -3229,8 +3272,15 @@ $(document).ready(function(){
             formData.append('n_radicado', $(comunicado_reemplazar).data('numero_radicado'));
             formData.append('numero_identificacion', $(comunicado_reemplazar).data('numero_identificacion'))
             formData.append('modulo_creacion', 'calificacionJuntas');
-            formData.append('asunto', $(comunicado_reemplazar).data('asunto_comunicado'));
-            formData.append('nombre_documento', $(comunicado_reemplazar).data('nombre_documento'))
+            if($(comunicado_reemplazar).data('tipo_descarga') === 'Manual'){
+                formData.append('nombre_documento', archivo.name);
+                formData.append('asunto', archivo.name);
+                formData.append('nombre_anterior', $(comunicado_reemplazar).data('nombre_documento'));
+            }else{
+                formData.append('nombre_documento', $(comunicado_reemplazar).data('nombre_documento'));
+                formData.append('asunto', $(comunicado_reemplazar).data('asunto_comunicado'));
+                formData.append('nombre_anterior', '');
+            }
             $.ajax({
                 type:'POST',
                 url:'/reemplazarDocumento',
