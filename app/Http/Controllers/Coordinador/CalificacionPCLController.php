@@ -7767,16 +7767,6 @@ class CalificacionPCLController extends Controller
                 ];
                 sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
                 ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial); 
-                
-                // Actualizacion del profesional calificador
-                $datos_profesional_calificador = [
-                    'Id_profesional' => Auth::user()->id,
-                    'Nombre_profesional' => Auth::user()->name,
-                    'F_ajuste_calificacion' => $date
-                ];
-
-                sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-                ->where('Id_Asignacion', $Id_Asignacion_Dcreto)->update($datos_profesional_calificador);
 
             }else{
                 $datos_dictamenPericial =[
@@ -7809,15 +7799,6 @@ class CalificacionPCLController extends Controller
                 sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
                 ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial); 
                 
-                // Actualizacion del profesional calificador
-                $datos_profesional_calificador = [
-                    'Id_profesional' => Auth::user()->id,
-                    'Nombre_profesional' => Auth::user()->name,
-                    'F_ajuste_calificacion' => $date
-                ];
-
-                sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-                ->where('Id_Asignacion', $Id_Asignacion_Dcreto)->update($datos_profesional_calificador);
             }    
             $comunicado_reemplazado = [
                 'Reemplazado' => 0,

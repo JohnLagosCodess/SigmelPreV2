@@ -1652,6 +1652,7 @@ class AdicionDxDTO extends Controller
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
 
+            
             // Actualizacion del profesional calificador
             $datos_profesional_calificador = [
                 'Id_profesional' => Auth::user()->id,

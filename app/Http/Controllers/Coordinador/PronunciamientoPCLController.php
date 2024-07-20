@@ -846,16 +846,6 @@ class PronunciamientoPCLController extends Controller
                 ['N_radicado',$radicado]
             ])->update($datos_info_comunicado_eventos);
             
-            // Actualizacion del profesional calificador
-            $datos_profesional_calificador = [
-                'Id_profesional' => Auth::user()->id,
-                'Nombre_profesional' => Auth::user()->name,
-                'F_ajuste_calificacion' => $date
-            ];
-        
-            sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-            ->where('Id_Asignacion', $Id_Asignacion_Pronuncia)->update($datos_profesional_calificador);
-            
             sigmel_auditorias_pronunciamiento_eventos::on('sigmel_auditorias')->insert($registro_actividad);
             if(!empty($array_diagnosticos_motivo_calificacion)){
                 // Inserción de la información

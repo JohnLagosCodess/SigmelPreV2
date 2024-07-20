@@ -567,7 +567,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-footer">
+                                    {{-- <div class="card-footer">
                                         <div class="row">
                                             <div class="col-12">
                                                 @if (!empty($datos_bd_DTO_ATEL[0]->Id_Asignacion) && $Id_asignacion_actual != $datos_bd_DTO_ATEL[0]->Id_Asignacion)
@@ -593,7 +593,7 @@
                                                 </div>
                                             </div>
                                         </div> 
-                                    </div>
+                                    </div> --}}
                                 </div>
                                 <br>
 
@@ -792,10 +792,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-footer">
+                                    {{-- <div class="card-footer">
                                         <div class="row">
                                             <div class="col-12">
-                                                {{-- @if (empty($info_adicion_dx[0]->ID_evento) || count($array_comunicados_correspondencia) === 0) --}}
                                                 @if (!empty($datos_bd_DTO_ATEL[0]->Id_Asignacion) && $Id_asignacion_actual != $datos_bd_DTO_ATEL[0]->Id_Asignacion)
                                                     <input type="submit" class="btn btn-info" id="btn_guardar_relacion_docs" value="Guardar">
                                                 @else
@@ -819,7 +818,7 @@
                                                 </div>
                                             </div>
                                         </div> 
-                                    </div>
+                                    </div> --}}
                                 </div>
                                 <br>
 
@@ -969,7 +968,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-footer">
+                                    {{-- <div class="card-footer">
                                         <div class="row">
                                             <div class="col-12">
                                                 @if (!empty($datos_bd_DTO_ATEL[0]->Id_Asignacion) && $Id_asignacion_actual != $datos_bd_DTO_ATEL[0]->Id_Asignacion)
@@ -995,7 +994,7 @@
                                                 </div>
                                             </div>
                                         </div> 
-                                    </div>
+                                    </div> --}}
                                 </div>
                                 <br>
 

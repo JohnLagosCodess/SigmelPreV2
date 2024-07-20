@@ -853,6 +853,7 @@ class ControversiaJuntasController extends Controller
 
             sleep(2);
 
+            
             // Actualizacion del profesional calificador
             $datos_profesional_calificador = [
                 'Id_profesional' => Auth::user()->id,
