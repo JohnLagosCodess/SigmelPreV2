@@ -362,10 +362,10 @@
                                                         <select class="medio_notificacion_afiliado custom-select" name="medio_notificacion_afiliado" id="medio_notificacion_afiliado" required></select>
                                                     </div>
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="col-3 mt-4 text-center">
                                                     <div class="form-group">
                                                         <input class="form-contol scalesR" type="checkbox" id="entidad_conocimiento" name="entidad_conocimiento" value="Si">
-                                                        <label for="entidad_conocimiento" class="col-form-label">Entidad de Conocimiento (AFP)</label>
+                                                        <label for="entidad_conocimiento" class="col-form-label">&nbsp; Entidad de Conocimiento (AFP)</label>
                                                         <div id="div_afp_conocimiento" class="d-none">
                                                             <select class="afp_conocimiento custom-select" name="afp_conocimiento" id="afp_conocimiento"></select>
                                                         </div>

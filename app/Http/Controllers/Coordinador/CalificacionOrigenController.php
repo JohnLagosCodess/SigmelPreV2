@@ -26,6 +26,8 @@ use App\Models\sigmel_informacion_acciones_automaticas_eventos;
 use App\Models\sigmel_informacion_alertas_automaticas_eventos;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_lista_parametros;
+use App\Models\sigmel_auditorias_informacion_accion_eventos;
+
 use DateTime;
 
 class CalificacionOrigenController extends Controller
@@ -357,6 +359,29 @@ class CalificacionOrigenController extends Controller
             ];
 
             $Id_Accion_eventos = sigmel_informacion_accion_eventos::on('sigmel_gestiones')->insertGetId($datos_info_registrarCalifcacionOrigen);
+
+            // Realizamos la inserción a la tabla de auditoria sigmel_auditorias_informacion_accion_eventos
+            $aud_datos_info_registrarCalifcacionOrigen= [
+                'Aud_ID_evento' => $request->newId_evento,
+                'Aud_Id_Asignacion' => $request->newId_asignacion,
+                'Aud_Id_proceso' => $request->Id_proceso,
+                'Aud_Modalidad_calificacion' => 'N/A',
+                'Aud_F_accion' => $date_time,
+                'Aud_Accion' => $request->accion,
+                'Aud_F_Alerta' => $request->fecha_alerta,
+                'Aud_fuente_informacion' => $request->fuente_informacion,
+                'Aud_Enviar' => $request->enviar,
+                'Aud_Estado_Facturacion' => $request->estado_facturacion,
+                'Aud_Causal_devolucion_comite' => $Causal_devolucion_comite,
+                'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
+                'Aud_Descripcion_accion' => $request->descripcion_accion,
+                'Aud_F_cierre' => $request->fecha_cierre,
+                'Aud_Nombre_usuario' => $nombre_usuario,
+				'Aud_F_asignacion_dto' => $Fecha_asignacion_dto,
+                'Aud_F_registro' => $date,
+            ];
+            sigmel_auditorias_informacion_accion_eventos::on('sigmel_auditorias')->insert($aud_datos_info_registrarCalifcacionOrigen);
+
             // Capturar el id accion para validar la accion que se acabo de guardar
             $info_accion_evento = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
             ->select('Accion', 'F_accion')
@@ -389,7 +414,7 @@ class CalificacionOrigenController extends Controller
                 case (!empty($Movimiento_automatico) and $Movimiento_automatico == 'Si' and !empty($Tiempo_movimiento) and !empty($Accion_automatica)):
                         $info_datos_accion_automatica = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_parametrizaciones_clientes as sipc')
                         ->leftJoin('sigmel_sys.users as u', 'u.id', '=', 'sipc.Profesional_asignado')
-                        ->select('sipc.Accion_ejecutar', 'sipc.Profesional_asignado', 'u.name')
+                        ->select('sipc.Accion_ejecutar', 'sipc.Estado', 'sipc.Profesional_asignado', 'u.name')
                         ->where([
                             ['sipc.Accion_ejecutar', $Accion_automatica],
                             ['sipc.Id_cliente', $id_cliente],
@@ -401,6 +426,7 @@ class CalificacionOrigenController extends Controller
                             $Accion_ejecutar_automatica = $info_datos_accion_automatica[0]->Accion_ejecutar;
                             $Profesional_asignado_automatico = $info_datos_accion_automatica[0]->Profesional_asignado;
                             $NombreProfesional_asignado_automatico = $info_datos_accion_automatica[0]->name;
+                            $Id_Estado_evento_automatico = $info_datos_accion_automatica[0]->Estado;
                             
                             // Se suman los dias a la fecha actual para saber la fecha del movimiento automatico
                             $dateTime = new DateTime($date_time);
@@ -415,6 +441,7 @@ class CalificacionOrigenController extends Controller
                                 'Id_servicio' => $Id_servicio,
                                 'Id_cliente' =>$id_cliente,
                                 'Accion_automatica' => $Accion_ejecutar_automatica,
+                                'Id_Estado_evento_automatico' => $Id_Estado_evento_automatico,                                
                                 'F_accion' => $date_time,
                                 'Id_profesional_automatico' => $Profesional_asignado_automatico,
                                 'Nombre_profesional_automatico' => $NombreProfesional_asignado_automatico,
@@ -442,7 +469,7 @@ class CalificacionOrigenController extends Controller
                 default:       
                         $mensaje_2 = 'la acción parametrizada NO tiene Movimiento Automático';
                     break;
-            }  
+            }   
             sleep(2);
 
             // Actualizar la tabla sigmel_informacion_asignacion_eventos
@@ -877,6 +904,28 @@ class CalificacionOrigenController extends Controller
             sigmel_informacion_accion_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_registrarCalifcacionOrigen);
 
+            // Realizamos la inserción a la tabla de auditoria sigmel_auditorias_informacion_accion_eventos
+            $aud_datos_info_registrarCalifcacionOrigen= [
+                'Aud_ID_evento' => $request->newId_evento,
+                'Aud_Id_Asignacion' => $request->newId_asignacion,
+                'Aud_Id_proceso' => $request->Id_proceso,
+                'Aud_Modalidad_calificacion' => 'N/A',
+                'Aud_F_accion' => $date_time,
+                'Aud_Accion' => $request->accion,
+                'Aud_F_Alerta' => $request->fecha_alerta,
+                'Aud_Enviar' => $request->enviar,
+                'Aud_Estado_Facturacion' => $request->estado_facturacion,
+                'Aud_Causal_devolucion_comite' => $Causal_devolucion_comite,
+                'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
+                'Aud_Descripcion_accion' => $request->descripcion_accion,
+                'Aud_F_cierre' => $request->fecha_cierre,
+                'Aud_fuente_informacion' => $request->fuente_informacion,
+                'Aud_Nombre_usuario' => $nombre_usuario,
+				'Aud_F_asignacion_dto' => $Fecha_asignacion_dto,
+                'Aud_F_registro' => $date,
+            ];
+            sigmel_auditorias_informacion_accion_eventos::on('sigmel_auditorias')->insert($aud_datos_info_registrarCalifcacionOrigen);
+
             //Capturar el id accion para validar la accion que se acabo de guardar
             $info_accion_evento = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
             ->select('Accion', 'F_accion')
@@ -908,7 +957,7 @@ class CalificacionOrigenController extends Controller
                 case (!empty($Movimiento_automatico) and $Movimiento_automatico == 'Si' and !empty($Tiempo_movimiento) and !empty($Accion_automatica)):
                         $info_datos_accion_automatica = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_parametrizaciones_clientes as sipc')
                         ->leftJoin('sigmel_sys.users as u', 'u.id', '=', 'sipc.Profesional_asignado')
-                        ->select('sipc.Accion_ejecutar', 'sipc.Profesional_asignado', 'u.name')
+                        ->select('sipc.Accion_ejecutar', 'sipc.Estado', 'sipc.Profesional_asignado', 'u.name')
                         ->where([
                             ['sipc.Accion_ejecutar', $Accion_automatica],
                             ['sipc.Id_cliente', $id_cliente],
@@ -920,6 +969,7 @@ class CalificacionOrigenController extends Controller
                             $Accion_ejecutar_automatica = $info_datos_accion_automatica[0]->Accion_ejecutar;
                             $Profesional_asignado_automatico = $info_datos_accion_automatica[0]->Profesional_asignado;
                             $NombreProfesional_asignado_automatico = $info_datos_accion_automatica[0]->name;
+                            $Id_Estado_evento_automatico = $info_datos_accion_automatica[0]->Estado;
 
                             // Se suman los dias a la fecha actual para saber la fecha del movimiento automatico
                             $dateTime = new DateTime($date_time);
@@ -940,6 +990,7 @@ class CalificacionOrigenController extends Controller
                                     'Id_servicio' => $Id_servicio,
                                     'Id_cliente' =>$id_cliente,
                                     'Accion_automatica' => $Accion_ejecutar_automatica,
+                                    'Id_Estado_evento_automatico' => $Id_Estado_evento_automatico,
                                     'F_accion' => $date_time,
                                     'Id_profesional_automatico' => $Profesional_asignado_automatico,
                                     'Nombre_profesional_automatico' => $NombreProfesional_asignado_automatico,
@@ -965,6 +1016,7 @@ class CalificacionOrigenController extends Controller
                                     'Id_servicio' => $Id_servicio,
                                     'Id_cliente' =>$id_cliente,
                                     'Accion_automatica' => $Accion_ejecutar_automatica,
+                                    'Id_Estado_evento_automatico' => $Id_Estado_evento_automatico,
                                     'F_accion' => $date_time,
                                     'Id_profesional_automatico' => $Profesional_asignado_automatico,
                                     'Nombre_profesional_automatico' => $NombreProfesional_asignado_automatico,
@@ -994,7 +1046,7 @@ class CalificacionOrigenController extends Controller
                 default:     
                         $mensaje_2 = 'la acción parametrizada NO tiene Movimiento Automático';
                     break;
-            } 
+            }   
             
             sleep(2);
 

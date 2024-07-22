@@ -153,7 +153,7 @@
                         <div class="cuadro">
                             <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$Radicado_comuni}}</span></span><br>
                             <span class="fuente_todo_texto"><span class="negrita">{{$T_documento_noti}} {{$NroIden_afiliado_noti}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$ID_evento}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
                         </div>
                     </td>
                 </tr>

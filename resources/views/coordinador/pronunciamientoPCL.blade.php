@@ -539,12 +539,11 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="reviso">Revisó<span style="color: red;">(*)</span></label>
+                                            @if (!empty($info_pronuncia[0]->Reviso_Pronuncia))
+                                                <input type="hidden" id="bd_quien_reviso" value="{{$info_pronuncia[0]->Reviso_Pronuncia}}">
+                                            @endif                                        
                                             <select class="reviso custom-select" name="reviso" id="reviso" style="width: 100%;">
-                                                @if (!empty($info_pronuncia[0]->Reviso_Pronuncia))
-                                                    <option value="{{$info_pronuncia[0]->Reviso_Pronuncia}}" selected>{{$info_pronuncia[0]->Reviso_Pronuncia}}</option>
-                                                 @else
-                                                    <option value="">Seleccione una opción</option>
-                                                @endif                                        
+                                                 <option value="">Seleccione una opción</option>
                                             </select>
                                         </div>
                                     </div>

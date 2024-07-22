@@ -1925,14 +1925,15 @@ $(document).ready(function(){
     var entidad_conocimiento = $("#entidad_conocimiento").val();
     $('#oficio_origen').change(function(){
         if ($(this).prop('checked')) {
-            var asunto_insertar = "CONCEPTO SOBRE PRESUNTO ORIGEN EVENTO";
-            var texto_insertar = '<p>Respetados Señores</p><p>En atención a la solicitud de emisión de concepto sobre el presunto origen de la contingencia, le informamos que una vez estudiada la documentación del paciente por el comité intedisciplinario de calificación de pérdida de la capacidad laboral y origen de Seguros de Vida ALFA S.A., experto en la materia, se considera que el presunto origen de la muerte del Señor(a) {{$nombre_afiliado}}, es con ocasión de un {{$origen_evento}}.</p><p>Para los efectos, se adjuntó el concepto que sustenta lo manifestado.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestra líneas de atención, al cliente en Bogotá (601) 3077032 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co»; o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>';
+            var asunto_insertar = "Dictamen presunto origen evento";
+            var texto_insertar = '<p>Respetados Señores</p><p>En atención a la solicitud de emisión de concepto sobre el presunto origen de la contingencia, le informamos que una vez estudiada la documentación del paciente por el comité intedisciplinario de calificación de pérdida de la capacidad laboral y origen de Seguros de Vida ALFA S.A., experto en la materia, se considera que el presunto origen de la muerte del Señor(a) {{$nombre_afiliado}}, es con ocasión de un {{$tipo_evento}} {{$origen_evento}}.</p><p>Para los efectos, se adjuntó el concepto que sustenta lo manifestado.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestra líneas de atención, al cliente en Bogotá (601) 3077032 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co»; o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>';
 
             $("#Asunto").val(asunto_insertar);
             $("#cuerpo_comunicado").summernote('code', texto_insertar);
 
             // Habilitación etiquetas
             $("#btn_insertar_nombre_afiliado").prop('disabled', false);
+            $("#btn_insertar_tipo_evento").prop('disabled', false);
             $("#btn_insertar_origen_evento").prop('disabled', false);
 
             // Selección automática de las copias a partes interesadas: Benficiario, Empleador, EPS, ARL
@@ -1959,6 +1960,7 @@ $(document).ready(function(){
 
             // deshabilitación etiquetas
             $("#btn_insertar_nombre_afiliado").prop('disabled', true);
+            $("#btn_insertar_tipo_evento").prop('disabled', true);
             $("#btn_insertar_origen_evento").prop('disabled', true);
 
             // Deselección automática de las copias a partes interesadas: Benficiario, Empleador, EPS, ARL
@@ -2166,7 +2168,14 @@ $(document).ready(function(){
     /* funcionalidad para insertar la etiqueta de nombre de afiliado y origen evento */
     $("#cuerpo_comunicado").summernote({
         height: 'auto',
-        toolbar: false
+        toolbar: false,
+        callbacks: {
+            onPaste: function (e) {
+                var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+                e.preventDefault();
+                document.execCommand('insertText', false, bufferText);
+            }
+        }
     });
     $('.note-editing-area').css("background", "white");
     $('.note-editor').css("border", "1px solid black");
@@ -2182,6 +2191,13 @@ $(document).ready(function(){
         e.preventDefault();
 
         var etiqueta = "{{$origen_evento}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta);
+    });
+
+    $("#btn_insertar_tipo_evento").click(function(e){
+        e.preventDefault();
+
+        var etiqueta = "{{$tipo_evento}}";
         $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta);
     });
 
@@ -2239,6 +2255,7 @@ $(document).ready(function(){
         var empleador = $('input[name="empleador"]:checked').val();
         var eps = $('input[name="eps"]:checked').val();
         var afp = $('input[name="afp"]:checked').val();
+        cuerpo_comunicado = cuerpo_comunicado ?  cuerpo_comunicado.replace(/"/g, "'") : '';
 
         // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
         var afp_conocimiento = '';
@@ -2372,8 +2389,15 @@ $(document).ready(function(){
                 formData.append('n_radicado', comunicado_reemplazar.N_radicado);
                 formData.append('numero_identificacion', comunicado_reemplazar.N_identificacion);
                 formData.append('modulo_creacion', 'determinacionOrigenATEL');
-                formData.append('asunto', comunicado_reemplazar.Asunto);
-                formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
+                if(comunicado_reemplazar.Tipo_descarga === 'Manual'){
+                    formData.append('nombre_documento', archivo.name);
+                    formData.append('asunto', archivo.name);
+                    formData.append('nombre_anterior', comunicado_reemplazar.Nombre_documento);
+                }else{
+                    formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
+                    formData.append('asunto', comunicado_reemplazar.Asunto);
+                    formData.append('nombre_anterior', '');
+                }
                 $.ajax({
                     type:'POST',
                     url:'/reemplazarDocumento',
@@ -2429,6 +2453,7 @@ $(document).ready(function(){
         var f_fallecimiento = $("#f_fallecimiento_"+tupla_comunicado).val();
         var sustentacion_califi_origen = $("#sustentacion_califi_origen_"+tupla_comunicado).val();
         var origen = $("#origen_dto_atel option:selected").text();
+        var N_siniestro = $("#n_siniestro").val();
 
         datos_generacion_proforma_dml_previsional = {
             '_token': token,
@@ -2449,6 +2474,7 @@ $(document).ready(function(){
             'sustentacion_califi_origen': sustentacion_califi_origen,
             'origen': origen,
             'id_comunicado' : infoComunicado.Id_Comunicado,
+            'N_siniestro': N_siniestro,
         };
         if(infoComunicado.Reemplazado == 1){
             var nombre_doc = infoComunicado.Nombre_documento;
@@ -2522,16 +2548,22 @@ $(document).ready(function(){
         var nombre_afiliado = $("#nombre_afiliado_"+tupla_comunicado).val();
         var direccion_afiliado = $("#direccion_afiliado_"+tupla_comunicado).val();
         var telefono_afiliado = $("#telefono_afiliado_"+tupla_comunicado).val();
-        var ciudad_afiliado = $("#ciudad_afiliado_"+tupla_comunicado).val();
+        var nombre_afp = $("#nombre_afp_"+tupla_comunicado).val();
+        var email_afp = $("#email_afp_"+tupla_comunicado).val();
+        var direccion_afp = $("#direccion_afp_"+tupla_comunicado).val();
+        var telefono_afp = $("#telefono_afp_"+tupla_comunicado).val();
+        var ciudad_afp = $("#ciudad_afp_"+tupla_comunicado).val();
         var Id_asignacion = $("#Id_Asignacion_consulta_"+tupla_comunicado).val();
         var Id_cliente_firma = $('#Id_cliente_firma_'+tupla_comunicado).val();
+        var tipo_evento = $('#nombre_evento_guardado').val();
         var origen = $("#origen_dto_atel option:selected").text();
         //checkbox de Copias de partes interesadas
         var copia_beneficiario = $('#beneficiario').filter(":checked").val();
         var copia_empleador = $('#empleador').filter(":checked").val();
         var copia_eps = $('#eps').filter(":checked").val();
         var copia_afp = $('#afp').filter(":checked").val();
-
+        var N_siniestro = $("#n_siniestro").val();
+        cuerpo = cuerpo ? cuerpo.replace(/"/g, "'") : '';
         // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
         var copia_afp_conocimiento = '';
         if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
@@ -2557,7 +2589,11 @@ $(document).ready(function(){
             'nombre_afiliado': nombre_afiliado,
             'direccion_afiliado': direccion_afiliado,
             'telefono_afiliado': telefono_afiliado,
-            'ciudad_afiliado': ciudad_afiliado,
+            'nombre_afp': nombre_afp,
+            'email_afp' : email_afp,
+            'direccion_afp': direccion_afp,
+            'telefono_afp': telefono_afp,
+            'ciudad_afp': ciudad_afp,
             'Id_asignacion': Id_asignacion,
             'Id_cliente_firma': Id_cliente_firma,
             'origen': origen,
@@ -2568,7 +2604,9 @@ $(document).ready(function(){
             'copia_afp_conocimiento': copia_afp_conocimiento,
             'copia_arl': copia_arl,
             'firmar': firmar,
-            'anexos': anexos
+            'anexos': anexos,
+            'tipo_evento': tipo_evento,
+            'N_siniestro': N_siniestro,
         };
         if(infoComunicado.Reemplazado == 1){
             var nombre_doc = infoComunicado.Nombre_documento;
@@ -2638,6 +2676,7 @@ $(document).ready(function(){
         $("#anexos").prop('readonly', true);
         $("#Asunto").prop('readonly', true);
         $("#btn_insertar_nombre_afiliado").prop('disabled', true);
+        $("#btn_insertar_tipo_evento").prop('disabled', true);
         $("#btn_insertar_origen_evento").prop('disabled', true);
         $(".note-editable").attr("contenteditable", false);
         $("#firmar").prop('disabled', true);

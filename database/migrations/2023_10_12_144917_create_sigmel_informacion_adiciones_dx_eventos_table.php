@@ -25,6 +25,18 @@ return new class extends Migration
             $table->integer('Origen')->nullable();
             $table->text('N_radicado')->nullable();
             $table->text('N_siniestro')->nullable();
+            $table->integer('Tipo_accidente')->nullable();
+            $table->date("Fecha_evento")->nullable();
+            $table->time('Hora_evento')->nullable();
+            $table->integer('Grado_severidad')->nullable();
+            $table->enum('Mortal', ['Si','No'])->nullable();
+            $table->date("Fecha_fallecimiento")->nullable();
+            $table->text("Descripcion_FURAT")->nullable();
+            $table->integer('Factor_riesgo')->nullable();
+            $table->integer('Tipo_lesion')->nullable();
+            $table->integer('Parte_cuerpo_afectada')->nullable();
+            $table->text("Justificacion_revision_origen")->nullable();
+            $table->text("Sustentacion")->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

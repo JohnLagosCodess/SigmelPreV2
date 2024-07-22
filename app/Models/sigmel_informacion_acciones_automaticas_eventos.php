@@ -20,6 +20,7 @@ class sigmel_informacion_acciones_automaticas_eventos extends Model
     'Id_servicio',
     'Id_cliente',
     'Accion_automatica',
+    'Id_Estado_evento_automatico',
     'F_accion',
     'Id_profesional_automatico',
     'Nombre_profesional_automatico',

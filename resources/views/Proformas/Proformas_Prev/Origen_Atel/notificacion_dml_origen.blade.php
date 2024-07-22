@@ -9,12 +9,12 @@
     <style>
         @page{
             /* arriba  derecha  abajo  izquierda */
-            margin: 2.5cm 1.3cm 2.5cm 1.3cm;
+            margin: 3cm 1.3cm 2.5cm 1.3cm;
         }
         #header {
             position: fixed; 
             /* esta ligado con el primer valor del margin */
-            top: -2.2cm;
+            top: -2.8cm;
             left: 0cm;
             width: 100%;
             text-align: right; 
@@ -89,7 +89,6 @@
         }
         .tabla2{
             width: 100%;
-            margin-left: -3.5px;
         }
         section{
             text-align: justify;
@@ -102,6 +101,8 @@
         .cuadro{
             border: 3px solid black;
             padding-left: 6px;
+            width: 5cm;
+            height: 2cm;
         }
         /* .hijo{
             width: 2cm;
@@ -133,7 +134,9 @@
     </div>
     <div id="footer">
         <?php if($footer == null): ?>
-            <p class="page" style="color: black;">Página </p>
+            <div style="text-align:center;">
+                <span style="color: #3C3C3C;">{{$nombre_afiliado}} - {{$tipo_identificacion}} {{$num_identificacion}} - Siniestro: {{$N_siniestro}} </span>
+            </div>
         <?php else: ?>
             <?php 
                 $ruta_footer = "/footer_clientes/{$id_cliente}/{$footer}";
@@ -142,8 +145,8 @@
                 $footer_base64 = base64_encode($footer_data);
             ?>
             <div class="footer_content">
+                <span style="color: #3C3C3C;">{{$nombre_afiliado}} - {{$tipo_identificacion}} {{$num_identificacion}} - Siniestro: {{$N_siniestro}}</span>
                 <img src="data:image/png;base64,{{ $footer_base64 }}" class="footer_image">
-                <p class="page" style="color: black;">Página </p>
             </div>
         <?php endif ?>
     </div>
@@ -164,42 +167,49 @@
         <table class="tabla2">
             <tbody>
                 <tr>
-                    <td>
-                        <span class="fuente_todo_texto"><span class="negrita">Señores: </span>{{$nombre_destinatario_principal}}</span><br>
-                        <span class="fuente_todo_texto"><span class="negrita">Dirección: </span>{{$direccion_destinatario_principal}}</span><br>
-                        <span class="fuente_todo_texto"><span class="negrita">Teléfono: </span>{{$telefono_destinatario_principal}}</span><br>
-                        <span class="fuente_todo_texto"><span class="negrita">Ciudad: </span>{{$ciudad_destinatario_principal}}</span>
+                    <td style="width:100%;">
+                        <span class="fuente_todo_texto"><span class="negrita">Señores: </span><br>{{$nombre_destinatario_principal}}</span><br>
+                        <span class="fuente_todo_texto">{{$email_destinatario_principal}}</span><br>
+                        <span class="fuente_todo_texto">{{$direccion_destinatario_principal}}</span><br>
+                        <span class="fuente_todo_texto">{{$telefono_destinatario_principal}}</span><br>
+                        <span class="fuente_todo_texto">{{$ciudad_destinatario_principal}}</span>
                     </td>
                     <td>
                         <div class="cuadro">
-                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$nro_radicado}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado : <br>{{$nro_radicado}}</span></span><br>
                             <span class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$nro_siniestro}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
+        <br>
         <table class="tabla1">
             <tbody>
                 <tr>
                     <td>
                         <span class="fuente_todo_texto"><span class="negrita">Asunto: {{$asunto}}</span></span><br>
-                        <span class="fuente_todo_texto"><span class="negrita">Ramo: </span>{{$ramo}}</span><br>
-                        <span class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></span><br>
-                        <span class="fuente_todo_texto"><span class="negrita">Siniestro: </span>{{$nro_siniestro}}</span>
+                        <div style="margin-left: 3cm;">
+                            <span class="fuente_todo_texto"><span class="negrita">Ramo: </span>{{$ramo}}</span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}} {{$nombre_afiliado}}</span></span><br>
+                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: </span>{{$N_siniestro}}</span>
+                        </div>
                     </td>
                 </tr>
             </tbody>
         </table>
+        <br>
         <section class="fuente_todo_texto">
             <?php 
                 $patron1 = '/\{\{\$nombre_afiliado\}\}/';
                 $patron2 = '/\{\{\$origen_evento\}\}/';
-                if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo)) {
-                    $nombre_afiliado = "<b>".$nombre_afiliado."</b>";
+                $patron3 = '/\{\{\$tipo_evento\}\}/';
+                if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) && preg_match($patron3, $cuerpo)) {
+                    $nombre_afiliado = "<b>".strtoupper($nombre_afiliado)."</b>";
                     $texto_modificado = str_replace('{{$nombre_afiliado}}', $nombre_afiliado, $cuerpo);
-                    $texto_modificado = str_replace('{{$origen_evento}}', $origen, $texto_modificado);
+                    $texto_modificado = str_replace('{{$origen_evento}}', strtoupper($origen), $texto_modificado);
+                    $texto_modificado = str_replace('{{$tipo_evento}}', strtoupper($tipo_evento), $texto_modificado);
                     $cuerpo = $texto_modificado;
                 } else {
                     $cuerpo = "";
@@ -222,9 +232,9 @@
         </section>
         <br>
         <section class="fuente_todo_texto">
-            <span class="negrita">Anexo:</span> {{$anexos}}
-            <br>
-            <span class="negrita">Elboró:</span> {{$nombre_usuario}}
+            {{-- <span class="negrita">Anexo:</span> {{$anexos}} --}}
+            {{-- <br> --}}
+            {{-- <span class="negrita">Elboró:</span> {{$nombre_usuario}} --}}
             <table style="text-align: justify; width:100%; margin-left: -3px;">
                 @if (count($Agregar_copia) == 0)
                     <tr>
@@ -306,5 +316,13 @@
             </table>
         </section>
     </div>
+    <script type="text/php">
+        if ( isset($pdf) ) {
+            $pdf->page_script('
+                $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
+                $pdf->text(485, 75, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
+            ');
+        }
+	</script>
 </body>
 </html>

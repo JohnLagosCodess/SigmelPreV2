@@ -50,6 +50,10 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    $(".grado_severidad").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
     
     $(".tipo_accidente").select2({
         placeholder:"Seleccione una opción",
@@ -1056,6 +1060,196 @@ $(document).ready(function(){
     });
 
     // Envío de la información
+    // $("#form_Adicion_Dx").submit(function(e){
+    //     e.preventDefault();
+
+    //     $("#btn_guardar_info_evento").prop("disabled", true);
+    //     $("#btn_guardar_relacion_docs").prop("disabled", true);
+    //     $("#btn_guardar_diagnosticos_adicionados").prop("disabled", true);
+
+    //     var GuardarAdicionDx = $('#GuardarAdicionDx');
+    //     var ActualizarAdicionDx = $('#ActualizarAdicionDx');
+
+    //     if (GuardarAdicionDx.length > 0) {
+    //         document.querySelector('#GuardarAdicionDx').disabled=true;            
+    //     }
+    //     if (ActualizarAdicionDx.length > 0) {
+    //         document.querySelector('#ActualizarAdicionDx').disabled=true;
+    //     }
+
+    //     // Captura del Id_evento
+    //     var id_evento = $("#Id_Evento").val();
+    //     // caputra del id de asignacion y id proceso de la adicion dx
+    //     var id_asignacion_adicion_dx = $("#Id_Asignacion_adicion_dx").val();
+    //     var id_proceso_adicion_dx = $("#Id_Proceso_adicion_dx").val();
+
+    //     // Captura del id de la determinación dto
+    //     var id_dto_atel = $("#id_dto_atel").val();
+
+    //     let token = $("input[name='_token']").val();
+
+    //     var tipo_evento = $("#tipo_evento").val();
+
+    //     if (tipo_evento == 1) {
+    //         // Creacion de array para los checkboxes de relacion de documentos
+    //         var relacion_docs_dto_atel = [];
+    //         $('input[type="checkbox"]').each(function() {
+    //             var relacion_documento_dto_atel = $(this).attr('id');            
+    //             if (relacion_documento_dto_atel === 'furat_acci_inci_sincober' || relacion_documento_dto_atel === 'historia_clinica_acci_inci_sincober') {                
+    //                 if ($(this).is(':checked')) {                
+    //                     var relacion_documento_dto_atel_valor = $(this).val();
+    //                     relacion_docs_dto_atel.push(relacion_documento_dto_atel_valor);
+    //                 }
+    //             }
+    //         });
+
+    //         // Creacion de array con los datos de la tabla dinámica Exámenes e interconsultas
+    //         var guardar_datos_examenes_interconsultas = [];
+    //         var datos_finales_examenes_interconsultas = [];
+    //         // RECORREMOS LOS TD DE LA TABLA PARA EXTRAER LOS DATOS E INSERTARLOS EN UN ARREGLO (LA INSERCIÓN LA HACE POR CADA FILA, POR ENDE, ES UN ARRAY MULTIDIMENSIONAL)
+    //         $('#listado_examenes_interconsultas tbody tr').each(function (index) {
+    //             if ($(this).attr('id') !== "datos_examenes_interconsulta") {
+    //                 $(this).children("td").each(function (index2) {
+    //                     var nombres_ids = $(this).find('*').attr("id");
+    //                     if (nombres_ids != undefined) {
+    //                         guardar_datos_examenes_interconsultas.push($('#'+nombres_ids).val());                        
+    //                     }
+    //                     if((index2+1) % 3 === 0){
+    //                         datos_finales_examenes_interconsultas.push(guardar_datos_examenes_interconsultas);
+    //                         guardar_datos_examenes_interconsultas = [];
+    //                     }
+    //                 });
+    //             }
+    //         });
+
+    //         // Creacion de array con los datos de la tabla dinámica Diagnóstico motivo de calificación
+    //         var guardar_datos_motivo_calificacion = [];
+    //         var datos_finales_adiciones_calificacion = [];
+    //         // RECORREMOS LOS TD DE LA TABLA PARA EXTRAER LOS DATOS E INSERTARLOS EN UN ARREGLO (LA INSERCIÓN LA HACE POR CADA FILA, POR ENDE, ES UN ARRAY MULTIDIMENSIONAL)
+    //         $('#listado_diagnostico_cie10 tbody tr').each(function (index) {
+    //             if ($(this).attr('id') !== "datos_diagnostico") {
+    //                 $(this).children("td").each(function (index2) {
+    //                     var nombres_ids = $(this).find('*').attr("id");
+    //                     if (nombres_ids != undefined) {
+    //                         if ($('#'+nombres_ids).val() == "on") {
+    //                             if ($('#'+nombres_ids).is(':checked')) {
+    //                                 guardar_datos_motivo_calificacion.push("Si");  
+    //                             } else {
+    //                                 guardar_datos_motivo_calificacion.push("No");  
+    //                             }
+    //                         }else{
+    //                             guardar_datos_motivo_calificacion.push($('#'+nombres_ids).val());                     
+    //                         }
+    //                     }
+    //                     if((index2+1) % 8 === 0){
+    //                         datos_finales_adiciones_calificacion.push(guardar_datos_motivo_calificacion);
+    //                         guardar_datos_motivo_calificacion = [];
+    //                     }
+    //                 });
+    //             }
+    //         });
+
+    //         // Validación de id_asignacion_dx para saber si toca actualizar la información
+    //         var id_adicion_dx = $("#id_adicion_dx").val();
+
+    //         if (id_adicion_dx == "" || id_adicion_dx == undefined) {
+    //             // Registrar Información
+    //             var informacion_formulario = {
+    //                 '_token': token,
+    //                 'ID_Evento': id_evento,
+    //                 'Id_Asignacion': id_asignacion_adicion_dx,
+    //                 'Id_proceso': id_proceso_adicion_dx,
+    //                 'Id_Dto_ATEL': id_dto_atel,
+    //                 'Activo': $("#es_activo").val(),
+    //                 'Tipo_evento': tipo_evento,
+    //                 'motivo_solicitud': $("#motivo_solicitud").val(),
+    //                 'N_siniestro': $("#n_siniestro").val(),
+    //                 'Relacion_documentos': relacion_docs_dto_atel,
+    //                 'Examenes_interconsultas': datos_finales_examenes_interconsultas,
+    //                 'Adicion_motivo_calificacion': datos_finales_adiciones_calificacion,
+    //                 'Otros_relacion_documentos': $("#otros_docs").val(),
+    //                 'Sustentacion_Adicion_Dx': $("#sustentacion_adicion_dx").val(),
+    //                 'Origen': $("#origen_dto_atel").val(),
+    //                 'radicado_dictamen': $("#radicado_dictamen").val(),                    
+    //             };
+    //         } else {
+    //             // Actualizar Información
+    //             var informacion_formulario = {
+    //                 '_token': token,
+    //                 'Id_Adiciones_Dx': id_adicion_dx,
+    //                 'ID_Evento': id_evento,
+    //                 'Id_Asignacion': id_asignacion_adicion_dx,
+    //                 'Id_proceso': id_proceso_adicion_dx,
+    //                 'Id_Dto_ATEL': id_dto_atel,
+    //                 'Activo': $("#es_activo").val(),
+    //                 'Tipo_evento': tipo_evento,
+    //                 'motivo_solicitud': $("#motivo_solicitud").val(),
+    //                 'N_siniestro': $("#n_siniestro").val(),
+    //                 'Relacion_documentos': relacion_docs_dto_atel,
+    //                 'Examenes_interconsultas': datos_finales_examenes_interconsultas,
+    //                 'Adicion_motivo_calificacion': datos_finales_adiciones_calificacion,
+    //                 'Otros_relacion_documentos': $("#otros_docs").val(),
+    //                 'Sustentacion_Adicion_Dx': $("#sustentacion_adicion_dx").val(),
+    //                 'Origen': $("#origen_dto_atel").val(),
+    //                 'radicado_dictamen': $("#radicado_dictamen").val(),                    
+    //             };
+    //         }
+
+            
+    //         $.ajax({
+    //             type:'POST',
+    //             url:'/GuardaroActualizarInfoAdicionDX',
+    //             data: informacion_formulario,
+    //             success: function(response){
+    //                 if (response.parametro == "agregar_dto_atel") {
+    //                     if (btn_guardar_info_evento > 0) {
+    //                         $("#btn_guardar_info_evento").addClass('d-none');
+    //                         $("#mostrar_mensaje_1").removeClass('d-none');
+    //                         $(".mensaje_agrego_1").append('<strong>'+response.mensaje+'</strong>');
+    //                         setTimeout(() => {
+    //                             $("#mostrar_mensaje_1").addClass('d-none');
+    //                             $(".mensaje_agrego_1").empty();
+    //                             location.reload();
+    //                         }, 3000);
+    //                     }
+    //                     else if (btn_guardar_relacion_docs > 0){
+    //                         $("#btn_guardar_relacion_docs").addClass('d-none');
+    //                         $("#mostrar_mensaje_2").removeClass('d-none');
+    //                         $(".mensaje_agrego_2").append('<strong>'+response.mensaje+'</strong>');
+    //                         setTimeout(() => {
+    //                             $("#mostrar_mensaje_2").addClass('d-none');
+    //                             $(".mensaje_agrego_2").empty();
+    //                             location.reload();
+    //                         }, 3000);
+    //                     }
+    //                     else if (btn_guardar_diagnosticos_adicionados > 0){
+    //                         $("#btn_guardar_diagnosticos_adicionados").addClass('d-none');
+    //                         $("#mostrar_mensaje_3").removeClass('d-none');
+    //                         $(".mensaje_agrego_3").append('<strong>'+response.mensaje+'</strong>');
+    //                         setTimeout(() => {
+    //                             $("#mostrar_mensaje_3").addClass('d-none');
+    //                             $(".mensaje_agrego_3").empty();
+    //                             location.reload();
+    //                         }, 3000);
+    //                     }
+    //                     else{
+    //                         $("#GuardarAdicionDx").addClass('d-none');
+    //                         $("#ActualizarAdicionDx").addClass('d-none');
+    //                         $("#mostrar_mensaje_agrego_adicion_dx").removeClass('d-none');
+    //                         $(".mensaje_agrego_adicion_dx").append('<strong>'+response.mensaje+'</strong>');
+    //                         setTimeout(() => {
+    //                             $("#mostrar_mensaje_agrego_adicion_dx").addClass('d-none');
+    //                             $(".mensaje_agrego_adicion_dx").empty();
+    //                             location.reload();
+    //                         }, 3000);
+    //                     }
+    //                 }
+    //             }
+    //         });
+    //     }
+
+    // });
+
     $("#form_Adicion_Dx").submit(function(e){
         e.preventDefault();
 
@@ -1080,7 +1274,11 @@ $(document).ready(function(){
         var id_proceso_adicion_dx = $("#Id_Proceso_adicion_dx").val();
 
         // Captura del id de la determinación dto
-        var id_dto_atel = $("#id_dto_atel").val();
+        if ($("#id_dto_atel").val() == '') {
+            var id_dto_atel = 0;
+        } else {
+            var id_dto_atel = $("#id_dto_atel").val();
+        }
 
         let token = $("input[name='_token']").val();
 
@@ -1100,6 +1298,7 @@ $(document).ready(function(){
             });
 
             // Creacion de array con los datos de la tabla dinámica Exámenes e interconsultas
+            var IdExamenesInterconsultas = [];
             var guardar_datos_examenes_interconsultas = [];
             var datos_finales_examenes_interconsultas = [];
             // RECORREMOS LOS TD DE LA TABLA PARA EXTRAER LOS DATOS E INSERTARLOS EN UN ARREGLO (LA INSERCIÓN LA HACE POR CADA FILA, POR ENDE, ES UN ARRAY MULTIDIMENSIONAL)
@@ -1116,10 +1315,46 @@ $(document).ready(function(){
                         }
                     });
                 }
+
+                var DataExamenesInterconsulta = $(this).data("id_fila_examen");
+                IdExamenesInterconsultas.push(DataExamenesInterconsulta);
             });
 
             // Creacion de array con los datos de la tabla dinámica Diagnóstico motivo de calificación
-            var guardar_datos_motivo_calificacion = [];
+            var IdDiagMotCali = [];
+            var guardar_datos_motivo_calificacion_vi = [];
+            var datos_finales_mot_calificacion = [];
+            // RECORREMOS LOS TD DE LA TABLA PARA EXTRAER LOS DATOS E INSERTARLOS EN UN ARREGLO (LA INSERCIÓN LA HACE POR CADA FILA, POR ENDE, ES UN ARRAY MULTIDIMENSIONAL)
+            $('#listado_diagnostico_cie10_visual tbody tr').each(function (index) {
+                if ($(this).attr('id') !== "datos_diagnostico_visual") {
+                    $(this).children("td").each(function (index2) {
+                        var nombres_ids = $(this).find('*').attr("id");
+                        if (nombres_ids != undefined) {
+                            if ($('#'+nombres_ids).val() == "on") {
+                                if ($('#'+nombres_ids).is(':checked')) {
+                                    guardar_datos_motivo_calificacion_vi.push("Si");  
+                                } else {
+                                    guardar_datos_motivo_calificacion_vi.push("No");  
+                                }
+                            }else{
+                                
+                                guardar_datos_motivo_calificacion_vi.push($('#'+nombres_ids).val());                     
+                            }
+                        }
+                        if((index2+1) % 7 === 0){
+                            datos_finales_mot_calificacion.push(guardar_datos_motivo_calificacion_vi);
+                            guardar_datos_motivo_calificacion_vi = [];
+                        }
+                    });
+                }
+
+                var DataIdDiagMotCali = $(this).data("id_fila_diag");
+                IdDiagMotCali.push(DataIdDiagMotCali);
+            });
+
+            // Creacion de array con los datos de la tabla dinámica Diagnósticos Adicionados
+            var IdDiagMotCaliAdi = [];
+            var guardar_datos_motivo_calificacion_adi = [];
             var datos_finales_adiciones_calificacion = [];
             // RECORREMOS LOS TD DE LA TABLA PARA EXTRAER LOS DATOS E INSERTARLOS EN UN ARREGLO (LA INSERCIÓN LA HACE POR CADA FILA, POR ENDE, ES UN ARRAY MULTIDIMENSIONAL)
             $('#listado_diagnostico_cie10 tbody tr').each(function (index) {
@@ -1129,26 +1364,34 @@ $(document).ready(function(){
                         if (nombres_ids != undefined) {
                             if ($('#'+nombres_ids).val() == "on") {
                                 if ($('#'+nombres_ids).is(':checked')) {
-                                    guardar_datos_motivo_calificacion.push("Si");  
+                                    guardar_datos_motivo_calificacion_adi.push("Si");  
                                 } else {
-                                    guardar_datos_motivo_calificacion.push("No");  
+                                    guardar_datos_motivo_calificacion_adi.push("No");  
                                 }
                             }else{
-                                guardar_datos_motivo_calificacion.push($('#'+nombres_ids).val());                     
+                                guardar_datos_motivo_calificacion_adi.push($('#'+nombres_ids).val());                     
                             }
                         }
                         if((index2+1) % 8 === 0){
-                            datos_finales_adiciones_calificacion.push(guardar_datos_motivo_calificacion);
-                            guardar_datos_motivo_calificacion = [];
+                            datos_finales_adiciones_calificacion.push(guardar_datos_motivo_calificacion_adi);
+                            guardar_datos_motivo_calificacion_adi = [];
                         }
                     });
                 }
-            });
 
+                var DataIdDiagMotCaliAdi = $(this).data("id_fila_diag_adi");
+                IdDiagMotCaliAdi.push(DataIdDiagMotCaliAdi);
+            });
+            
             // Validación de id_asignacion_dx para saber si toca actualizar la información
             var id_adicion_dx = $("#id_adicion_dx").val();
 
-            if (id_adicion_dx == "" || id_adicion_dx == undefined) {
+            // if (id_adicion_dx == "" || id_adicion_dx == undefined) {
+            if( $("#btn_guardar_info_evento").val() == "Guardar" && 
+                $("#btn_guardar_relacion_docs").val() == "Guardar" && 
+                $("#btn_guardar_diagnosticos_adicionados").val() == "Guardar" && 
+                $("#GuardarAdicionDx").val() == "Guardar"){
+                // console.log('guardar');
                 // Registrar Información
                 var informacion_formulario = {
                     '_token': token,
@@ -1174,13 +1417,19 @@ $(document).ready(function(){
                     'Justificacion_revision_origen': $("#justificacion_revision_origen").val(),
                     'Relacion_documentos': relacion_docs_dto_atel,
                     'Examenes_interconsultas': datos_finales_examenes_interconsultas,
+                    'IdExamenesInterconsultas': IdExamenesInterconsultas,
+                    'datos_finales_mot_calificacion': datos_finales_mot_calificacion,
+                    'IdDiagMotCali': IdDiagMotCali,
+                    'Sustentacion': $("#sustentacion_califi_origen").val(),
                     'Adicion_motivo_calificacion': datos_finales_adiciones_calificacion,
+                    'IdDiagMotCaliAdi': IdDiagMotCaliAdi,
                     'Otros_relacion_documentos': $("#otros_docs").val(),
                     'Sustentacion_Adicion_Dx': $("#sustentacion_adicion_dx").val(),
                     'Origen': $("#origen_dto_atel").val(),
                     'radicado_dictamen': $("#radicado_dictamen").val(),                    
                 };
             } else {
+                // console.log('actualizar');
                 // Actualizar Información
                 var informacion_formulario = {
                     '_token': token,
@@ -1207,6 +1456,8 @@ $(document).ready(function(){
                     'Justificacion_revision_origen': $("#justificacion_revision_origen").val(),
                     'Relacion_documentos': relacion_docs_dto_atel,
                     'Examenes_interconsultas': datos_finales_examenes_interconsultas,
+                    'datos_finales_mot_calificacion': datos_finales_mot_calificacion,
+                    'Sustentacion': $("#sustentacion_califi_origen").val(),
                     'Adicion_motivo_calificacion': datos_finales_adiciones_calificacion,
                     'Otros_relacion_documentos': $("#otros_docs").val(),
                     'Sustentacion_Adicion_Dx': $("#sustentacion_adicion_dx").val(),
@@ -1214,14 +1465,14 @@ $(document).ready(function(){
                     'radicado_dictamen': $("#radicado_dictamen").val(),                    
                 };
             }
-
-            
+            // console.log(informacion_formulario);
             $.ajax({
                 type:'POST',
                 url:'/GuardaroActualizarInfoAdicionDX',
                 data: informacion_formulario,
                 success: function(response){
                     if (response.parametro == "agregar_dto_atel") {
+
                         if (btn_guardar_info_evento > 0) {
                             $("#btn_guardar_info_evento").addClass('d-none');
                             $("#mostrar_mensaje_1").removeClass('d-none');
@@ -1263,12 +1514,15 @@ $(document).ready(function(){
                                 location.reload();
                             }, 3000);
                         }
+
                     }
                 }
             });
         }
 
     });
+
+
 
     if ($('#ActualizarAdicionDx').length) {
         $('#div_comite_interdisciplinario').removeClass('d-none');
@@ -1328,13 +1582,13 @@ $(document).ready(function(){
     }) 
 
     var profesional_comite = $("#profesional_comite").val();
-    if (profesional_comite !== '' && idRol != 6) {
+    if (profesional_comite !== '') {
         $("#GuardarComiteInter").prop('disabled', true);
         $("#btn_guardar_info_evento").prop('disabled', true);
         $("#btn_guardar_relacion_docs").prop('disabled', true);
         $("#btn_guardar_diagnosticos_adicionados").prop('disabled', true);
         $("#ActualizarAdicionDx").prop('disabled', true);       
-        $("#div_correspondecia").removeClass('d-none');
+        // $("#div_correspondecia").removeClass('d-none');
     }
 
     // Desabilitar los botones si ya esta visado
@@ -1375,14 +1629,15 @@ $(document).ready(function(){
     var entidad_conocimiento = $("#entidad_conocimiento").val();
     $('#oficio_origen').change(function(){
         if ($(this).prop('checked')) {
-         var asunto_insertar = "CONCEPTO SOBRE PRESUNTO ORIGEN EVENTO";
-         var texto_insertar = '<p>Respetados Señores</p><p>En atención a la solicitud de emisión de concepto sobre el presunto origen de la contingencia, le informamos que una vez estudiada la documentación del paciente por el comité intedisciplinario de calificación de pérdida de la capacidad laboral y origen de Seguros de Vida ALFA S.A., experto en la materia, se considera que el presunto origen de la muerte del Señor(a) {{$nombre_afiliado}}, es con ocasión de un {{$origen_evento}}.</p><p>Para los efectos, se adjuntó el concepto que sustenta lo manifestado.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestra líneas de atención, al cliente en Bogotá (601) 3077032 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escribanos a «servicioalcliente@segurosalfa.com.co»; o a la dirección Carrera 10 # 18-36 piso 4 Edificio Jose maria Cordoba, Bogota D.C.</p>';
+         var asunto_insertar = "Dictamen presunto origen evento";
+         var texto_insertar = '<p>Respetados Señores</p><p>En atención a la solicitud de emisión de concepto sobre el presunto origen de la contingencia, le informamos que una vez estudiada la documentación del paciente por el comité intedisciplinario de calificación de pérdida de la capacidad laboral y origen de Seguros de Vida ALFA S.A., experto en la materia, se considera que el presunto origen de la muerte del Señor(a) {{$nombre_afiliado}}, es con ocasión de un {{$tipo_evento}} {{$origen_evento}}.</p><p>Para los efectos, se adjuntó el concepto que sustenta lo manifestado.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestra líneas de atención, al cliente en Bogotá (601) 3077032 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co»; o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>';
 
          $("#Asunto").val(asunto_insertar);
          $("#cuerpo_comunicado").summernote('code', texto_insertar);
 
          // Habilitación etiquetas
          $("#btn_insertar_nombre_afiliado").prop('disabled', false);
+         $("#btn_insertar_tipo_evento").prop('disabled', false);
          $("#btn_insertar_origen_evento").prop('disabled', false);
 
          // Selección automática de las copias a partes interesadas: Benficiario, Empleador, EPS, ARL
@@ -1409,6 +1664,7 @@ $(document).ready(function(){
 
             // deshabilitación etiquetas
             $("#btn_insertar_nombre_afiliado").prop('disabled', true);
+            $("#btn_insertar_tipo_evento").prop('disabled', true);
             $("#btn_insertar_origen_evento").prop('disabled', true);
 
             // Deselección automática de las copias a partes interesadas: Benficiario, Empleador, EPS, ARL
@@ -1603,10 +1859,10 @@ $(document).ready(function(){
 
     // validar asunto
 
-    var asuntocorrespondencia = $("#Asunto").val();
-    if (asuntocorrespondencia !== '') {
-        $("#div_correspondecia").addClass('d-none');
-    }
+    // var asuntocorrespondencia = $("#Asunto").val();
+    // if (asuntocorrespondencia !== '') {
+    //     $("#div_correspondecia").addClass('d-none');
+    // }
 
     // Habilitar formulario de correspondencia
 
@@ -1618,7 +1874,14 @@ $(document).ready(function(){
     /* funcionalidad para insertar la etiqueta de nombre de afiliado y origen evento */
     $("#cuerpo_comunicado").summernote({
         height: 'auto',
-        toolbar: false
+        toolbar: false,
+        callbacks: {
+            onPaste: function (e) {
+                var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+                e.preventDefault();
+                document.execCommand('insertText', false, bufferText);
+            }
+        }
     });
     $('.note-editing-area').css("background", "white");
     $('.note-editor').css("border", "1px solid black");
@@ -1635,6 +1898,13 @@ $(document).ready(function(){
         e.preventDefault();
 
         var etiqueta = "{{$origen_evento}}";
+        $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta);
+    });
+
+    $("#btn_insertar_tipo_evento").click(function(e){
+        e.preventDefault();
+
+        var etiqueta = "{{$tipo_evento}}";
         $('#cuerpo_comunicado').summernote('editor.insertText', etiqueta);
     });
 
@@ -1692,7 +1962,7 @@ $(document).ready(function(){
         var empleador = $('input[name="empleador"]:checked').val();    
         var eps = $('input[name="eps"]:checked').val();
         var afp = $('input[name="afp"]:checked').val();
-
+        cuerpo_comunicado = cuerpo_comunicado ? cuerpo_comunicado.replace(/"/g, "'") : '';
         // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
         var afp_conocimiento = '';
         if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
@@ -1891,8 +2161,15 @@ $(document).ready(function(){
             formData.append('n_radicado', comunicado_reemplazar.N_radicado);
             formData.append('numero_identificacion', comunicado_reemplazar.N_identificacion);
             formData.append('modulo_creacion', 'adicionDxDtoOrigen');
-            formData.append('asunto', comunicado_reemplazar.Asunto);
-            formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
+            if(comunicado_reemplazar.Tipo_descarga === 'Manual'){
+                formData.append('nombre_documento', archivo.name);
+                formData.append('asunto', archivo.name);
+                formData.append('nombre_anterior', comunicado_reemplazar.Nombre_documento);
+            }else{
+                formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
+                formData.append('asunto', comunicado_reemplazar.Asunto);
+                formData.append('nombre_anterior', '');
+            }
             $.ajax({
                 type:'POST',
                 url:'/reemplazarDocumento',
@@ -1953,6 +2230,7 @@ $(document).ready(function(){
         var infoComunicado = $(this).data("archivo");
         var id_cliente = $("#Id_cliente_"+tupla_comunicado).val();
         var num_identificacion = $("#num_identificacion_"+tupla_comunicado).val();
+        var fecha_dictamen = $("#f_dictamen_"+tupla_comunicado).val();
         var nro_siniestro = $("#nro_siniestro_"+tupla_comunicado).val();
         var Id_Asignacion = $("#Id_Asignacion_"+tupla_comunicado).val();
         var Id_Proceso = $("#Id_Proceso_"+tupla_comunicado).val();
@@ -1967,7 +2245,8 @@ $(document).ready(function(){
         var f_evento = $("#f_evento_"+tupla_comunicado).val();
         var f_fallecimiento = $("#f_fallecimiento_"+tupla_comunicado).val();
         var sustentacion_califi_origen = $("#sustentacion_califi_origen_"+tupla_comunicado).val();
-        var origen = $("#origen_dto_atel option:selected").text();
+        var origen = $("#origen_dto_atel option:selected").text(); 
+        var N_siniestro = $("#n_siniestro").val();
 
         datos_generacion_proforma_dml_previsional = {
             '_token': token,
@@ -1988,7 +2267,9 @@ $(document).ready(function(){
             'sustentacion_califi_origen': sustentacion_califi_origen,
             'origen': origen,
             'id_comunicado': infoComunicado.Id_Comunicado,
+            'N_siniestro': N_siniestro,
         };
+        console.log("datos_generacion_proforma_dml_previsional : ",datos_generacion_proforma_dml_previsional);
         if(infoComunicado.Reemplazado == 1){
             var nombre_doc = infoComunicado.Nombre_documento;
             var idEvento = infoComunicado.ID_evento;
@@ -2036,7 +2317,7 @@ $(document).ready(function(){
                 complete:  function() {
                     $("#btn_enviar_dictamen_previsional").removeClass("descarga-deshabilitada");
                     if(infoComunicado.Nombre_documento == null){
-                        location.reload();
+                        // location.reload();
                     }
                 },       
             });
@@ -2064,6 +2345,11 @@ $(document).ready(function(){
         var direccion_afiliado = $("#direccion_afiliado_"+tupla_comunicado).val();
         var telefono_afiliado = $("#telefono_afiliado_"+tupla_comunicado).val();
         var ciudad_afiliado = $("#ciudad_afiliado_"+tupla_comunicado).val();
+        var nombre_afp = $("#nombre_afp_"+tupla_comunicado).val();
+        var email_afp = $("#email_afp_"+tupla_comunicado).val();
+        var direccion_afp = $("#direccion_afp_"+tupla_comunicado).val();
+        var telefono_afp = $("#telefono_afp_"+tupla_comunicado).val();
+        var ciudad_afp = $("#ciudad_afp_"+tupla_comunicado).val();
         var Id_asignacion = $("#Id_Asignacion_consulta_"+tupla_comunicado).val();
         var Id_cliente_firma = $('#Id_cliente_firma_'+tupla_comunicado).val();
         var origen = $("#origen_dto_atel option:selected").text();
@@ -2072,7 +2358,9 @@ $(document).ready(function(){
         var copia_empleador = $('#empleador').filter(":checked").val();
         var copia_eps = $('#eps').filter(":checked").val();
         var copia_afp = $('#afp').filter(":checked").val();
-
+        var tipo_evento = $('#nombre_evento_guardado').val();
+        var N_siniestro = $("#n_siniestro").val();
+        cuerpo = cuerpo ? cuerpo.replace(/"/g, "'") : '';
         // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
         var copia_afp_conocimiento = '';
         if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
@@ -2098,6 +2386,11 @@ $(document).ready(function(){
             'direccion_afiliado': direccion_afiliado,
             'telefono_afiliado': telefono_afiliado,
             'ciudad_afiliado': ciudad_afiliado,
+            'nombre_afp': nombre_afp,
+            'email_afp' : email_afp,
+            'direccion_afp': direccion_afp,
+            'telefono_afp': telefono_afp,
+            'ciudad_afp': ciudad_afp,
             'Id_asignacion': Id_asignacion,
             'Id_cliente_firma': Id_cliente_firma,
             'origen': origen,
@@ -2106,9 +2399,12 @@ $(document).ready(function(){
             'copia_eps': copia_eps,
             'copia_afp': copia_afp,
             'copia_afp_conocimiento': copia_afp_conocimiento,
+            'tipo_evento': tipo_evento,
             'copia_arl': copia_arl,
             'firmar': firmar,
-            'anexos': anexos
+            'anexos': anexos,
+            'tipo_evento': tipo_evento,
+            'N_siniestro': N_siniestro,
         };
 
         if(infoComunicado.Reemplazado == 1){
@@ -2170,7 +2466,7 @@ $(document).ready(function(){
         $("#form_Adicion_Dx").addClass('d-none');
         $("#div_comite_interdisciplinario").addClass('d-none');
         $("#div_correspondecia").addClass('d-none');
-        $("label[for='editar_correspondencia']").addClass('d-none');
+        $("#editar_correspondencia").addClass('d-none');
     }
 
     // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:
@@ -2179,14 +2475,113 @@ $(document).ready(function(){
         $("#anexos").prop('readonly', true);
         $("#Asunto").prop('readonly', true);
         $("#btn_insertar_nombre_afiliado").prop('disabled', true);
+        $("#btn_insertar_tipo_evento").prop('disabled', true);
         $("#btn_insertar_origen_evento").prop('disabled', true);
         $(".note-editable").attr("contenteditable", false);
         $("#firmar").prop('disabled', true);
     }
 });
 
+/* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnosticos motivo de calificación*/
+function funciones_elementos_fila_diagnosticos_visual(num_consecutivo) {
+    // Inicializacion de select 2
+    $("#lista_Cie10_fila_visual_"+num_consecutivo).select2({
+        //width: '100%',
+        width: '140px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
 
-/* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/
+    $("#lista_origenCie10_fila_visual_"+num_consecutivo).select2({
+        width: '100%',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
+    $("#lista_lateralidadCie10_fila_visual_"+num_consecutivo).select2({
+        width: '100%',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
+    //Carga de datos en los selectores
+
+    let token = $("input[name='_token']").val();
+    let datos_CIE10 = {
+        '_token': token,
+        'parametro' : "listado_CIE10",
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargueListadoSelectoresAdicionDx',
+        data: datos_CIE10,
+        success:function(data){
+            // $("select[id^='lista_Cie10_fila_']").empty();
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $("#lista_Cie10_fila_visual_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Cie_diagnostico"]+'">'+data[claves[i]]["CIE10"]+' - '+data[claves[i]]["Descripcion_diagnostico"]+'</option>');
+            }
+        }
+    });
+
+    let datos_Origen_CIE10 = {
+        '_token': token,
+        'parametro' : "listado_OrigenCIE10",
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargueListadoSelectoresAdicionDx',
+        data: datos_Origen_CIE10,
+        success:function(data){
+            // $("select[id^='lista_origenCie10_fila_']").empty();
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $("#lista_origenCie10_fila_visual_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+            }
+        }
+    });
+
+    let datos_Lateralidad_CIE10 = {
+        '_token': token,
+        'parametro' : "listado_LateralidadCIE10",
+    };
+    $.ajax({
+        type:'POST',
+        url:'/cargueListadoSelectoresAdicionDx',
+        data: datos_Lateralidad_CIE10,
+        success:function(data){
+            // $("select[id^='lista_origenCie10_fila_']").empty();
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $("#lista_lateralidadCie10_fila_visual_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+            }
+        }
+    });
+
+    $(document).on('change', '#lista_Cie10_fila_visual_'+num_consecutivo, function() {        
+        let seleccion = $(this).val();        
+        let datos_Nombre_CIE = {
+            '_token': token,
+            'parametro' : "listado_NombreCIE10",
+            'seleccion': seleccion,
+        };    
+        $.ajax({
+            type:'POST',
+            url:'/cargueListadoSelectoresAdicionDx',
+            data: datos_Nombre_CIE,
+            success:function(data){
+                //console.log(data);
+                let claves = Object.keys(data);
+                //console.log(claves);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#nombre_cie10_fila_visual_"+num_consecutivo).val(data[claves[i]]["Descripcion_diagnostico"]);
+                }
+            }
+        });
+    });
+}
+
+/* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnosticos adicionados */
 function funciones_elementos_fila_diagnosticos(num_consecutivo) {
     // Inicializacion de select 2
     $("#lista_Cie10_fila_"+num_consecutivo).select2({

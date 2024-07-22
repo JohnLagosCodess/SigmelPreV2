@@ -410,6 +410,42 @@ $(document).ready(function(){
         iniciarIntervalo_correspon();
     });
 
+
+    /* aqui se deja el cargue de informacion del selector de revisó para solucionar la incidencia */
+    let datos_lista_lider_grupo = {
+        '_token': token,
+        'parametro':"lista_lider_grupo",
+    };
+    $.ajax({
+        type:'POST',
+        url:'/selectoresPronunciamiento',
+        data: datos_lista_lider_grupo,
+        success:function(data) {
+            let Nreviso = $('select[name=reviso]').val();
+            let lidergru = Object.keys(data);
+            var bd_quien_reviso = $('#bd_quien_reviso').val();
+
+            if (bd_quien_reviso != undefined) {
+                for (let i = 0; i < lidergru.length; i++) {
+                    if (data[lidergru[i]]['name'] != Nreviso) {
+                        if(data[lidergru[i]]["name"] == bd_quien_reviso){
+                            $('#reviso').append('<option value="'+data[lidergru[i]]["name"]+'" selected>'+data[lidergru[i]]["name"]+'</option>');
+                        }else{
+                            $('#reviso').append('<option value="'+data[lidergru[i]]["name"]+'">'+data[lidergru[i]]["name"]+'</option>');
+                        }
+                    }
+                }
+            }else{
+                for (let i = 0; i < lidergru.length; i++) {
+                    if (data[lidergru[i]]['name'] != Nreviso) {  
+                        $('#reviso').append('<option value="'+data[lidergru[i]]["name"]+'">'+data[lidergru[i]]["name"]+'</option>');
+                    }
+                }
+                $("#reviso").prop("selectedIndex", 1);
+            }
+        }
+    });
+
     // Función para validar items a mostrar
     const tiempoDeslizamiento2 = 'slow';
     function iniciarIntervalo_correspon() {
@@ -421,26 +457,26 @@ $(document).ready(function(){
         $("#elaboro").empty();
         $("#elaboro").val(elaboro2);
         //Listado de lideres grupo trabajo
-        let datos_lista_lider_grupo = {
-                '_token': token,
-                'parametro':"lista_lider_grupo",
-                'nom_usuario_session':elaboro2
-        };
-        $.ajax({
-            type:'POST',
-            url:'/selectoresPronunciamiento',
-            data: datos_lista_lider_grupo,
-            success:function(data) {
-                let Nreviso = $('select[name=reviso]').val();
-                let lidergru = Object.keys(data);
-                for (let i = 0; i < lidergru.length; i++) {
-                    if (data[lidergru[i]]['name'] != Nreviso) {  
-                        $('#reviso').append('<option value="'+data[lidergru[i]]["name"]+'">'+data[lidergru[i]]["name"]+'</option>');
-                    }
-                }
-                $("#reviso").prop("selectedIndex", 1);
-            }
-        });
+        // let datos_lista_lider_grupo = {
+        //         '_token': token,
+        //         'parametro':"lista_lider_grupo",
+        //         'nom_usuario_session':elaboro2
+        // };
+        // $.ajax({
+        //     type:'POST',
+        //     url:'/selectoresPronunciamiento',
+        //     data: datos_lista_lider_grupo,
+        //     success:function(data) {
+        //         let Nreviso = $('select[name=reviso]').val();
+        //         let lidergru = Object.keys(data);
+        //         for (let i = 0; i < lidergru.length; i++) {
+        //             if (data[lidergru[i]]['name'] != Nreviso) {  
+        //                 $('#reviso').append('<option value="'+data[lidergru[i]]["name"]+'">'+data[lidergru[i]]["name"]+'</option>');
+        //             }
+        //         }
+        //         $("#reviso").prop("selectedIndex", 1);
+        //     }
+        // });
         if(!info_pronuncia){
             intervaloCo = setInterval(() => {
                 switch (opt_correspondencia) {
@@ -525,8 +561,15 @@ $(document).ready(function(){
             formData.append('n_radicado', comunicado_reemplazar.N_radicado);
             formData.append('numero_identificacion', comunicado_reemplazar.N_identificacion);
             formData.append('modulo_creacion', 'pronunciamientoPCL');
-            formData.append('asunto', comunicado_reemplazar.Asunto);
-            formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
+            if(comunicado_reemplazar.Tipo_descarga === 'Manual'){
+                formData.append('nombre_documento', archivo.name);
+                formData.append('asunto', archivo.name);
+                formData.append('nombre_anterior', comunicado_reemplazar.Nombre_documento);
+            }else{
+                formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
+                formData.append('asunto', comunicado_reemplazar.Asunto);
+                formData.append('nombre_anterior', '');
+            }
             $.ajax({
                 type:'POST',
                 url:'/reemplazarDocumento',
@@ -649,6 +692,8 @@ $(document).ready(function(){
 
     $("#editar_correspondencia").click(function(e){
         var info_pronunciamiento = JSON.parse(info_pronuncia)[0];
+        var decision = info_pronunciamiento.Decision;
+        $("input[name='decision_pr'][value='" + decision + "']").prop("checked", true);
         $("#ActualizarPronuncia").removeClass('d-none');
         $("#div_pronu_califi").removeClass('d-none');
         $("#div_doc_pronu").removeClass('d-none');
@@ -728,7 +773,14 @@ $(document).ready(function(){
      // Funcionalidad para insertar las etiquetas en la sutentacion
     $("#sustenta_cali").summernote({
         height: 'auto',
-        toolbar: false
+        toolbar: false,
+        callbacks: {
+            onPaste: function (e) {
+                var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+                e.preventDefault();
+                document.execCommand('insertText', false, bufferText);
+            }
+        }
     });
     $('.note-editing-area').css("background", "white");
     $('.note-editor').css("border", "1px solid black");  
@@ -772,14 +824,14 @@ $(document).ready(function(){
             "estructuración: <strong>{{$F_estructuracionPcl}}</strong>.</p>"+
             "<p>1. </p>"+
             "<p>Por lo anterior, presentamos el recurso de reposición y en subsidio el de apelación, contra la pérdida de capacidad laboral (PCL), "+
-            "con el fin que se dictamine el valor correspondiente a las patologías del paciente dando aplicación al Decreto  1507/2014 como "+
+            "con el fin que se dictamine el valor correspondiente a las patologías del paciente dando aplicación al Decreto 1507/2014 como "+
             "normatividad vigente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación, e "+
             "informarnos con el fin de consignar los honorarios respectivos.</p>"+
             "<p>ANEXO:</p>"+
             "<p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera. </p>"+
             "<p>NOTIFICACIONES:</p>"+
             "<p>Recibiré notificaciones en la Carrera 10 # 18 – 36 Edificio Córdoba Piso 4, en la ciudad de Bogotá, D.C. </p>"+
-            "<p>Cualquier Información adicional con gusto  le será suministrada,</p>";
+            "<p>Cualquier Información adicional con gusto le será suministrada,</p>";
             $('#sustenta_cali').summernote('code', texto_insertar);
             $('#proformas_pro_pcl').removeClass('d-none');
             $('#proformas_pro_pcl').val('WORD');
@@ -890,6 +942,9 @@ $(document).ready(function(){
                 });
             }
         });
+        var sustenta_cali = $('#sustenta_cali').val();
+        sustenta_cali = sustenta_cali ? sustenta_cali.replace(/"/g, "'") : '';
+
         var formData = new FormData($('form')[0]);
         formData.append('datos_finales_diagnosticos_moticalifi', JSON.stringify(datos_finales_diagnosticos_moticalifi));
         //const arrayData = JSON.parse(formData.get('datos_finales_diagnosticos_moticalifi'));
@@ -918,7 +973,7 @@ $(document).ready(function(){
         formData.append('rango_pcl', $('#rango_pcl').val());
         formData.append('decision_pr', $("[id^='di_']").filter(":checked").val());
         formData.append('asunto_cali', $('#asunto_cali').val());
-        formData.append('sustenta_cali', $('#sustenta_cali').val());
+        formData.append('sustenta_cali', sustenta_cali);
         formData.append('destinatario_principal', $('#destinatario_principal').filter(":checked").val());
         formData.append('tipo_entidad', $("#tipo_entidad").val());
         formData.append('nombre_entidad', $("#nombre_entidad").val());
@@ -1010,6 +1065,8 @@ $(document).ready(function(){
         var copia_afp = $('#copia_afp').filter(":checked").val();
         var copia_arl = $('#copia_arl').filter(":checked").val();
         var firmar = $('#firmar').filter(":checked").val();
+        Sustenta_cali = Sustenta_cali ? Sustenta_cali.replace(/"/g, "'") : '';
+        var N_siniestro = $('#n_siniestro').val();
 
         let token = $("input[name='_token']").val();
         var datos_proforma_pro = {
@@ -1030,6 +1087,7 @@ $(document).ready(function(){
             'Firma_corre':firmar,
             'desicion_proforma':desicion_proforma,
             'id_comunicado': comunicado.Id_Comunicado,
+            'N_siniestro' : N_siniestro
         };
         if(comunicado.Reemplazado == 1){
             var nombre_doc = comunicado.Nombre_documento;
@@ -1080,7 +1138,7 @@ $(document).ready(function(){
                 },
                 complete: function(){
                     $("#btn_generar_proforma").removeClass("descarga-deshabilitada");
-                    location.reload();
+                    // location.reload();
                 }  
             });
         }

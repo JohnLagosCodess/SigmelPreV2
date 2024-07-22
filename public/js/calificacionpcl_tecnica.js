@@ -3218,8 +3218,15 @@ $(document).ready(function(){
             formData.append('n_radicado', comunicado_reemplazar.N_radicado);
             formData.append('numero_identificacion', comunicado_reemplazar.N_identificacion);
             formData.append('modulo_creacion', 'calificacionTecnicaPCL');
-            formData.append('asunto', comunicado_reemplazar.Asunto);
-            formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
+            if(comunicado_reemplazar.Tipo_descarga === 'Manual'){
+                formData.append('nombre_documento', archivo.name);
+                formData.append('asunto', archivo.name);
+                formData.append('nombre_anterior', comunicado_reemplazar.Nombre_documento);
+            }else{
+                formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
+                formData.append('asunto', comunicado_reemplazar.Asunto);
+                formData.append('nombre_anterior', '');
+            }
             $.ajax({
                 type:'POST',
                 url:'/reemplazarDocumento',
@@ -3382,11 +3389,13 @@ $(document).ready(function(){
         } else {
             var cuerpo_comunicadoPcl = cuerpo_comunicado;
         }
-
+        cuerpo_comunicado = cuerpo_comunicado ? cuerpo_comunicado.replace(/"/g, "'") : '';
+        cuerpo_comunicado_cero = cuerpo_comunicado_cero ? cuerpo_comunicado_cero.replace(/"/g, "'") : '';
         var afiliado = $('input[name="afiliado"]:checked').val();
         var empleador = $('input[name="empleador"]:checked').val();   
         var eps = $('input[name="eps"]:checked').val();
         var afp = $('input[name="afp"]:checked').val();
+        
 
         // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
         var afp_conocimiento = '';
@@ -3411,6 +3420,7 @@ $(document).ready(function(){
         var f_correspondencia = $('#f_correspondencia').val();
         var radicado = $('#radicado').val();
         var bandera_correspondecia_guardar_actualizar = $('#bandera_correspondecia_guardar_actualizar').val();
+        var N_siniestro = $('#n_siniestro').val();
         
         var datos_correspondecia={
             '_token': token,            
@@ -3450,7 +3460,8 @@ $(document).ready(function(){
             'f_correspondencia':f_correspondencia,
             'radicado':radicado,
             'bandera_correspondecia_guardar_actualizar':bandera_correspondecia_guardar_actualizar,
-            'tipo_descarga':'Oficio'
+            'tipo_descarga':'Oficio',
+            'N_siniestro': N_siniestro
         }
 
         $.ajax({    
@@ -3603,7 +3614,14 @@ $(document).ready(function(){
     // Funcionalidad para insertar las etiquetas de diagnosticos cie10 y origen Notificacion calificacion numerica
     $("#cuerpo_comunicado").summernote({
         height: 'auto',
-        toolbar: false
+        toolbar: false,
+        callbacks: {
+            onPaste: function (e) {
+                var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+                e.preventDefault();
+                document.execCommand('insertText', false, bufferText);
+            }
+        }
     });
     $('.note-editing-area').css("background", "white");
     $('.note-editor').css("border", "1px solid black");    
@@ -3615,7 +3633,7 @@ $(document).ready(function(){
     oficioremisoriopcl.change(function(){
         if ($(this).prop('checked')) {
             $("#Asunto").val("Calificación de Pérdida de Capacidad Laboral al Fondo de Pensiones Porvenir S.A.");
-            var texto_insertar = "<p>Hola, {{$Nombre_afiliado}} </p>"+
+            var texto_insertar = "<p>Hola, {{$Nombre_afiliado}}! </p>"+
             "<p>En Seguros de Vida Alfa S.A. siempre buscamos la protección y satisfacción de nuestros clientes. De acuerdo con tu solicitud de  "+ 
             "calificación de pérdida de capacidad laboral (PCL) en la AFP Porvenir S.A., te informamos que el historial médico ha sido revisado y "+
             "calificado por el grupo interdisciplinario de calificación de Seguros de Vida Alfa S.A.(1).</p>"+
@@ -3626,8 +3644,8 @@ $(document).ready(function(){
             "caso, podrás iniciar tu solicitud pensional a través de a página web www.porvenir.com.co o llamando a la línea de atención al cliente "+
             "de Porvenir 018000510800, con el fin de solicitar una cita para la radicación de la documentación.</p>"+
             "<p>En caso de que no te encuentres de acuerdo con la calificación emitida por Seguros de Vida Alfa S.A., cuentas con diez (10) días "+
-            "hábiles siguientes a partir de la fecha de recibida la notificación para manifestar tu inconformidad frente a resultado. Esta manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de los siguientes aspectos te encuentras en desacuerdo: <br><br>- Pérdida de capacidad laboral <br> - Origen <br>  - Fecha de estructuración <br><br> La carta debe ser remitida por medio de correo certificado a la dirección Carrera 10 # 18-36, piso 4 edificio José María Córdoba en "+
-            "Bogotá o a inconformidad@segurosalfa.com.co. <br><br> Ten presente que el comunicado debe venir firmado por ti, relacionando los datos de <br> localizaci ón. Posterior a la revisión de tu carta, procederemos a remitir tu expediente a la respectiva Junta Regional de Calificación de Invalidez para obtener una segunda calificación. <br><br> Una vez realizada la solicitud, a más tardar en (15) quince días hábiles recibirás por parte de Seguros de Vida Alfa S.A. una comunicación donde te informaremos el estado del proceso. "
+            "hábiles siguientes a partir de la fecha de recibida la notificación para manifestar tu inconformidad frente a resultado. Esta manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de los siguientes aspectos te encuentras en desacuerdo: <br><br>- Pérdida de capacidad laboral <br> - Origen <br>  - Fecha de estructuración <br><br> La carta debe ser remitida por medio de correo certificado a la dirección <strong>Carrera 10 # 18-36, piso 4 edificio José María Córdoba en "+
+            "Bogotá o a inconformidad@segurosalfa.com.co.</strong> Ten presente que el comunicado debe venir firmado por ti, relacionando los datos de localización. Posterior a la revisión de tu carta, procederemos a remitir tu expediente a la respectiva Junta Regional de Calificación de Invalidez para obtener una segunda calificación.<br> Una vez realizada la solicitud, a más tardar en (15) quince días hábiles recibirás por parte de Seguros de Vida Alfa S.A. una comunicación donde te informaremos el estado del proceso. "
             //"manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de"+
             //"los siguientes aspectos te encuentras en desacuerdo: </p>"+
             //"<p>- Pérdida de capacidad laboral</p>"+
@@ -3702,13 +3720,13 @@ $(document).ready(function(){
     oficioremisorioincapcl.change(function(){
         if ($(this).prop('checked')) {
             $("#Asunto").val("Calificación de Pérdida de Capacidad Laboral al Fondo de Pensiones Porvenir S.A.");
-            var texto_insertar = "<p>Hola, {{$Nombre_afiliado}} </p>"+
+            var texto_insertar = "<p>Respetado(a) {{$Nombre_afiliado}}, cordial saludo: </p>"+
             "<p>Teniendo en cuenta que usted ha cumplido los términos de incapacidad temporal prolongada establecidos por la ley, la AFP Porvenir "+ 
             "S.A. en cumplimiento de la normatividad legal vigente procede a notificarle el dictamen de calificación con respecto a las patologías "+
             "padecidas por usted y sustentadas en las Historias Clínicas aportadas que hacen parte integra de su expediente.</p>"+
             "<p>Para el caso particular, es necesario resaltar el siguiente acápite legal: Literal a) del Artículo 29 del Decreto 1352 de 2013.</p>"+
             "<p>Teniendo en cuenta lo anterior nos permitimos informarle que el grupo interdisciplinario de Seguros de Vida Alfa S.A, aseguradora que "+
-            "maneja el seguro previsional de los afiliados a la AFP Porvenir, emiti ó dictamen de calificación de origen y pérdida de la capacidad "+
+            "maneja el seguro previsional de los afiliados a la AFP Porvenir, emitió dictamen de calificación de origen y pérdida de la capacidad "+
             "laboral (PCL), definiendo para su caso lo siguiente:</p>"+
             "<table class='tabla_cuerpo'>" +
             "<tr>" +
@@ -3818,7 +3836,14 @@ $(document).ready(function(){
 
     $("#cuerpo_comunicado_cero").summernote({
         height: 'auto',
-        toolbar: false
+        toolbar: false,
+        callbacks: {
+            onPaste: function (e) {
+                var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+                e.preventDefault();
+                document.execCommand('insertText', false, bufferText);
+            }
+        }
     });
     $('.note-editing-area').css("background", "white");
     $('.note-editor').css("border", "1px solid black");

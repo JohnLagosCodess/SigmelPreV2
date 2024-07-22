@@ -27,6 +27,7 @@ $(document).ready(function(){
 
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE TIPO DE DOCUMENTO BENEFICIARIO */
     $(".afi_tipo_documento").select2({
+        width: '100%',
         placeholder: "Seleccione una opción",
         allowClear: false
     });
@@ -69,12 +70,14 @@ $(document).ready(function(){
 
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE DEPARTAMENOS (INFORMACIÓN AFILIADO) */
     $(".afi_departamento_info_afiliado").select2({
+        width: '100%',
         placeholder: "Seleccione una opción",
         allowClear: false
     });
 
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE MUNCIPIOS (INFORMACIÓN AFILIADO) */
     $(".afi_municipio_info_afiliado").select2({
+        width: '100%',
         placeholder: "Seleccione una opción",
         allowClear: false
     });
@@ -996,7 +999,13 @@ $(document).ready(function(){
                 $('#servicio').append('<option value="" selected>Seleccione</option>');
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
-                    $('#servicio').append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
+                    if($("#tipo_evento").val() == 2){
+                        if (data[claves[i]]["Id_Servicio"] != 2) {
+                            $('#servicio').append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
+                        }
+                    }else{
+                        $('#servicio').append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
+                    }
                 }
             }
         });

@@ -2415,26 +2415,26 @@ class AdministradorController extends Controller
                 ->where([
                     ['ID_evento', '=', $request->nro_evento],
                     ['Id_proceso', '=',  $request->id_proceso_actual]
-                ])->get();
+                ])->get();            
 
             $string_ids_servicios = array();
 
-             /* Quitar los servicios no contratados */
-             $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
-             ->select('Id_servicio')
-             ->where([
-                 ['Id_proceso',$request->id_proceso_actual],
-                 ['Id_cliente',$request->id_cliente]
-             ])
-             ->get();
+            /* Quitar los servicios no contratados */
+            $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+                    ->select('Id_servicio')
+                    ->where([
+                        ['Id_proceso',$request->id_proceso_actual],
+                        ['Id_cliente',$request->id_cliente]
+                    ])
+                    ->get();
 
             for ($i=0; $i < count($listado_id_servicios_evento); $i++) { 
                 array_push($string_ids_servicios, $listado_id_servicios_evento[$i]->Id_servicio);
                 array_push($string_ids_servicios, 3); // Se agrega pronunciamiento Origen para no mostrar
                 array_push($string_ids_servicios, 9); // Se agrega pronunciamiento PCL para no mostrar
             }
-            
-            /* MODIFICACIÓN PARA QUE SE PUEDA CREAR MUCHOS SERVICIOS DE RECALIFICACIÓN y Adición DX 06-02-2024 
+
+            /* MODIFICACIÓN PARA QUE SE PUEDA CREAR MUCHOS SERVICIOS DE RECALIFICACIÓN y Adición y Juntas DX 06-02-2024 
                 EL SERVICIO DE Recalificación TIENE EL ID 7 O EL 8 Revision Pension
                 o 2 DX  en la tabla sigmel_lista_procesos_servicios
             */
@@ -2473,21 +2473,95 @@ class AdministradorController extends Controller
                     $string_ids_servicios = array_values($string_ids_servicios);
                     // Actualizar el tamaño del array
                     $tamanio = count($string_ids_servicios);
-                } else {
+                }else {
                     // Si el valor 7,8,2 ya no está en el array, salimos del bucle
                     break;
                 }
-            }
+            }          
             
-            $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
-            ->select('Id_Servicio', 'Nombre_servicio')
-            ->where([
-                ['Id_proceso', '=', $request->id_proceso_actual],
-                ['Estado', '=', 'activo']
-            ])
-            ->whereIn('Id_Servicio', $servicios_contratados)
-            ->whereNotIn('Id_Servicio', $string_ids_servicios)
-            ->get();
+            switch(true)
+            {
+                case($request->id_proceso_actual == 1):
+                    $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+                    ->select('Id_servicio')
+                    ->where([
+                        ['Id_proceso',$request->id_proceso_actual],
+                        ['Id_cliente',$request->id_cliente]
+                    ])->get();
+
+                    $servicio_cliente = array();
+                    for ($i=0; $i < count($servicios_contratados); $i++) { 
+                        array_push($servicio_cliente, $servicios_contratados[$i]->Id_servicio);
+                    }
+                    $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                    ->select('Id_Servicio', 'Nombre_servicio')
+                    ->where([
+                        ['Id_proceso', '=', $request->id_proceso_actual],
+                        ['Estado', '=', 'activo']
+                    ])
+                    ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                    ->whereIn('Id_Servicio', $servicio_cliente)
+                    ->where('Id_Servicio', '<>', 1)
+                    ->get();
+                break;
+                case($request->id_proceso_actual == 2):
+                    $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+                    ->select('Id_servicio')
+                    ->where([
+                        ['Id_proceso',$request->id_proceso_actual],
+                        ['Id_cliente',$request->id_cliente]
+                    ])->get();
+
+                    $servicio_cliente = array();
+                    for ($i=0; $i < count($servicios_contratados); $i++) { 
+                        array_push($servicio_cliente, $servicios_contratados[$i]->Id_servicio);
+                    }
+                    $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                    ->select('Id_Servicio', 'Nombre_servicio')
+                    ->where([
+                        ['Id_proceso', '=', $request->id_proceso_actual],
+                        ['Estado', '=', 'activo']
+                    ])
+                    ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                    ->whereIn('Id_Servicio', $servicio_cliente)
+                    ->where('Id_Servicio', '<>', 6)
+                    ->get();
+                break;
+                case($request->id_proceso_escogido == 3):
+                    $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+                    ->select('Id_servicio')
+                    ->where([
+                        ['Id_proceso',$request->id_proceso_escogido],
+                        ['Id_cliente',$request->id_cliente]
+                    ])->get();
+
+                    $servicio_cliente = array();
+                    for ($i=0; $i < count($servicios_contratados); $i++) { 
+                        array_push($servicio_cliente, $servicios_contratados[$i]->Id_servicio);
+                    }
+
+                    $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                    ->select('Id_Servicio', 'Nombre_servicio')
+                    ->where([
+                        ['Id_proceso', '=', $request->id_proceso_escogido],
+                        ['Estado', '=', 'activo']
+                    ])
+                    ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                    ->whereIn('Id_Servicio', $servicio_cliente)
+                    ->get();
+                break;
+                default:
+                    $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+                    ->select('Id_Servicio', 'Nombre_servicio')
+                    ->where([
+                        ['Id_proceso', '=', $request->id_proceso_actual],
+                        ['Estado', '=', 'activo']
+                    ])
+                    ->whereIn('Id_Servicio', $servicios_contratados)
+                    ->whereNotIn('Id_Servicio', $string_ids_servicios)
+                    ->get();
+                break;
+            }
 
             $info_listado_servicios = json_decode(json_encode($listado_servicios, true));
             return response()->json(($info_listado_servicios));
@@ -2648,25 +2722,20 @@ class AdministradorController extends Controller
         if($parametro == 'listado_servicios_nuevo_proceso'){
             
             $listado_id_servicios_evento = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-                ->select('Id_servicio')
-                ->where([
-                    ['ID_evento', '=', $request->nro_evento],
-                    ['Id_proceso', '=',  $request->id_proceso_escogido]
-                ])->get();
+            ->select('Id_servicio')
+            ->where([
+                ['ID_evento', '=', $request->nro_evento],
+                ['Id_proceso', '=',  $request->id_proceso_escogido]
+            ])->get();            
 
             $string_ids_servicios = array();
 
             for ($i=0; $i < count($listado_id_servicios_evento); $i++) { 
                 array_push($string_ids_servicios, $listado_id_servicios_evento[$i]->Id_servicio);
             }
-
-            // Despues de obtener los servicios de cada proceso se realiza las siguiente validaciones 
-            // segun el caso
-            // CASO 1: traer servicios del proceso Origen distintos a la Adicion Dx
-            // CASO 2: traer servicios del proceso PCL distintos a Recalificacion y Revision pension
-            // CASO 3: traer servicios del proceso Juntas segun los contratados
+            
             $tamanio = count($string_ids_servicios);
-            for ($a = 0; $a < $tamanio; $a++) { 
+            for ($a = 0; $a <= $tamanio || $a > $tamanio; $a++) {                 
                 if (in_array(12, $string_ids_servicios)) {
                     // Eliminar el valor 12 del array
                     $index = array_search(12, $string_ids_servicios);
@@ -2683,14 +2752,49 @@ class AdministradorController extends Controller
                     $string_ids_servicios = array_values($string_ids_servicios);
                     // Actualizar el tamaño del array
                     $tamanio = count($string_ids_servicios);
-                } else {
+                } else if (in_array(3, $string_ids_servicios)) {                    
+                    // Eliminar el valor 3 del array
+                    $index = array_search(3, $string_ids_servicios);
+                    unset($string_ids_servicios[$index]);
+                    // Reindexar el array después de eliminar un elemento
+                    $string_ids_servicios = array_values($string_ids_servicios);                    
+                    // Actualizar el tamaño del array
+                    $tamanio = count($string_ids_servicios);                    
+                } else if (in_array(9, $string_ids_servicios)) {
+                    // Eliminar el valor 9 del array
+                    $index = array_search(9, $string_ids_servicios);
+                    unset($string_ids_servicios[$index]);
+                    // Reindexar el array después de eliminar un elemento
+                    $string_ids_servicios = array_values($string_ids_servicios);
+                    // Actualizar el tamaño del array
+                    $tamanio = count($string_ids_servicios);
+                } 
+                else {
                     // Si el valor 12,12 ya no está en el array, salimos del bucle
                     break;
                 }
-            }
+            } 
+            // Despues de obtener los servicios de cada proceso se realiza las siguiente validaciones 
+            // segun el caso
+            // CASO 1: traer servicios del proceso Origen distintos a la Adicion Dx (ESTO YA NO VA DEBIDO A LA FICHA PBS-051)
+            // CASO 2: traer servicios del proceso PCL distintos a Recalificacion y Revision pension (ESTO YA NO VA DEBIDO A LA FICHA PBS-051)
+            // CASO 3: traer servicios del proceso Juntas segun los contratados
+            
             switch(true)
             {
                 case($request->id_proceso_escogido == 1):
+                    $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+                    ->select('Id_servicio')
+                    ->where([
+                        ['Id_proceso',$request->id_proceso_escogido],
+                        ['Id_cliente',$request->id_cliente]
+                    ])->get();
+
+                    $servicio_cliente = array();
+                    for ($i=0; $i < count($servicios_contratados); $i++) { 
+                        array_push($servicio_cliente, $servicios_contratados[$i]->Id_servicio);
+                    }
+
                     $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
                     ->select('Id_Servicio', 'Nombre_servicio')
                     ->where([
@@ -2698,10 +2802,23 @@ class AdministradorController extends Controller
                         ['Estado', '=', 'activo']
                     ])
                     ->whereNotIn('Id_Servicio', $string_ids_servicios)
-                    ->where('Id_Servicio', '<>', 2)
+                    ->whereIn('Id_Servicio', $servicio_cliente)
+                    // ->where('Id_Servicio', '<>', 2)
                     ->get();
                 break;
                 case($request->id_proceso_escogido == 2):
+                    $servicios_contratados = sigmel_informacion_servicios_contratados::on('sigmel_gestiones')
+                    ->select('Id_servicio')
+                    ->where([
+                        ['Id_proceso',$request->id_proceso_escogido],
+                        ['Id_cliente',$request->id_cliente]
+                    ])->get();
+
+                    $servicio_cliente = array();
+                    for ($i=0; $i < count($servicios_contratados); $i++) { 
+                        array_push($servicio_cliente, $servicios_contratados[$i]->Id_servicio);
+                    }
+
                     $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
                     ->select('Id_Servicio', 'Nombre_servicio')
                     ->where([
@@ -2709,7 +2826,8 @@ class AdministradorController extends Controller
                         ['Estado', '=', 'activo']
                     ])
                     ->whereNotIn('Id_Servicio', $string_ids_servicios)
-                    ->whereNotIn('Id_Servicio', [7,8])
+                    ->whereIn('Id_Servicio', $servicio_cliente)
+                    // ->whereNotIn('Id_Servicio', [7,8])
                     ->get();
                 break;
                 case($request->id_proceso_escogido == 3):
@@ -2737,16 +2855,9 @@ class AdministradorController extends Controller
 
                 break;
                 default:
-                    $listado_servicios = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
-                    ->select('Id_Servicio', 'Nombre_servicio')
-                    ->where([
-                        ['Id_proceso', '=', $request->id_proceso_escogido],
-                        ['Estado', '=', 'activo']
-                    ])
-                    ->whereNotIn('Id_Servicio', $string_ids_servicios)
-                    ->get();
+                    
                 break;
-            }     
+            }                     
 
             $info_listado_servicios = json_decode(json_encode($listado_servicios, true));
             return response()->json(($info_listado_servicios));

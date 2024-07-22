@@ -141,29 +141,32 @@ $(document).ready(function () {
                             // data[i]['Ver'] = Ver;
 
                             // Validación para crear el modal del formulario de nuevo servicio
-                            if(data[i]['Nombre_servicio'] == 'Determinación del Origen (DTO) ATEL' || data[i]['Nombre_servicio'] == 'Adición DX' || data[i]['Nombre_servicio'] == 'Calificación técnica' || data[i]['Nombre_servicio'] == 'Recalificación' || data[i]['Nombre_servicio'] == 'Revisión pensión'){
-                                if(data[i]['Visible_Nuevo_Servicio'] == 'Si' && data[i]['Nombre_estado'] == 'Gestionado' || data[i]['Nombre_estado'] == 'Notificado'){
-                                    if (data[i]['Nombre_servicio'] == 'Determinación del Origen (DTO) ATEL' && data[i]['Nombre_evento'] != 'Enfermedad') {
-                                        agregar_nuevo_servicio = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoServicio_'+data[i]["ID_evento"]+'" id="btn_nuevo_servicio_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Servicio"\
-                                        data-id_evento_nuevo_servicio="'+data[i]["ID_evento"]+'" data-id_proceso_nuevo_servicio="'+data[i]["Id_proceso"]+'" data-nombre_proceso_nuevo_servicio="'+data[i]["Nombre_proceso"]+'" \
-                                        data-id_servicio_nuevo_servicio="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_servicio="'+data[i]["Id_Asignacion"]+'" data-id_cliente="'+data[i]["Id_cliente"]+'"><i class="fa fa-puzzle-piece text-info"></i></a>';
-                                        data[i]['agregar_nuevo_servicio'] = agregar_nuevo_servicio;
-                                    } 
-                                    else if(data[i]['Nombre_servicio'] != 'Determinación del Origen (DTO) ATEL'){
-                                        agregar_nuevo_servicio = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoServicio_'+data[i]["ID_evento"]+'" id="btn_nuevo_servicio_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Servicio"\
-                                        data-id_evento_nuevo_servicio="'+data[i]["ID_evento"]+'" data-id_proceso_nuevo_servicio="'+data[i]["Id_proceso"]+'" data-nombre_proceso_nuevo_servicio="'+data[i]["Nombre_proceso"]+'" \
-                                        data-id_servicio_nuevo_servicio="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_servicio="'+data[i]["Id_Asignacion"]+'" data-id_cliente="'+data[i]["Id_cliente"]+'"><i class="fa fa-puzzle-piece text-info"></i></a>';
-                                        data[i]['agregar_nuevo_servicio'] = agregar_nuevo_servicio;
-                                    }
-                                    else{
+                            if(data[i]['Visar'] == "Si"){
+                                if(data[i]['Nombre_servicio'] == 'Determinación del Origen (DTO) ATEL' || data[i]['Nombre_servicio'] == 'Adición DX' || data[i]['Nombre_servicio'] == 'Calificación técnica' || data[i]['Nombre_servicio'] == 'Recalificación' || data[i]['Nombre_servicio'] == 'Revisión pensión'){
+                                    if(data[i]['Visible_Nuevo_Servicio'] == 'Si' && data[i]['Nombre_estado'] == 'Gestionado'  || data[i]['Nombre_estado'] == 'Notificado'){
+                                        if (data[i]['Nombre_servicio'] == 'Determinación del Origen (DTO) ATEL' && data[i]['Nombre_evento'] != 'Enfermedad') {
+                                            agregar_nuevo_servicio = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoServicio_'+data[i]["ID_evento"]+'" id="btn_nuevo_servicio_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Servicio"\
+                                            data-id_evento_nuevo_servicio="'+data[i]["ID_evento"]+'" data-id_proceso_nuevo_servicio="'+data[i]["Id_proceso"]+'" data-nombre_proceso_nuevo_servicio="'+data[i]["Nombre_proceso"]+'" \
+                                            data-id_servicio_nuevo_servicio="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_servicio="'+data[i]["Id_Asignacion"]+'" data-id_cliente="'+data[i]["Id_cliente"]+'"><i class="fa fa-puzzle-piece text-info"></i></a>';
+                                            data[i]['agregar_nuevo_servicio'] = agregar_nuevo_servicio;
+                                        } 
+                                        else if(data[i]['Nombre_servicio'] != 'Determinación del Origen (DTO) ATEL'){
+                                            agregar_nuevo_servicio = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoServicio_'+data[i]["ID_evento"]+'" id="btn_nuevo_servicio_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Servicio"\
+                                            data-id_evento_nuevo_servicio="'+data[i]["ID_evento"]+'" data-id_proceso_nuevo_servicio="'+data[i]["Id_proceso"]+'" data-nombre_proceso_nuevo_servicio="'+data[i]["Nombre_proceso"]+'" \
+                                            data-id_servicio_nuevo_servicio="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_servicio="'+data[i]["Id_Asignacion"]+'" data-id_cliente="'+data[i]["Id_cliente"]+'"><i class="fa fa-puzzle-piece text-info"></i></a>';
+                                            data[i]['agregar_nuevo_servicio'] = agregar_nuevo_servicio;
+                                        }
+                                        else {
+                                            data[i]['agregar_nuevo_servicio'] = "";
+                                        }
+                                    }else{
                                         data[i]['agregar_nuevo_servicio'] = "";
                                     }
-
                                 }else{
-                                    data[i]['agregar_nuevo_servicio'] = ""; 
+                                    data[i]['agregar_nuevo_servicio'] = "";
                                 }
                             }else{
-                                data[i]['agregar_nuevo_servicio'] = ""; 
+                                data[i]['agregar_nuevo_servicio'] = "";
                             }
 
                             // Validación para crear el modal del formulario de nuevo proceso
@@ -935,6 +938,7 @@ $(document).ready(function () {
                                     <i class="fas fa-info-circle"></i> <strong>Importante:</strong> No puede crear el proceso debido a que el proceso, servicio y/o acción seleccionados no tienen una parametrización\
                                     asociada. Debe configurar una.\
                                 </div>\
+                                <div class="alert validacion_servicio_proceso d-none" role="alert"></div>\
                                 <input type="hidden" class="form-control" id="nro_evento_nuevo_proceso_'+id_evento_nuevo_proceso+'" value="'+id_evento_nuevo_proceso+'">\
                                 <a href="javascript:void(0);" class="text-dark text-md mr-auto" data-toggle="modal" data-target="#modalListaDocumentos" id="cargue_documentos_nuevo_proceso_evento_'+id_evento_nuevo_proceso+'">\
                                 <i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>\
@@ -1052,6 +1056,50 @@ $(document).ready(function () {
                     }
                 }
             });
+
+            /* VALIDACIÓN PARA DETERMINAR LOS SERVICIO ADX, CALIFICACION TÉCNICA Y RECALIFICACION SE PUEDE CREAR O NO */
+            var creacion_servicio_proceso = setInterval(() => {
+                if($("#"+id_proceso_escogido).val() != '' && $("#"+selector_nuevo_servicio).val() != ''){
+
+                    let datos_consulta = {
+                        '_token': token,
+                        // 'parametro': 'validar_nuevo_adx',
+                        'Id_proceso': $("#"+id_proceso_escogido).val(),
+                        'Id_servicio': $("#"+selector_nuevo_servicio).val(),
+                        'nro_evento': nro_evento_nuevo_proceso
+                    };
+
+                    // console.log(datos_consulta + 'SOY EL SET INTERVAL DEL CHANGE');
+                    $.ajax({
+                        type:'POST',
+                        url:'/ValidarNuevosServiciosNuevoProceso',
+                        data: datos_consulta,
+                        success:function(data) {
+                            if(data.parametro == 'fallo'){
+                                // $("#"+selector_nueva_accion_nuevo_servicio).empty();
+                                // $("#"+selector_nueva_accion_nuevo_servicio).append('<option></option>');
+
+                                $(".validacion_servicio_proceso").removeClass('d-none');
+                                $(".validacion_servicio_proceso").addClass('alert-danger');
+                                $(".validacion_servicio_proceso").empty();
+                                $(".validacion_servicio_proceso").append('<i class="fas fa-info-circle"></i> <strong>Importante:</strong> '+data.mensaje);
+
+                                $('.renderizar_nuevo_proceso').find("a[id^='cargue_documentos_nuevo_proceso_evento_']").addClass('d-none');
+                                $('.renderizar_nuevo_proceso').find("button[id^='crear_proceso_evento_']").addClass('d-none');
+                            }else{
+                                $(".validacion_servicio_proceso").addClass('d-none');
+                                $(".validacion_servicio_proceso").removeClass('alert-danger');
+                                $(".validacion_servicio_proceso").empty();
+                                
+                                $('.renderizar_nuevo_proceso').find("a[id^='cargue_documentos_nuevo_proceso_evento_']").removeClass('d-none');
+                                $('.renderizar_nuevo_proceso').find("button[id^='crear_proceso_evento_']").removeClass('d-none');
+                                clearInterval(creacion_servicio_proceso);
+                            }
+                        
+                        }
+                    });
+                }
+            }, 100000);
 
         });
 

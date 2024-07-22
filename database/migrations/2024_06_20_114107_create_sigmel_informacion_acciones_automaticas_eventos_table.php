@@ -18,7 +18,8 @@ return new class extends Migration
             $table->integer('Id_proceso')->nullable();
             $table->integer('Id_servicio')->nullable(); 
             $table->integer('Id_cliente')->nullable();           
-            $table->integer('Accion_automatica')->nullable();  
+            $table->integer('Accion_automatica')->nullable();
+            $table->integer('Id_Estado_evento_automatico')->nullable();
             $table->datetime('F_accion')->nullable();
             $table->integer('Id_profesional_automatico')->nullable();
             $table->text('Nombre_profesional_automatico')->nullable();

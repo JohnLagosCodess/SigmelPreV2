@@ -1025,27 +1025,29 @@ class BuscarEventoController extends Controller
                         }
                     }
                     if (count($posicionPclRevi) > 0) {
-                        $ID_eventoRevi = $posicionPclRevi[0]['ID_evento'];
-                        $Id_procesoRevi = $posicionPclRevi[0]['Id_proceso'];
-                        $Id_ServicioRevi = $posicionPclRevi[0]['Id_Servicio'];
-                        $Id_AsignacionRevi = $posicionPclRevi[0]['Id_Asignacion'];
-    
-                        $resultadoReviPcl = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
-                        ->select('ID_Evento','Id_Asignacion','Porcentaje_pcl')
-                        ->where([['Id_Asignacion',$Id_AsignacionRevi], ['Id_proceso',$Id_procesoRevi], ['ID_Evento',$ID_eventoRevi]])
-                        ->get(); 
-                        if (count($resultadoReviPcl) > 0) {
-                            $ProcentajePClReviResultado = $resultadoReviPcl[0]->Porcentaje_pcl;
-                            $IdAsignacionResultado = $resultadoReviPcl[0]->Id_Asignacion;
-                            $ID_eventoResultado = $resultadoReviPcl[0]->ID_Evento;
-            
-                            foreach ($posicionPclRevi as &$elemento) {
-                                // Verificar si Id_Asignacion es igual a $IdAsignacionResultado
-                                if ($elemento['Id_Asignacion'] == $IdAsignacionResultado && $elemento['ID_evento'] == $ID_eventoResultado) {
-                                    // Agregar $OrigenResultado al array
-                                    $elemento['ProcentajePClReviResultado'] = $ProcentajePClReviResultado;
-                                }
-                            }
+                        $resultadoReviPcl =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                        ->select('side.ID_Evento','side.Id_Asignacion','side.Porcentaje_pcl');
+                        foreach ($posicionPclRevi as $item) {
+                            $resultadoReviPcl->orWhere([
+                                ['side.Id_Asignacion', $item['Id_Asignacion']],
+                                ['side.Id_proceso', $item['Id_proceso']],
+                                ['side.ID_evento', $item['ID_evento']]
+                            ]);
+                        }
+                        $resulRevPcl = $resultadoReviPcl->get();  
+                        if (count($resulRevPcl) > 0) {
+                            $ArrayresulRevPcl = $resulRevPcl->toArray();                                                 
+                            foreach ($posicionPclRevi as &$item) {
+                                // Buscar el elemento correspondiente en los resultados de la consulta
+                                $resultado = array_filter($ArrayresulRevPcl, function ($result) use ($item) {
+                                    return $result->Id_Asignacion == $item['Id_Asignacion'];
+                                });                    
+                                // Si se encuentra una coincidencia, agregar la información al array original
+                                if (!empty($resultado)) {
+                                    $resultado = reset($resultado); // Obtener el primer elemento del array de resultados
+                                    $item['ProcentajePClReviResultado'] = $resultado->Porcentaje_pcl;
+                                } 
+                            }                                                         
                             // Filtrar los elementos que contienen [ProcentajePClReviResultado]
                             $posicionPclReviFiltrado = array_filter($posicionPclRevi, function ($item) {
                                 return isset($item['ProcentajePClReviResultado']);
@@ -1062,7 +1064,7 @@ class BuscarEventoController extends Controller
                                         break; // Romper el bucle interno una vez que se encuentra la coincidencia
                                     }
                                 }
-                            }                            
+                            }                              
                         }                        
                     }
 
@@ -1705,34 +1707,36 @@ class BuscarEventoController extends Controller
                         }
                     }
                     if (count($posicionPclRevi) > 0) {
-                        $ID_eventoRevi = $posicionPclRevi[0]['ID_evento'];
-                        $Id_procesoRevi = $posicionPclRevi[0]['Id_proceso'];
-                        $Id_ServicioRevi = $posicionPclRevi[0]['Id_Servicio'];
-                        $Id_AsignacionRevi = $posicionPclRevi[0]['Id_Asignacion'];
-    
-                        $resultadoReviPcl = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
-                        ->select('ID_Evento','Id_Asignacion','Porcentaje_pcl')
-                        ->where([['Id_Asignacion',$Id_AsignacionRevi], ['Id_proceso',$Id_procesoRevi], ['ID_Evento',$ID_eventoRevi]])
-                        ->get(); 
-                        if (count($resultadoReviPcl) > 0) {
-                            $ProcentajePClReviResultado = $resultadoReviPcl[0]->Porcentaje_pcl;
-                            $IdAsignacionResultado = $resultadoReviPcl[0]->Id_Asignacion;
-                            $ID_eventoResultado = $resultadoReviPcl[0]->ID_Evento;
-            
-                            foreach ($posicionPclRevi as &$elemento) {
-                                // Verificar si Id_Asignacion es igual a $IdAsignacionResultado
-                                if ($elemento['Id_Asignacion'] == $IdAsignacionResultado && $elemento['ID_evento'] == $ID_eventoResultado) {
-                                    // Agregar $OrigenResultado al array
-                                    $elemento['ProcentajePClReviResultado'] = $ProcentajePClReviResultado;
-                                }
-                            }
+                        $resultadoReviPcl =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
+                        ->select('side.ID_Evento','side.Id_Asignacion','side.Porcentaje_pcl');
+                        foreach ($posicionPclRevi as $item) {
+                            $resultadoReviPcl->orWhere([
+                                ['side.Id_Asignacion', $item['Id_Asignacion']],
+                                ['side.Id_proceso', $item['Id_proceso']],
+                                ['side.ID_evento', $item['ID_evento']]
+                            ]);
+                        }
+                        $resulRevPcl = $resultadoReviPcl->get();  
+                        if (count($resulRevPcl) > 0) {
+                            $ArrayresulRevPcl = $resulRevPcl->toArray();                                                 
+                            foreach ($posicionPclRevi as &$item) {
+                                // Buscar el elemento correspondiente en los resultados de la consulta
+                                $resultado = array_filter($ArrayresulRevPcl, function ($result) use ($item) {
+                                    return $result->Id_Asignacion == $item['Id_Asignacion'];
+                                });                    
+                                // Si se encuentra una coincidencia, agregar la información al array original
+                                if (!empty($resultado)) {
+                                    $resultado = reset($resultado); // Obtener el primer elemento del array de resultados
+                                    $item['ProcentajePClReviResultado'] = $resultado->Porcentaje_pcl;
+                                } 
+                            }                                                         
                             // Filtrar los elementos que contienen [ProcentajePClReviResultado]
                             $posicionPclReviFiltrado = array_filter($posicionPclRevi, function ($item) {
                                 return isset($item['ProcentajePClReviResultado']);
                             }); 
                             // Reorganizar los índices del array filtrado
                             $posicionPclReviFiltrado = array_values($posicionPclReviFiltrado);
-                            //Combinar el array object con el array                             
+                            //Combinar el array object con el array 
                             foreach ($array_informacion_eventos as $key2 => $item2) {
                                 foreach ($posicionPclReviFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
@@ -1742,7 +1746,7 @@ class BuscarEventoController extends Controller
                                         break; // Romper el bucle interno una vez que se encuentra la coincidencia
                                     }
                                 }
-                            }                            
+                            }                              
                         }                        
                     }
                     // Resultado Pronunciamiento Pcl
@@ -2416,6 +2420,225 @@ class BuscarEventoController extends Controller
         );
 
         return json_decode(json_encode($mensajes, true));
+
+    }
+
+    // Función para validar la creación de un servicio ADX, CALIFICACIÓN TÉCNICA, RECALIFICACIÓN Y REVISIÓN PENSIÓN
+    // Desde la modal de Nuevo Proceso
+    public function ValidarNuevosServiciosNuevoProceso (Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        // Captura de datos del formulario
+        $id_proceso_seleccionado = $request->Id_proceso;
+        $id_servicio_seleccionado = $request->Id_servicio;
+        $id_evento_seleccionado = $request->nro_evento;
+
+        // Caso 1: Validación de creación de servicio de Determinación del Origen (DTO) ATEl
+        // Caso 2: Validación de creación de servicio Adición Dx
+        // Caso 3: Validación de creación de servicio Recalificación PCL
+        // Caso 4: Validación de creación de servicio Revisión Pensión PCL
+        // Caso 5: Validación de creación de servicio Calificación Técnica
+        switch (true) {
+            case ($id_servicio_seleccionado == 1):
+                /*  Extraemos los id de asignación del o las Adiciones Dx  creadas para
+                    el id evento seleccionado
+                */
+                $informacion_adx = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_Asignacion')
+                ->where([
+                    ['ID_evento', $id_evento_seleccionado],
+                    ['Id_proceso', $id_proceso_seleccionado]
+                ])
+                ->whereIn('Id_servicio', [2])
+                ->get();
+
+                // creamos el array con la información del o las Adiciones Dx
+                $array_informacion_adx = json_decode(json_encode($informacion_adx, true));
+                $total_datos_adx = count($array_informacion_adx);
+
+                /*  Extraemos los id de asignación del o los DTO  creados para
+                    el id evento seleccionado
+                */
+                $informacion_dto = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_Asignacion')
+                ->where([
+                    ['ID_evento', $id_evento_seleccionado],
+                    ['Id_proceso', $id_proceso_seleccionado]
+                ])
+                ->whereIn('Id_servicio', [1])
+                ->get();
+
+                // creamos el array con la información de DTO
+                $array_informacion_dto = json_decode(json_encode($informacion_dto, true));
+                $total_datos_dto = count($array_informacion_dto);
+
+                // Si ya existe almenos una DTO o Adición Dx no se le permite crear el servicio
+                if ($total_datos_dto > 0 || $total_datos_adx > 0) {
+                    $mensajes = array(
+                        "parametro" => 'fallo',
+                        "mensaje" => 'No puede crear el servicio de Determinación del Origen (DTO) ATEl debido a que ya se cuenta con un servicio de Adición DX o Determinación del Origen (DTO) ATEl creado.'
+                    );
+                    return json_decode(json_encode($mensajes, true));
+                } else {
+                    $mensajes = array(
+                        "parametro" => 'exito'
+                    );
+                    return json_decode(json_encode($mensajes, true));
+                }
+            break;
+            case ($id_servicio_seleccionado == 2):
+
+                /*  Extraemos los id de asignación del o las Adiciones Dx  creadas para
+                    el id evento seleccionado
+                */
+                $informacion_adx = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_Asignacion')
+                ->where([
+                    ['ID_evento', $id_evento_seleccionado],
+                    ['Id_proceso', $id_proceso_seleccionado]
+                ])
+                ->whereIn('Id_servicio', [2])
+                ->get();
+
+                // creamos el array con la información del o las Adiciones Dx
+                $array_informacion_adx = json_decode(json_encode($informacion_adx, true));
+                $total_datos_adx = count($array_informacion_adx);
+
+                /*  Extraemos los id de asignación del o los DTO  creados para
+                    el id evento seleccionado
+                */
+                $informacion_dto = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_Asignacion')
+                ->where([
+                    ['ID_evento', $id_evento_seleccionado],
+                    ['Id_proceso', $id_proceso_seleccionado]
+                ])
+                ->whereIn('Id_servicio', [1])
+                ->get();
+
+                // creamos el array con la información de DTO
+                $array_informacion_dto = json_decode(json_encode($informacion_dto, true));
+                $total_datos_dto = count($array_informacion_dto);
+
+                /* Escenario 1: Validar que si existe almenos un Adición Dx creada no deja crear el servicio */
+                /* Escenario 2: Validar que si existe un DTO creado no deja crear el servicio */
+                switch (true) {
+                    case ($total_datos_adx > 0):
+                        $mensajes = array(
+                            "parametro" => 'fallo',
+                            "mensaje" => 'No puede crear el servicio de Adición DX debido a que ya se cuenta con un servicio de Adición DX creado.'
+                        );
+                        return json_decode(json_encode($mensajes, true));
+                    break;
+
+                    case ($total_datos_dto > 0):
+                        $mensajes = array(
+                            "parametro" => 'fallo',
+                            "mensaje" => 'No puede crear el servicio de Adición DX debido a que ya se cuenta con un servicio de Determinación del Origen (DTO) ATEL creado.'
+                        );
+                        return json_decode(json_encode($mensajes, true));
+                    break;
+
+                    default:
+                        $mensajes = array(
+                            "parametro" => 'exito'
+                        );
+                        return json_decode(json_encode($mensajes, true));
+                    break;
+                }
+
+            break;                        
+            case ($id_servicio_seleccionado == 7):
+                //  PASO 1: Extracción del id de asignacion de la calficación técnica y recalificación
+                //  que han sido creados para el id evento seleccioando 
+                $informacion_recalificacion_pcl = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_Asignacion')
+                ->where([
+                    ['ID_evento', $id_evento_seleccionado],
+                    ['Id_proceso', $id_proceso_seleccionado]
+                ])
+                ->whereIn('Id_servicio', [6, 7, 8])
+                ->get();     
+                
+                // se convierte el object a array
+                $array_informacion_recalificacion_pcl = json_decode(json_encode($informacion_recalificacion_pcl, true));                
+                // print_r($array_informacion_recalificacion_pcl);
+                
+                // Escenario 1: Validar si cuenta con una Calificación técnica o Recalificación creada.
+                if (count($array_informacion_recalificacion_pcl) > 0) {
+
+                    $mensajes = array(
+                        "parametro" => 'fallo',
+                        "mensaje" => 'No se puede crear el servicio de Recalificación debido a que ya se cuenta con un servicio de Recalificación, Revisión de Pensión o Calificación Técnica creada.'
+                    );
+                    return json_decode(json_encode($mensajes, true));
+                }                                             
+                
+            break;
+            case ($id_servicio_seleccionado == 8):                
+                // PASO 1: Extracción del id de asignacion de la calficación técnica y revisión pensión
+                //  que han sido creados para el id evento seleccioando 
+
+                $informacion_revision_pension_pcl = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_Asignacion')
+                ->where([
+                    ['ID_evento', $id_evento_seleccionado],
+                    ['Id_proceso', $id_proceso_seleccionado]
+                ])
+                ->whereIn('Id_servicio', [6, 7, 8])
+                ->get(); 
+
+                // se convierte el object a array
+
+                $array_informacion_revision_pension_pcl = json_decode(json_encode($informacion_revision_pension_pcl, true));
+                // print_r($array_informacion_revision_pension_pcl);
+                
+                // Escenario 1: Validar si cuenta con una Calificación técnica o Revisión pensión creada.
+                if (count($array_informacion_revision_pension_pcl) > 0) {                  
+
+                    $mensajes = array(
+                        "parametro" => 'fallo',
+                        "mensaje" => 'No se puede crear el servicio de Revisión de Pensión debido a que ya se cuenta con un servicio de Recalificación, Revisión de Pensión o Calificación Técnica creada.'
+                    );
+                    return json_decode(json_encode($mensajes, true));
+                }                                             
+                
+            break;
+            case ($id_servicio_seleccionado == 6):                
+                // PASO 1: Extracción del id de asignacion de la calficación técnica y revisión pensión
+                //  que han sido creados para el id evento seleccioando 
+
+                $informacion_calificacion_tecnica_pcl = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->select('Id_Asignacion')
+                ->where([
+                    ['ID_evento', $id_evento_seleccionado],
+                    ['Id_proceso', $id_proceso_seleccionado]
+                ])
+                ->whereIn('Id_servicio', [6, 7, 8])
+                ->get(); 
+
+                // se convierte el object a array
+
+                $array_informacion_calificacion_tecnica_pcl = json_decode(json_encode($informacion_calificacion_tecnica_pcl, true));
+                // print_r($array_informacion_revision_pension_pcl);
+                
+                // Escenario 1: Validar si cuenta con una Calificación técnica o Recalificación creada.
+                if (count($array_informacion_calificacion_tecnica_pcl) > 0) {                
+
+                    $mensajes = array(
+                        "parametro" => 'fallo',
+                        "mensaje" => 'No se puede crear el servicio de Calificación técnica debido a que ya se cuenta con un servicio de Recalificación o Revisión Pensión creada.'
+                    );
+                    return json_decode(json_encode($mensajes, true));
+                }                                             
+                
+            break;
+            default:
+                # code...
+            break;
+        }
 
     }
 

@@ -1141,6 +1141,8 @@ $(document).ready(function(){
     $(".modal-footer").remove();
     $(document).on('submit', "form[id^='form_editar_agudeza_visual']", function(e){
         e.preventDefault();
+
+        $("#btn_guardar_agudeza").prop('disabled', true);
         
         if (confirmacion_ceguera_total == "" || confirmacion_ceguera_total == undefined) {
             confirmacion_ceguera_total = "No";

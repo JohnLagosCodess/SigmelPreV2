@@ -253,15 +253,20 @@ class PronunciamientoOrigenController extends Controller
 
         //Lista lider grupos
         if($parametro == "lista_lider_grupo"){
-            $datos_lider_grupo = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_usuarios_grupos_trabajos as ug')
-                ->select('ug.id_equipo_trabajo','li.name')
-                ->leftJoin('sigmel_sys.users as g', 'ug.id_usuarios_asignados', '=', 'g.id')
-                ->leftJoin('sigmel_gestiones.sigmel_grupos_trabajos as gr', 'ug.id_equipo_trabajo', '=', 'gr.id')
-                ->leftJoin('sigmel_sys.users as li', 'gr.lider', '=', 'li.id')
-                ->where([
-                    ['g.name', $request->nom_usuario_session]
-                ])
-                ->get();
+            // $datos_lider_grupo = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_usuarios_grupos_trabajos as ug')
+            //     ->select('ug.id_equipo_trabajo','li.name')
+            //     ->leftJoin('sigmel_sys.users as g', 'ug.id_usuarios_asignados', '=', 'g.id')
+            //     ->leftJoin('sigmel_gestiones.sigmel_grupos_trabajos as gr', 'ug.id_equipo_trabajo', '=', 'gr.id')
+            //     ->leftJoin('sigmel_sys.users as li', 'gr.lider', '=', 'li.id')
+            //     ->where([
+            //         ['g.name', $request->nom_usuario_session]
+            //     ])
+            //     ->get();
+        
+            $datos_lider_grupo =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
+            ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
+            ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
+            ->where([['sgt.Id_proceso_equipo', '=', '1']])->get();
 
             $informacion_datos_lider_grupo = json_decode(json_encode($datos_lider_grupo, true));
             return response()->json($informacion_datos_lider_grupo);
@@ -795,15 +800,6 @@ class PronunciamientoOrigenController extends Controller
                 ['N_radicado',$radicado]
             ])->update($datos_info_comunicado_eventos);
 
-            // Actualizacion del profesional calificador
-            $datos_profesional_calificador = [
-                'Id_profesional' => Auth::user()->id,
-                'Nombre_profesional' => Auth::user()->name
-            ];
-        
-            sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-            ->where('Id_Asignacion', $Id_Asignacion_Pronuncia)->update($datos_profesional_calificador);
-
             sleep(2);
             $datos_info_accion_evento= [    
                 'F_calificacion_servicio' => $datetime
@@ -1053,13 +1049,21 @@ class PronunciamientoOrigenController extends Controller
         extract($total_copias);
         
         $Agregar_copias = [];
+
         if (isset($copia_afiliado)) {
-            $emailAfiliado = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-            ->select('Email')
-            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $nro_siniestro]])
+            $AfiliadoData = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->select('siae.Nombre_afiliado', 'siae.Direccion', 'siae.Telefono_contacto', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio', 'siae.Email')
+            ->where([['siae.Nro_identificacion', $num_identificacion],['siae.ID_evento', $nro_siniestro]])
             ->get();
-            $afiliadoEmail = $emailAfiliado[0]->Email;            
-            $Agregar_copias['Afiliado'] = $afiliadoEmail;            
+            $nombreAfiliado = $AfiliadoData[0]->Nombre_afiliado;
+            $direccionAfiliado = $AfiliadoData[0]->Direccion;
+            $telefonoAfiliado = $AfiliadoData[0]->Telefono_contacto;
+            $ciudadAfiliado = $AfiliadoData[0]->Nombre_ciudad;
+            $municipioAfiliado = $AfiliadoData[0]->Nombre_municipio;
+            $emailAfiliado = $AfiliadoData[0]->Email;            
+            $Agregar_copias['Afiliado'] = $nombreAfiliado."; ".$direccionAfiliado."; ".$emailAfiliado."; ".$telefonoAfiliado."; ".$ciudadAfiliado."; ".$municipioAfiliado.".";          
         }
 
         if(isset($copia_empleador)){
@@ -1538,8 +1542,8 @@ class PronunciamientoOrigenController extends Controller
                 // Quitamos el style y agregamos los atributos width y height
                 $patronstyle = '/<img[^>]+style="width:\s*([\d.]+)px;\s*height:\s*([\d.]+)px[^"]*"[^>]*>/';
                 preg_match($patronstyle, $Firma_cliente, $coincidencias);
-                $width = $coincidencias[1]; // Valor de width
-                $height = $coincidencias[2]; // Valor de height
+                $width = count($coincidencias)>0 ? $coincidencias[1] : '100px'; // Valor de width
+                $height = count($coincidencias)>0 ? $coincidencias[2] : '70px'; // Valor de height
             
                 $nuevoStyle = 'width="'.$width.'" height="'.$height.'"';
                 $htmlModificado = reemplazarStyleImg($Firma_cliente, $nuevoStyle);

@@ -37,6 +37,8 @@ use App\Models\sigmel_informacion_acciones_automaticas_eventos;
 use App\Models\sigmel_informacion_alertas_automaticas_eventos;
 use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_historial_accion_eventos;
+use App\Models\sigmel_auditorias_informacion_accion_eventos;
+
 use DateTime;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
@@ -663,6 +665,28 @@ class CalificacionJuntasController extends Controller
             ];
 
             $Id_Accion_eventos = sigmel_informacion_accion_eventos::on('sigmel_gestiones')->insertGetId($datos_info_registrarCalifcacionJuntas);
+
+            // Realizamos la inserción a la tabla de auditoria sigmel_auditorias_informacion_accion_eventos
+            $aud_datos_info_registrarCalifcacionJuntas= [
+                'Aud_ID_evento' => $request->newId_evento,
+                'Aud_Id_Asignacion' => $request->newId_asignacion,
+                'Aud_Id_proceso' => $request->Id_proceso,
+                'Aud_Modalidad_calificacion' => 'N/A',
+                'Aud_F_accion' => $date_time,
+                'Aud_Accion' => $request->accion,
+                'Aud_F_Alerta' => $request->fecha_alerta,
+                'Aud_Enviar' => $request->enviar,
+                'Aud_Estado_Facturacion' => $request->estado_facturacion,
+                'Aud_Causal_devolucion_comite' => 'N/A',
+                'Aud_Descripcion_accion' => $request->descripcion_accion,
+                'Aud_F_cierre' => $request->fecha_cierre,
+                'Aud_Nombre_usuario' => $nombre_usuario,
+				'Aud_F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
+                'Aud_Fuente_informacion' => $request->fuente_info_juntas,
+                'Aud_F_registro' => $date,
+            ];
+            sigmel_auditorias_informacion_accion_eventos::on('sigmel_auditorias')->insert($aud_datos_info_registrarCalifcacionJuntas);
+
             // Capturar el id accion para validar la accion que se acabo de guardar
             $info_accion_evento = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
             ->select('Accion', 'F_accion')
@@ -694,7 +718,7 @@ class CalificacionJuntasController extends Controller
                 case (!empty($Movimiento_automatico) and $Movimiento_automatico == 'Si' and !empty($Tiempo_movimiento) and !empty($Accion_automatica)):
                         $info_datos_accion_automatica = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_parametrizaciones_clientes as sipc')
                         ->leftJoin('sigmel_sys.users as u', 'u.id', '=', 'sipc.Profesional_asignado')
-                        ->select('sipc.Accion_ejecutar', 'sipc.Profesional_asignado', 'u.name')
+                        ->select('sipc.Accion_ejecutar', 'sipc.Estado', 'sipc.Profesional_asignado', 'u.name')
                         ->where([
                             ['sipc.Accion_ejecutar', $Accion_automatica],
                             ['sipc.Id_cliente', $id_cliente],
@@ -706,6 +730,7 @@ class CalificacionJuntasController extends Controller
                             $Accion_ejecutar_automatica = $info_datos_accion_automatica[0]->Accion_ejecutar;
                             $Profesional_asignado_automatico = $info_datos_accion_automatica[0]->Profesional_asignado;
                             $NombreProfesional_asignado_automatico = $info_datos_accion_automatica[0]->name;
+                            $Id_Estado_evento_automatico = $info_datos_accion_automatica[0]->Estado;
                             
                             // Se suman los dias a la fecha actual para saber la fecha del movimiento automatico
                             $dateTime = new DateTime($date_time);
@@ -720,6 +745,7 @@ class CalificacionJuntasController extends Controller
                                 'Id_servicio' => $Id_servicio,
                                 'Id_cliente' =>$id_cliente,
                                 'Accion_automatica' => $Accion_ejecutar_automatica,
+                                'Id_Estado_evento_automatico' => $Id_Estado_evento_automatico,
                                 'F_accion' => $date_time,
                                 'Id_profesional_automatico' => $Profesional_asignado_automatico,
                                 'Nombre_profesional_automatico' => $NombreProfesional_asignado_automatico,
@@ -1178,6 +1204,27 @@ class CalificacionJuntasController extends Controller
             sigmel_informacion_accion_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_registrarCalifcacionJuntas);
 
+            // Realizamos la inserción a la tabla de auditoria sigmel_auditorias_informacion_accion_eventos
+            $aud_datos_info_registrarCalifcacionJuntas= [
+                'Aud_ID_evento' => $request->newId_evento,
+                'Aud_Id_Asignacion' => $request->newId_asignacion,
+                'Aud_Id_proceso' => $request->Id_proceso,
+                'Aud_Modalidad_calificacion' => 'N/A',
+                'Aud_F_accion' => $date_time,
+                'Aud_Accion' => $request->accion,
+                'Aud_F_Alerta' => $request->fecha_alerta,
+                'Aud_Enviar' => $request->enviar,
+                'Aud_Estado_Facturacion' => $request->estado_facturacion,
+                'Aud_Causal_devolucion_comite' => 'N/A',
+                'Aud_Descripcion_accion' => $request->descripcion_accion,
+                'Aud_F_cierre' => $request->fecha_cierre,
+                'Aud_Nombre_usuario' => $nombre_usuario,
+				'Aud_F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
+                'Aud_Fuente_informacion' => $request->fuente_info_juntas,
+                'Aud_F_registro' => $date,
+            ];
+            sigmel_auditorias_informacion_accion_eventos::on('sigmel_auditorias')->insert($aud_datos_info_registrarCalifcacionJuntas);
+
             //Capturar el id accion para validar la accion que se acabo de guardar
             $info_accion_evento = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
             ->select('Accion', 'F_accion')
@@ -1209,7 +1256,7 @@ class CalificacionJuntasController extends Controller
                 case (!empty($Movimiento_automatico) and $Movimiento_automatico == 'Si' and !empty($Tiempo_movimiento) and !empty($Accion_automatica)):
                         $info_datos_accion_automatica = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_parametrizaciones_clientes as sipc')
                         ->leftJoin('sigmel_sys.users as u', 'u.id', '=', 'sipc.Profesional_asignado')
-                        ->select('sipc.Accion_ejecutar', 'sipc.Profesional_asignado', 'u.name')
+                        ->select('sipc.Accion_ejecutar', 'sipc.Estado', 'sipc.Profesional_asignado', 'u.name')
                         ->where([
                             ['sipc.Accion_ejecutar', $Accion_automatica],
                             ['sipc.Id_cliente', $id_cliente],
@@ -1221,6 +1268,7 @@ class CalificacionJuntasController extends Controller
                             $Accion_ejecutar_automatica = $info_datos_accion_automatica[0]->Accion_ejecutar;
                             $Profesional_asignado_automatico = $info_datos_accion_automatica[0]->Profesional_asignado;
                             $NombreProfesional_asignado_automatico = $info_datos_accion_automatica[0]->name;
+                            $Id_Estado_evento_automatico = $info_datos_accion_automatica[0]->Estado;
 
                             // Se suman los dias a la fecha actual para saber la fecha del movimiento automatico
                             $dateTime = new DateTime($date_time);
@@ -1241,6 +1289,7 @@ class CalificacionJuntasController extends Controller
                                     'Id_servicio' => $Id_servicio,
                                     'Id_cliente' =>$id_cliente,
                                     'Accion_automatica' => $Accion_ejecutar_automatica,
+                                    'Id_Estado_evento_automatico' => $Id_Estado_evento_automatico,
                                     'F_accion' => $date_time,
                                     'Id_profesional_automatico' => $Profesional_asignado_automatico,
                                     'Nombre_profesional_automatico' => $NombreProfesional_asignado_automatico,
@@ -1266,6 +1315,7 @@ class CalificacionJuntasController extends Controller
                                     'Id_servicio' => $Id_servicio,
                                     'Id_cliente' =>$id_cliente,
                                     'Accion_automatica' => $Accion_ejecutar_automatica,
+                                    'Id_Estado_evento_automatico' => $Id_Estado_evento_automatico,
                                     'F_accion' => $date_time,
                                     'Id_profesional_automatico' => $Profesional_asignado_automatico,
                                     'Nombre_profesional_automatico' => $NombreProfesional_asignado_automatico,
@@ -1295,7 +1345,7 @@ class CalificacionJuntasController extends Controller
                 default:   
                         $mensaje_2 = 'la acción parametrizada NO tiene Movimiento Automático';
                     break;
-            }
+            } 
 
             sleep(2);
 
@@ -2780,6 +2830,7 @@ class CalificacionJuntasController extends Controller
         $asunto = "<b>".strtoupper($request->asunto_act)."</b>";
         $cuerpo = $request->cuerpo_comunicado_act;
         $Cliente = $request->cliente_comunicado2_act;
+        $Email_destinatario = $request->email_destinatario_act2;
 
         /* DATOS VARIABLES */
         $tipo_de_preforma = $request->tipo_de_preforma_editar;
@@ -3143,6 +3194,7 @@ class CalificacionJuntasController extends Controller
                     'footer' => $footer,
                     'nombre_usuario' => $nombre_usuario,
                     'N_siniestro' => $request->n_siniestro_proforma_editar,
+                    'email_destinatario' => $Email_destinatario
                 ];
 
                 $extension_proforma = "pdf";
@@ -3374,9 +3426,11 @@ class CalificacionJuntasController extends Controller
                 }
 
                 /* 4. MOTIVO DE LA REMISIÓN */
-                $informacion_motivo_remision = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-                ->select('Contro_pcl', 'Contro_origen', 'Contro_diagnostico', 'Contro_f_estructura', 'Contro_m_califi')
-                ->where([['ID_evento', $ID_evento]])
+
+                $informacion_motivo_remision = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_controversia_juntas_eventos as sicje')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'sicje.Parte_controvierte_califi', '=', 'slp.Id_Parametro')
+                ->select('sicje.Contro_pcl', 'sicje.Contro_origen', 'sicje.Contro_diagnostico', 'sicje.Contro_f_estructura', 'sicje.Contro_m_califi', 'slp.Nombre_parametro')
+                ->where([['ID_evento', $ID_evento],['Id_Asignacion',$Id_Asignacion]])
                 ->get();
 
                 if (count($informacion_motivo_remision) > 0) {
@@ -3385,12 +3439,14 @@ class CalificacionJuntasController extends Controller
                     $diagnosticos = $informacion_motivo_remision[0]->Contro_diagnostico;
                     $fecha_estructuracion = $informacion_motivo_remision[0]->Contro_f_estructura;
                     $manual_calificacion = $informacion_motivo_remision[0]->Contro_m_califi;
+                    $parte_controvierte_califi = $informacion_motivo_remision[0]->Nombre_parametro;
                 } else {
                     $pcl = "";
                     $origen = "";
                     $diagnosticos = "";
                     $fecha_estructuracion = "";
                     $manual_calificacion = "";
+                    $parte_controvierte_califi = "";
                 }
 
                 /* datos del logo que va en el header */
@@ -3442,6 +3498,7 @@ class CalificacionJuntasController extends Controller
                     'nombre_afiliado' => $nombre_afiliado,
                     'tipo_doc_afiliado' => $tipo_doc_afiliado,
                     'num_identificacion_afiliado' => $num_identificacion_afiliado,
+                    'parte_controvierte_califi' => $parte_controvierte_califi,
                     'edad_afiliado' => $edad_afiliado,
                     'genero_afiliado' => $genero_afiliado,
                     'fecha_nacimiento_afiliado' => $fecha_nacimiento_afiliado,
@@ -3708,9 +3765,21 @@ class CalificacionJuntasController extends Controller
                 
                 // Tipos de controversia
                 $informacion_tipos_controversia = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-                ->select('Contro_origen', 'Contro_pcl', 'Contro_diagnostico', 'Contro_f_estructura', 'Contro_m_califi')
-                ->where([['ID_evento', $ID_evento]])
+                ->select('Contro_origen', 'Contro_pcl', 'Contro_diagnostico', 'Contro_f_estructura', 'Contro_m_califi', 'Observaciones', 'Porcentaje_pcl','F_estructuracion_contro')
+                ->where([['ID_evento', $ID_evento],['Id_Asignacion',$Id_Asignacion]])
                 ->get();
+
+                if (count($informacion_tipos_controversia) > 0) {
+                    $observaciones_controversia = $informacion_tipos_controversia[0]->Observaciones;
+                    $fecha_estructuración = $informacion_tipos_controversia[0]->F_estructuracion_contro;
+                    $porcentaje_pcl = $informacion_tipos_controversia[0]->Porcentaje_pcl;
+                } else {
+                    $observaciones_controversia = "";
+                    $fecha_estructuración = "";
+                    $porcentaje_pcl = "";
+                }
+
+                // dd("INFORMACIÓN TIPOS CONTROVERSIA : ",$informacion_tipos_controversia);
 
                 $array_informacion_tipos_controversia = json_decode(json_encode($informacion_tipos_controversia), true);
 
@@ -4079,6 +4148,9 @@ class CalificacionJuntasController extends Controller
                     'nombre_usuario' => $nombre_usuario,
                     'footer' => $footer,
                     'N_siniestro' => $request->n_siniestro_proforma_editar,
+                    'observaciones_controversia' => $observaciones_controversia,
+                    'fecha_estructuración' => $fecha_estructuración,
+                    'porcentaje_pcl' => $porcentaje_pcl
                     // 'footer_dato_1' => $footer_dato_1,
                     // 'footer_dato_2' => $footer_dato_2,
                     // 'footer_dato_3' => $footer_dato_3,
@@ -4569,38 +4641,91 @@ class CalificacionJuntasController extends Controller
                 $header = $section->addHeader();
                 $imagenPath_header = public_path($ruta_logo);
                 $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
+                $test = $header->addTextRun(['alignment' => 'right']);
+                $test->addText('Página ');
+                $test->addField('PAGE');
+                $test->addText(' de ');
+                $test->addField('NUMPAGES');
+                $header->addTextBreak();
 
                 // Creación de Contenido
                 $section->addText('Bogotá D.C, '.$date, array('bold' => true));
-
                 $section->addTextBreak();
-                    $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
-                        <tr>
-                            <td>
-                                <p><b>Señores: </b>'.$nombre_junta.'</p>
-                                <p><b>Dirección: </b>'.$direccion_junta.'</p>
-                                <p><b>Teléfono: </b>'.$telefono_junta.'</p>
-                                <p><b>Ciudad: </b>'.$ciudad_junta.' - '.$departamento_junta.'</p>
-                            </td>
-                            <td>
-                                <table style="width: 60%; border: 3px black solid;">
-                                    <tr>
-                                        <td>
-                                            <p><b>Nro. Radicado: '.$nro_radicado.'</b></p>  
-                                            <p><b>'.$tipo_doc_afiliado." ".$num_identificacion_afiliado.'</b></p>
-                                            <p><b>Siniestro: '.$request->n_siniestro_proforma_editar.'</b></p>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>';
 
-                    Html::addHtml($section, $htmltabla1, false, true);
+                $table = $section->addTable();
 
-                    $section->addText('Asunto: '.$request->asunto_act, array('bold' => true));
-                    $section->addTextBreak();
-                    $section->addText('Siniestro: '.$request->n_siniestro_proforma_editar." ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." ".$nombre_afiliado, array('bold' => true));
+    
+                $table->addRow();
+
+
+                $cell1 = $table->addCell(5000);
+
+                $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
+                $textRun1->addText('Señores: ',array('bold' => true));
+                $textRun1->addTextBreak();
+                $textRun1->addText($nombre_junta);
+                $textRun1->addTextBreak();
+                $textRun1->addText($direccion_junta);
+                $textRun1->addTextBreak();
+                $textRun1->addText($telefono_junta);
+                $textRun1->addTextBreak();
+                $textRun1->addText($ciudad_junta);
+
+                $cell2 = $table->addCell(5000);
+
+                $nestedTable = $cell2->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80 * 60, 'alignment'=>'right'));
+                $nestedTable->addRow();
+                $nestedCell = $nestedTable->addCell();
+                $nestedTextRun = $nestedCell->addTextRun(array('alignment'=>'left'));
+                $nestedTextRun->addText('Nro. Radicado: ', array('bold' => true));
+                $nestedTextRun->addTextBreak();
+                $nestedTextRun->addText($nro_radicado, array('bold' => true));
+                $nestedTextRun->addTextBreak();
+                $nestedTextRun->addText($tipo_doc_afiliado . ' ' . $num_identificacion_afiliado, array('bold' => true));
+                $nestedTextRun->addTextBreak();
+                $nestedTextRun->addText('Siniestro: ' . $request->n_siniestro_proforma_editar, array('bold' => true));
+                
+                $section->addTextBreak();
+                $section->addTextBreak();
+
+                    // $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
+                    //     <tr>
+                    //         <td>
+                    //             <p><b>Señores: </b>'.$nombre_junta.'</p>
+                    //             <p><b>Dirección: </b>'.$direccion_junta.'</p>
+                    //             <p><b>Teléfono: </b>'.$telefono_junta.'</p>
+                    //             <p><b>Ciudad: </b>'.$ciudad_junta.' - '.$departamento_junta.'</p>
+                    //         </td>
+                    //         <td>
+                    //             <table style="width: 60%; border: 3px black solid;">
+                    //                 <tr>
+                    //                     <td>
+                    //                         <p><b>Nro. Radicado: '.$nro_radicado.'</b></p>  
+                    //                         <p><b>'.$tipo_doc_afiliado." ".$num_identificacion_afiliado.'</b></p>
+                    //                         <p><b>Siniestro: '.$request->n_siniestro_proforma_editar.'</b></p>
+                    //                     </td>
+                    //                 </tr>
+                    //             </table>
+                    //         </td>
+                    //     </tr>
+                    // </table>';
+
+                    // Html::addHtml($section, $htmltabla1, false, true);
+                    $table = $section->addTable(array('alignment'=>'center'));
+    
+                    $table->addRow();
+
+                    $cell1 = $table->addCell(10000);
+
+                    $asuntoyafiliado = $cell1->addTextRun(array('alignment'=>'left'));
+                    $asuntoyafiliado->addText('Asunto: ', array('bold' => true));
+                    $asuntoyafiliado->addText($request->asunto_act, array('bold' => true));
+                    $asuntoyafiliado->addTextBreak();
+                    $asuntoyafiliado->addText($tipo_doc_afiliado." ".$num_identificacion_afiliado." ".$nombre_afiliado);
+                    $asuntoyafiliado->addTextBreak();
+                    $asuntoyafiliado->addText('Siniestro: ', array('bold' => true));
+                    $asuntoyafiliado->addText($request->n_siniestro_proforma_editar);
+
 
                     // Configuramos el reemplazo de las etiquetas del cuerpo del comunicado
                     $patron1 = '/\{\{\$nombre_junta\}\}/';
@@ -4635,8 +4760,8 @@ class CalificacionJuntasController extends Controller
                         // Quitamos el style y agregamos los atributos width y height
                         $patronstyle = '/<img[^>]+style="width:\s*([\d.]+)px;\s*height:\s*([\d.]+)px[^"]*"[^>]*>/';
                         preg_match($patronstyle, $Firma_cliente, $coincidencias);
-                        //$width = $coincidencias[1]; // Valor de width
-                        //$height = $coincidencias[2]; // Valor de height
+                        //$width = count($coincidencias)>0 ? $coincidencias[1] : '100px'; // Valor de width
+                        //$height = count($coincidencias)>0 ? $coincidencias[2] : '70px'; // Valor de height
                         $width = 150; // Valor de width
                         $height = 80; // Valor de height
                     
@@ -4652,62 +4777,62 @@ class CalificacionJuntasController extends Controller
                     $section->addTextBreak();
                     $section->addText('Convenio Codess - Seguros de Vida Alfa S.A', array('bold' => true));
                     $section->addTextBreak();
-                    $section->addText('Elaboró: '.$nombre_usuario, array('bold' => true));
-                    $section->addTextBreak();
+                    // $section->addText('Elaboró: '.$nombre_usuario, array('bold' => true));
+                    // $section->addTextBreak();
 
                     // Configuramos la tabla de copias a partes interesadas
-                    $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
-                    if (count($Agregar_copias) == 0) {
-                        $htmltabla2 .= '
-                            <tr>
-                                <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
-                            </tr>';
-                    } else {
-                        $htmltabla2 .= '
-                            <tr>
-                                <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
-                            </tr>';
+                    // $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
+                    // if (count($Agregar_copias) == 0) {
+                    //     $htmltabla2 .= '
+                    //         <tr>
+                    //             <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
+                    //         </tr>';
+                    // } else {
+                    //     $htmltabla2 .= '
+                    //         <tr>
+                    //             <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
+                    //         </tr>';
 
-                        $Afiliado = 'Afiliado';
-                        $Empleador = 'Empleador';
-                        $EPS = 'EPS';
-                        $AFP = 'AFP';
-                        $ARL = 'ARL';
-                        $JRCI = 'JRCI';
-                        $JNCI = 'JNCI';
+                    //     $Afiliado = 'Afiliado';
+                    //     $Empleador = 'Empleador';
+                    //     $EPS = 'EPS';
+                    //     $AFP = 'AFP';
+                    //     $ARL = 'ARL';
+                    //     $JRCI = 'JRCI';
+                    //     $JNCI = 'JNCI';
 
-                        if (isset($Agregar_copias[$Afiliado])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$Afiliado])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$Empleador])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$Empleador])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$EPS])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$EPS])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$AFP])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$AFP])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$ARL])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$ARL])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$JRCI])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$JRCI])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$JNCI])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
-                        }
-                    }
+                    //     if (isset($Agregar_copias[$JNCI])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
+                    //     }
+                    // }
 
-                    $htmltabla2 .= '</table>';
-                    Html::addHtml($section, $htmltabla2, false, true);
-                    $section->addTextBreak();
+                    // $htmltabla2 .= '</table>';
+                    // Html::addHtml($section, $htmltabla2, false, true);
+                    // $section->addTextBreak();
 
                     // Configuramos el footer
                     $info = $nombre_afiliado." - ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." - Siniestro: ".$request->n_siniestro_proforma_editar;
@@ -4916,20 +5041,27 @@ class CalificacionJuntasController extends Controller
                 extract($total_copias);
                 // Creamos array para empezar a llenarlos con las copias
                 $Agregar_copias = [];
-                if (isset($edit_copia_afiliado)) {
-                    $emailAfiliado = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-                    ->select('Email')
-                    ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+                if (isset($copia_afiliado)) {
+                    $AfiliadoData = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                    ->select('siae.Nombre_afiliado', 'siae.Direccion', 'siae.Telefono_contacto', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio', 'siae.Email')
+                    ->where([['siae.Nro_identificacion', $num_identificacion],['siae.ID_evento', $nro_siniestro]])
                     ->get();
-                    $afiliadoEmail = $emailAfiliado[0]->Email;            
-                    $Agregar_copias['Afiliado'] = $afiliadoEmail;            
-                } 
+                    $nombreAfiliado = $AfiliadoData[0]->Nombre_afiliado;
+                    $direccionAfiliado = $AfiliadoData[0]->Direccion;
+                    $telefonoAfiliado = $AfiliadoData[0]->Telefono_contacto;
+                    $ciudadAfiliado = $AfiliadoData[0]->Nombre_ciudad;
+                    $municipioAfiliado = $AfiliadoData[0]->Nombre_municipio;
+                    $emailAfiliado = $AfiliadoData[0]->Email;            
+                    $Agregar_copias['Afiliado'] = $nombreAfiliado."; ".$direccionAfiliado."; ".$emailAfiliado."; ".$telefonoAfiliado."; ".$ciudadAfiliado."; ".$municipioAfiliado.".";          
+                }
 
                 if(isset($edit_copia_empleador)) {            
                     $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
-                    ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                    ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sile.Email', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
                     ->where([['sile.Nro_identificacion', $N_identificacion],['sile.ID_evento', $ID_evento]])
                     ->get();
 
@@ -4940,11 +5072,12 @@ class CalificacionJuntasController extends Controller
                     }
 
                     $direccion_empleador = $datos_empleador[0]->Direccion;
+                    $email_empleador = $datos_empleador[0]->Email;
                     $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
                     $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
                     $departamento_empleador = $datos_empleador[0]->Nombre_departamento;
 
-                    $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$telefono_empleador."; ".$ciudad_empleador." - ".$departamento_empleador.".";
+                    $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$email_empleador."; ".$telefono_empleador."; ".$ciudad_empleador." - ".$departamento_empleador.".";
                 }
 
                 if (isset($edit_copia_eps)) {
@@ -4952,13 +5085,14 @@ class CalificacionJuntasController extends Controller
                     ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-                    ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 
+                    ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sie.Emails as Email_eps',
                     'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
                     ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
                     ->get();
 
                     $nombre_eps = $datos_eps[0]->Nombre_eps;
                     $direccion_eps = $datos_eps[0]->Direccion;
+                    $email_eps = $datos_eps[0]->Email_eps;
                     if ($datos_eps[0]->Otros_Telefonos != "") {
                         $telefonos_eps = $datos_eps[0]->Telefonos.",".$datos_eps[0]->Otros_Telefonos;
                     } else {
@@ -4967,7 +5101,7 @@ class CalificacionJuntasController extends Controller
                     $ciudad_eps = $datos_eps[0]->Nombre_ciudad;
                     $departamento_eps = $datos_eps[0]->Nombre_departamento;
 
-                    $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$telefonos_eps."; ".$ciudad_eps." - ".$departamento_eps;
+                    $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$email_eps."; ".$telefonos_eps."; ".$ciudad_eps." - ".$departamento_eps;
                 }
 
                 if (isset($edit_copia_afp)) {
@@ -4975,13 +5109,14 @@ class CalificacionJuntasController extends Controller
                     ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-                    ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+                    ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sie.Emails as Email_afp',
                     'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
                     ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
                     ->get();
 
                     $nombre_afp = $datos_afp[0]->Nombre_afp;
                     $direccion_afp = $datos_afp[0]->Direccion;
+                    $email_afp = $datos_afp[0]->Email_afp;
                     if ($datos_afp[0]->Otros_Telefonos != "") {
                         $telefonos_afp = $datos_afp[0]->Telefonos.",".$datos_afp[0]->Otros_Telefonos;
                     } else {
@@ -4990,7 +5125,7 @@ class CalificacionJuntasController extends Controller
                     $ciudad_afp = $datos_afp[0]->Nombre_ciudad;
                     $departamento_afp = $datos_afp[0]->Nombre_departamento;
 
-                    $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$telefonos_afp."; ".$ciudad_afp." - ".$departamento_afp;
+                    $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$email_afp."; ".$telefonos_afp."; ".$ciudad_afp." - ".$departamento_afp;
                 }
 
                 if (isset($edit_copia_arl)) {
@@ -4998,13 +5133,14 @@ class CalificacionJuntasController extends Controller
                     ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-                    ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+                    ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos','sie.Emails as Email_arl',
                     'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
                     ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
                     ->get();
 
                     $nombre_arl = $datos_arl[0]->Nombre_arl;
                     $direccion_arl = $datos_arl[0]->Direccion;
+                    $email_arl = $datos_arl[0]->Email_arl;
                     if ($datos_arl[0]->Otros_Telefonos != "") {
                         $telefonos_arl = $datos_arl[0]->Telefonos.",".$datos_arl[0]->Otros_Telefonos;
                     } else {
@@ -5014,7 +5150,7 @@ class CalificacionJuntasController extends Controller
                     $ciudad_arl = $datos_arl[0]->Nombre_ciudad;
                     $departamento_arl = $datos_arl[0]->Nombre_departamento;
 
-                    $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl." - ".$departamento_arl;
+                    $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$ciudad_arl." - ".$departamento_arl;
                 };
 
                 if(isset($edit_copia_jrci)){
@@ -5044,11 +5180,11 @@ class CalificacionJuntasController extends Controller
                         } else {
                             $telefonos_jrci = $datos_jrci[0]->Telefonos;
                         }
-
+                        $email_jrci = $datos_jrci[0]->Emails;
                         $ciudad_jrci = $datos_jrci[0]->Nombre_ciudad;
                         $departamento_jrci = $datos_jrci[0]->Nombre_departamento;
     
-                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
+                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$email_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
     
                     }else{
     
@@ -5070,6 +5206,7 @@ class CalificacionJuntasController extends Controller
                         ])->get();
     
                         $nombre_jrci = $datos_jrci[0]->Nombre_entidad;
+                        $email_jrci = $datos_jrci[0]->Emails;
                         $direccion_jrci = $datos_jrci[0]->Direccion;
 
                         if ($datos_jrci[0]->Otros_Telefonos != "") {
@@ -5081,7 +5218,7 @@ class CalificacionJuntasController extends Controller
                         $ciudad_jrci = $datos_jrci[0]->Nombre_ciudad;
                         $departamento_jrci = $datos_jrci[0]->Nombre_departamento;
     
-                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
+                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$email_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
                     }
                 }
                 
@@ -5105,7 +5242,7 @@ class CalificacionJuntasController extends Controller
     
                     $nombre_jnci = $datos_jnci[0]->Nombre_entidad;
                     $direccion_jnci = $datos_jnci[0]->Direccion;
-
+                    $email_jnci = $datos_jnci[0]->Emails;
                     if ($datos_jnci[0]->Otros_Telefonos != "") {
                         $telefonos_jnci = $datos_jnci[0]->Telefonos.",".$datos_jnci[0]->Otros_Telefonos;
                     } else {
@@ -5115,7 +5252,7 @@ class CalificacionJuntasController extends Controller
                     $ciudad_jnci = $datos_jnci[0]->Nombre_ciudad;
                     $departamento_jnci = $datos_jnci[0]->Nombre_departamento;
 
-                    $Agregar_copias['JNCI'] = $nombre_jnci."; ".$direccion_jnci."; ".$telefonos_jnci."; ".$ciudad_jnci." - ".$departamento_jnci;
+                    $Agregar_copias['JNCI'] = $nombre_jnci."; ".$direccion_jnci."; ".$email_jnci."; ".$telefonos_jnci."; ".$ciudad_jnci." - ".$departamento_jnci;
     
                 }
 
@@ -5210,39 +5347,92 @@ class CalificacionJuntasController extends Controller
                 $header = $section->addHeader();
                 $imagenPath_header = public_path($ruta_logo);
                 $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
+                $test = $header->addTextRun(['alignment' => 'right']);
+                $test->addText('Página ');
+                $test->addField('PAGE');
+                $test->addText(' de ');
+                $test->addField('NUMPAGES');
+                $header->addTextBreak();
 
                 // Creación de Contenido
                 $section->addText('Bogotá D.C, '.$date, array('bold' => true));
-
                 $section->addTextBreak();
-                    $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
-                        <tr>
-                            <td>
-                                <p><b>Señores: </b>'.$nombre_junta.'</p>
-                                <p><b>Dirección: </b>'.$direccion_junta.'</p>
-                                <p><b>Teléfono: </b>'.$telefono_junta.'</p>
-                                <p><b>Ciudad: </b>'.$ciudad_junta.' - '.$departamento_junta.'</p>
-                            </td>
-                            <td>
-                                <table style="width: 60%; border: 3px black solid;">
-                                    <tr>
-                                        <td>
-                                            <p><b>Nro. Radicado: '.$nro_radicado.'</b></p>  
-                                            <p><b>'.$tipo_doc_afiliado." ".$num_identificacion_afiliado.'</b></p>
-                                            <p><b>Siniestro: '.$request->n_siniestro_proforma_editar.'</b></p>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>';
 
-                    Html::addHtml($section, $htmltabla1, false, true);
+                $table = $section->addTable();
 
-                    $section->addText('Asunto: '.$request->asunto_act, array('bold' => true));
+    
+                $table->addRow();
+    
+    
+                $cell1 = $table->addCell(5000);
+    
+    
+                $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
+                $textRun1->addText('Señores: ',array('bold' => true));
+                $textRun1->addTextBreak();
+                $textRun1->addText($nombre_junta);
+                $textRun1->addTextBreak();
+                $textRun1->addText($direccion_junta);
+                $textRun1->addTextBreak();
+                $textRun1->addText($telefono_junta);
+                $textRun1->addTextBreak();
+                $textRun1->addText($ciudad_junta.' - '.$departamento_junta);
+    
+                $cell2 = $table->addCell(5000);
+    
+                $nestedTable = $cell2->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80 * 60, 'alignment'=>'right'));
+                $nestedTable->addRow();
+                $nestedCell = $nestedTable->addCell();
+                $nestedTextRun = $nestedCell->addTextRun(array('alignment'=>'left'));
+                $nestedTextRun->addText('Nro. Radicado: ', array('bold' => true));
+                $nestedTextRun->addTextBreak();
+                $nestedTextRun->addText($nro_radicado, array('bold' => true));
+                $nestedTextRun->addTextBreak();
+                $nestedTextRun->addText($tipo_doc_afiliado . ' ' . $num_identificacion_afiliado, array('bold' => true));
+                $nestedTextRun->addTextBreak();
+                $nestedTextRun->addText('Siniestro: ' . $request->n_siniestro_proforma_editar, array('bold' => true));
+                
+                $section->addTextBreak();
+                $section->addTextBreak();
+                    // $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
+                    //     <tr>
+                    //         <td>
+                    //             <p><b>Señores: </b>'.$nombre_junta.'</p>
+                    //             <p><b>Dirección: </b>'.$direccion_junta.'</p>
+                    //             <p><b>Teléfono: </b>'.$telefono_junta.'</p>
+                    //             <p><b>Ciudad: </b>'.$ciudad_junta.' - '.$departamento_junta.'</p>
+                    //         </td>
+                    //         <td>
+                    //             <table style="width: 60%; border: 3px black solid;">
+                    //                 <tr>
+                    //                     <td>
+                    //                         <p><b>Nro. Radicado: '.$nro_radicado.'</b></p>  
+                    //                         <p><b>'.$tipo_doc_afiliado." ".$num_identificacion_afiliado.'</b></p>
+                    //                         <p><b>Siniestro: '.$request->n_siniestro_proforma_editar.'</b></p>
+                    //                     </td>
+                    //                 </tr>
+                    //             </table>
+                    //         </td>
+                    //     </tr>
+                    // </table>';
+
+                    // Html::addHtml($section, $htmltabla1, false, true);
+
+                    $table = $section->addTable(array('alignment'=>'center'));
+
+    
+                    $table->addRow();
+        
+        
+                    $cell1 = $table->addCell(10000);
+        
+                    $asuntoyafiliado = $cell1->addTextRun(array('alignment'=>'left'));
+                    $asuntoyafiliado->addText('Asunto: ', array('bold' => true));
+                    $asuntoyafiliado->addText($request->asunto_act, array('bold' => true));
+                    $asuntoyafiliado->addTextBreak();
+                    $asuntoyafiliado->addText('Paciente: ', array('bold' => true));
+                    $asuntoyafiliado->addText($nombre_afiliado." ".$tipo_doc_afiliado." ".$num_identificacion_afiliado);
                     $section->addTextBreak();
-                    $section->addText('PACIENTE: '.$nombre_afiliado." ".$tipo_doc_afiliado." ".$num_identificacion_afiliado, array('bold' => true));
-
                     // Configuramos el reemplazo de las etiquetas del cuerpo del comunicado
                     $patron1 = '/\{\{\$nombre_afiliado\}\}/';
                     $patron2 = '/\{\{\$correo_solicitud_informacion\}\}/';
@@ -5278,8 +5468,8 @@ class CalificacionJuntasController extends Controller
                         // Quitamos el style y agregamos los atributos width y height
                         $patronstyle = '/<img[^>]+style="width:\s*([\d.]+)px;\s*height:\s*([\d.]+)px[^"]*"[^>]*>/';
                         preg_match($patronstyle, $Firma_cliente, $coincidencias);
-                        $width = $coincidencias[1]; // Valor de width
-                        $height = $coincidencias[2]; // Valor de height
+                        $width = count($coincidencias)>0 ? $coincidencias[1] : '100px'; // Valor de width
+                        $height = count($coincidencias)>0 ? $coincidencias[2] : '70px'; // Valor de height
                     
                         $nuevoStyle = 'width="'.$width.'" height="'.$height.'"';
                         $htmlModificado = reemplazarStyleImg($Firma_cliente, $nuevoStyle);
@@ -5293,62 +5483,62 @@ class CalificacionJuntasController extends Controller
                     $section->addTextBreak();
                     $section->addText('Convenio Codess -  Seguros de Vida Alfa S.A', array('bold' => true));
                     $section->addTextBreak();
-                    $section->addText('Elaboró: '.$nombre_usuario, array('bold' => true));
-                    $section->addTextBreak();
+                    // $section->addText('Elaboró: '.$nombre_usuario, array('bold' => true));
+                    // $section->addTextBreak();
 
-                    // Configuramos la tabla de copias a partes interesadas
-                    $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
-                    if (count($Agregar_copias) == 0) {
-                        $htmltabla2 .= '
-                            <tr>
-                                <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
-                            </tr>';
-                    } else {
-                        $htmltabla2 .= '
-                            <tr>
-                                <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
-                            </tr>';
+                    // // Configuramos la tabla de copias a partes interesadas
+                    // $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
+                    // if (count($Agregar_copias) == 0) {
+                    //     $htmltabla2 .= '
+                    //         <tr>
+                    //             <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
+                    //         </tr>';
+                    // } else {
+                    //     $htmltabla2 .= '
+                    //         <tr>
+                    //             <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
+                    //         </tr>';
 
-                        $Afiliado = 'Afiliado';
-                        $Empleador = 'Empleador';
-                        $EPS = 'EPS';
-                        $AFP = 'AFP';
-                        $ARL = 'ARL';
-                        $JRCI = 'JRCI';
-                        $JNCI = 'JNCI';
+                    //     $Afiliado = 'Afiliado';
+                    //     $Empleador = 'Empleador';
+                    //     $EPS = 'EPS';
+                    //     $AFP = 'AFP';
+                    //     $ARL = 'ARL';
+                    //     $JRCI = 'JRCI';
+                    //     $JNCI = 'JNCI';
 
-                        if (isset($Agregar_copias[$Afiliado])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$Afiliado])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$Empleador])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$Empleador])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$EPS])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$EPS])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$AFP])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$AFP])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$ARL])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$ARL])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$JRCI])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
-                        }
+                    //     if (isset($Agregar_copias[$JRCI])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
+                    //     }
 
-                        if (isset($Agregar_copias[$JNCI])) {
-                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
-                        }
-                    }
+                    //     if (isset($Agregar_copias[$JNCI])) {
+                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
+                    //     }
+                    // }
 
-                    $htmltabla2 .= '</table>';
-                    Html::addHtml($section, $htmltabla2, false, true);
-                    $section->addTextBreak();
+                    // $htmltabla2 .= '</table>';
+                    // Html::addHtml($section, $htmltabla2, false, true);
+                    // $section->addTextBreak();
 
                     // Configuramos el footer
                     $info = $nombre_afiliado." - ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." - Siniestro: ".$request->n_siniestro_proforma_editar;
@@ -5358,12 +5548,12 @@ class CalificacionJuntasController extends Controller
                         $imagenPath_footer = public_path($ruta_logo_footer);
                         $footer->addImage($imagenPath_footer, array('width' => 450, 'height' => 70, 'alignment' => 'left'));
                     }
-                    $table = $footer->addTable('myTable');
-                    $table->addRow();
-                    $cell1 = $table->addCell(80000, ['gridSpan' => 2]);
-                    $textRun = $cell1->addTextRun(['alignment' => 'center']);
-                    $textRun->addText('Página ');
-                    $textRun->addField('PAGE');
+                    // $table = $footer->addTable('myTable');
+                    // $table->addRow();
+                    // $cell1 = $table->addCell(80000, ['gridSpan' => 2]);
+                    // $textRun = $cell1->addTextRun(['alignment' => 'center']);
+                    // $textRun->addText('Página ');
+                    // $textRun->addField('PAGE');
 
                     // Generamos el documento y luego se guarda
                     $writer = new Word2007($phpWord);
