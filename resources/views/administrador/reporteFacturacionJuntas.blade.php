@@ -81,6 +81,7 @@
                                                 <th>TIPO_CONTROVERSIA2</th>
                                                 <th>TIPO_CONTROVERSIA3</th>
                                                 <th>TIPO_CONTROVERSIA4</th>
+                                                <th>TIPO_CONTROVERSIA5</th>
                                                 <th>DX_PRINCIPAL</th>
                                                 <th>DIAGNOSTICO 2</th>
                                                 <th>DIAGNOSTICO 3</th>

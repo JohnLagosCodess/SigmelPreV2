@@ -576,9 +576,9 @@ $(document).ready(function(){
                     elementosDeslizarJrci2.forEach(elemento => {
                         $(elemento).slideUp(tiempoDeslizamientoJrci);
                     });
-                    $('#total_rol_ocupacional').prop('required', true);
-                    $('#total_discapacidad').prop('required', false);
-                    $('#total_minusvalia').prop('required', false);
+                    $('#total_rol_ocupacional_jrci_emitido').prop('required', true);
+                    $('#total_discapacidad_jrci_emitido').prop('required', false);
+                    $('#total_minusvalia_jrci_emitido').prop('required', false);
                 break;
                 case 3:
                     elementosDeslizarJrci2.forEach(elemento => {
@@ -638,7 +638,7 @@ $(document).ready(function(){
             if (!isNaN(sumaTotal_pcl_jrci)){
                 $('#porcentaje_pcl_jrci_emitido').val(sumaTotal_pcl_jrci);
             }
-            console.log(sumaTotal_pcl_jrci);
+            // console.log(sumaTotal_pcl_jrci);
             if(sumaTotal_pcl_jrci=='isNaN'){
                 rango_pcl_jrci_emitido = '0';
             }else if(sumaTotal_pcl_jrci < "14,99"){

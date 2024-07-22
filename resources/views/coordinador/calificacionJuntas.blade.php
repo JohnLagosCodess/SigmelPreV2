@@ -174,7 +174,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fecha_asignacion_juntas">Fecha de asignación para pronunciamiento de Juntas</label>
-                                                <input type="text" class="form-control" name="fecha_asignacion_juntas" id="fecha_asignacion_juntas" value="{{$array_datos_calificacionJuntas[0]->Fecha_asignacion_calif}}" disabled>
+                                                <input type="text" class="form-control" name="fecha_asignacion_juntas" id="fecha_asignacion_juntas" value="{{$array_datos_calificacionJuntas[0]->F_asignacion_pronu_juntas}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">

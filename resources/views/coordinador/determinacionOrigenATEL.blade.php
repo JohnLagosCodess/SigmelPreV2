@@ -539,7 +539,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer">
+                                {{-- <div class="card-footer">
                                     <div class="row">
                                         <div class="col-12">
                                             @if (empty($datos_bd_DTO_ATEL[0]->ID_evento))
@@ -557,7 +557,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                             <br>
 
@@ -576,7 +576,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer">
+                                {{-- <div class="card-footer">
                                     <div class="row">
                                         <div class="col-12">
                                             @if (empty($datos_bd_DTO_ATEL[0]->ID_evento))
@@ -594,7 +594,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                             <br>
     
@@ -823,7 +823,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer">
+                                {{-- <div class="card-footer">
                                     <div class="row">
                                         <div class="col-12">
                                             @if (empty($datos_bd_DTO_ATEL[0]->ID_evento))
@@ -841,7 +841,7 @@
                                             </div>
                                         </div>
                                     </div> 
-                                </div>
+                                </div> --}}
                             </div>
                             <br>
 
@@ -895,7 +895,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer">
+                                {{-- <div class="card-footer">
                                     <div class="row">
                                         <div class="col-12">
                                             @if (empty($datos_bd_DTO_ATEL[0]->ID_evento))
@@ -913,7 +913,7 @@
                                             </div>
                                         </div>
                                     </div> 
-                                </div>
+                                </div> --}}
                             </div>
                             <br>
                             

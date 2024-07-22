@@ -66,6 +66,8 @@ use App\Models\sigmel_lista_causal_devoluciones;
 use App\Models\sigmel_lista_dominancias;
 use App\Models\sigmel_lista_procesos_servicios;
 use App\Models\sigmel_lista_regional_juntas;
+use App\Models\sigmel_auditorias_informacion_accion_eventos;
+
 use DateTime;
 use Psy\Readline\Hoa\Console;
 use Svg\Tag\Rect;
@@ -601,6 +603,25 @@ class CalificacionPCLController extends Controller
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
+
+                $aud_datos_info_registrarCalifcacionPcl= [
+                    'Aud_ID_evento' => $request->newId_evento,
+                    'Aud_Id_Asignacion' => $request->newId_asignacion,
+                    'Aud_Id_proceso' => $request->Id_proceso,
+                    'Aud_Modalidad_calificacion' => 'N/A',
+                    'Aud_fuente_informacion' => $request->fuente_informacion,
+                    'Aud_F_accion' => $date_time,
+                    'Aud_Accion' => $request->accion,
+                    'Aud_F_Alerta' => $request->fecha_alerta,
+                    'Aud_Enviar' => $request->enviar,
+                    'Aud_Estado_Facturacion' => $request->estado_facturacion,
+                    'Aud_Causal_devolucion_comite' => $Causal_devolucion_comite,
+                    'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
+                    'Aud_Descripcion_accion' => $request->descripcion_accion,
+                    'Aud_F_cierre' => $request->fecha_cierre,
+                    'Aud_Nombre_usuario' => $nombre_usuario,
+                    'Aud_F_registro' => $date,
+                ];
             } else {                
                 $datos_info__registrarCalifcacionPcl= [
                     'ID_evento' => $request->newId_evento,
@@ -620,9 +641,32 @@ class CalificacionPCLController extends Controller
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
+
+                $aud_datos_info_registrarCalifcacionPcl= [
+                    'Aud_ID_evento' => $request->newId_evento,
+                    'Aud_Id_Asignacion' => $request->newId_asignacion,
+                    'Aud_Id_proceso' => $request->Id_proceso,
+                    'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
+                    'Aud_fuente_informacion' => $request->fuente_informacion,
+                    'Aud_F_accion' => $date_time,
+                    'Aud_Accion' => $request->accion,
+                    'Aud_F_Alerta' => $request->fecha_alerta,
+                    'Aud_Enviar' => $request->enviar,
+                    'Aud_Estado_Facturacion' => $request->estado_facturacion,
+                    'Aud_Causal_devolucion_comite' => $Causal_devolucion_comite,                    
+                    'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
+                    'Aud_Descripcion_accion' => $request->descripcion_accion,
+                    'Aud_F_cierre' => $request->fecha_cierre,
+                    'Aud_Nombre_usuario' => $nombre_usuario,
+                    'Aud_F_registro' => $date,
+                ];
             }
 
             $Id_Accion_eventos = sigmel_informacion_accion_eventos::on('sigmel_gestiones')->insertGetId($datos_info__registrarCalifcacionPcl);
+
+            // Realizamos la inserción a la tabla de auditoria sigmel_auditorias_informacion_accion_eventos
+            sigmel_auditorias_informacion_accion_eventos::on('sigmel_auditorias')->insert($aud_datos_info_registrarCalifcacionPcl);
+
             // Capturar el id accion para validar la accion que se acabo de guardar
             $info_accion_evento = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
             ->select('Accion', 'F_accion')
@@ -1138,6 +1182,26 @@ class CalificacionPCLController extends Controller
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
+
+                $aud_datos_info_actualizarCalifcacionPcl= [
+                    'Aud_ID_evento' => $request->newId_evento,
+                    'Aud_Id_Asignacion' => $request->newId_asignacion,
+                    'Aud_Id_proceso' => $request->Id_proceso,
+                    'Aud_Modalidad_calificacion' => 'N/A',
+                    'Aud_fuente_informacion' => $request->fuente_informacion,
+                    'Aud_F_accion' => $date_time,
+                    'Aud_Accion' => $request->accion,
+                    'Aud_F_Alerta' => $request->fecha_alerta,
+                    'Aud_Enviar' => $request->enviar,
+                    'Aud_Estado_Facturacion' => $request->estado_facturacion,
+                    'Aud_Causal_devolucion_comite' => $Causal_devolucion_comite,
+                    'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
+                    'Aud_Descripcion_accion' => $request->descripcion_accion,
+                    'Aud_F_cierre' => $request->fecha_cierre,
+                    'Aud_Nombre_usuario' => $nombre_usuario,
+                    'Aud_F_registro' => $date,
+                ];
+
             } else {
                 $datos_info_actualizarCalifcacionPcl= [
                     'ID_evento' => $request->newId_evento,
@@ -1157,10 +1221,32 @@ class CalificacionPCLController extends Controller
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
+
+                $aud_datos_info_actualizarCalifcacionPcl= [
+                    'Aud_ID_evento' => $request->newId_evento,
+                    'Aud_Id_Asignacion' => $request->newId_asignacion,
+                    'Aud_Id_proceso' => $request->Id_proceso,
+                    'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
+                    'Aud_fuente_informacion' => $request->fuente_informacion,
+                    'Aud_F_accion' => $date_time,
+                    'Aud_Accion' => $request->accion,
+                    'Aud_F_Alerta' => $request->fecha_alerta,
+                    'Aud_Enviar' => $request->enviar,
+                    'Aud_Estado_Facturacion' => $request->estado_facturacion,
+                    'Aud_Causal_devolucion_comite' => $Causal_devolucion_comite,
+                    'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
+                    'Aud_Descripcion_accion' => $request->descripcion_accion,
+                    'Aud_F_cierre' => $request->fecha_cierre,
+                    'Aud_Nombre_usuario' => $nombre_usuario,
+                    'Aud_F_registro' => $date,
+                ];
             }
 
             sigmel_informacion_accion_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_actualizarCalifcacionPcl);
+
+            // Realizamos la inserción a la tabla de auditoria sigmel_auditorias_informacion_accion_eventos
+            sigmel_auditorias_informacion_accion_eventos::on('sigmel_auditorias')->insert($aud_datos_info_actualizarCalifcacionPcl);
 
             //Capturar el id accion para validar la accion que se acabo de guardar
             $info_accion_evento = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
@@ -5265,6 +5351,7 @@ class CalificacionPCLController extends Controller
                 ['Tipo_lista', '=', 'Origen Cie10'],
                 ['Estado', '=', 'activo']
             ])
+            ->whereNotIn('Nombre_parametro', ['Mixto','Integral','Derivado del evento','No derivado del evento'])
             ->get();
 
             $info_listado_Origen_CIE10 = json_decode(json_encode($listado_Origen_CIE10, true));
@@ -7681,16 +7768,6 @@ class CalificacionPCLController extends Controller
                 ];
                 sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
                 ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial); 
-                
-                // Actualizacion del profesional calificador
-                $datos_profesional_calificador = [
-                    'Id_profesional' => Auth::user()->id,
-                    'Nombre_profesional' => Auth::user()->name,
-                    'F_ajuste_calificacion' => $date
-                ];
-
-                sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-                ->where('Id_Asignacion', $Id_Asignacion_Dcreto)->update($datos_profesional_calificador);
 
             }else{
                 $datos_dictamenPericial =[
@@ -7723,15 +7800,6 @@ class CalificacionPCLController extends Controller
                 sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
                 ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial); 
                 
-                // Actualizacion del profesional calificador
-                $datos_profesional_calificador = [
-                    'Id_profesional' => Auth::user()->id,
-                    'Nombre_profesional' => Auth::user()->name,
-                    'F_ajuste_calificacion' => $date
-                ];
-
-                sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-                ->where('Id_Asignacion', $Id_Asignacion_Dcreto)->update($datos_profesional_calificador);
             }    
             $comunicado_reemplazado = [
                 'Reemplazado' => 0,

@@ -2521,6 +2521,7 @@ class RecalificacionPCLController extends Controller
                 ['Tipo_lista', '=', 'Origen Cie10'],
                 ['Estado', '=', 'activo']
             ])
+            ->whereNotIn('Nombre_parametro', ['Mixto','Integral','Derivado del evento','No derivado del evento'])
             ->get();
 
             $info_listado_Origen_CIE10 = json_decode(json_encode($listado_Origen_CIE10, true));
@@ -5597,16 +5598,6 @@ class RecalificacionPCLController extends Controller
                 sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
                 ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial); 
 
-                // Actualizacion del profesional calificador
-                $datos_profesional_calificador = [
-                    'Id_profesional' => Auth::user()->id,
-                    'Nombre_profesional' => Auth::user()->name,
-                    'F_calificacion' => $date
-                ];
-            
-                sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-                ->where('Id_Asignacion', $Id_Asignacion_Dcreto)->update($datos_profesional_calificador);
-
             }else{
                 $datos_dictamenPericial =[
                     'Suma_combinada' => $suma_combinada,
@@ -5638,15 +5629,6 @@ class RecalificacionPCLController extends Controller
                 sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
                 ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial);  
                 
-                // Actualizacion del profesional calificador
-                $datos_profesional_calificador = [
-                    'Id_profesional' => Auth::user()->id,
-                    'Nombre_profesional' => Auth::user()->name,
-                    'F_calificacion' => $date
-                ];
-            
-                sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-                ->where('Id_Asignacion', $Id_Asignacion_Dcreto)->update($datos_profesional_calificador);
             }
             $comunicado_reemplazado = [
                 'Reemplazado' => 0,

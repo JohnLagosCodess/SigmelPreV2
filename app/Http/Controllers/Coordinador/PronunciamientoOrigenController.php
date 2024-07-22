@@ -800,15 +800,6 @@ class PronunciamientoOrigenController extends Controller
                 ['N_radicado',$radicado]
             ])->update($datos_info_comunicado_eventos);
 
-            // Actualizacion del profesional calificador
-            $datos_profesional_calificador = [
-                'Id_profesional' => Auth::user()->id,
-                'Nombre_profesional' => Auth::user()->name
-            ];
-        
-            sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-            ->where('Id_Asignacion', $Id_Asignacion_Pronuncia)->update($datos_profesional_calificador);
-
             sleep(2);
             $datos_info_accion_evento= [    
                 'F_calificacion_servicio' => $datetime
