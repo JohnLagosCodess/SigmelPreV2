@@ -407,6 +407,7 @@ class DeterminacionOrigenATEL extends Controller
                 ['Tipo_lista', '=', 'Origen Cie10'],
                 ['Estado', '=', 'activo']
             ])
+            ->whereNotIn('Nombre_parametro', ['Mixto','Integral','Derivado del evento','No derivado del evento'])
             ->get();
 
             $info_listado_Origen_CIE10 = json_decode(json_encode($listado_Origen_CIE10, true));
@@ -770,6 +771,15 @@ class DeterminacionOrigenATEL extends Controller
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
 
+            // Actualizacion del profesional calificador
+            $datos_profesional_calificador = [
+                'Id_profesional' => Auth::user()->id,
+                'Nombre_profesional' => $nombre_usuario
+            ];
+
+            sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            ->where('Id_Asignacion', $request->Id_Asignacion)->update($datos_profesional_calificador);
+
             $mensaje = 'Información guardada satisfactoriamente.';
 
         }else{
@@ -789,15 +799,6 @@ class DeterminacionOrigenATEL extends Controller
             ->update($comunicado_reemplazado);
         }
         
-        // Actualizacion del profesional calificador
-        $datos_profesional_calificador = [
-            'Id_profesional' => Auth::user()->id,
-            'Nombre_profesional' => $nombre_usuario
-        ];
-
-        sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-        ->where('Id_Asignacion', $request->Id_Asignacion)->update($datos_profesional_calificador);
-
         sleep(2);
         $datos_info_accion_evento= [    
             'F_calificacion_servicio' => $datetime

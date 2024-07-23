@@ -980,6 +980,7 @@ class AdicionDxDTO extends Controller
                 ['Tipo_lista', '=', 'Origen Cie10'],
                 ['Estado', '=', 'activo']
             ])
+            ->whereNotIn('Nombre_parametro', ['Mixto','Integral','Derivado del evento','No derivado del evento'])
             ->get();
 
             $info_listado_Origen_CIE10 = json_decode(json_encode($listado_Origen_CIE10, true));
@@ -1652,6 +1653,7 @@ class AdicionDxDTO extends Controller
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
 
+            
             // Actualizacion del profesional calificador
             $datos_profesional_calificador = [
                 'Id_profesional' => Auth::user()->id,

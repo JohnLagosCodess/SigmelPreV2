@@ -37,6 +37,8 @@ use App\Models\sigmel_informacion_acciones_automaticas_eventos;
 use App\Models\sigmel_informacion_alertas_automaticas_eventos;
 use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_historial_accion_eventos;
+use App\Models\sigmel_auditorias_informacion_accion_eventos;
+
 use DateTime;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
@@ -663,6 +665,28 @@ class CalificacionJuntasController extends Controller
             ];
 
             $Id_Accion_eventos = sigmel_informacion_accion_eventos::on('sigmel_gestiones')->insertGetId($datos_info_registrarCalifcacionJuntas);
+
+            // Realizamos la inserción a la tabla de auditoria sigmel_auditorias_informacion_accion_eventos
+            $aud_datos_info_registrarCalifcacionJuntas= [
+                'Aud_ID_evento' => $request->newId_evento,
+                'Aud_Id_Asignacion' => $request->newId_asignacion,
+                'Aud_Id_proceso' => $request->Id_proceso,
+                'Aud_Modalidad_calificacion' => 'N/A',
+                'Aud_F_accion' => $date_time,
+                'Aud_Accion' => $request->accion,
+                'Aud_F_Alerta' => $request->fecha_alerta,
+                'Aud_Enviar' => $request->enviar,
+                'Aud_Estado_Facturacion' => $request->estado_facturacion,
+                'Aud_Causal_devolucion_comite' => 'N/A',
+                'Aud_Descripcion_accion' => $request->descripcion_accion,
+                'Aud_F_cierre' => $request->fecha_cierre,
+                'Aud_Nombre_usuario' => $nombre_usuario,
+				'Aud_F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
+                'Aud_Fuente_informacion' => $request->fuente_info_juntas,
+                'Aud_F_registro' => $date,
+            ];
+            sigmel_auditorias_informacion_accion_eventos::on('sigmel_auditorias')->insert($aud_datos_info_registrarCalifcacionJuntas);
+
             // Capturar el id accion para validar la accion que se acabo de guardar
             $info_accion_evento = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
             ->select('Accion', 'F_accion')
@@ -1179,6 +1203,27 @@ class CalificacionJuntasController extends Controller
 
             sigmel_informacion_accion_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_registrarCalifcacionJuntas);
+
+            // Realizamos la inserción a la tabla de auditoria sigmel_auditorias_informacion_accion_eventos
+            $aud_datos_info_registrarCalifcacionJuntas= [
+                'Aud_ID_evento' => $request->newId_evento,
+                'Aud_Id_Asignacion' => $request->newId_asignacion,
+                'Aud_Id_proceso' => $request->Id_proceso,
+                'Aud_Modalidad_calificacion' => 'N/A',
+                'Aud_F_accion' => $date_time,
+                'Aud_Accion' => $request->accion,
+                'Aud_F_Alerta' => $request->fecha_alerta,
+                'Aud_Enviar' => $request->enviar,
+                'Aud_Estado_Facturacion' => $request->estado_facturacion,
+                'Aud_Causal_devolucion_comite' => 'N/A',
+                'Aud_Descripcion_accion' => $request->descripcion_accion,
+                'Aud_F_cierre' => $request->fecha_cierre,
+                'Aud_Nombre_usuario' => $nombre_usuario,
+				'Aud_F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
+                'Aud_Fuente_informacion' => $request->fuente_info_juntas,
+                'Aud_F_registro' => $date,
+            ];
+            sigmel_auditorias_informacion_accion_eventos::on('sigmel_auditorias')->insert($aud_datos_info_registrarCalifcacionJuntas);
 
             //Capturar el id accion para validar la accion que se acabo de guardar
             $info_accion_evento = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
@@ -1734,10 +1779,11 @@ class CalificacionJuntasController extends Controller
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
         $f_contro_primer_califi = $request->f_contro_primer_califi;
+        $f_contro_radi_califi = $request->f_contro_radi_califi;
         $f_notifi_afiliado = $request->f_notifi_afiliado;
         //Validar registro termino de controversia
         $conteoDias = sigmel_calendarios::on('sigmel_gestiones')
-        ->whereBetween('Fecha', [$f_notifi_afiliado, $f_contro_primer_califi])
+        ->whereBetween('Fecha', [$f_notifi_afiliado, $f_contro_radi_califi])
         ->where('Calendario', 'LunesAViernes')
         ->where('EsHabil', 1)
         ->where('EsFestivo', 0)
@@ -1818,10 +1864,11 @@ class CalificacionJuntasController extends Controller
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
         $f_contro_primer_califi = $request->f_contro_primer_califi;
+        $f_contro_radi_califi = $request->f_contro_radi_califi;
         $f_notifi_afiliado = $request->f_notifi_afiliado;
         //Validar registro termino de controversia
         $conteoDias = sigmel_calendarios::on('sigmel_gestiones')
-        ->whereBetween('Fecha', [$f_notifi_afiliado, $f_contro_primer_califi])
+        ->whereBetween('Fecha', [$f_notifi_afiliado, $f_contro_radi_califi])
         ->where('Calendario', 'LunesAViernes')
         ->where('EsHabil', 1)
         ->where('EsFestivo', 0)
@@ -4996,20 +5043,27 @@ class CalificacionJuntasController extends Controller
                 extract($total_copias);
                 // Creamos array para empezar a llenarlos con las copias
                 $Agregar_copias = [];
-                if (isset($edit_copia_afiliado)) {
-                    $emailAfiliado = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-                    ->select('Email')
-                    ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+                if (isset($copia_afiliado)) {
+                    $AfiliadoData = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                    ->select('siae.Nombre_afiliado', 'siae.Direccion', 'siae.Telefono_contacto', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio', 'siae.Email')
+                    ->where([['siae.Nro_identificacion', $num_identificacion],['siae.ID_evento', $nro_siniestro]])
                     ->get();
-                    $afiliadoEmail = $emailAfiliado[0]->Email;            
-                    $Agregar_copias['Afiliado'] = $afiliadoEmail;            
-                } 
+                    $nombreAfiliado = $AfiliadoData[0]->Nombre_afiliado;
+                    $direccionAfiliado = $AfiliadoData[0]->Direccion;
+                    $telefonoAfiliado = $AfiliadoData[0]->Telefono_contacto;
+                    $ciudadAfiliado = $AfiliadoData[0]->Nombre_ciudad;
+                    $municipioAfiliado = $AfiliadoData[0]->Nombre_municipio;
+                    $emailAfiliado = $AfiliadoData[0]->Email;            
+                    $Agregar_copias['Afiliado'] = $nombreAfiliado."; ".$direccionAfiliado."; ".$emailAfiliado."; ".$telefonoAfiliado."; ".$ciudadAfiliado."; ".$municipioAfiliado.".";          
+                }
 
                 if(isset($edit_copia_empleador)) {            
                     $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
-                    ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                    ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sile.Email', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
                     ->where([['sile.Nro_identificacion', $N_identificacion],['sile.ID_evento', $ID_evento]])
                     ->get();
 
@@ -5020,11 +5074,12 @@ class CalificacionJuntasController extends Controller
                     }
 
                     $direccion_empleador = $datos_empleador[0]->Direccion;
+                    $email_empleador = $datos_empleador[0]->Email;
                     $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
                     $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
                     $departamento_empleador = $datos_empleador[0]->Nombre_departamento;
 
-                    $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$telefono_empleador."; ".$ciudad_empleador." - ".$departamento_empleador.".";
+                    $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$email_empleador."; ".$telefono_empleador."; ".$ciudad_empleador." - ".$departamento_empleador.".";
                 }
 
                 if (isset($edit_copia_eps)) {
@@ -5032,13 +5087,14 @@ class CalificacionJuntasController extends Controller
                     ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-                    ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 
+                    ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sie.Emails as Email_eps',
                     'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
                     ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
                     ->get();
 
                     $nombre_eps = $datos_eps[0]->Nombre_eps;
                     $direccion_eps = $datos_eps[0]->Direccion;
+                    $email_eps = $datos_eps[0]->Email_eps;
                     if ($datos_eps[0]->Otros_Telefonos != "") {
                         $telefonos_eps = $datos_eps[0]->Telefonos.",".$datos_eps[0]->Otros_Telefonos;
                     } else {
@@ -5047,7 +5103,7 @@ class CalificacionJuntasController extends Controller
                     $ciudad_eps = $datos_eps[0]->Nombre_ciudad;
                     $departamento_eps = $datos_eps[0]->Nombre_departamento;
 
-                    $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$telefonos_eps."; ".$ciudad_eps." - ".$departamento_eps;
+                    $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$email_eps."; ".$telefonos_eps."; ".$ciudad_eps." - ".$departamento_eps;
                 }
 
                 if (isset($edit_copia_afp)) {
@@ -5055,13 +5111,14 @@ class CalificacionJuntasController extends Controller
                     ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-                    ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+                    ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sie.Emails as Email_afp',
                     'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
                     ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
                     ->get();
 
                     $nombre_afp = $datos_afp[0]->Nombre_afp;
                     $direccion_afp = $datos_afp[0]->Direccion;
+                    $email_afp = $datos_afp[0]->Email_afp;
                     if ($datos_afp[0]->Otros_Telefonos != "") {
                         $telefonos_afp = $datos_afp[0]->Telefonos.",".$datos_afp[0]->Otros_Telefonos;
                     } else {
@@ -5070,7 +5127,7 @@ class CalificacionJuntasController extends Controller
                     $ciudad_afp = $datos_afp[0]->Nombre_ciudad;
                     $departamento_afp = $datos_afp[0]->Nombre_departamento;
 
-                    $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$telefonos_afp."; ".$ciudad_afp." - ".$departamento_afp;
+                    $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$email_afp."; ".$telefonos_afp."; ".$ciudad_afp." - ".$departamento_afp;
                 }
 
                 if (isset($edit_copia_arl)) {
@@ -5078,13 +5135,14 @@ class CalificacionJuntasController extends Controller
                     ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-                    ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+                    ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos','sie.Emails as Email_arl',
                     'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
                     ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
                     ->get();
 
                     $nombre_arl = $datos_arl[0]->Nombre_arl;
                     $direccion_arl = $datos_arl[0]->Direccion;
+                    $email_arl = $datos_arl[0]->Email_arl;
                     if ($datos_arl[0]->Otros_Telefonos != "") {
                         $telefonos_arl = $datos_arl[0]->Telefonos.",".$datos_arl[0]->Otros_Telefonos;
                     } else {
@@ -5094,7 +5152,7 @@ class CalificacionJuntasController extends Controller
                     $ciudad_arl = $datos_arl[0]->Nombre_ciudad;
                     $departamento_arl = $datos_arl[0]->Nombre_departamento;
 
-                    $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl." - ".$departamento_arl;
+                    $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$ciudad_arl." - ".$departamento_arl;
                 };
 
                 if(isset($edit_copia_jrci)){
@@ -5124,11 +5182,11 @@ class CalificacionJuntasController extends Controller
                         } else {
                             $telefonos_jrci = $datos_jrci[0]->Telefonos;
                         }
-
+                        $email_jrci = $datos_jrci[0]->Emails;
                         $ciudad_jrci = $datos_jrci[0]->Nombre_ciudad;
                         $departamento_jrci = $datos_jrci[0]->Nombre_departamento;
     
-                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
+                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$email_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
     
                     }else{
     
@@ -5150,6 +5208,7 @@ class CalificacionJuntasController extends Controller
                         ])->get();
     
                         $nombre_jrci = $datos_jrci[0]->Nombre_entidad;
+                        $email_jrci = $datos_jrci[0]->Emails;
                         $direccion_jrci = $datos_jrci[0]->Direccion;
 
                         if ($datos_jrci[0]->Otros_Telefonos != "") {
@@ -5161,7 +5220,7 @@ class CalificacionJuntasController extends Controller
                         $ciudad_jrci = $datos_jrci[0]->Nombre_ciudad;
                         $departamento_jrci = $datos_jrci[0]->Nombre_departamento;
     
-                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
+                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$email_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
                     }
                 }
                 
@@ -5185,7 +5244,7 @@ class CalificacionJuntasController extends Controller
     
                     $nombre_jnci = $datos_jnci[0]->Nombre_entidad;
                     $direccion_jnci = $datos_jnci[0]->Direccion;
-
+                    $email_jnci = $datos_jnci[0]->Emails;
                     if ($datos_jnci[0]->Otros_Telefonos != "") {
                         $telefonos_jnci = $datos_jnci[0]->Telefonos.",".$datos_jnci[0]->Otros_Telefonos;
                     } else {
@@ -5195,7 +5254,7 @@ class CalificacionJuntasController extends Controller
                     $ciudad_jnci = $datos_jnci[0]->Nombre_ciudad;
                     $departamento_jnci = $datos_jnci[0]->Nombre_departamento;
 
-                    $Agregar_copias['JNCI'] = $nombre_jnci."; ".$direccion_jnci."; ".$telefonos_jnci."; ".$ciudad_jnci." - ".$departamento_jnci;
+                    $Agregar_copias['JNCI'] = $nombre_jnci."; ".$direccion_jnci."; ".$email_jnci."; ".$telefonos_jnci."; ".$ciudad_jnci." - ".$departamento_jnci;
     
                 }
 

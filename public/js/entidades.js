@@ -64,7 +64,7 @@ $(document).ready(function(){
         url:'/selectoresEntidad',
         data: datos_lista_tipo_entidad,
         success:function(data) {
-            //console.log(data);
+            // console.log("Esto es data : ",data);
             $('#tipo_entidad').empty();
             $('#tipo_entidad').append('<option value="" selected>Seleccione</option>');
             let claves = Object.keys(data);
@@ -263,7 +263,11 @@ $(document).ready(function(){
     });
 
     // SETEAR CAMPOS FORMULARIO EDICIÓN ENTIDAD.
+    let isDataLoaded = false;
     $(document).on('mouseover', "a[id^='btn_modal_edicion_entidad_']", function(){
+        if (isDataLoaded) return;
+
+        isDataLoaded = true;
         $(".modal-title").empty();
         $(".modal-footer").remove();
         let id_editar_entidad = $(this).data("id_editar_entidad");
@@ -291,7 +295,7 @@ $(document).ready(function(){
                 // Añadir otra entidad
                 $("#otra_entidad_edit").empty();
                 $("#otra_entidad_edit").val(data[0]["Otro_entidad"]);
-                if (data[0]["Otro_entidad"] != null) {
+                if (data[0]["Otro_entidad"] != null && data[0]["IdTipo_entidad"] === 6) {
                     $(".columna_otro_entidad_edit").removeClass('d-none');
                     $(".columna_otro_entidad_edit").slideDown('slow');
                     $('#otra_entidad_edit').prop('required', true);
@@ -382,7 +386,6 @@ $(document).ready(function(){
                 url:'/selectoresEntidad',
                 data: datos_tipo_ident,
                 success:function(data) {
-                    //console.log(datos_tipo_ident)
                     let entidadActual = Object.keys(data);
                     for (let i = 0; i < entidadActual.length; i++) {
                         $('#edi_tipo_entidad').append('<option value="'+data[entidadActual[i]]["Id_Entidad"]+'">'+data[entidadActual[i]]["Tipo_Entidad"]+'</option>');
@@ -410,8 +413,7 @@ $(document).ready(function(){
                     }
                 }
             });
-            /* CARGAR LISTADO DE CIUDAD */
-            
+            /* CARGAR LISTADO DE CIUDAD */    
             var datos_ciuda_ident = {
                 'edi_departamento_c': $('#edi_entidad_departamento').val(),
                 'edi_ciudad': $('#edi_entidad_ciudad').val(),

@@ -118,7 +118,7 @@ class ReporteFacturacionPclController extends Controller
                 'Porcentaje_Deficiencia'
             )
             ->whereRaw('DATE(F_accion) BETWEEN ? AND ?', [$fecha_desde, $fecha_hasta])
-            ->orderBy('ID_evento', 'desc')
+            ->orderBy('F_accion', 'asc')
             ->get();
             $array_reporte_facturacion_pcl = json_decode(json_encode($reporte_facturacion_pcl, true)); 
             return response()->json($array_reporte_facturacion_pcl);

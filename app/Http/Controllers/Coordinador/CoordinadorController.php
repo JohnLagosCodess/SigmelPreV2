@@ -1356,11 +1356,23 @@ class CoordinadorController extends Controller
         $modulo_creacion = $request->modulo_creacion;
         $numero_identificacion = $request->numero_identificacion;
         $n_radicado = $request->n_radicado;
-        $datos_comunicado_actualizar=[
-            'F_comunicado' => $date,
-            'Elaboro' => $nombre_usuario,
-            'Reemplazado' => 1,
-        ];
+        $nombre_doc_anterior = $request->nombre_anterior;
+        if($tipo_descarga === 'Manual'){
+            $datos_comunicado_actualizar=[
+                'F_comunicado' => $date,
+                'Elaboro' => $nombre_usuario,
+                'Nombre_documento' => $request->nombre_documento,
+                'Asunto' => $request->asunto,
+                'Reemplazado' => 1,
+            ];
+        }
+        else{
+            $datos_comunicado_actualizar=[
+                'F_comunicado' => $date,
+                'Elaboro' => $nombre_usuario,
+                'Reemplazado' => 1,
+            ];
+        }
 
         if($request->hasFile('doc_de_reemplazo')){
             $archivo = $request->file('doc_de_reemplazo');
@@ -1374,6 +1386,9 @@ class CoordinadorController extends Controller
 
             if($tipo_descarga === 'Manual'){
                 $nombre_final_documento = $request->asunto;
+                if($nombre_doc_anterior !== '' && $nombre_doc_anterior !== $nombre_final_documento){
+                    File::delete($path.'/'.$nombre_doc_anterior);
+                }
             }
             else {
                 $nombre_final_documento = $request -> nombre_documento;

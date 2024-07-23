@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::connection('sigmel_auditorias')->create('sigmel_auditorias_informacion_accion_eventos', function (Blueprint $table) {
             $table->increments('Id_Aud_accion');
-            $table->integer('Aud_Id_Accion');
-            $table->string('Aud_ID_evento',20);
-            $table->integer('Aud_Id_Asignacion');
-            $table->integer('Aud_Id_proceso');
+            $table->integer('Aud_Id_Accion')->nullable();
+            $table->string('Aud_ID_evento',20)->nullable();
+            $table->integer('Aud_Id_Asignacion')->nullable();
+            $table->integer('Aud_Id_proceso')->nullable();
             $table->string('Aud_Modalidad_calificacion',25)->nullable();
             $table->string('Aud_Fuente_informacion',25)->nullable();            
-            $table->datetime('Aud_F_accion');
-            $table->string('Aud_Accion',40);
+            $table->datetime('Aud_F_accion')->nullable();
+            $table->string('Aud_Accion',40)->nullable();
             $table->date('Aud_F_Alerta')->nullable();
-            $table->string('Aud_Enviar',40);
+            $table->string('Aud_Enviar',40)->nullable();
             $table->text('Aud_Estado_Facturacion')->nullable();
             $table->string('Aud_Causal_devolucion_comite',40)->nullable();
             $table->datetime('Aud_F_devolucion_comite')->nullable();
@@ -32,8 +32,8 @@ return new class extends Migration
             $table->datetime('Aud_F_calificacion_servicio')->nullable();
             $table->datetime('Aud_F_asignacion_pronu_juntas')->nullable();
             $table->date('Aud_F_cierre')->nullable();
-            $table->text('Aud_Nombre_usuario');
-            $table->date('Aud_F_registro');
+            $table->text('Aud_Nombre_usuario')->nullable();
+            $table->date('Aud_F_registro')->nullable();
         });
     }
 

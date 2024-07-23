@@ -2823,11 +2823,12 @@ class BuscarEventoController extends Controller
                     $Controvertido['N_dictamen_controvertido'] = optional($origen[0])->Consecutivo_dictamen;
                     $Controvertido['F_dictamen_controvertido'] = optional($origen[0])->F_registro;
                     $Controvertido['N_siniestro'] = optional($origen[0])->N_siniestro;
+
+                    $this->copiarLisdatoGeneralDocumentos($evento,$servicioNuevo,$servicioOrigen);
+
+                    break;
                 }
 
-                $this->copiarLisdatoGeneralDocumentos($evento,$servicioNuevo,$servicioOrigen);
-
-                break;
             }
         }
 
@@ -2838,7 +2839,7 @@ class BuscarEventoController extends Controller
 
         //Siempre y cuando el diagnostico no este vacio se insertera la informacion en la tabla
         if(isset($diagnostico) && !$diagnostico->isEmpty()){
-            $diagnostico = json_decode(json_encode($diagnostico),true);
+            $diagnostico = json_decode(json_encode($diagnostico->toArray()),true);
             DB::table('sigmel_gestiones.sigmel_informacion_diagnosticos_eventos')->insert($diagnostico);
         }
     }
