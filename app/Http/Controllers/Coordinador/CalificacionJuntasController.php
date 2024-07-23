@@ -1779,10 +1779,11 @@ class CalificacionJuntasController extends Controller
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
         $f_contro_primer_califi = $request->f_contro_primer_califi;
+        $f_contro_radi_califi = $request->f_contro_radi_califi;
         $f_notifi_afiliado = $request->f_notifi_afiliado;
         //Validar registro termino de controversia
         $conteoDias = sigmel_calendarios::on('sigmel_gestiones')
-        ->whereBetween('Fecha', [$f_notifi_afiliado, $f_contro_primer_califi])
+        ->whereBetween('Fecha', [$f_notifi_afiliado, $f_contro_radi_califi])
         ->where('Calendario', 'LunesAViernes')
         ->where('EsHabil', 1)
         ->where('EsFestivo', 0)
@@ -1863,10 +1864,11 @@ class CalificacionJuntasController extends Controller
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
         $f_contro_primer_califi = $request->f_contro_primer_califi;
+        $f_contro_radi_califi = $request->f_contro_radi_califi;
         $f_notifi_afiliado = $request->f_notifi_afiliado;
         //Validar registro termino de controversia
         $conteoDias = sigmel_calendarios::on('sigmel_gestiones')
-        ->whereBetween('Fecha', [$f_notifi_afiliado, $f_contro_primer_califi])
+        ->whereBetween('Fecha', [$f_notifi_afiliado, $f_contro_radi_califi])
         ->where('Calendario', 'LunesAViernes')
         ->where('EsHabil', 1)
         ->where('EsFestivo', 0)
