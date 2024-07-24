@@ -526,7 +526,7 @@ class CalificacionJuntasController extends Controller
             });
 
             //Comunicados 
-            $comunicados = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos')
+            /* $comunicados = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos')
             ->select('Asunto as Nombre','Id_Comunicado', 'Lista_chequeo')
             ->where([
                 ['ID_evento', $request->Id_evento],
@@ -541,7 +541,7 @@ class CalificacionJuntasController extends Controller
                     'Id_Comunicado' => $comunicado->Id_Comunicado,
                     'Lista_chequeo' => $comunicado->Lista_chequeo,
                 ];
-            }
+            } */
 
             return response()->json($lista_chequeo);
         }
@@ -5754,8 +5754,15 @@ class CalificacionJuntasController extends Controller
             'id_cliente' => $dato_logo_header[0]->Id_cliente,
             'lista_chequeo' => $lista_chequeo
         ];
+        //Verificamos si existe algun radicado asociado a la lista
+        $radicado_comunicado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos')
+        ->select('N_radicado')->where([
+            ['ID_evento',$request->Id_evento],
+            ['Asunto','LIKE','Lista_chequeo%']
+        ])->first();
+        
+        $n_radicado = !empty($radicado_comunicado) ? $radicado_comunicado->N_radicado  : getRadicado('Juntas'); //Para cada lista de chequeo se le debe generar un radicado
 
-        $n_radicado = getRadicado('Juntas'); //Para cada lista de chequeo se le debe generar un radicado
 
         $extension_proforma = "pdf";
         $ruta_proforma = '/Proformas/Proformas_Prev/Juntas/lista_chequeo';
@@ -5773,7 +5780,7 @@ class CalificacionJuntasController extends Controller
         file_put_contents(public_path("Documentos_Eventos/{$request->Id_evento}/{$nombre_pdf}"), $output);
 
         //Registramos una unica vez la lista de chequeo
-        if ($request->bandera == 'Guardar' && !empty($indice_lista_chequeo)) {
+        if ($request->bandera == 'Guardar' && !empty($indice_lista_chequeo) && empty($radicado_comunicado)) {
 
             $fecha_actual = date("Y-m-d", time());
             
