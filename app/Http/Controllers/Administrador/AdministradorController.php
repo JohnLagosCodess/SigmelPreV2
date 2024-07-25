@@ -3718,7 +3718,13 @@ class AdministradorController extends Controller
             
         } 
 
-        return back()->with('mensaje_confirmacion_nuevo_evento', 'Evento '.$idEvento.' creado correctamente');
+        // return back()->with('mensaje_confirmacion_nuevo_evento', 'Evento '.$idEvento.' creado correctamente');
+
+        return back()->with([
+            'mensaje_confirmacion_nuevo_evento' => 'Evento '.$idEvento.' creado correctamente.',
+            'id_servicio_registrado' => $request->servicio,
+            'id_evento_registrado' => $idEvento
+        ]);
         // }
         
     }

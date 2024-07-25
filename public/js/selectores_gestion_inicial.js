@@ -1400,7 +1400,7 @@ $(document).ready(function(){
                         $('#departamento_info_afiliado').val(data[claves_info_afiliado[i]]["Id_departamento"]).change();
                         setTimeout(function(){
                             $('#municipio_info_afiliado').val(data[claves_info_afiliado[i]]["Id_municipio"]).change().prop('disabled', false);
-                        }, 100);
+                        }, 400);
                         $('#ocupacion').val(data[claves_info_afiliado[i]]["Ocupacion"]);
                         $('#tipo_afiliado').val(data[claves_info_afiliado[i]]["Tipo_afiliado"]).change();
                         $('#ibc').val(data[claves_info_afiliado[i]]["Ibc"]);
@@ -1505,7 +1505,7 @@ $(document).ready(function(){
                         $('#departamento_info_laboral').val(data[claves_info_laboral[i]]["Id_departamento"]).change();
                         setTimeout(function (){
                             $('#municipio_info_laboral').val(data[claves_info_laboral[i]]["Id_municipio"]).change().prop('disabled', false);
-                        }, 100);
+                        }, 400);
                         $('#actividad_economica').val(data[claves_info_laboral[i]]["Id_actividad_economica"]).change();
                         $('#clase_riesgo').val(data[claves_info_laboral[i]]["Id_clase_riesgo"]).change();
                         $('#persona_contacto').val(data[claves_info_laboral[i]]["Persona_contacto"]);
@@ -1640,15 +1640,28 @@ $(document).ready(function(){
         $('#form_editar_evento').attr("action", url_editar_evento);
     });
 
-    /* Obtener el ID del evento a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id evento */
-    /* Obtener el ID del servicio a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id servicio */
-    $("input[id^='listadodocumento_']").click(function(){
-        let idobtenido = $('#id_evento').val();
+    /*  
+        Si el usuario decide dar si a la confirmacion de cargue de documentos:
+        Obtenemos el id del evento y el id de servicio que vienen del controlador
+        una vez se crea el evento
+    */
+    $(document).on('click', '#abrir_modal_doc_mod_nuevo', function(){
+        let idobtenido = $('#id_evento_registrado').val();
         $("input[id^='EventoID_']").val(idobtenido);
-
-        let idservicioobtenido = $("#servicio").val();
+        let idservicioobtenido = $("#id_servicio_registrado").val();
         $("input[id^='Id_servicio_']").val(idservicioobtenido);
-        
+    });
+
+    /* 
+        Si el usuario decide dar no a la confirmacion de cargue de documentos o
+        al botón cerrar del modal: Borrara los valores del los campos de captura de id evento y id servicio
+        ocultará el div de confirmación
+    */
+    $(document).on('click', '#cerrar_modal_doc_mod_nuevo, #cerrar_modal_docs_nuevo', function(){
+        $("input[id^='EventoID_']").val('');
+        $("input[id^='Id_servicio_']").val('');
+        $('#div_mensaje_carga_docs').addClass('d-none');
+        location.reload();
     });
 
     /* Envío de Información del Documento a Cargar */
@@ -1675,6 +1688,11 @@ $(document).ready(function(){
                         $('#listadodocumento_'+response.otro).val('');
                     }else{
                         $('#'+input_documento).val('');
+
+                        let idservicioobtenido = $("#id_servicio_registrado").val();
+                        if (idservicioobtenido) {
+                            $("input[id^='Id_servicio_']").val(idservicioobtenido);
+                        }
                     }
                     $('.mostrar_fallo').removeClass('d-none');
                     $('.mostrar_fallo').append('<strong>'+response.mensaje+'</strong>');

@@ -332,6 +332,7 @@ $(document).ready(function(){
             'Id_proceso' : Id_proceso_actual,
             'Id_servicio': $("#Id_servicio").val(),
             'Id_accion': $(this).val(),
+            'nro_evento': $('#id_evento').val()
         }
     
         $.ajax({
@@ -3251,7 +3252,7 @@ $(document).ready(function(){
     }); 
 
     //Reemplazar Documento
-    const initValueExtension = document.getElementById('extensionInvalidaMensaje').textContent;
+    const initValueExtension = document.getElementById('extensionInvalidaMensaje')?.textContent;
     $("form[id^='reemplazar_documento']").submit(function(e){
         e.preventDefault();
         if(!$('#cargue_comunicados_modal')[0].files[0]){
@@ -6334,10 +6335,10 @@ function procesarListaChequeo(accion){
                 'nombreDoc' : $(this).data('nombre'),
             };
 
-            if($(this).data('idcomunicado')){
+            /*if($(this).data('idcomunicado')){
                 lista_chequeo['idComunicado'] = $(this).data('idcomunicado');
                 lista_chequeo['statusDoc'] = 'Comunicado';
-            }
+            }*/
             datos.push(lista_chequeo);
         }
     });

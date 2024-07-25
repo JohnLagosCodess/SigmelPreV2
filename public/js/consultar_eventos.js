@@ -456,9 +456,9 @@ $(document).ready(function () {
                                             </div>\
                                         </div>\
                                         <div class="form-group row">\
-                                            <label for="" class="col-sm-3 col-form-label">Fecha alerta <span style="color:red;">(*)</span></label>\
+                                            <label for="" class="col-sm-3 col-form-label">Fecha alerta</label>\
                                             <div class="col-sm-9">\
-                                                <input type="date" class="form-control" name="nueva_fecha_alerta" id="nueva_fecha_alerta_'+id_evento_nuevo_servicio+'" min="'+fecha_de_hoy+'" required>\
+                                                <input type="date" class="form-control" name="nueva_fecha_alerta" id="nueva_fecha_alerta_'+id_evento_nuevo_servicio+'" min="'+fecha_de_hoy+'">\
                                             </div>\
                                         </div>\
                                     </div>\
@@ -924,9 +924,9 @@ $(document).ready(function () {
                                             </div>\
                                         </div>\
                                         <div class="form-group row">\
-                                            <label for="" class="col-sm-3 col-form-label">Fecha alerta <span style="color:red;">(*)</span></label>\
+                                            <label for="" class="col-sm-3 col-form-label">Fecha alerta</label>\
                                             <div class="col-sm-9">\
-                                                <input type="date" class="form-control" name="nueva_fecha_alerta_nuevo_proceso" id="nueva_fecha_alerta_nuevo_proceso_'+id_evento_nuevo_proceso+'" min="'+fecha_de_hoy+'" required>\
+                                                <input type="date" class="form-control" name="nueva_fecha_alerta_nuevo_proceso" id="nueva_fecha_alerta_nuevo_proceso_'+id_evento_nuevo_proceso+'" min="'+fecha_de_hoy+'">\
                                             </div>\
                                         </div>\
                                     </div>\

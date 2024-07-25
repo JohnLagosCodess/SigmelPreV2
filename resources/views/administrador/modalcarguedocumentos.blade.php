@@ -266,7 +266,13 @@
 
 <?php if($aperturaModal == 'Nuevo'): ?>
     <div class="row">
-        <x-adminlte-modal id="modalListaDocumentos" title="Listado de Documentos" theme="info" icon="fas fa-plus" size='xl' scrollable="yes" disable-animations>
+        @php
+            $modalTitle = 'Cargue del listado de documentos para el evento: ';
+            if (session('id_evento_registrado')) {
+                $modalTitle .= session('id_evento_registrado');
+            }
+        @endphp
+        <x-adminlte-modal id="modalListaDocumentos" title="{{ $modalTitle }}" theme="info" icon="fas fa-plus" size='xl' scrollable="yes" disable-animations>
             <div class="col-12">
                 <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
                     <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para que el documento se guarde debe haber escrito un número de ID evento y haber seleccionado un Servicio.
@@ -338,7 +344,7 @@
             <x-slot name="footerSlot">
                 <div class="mostrar_fallo alert alert-danger mt-2 mr-auto d-none"role="alert"></div>
                 <div class="mostrar_exito alert alert-success mt-2 mr-auto d-none" role="alert"></div>
-                <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal"/>
+                <x-adminlte-button theme="danger" label="Cerrar" id="cerrar_modal_docs_nuevo" data-dismiss="modal"/>
             </x-slot>
         </x-adminlte-modal>
 
