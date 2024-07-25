@@ -225,6 +225,7 @@ class RecalificacionPCLController extends Controller
                     ->where([
                         ['ID_evento',$Id_evento_recali],
                         ['Id_Asignacion', $eventoAsigancion_Recalifi],
+                        ['Id_proceso',$Id_proceso_recali],
                         ['Estado_Recalificacion', 'Activo']
                     ])
                     ->get();
@@ -235,7 +236,7 @@ class RecalificacionPCLController extends Controller
                     ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
                     ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
                     'slp.Nombre_parametro', 'side.Principal', 'side.Deficiencia_motivo_califi_condiciones','slp2.Nombre_parametro as Nombre_parametro_lateralidad'
-                    )->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion', $eventoAsigancion_Recalifi], ['side.Estado_Recalificacion', '=', 'Activo']])->get();
+                    )->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion', $eventoAsigancion_Recalifi], ['Id_proceso',$Id_proceso_recali], ['side.Estado_Recalificacion', '=', 'Activo']])->get();
         
                     $array_datos_deficiencias_alteraciones =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
@@ -445,6 +446,7 @@ class RecalificacionPCLController extends Controller
                 ->where([
                     ['ID_evento',$Id_evento_recali],
                     ['Id_Asignacion',$Id_asignacion_recali],
+                    ['Id_proceso',$Id_proceso_recali],
                     ['Estado_Recalificacion', 'Activo']
                 ])
                 ->get();
@@ -455,7 +457,7 @@ class RecalificacionPCLController extends Controller
                 ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
                 ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
                 'slp.Nombre_parametro', 'side.Principal', 'side.Deficiencia_motivo_califi_condiciones','slp2.Nombre_parametro as Nombre_parametro_lateralidad')
-                ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion',$Id_asignacion_recali], ['side.Estado_Recalificacion', '=', 'Activo']])->get(); 
+                ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion',$Id_asignacion_recali], ['Id_proceso',$Id_proceso_recali], ['side.Estado_Recalificacion', '=', 'Activo']])->get(); 
         
                 $array_datos_deficiencias_alteracionesre =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
@@ -1065,6 +1067,7 @@ class RecalificacionPCLController extends Controller
                 ->where([
                     ['ID_evento',$Id_evento_recali],
                     ['Id_Asignacion',$Id_asignacion_recali],
+                    ['Id_proceso',$Id_proceso_recali],
                     ['Estado_Recalificacion', 'Activo']
                 ])
                 ->get();
@@ -1075,7 +1078,7 @@ class RecalificacionPCLController extends Controller
                 ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
                 ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
                 'slp.Nombre_parametro', 'side.Principal', 'side.Deficiencia_motivo_califi_condiciones','slp2.Nombre_parametro as Nombre_parametro_lateralidad')
-                ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion',$Id_asignacion_recali], ['side.Estado_Recalificacion', '=', 'Activo']])->get(); 
+                ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion',$Id_asignacion_recali], ['Id_proceso',$Id_proceso_recali], ['side.Estado_Recalificacion', '=', 'Activo']])->get(); 
         
                 $array_datos_deficiencias_alteracionesre =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
@@ -1600,6 +1603,7 @@ class RecalificacionPCLController extends Controller
                     ->where([
                         ['ID_evento',$Id_evento_recali],
                         ['Id_Asignacion', $validar_estado_decreto[0]->Id_Asignacion_decreto],
+                        ['Id_proceso',$Id_proceso_recali],
                         ['Estado', 'Activo']
                     ])
                     ->get();
@@ -1610,7 +1614,7 @@ class RecalificacionPCLController extends Controller
                     ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
                     ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
                     'slp.Nombre_parametro', 'side.Principal', 'side.Deficiencia_motivo_califi_condiciones','slp2.Nombre_parametro as Nombre_parametro_lateralidad')
-                    ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion', $validar_estado_decreto[0]->Id_Asignacion_decreto], ['side.Estado', '=', 'Activo']])->get();
+                    ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion', $validar_estado_decreto[0]->Id_Asignacion_decreto], ['Id_proceso',$Id_proceso_recali], ['side.Estado', '=', 'Activo']])->get();
         
                     $array_datos_deficiencias_alteraciones =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
@@ -1691,6 +1695,7 @@ class RecalificacionPCLController extends Controller
                     $array_datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
                     ->where([
                         ['ID_evento',$Id_evento_recali],
+                        ['Id_proceso',$Id_proceso_recali],
                         ['Estado', 'Activo']
                     ])
                     ->get();
@@ -1701,7 +1706,7 @@ class RecalificacionPCLController extends Controller
                     ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
                     ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
                     'slp.Nombre_parametro', 'side.Principal', 'side.Deficiencia_motivo_califi_condiciones','slp2.Nombre_parametro as Nombre_parametro_lateralidad')
-                    ->where([['side.ID_evento',$Id_evento_recali], ['side.Estado', '=', 'Activo']])->get();
+                    ->where([['side.ID_evento',$Id_evento_recali], ['Id_proceso',$Id_proceso_recali], ['side.Estado', '=', 'Activo']])->get();
         
                     $array_datos_deficiencias_alteraciones =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
@@ -1908,6 +1913,7 @@ class RecalificacionPCLController extends Controller
                 ->where([
                     ['ID_evento',$Id_evento_recali],
                     ['Id_Asignacion',$Id_asignacion_recali],
+                    ['Id_proceso',$Id_proceso_recali],
                     ['Estado_Recalificacion', 'Activo']
                 ])
                 ->get();
@@ -1918,7 +1924,7 @@ class RecalificacionPCLController extends Controller
                 ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
                 ->select('side.Id_Diagnosticos_motcali', 'side.ID_evento', 'side.Id_Asignacion', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
                 'slp.Nombre_parametro', 'side.Principal', 'side.Deficiencia_motivo_califi_condiciones','slp2.Nombre_parametro as Nombre_parametro_lateralidad')
-                ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion',$Id_asignacion_recali], ['side.Estado_Recalificacion', '=', 'Activo']])->get(); 
+                ->where([['side.ID_evento',$Id_evento_recali], ['side.Id_Asignacion',$Id_asignacion_recali], ['Id_proceso',$Id_proceso_recali], ['side.Estado_Recalificacion', '=', 'Activo']])->get(); 
         
                 $array_datos_deficiencias_alteracionesre =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
@@ -6023,7 +6029,7 @@ class RecalificacionPCLController extends Controller
         //Captura de datos Realacion de documentos/examenes fisico(Descripción)
 
         $array_datos_relacion_examentes = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
-        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Estado_Recalificacion','Activo']])->get();  
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Id_proceso',$Id_Proceso_comuni], ['Estado_Recalificacion','Activo']])->get();  
 
         //Captura de datos Fundamentos para la calificacion de la perdida de la capacidad laboral y ocupacional - titulos I Y II
 
@@ -6032,9 +6038,10 @@ class RecalificacionPCLController extends Controller
         $array_diagnosticos_fc = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
         ->select('side.CIE10', 'slcd.CIE10 as Codigo_cie10', 'side.Nombre_CIE10', 'side.Origen_CIE10', 'slp.Nombre_parametro as Nombre_origen', 
-        'side.Deficiencia_motivo_califi_condiciones')
-        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Estado_Recalificacion','Activo']])->get();  
+        'slp2.Nombre_parametro as Nombre_lateralidad', 'side.Deficiencia_motivo_califi_condiciones')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Id_proceso',$Id_Proceso_comuni], ['Estado_Recalificacion','Activo']])->get();  
 
         $array_deficiencias_alteraciones = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
         ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
@@ -6474,7 +6481,7 @@ class RecalificacionPCLController extends Controller
         //Captura de datos Realacion de documentos/examenes fisico(Descripción)
 
         $array_datos_relacion_examentes = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
-        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Estado_Recalificacion', 'Activo']])->get();  
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Id_proceso',$Id_Proceso_comuni], ['Estado_Recalificacion', 'Activo']])->get();  
 
         //Captura de datos Fundamentos para la calificacion de la perdida de la capacidad laboral y ocupacional - libros I, II y III
 
@@ -6483,9 +6490,10 @@ class RecalificacionPCLController extends Controller
         $array_diagnosticos_fc = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
         ->select('side.CIE10', 'slcd.CIE10 as Codigo_cie10', 'side.Nombre_CIE10', 'side.Origen_CIE10', 'slp.Nombre_parametro as Nombre_origen', 
-        'side.Deficiencia_motivo_califi_condiciones')
-        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Estado_Recalificacion', 'Activo']])->get();  
+        'slp2.Nombre_parametro as Nombre_lateralidad', 'side.Deficiencia_motivo_califi_condiciones')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Id_proceso',$Id_Proceso_comuni], ['Estado_Recalificacion', 'Activo']])->get();  
 
         $array_deficiencias_alteraciones = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')        
         ->select('sidae.Tabla1999', 'sidae.Titulo_tabla1999', 'sidae.Total_deficiencia')
@@ -6946,7 +6954,7 @@ class RecalificacionPCLController extends Controller
         $array_diagnosticosPcl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
         ->select('side.CIE10', 'slcd.CIE10 as Codigo_cie10', 'side.Nombre_CIE10')
-        ->where([['ID_Evento',$ID_Evento_comuni_comite], ['Id_Asignacion',$Id_Asignacion_comuni_comite], ['side.Estado', 'Activo']])->get(); 
+        ->where([['ID_Evento',$ID_Evento_comuni_comite], ['Id_Asignacion',$Id_Asignacion_comuni_comite], ['Id_proceso',$Id_Proceso_comuni_comite], ['side.Estado', 'Activo']])->get(); 
         
         if(count($array_diagnosticosPcl) > 0){
             // Obtener el array de nombres CIE10
@@ -8574,7 +8582,7 @@ class RecalificacionPCLController extends Controller
         //Captura de datos Realacion de documentos/examenes fisico(Descripción)
 
         $array_datos_relacion_examentes = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
-        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Estado_Recalificacion', 'Activo']])->get();  
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Id_proceso',$Id_Proceso_comuni], ['Estado_Recalificacion', 'Activo']])->get();  
 
         //Captura de datos Fundamentos para la calificacion de la perdida de la capacidad laboral y ocupacional - titulos I Y II
 
@@ -8585,8 +8593,8 @@ class RecalificacionPCLController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'slp2.Id_Parametro', '=', 'side.Lateralidad_CIE10')
         ->select('side.CIE10', 'slcd.CIE10 as Codigo_cie10', 'side.Nombre_CIE10', 'side.Origen_CIE10', 'slp.Nombre_parametro as Nombre_origen', 
-        'side.Deficiencia_motivo_califi_condiciones','slp2.Nombre_parametro as LateralidadDx')
-        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Estado_Recalificacion', 'Activo']])->get();  
+        'slp2.Nombre_parametro as Nombre_lateralidad', 'side.Deficiencia_motivo_califi_condiciones')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Id_proceso',$Id_Proceso_comuni], ['Estado_Recalificacion', 'Activo']])->get();  
 
         $array_deficiencias_alteraciones = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_deficiencias_alteraciones_eventos as sidae')
         ->leftJoin('sigmel_gestiones.sigmel_lista_tablas_1507_decretos as sltd', 'sltd.Id_tabla', '=', 'sidae.Id_tabla')
@@ -8979,7 +8987,7 @@ class RecalificacionPCLController extends Controller
         $array_diagnosticosPcl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
         ->select('side.CIE10', 'slcd.CIE10 as Codigo_cie10', 'side.Nombre_CIE10')
-        ->where([['ID_Evento',$ID_Evento_comuni_comite], ['Id_Asignacion',$Id_Asignacion_comuni_comite], ['Estado_Recalificacion', 'Activo']])->get(); 
+        ->where([['ID_Evento',$ID_Evento_comuni_comite], ['Id_Asignacion',$Id_Asignacion_comuni_comite], ['Id_proceso',$Id_Proceso_comuni_comite], ['Estado_Recalificacion', 'Activo']])->get(); 
         
         if(count($array_diagnosticosPcl) > 0){
             // Obtener el array de nombres CIE10

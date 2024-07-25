@@ -1507,21 +1507,28 @@ $(document).ready(function(){
 
     let comunicado_reemplazar = null;
     $("form[id^='form_reemplazar_archivo_']").submit(function (e){
-        e.preventDefault();           
+        e.preventDefault();
+        //Se abre el modal
         $('#modalReemplazarArchivos').modal('show');  
+        //Se limpian las advertencias y el input de archivo
+        $(".cargueundocumentoprimeromodal").addClass('d-none');
+        $(".extensionInvalidaModal").addClass('d-none');
+        $('#cargue_comunicados_modal').val('');
+        //Se obtiene la info del archivo que toca reemplazar 
         comunicado_reemplazar = $(this).data('archivo');
         let nombre_doc = comunicado_reemplazar.Nombre_documento;
         let nombre_doc_manual = comunicado_reemplazar.Asunto;
-        if(nombre_doc != null && nombre_doc != "null"){
+        if(nombre_doc != null && nombre_doc != "null" && comunicado_reemplazar.Tipo_descarga !== 'Manual'){
             extensionDoc = `.${ nombre_doc.split('.').pop()}`;
             document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
         }
-        else if(nombre_doc_manual != null && nombre_doc_manual != "null"){
-            extensionDoc = `.${ nombre_doc_manual.split('.').pop()}`;
-            document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
+        else if(comunicado_reemplazar.Tipo_descarga === 'Manual'){
+            extensionDocManual = ['.pdf','.doc','.docx','.xlsx']
+            document.getElementById('cargue_comunicados_modal').setAttribute('accept', '.pdf, .doc, .docx, .xlsx');
         }
     });
 
+    const initValueExtension = document.getElementById('extensionInvalidaMensaje')?.textContent;
     $("form[id^='reemplazar_documento']").submit(function(e){
         e.preventDefault();
         if(!$('#cargue_comunicados_modal')[0].files[0]){
@@ -1531,7 +1538,7 @@ $(document).ready(function(){
         $(".extensionInvalidaModal").addClass('d-none');
         var archivo = $('#cargue_comunicados_modal')[0].files[0];
         extensionDocCargado = `.${archivo.name.split('.').pop()}`;
-        if(extensionDoc === extensionDocCargado){
+        if(comunicado_reemplazar.Tipo_descarga === 'Manual' && extensionDocManual.includes(extensionDocCargado)){
             var formData = new FormData($('form')[0]);
             formData.append('doc_de_reemplazo', archivo);
             formData.append('token', $('input[name=_token]').val());
@@ -1542,16 +1549,58 @@ $(document).ready(function(){
             formData.append('id_evento', comunicado_reemplazar.ID_evento);
             formData.append('n_radicado', comunicado_reemplazar.N_radicado);
             formData.append('numero_identificacion', comunicado_reemplazar.N_identificacion);
-            formData.append('modulo_creacion', 'controversiaJuntas');
-            if(comunicado_reemplazar.Tipo_descarga === 'Manual'){
-                formData.append('nombre_documento', archivo.name);
-                formData.append('asunto', archivo.name);
-                formData.append('nombre_anterior', comunicado_reemplazar.Nombre_documento);
-            }else{
-                formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
-                formData.append('asunto', comunicado_reemplazar.Asunto);
-                formData.append('nombre_anterior', '');
-            }
+            formData.append('modulo_creacion', 'determinacionOrigenATEL');
+            formData.append('nombre_documento', archivo.name);
+            formData.append('asunto', archivo.name);
+            formData.append('nombre_anterior', comunicado_reemplazar.Nombre_documento);
+            $.ajax({
+                type:'POST',
+                url:'/reemplazarDocumento',
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend:  function() {
+                    $("#cargarComunicadoModal").addClass("descarga-deshabilitada");
+                },
+                success:function(response){
+                    if (response.parametro == 'reemplazar_comunicado') {
+                        $('.alerta_externa_comunicado_modal').removeClass('d-none');
+                        $('.alerta_externa_comunicado_modal').append('<strong>'+response.mensaje+'</strong>');
+                        setTimeout(function(){
+                            $('.alerta_externa_comunicado_modal').addClass('d-none');
+                            $('.alerta_externa_comunicado_modal').empty();
+                            localStorage.setItem("#Generar_comunicados", true);
+                            location.reload();
+                            $("#modalReemplazarArchivos").modal('hide');
+                        }, 1000);
+                    }
+                },
+                complete:function(){
+                    $("#cargarComunicadoModal").removeClass("descarga-deshabilitada");
+                }
+            });
+        }
+        else if(comunicado_reemplazar.Tipo_descarga !== 'Manual' && extensionDoc === extensionDocCargado){
+            var formData = new FormData($('form')[0]);
+            formData.append('doc_de_reemplazo', archivo);
+            formData.append('token', $('input[name=_token]').val());
+            formData.append('id_comunicado', comunicado_reemplazar.Id_Comunicado);
+            formData.append('tipo_descarga', comunicado_reemplazar.Tipo_descarga);
+            formData.append('id_asignacion', comunicado_reemplazar.Id_Asignacion);
+            formData.append('id_proceso', comunicado_reemplazar.Id_proceso);
+            formData.append('id_evento', comunicado_reemplazar.ID_evento);
+            formData.append('n_radicado', comunicado_reemplazar.N_radicado);
+            formData.append('numero_identificacion', comunicado_reemplazar.N_identificacion);
+            formData.append('modulo_creacion', 'determinacionOrigenATEL');
+            // if(comunicado_reemplazar.Tipo_descarga === 'Manual'){
+            //     formData.append('nombre_documento', archivo.name);
+            //     formData.append('asunto', archivo.name);
+            //     formData.append('nombre_anterior', comunicado_reemplazar.Nombre_documento);
+            // }else{
+            formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
+            formData.append('asunto', comunicado_reemplazar.Asunto);
+            formData.append('nombre_anterior', '');
+            // }
             $.ajax({
                 type:'POST',
                 url:'/reemplazarDocumento',
@@ -1580,7 +1629,16 @@ $(document).ready(function(){
             });
         }
         else{
-            document.getElementById('extensionInvalidaMensaje').textContent += extensionDoc;
+            document.getElementById('extensionInvalidaMensaje').textContent = initValueExtension;
+            if(comunicado_reemplazar.Tipo_descarga !== 'Manual'){
+                if (!document.getElementById('extensionInvalidaMensaje').textContent.includes(extensionDoc)) {
+                    document.getElementById('extensionInvalidaMensaje').textContent += extensionDoc;
+                }
+                return $(".extensionInvalidaModal").removeClass('d-none');
+            }
+            if (!document.getElementById('extensionInvalidaMensaje').textContent.includes(extensionDocManual)) {
+                document.getElementById('extensionInvalidaMensaje').textContent += extensionDocManual;
+            }
             return $(".extensionInvalidaModal").removeClass('d-none');
         }
     });
