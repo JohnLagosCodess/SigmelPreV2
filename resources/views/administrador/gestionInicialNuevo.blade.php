@@ -18,36 +18,40 @@
     <div class="card-info" style="border: 1px solid black;">
         <div class="card-header text-center">
             <h4>Registrar: Nuevo Evento</h4>
-            <h4></h4>
+        </div>
+        <div class="card-body">
+            @if (session()->get('mensaje_confirmacion_nuevo_evento'))
+                <div class="alert alert-success mt-2" role="alert">
+                    <strong>{{session()->get('mensaje_confirmacion_nuevo_evento')}}</strong>
+                </div>
+                <div class="d-none">
+                    <input type="text" id="id_evento_registrado" value="{{ session('id_evento_registrado') }}">
+                    <input type="text" id="id_servicio_registrado" value="{{ session('id_servicio_registrado') }}">
+                </div>
+                <div id="div_mensaje_carga_docs">
+                    <b>¿Desea Cargar los documentos?</b> &nbsp; <button class="btn btn-sm btn-success" id="abrir_modal_doc_mod_nuevo" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos">Si</button> 
+                    &nbsp; <button class="btn btn-sm btn-danger" id="cerrar_modal_doc_mod_nuevo">No</button>
+                </div>
+            @endif
+            @if (session()->get('confirmacion_evento_no_creado'))
+                <div class="alert alert-danger mt-2" role="alert">
+                    <strong>{{session()->get('confirmacion_evento_no_creado')}}</strong>
+                </div>
+            @endif
         </div>
         <form action="{{route('creacionEvento')}}" method="POST" id="gestion_inicial_nuevo">
             @csrf
             <div class="card-body">
-                @if (session()->get('mensaje_confirmacion_nuevo_evento'))
-                    <div class="alert alert-success mt-2" role="alert">
-                        <strong>{{session()->get('mensaje_confirmacion_nuevo_evento')}}</strong>
-                    </div>
-                @endif
-                {{-- @if (session()->get('evento_actualizado'))
-                    <div class="alert alert-success mt-2" role="alert">
-                        <strong>{{session()->get('evento_actualizado')}}</strong>
-                    </div>
-                @endif --}}
-                @if (session()->get('confirmacion_evento_no_creado'))
-                    <div class="alert alert-danger mt-2" role="alert">
-                        <strong>{{session()->get('confirmacion_evento_no_creado')}}</strong>
-                    </div>
-                @endif
                 <div class="row">
                     {{-- AQUI VA EL FORMULARIO COMPLETO --}}
                     <div class="col-12">
-                        <div class="row">
+                        {{-- <div class="row">
                             <div class="col-12">
                                 <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
                                     <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Debe cargar los documentos obligatorios para crear el evento.
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         {{-- CLIENTE Y TIPO DE CLIENTE --}}
                         <div class="row">
                             <div class="col-sm">
@@ -469,47 +473,47 @@
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="empresa" class="col-form-label si_nom_empresa">Empresa</label>
-                                                    <label for="empresa" class="col-form-label no_nom_empresa d-none">Empresa</label>
-                                                    <input type="text" class="empresa form-control" name="empresa" id="empresa">
+                                                    <label for="empresa" class="col-form-label si_nom_empresa">Empresa <span style="color:red;">(*)</span></label>
+                                                    <label for="empresa" class="col-form-label no_nom_empresa d-none">Empresa <span style="color:red;">(*)</span></label>
+                                                    <input type="text" class="empresa form-control" name="empresa" id="empresa" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="nit_cc" class="col-form-label">NIT / CC </label>
-                                                    <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc">
+                                                    <label for="nit_cc" class="col-form-label">NIT / CC <span style="color:red;">(*)</span></label>
+                                                    <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="telefono_empresa" class="col-form-label">Télefono empresa</label>
-                                                    <input type="text" class="telefono_empresa form-control" name="telefono_empresa" id="telefono_empresa">
+                                                    <label for="telefono_empresa" class="col-form-label">Télefono empresa <span style="color:red;">(*)</span></label>
+                                                    <input type="text" class="telefono_empresa form-control" name="telefono_empresa" id="telefono_empresa" required>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row columna_row2_laboral ">
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="email_info_laboral" class="col-form-label">Email</label>
-                                                    <input type="email" class="email_info_laboral form-control" name="email_info_laboral" id="email_info_laboral">
+                                                    <label for="email_info_laboral" class="col-form-label">Email <span style="color:red;">(*)</span></label>
+                                                    <input type="email" class="email_info_laboral form-control" name="email_info_laboral" id="email_info_laboral" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="direccion_info_laboral" class="col-form-label">Dirección</label>
-                                                    <input type="text" class="direccion_info_laboral form-control" name="direccion_info_laboral" id="direccion_info_laboral">
+                                                    <label for="direccion_info_laboral" class="col-form-label">Dirección <span style="color:red;">(*)</span></label>
+                                                    <input type="text" class="direccion_info_laboral form-control" name="direccion_info_laboral" id="direccion_info_laboral" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="departamento_info_laboral" class="col-form-label">Departamento</label>
-                                                    <select class="departamento_info_laboral custom-select" name="departamento_info_laboral" id="departamento_info_laboral"></select>
+                                                    <label for="departamento_info_laboral" class="col-form-label">Departamento <span style="color:red;">(*)</span></label>
+                                                    <select class="departamento_info_laboral custom-select" name="departamento_info_laboral" id="departamento_info_laboral" required></select>
                                                 </div>
                                             </div>
                                             <div class="col-sm columna_municipio_info_laboral ">
                                                 <div class="form-group">
-                                                    <label for="municipio_info_laboral" class="col-form-label">Ciudad</label>
-                                                    <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral" disabled></select>
+                                                    <label for="municipio_info_laboral" class="col-form-label">Ciudad <span style="color:red;">(*)</span></label>
+                                                    <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral" disabled required></select>
                                                 </div>
                                             </div>
                                             <div class="col-sm columna_pais_exterior_info_laboral d-none">
@@ -661,8 +665,8 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
-                                                    <label for="fuente_informacion" class="col-form label">Fuente de información</label>
-                                                    <select class="fuente_informacion custom-select" name="fuente_informacion" id="fuente_informacion"></select>
+                                                    <label for="fuente_informacion" class="col-form label">Fuente de información <span style="color:red;">(*)</span></label>
+                                                    <select class="fuente_informacion custom-select" name="fuente_informacion" id="fuente_informacion" required></select>
                                                 </div>
                                             </div>
                                             <div class="col-4 columna_otra_fuente_informacion d-none">
@@ -673,11 +677,11 @@
                                             </div>
                                         </div>
                                         {{-- OPCIONES PARA HABILITAR EL MODAL DE DOCUMENTOS --}}
-                                        <div class="row">
+                                        {{-- <div class="row">
                                             <div class="col-6">
                                                 <a href="javascript:void(0);" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         
                                     </div>
                                 </div>
@@ -745,7 +749,7 @@
                 </div>
 
                 <div class="grupo_botones" style="float: left;">
-                    <input type="reset" id="btn_borrar" class="btn btn-info" value="Restablecer">
+                    {{-- <input type="reset" id="btn_borrar" class="btn btn-info" value="Restablecer"> --}}
                     <input type="submit" id="btn_guardar_evento" class="btn btn-info d-none" value="Guardar">
                     {{-- <input type="submit" id="btn_guardar_evento" class="btn btn-info d-none" value="Guardar" onclick="OcultarbotonGuardar()"> --}}
                 </div>
@@ -851,18 +855,57 @@
 </script>
 <script>
     // Validación inicial si el input de fecha está vacío
-    $("#fecha_radicacion").on("focus", function() {
-        if(!$("#fecha_evento").val()){
-            Validarfecha("#fecha_radicacion");
-        }else{
-            let fechaEvento = $("#fecha_evento").val();
-            Validarfecha("#fecha_radicacion","<",fechaEvento,"La fecha debe ser igual o mayor al evento");
-        }
-    });
+    // $("#fecha_radicacion").on("focus", function() {
+    //     if(!$("#fecha_evento").val()){
+    //         Validarfecha("#fecha_radicacion");
+    //     }else{
+    //         let fechaEvento = $("#fecha_evento").val();
+    //         Validarfecha("#fecha_radicacion","<",fechaEvento,"La fecha debe ser igual o mayor al evento");
+    //     }
+    // });
 
-    $("#fecha_evento").on("focus", function() {
-                var fechaEvento = $(this).val();
-                $("#fecha_radicacion").val('').attr("min", fechaEvento);
+    // $("#fecha_evento").on("focus", function() {
+    //             var fechaEvento = $(this).val();
+    //             $("#fecha_radicacion").val('').attr("min", fechaEvento);
+    // });
+
+    /* Nueva validación para la fecha de Radicación */
+    $(document).on('keyup change click', '#fecha_radicacion',function(event){
+        
+        var fechaEvento = $("#fecha_evento").val();
+        var tipo_handler = event.type;
+        /* 
+            CASO 1: Si el evento es de tipo click entonces modifica el atributo min de la f de radicación
+            para no permitir dejar escoger fechas anteriores a la fecha de evento seleccionada.
+        */
+       /*
+            CASO 2: Si los eventos son keyup y change entonces se valida que la fecha de radicación
+            no debe ser inferior a la fecha del evento, solo puede ser superior o igual.
+        */
+        switch (tipo_handler) {
+            case 'click':
+                $(this).attr("min", fechaEvento);
+            break;
+            
+            case 'keyup':
+            case 'change':
+                if ($(this).val() < fechaEvento) {
+                    // Eliminar cualquier alerta previa
+                    if ($(this).next('i').length) {
+                        $(this).next('i').remove();
+                    }
+                    let alerta = '<i style="color:red;">La fecha debe ser igual o mayor a la fecha evento: '+fechaEvento+'</i>';
+                    $(this).after(alerta);
+                }else{
+                    if ($(this).next('i').length) {
+                        $(this).next('i').remove();
+                    }
+                }
+            break;
+
+            default:
+            break;
+        }
     });
 
     $("#fecha_alerta").on("focus",function(){

@@ -381,7 +381,7 @@
                     asociada. Debe configurar una.
                 </div>
                 <div class="grupo_botones">
-                    <input type="reset" id="Borrar" class="btn btn-info" value="Restablecer">
+                    {{-- <input type="reset" id="Borrar" class="btn btn-info" value="Restablecer"> --}}
                     @if (empty($array_datos_calificacionJuntas[0]->Accion_realizar))
                         <input type="submit" id="Edicion" class="btn btn-info" value="Guardar">
                         <div class="col-12">

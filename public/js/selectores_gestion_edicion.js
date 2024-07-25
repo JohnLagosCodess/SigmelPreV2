@@ -554,6 +554,7 @@ $(document).ready(function(){
             success:function(data) {
                 // console.log(data);
                 $('#municipio_info_afiliado').empty();
+                $('#municipio_info_afiliado').append('<option value="">Seleccione</option>');
                 let municipio_info_afiliadoEdicion = $('select[name=municipio_info_afiliado]').val();
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
@@ -905,6 +906,7 @@ $(document).ready(function(){
             success:function(data) {
                 //console.log(data);
                 $('#municipio_info_laboral').empty();
+                $('#municipio_info_laboral').append('<option value="">Seleccione</option>');
                 let municipio_info_laboralEdicion = $('select[name=municipio_info_laboral]').val();
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {

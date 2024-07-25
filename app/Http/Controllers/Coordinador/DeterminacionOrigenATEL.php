@@ -453,7 +453,7 @@ class DeterminacionOrigenATEL extends Controller
                 ['Tipo_lista', '=', 'Origen DTO ATEL'],
                 ['Estado', '=', 'activo']
             ])
-            ->whereNotIn('Nombre_parametro', ['Incidente', 'Sin Cobertura'])
+            ->whereNotIn('Nombre_parametro', ['Incidente', 'Sin Cobertura','Mixto','Integral'])
             ->get();
             $info_origen_vali_1 = json_decode(json_encode($listado_origen_vali_1, true));
             return response()->json($info_origen_vali_1);
