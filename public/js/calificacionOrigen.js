@@ -1795,7 +1795,7 @@ $(document).ready(function(){
         }, 1000);
     });
 
-    const initValueExtension = document.getElementById('extensionInvalidaMensaje').textContent;
+    const initValueExtension = document.getElementById('extensionInvalidaMensaje')?.textContent;
     $("form[id^='reemplazar_documento']").submit(function(e){
         e.preventDefault();
         if(!$('#cargue_comunicados_modal')[0].files[0]){
