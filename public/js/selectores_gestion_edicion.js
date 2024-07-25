@@ -92,6 +92,7 @@ $(document).ready(function(){
 
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE AFP */
     $(".afp").select2({
+        width: '100%',
         placeholder: "Seleccione una opción",
         allowClear: false
     });

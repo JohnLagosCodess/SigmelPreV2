@@ -422,8 +422,8 @@
                                                 </div>
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="afp" class="col-form label">AFP <span style="color:red;">(*)</span></</label>
-                                                        <select class="afp custom-select" name="afp" id="afp"required>
+                                                        <label for="afp" class="col-form label">AFP <span style="color:red;">(*)</span></label>
+                                                        <select class="afp custom-select" name="afp" id="afp" required>
                                                             <option value="{{$array_datos_info_afiliados[0]->Id_afp}}">{{$array_datos_info_afiliados[0]->Nombre_afp}}</option>
                                                         </select>
                                                     </div>
