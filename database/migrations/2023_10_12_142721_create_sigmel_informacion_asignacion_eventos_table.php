@@ -32,12 +32,15 @@ return new class extends Migration
             $table->text('Consecutivo_dictamen')->nullable();
             $table->integer('Id_profesional')->nullable();
             $table->text('Nombre_profesional')->nullable();
+            $table->integer('Id_calificador')->nullable();
+            $table->text('Nombre_calificador')->nullable();
             $table->text('Descripcion_bandeja')->nullable();            
             $table->date('F_calificacion')->nullable();           
             $table->date('F_ajuste_calificacion')->nullable();            
             $table->enum('Detener_tiempo_gestion', ['Si','No'])->nullable();
             $table->date('F_detencion_tiempo_gestion')->nullable();
             $table->text('Fuente_info_juntas')->nullable();
+            $table->enum('Notificacion', ['Si','No'])->default('No')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

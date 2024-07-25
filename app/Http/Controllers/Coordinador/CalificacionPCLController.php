@@ -7618,8 +7618,8 @@ class CalificacionPCLController extends Controller
 
                 // Actualizacion del profesional calificador
                 $datos_profesional_calificador = [
-                    'Id_profesional' => Auth::user()->id,
-                    'Nombre_profesional' => Auth::user()->name,
+                    'Id_calificador' => Auth::user()->id,
+                    'Nombre_calificador' => Auth::user()->name,
                     'F_calificacion' => $date
                 ];
             
@@ -7694,8 +7694,8 @@ class CalificacionPCLController extends Controller
                 
                 // Actualizacion del profesional calificador
                 $datos_profesional_calificador = [
-                    'Id_profesional' => Auth::user()->id,
-                    'Nombre_profesional' => Auth::user()->name,
+                    'Id_calificador' => Auth::user()->id,
+                    'Nombre_calificador' => Auth::user()->name,
                     'F_calificacion' => $date
                 ];
 

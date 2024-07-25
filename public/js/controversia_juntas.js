@@ -2311,6 +2311,7 @@ $(document).ready(function(){
             'decision_dictamen_jrci': $('input[name=decision_dictamen_jrci]').filter(":checked").val(),
             'causal_decision': $('#causal_decision').val(),
             'sustentacion_concepto_jrci': $('#sustentacion_concepto_jrci').val(),
+            'bandera_porfesional_pronunciamiento': $('#bandera_porfesional_pronunciamiento').val(),
         }
        document.querySelector("#guardar_datos_revision_jrci").disabled = true;
         $.ajax({

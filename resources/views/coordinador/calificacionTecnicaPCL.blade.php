@@ -7441,7 +7441,7 @@
                                             <label for="tipo_clasificacion">Copia a partes interesadas</label>
                                         </div>
                                     </div>
-                                    <div class="col-3">
+                                    {{-- <div class="col-3">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
                                                 @if (!empty($array_comite_interdisciplinario[0]->Copia_empleador))
@@ -7452,7 +7452,7 @@
                                                 <label for="afiliado" class="custom-control-label">Afiliado</label>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div class="col-3">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">

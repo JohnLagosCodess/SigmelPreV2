@@ -183,32 +183,32 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="profesional_calificador">Profesional Calificador</label>
-                                            <input type="text" class="form-control" name="profesional_calificador" id="profesional_calificador" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Nombre_profesional)){echo $array_datos_calificacionOrigen[0]->Nombre_profesional;}?>" disabled>
+                                            <input type="text" class="form-control" name="profesional_calificador" id="profesional_calificador" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Nombre_calificador)){echo $array_datos_calificacionOrigen[0]->Nombre_calificador;}else{ echo 'Sin Calificación';}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="tipo_profesional_calificador">Tipo Profesional calificador</label>
-                                            <input type="text" class="form-control" name="tipo_profesional_calificador" id="tipo_profesional_calificador" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Tipo_Profesional_calificador)){echo $array_datos_calificacionOrigen[0]->Tipo_Profesional_calificador;}?>" disabled>
+                                            <input type="text" class="form-control" name="tipo_profesional_calificador" id="tipo_profesional_calificador" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Tipo_Profesional_calificador)){echo $array_datos_calificacionOrigen[0]->Tipo_Profesional_calificador;}else{ echo 'Sin Calificación';}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="fecha_calificacion">Fecha de calificación</label>
-                                            <input type="text" class="form-control" name="fecha_calificacion" id="fecha_calificacion" value="<?php if(!empty($array_datos_calificacionOrigen[0]->F_calificacion_servicio)){echo $array_datos_calificacionOrigen[0]->F_calificacion_servicio;}?>" disabled> 
+                                            <input type="text" class="form-control" name="fecha_calificacion" id="fecha_calificacion" value="<?php if(!empty($array_datos_calificacionOrigen[0]->F_calificacion_servicio)){echo $array_datos_calificacionOrigen[0]->F_calificacion_servicio;}else{ echo 'Sin Calificación';}?>" disabled> 
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="profesional_comite">Profesional Comité</label>
-                                            <input type="text" class="form-control" name="profesional_comite" id="profesional_comite" value="<?php if(!empty($cali_profe_comite[0]->Profesional_comite)){echo $cali_profe_comite[0]->Profesional_comite;}?>" disabled>
+                                            <input type="text" class="form-control" name="profesional_comite" id="profesional_comite" value="<?php if(!empty($cali_profe_comite[0]->Profesional_comite)){echo $cali_profe_comite[0]->Profesional_comite;}else{echo 'Sin Visado';}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="fecha_visado_comite">Fecha de visado comité</label>
                                             {{-- <input type="text" class="form-control" name="fecha_visado_comite" id="fecha_visado_comite" value="{{$cali_profe_comite[0]->F_visado_comite}}" disabled> --}}
-                                            <input type="text" class="form-control" name="fecha_visado_comite" id="fecha_visado_comite" value="<?php if(!empty($cali_profe_comite[0]->F_visado_comite)){echo $cali_profe_comite[0]->F_visado_comite;}?>" disabled>
+                                            <input type="text" class="form-control" name="fecha_visado_comite" id="fecha_visado_comite" value="<?php if(!empty($cali_profe_comite[0]->F_visado_comite)){echo $cali_profe_comite[0]->F_visado_comite;}else{echo 'Sin Visado';}?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-4">

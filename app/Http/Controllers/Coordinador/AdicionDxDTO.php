@@ -1656,8 +1656,8 @@ class AdicionDxDTO extends Controller
             
             // Actualizacion del profesional calificador
             $datos_profesional_calificador = [
-                'Id_profesional' => Auth::user()->id,
-                'Nombre_profesional' => $nombre_usuario
+                'Id_calificador' => Auth::user()->id,
+                'Nombre_calificador' => $nombre_usuario
             ];
     
             sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')

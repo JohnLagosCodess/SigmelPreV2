@@ -809,13 +809,11 @@ class ControversiaJuntasController extends Controller
         $newIdAsignacion = $request->newId_asignacion;
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
-        
-        // Validar si existe el evento
-        $info_controverisa_juntas = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])->get();
+        $bandera_porfesional_pronunciamiento = $request->bandera_porfesional_pronunciamiento;
+                
         //Si el evento existe hace el IF y si no hace ELSE
 
-        if (count($info_controverisa_juntas) > 0) {
+        if ($bandera_porfesional_pronunciamiento == 'Actualizar') {
             //Captura los datos a actualizar en controversia
             $datos_info_controvertido_juntas= [
                 'Decision_dictamen_jrci' => $request->decision_dictamen_jrci,
@@ -856,8 +854,8 @@ class ControversiaJuntasController extends Controller
             
             // Actualizacion del profesional calificador
             $datos_profesional_calificador = [
-                'Id_profesional' => Auth::user()->id,
-                'Nombre_profesional' => $nombre_usuario
+                'Id_calificador' => Auth::user()->id,
+                'Nombre_calificador' => $nombre_usuario
             ];
 
             sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
