@@ -906,7 +906,7 @@
                                             <div class="col-12">
                                                 <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
                                                     <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de agregar una fila nueva es necesario
-                                                    que diligencie en su totalidad los campos.
+                                                    que diligencie en su totalidad los campos. Y en el campo <b>Descripción complementaria del DX</b> solo acepta <b>Máximo 100 caracteres</b>
                                                 </div>
                                                 <!-- <div class="alert d-none" id="resultado_insercion_cie10" role="alert"></div> -->
                                                 <div class="table-responsive">
@@ -1839,7 +1839,15 @@
             // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionpcl.js)
             funciones_elementos_fila_diagnosticos_visual(contador_cie10_visual);
             
-            array_ids_checkboxes_nuevos.push("checkbox_dx_principal_Cie10_"+contador_cie10_visual)
+            array_ids_checkboxes_nuevos.push("checkbox_dx_principal_Cie10_"+contador_cie10_visual);
+
+            // Añadir el límite de caracteres al textarea recién creado descripcion_cie10_fila_visual_
+            $('#descripcion_cie10_fila_visual_' + contador_cie10).on('keyup', function() {
+                var maxLength = 100; // Máximo número de caracteres permitidos
+                if ($(this).val().length > maxLength) {
+                    $(this).val($(this).val().substring(0, maxLength)); // Trunca el texto a maxLength caracteres
+                }
+            });
         });
 
         $(document).on('click', '#btn_remover_cie10_fila_visual', function(){
@@ -1896,6 +1904,14 @@
             funciones_elementos_fila_diagnosticos(contador_cie10);
             
             array_ids_checkboxes_nuevos.push("checkbox_dx_principal_Cie10_"+contador_cie10);
+
+            // Añadir el límite de caracteres al textarea recién creado descripcion_cie10_fila_
+            $('#descripcion_cie10_fila_' + contador_cie10).on('keyup', function() {
+                var maxLength = 100; // Máximo número de caracteres permitidos
+                if ($(this).val().length > maxLength) {
+                    $(this).val($(this).val().substring(0, maxLength)); // Trunca el texto a maxLength caracteres
+                }
+            });
             
         });
             

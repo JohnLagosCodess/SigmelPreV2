@@ -306,7 +306,7 @@
             </tr>
             <tr>
                 <td colspan="4" class="titulo_labels">E-mail solicitante: </td>
-                <td colspan="5" class="dato_dinamico">{{wordwrap($Emails_dic, 36, "\n", true);}}</td>
+                <td colspan="5" class="dato_dinamico">{{wordwrap($Emails_dic, 34, "\n", true);}}</td>
                 <td colspan="3" class="titulo_labels">Ciudad solicitante: </td>
                 <td colspan="5" class="dato_dinamico">{{$Nombre_municipio_dic}}</td>
             </tr>   
@@ -497,25 +497,48 @@
                 <div class="dato_dinamico_font">{{$Descripcion_enfermedad_actual}}</div>
             </section>
         </div>  
-        <table class="tabla_dictamen">               
+        <table class="tabla_dictamen">            
             <tr>
                 <td colspan="17" class="titulo_tablas">TÍTULO I CLASIFICACIÓN / VALORACIÓN DE LAS DEFICIENCIAS</td>
             </tr>
-        </table> 
-        <div class="content2">       
-            <?php $conteo_diagnostico = 0; ?>
+            <tr>
+                <td colspan="1" rowspan="1" class="centrar_titulo_labels">No.</td>
+                <td colspan="1" rowspan="1" class="centrar_titulo_labels">CIE 10</td>
+                <td colspan="5" rowspan="1" class="centrar_titulo_labels">Diagnóstico</td>
+                <td colspan="2" rowspan="1" class="centrar_titulo_labels">Lateralidad</td>
+                <td colspan="6" rowspan="1" class="centrar_titulo_labels">Deficiencia(s) motivo de calificación / condiciones de salud</td>                
+                <td colspan="2" rowspan="1" class="centrar_titulo_labels">Origen</td>
+            </tr>
+            <?php $conteo_deficienciass = 0; ?>
+            <?php $cumple_condicions = 0; ?>
+            <?php $rowspan_totals = 0; ?>            
             @if (count($array_diagnosticos_fc) > 0)
-                @foreach ($array_diagnosticos_fc as $diagnosticos_fc)
-                    <?php $conteo_diagnostico = $conteo_diagnostico + 1;?>
-                    <section class="border_section">
-                        <div class="dato_dinamico_font"><b>No.</b> <?php echo $conteo_diagnostico?> - <b>Origen:</b> <?php echo $diagnosticos_fc->Nombre_origen?> - <b>Código CIE 10:</b> <?php echo $diagnosticos_fc->Codigo_cie10?> - <b>Diagnóstico:</b> <?php echo $diagnosticos_fc->Nombre_CIE10?></div>    
-                        <div class="dato_dinamico_font"><b>Deficiencia(s) motivo de calificación / condiciones de salud:</b></div>
-                        <div class="dato_dinamico_font"><?php echo $diagnosticos_fc->Deficiencia_motivo_califi_condiciones?></div>                                                                         
-                    </section>
-                @endforeach                
-            @endif
-        </div> 
-        <table class="tabla_dictamen">    
+                <?php $cumple_condicions++; ?>
+                <?php $rowspan_totals += count($array_diagnosticos_fc); ?>
+                @foreach ($array_diagnosticos_fc as $index => $deficiencias_fc)                    
+                    <?php $conteo_deficienciass = $conteo_deficienciass + 1; ?>                   
+                    <tr>
+                        <td colspan="1" class="centrar_dato_dinamico">{{ $conteo_deficienciass }}</td>
+                        <td colspan="1" class="centrar_dato_dinamico">{{ $deficiencias_fc->Codigo_cie10 }}</td>
+                        <td colspan="5" class="dato_dinamico">{{ $deficiencias_fc->Nombre_CIE10 }}</td>
+                        <td colspan="2" class="dato_dinamico">{{ $deficiencias_fc->Nombre_lateralidad }}</td>
+                        <td colspan="6" class="dato_dinamico">{{ $deficiencias_fc->Deficiencia_motivo_califi_condiciones }}</td>                                                                    
+                        <td colspan="2" class="dato_dinamico">{{($deficiencias_fc->Nombre_origen)}}</td>
+                    </tr>
+                @endforeach             
+            @else
+                <tr>
+                    <td colspan="1" class="centrar_dato_dinamico"></td>
+                    <td colspan="1" class="centrar_dato_dinamico"></td>
+                    <td colspan="5" class="dato_dinamico"></td>
+                    <td colspan="2" class="dato_dinamico"></td>
+                    <td colspan="6" class="dato_dinamico"></td>
+                    <td colspan="2" class="dato_dinamico"></td>
+                </tr>         
+            @endif        
+            <tr>
+                <td colspan="17"></td>
+            </tr>    
             <tr>
                 <td colspan="17" class="titulo_tablas">Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores</td>
             </tr>            

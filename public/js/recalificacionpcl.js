@@ -2978,13 +2978,13 @@ $(document).ready(function(){
                 var montoIndemnizacion = ((porcentajePcl / 2) - 0.5);
                 $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
             }
-            if (porcentajePcl >= 66) {
-                $('#div_formatoc').removeClass('d-none');   
-            }else if(porcentajePcl >= 50 && porcentajePcl <= 65.99){
-                $('#div_formatod').removeClass('d-none');   
-            }else if(porcentajePcl < 50){
-                $('#div_formatoe').removeClass('d-none');   
-            }
+            // if (porcentajePcl >= 66) {
+            //     $('#div_formatoc').removeClass('d-none');   
+            // }else if(porcentajePcl >= 50 && porcentajePcl <= 65.99){
+            //     $('#div_formatod').removeClass('d-none');   
+            // }else if(porcentajePcl < 50){
+            //     $('#div_formatoe').removeClass('d-none');   
+            // }
 
         } else if(definirDecreto_deficiencia == 3) {
             var total_deficiencia1999 = $('#Total_Deficiencia50');
@@ -3032,13 +3032,13 @@ $(document).ready(function(){
                         $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
                     }
 
-                    if (porcentajePcl >= 66) {
-                        $('#div_formatoc').removeClass('d-none');
-                    }else if(porcentajePcl >= 50 && porcentajePcl <= 65.99){
-                        $('#div_formatod').removeClass('d-none');   
-                    }else if(porcentajePcl < 50){
-                        $('#div_formatoe').removeClass('d-none');   
-                    }
+                    // if (porcentajePcl >= 66) {
+                    //     $('#div_formatoc').removeClass('d-none');
+                    // }else if(porcentajePcl >= 50 && porcentajePcl <= 65.99){
+                    //     $('#div_formatod').removeClass('d-none');   
+                    // }else if(porcentajePcl < 50){
+                    //     $('#div_formatoe').removeClass('d-none');   
+                    // }
                 });
             });                 
             
@@ -3082,13 +3082,13 @@ $(document).ready(function(){
                 $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
             }
 
-            if (porcentajePcl >= 66) {
-                $('#div_formatoc').removeClass('d-none');
-            }else if(porcentajePcl >= 50 && porcentajePcl <= 65.99){
-                $('#div_formatod').removeClass('d-none');   
-            }else if(porcentajePcl < 50){
-                $('#div_formatoe').removeClass('d-none');   
-            }
+            // if (porcentajePcl >= 66) {
+            //     $('#div_formatoc').removeClass('d-none');
+            // }else if(porcentajePcl >= 50 && porcentajePcl <= 65.99){
+            //     $('#div_formatod').removeClass('d-none');   
+            // }else if(porcentajePcl < 50){
+            //     $('#div_formatoe').removeClass('d-none');   
+            // }
             
         }else if(definirDecreto_deficiencia == 2) {            
             porcentajePcl = 0;    
@@ -3115,13 +3115,13 @@ $(document).ready(function(){
                 $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
             }
 
-            if (porcentajePcl >= 66) {
-                $('#div_formatoc').removeClass('d-none');
-            }else if(porcentajePcl >= 50 && porcentajePcl <= 65.99){
-                $('#div_formatod').removeClass('d-none');   
-            }else if(porcentajePcl < 50){
-                $('#div_formatoe').removeClass('d-none');   
-            }
+            // if (porcentajePcl >= 66) {
+            //     $('#div_formatoc').removeClass('d-none');
+            // }else if(porcentajePcl >= 50 && porcentajePcl <= 65.99){
+            //     $('#div_formatod').removeClass('d-none');   
+            // }else if(porcentajePcl < 50){
+            //     $('#div_formatoe').removeClass('d-none');   
+            // }
         }else{            
             porcentajePcl = 0;  
             
@@ -3147,13 +3147,13 @@ $(document).ready(function(){
                 $("#monto_inde").val(montoIndemnizacion.toFixed(2));                    
             }
 
-            if (porcentajePcl >= 66) {
-                $('#div_formatoc').removeClass('d-none');
-            }else if(porcentajePcl >= 50 && porcentajePcl <= 65.99){
-                $('#div_formatod').removeClass('d-none');   
-            }else if(porcentajePcl < 50){
-                $('#div_formatoe').removeClass('d-none');   
-            }
+            // if (porcentajePcl >= 66) {
+            //     $('#div_formatoc').removeClass('d-none');
+            // }else if(porcentajePcl >= 50 && porcentajePcl <= 65.99){
+            //     $('#div_formatod').removeClass('d-none');   
+            // }else if(porcentajePcl < 50){
+            //     $('#div_formatoe').removeClass('d-none');   
+            // }
         }  
 
         var tercerapersona = $("#requiere_persona");

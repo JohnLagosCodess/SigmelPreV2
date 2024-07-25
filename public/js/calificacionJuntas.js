@@ -6334,10 +6334,10 @@ function procesarListaChequeo(accion){
                 'nombreDoc' : $(this).data('nombre'),
             };
 
-            if($(this).data('idcomunicado')){
+            /*if($(this).data('idcomunicado')){
                 lista_chequeo['idComunicado'] = $(this).data('idcomunicado');
                 lista_chequeo['statusDoc'] = 'Comunicado';
-            }
+            }*/
             datos.push(lista_chequeo);
         }
     });
