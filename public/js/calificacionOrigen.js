@@ -641,13 +641,13 @@ $(document).ready(function(){
             $('#alerta_fecha_alerta').addClass('d-none');
         }
     });
-    console.log(Fecha_alerta_capturada.val());
+    // console.log(Fecha_alerta_capturada.val());
     if (Fecha_alerta_capturada.val() == '') {
-        console.log('if');
+        // console.log('if');
         $('#Edicion').prop('disabled', false)
         $('#alerta_fecha_alerta').addClass('d-none');
     }else if (Fecha_alerta_capturada.val() < fechaActual_alerta){
-        console.log('else');
+        // console.log('else');
         $('#Edicion').prop('disabled', true) 
         $('#alerta_fecha_alerta').removeClass('d-none');
     }
@@ -657,7 +657,7 @@ $(document).ready(function(){
         e.preventDefault();  
         // Deshabilitar elementos mientras se realiza la petición
         document.querySelector("#Edicion").disabled = true;
-        document.querySelector("#Borrar").disabled = true;
+        // document.querySelector("#Borrar").disabled = true;
 
         // Obtener el archivo seleccionado
         var archivo = $('#cargue_documentos')[0].files[0];

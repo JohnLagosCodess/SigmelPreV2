@@ -184,7 +184,8 @@ class CalificacionJuntasController extends Controller
         if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado) && empty($arrayinfo_controvertido[0]->F_plazo_controversia)){
             $fecha_controversia = calcularDiasHabiles($arrayinfo_controvertido[0]->F_notifi_afiliado);
 
-            $arrayinfo_controvertido[0]->F_plazo_controversia = $fecha_controversia[0]->Fecha;
+            // $arrayinfo_controvertido[0]->F_plazo_controversia = $fecha_controversia[0]->Fecha;
+            $arrayinfo_controvertido[0]->F_plazo_controversia = $fecha_controversia;
         }
         return view('coordinador.calificacionJuntas', compact('user','array_datos_calificacionJuntas','arraylistado_documentos','arrayinfo_afiliado',
         'arrayinfo_controvertido','arrayinfo_pagos','listado_documentos_solicitados','dato_validacion_no_aporta_docs',
