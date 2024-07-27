@@ -809,13 +809,11 @@ class ControversiaJuntasController extends Controller
         $newIdAsignacion = $request->newId_asignacion;
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
-        
-        // Validar si existe el evento
-        $info_controverisa_juntas = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])->get();
+        $bandera_porfesional_pronunciamiento = $request->bandera_porfesional_pronunciamiento;
+                
         //Si el evento existe hace el IF y si no hace ELSE
 
-        if (count($info_controverisa_juntas) > 0) {
+        if ($bandera_porfesional_pronunciamiento == 'Actualizar') {
             //Captura los datos a actualizar en controversia
             $datos_info_controvertido_juntas= [
                 'Decision_dictamen_jrci' => $request->decision_dictamen_jrci,
@@ -856,8 +854,8 @@ class ControversiaJuntasController extends Controller
             
             // Actualizacion del profesional calificador
             $datos_profesional_calificador = [
-                'Id_profesional' => Auth::user()->id,
-                'Nombre_profesional' => $nombre_usuario
+                'Id_calificador' => Auth::user()->id,
+                'Nombre_calificador' => $nombre_usuario
             ];
 
             sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
@@ -2413,8 +2411,8 @@ class ControversiaJuntasController extends Controller
         if (isset($copia_eps)) {
             $datos_eps = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
             ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
@@ -2436,8 +2434,8 @@ class ControversiaJuntasController extends Controller
         if (isset($copia_afp)) {
             $datos_afp = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
             ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
@@ -2459,8 +2457,8 @@ class ControversiaJuntasController extends Controller
         if(isset($copia_arl)){
             $datos_arl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
             ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
@@ -3181,8 +3179,8 @@ class ControversiaJuntasController extends Controller
         if (isset($copia_eps)) {
             $datos_eps = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
             ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
@@ -3204,8 +3202,8 @@ class ControversiaJuntasController extends Controller
         if (isset($copia_afp)) {
             $datos_afp = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
             ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
@@ -3227,8 +3225,8 @@ class ControversiaJuntasController extends Controller
         if(isset($copia_arl)){
             $datos_arl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
             ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])

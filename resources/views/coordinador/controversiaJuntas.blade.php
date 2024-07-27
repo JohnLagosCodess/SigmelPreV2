@@ -625,7 +625,13 @@
                                     <div class="row activa_boton_g" <?php if(!empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci)){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
                                         <div class="col-6">
                                             <div class="form-group">
-                                                <input type="submit" id="guardar_datos_revision_jrci" class="btn btn-info" value="Guardar">
+                                                @if (!empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci))
+                                                    <input type="submit" id="guardar_datos_revision_jrci" class="btn btn-info" value="Guardar">
+                                                    <input type="hidden" id="bandera_porfesional_pronunciamiento" value="Actualizar">                                                                                                        
+                                                @else
+                                                    <input type="submit" id="guardar_datos_revision_jrci" class="btn btn-info" value="Guardar">
+                                                    <input type="hidden" id="bandera_porfesional_pronunciamiento" value="Guardar">                                                    
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="col-12">
