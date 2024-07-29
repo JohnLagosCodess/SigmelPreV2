@@ -4873,7 +4873,7 @@ $(document).ready(function(){
 // Examenes Interconsultas
 $(document).ready(function(){
     $("#guardar_datos_examenes").click(function(){       
-            
+        $('#guardar_datos_examenes').prop('disabled', true);                                
         let token = $("input[name='_token']").val();
         var guardar_datos = [];
         var datos_finales_examenes_interconsultas = [];
@@ -5066,7 +5066,7 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
 // Diagnosticos CIE10
 $(document).ready(function(){
     $("#guardar_datos_cie10").click(function(){       
-            
+        $('#guardar_datos_cie10').prop('disabled', true);                        
         let token = $("input[name='_token']").val();
         var guardar_datos = [];
         var datos_finales_diagnosticos_moticalifi = [];
@@ -5426,7 +5426,7 @@ function funciones_elementos_fila_deficienciasDecretocero(num_decretoceroconse) 
 // Gurardar Deficiencias Cero
 $(document).ready(function(){
     $("#guardar_deficiencias_DecretoCero").click(function(){       
-            
+        $('#guardar_deficiencias_DecretoCero').prop('disabled', true);                       
         let token = $("input[name='_token']").val();
         var guardar_datos_alteraciones = [];
         var datos_finales_deficiciencias_decreto_cero = [];      
@@ -5866,7 +5866,7 @@ $(document).ready(function(){
 // Guardar Deficiencia decreto 3
 $(document).ready(function(){
     $("#guardar_deficiencias_Decreto3").click(function(){       
-            
+        $('#guardar_deficiencias_Decreto3').prop('disabled', true);            
         let token = $("input[name='_token']").val();
         var guardar_datos_alteraciones = [];
         var datos_finales_deficiciencias_decreto_tres = [];      
