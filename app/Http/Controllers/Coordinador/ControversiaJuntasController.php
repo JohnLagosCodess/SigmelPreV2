@@ -835,7 +835,11 @@ class ControversiaJuntasController extends Controller
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
         $bandera_porfesional_pronunciamiento = $request->bandera_porfesional_pronunciamiento;
-                
+        
+        // Validar si existe el evento
+        $info_controverisa_juntas = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])->get();
+
         //Si el evento existe hace el IF y si no hace ELSE
 
         if ($bandera_porfesional_pronunciamiento == 'Actualizar') {
@@ -858,38 +862,72 @@ class ControversiaJuntasController extends Controller
                 "mensaje" => 'Registro actualizado satisfactoriamente.'
             );            
         } else {
-            //Captura los datos a insertar en controversia
-            $datos_info_controvertido_juntas= [
-                'ID_evento' => $request->newId_evento,
-                'Id_Asignacion' => $request->newId_asignacion,
-                'Id_proceso' => $request->Id_proceso,
-                'Decision_dictamen_jrci' => $request->decision_dictamen_jrci,
-                'Causal_decision_jrci' => $request->causal_decision,
-                'Sustentacion_concepto_jrci' => $request->sustentacion_concepto_jrci,
-                'F_sustenta_jrci' => $date,
-                'Nombre_usuario' => $nombre_usuario,
-                'F_registro' => $date,
-            ];
-               
-            sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-            ->insert($datos_info_controvertido_juntas);
 
-            sleep(2);
+            if (count($info_controverisa_juntas) > 0) {
+                //Captura los datos a actualizar en controversia
+                $datos_info_controvertido_juntas= [
+                    'Decision_dictamen_jrci' => $request->decision_dictamen_jrci,
+                    'Causal_decision_jrci' => $request->causal_decision,
+                    'Sustentacion_concepto_jrci' => $request->sustentacion_concepto_jrci,
+                    'F_sustenta_jrci' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                    'F_registro' => $date,
+                ];
+                
+                sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$newIdEvento],['Id_Asignacion',$newIdAsignacion]])
+                ->update($datos_info_controvertido_juntas);
 
+                sleep(2);
             
-            // Actualizacion del profesional calificador
-            $datos_profesional_calificador = [
-                'Id_calificador' => Auth::user()->id,
-                'Nombre_calificador' => $nombre_usuario
-            ];
+                // Actualizacion del profesional calificador
+                $datos_profesional_calificador = [
+                    'Id_calificador' => Auth::user()->id,
+                    'Nombre_calificador' => $nombre_usuario
+                ];
 
-            sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-            ->where('Id_Asignacion', $newIdAsignacion)->update($datos_profesional_calificador);
+                sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->where('Id_Asignacion', $newIdAsignacion)->update($datos_profesional_calificador);
+        
+        
+                $mensajes = array(
+                    "parametro" => 'registro_revision_jrci',
+                    "mensaje" => 'Registro actualizado satisfactoriamente.'
+                ); 
+            } else {                
+                //Captura los datos a insertar en controversia
+                $datos_info_controvertido_juntas= [
+                    'ID_evento' => $request->newId_evento,
+                    'Id_Asignacion' => $request->newId_asignacion,
+                    'Id_proceso' => $request->Id_proceso,
+                    'Decision_dictamen_jrci' => $request->decision_dictamen_jrci,
+                    'Causal_decision_jrci' => $request->causal_decision,
+                    'Sustentacion_concepto_jrci' => $request->sustentacion_concepto_jrci,
+                    'F_sustenta_jrci' => $date,
+                    'Nombre_usuario' => $nombre_usuario,
+                    'F_registro' => $date,
+                ];
+                   
+                sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
+                ->insert($datos_info_controvertido_juntas);
     
-            $mensajes = array(
-                "parametro" => 'registro_revision_jrci',
-                "mensaje" => 'Registro guardado satisfactoriamente.'
-            );
+                sleep(2);
+                
+                // Actualizacion del profesional calificador
+                $datos_profesional_calificador = [
+                    'Id_calificador' => Auth::user()->id,
+                    'Nombre_calificador' => $nombre_usuario
+                ];
+    
+                sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->where('Id_Asignacion', $newIdAsignacion)->update($datos_profesional_calificador);
+        
+                $mensajes = array(
+                    "parametro" => 'registro_revision_jrci',
+                    "mensaje" => 'Registro guardado satisfactoriamente.'
+                );
+            }
+            
         }
     
         return json_decode(json_encode($mensajes, true));
