@@ -2743,7 +2743,7 @@ class BuscarEventoController extends Controller
                         'de.Total_Deficiencia50 as Deficiencia_50',
                         'de.F_estructuracion as F_estructuracion',
                         'de.Origen as Origen',
-                        'lae.Total_otras_areas as Total_otras_areas',
+                        'lae.Total_laboral_otras_areas as Total_laboral_otras_areas',
                         'lle.Total_discapacidad as Total_discapacidad',
                         'lle.Total_minusvalia as Total_minusvalia'
                     )->where([
@@ -2772,17 +2772,31 @@ class BuscarEventoController extends Controller
                         });
 
                     //Informacion del controvertido para el caso PCL, el caul debe estar visado en el caso de calificacion
+                    /* Validamos el decreto de calificacion para determinar cuando enviar el valor del rol ocupacional dependiendo
+                        de los decretos 1507 de 2014 (id 1), 1507 de 2014 cero (id 2), 917 de 999 (id 3)
+                    */
+                    if(count($informacionComite) > 0){
+                        if ($informacionComite->Decreto_calificacion == 1 || $informacionComite->Decreto_calificacion == 3) {
+                            $Total_rol_ocupacional = optional($informacionComite)->Total_laboral_otras_areas;
+                        }else{
+                            $Total_rol_ocupacional = 0;
+                        }
+                    }else {
+                        $Total_rol_ocupacional = null;
+                    }
+
                     $Controvertido['N_dictamen_controvertido'] = optional($informacionComite)->Consecutivo_dictamen;
                     $Controvertido['F_dictamen_controvertido'] = optional($informacionComite)->FechaDictamen;
                     $Controvertido['N_siniestro'] =  optional($informacionComite)->N_siniestro;
                     $Controvertido['Origen_controversia'] = optional($informacionComite)->Origen;
                     $Controvertido['Manual_de_califi'] = optional($informacionComite)->Decreto_calificacion;
                     $Controvertido['Total_deficiencia'] = optional($informacionComite)->Deficiencia_50;
-                    $Controvertido['Total_rol_ocupacional'] = optional($informacionComite)->Total_otras_areas;
+                    $Controvertido['Total_rol_ocupacional'] = $Total_rol_ocupacional;
                     $Controvertido['Total_discapacidad'] = optional($informacionComite)->Total_discapacidad;
                     $Controvertido['Total_minusvalia'] = optional($informacionComite)->Total_minusvalia;
                     $Controvertido['Porcentaje_pcl'] = optional($informacionComite)->_pcl;
                     $Controvertido['F_estructuracion_contro'] = optional($informacionComite)->F_estructuracion;
+                    $Controvertido['Id_Asignacion_Servicio_Anterior'] = $Id_Asignacion_origen;
 
                     //Se copian los documentos siempre y cuando no se una controversia y cumpla las reglas.
                     if($servicio['Nombre_servicio'] != 'Controversia PCL'){
@@ -2823,6 +2837,7 @@ class BuscarEventoController extends Controller
                     $Controvertido['N_dictamen_controvertido'] = optional($origen[0])->Consecutivo_dictamen;
                     $Controvertido['F_dictamen_controvertido'] = optional($origen[0])->F_registro;
                     $Controvertido['N_siniestro'] = optional($origen[0])->N_siniestro;
+                    $Controvertido['Id_Asignacion_Servicio_Anterior'] = $Id_Asignacion_origen;
 
                     $this->copiarLisdatoGeneralDocumentos($evento,$servicioNuevo,$servicioOrigen);
 

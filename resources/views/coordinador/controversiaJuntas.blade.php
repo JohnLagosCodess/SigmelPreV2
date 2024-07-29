@@ -254,7 +254,11 @@
                                             <div class="form-group">
                                                 <br>
                                                 <label for="manual_de_califi">Manual de calificación <span style="color: red;">(*)</span></label>
-                                                <select class="custom-select manual_de_califi" name="manual_de_califi" id="manual_de_califi" style="width: 100%;" required>
+                                                <select class="custom-select manual_de_califi" name="manual_de_califi" id="manual_de_califi" style="width: 100%;" required
+                                                    @if ($bandera_manual_calificacion == "desactivar")
+                                                        disabled
+                                                    @endif
+                                                >
                                                     @if (!empty($arrayinfo_controvertido[0]->Manual_de_califi))
                                                             <option value="{{$arrayinfo_controvertido[0]->Manual_de_califi}}" selected>{{$arrayinfo_controvertido[0]->Nombre_decreto}}</option>
                                                     @else
@@ -267,7 +271,7 @@
                                             <div class="form-group">
                                                 <br>
                                                 <label for="total_deficiencia">Total Deficiencia <span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="total_deficiencia" id="total_deficiencia" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_deficiencia)) { echo $arrayinfo_controvertido[0]->Total_deficiencia;} ?>" required>
+                                                <input type="text" class="form-control" name="total_deficiencia" id="total_deficiencia" value="<?php if(isset($arrayinfo_controvertido[0]->Total_deficiencia)) { echo $arrayinfo_controvertido[0]->Total_deficiencia;} ?>" required>
                                             </div>
                                         </div>
                                         @endif
@@ -275,21 +279,21 @@
                                             <div class="form-group" >
                                                 <br>
                                                 <label for="total_rol_ocupacional" style="font-size:0.9em;">Total Laboralmente activo / Rol ocupacional  <span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="total_rol_ocupacional" id="total_rol_ocupacional" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_rol_ocupacional)) { echo $arrayinfo_controvertido[0]->Total_rol_ocupacional;} ?>">
+                                                <input type="text" class="form-control" name="total_rol_ocupacional" id="total_rol_ocupacional" value="<?php if(isset($arrayinfo_controvertido[0]->Total_rol_ocupacional)) { echo $arrayinfo_controvertido[0]->Total_rol_ocupacional;} ?>">
                                             </div>
                                         </div>
                                         <div class="col-4 total_discapaci" <?php if(!empty($arrayinfo_controvertido[0]->Manual_de_califi)&& $arrayinfo_controvertido[0]->Manual_de_califi=='3'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
                                             <div class="form-group">
                                                 <br>
                                                 <label for="total_discapacidad">Total Discapacidad <span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="total_discapacidad" id="total_discapacidad" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_discapacidad)) { echo $arrayinfo_controvertido[0]->Total_discapacidad;} ?>">
+                                                <input type="text" class="form-control" name="total_discapacidad" id="total_discapacidad" value="<?php if(isset($arrayinfo_controvertido[0]->Total_discapacidad)) { echo $arrayinfo_controvertido[0]->Total_discapacidad;} ?>">
                                             </div>
                                         </div>
                                         <div class="col-4 total_minusva" <?php if(!empty($arrayinfo_controvertido[0]->Manual_de_califi)&& $arrayinfo_controvertido[0]->Manual_de_califi=='3'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
                                             <div class="form-group">
                                                 <br>
                                                 <label for="total_minusvalia">Total Minusvalía <span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="total_minusvalia" id="total_minusvalia" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_minusvalia)) { echo $arrayinfo_controvertido[0]->Total_minusvalia;} ?>">
+                                                <input type="text" class="form-control" name="total_minusvalia" id="total_minusvalia" value="<?php if(isset($arrayinfo_controvertido[0]->Total_minusvalia)) { echo $arrayinfo_controvertido[0]->Total_minusvalia;} ?>">
                                             </div>
                                         </div>
 
@@ -298,7 +302,7 @@
                                             <div class="form-group">
                                                 <br>
                                                 <label for="porcentaje_pcl">% PCL <span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="porcentaje_pcl" id="porcentaje_pcl" value="<?php if(!empty($arrayinfo_controvertido[0]->Porcentaje_pcl)) { echo $arrayinfo_controvertido[0]->Porcentaje_pcl;} ?>" readonly>
+                                                <input type="text" class="form-control" name="porcentaje_pcl" id="porcentaje_pcl" value="<?php if(isset($arrayinfo_controvertido[0]->Porcentaje_pcl)) { echo $arrayinfo_controvertido[0]->Porcentaje_pcl;} ?>" readonly>
                                             </div>
                                         </div>
                                         <div class="col-4" >
@@ -457,7 +461,7 @@
                                             <div class="form-group">
                                                 <br>
                                                 <label for="total_deficiencia_jrci_emitido">Total Deficiencia (JRCI) <span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="total_deficiencia_jrci_emitido" id="total_deficiencia_jrci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_deficiencia_jrci_emitido)) { echo $arrayinfo_controvertido[0]->Total_deficiencia_jrci_emitido;} ?>">
+                                                <input type="text" class="form-control" name="total_deficiencia_jrci_emitido" id="total_deficiencia_jrci_emitido" value="<?php if(isset($arrayinfo_controvertido[0]->Total_deficiencia_jrci_emitido)) { echo $arrayinfo_controvertido[0]->Total_deficiencia_jrci_emitido;} ?>">
                                             </div>
                                         </div>
                                         @endif
@@ -465,21 +469,21 @@
                                             <div class="form-group" >
                                                 <br>
                                                 <label for="total_rol_ocupacional_jrci_emitido" style='font-size:0.8em;'>Total Laboralmente activo / Rol ocupacional (JRCI) <span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="total_rol_ocupacional_jrci_emitido" id="total_rol_ocupacional_jrci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_rol_ocupacional_jrci_emitido)) { echo $arrayinfo_controvertido[0]->Total_rol_ocupacional_jrci_emitido;} ?>">
+                                                <input type="text" class="form-control" name="total_rol_ocupacional_jrci_emitido" id="total_rol_ocupacional_jrci_emitido" value="<?php if(isset($arrayinfo_controvertido[0]->Total_rol_ocupacional_jrci_emitido)) { echo $arrayinfo_controvertido[0]->Total_rol_ocupacional_jrci_emitido;} ?>">
                                             </div>
                                         </div>
                                         <div class="col-4 total_discapaci_jrci_emitido" <?php if(!empty($arrayinfo_controvertido[0]->Manual_de_califi_jrci_emitido)&& $arrayinfo_controvertido[0]->Manual_de_califi_jrci_emitido=='3'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
                                             <div class="form-group">
                                                 <br>
                                                 <label for="total_discapacidad_jrci_emitido">Total Discapacidad (JRCI) <span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="total_discapacidad_jrci_emitido" id="total_discapacidad_jrci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_discapacidad_jrci_emitido)) { echo $arrayinfo_controvertido[0]->Total_discapacidad_jrci_emitido;} ?>">
+                                                <input type="text" class="form-control" name="total_discapacidad_jrci_emitido" id="total_discapacidad_jrci_emitido" value="<?php if(isset($arrayinfo_controvertido[0]->Total_discapacidad_jrci_emitido)) { echo $arrayinfo_controvertido[0]->Total_discapacidad_jrci_emitido;} ?>">
                                             </div>
                                         </div>
                                         <div class="col-4 total_minusva_jrci_emitido" <?php if(!empty($arrayinfo_controvertido[0]->Manual_de_califi_jrci_emitido)&& $arrayinfo_controvertido[0]->Manual_de_califi_jrci_emitido=='3'){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
                                             <div class="form-group">
                                                 <br>
                                                 <label for="total_minusvalia_jrci_emitido">Total Minusvalía (JRCI) <span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="total_minusvalia_jrci_emitido" id="total_minusvalia_jrci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Total_minusvalia_jrci_emitido)) { echo $arrayinfo_controvertido[0]->Total_minusvalia_jrci_emitido;} ?>">
+                                                <input type="text" class="form-control" name="total_minusvalia_jrci_emitido" id="total_minusvalia_jrci_emitido" value="<?php if(isset($arrayinfo_controvertido[0]->Total_minusvalia_jrci_emitido)) { echo $arrayinfo_controvertido[0]->Total_minusvalia_jrci_emitido;} ?>">
                                             </div>
                                         </div>
                                         @if ($array_control['Servicios'])
@@ -487,7 +491,7 @@
                                             <div class="form-group">
                                                 <br>
                                                 <label for="porcentaje_pcl_jrci_emitido">% PCL (JRCI) <span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="porcentaje_pcl_jrci_emitido" id="porcentaje_pcl_jrci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->Porcentaje_pcl_jrci_emitido)) { echo $arrayinfo_controvertido[0]->Porcentaje_pcl_jrci_emitido;} ?>" readonly>
+                                                <input type="text" class="form-control" name="porcentaje_pcl_jrci_emitido" id="porcentaje_pcl_jrci_emitido" value="<?php if(isset($arrayinfo_controvertido[0]->Porcentaje_pcl_jrci_emitido)) { echo $arrayinfo_controvertido[0]->Porcentaje_pcl_jrci_emitido;} ?>" readonly>
                                             </div>
                                         </div>
                                         <div class="col-4">

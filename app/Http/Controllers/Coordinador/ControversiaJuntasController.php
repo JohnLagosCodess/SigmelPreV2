@@ -42,7 +42,7 @@ class ControversiaJuntasController extends Controller
 
         // Trae informacion de controversia_juntas
         $arrayinfo_controvertido= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_controversia_juntas_eventos as j')
-        ->select('j.ID_evento','j.Enfermedad_heredada','j.F_transferencia_enfermedad','j.Primer_calificador','pa.Nombre_parametro as Calificador'
+        ->select('j.Id_Asignacion_Servicio_Anterior','j.ID_evento','j.Enfermedad_heredada','j.F_transferencia_enfermedad','j.Primer_calificador','pa.Nombre_parametro as Calificador'
         ,'j.Nom_entidad','j.N_dictamen_controvertido','j.N_siniestro','j.F_notifi_afiliado','j.Parte_controvierte_califi','pa2.Nombre_parametro as ParteCalificador','j.Nombre_controvierte_califi',
         'j.N_radicado_entrada_contro','j.Contro_origen','j.Contro_pcl','j.Contro_diagnostico','j.Contro_f_estructura','j.Contro_m_califi',
         'j.F_contro_primer_califi','j.F_contro_radi_califi','j.Termino_contro_califi','j.Jrci_califi_invalidez','sie.Nombre_entidad as JrciNombre',
@@ -223,12 +223,37 @@ class ControversiaJuntasController extends Controller
         //Obtenemos las secciones a mostrar
         $array_control = $this->controlJuntas($Id_evento_juntas, $Id_asignacion_juntas,  $array_datos_controversiaJuntas[0]->Nombre_servicio);
 
+        // Extraemos el id de asignacion con el que fue creado la controversia
+        // En caso de que tenga el dato se procede a analizar si el servicio que tiene asociado ese id asignacion es una calitec, recalificación, revision pension
+        // Si tiene, mandamos una bandera a la vista para inhabilitar el selector manual calificación de la sección Diagnósticos del Dictamen Controvertido
+        if(!empty($arrayinfo_controvertido[0]->Id_Asignacion_Servicio_Anterior)){
+            
+            $id_asignacion_servicio_anterior = $arrayinfo_controvertido[0]->Id_Asignacion_Servicio_Anterior;
+
+            $info_servicio = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            ->select('Id_servicio')
+            ->where([['Id_Asignacion', $id_asignacion_servicio_anterior]])->get();
+
+            if(!empty($info_servicio[0]->Id_servicio)){
+                if($info_servicio[0]->Id_servicio == 6 || $info_servicio[0]->Id_servicio == 7 || $info_servicio[0]->Id_servicio == 8){
+                    $bandera_manual_calificacion = 'desactivar';
+                }else{
+                    $bandera_manual_calificacion = 'activar';
+                }
+            }else{
+                $bandera_manual_calificacion = 'activar';
+            }
+            
+        }else{
+            $bandera_manual_calificacion = 'activar';
+        }
+
         //dd($arrayinfo_controvertido);
         return view('coordinador.controversiaJuntas', compact('user','array_datos_controversiaJuntas','arrayinfo_controvertido',
         'array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci',
         'array_datos_diagnostico_reposi_dictamen_jrci',
         'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 
-        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control'));
+        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion'));
     }
 
         /**

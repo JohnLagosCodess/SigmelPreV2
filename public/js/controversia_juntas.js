@@ -500,6 +500,13 @@ $(document).ready(function(){
         total_minusvalia =$(this).val();
         iniciarIntervalo_pPCL();
     });
+
+    // Ejecutamos la función iniciarIntervalo_pPCL cuando cargue la vista para cuando ya el formulario traiga datos
+    if($("#total_deficiencia").val() != ''){
+        total_deficiencia =$(this).val();
+        iniciarIntervalo_pPCL();
+    };
+
     function iniciarIntervalo_pPCL() {
         intervalo = setInterval(() => {
             // Verificar si alguna de las variables es falsa o indefinida, y establecerlas como cero en ese caso
@@ -516,13 +523,13 @@ $(document).ready(function(){
             }
             if(sumaTotal_pcl=='isNaN'){
                 rango_pcl = '0';
-            }else if(sumaTotal_pcl < "14.99"){
+            }else if(sumaTotal_pcl < 14.99){
                 rango_pcl = 'Entre 1 y 14,99%';
-            } else if (sumaTotal_pcl >= "14.99" && sumaTotal_pcl < "29.99"){
+            } else if (sumaTotal_pcl >= 14.99 && sumaTotal_pcl < 29.99){
                 rango_pcl = 'Entre 15 y 29,99%';
-            } else if (sumaTotal_pcl >= "29.99" && sumaTotal_pcl < "49.99"){
+            } else if (sumaTotal_pcl >= 29.99 && sumaTotal_pcl < 49.99){
                 rango_pcl = 'Entre 30 y 49,99%';
-            } else if (sumaTotal_pcl >= "49.99"){
+            } else if (sumaTotal_pcl >= 49.99){
                 rango_pcl = 'Mayor o igual 50%';
             }else{
                 rango_pcl = '0';
