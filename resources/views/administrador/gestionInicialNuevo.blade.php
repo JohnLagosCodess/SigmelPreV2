@@ -458,7 +458,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row columna_row1_laboral ">
+                                        <div class="row columna_row1_laboral">
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="arl_info_laboral" class="col-form-label">ARL</label>
@@ -474,19 +474,21 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="empresa" class="col-form-label si_nom_empresa">Empresa <span style="color:red;">(*)</span></label>
-                                                    <label for="empresa" class="col-form-label no_nom_empresa d-none">Empresa <span style="color:red;">(*)</span></label>
+                                                    <label for="empresa" class="col-form-label no_nom_empresa d-none">Empresa</label>
                                                     <input type="text" class="empresa form-control" name="empresa" id="empresa" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="nit_cc" class="col-form-label">NIT / CC <span style="color:red;">(*)</span></label>
+                                                    <label for="nit_cc" class="col-form-label si_nom_nitcc">NIT / CC <span style="color:red;">(*)</span></label>
+                                                    <label for="nit_cc" class="col-form-label no_nom_nitcc d-none">NIT / CC</label>
                                                     <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="telefono_empresa" class="col-form-label">Télefono empresa <span style="color:red;">(*)</span></label>
+                                                    <label for="telefono_empresa" class="col-form-label si_nom_tel_empresa">Télefono empresa <span style="color:red;">(*)</span></label>
+                                                    <label for="telefono_empresa" class="col-form-label no_nom_tel_empresa d-none">Télefono empresa</label>
                                                     <input type="text" class="telefono_empresa form-control" name="telefono_empresa" id="telefono_empresa" required>
                                                 </div>
                                             </div>
@@ -494,25 +496,29 @@
                                         <div class="row columna_row2_laboral ">
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="email_info_laboral" class="col-form-label">Email <span style="color:red;">(*)</span></label>
+                                                    <label for="email_info_laboral" class="col-form-label si_nom_email">Email <span style="color:red;">(*)</span></label>
+                                                    <label for="email_info_laboral" class="col-form-label no_nom_email d-none">Email</label>
                                                     <input type="email" class="email_info_laboral form-control" name="email_info_laboral" id="email_info_laboral" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="direccion_info_laboral" class="col-form-label">Dirección <span style="color:red;">(*)</span></label>
+                                                    <label for="direccion_info_laboral" class="col-form-label si_nom_direccion">Dirección <span style="color:red;">(*)</span></label>
+                                                    <label for="direccion_info_laboral" class="col-form-label no_nom_direccion d-none">Dirección</label>
                                                     <input type="text" class="direccion_info_laboral form-control" name="direccion_info_laboral" id="direccion_info_laboral" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
-                                                    <label for="departamento_info_laboral" class="col-form-label">Departamento <span style="color:red;">(*)</span></label>
+                                                    <label for="departamento_info_laboral" class="col-form-label si_nom_departamento">Departamento <span style="color:red;">(*)</span></label>
+                                                    <label for="departamento_info_laboral" class="col-form-label no_nom_departamento d-none">Departamento</label>
                                                     <select class="departamento_info_laboral custom-select" name="departamento_info_laboral" id="departamento_info_laboral" required></select>
                                                 </div>
                                             </div>
                                             <div class="col-sm columna_municipio_info_laboral ">
                                                 <div class="form-group">
-                                                    <label for="municipio_info_laboral" class="col-form-label">Ciudad <span style="color:red;">(*)</span></label>
+                                                    <label for="municipio_info_laboral" class="col-form-label si_nom_ciudad">Ciudad <span style="color:red;">(*)</span></label>
+                                                    <label for="municipio_info_laboral" class="col-form-label no_nom_ciudad d-none">Ciudad</label>
                                                     <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral" disabled required></select>
                                                 </div>
                                             </div>
@@ -657,12 +663,12 @@
                                                     <select class="nombre_solicitante custom-select" name="nombre_solicitante" id="nombre_solicitante" requiered disabled></select>
                                                 </div>
                                             </div>
-                                            <div class="col-4 columna_otro_nombre_solicitante d-none">
+                                            {{-- <div class="col-4 columna_otro_nombre_solicitante d-none">
                                                 <div class="form-group">
                                                     <label for="otro_nombre_solicitante" class="col-form label">Otro Nombre de solicitante</label>
                                                     <input type="text" class="otro_nombre_solicitante form-control" name="otro_nombre_solicitante" id="otro_nombre_solicitante">
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="fuente_informacion" class="col-form label">Fuente de información <span style="color:red;">(*)</span></label>
@@ -908,9 +914,27 @@
         }
     });
 
-    $("#fecha_alerta").on("focus",function(){
-        Validarfecha("#fecha_alerta","<",null,"La fecha debe ser igual o mayor a");
+    $(document).on('keyup change', '#fecha_alerta', function(event){
+
+        var fechaActual = new Date().toISOString().slice(0,10);
+
+        var tipo_handler = event.type;
+        if (tipo_handler == 'keyup' || tipo_handler == 'change') {
+            if ($(this).val() < fechaActual) {
+                // Eliminar cualquier alerta previa
+                if ($(this).next('i').length) {
+                    $(this).next('i').remove();
+                }
+                let alerta = '<i style="color:red;">La fecha debe ser igual o mayor a: '+fechaActual+'</i>';
+                $(this).after(alerta);
+            }else{
+                if ($(this).next('i').length) {
+                    $(this).next('i').remove();
+                }
+            }
+        }
     });
+
     $(function() {
         $("#fecha_ingreso").on("change", function() {
             var fechaEvento = $(this).val();
