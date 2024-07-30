@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Coordinador;
 
 use App\Http\Controllers\Controller;
+use App\Models\cndatos_comunicado_eventos;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -2143,7 +2144,9 @@ class CalificacionJuntasController extends Controller
 
         switch (true) {
             case ($destinatarioPrincipal == 'Afiliado'):                
-                $array_datos_destinatarios = DB::select('CALL psrcomunicados(?,?)', array($newIdEvento,$identificacion_comunicado_afiliado)); 
+                $array_datos_destinatarios = cndatos_comunicado_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$newIdEvento],['Nro_identificacion',$identificacion_comunicado_afiliado]])
+                ->limit(1)->get(); 
                 $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
@@ -2164,7 +2167,9 @@ class CalificacionJuntasController extends Controller
                 ]);
             break;
             case ($destinatarioPrincipal == 'Empresa'):                
-                $array_datos_destinatarios = DB::select('CALL psrcomunicados(?,?)', array($newIdEvento,$identificacion_comunicado_afiliado)); 
+                $array_datos_destinatarios = cndatos_comunicado_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$newIdEvento],['Nro_identificacion',$identificacion_comunicado_afiliado]])
+                ->limit(1)->get(); 
                 $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')

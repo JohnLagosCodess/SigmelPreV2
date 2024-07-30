@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\File;
 
 use App\Models\cndatos_bandeja_eventos;
+use App\Models\cndatos_comunicado_eventos;
 use App\Models\sigmel_lista_parametros;
 use App\Models\sigmel_informacion_accion_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
@@ -101,7 +102,9 @@ class CalificacionPCLController extends Controller
         }
         $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newIdAsignacion));
         $Nro_ident_afiliado = $array_datos_calificacionPcl[0]->Nro_identificacion;
-        $array_datos_destinatarios = DB::select('CALL psrcomunicados(?,?)', array($newIdEvento,$Nro_ident_afiliado));
+        $array_datos_destinatarios = cndatos_comunicado_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$newIdEvento],['Nro_identificacion',$Nro_ident_afiliado]])
+        ->limit(1)->get();
         
         //Consulta Vista a mostrar
         $TraeVista= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_lista_procesos_servicios as p')
@@ -2123,7 +2126,9 @@ class CalificacionPCLController extends Controller
 
         switch (true) {
             case ($destinatarioPrincipal == 'Afiliado'):                
-                $array_datos_destinatarios = DB::select('CALL psrcomunicados(?,?)', array($newIdEvento,$identificacion_comunicado_afiliado)); 
+                $array_datos_destinatarios = cndatos_comunicado_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$newIdEvento],['Nro_identificacion',$identificacion_comunicado_afiliado]])
+                ->limit(1)->get(); 
                 $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
@@ -2144,7 +2149,9 @@ class CalificacionPCLController extends Controller
                 ]);
             break;
             case ($destinatarioPrincipal == 'Empresa'):                
-                $array_datos_destinatarios = DB::select('CALL psrcomunicados(?,?)', array($newIdEvento,$identificacion_comunicado_afiliado)); 
+                $array_datos_destinatarios = cndatos_comunicado_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$newIdEvento],['Nro_identificacion',$identificacion_comunicado_afiliado]])
+                ->limit(1)->get();  
                 $array_datos_lider =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_grupos_trabajos as sgt')
                 ->leftJoin('sigmel_sys.users as ssu', 'ssu.id', '=', 'sgt.lider')
                 ->select('ssu.id', 'ssu.name', 'sgt.Id_proceso_equipo')
