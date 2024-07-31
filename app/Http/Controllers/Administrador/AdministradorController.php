@@ -3526,6 +3526,9 @@ class AdministradorController extends Controller
         //     break;
         // }
         
+        // Si es Arl o Afp o Eps el id de solicitante y nombre solicitante son correspondiente a la entidad respectivamente
+        // Si es Afiliado o Pensionado o Rama Judicial el id del solicitante será null y el nombre del solicitante serás el q venga con el input
+        // En caso de que esos campos sean vacíos todo será null
         if ($request->solicitante == 1 || $request->solicitante == 2 || $request->solicitante == 3) {
             $id_nombre_solicitante = $request->nombre_solicitante;
             $nombre_entidad = sigmel_informacion_entidades::on('sigmel_gestiones')
@@ -4402,6 +4405,9 @@ class AdministradorController extends Controller
 
         /* Actualizacion tabla sigmel_informacion_pericial_eventos */
 
+        // Si es Arl o Afp o Eps el id de solicitante y nombre solicitante son correspondiente a la entidad respectivamente
+        // Si es Afiliado o Pensionado o Rama Judicial el id del solicitante será null y el nombre del solicitante serás el q venga con el input
+        // En caso de que esos campos sean vacíos todo será null
         if ($request->solicitante == 1 || $request->solicitante == 2 || $request->solicitante == 3) {
             $id_nombre_solicitante = $request->nombre_solicitante;
             $nombre_entidad = sigmel_informacion_entidades::on('sigmel_gestiones')

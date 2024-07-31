@@ -650,217 +650,237 @@
                                             <?php endif?>
                                         </div> 
                                         <input type="hidden" class="form-control" name="t_laboral" id="t_laboral" value="{{$radio}}">
-                                        <div class="row  columna_row1_laboral"  <?php if ($radio == 'Empleado actual' || $radio == 'Independiente'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
-                                            <div class="row">
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <label for="arl_info_laboral" class="col-form-label">ARL</label>
-                                                        <select class="arl_info_laboral custom-select" name="arl_info_laboral" id="arl_info_laboral">
-                                                            <option value="{{$array_datos_info_laboral[0]->Id_arl}}">{{$array_datos_info_laboral[0]->Nombre_arl}}</option>
-                                                        </select>
-                                                    </div>
+                                        <div class="row  columna_row1_laboral"  <?php if ($radio == 'Empleado actual' || $radio == 'Independiente'): ?> style="display:flex" <?php else: ?>  style="display:none" <?php endif?>>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="arl_info_laboral" class="col-form-label">ARL</label>
+                                                    <select class="arl_info_laboral custom-select" name="arl_info_laboral" id="arl_info_laboral">
+                                                        <option value="{{$array_datos_info_laboral[0]->Id_arl}}">{{$array_datos_info_laboral[0]->Nombre_arl}}</option>
+                                                    </select>
                                                 </div>
-                                                <div class="col-sm otro_arl_info_laboral d-none">
-                                                    <div class="form-group">
-                                                        <label for="otra_arl_info_laboral" class="col-form-label">Otra ARL</label>
-                                                        <input type="text" class="otra_arl_info_laboral form-control" name="otra_arl_info_laboral" id="otra_arl_info_laboral">
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm otro_arl_info_laboral d-none">
+                                                <div class="form-group">
+                                                    <label for="otra_arl_info_laboral" class="col-form-label">Otra ARL</label>
+                                                    <input type="text" class="otra_arl_info_laboral form-control" name="otra_arl_info_laboral" id="otra_arl_info_laboral">
                                                 </div>
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <?php if ($radio == 'Empleado actual' || $radio == 'Independiente'): ?>
-                                                            <label for="empresa" class="col-form-label si_nom_empresa">Empresa <span style="color:red;">(*)</span></label>
-                                                            <label for="empresa" class="col-form-label no_nom_empresa d-none">Empresa <span style="color:red;">(*)</span></label>
-                                                            <input type="text" class="empresa form-control" name="empresa" id="empresa"  value="{{$array_datos_info_laboral[0]->Empresa}}" required>
-                                                        <?php else: ?>
-                                                            <label for="empresa" class="col-form-label si_nom_empresa">Empresa</label>
-                                                            <label for="empresa" class="col-form-label no_nom_empresa d-none">Empresa></label>
-                                                            <input type="text" class="empresa form-control" name="empresa" id="empresa"  value="{{$array_datos_info_laboral[0]->Empresa}}">
-                                                        <?php endif?>
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <?php if ($radio == 'Empleado actual'): ?>
+                                                        <label for="empresa" class="col-form-label si_nom_empresa">Empresa <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="empresa form-control" name="empresa" id="empresa"  value="{{$array_datos_info_laboral[0]->Empresa}}" required>
+                                                    <?php elseif($radio == 'Independiente'): ?>
+                                                        <label for="empresa" class="col-form-label no_nom_empresa">Empresa</label>
+                                                        <input type="text" class="empresa form-control" name="empresa" id="empresa"  value="{{$array_datos_info_laboral[0]->Empresa}}">
+                                                    <?php else: ?>
+                                                        <label for="empresa" class="col-form-label si_nom_empresa">Empresa <span style="color:red;">(*)</span></label>
+                                                        <label for="empresa" class="col-form-label no_nom_empresa d-none">Empresa</label>
+                                                        <input type="text" class="empresa form-control" name="empresa" id="empresa"  value="{{$array_datos_info_laboral[0]->Empresa}}">
+                                                    <?php endif?>
                                                 </div>
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <?php if ($radio == 'Empleado actual' || $radio == 'Independiente'): ?>
-                                                            <label for="nit_cc" class="col-form-label">NIT / CC <span style="color:red;">(*)</span></label>
-                                                            <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc"  value="{{$array_datos_info_laboral[0]->Nit_o_cc}}" required>
-                                                        <?php else: ?>
-                                                            <label for="nit_cc" class="col-form-label">NIT / CC</label>
-                                                            <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc"  value="{{$array_datos_info_laboral[0]->Nit_o_cc}}">
-                                                        <?php endif?>
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <?php if ($radio == 'Empleado actual'): ?>
+                                                        <label for="nit_cc" class="col-form-label si_nom_nitcc">NIT / CC <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc"  value="{{$array_datos_info_laboral[0]->Nit_o_cc}}" required>
+                                                    <?php elseif($radio == 'Independiente'): ?>
+                                                        <label for="nit_cc" class="col-form-label no_nom_nitcc">NIT / CC</label>
+                                                        <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc"  value="{{$array_datos_info_laboral[0]->Nit_o_cc}}">
+                                                    <?php else: ?>
+                                                        <label for="nit_cc" class="col-form-label si_nom_nitcc">NIT / CC <span style="color:red;">(*)</span></label>
+                                                        <label for="nit_cc" class="col-form-label no_nom_nitcc d-none">NIT / CC</label>
+                                                        <input type="text" class="nit_cc form-control" name="nit_cc" id="nit_cc"  value="{{$array_datos_info_laboral[0]->Nit_o_cc}}">
+                                                    <?php endif?>
                                                 </div>
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <?php if ($radio == 'Empleado actual' || $radio == 'Independiente'): ?>
-                                                            <label for="telefono_empresa" class="col-form-label">Télefono empresa <span style="color:red;">(*)</span></label>
-                                                            <input type="text" class="telefono_empresa form-control" name="telefono_empresa" id="telefono_empresa" value="{{$array_datos_info_laboral[0]->Telefono_empresa}}" required>
-                                                        <?php else: ?>
-                                                            <label for="telefono_empresa" class="col-form-label">Télefono empresa</label>
-                                                            <input type="text" class="telefono_empresa form-control" name="telefono_empresa" id="telefono_empresa" value="{{$array_datos_info_laboral[0]->Telefono_empresa}}">
-                                                        <?php endif?>
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <?php if ($radio == 'Empleado actual'): ?>
+                                                        <label for="telefono_empresa" class="col-form-label si_nom_tel_empresa">Télefono empresa <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="telefono_empresa form-control" name="telefono_empresa" id="telefono_empresa" value="{{$array_datos_info_laboral[0]->Telefono_empresa}}" required>
+                                                    <?php elseif($radio == 'Independiente'):?>
+                                                        <label for="telefono_empresa" class="col-form-label no_nom_tel_empresa">Télefono empresa</label>
+                                                        <input type="text" class="telefono_empresa form-control" name="telefono_empresa" id="telefono_empresa" value="{{$array_datos_info_laboral[0]->Telefono_empresa}}">
+                                                    <?php else: ?>
+                                                        <label for="telefono_empresa" class="col-form-label si_nom_tel_empresa">Télefono empresa <span style="color:red;">(*)</span></label>
+                                                        <label for="telefono_empresa" class="col-form-label no_nom_tel_empresa d-none">Télefono empresa</label>
+                                                        <input type="text" class="telefono_empresa form-control" name="telefono_empresa" id="telefono_empresa" value="{{$array_datos_info_laboral[0]->Telefono_empresa}}">
+                                                    <?php endif?>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row columna_row2_laboral" <?php if ($radio == 'Empleado actual'  || $radio == 'Independiente'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
-                                            <div class="row">
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <?php if ($radio == 'Empleado actual' || $radio == 'Independiente'): ?>
-                                                            <label for="email_info_laboral" class="col-form-label">Email <span style="color:red;">(*)</span></label>
-                                                            <input type="email" class="email_info_laboral form-control" name="email_info_laboral" id="email_info_laboral" value="{{$array_datos_info_laboral[0]->Email}}" required>
-                                                        <?php else: ?>
-                                                            <label for="email_info_laboral" class="col-form-label">Email</label>
-                                                            <input type="email" class="email_info_laboral form-control" name="email_info_laboral" id="email_info_laboral" value="{{$array_datos_info_laboral[0]->Email}}">
-                                                        <?php endif?>
-                                                    </div>
+                                        <div class="row columna_row2_laboral" <?php if ($radio == 'Empleado actual'  || $radio == 'Independiente'): ?> style="display:flex" <?php else: ?>  style="display:none" <?php endif?>>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <?php if ($radio == 'Empleado actual'): ?>
+                                                        <label for="email_info_laboral" class="col-form-label si_nom_email">Email <span style="color:red;">(*)</span></label>
+                                                        <input type="email" class="email_info_laboral form-control" name="email_info_laboral" id="email_info_laboral" value="{{$array_datos_info_laboral[0]->Email}}" required>
+                                                    <?php elseif($radio == 'Independiente'):?>
+                                                        <label for="email_info_laboral" class="col-form-label no_nom_email">Email</label>
+                                                        <input type="email" class="email_info_laboral form-control" name="email_info_laboral" id="email_info_laboral" value="{{$array_datos_info_laboral[0]->Email}}">
+                                                    <?php else: ?>
+                                                        <label for="email_info_laboral" class="col-form-label si_nom_email">Email <span style="color:red;">(*)</span></label>
+                                                        <label for="email_info_laboral" class="col-form-label no_nom_email d-none">Email</label>
+                                                        <input type="email" class="email_info_laboral form-control" name="email_info_laboral" id="email_info_laboral" value="{{$array_datos_info_laboral[0]->Email}}">
+                                                    <?php endif?>
                                                 </div>
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <?php if ($radio == 'Empleado actual' || $radio == 'Independiente'): ?>
-                                                            <label for="direccion_info_laboral" class="col-form-label">Dirección <span style="color:red;">(*)</span></label>
-                                                            <input type="text" class="direccion_info_laboral form-control" name="direccion_info_laboral" id="direccion_info_laboral" value="{{$array_datos_info_laboral[0]->Direccion}}" required>
-                                                        <?php else: ?>
-                                                            <label for="direccion_info_laboral" class="col-form-label">Dirección</label>
-                                                            <input type="text" class="direccion_info_laboral form-control" name="direccion_info_laboral" id="direccion_info_laboral" value="{{$array_datos_info_laboral[0]->Direccion}}">
-                                                        <?php endif?>
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <?php if ($radio == 'Empleado actual'): ?>
+                                                        <label for="direccion_info_laboral" class="col-form-label si_nom_direccion">Dirección <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="direccion_info_laboral form-control" name="direccion_info_laboral" id="direccion_info_laboral" value="{{$array_datos_info_laboral[0]->Direccion}}" required>
+                                                    <?php elseif($radio == 'Independiente'):?>
+                                                        <label for="direccion_info_laboral" class="col-form-label no_nom_direccion">Dirección</label>
+                                                        <input type="text" class="direccion_info_laboral form-control" name="direccion_info_laboral" id="direccion_info_laboral" value="{{$array_datos_info_laboral[0]->Direccion}}">
+                                                    <?php else: ?>
+                                                        <label for="direccion_info_laboral" class="col-form-label si_nom_direccion">Dirección <span style="color:red;">(*)</span></label>
+                                                        <label for="direccion_info_laboral" class="col-form-label no_nom_direccion d-none">Dirección</label>
+                                                        <input type="text" class="direccion_info_laboral form-control" name="direccion_info_laboral" id="direccion_info_laboral" value="{{$array_datos_info_laboral[0]->Direccion}}">
+                                                    <?php endif?>
                                                 </div>
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <?php if ($radio == 'Empleado actual' || $radio == 'Independiente'): ?>
-                                                            <label for="departamento_info_laboral" class="col-form-label">Departamento <span style="color:red;">(*)</span></label>
-                                                            <select class="departamento_info_laboral custom-select" name="departamento_info_laboral" id="departamento_info_laboral" required>
-                                                                <option value="{{$array_datos_info_laboral[0]->Id_departamento}}">{{$array_datos_info_laboral[0]->Nombre_departamento}}</option>
-                                                            </select>
-                                                        <?php else: ?>
-                                                            <label for="departamento_info_laboral" class="col-form-label">Departamento</label>
-                                                            <select class="departamento_info_laboral custom-select" name="departamento_info_laboral" id="departamento_info_laboral">
-                                                                <option value="{{$array_datos_info_laboral[0]->Id_departamento}}">{{$array_datos_info_laboral[0]->Nombre_departamento}}</option>
-                                                            </select>
-                                                        <?php endif?>
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <?php if ($radio == 'Empleado actual'): ?>
+                                                        <label for="departamento_info_laboral" class="col-form-label si_nom_departamento">Departamento <span style="color:red;">(*)</span></label>
+                                                        <select class="departamento_info_laboral custom-select" name="departamento_info_laboral" id="departamento_info_laboral" required>
+                                                            <option value="{{$array_datos_info_laboral[0]->Id_departamento}}">{{$array_datos_info_laboral[0]->Nombre_departamento}}</option>
+                                                        </select>
+                                                    <?php elseif($radio == 'Independiente'):?>
+                                                        <label for="departamento_info_laboral" class="col-form-label no_nom_departamento">Departamento</label>
+                                                        <select class="departamento_info_laboral custom-select" name="departamento_info_laboral" id="departamento_info_laboral">
+                                                            <option value="{{$array_datos_info_laboral[0]->Id_departamento}}">{{$array_datos_info_laboral[0]->Nombre_departamento}}</option>
+                                                        </select>
+                                                    <?php else: ?>
+                                                        <label for="departamento_info_laboral" class="col-form-label si_nom_departamento">Departamento <span style="color:red;">(*)</span></label>
+                                                        <label for="departamento_info_laboral" class="col-form-label no_nom_departamento d-none">Departamento</label>
+                                                        <select class="departamento_info_laboral custom-select" name="departamento_info_laboral" id="departamento_info_laboral">
+                                                            <option value="{{$array_datos_info_laboral[0]->Id_departamento}}">{{$array_datos_info_laboral[0]->Nombre_departamento}}</option>
+                                                        </select>
+                                                    <?php endif?>
                                                 </div>
-                                                <div class="col-sm columna_municipio_info_laboral">
-                                                    <div class="form-group">
-                                                        <?php if ($radio == 'Empleado actual' || $radio == 'Independiente'): ?>
-                                                            <label for="municipio_info_laboral" class="col-form-label">Ciudad <span style="color:red;">(*)</span></label>
-                                                            <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral" required>
-                                                                <option value="{{$array_datos_info_laboral[0]->Id_municipio}}">{{$array_datos_info_laboral[0]->Nombre_municipio}}</option>
-                                                            </select>
-                                                        <?php else: ?>
-                                                            <label for="municipio_info_laboral" class="col-form-label">Ciudad</label>
-                                                            <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral">
-                                                                <option value="{{$array_datos_info_laboral[0]->Id_municipio}}">{{$array_datos_info_laboral[0]->Nombre_municipio}}</option>
-                                                            </select>
-                                                        <?php endif?>
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm columna_municipio_info_laboral">
+                                                <div class="form-group">
+                                                    <?php if ($radio == 'Empleado actual'): ?>
+                                                        <label for="municipio_info_laboral" class="col-form-label si_nom_ciudad">Ciudad <span style="color:red;">(*)</span></label>
+                                                        <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral" required>
+                                                            <option value="{{$array_datos_info_laboral[0]->Id_municipio}}">{{$array_datos_info_laboral[0]->Nombre_municipio}}</option>
+                                                        </select>
+                                                    <?php elseif($radio == 'Independiente'):?>
+                                                        <label for="municipio_info_laboral" class="col-form-label no_nom_ciudad">Ciudad</label>
+                                                        <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral">
+                                                            <option value="{{$array_datos_info_laboral[0]->Id_municipio}}">{{$array_datos_info_laboral[0]->Nombre_municipio}}</option>
+                                                        </select>
+                                                    <?php else: ?>
+                                                        <label for="municipio_info_laboral" class="col-form-label si_nom_ciudad">Ciudad <span style="color:red;">(*)</span></label>
+                                                        <label for="municipio_info_laboral" class="col-form-label no_nom_ciudad d-none">Ciudad</label>
+                                                        <select class="municipio_info_laboral custom-select" name="municipio_info_laboral" id="municipio_info_laboral">
+                                                            <option value="{{$array_datos_info_laboral[0]->Id_municipio}}">{{$array_datos_info_laboral[0]->Nombre_municipio}}</option>
+                                                        </select>
+                                                    <?php endif?>
                                                 </div>
-                                                <div class="col-sm columna_pais_exterior_info_laboral d-none">
-                                                    <div class="form-group">
-                                                        <label for="pais_exterior_info_laboral" class="col-form-label">País Exterior</label>
-                                                        <input type="text" class="pais_exterior_info_laboral form-control" name="pais_exterior_info_laboral" id="pais_exterior_info_laboral">
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm columna_pais_exterior_info_laboral d-none">
+                                                <div class="form-group">
+                                                    <label for="pais_exterior_info_laboral" class="col-form-label">País Exterior</label>
+                                                    <input type="text" class="pais_exterior_info_laboral form-control" name="pais_exterior_info_laboral" id="pais_exterior_info_laboral">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row columna_row3_laboral" <?php if ($radio == 'Empleado actual'  || $radio == 'Independiente'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
-                                            <div class="row">
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <label for="actividad_economica" class="col-form-label">Actividad económica</label>
-                                                        <select class="actividad_economica custom-select" name="actividad_economica" id="actividad_economica">
-                                                            <option value="{{$array_datos_info_laboral[0]->Id_actividad_economica}}">{{$array_datos_info_laboral[0]->Nombre_actividad}}</option>
-                                                        </select>
-                                                    </div>
+                                        <div class="row columna_row3_laboral" <?php if ($radio == 'Empleado actual'  || $radio == 'Independiente'): ?> style="display:flex" <?php else: ?>  style="display:none" <?php endif?>>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="actividad_economica" class="col-form-label">Actividad económica</label>
+                                                    <select class="actividad_economica custom-select" name="actividad_economica" id="actividad_economica">
+                                                        <option value="{{$array_datos_info_laboral[0]->Id_actividad_economica}}">{{$array_datos_info_laboral[0]->Nombre_actividad}}</option>
+                                                    </select>
                                                 </div>
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <label for="clase_riesgo" class="col-form-label">Clase / Riesgo</label>
-                                                        <select class="clase_riesgo custom-select" name="clase_riesgo" id="clase_riesgo">
-                                                            <option value="{{$array_datos_info_laboral[0]->Id_clase_riesgo}}">{{$array_datos_info_laboral[0]->Nombre_riesgo}}</option>
-                                                        </select>
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="clase_riesgo" class="col-form-label">Clase / Riesgo</label>
+                                                    <select class="clase_riesgo custom-select" name="clase_riesgo" id="clase_riesgo">
+                                                        <option value="{{$array_datos_info_laboral[0]->Id_clase_riesgo}}">{{$array_datos_info_laboral[0]->Nombre_riesgo}}</option>
+                                                    </select>
                                                 </div>
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <label for="persona_contacto" class="col-form-label">Persona de contacto</label>
-                                                        <input type="text" class="persona_contacto form-control" name="persona_contacto" id="persona_contacto" value="{{$array_datos_info_laboral[0]->Persona_contacto}}">
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="persona_contacto" class="col-form-label">Persona de contacto</label>
+                                                    <input type="text" class="persona_contacto form-control" name="persona_contacto" id="persona_contacto" value="{{$array_datos_info_laboral[0]->Persona_contacto}}">
                                                 </div>
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <label for="telefono_persona_contacto" class="col-form-label">Teléfono persona contacto</label>
-                                                        <input type="text" class="telefono_persona_contacto form-control" name="telefono_persona_contacto" id="telefono_persona_contacto" value="{{$array_datos_info_laboral[0]->Telefono_persona_contacto}}">
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="telefono_persona_contacto" class="col-form-label">Teléfono persona contacto</label>
+                                                    <input type="text" class="telefono_persona_contacto form-control" name="telefono_persona_contacto" id="telefono_persona_contacto" value="{{$array_datos_info_laboral[0]->Telefono_persona_contacto}}">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row columna_row4_laboral" <?php if ($radio == 'Empleado actual' || $radio == 'Independiente'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
-                                            <div class="row">
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <label for="codigo_ciuo" class="col-form-label">Código CIUO</label>
-                                                        <select class="codigo_ciuo custom-select" name="codigo_ciuo" id="codigo_ciuo">
-                                                            <option value="{{$array_datos_info_laboral[0]->Id_codigo_ciuo}}">{{$array_datos_info_laboral[0]->Nombre_ciuo}}</option>
-                                                        </select>
-                                                    </div>
+                                        <div class="row columna_row4_laboral" <?php if ($radio == 'Empleado actual' || $radio == 'Independiente'): ?> style="display:flex" <?php else: ?>  style="display:none" <?php endif?>>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="codigo_ciuo" class="col-form-label">Código CIUO</label>
+                                                    <select class="codigo_ciuo custom-select" name="codigo_ciuo" id="codigo_ciuo">
+                                                        <option value="{{$array_datos_info_laboral[0]->Id_codigo_ciuo}}">{{$array_datos_info_laboral[0]->Nombre_ciuo}}</option>
+                                                    </select>
                                                 </div>
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <label for="fecha_ingreso" class="col-form-label">Fecha de ingreso</label>
-                                                        <input type="date" class="fecha_ingreso form-control" name="fecha_ingreso" id="fecha_ingreso" value="{{$array_datos_info_laboral[0]->F_ingreso}}" max="{{date("Y-m-d")}}">
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="fecha_ingreso" class="col-form-label">Fecha de ingreso</label>
+                                                    <input type="date" class="fecha_ingreso form-control" name="fecha_ingreso" id="fecha_ingreso" value="{{$array_datos_info_laboral[0]->F_ingreso}}" max="{{date("Y-m-d")}}">
                                                 </div>
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <label for="cargo" class="col-form-label">Cargo</label>
-                                                        <input type="text" class="cargo form-control" name="cargo" id="cargo" value="{{$array_datos_info_laboral[0]->Cargo}}" >
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="cargo" class="col-form-label">Cargo</label>
+                                                    <input type="text" class="cargo form-control" name="cargo" id="cargo" value="{{$array_datos_info_laboral[0]->Cargo}}" >
                                                 </div>
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <label for="funciones_cargo" class="col-form-label">Funciones del cargo</label>
-                                                        <textarea class="funciones_cargo form-control" name="funciones_cargo" id="funciones_cargo" rows="2">{{$array_datos_info_laboral[0]->Funciones_cargo}} </textarea>
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="funciones_cargo" class="col-form-label">Funciones del cargo</label>
+                                                    <textarea class="funciones_cargo form-control" name="funciones_cargo" id="funciones_cargo" rows="2">{{$array_datos_info_laboral[0]->Funciones_cargo}} </textarea>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row columna_row5_laboral" <?php if ($radio == 'Empleado actual' || $radio == 'Independiente'): ?> style="display:block" <?php else: ?>  style="display:none" <?php endif?>>
-                                            <div class="row">
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <label for="antiguedad_empresa" class="col-form-label">Antiguedad en empresa (Meses)</label>
-                                                        <input type="number" class="antiguedad_empresa form-control" name="antiguedad_empresa" id="antiguedad_empresa" value="{{$array_datos_info_laboral[0]->Antiguedad_empresa}}">
-                                                    </div>
+                                        <div class="row columna_row5_laboral" <?php if ($radio == 'Empleado actual' || $radio == 'Independiente'): ?> style="display:flex" <?php else: ?>  style="display:none" <?php endif?>>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="antiguedad_empresa" class="col-form-label">Antiguedad en empresa (Meses)</label>
+                                                    <input type="number" class="antiguedad_empresa form-control" name="antiguedad_empresa" id="antiguedad_empresa" value="{{$array_datos_info_laboral[0]->Antiguedad_empresa}}">
                                                 </div>
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <label for="antiguedad_cargo" class="col-form-label">Antiguedad en el cargo (Meses)</label>
-                                                        <input type="number" class="antiguedad_cargo form-control" name="antiguedad_cargo" id="antiguedad_cargo" value="{{$array_datos_info_laboral[0]->Antiguedad_cargo_empresa}}">
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="antiguedad_cargo" class="col-form-label">Antiguedad en el cargo (Meses)</label>
+                                                    <input type="number" class="antiguedad_cargo form-control" name="antiguedad_cargo" id="antiguedad_cargo" value="{{$array_datos_info_laboral[0]->Antiguedad_cargo_empresa}}">
                                                 </div>
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <label for="fecha_retiro" class="col-form-label">Fecha de retiro</label>
-                                                        <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro" value="{{$array_datos_info_laboral[0]->F_retiro}}">
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="fecha_retiro" class="col-form-label">Fecha de retiro</label>
+                                                    <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro" value="{{$array_datos_info_laboral[0]->F_retiro}}">
                                                 </div>
-                                                <div class="col-sm">
-                                                    <div class="form-group">
-                                                        <label for="medio_notificacion_laboral" class="col-form-label si_medio_noti">Medio de Notificación <span style="color:red;">(*)</span></label>
-                                                        <label for="medio_notificacion_laboral" class="col-form-label no_medio_noti d-none">Medio de Notificación</label>
-                                                        <select class="medio_notificacion_laboral custom-select" name="medio_notificacion_laboral" id="medio_notificacion_laboral">
-                                                            <option value="{{$array_datos_info_laboral[0]->Medio_notificacion}}">{{$array_datos_info_laboral[0]->Medio_notificacion}}</option>
-                                                        </select>
-                                                    </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="medio_notificacion_laboral" class="col-form-label si_medio_noti">Medio de Notificación <span style="color:red;">(*)</span></label>
+                                                    <label for="medio_notificacion_laboral" class="col-form-label no_medio_noti d-none">Medio de Notificación</label>
+                                                    <select class="medio_notificacion_laboral custom-select" name="medio_notificacion_laboral" id="medio_notificacion_laboral">
+                                                        <option value="{{$array_datos_info_laboral[0]->Medio_notificacion}}">{{$array_datos_info_laboral[0]->Medio_notificacion}}</option>
+                                                    </select>
                                                 </div>
-                                                <div class="col-12">
-                                                    <div class="form-group">
-                                                        <label for="descripcion" class="col-form-label">Descripción</label>
-                                                        <textarea class="descripcion form-control" name="descripcion" id="descripcion" rows="2">{{$array_datos_info_laboral[0]->Descripcion}}</textarea>
-                                                    </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="descripcion" class="col-form-label">Descripción</label>
+                                                    <textarea class="descripcion form-control" name="descripcion" id="descripcion" rows="2">{{$array_datos_info_laboral[0]->Descripcion}}</textarea>
                                                 </div>
                                             </div>
                                         </div>

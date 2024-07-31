@@ -898,7 +898,7 @@ $(document).ready(function(){
             success:function(data) {
                 // console.log(data);
                 $('#nombre_solicitante').empty();
-                $('#nombre_solicitante').append('<option value="" selected>Seleccione</option>');
+                $('#nombre_solicitante').append('<option value="">Seleccione</option>');
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
                     $('#nombre_solicitante').append('<option value="'+data[claves[i]]["Id_Nombre_solicitante"]+'">'+data[claves[i]]["Nombre_solicitante"]+'</option>');
@@ -1320,40 +1320,46 @@ $(document).ready(function(){
         }
     });
 
-    /* Validación opción OTRO/¿Cuál? del selector Solicitante  */
+    /* Validación del selector Solicitante  */
     $('#solicitante').change(function (){
         let opt_otro_solicitante = $("#solicitante option:selected").text();
+
+        // si la opcion es rama judicial muestra el input vacío Nombre solicitante y al selector se le quita el required
+        // si la opcion es Afiliado o Pensionado muestra el input Nombre solicitante con el nombre del afiliado y al selector se le quita el required
+        // Si la opcion es Arl o Afp Eps muestra el selector Nombre solicitante y se le adiciond el required
         if (opt_otro_solicitante === "Rama Judicial") {
             $(".columna_otro_solicitante").removeClass('d-none');
             $(".columna_otro_solicitante").slideDown('slow');
             $(".otro_solicitante").val('');   
             $(".columna_nombre_solicitante").slideUp('slow');
-            $(".columna_otro_nombre_solicitante").slideUp('slow');
+            // $(".columna_otro_nombre_solicitante").slideUp('slow');
+            $("#nombre_solicitante").prop('required', false);
         } else if (opt_otro_solicitante === "Afiliado" || opt_otro_solicitante === "Pensionado") {
             let nombre_afiliado_solicitante = $("#nombre_afiliado").val();
             $(".columna_otro_solicitante").removeClass('d-none');
             $(".columna_otro_solicitante").slideDown('slow');
             $(".otro_solicitante").val(nombre_afiliado_solicitante); 
             $(".columna_nombre_solicitante").slideUp('slow');
-            $(".columna_otro_nombre_solicitante").slideUp('slow');
+            // $(".columna_otro_nombre_solicitante").slideUp('slow');
+            $("#nombre_solicitante").prop('required', false);
         }        
         else {
             $(".columna_otro_solicitante").slideUp('slow');
             $(".columna_nombre_solicitante").slideDown('slow');
-
+            $("#nombre_solicitante").prop('required', true);
         }        
     });
 
     /* Validación opción OTRO/¿Cuál? del selector Nombre Solicitante  */
-    $('#nombre_solicitante').change(function (){
-        let opt_otro_nombre_solicitante = $("#nombre_solicitante option:selected").text();
-        if (opt_otro_nombre_solicitante === "Rama Judicial") {
-            $(".columna_otro_nombre_solicitante").removeClass('d-none');
-            $(".columna_otro_nombre_solicitante").slideDown('slow');
-        } else {
-            $(".columna_otro_nombre_solicitante").slideUp('slow');
-        }
-    });
+    // $('#nombre_solicitante').change(function (){
+    //     let opt_otro_nombre_solicitante = $("#nombre_solicitante option:selected").text();
+    //     if (opt_otro_nombre_solicitante === "Rama Judicial") {
+    //         $(".columna_otro_nombre_solicitante").removeClass('d-none');
+    //         $(".columna_otro_nombre_solicitante").slideDown('slow');
+    //     } else {
+    //         $(".columna_otro_nombre_solicitante").slideUp('slow');
+    //     }
+    // });
 
     /* Validación opción OTRO/¿Cuál? del selector Fuente de informacion  */
     $('#fuente_informacion').change(function (){
@@ -1805,13 +1811,34 @@ $(document).ready(function(){
             $(".columna_row3_laboral").slideDown('slow');
             $(".columna_row4_laboral").slideDown('slow');
             $(".columna_row5_laboral").slideDown('slow');
-            document.getElementById('empresa').required = false;
-            document.getElementById('medio_notificacion_laboral').required = false;
-            document.getElementById('nit_cc').required = false;
-            $(".no_nom_empresa").addClass('d-none');
+            
+            /* Le adicionamos la propiedad required a los siguientes campos */
+            $('#empresa').prop('required',true);
+            $('#nit_cc').prop('required',true);
+            $('#telefono_empresa').prop('required',true);
+            $('#email_info_laboral').prop('required',true);
+            $('#direccion_info_laboral').prop('required',true);
+            $('#departamento_info_laboral').prop('required',true);
+            $('#municipio_info_laboral').prop('required',true);
+            
+            /* Mostrarmos el span de obligatoriedad */
             $(".si_nom_empresa").removeClass('d-none');
-            $(".no_medio_noti").addClass('d-none');
-            $(".si_medio_noti").removeClass('d-none');
+            $(".no_nom_empresa").addClass('d-none');
+            $(".si_nom_nitcc").removeClass('d-none');
+            $(".no_nom_nitcc").addClass('d-none');
+            $(".si_nom_tel_empresa").removeClass('d-none');
+            $(".no_nom_tel_empresa").addClass('d-none');
+            $(".si_nom_email").removeClass('d-none');
+            $(".no_nom_email").addClass('d-none');
+            $(".si_nom_direccion").removeClass('d-none');
+            $(".no_nom_direccion").addClass('d-none');
+            $(".si_nom_departamento").removeClass('d-none');
+            $(".no_nom_departamento").addClass('d-none');
+            $(".si_nom_ciudad").removeClass('d-none');
+            $(".no_nom_ciudad").addClass('d-none');
+
+            // $(".no_medio_noti").addClass('d-none');
+            // $(".si_medio_noti").removeClass('d-none');
         }
     }); 
 
@@ -1823,13 +1850,31 @@ $(document).ready(function(){
             $(".columna_row3_laboral").slideDown('slow');
             $(".columna_row4_laboral").slideDown('slow');
             $(".columna_row5_laboral").slideDown('slow');
-            document.getElementById('empresa').required = false;
-            document.getElementById('nit_cc').required = false;
-            document.getElementById('medio_notificacion_laboral').required = false;
+            
+            /* Le quitamos la propiedad required a los siguientes campos */
+            $('#empresa').prop('required',false);
+            $('#nit_cc').prop('required',false);
+            $('#telefono_empresa').prop('required',false);
+            $('#email_info_laboral').prop('required',false);
+            $('#direccion_info_laboral').prop('required',false);
+            $('#departamento_info_laboral').prop('required',false);
+            $('#municipio_info_laboral').prop('required',false);
+
+            /* Quitamos el span de obligatoriedad */
             $(".si_nom_empresa").addClass('d-none');
             $(".no_nom_empresa").removeClass('d-none');
-            //$(".si_medio_noti").addClass('d-none');
-            $(".no_medio_noti").removeClass('d-none');
+            $(".si_nom_nitcc").addClass('d-none');
+            $(".no_nom_nitcc").removeClass('d-none');
+            $(".si_nom_tel_empresa").addClass('d-none');
+            $(".no_nom_tel_empresa").removeClass('d-none');
+            $(".si_nom_email").addClass('d-none');
+            $(".no_nom_email").removeClass('d-none');
+            $(".si_nom_direccion").addClass('d-none');
+            $(".no_nom_direccion").removeClass('d-none');
+            $(".si_nom_departamento").addClass('d-none');
+            $(".no_nom_departamento").removeClass('d-none');
+            $(".si_nom_ciudad").addClass('d-none');
+            $(".no_nom_ciudad").removeClass('d-none');
         }
     }); 
 
@@ -1841,9 +1886,57 @@ $(document).ready(function(){
             $(".columna_row3_laboral").slideUp('slow');
             $(".columna_row4_laboral").slideUp('slow');
             $(".columna_row5_laboral").slideUp('slow');
-            document.getElementById('empresa').required = false;
-            document.getElementById('nit_cc').required = false;
-            document.getElementById('medio_notificacion_laboral').required = false;
+
+            /* Le quitamos la propiedad required a los siguientes campos */
+            $('#empresa').prop('required',false);
+            $('#nit_cc').prop('required',false);
+            $('#telefono_empresa').prop('required',false);
+            $('#email_info_laboral').prop('required',false);
+            $('#direccion_info_laboral').prop('required',false);
+            $('#departamento_info_laboral').prop('required',false);
+            $('#municipio_info_laboral').prop('required',false);
+
+            /* Quitamos el span de obligatoriedad */
+            $(".si_nom_empresa").addClass('d-none');
+            $(".no_nom_empresa").removeClass('d-none');
+            $(".si_nom_nitcc").addClass('d-none');
+            $(".no_nom_nitcc").removeClass('d-none');
+            $(".si_nom_tel_empresa").addClass('d-none');
+            $(".no_nom_tel_empresa").removeClass('d-none');
+            $(".si_nom_email").addClass('d-none');
+            $(".no_nom_email").removeClass('d-none');
+            $(".si_nom_direccion").addClass('d-none');
+            $(".no_nom_direccion").removeClass('d-none');
+            $(".si_nom_departamento").addClass('d-none');
+            $(".no_nom_departamento").removeClass('d-none');
+            $(".si_nom_ciudad").addClass('d-none');
+            $(".no_nom_ciudad").removeClass('d-none');
+
+            // document.getElementById('medio_notificacion_laboral').required = false;
+
+            /* Seteamos a vacío los campos del formulario */
+            $('#arl_info_laboral').append('<option value="" selected>Seleccione</option>');
+            $('#empresa').val('');
+            $('#nit_cc').val('');
+            $('#telefono_empresa').val('');
+            $('#email_info_laboral').val('');
+            $('#direccion_info_laboral').val('');
+            $('#departamento_info_laboral').append('<option value="" selected>Seleccione</option>');
+            $('#municipio_info_laboral').append('<option value="" selected>Seleccione</option>');
+            $('#pais_exterior_info_laboral').val('');
+            $('#actividad_economica').append('<option value="" selected>Seleccione</option>');
+            $('#clase_riesgo').append('<option value="" selected>Seleccione</option>');
+            $('#persona_contacto').val('');
+            $('#telefono_persona_contacto').val('');
+            $('#codigo_ciuo').append('<option value="" selected>Seleccione</option>');
+            $('#fecha_ingreso').val('');
+            $('#cargo').val('');
+            $('#funciones_cargo').val('');
+            $('#antiguedad_empresa').val('');
+            $('#antiguedad_cargo').val('');
+            $('#fecha_retiro').val('');
+            $('#medio_notificacion_laboral').append('<option value="" selected>Seleccione</option>');
+            $('#descripcion').val('');
         }
     }); 
 
