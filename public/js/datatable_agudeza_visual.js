@@ -6,6 +6,7 @@ $(document).ready(function(){
         "searching": false,
         "ordering": false,
         "scrollCollapse": true,
+        "scrollX": true,
         "scrollY": "30vh",
         "paging": false,
         "language":{

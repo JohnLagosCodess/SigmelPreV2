@@ -447,10 +447,10 @@
                                             <table id="listado_diagnostico_cie10" class="table table-striped table-bordered" width="100%">
                                                 <thead>
                                                     <tr class="bg-info">
-                                                        <th style="width: 340px !important;">CIE10</th>
-                                                        <th style="width: 340px !important;">Nombre CIE10</th>
-                                                        <th style="width: 140px !important;">Lateralidad Dx</th>
-                                                        <th style="width: 140px !important;">Origen CIE10</th>
+                                                        <th>CIE10</th>
+                                                        <th>Nombre CIE10</th>
+                                                        <th>Lateralidad Dx</th>
+                                                        <th>Origen CIE10</th>
                                                         <th>Dx principal</th>
                                                         <th>Deficiencia(s) motivo de la calificación/<br>Condiciones de salud</th>
                                                         <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_cie10_fila"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
@@ -611,18 +611,18 @@
                                                 <table id="listado_deficiencia_porfactor" class="table table-striped table-bordered" width="100%">
                                                     <thead>
                                                         <tr class="bg-info">
-                                                            <th style="width: 140px !important;">Tabla</th>
-                                                            <th style="width: 140px !important;">Título tabla</th>
-                                                            <th style="width: 140px !important;">Clase principal (FP)</th>
-                                                            <th style="width: 140px !important;">CFM1</th>
-                                                            <th style="width: 140px !important;">CFM2</th>
-                                                            <th style="width: 140px !important;">FU</th>
-                                                            <th style="width: 140px !important;">CAT</th>
-                                                            <th style="width: 140px !important;">Clase final</th>
+                                                            <th>Tabla</th>
+                                                            <th>Título tabla</th>
+                                                            <th>Clase principal (FP)</th>
+                                                            <th>CFM1</th>
+                                                            <th>CFM2</th>
+                                                            <th>FU</th>
+                                                            <th>CAT</th>
+                                                            <th>Clase final</th>
                                                             {{-- <th style="width: 140px !important;">DX principal</th> --}}
                                                             <th style="width: 140px !important;">MSD</th>
                                                             <th style="width: 140px !important;">Dominancia</th>
-                                                            <th style="width: 140px !important;">Deficiencia</th>
+                                                            <th>Deficiencia</th>
                                                             <th style="width: 140px !important;">% Total Deficiencia (F.Balthazar,sin ponderar)</th>                                                            
                                                             <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_deficiencia_porfactor"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                         </tr>
@@ -686,18 +686,18 @@
                                                 <table id="listado_deficiencia_porfactor" class="table table-striped table-bordered" width="100%">
                                                     <thead>
                                                         <tr class="bg-info">
-                                                            <th style="width: 140px !important;">Tabla</th>
-                                                            <th style="width: 140px !important;">Título tabla</th>
-                                                            <th style="width: 140px !important;">Clase principal (FP)</th>
-                                                            <th style="width: 140px !important;">CFM1</th>
-                                                            <th style="width: 140px !important;">CFM2</th>
-                                                            <th style="width: 140px !important;">FU</th>
-                                                            <th style="width: 140px !important;">CAT</th>
-                                                            <th style="width: 140px !important;">Clase final</th>
+                                                            <th>Tabla</th>
+                                                            <th>Título tabla</th>
+                                                            <th>Clase principal (FP)</th>
+                                                            <th>CFM1</th>
+                                                            <th>CFM2</th>
+                                                            <th>FU</th>
+                                                            <th>CAT</th>
+                                                            <th>Clase final</th>
                                                             {{-- <th style="width: 140px !important;">DX principal</th> --}}
                                                             <th style="width: 140px !important;">MSD</th>
                                                             <th style="width: 140px !important;">Dominancia</th>
-                                                            <th style="width: 140px !important;">Deficiencia</th>
+                                                            <th>Deficiencia</th>
                                                             <th style="width: 140px !important;">% Total Deficiencia (F.Balthazar,sin ponderar)</th>                                                            
                                                             <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_deficiencia_porfactor"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                         </tr>
@@ -8109,6 +8109,7 @@
             "searching": false,
             "ordering": false,
             "scrollCollapse": true,
+            "scrollX": true,
             "scrollY": "30vh",
             "paging": false,
             "language":{
@@ -8125,7 +8126,7 @@
             contador_cie10 = contador_cie10 + 1;
             var nueva_fila_cie10 = [
                 '<select id="lista_Cie10_fila_'+contador_cie10+'" class="form-comtrol custom-select lista_Cie10_fila_'+contador_cie10+'" name="lista_Cie10"><option></option></select>',
-                '<input type="text" class="form-control" id="nombre_cie10_fila_'+contador_cie10+'" name="nombre_cie10"/>',
+                '<input type="text" class="form-control" style="width: 239.422px;" id="nombre_cie10_fila_'+contador_cie10+'" name="nombre_cie10"/>',
                 '<select id="lista_lateralidadCie10_fila_'+contador_cie10+'" class="custom-select lista_lateralidadCie10_fila_'+contador_cie10+'" name="lista_lateralidadCie10"><option></option></select>',
                 '<select id="lista_origenCie10_fila_'+contador_cie10+'" class="custom-select lista_origenCie10_fila_'+contador_cie10+'" name="lista_origenCie10"><option></option></select>',
                 '<input type="checkbox" id="checkbox_dx_principal_cie10_'+contador_cie10+'" class="checkbox_dx_principal_cie10_'+contador_cie10+'" data-id_fila_checkbox_dx_principal_cie10_="'+contador_cie10+'" style="transform: scale(1.2);">',

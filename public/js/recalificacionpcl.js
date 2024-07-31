@@ -4971,19 +4971,21 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
     // Inicializacion de select 2
     $("#lista_Cie10_fila_"+num_consecutivo).select2({
         //width: '100%',
-        width: '340px',
+        width: '270px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     $("#lista_origenCie10_fila_"+num_consecutivo).select2({
-        width: '100%',
+        // width: '100%',
+        width: '126.062px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     $("#lista_lateralidadCie10_fila_"+num_consecutivo).select2({
-        width: '100%',
+        // width: '100%',
+        width: '126.062px',
         placeholder: "Seleccione",
         allowClear: false
     });

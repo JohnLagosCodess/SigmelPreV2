@@ -16,6 +16,7 @@ $(document).ready(function(){
             "searching": false,
             "ordering": false,
             "scrollCollapse": true,
+            "scrollX": true,
             "scrollY": "30vh",
             "paging": false,
             "language":{
@@ -36,17 +37,17 @@ $(document).ready(function(){
             // 11
             var nueva_fila_alteraciones = [
               '<select id="listado_tablas_fila_alteraciones_'+contador_alteraciones+'" class="form-comtrol custom-select listado_tablas_fila_alteraciones_'+contador_alteraciones+'" name="ident_tabla"><option></option></select>',
-              '<div id="titulo_tabla_fila_alteraciones_'+contador_alteraciones+'"></div>',
-              '<div id="FP_fila_alteraciones_'+contador_alteraciones+'"></div>',
-              '<div id="CFM1_fila_alteraciones_'+contador_alteraciones+'"></div>',
-              '<div id="CFM2_fila_alteraciones_'+contador_alteraciones+'"></div>',
-              '<div id="FU_fila_alteraciones_'+contador_alteraciones+'"></div>',
-              '<div id="CAT_fila_alteraciones_'+contador_alteraciones+'"></div>',
-              '<div id="ClaseFinal_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<div style="width: 140px;" id="titulo_tabla_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<div style="width: 100px;" id="FP_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<div style="width: 100px;" id="CFM1_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<div style="width: 100px;" id="CFM2_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<div style="width: 100px;" id="FU_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<div style="width: 100px;" id="CAT_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<div style="width: 100px;" id="ClaseFinal_fila_alteraciones_'+contador_alteraciones+'"></div>',
               //   '<input type="checkbox" id="checkbox_dx_principal_DefiAlteraciones_'+contador_alteraciones+'" class="checkbox_dx_principal_DefiAlteraciones_'+contador_alteraciones+'" data-id_fila_checkbox_dx_principal_DefiAlteraciones="'+contador_alteraciones+'" style="transform: scale(1.2);">',
               '<div id="MSD_fila_alteraciones_'+contador_alteraciones+'"></div>',
               '<div id="Dominancia_fila_alteraciones_'+contador_alteraciones+'"></div>',
-              '<div id="Deficiencia_fila_alteraciones_'+contador_alteraciones+'"></div>',
+              '<div style="width: 100px;" id="Deficiencia_fila_alteraciones_'+contador_alteraciones+'"></div>',
               '<div id="Total_deficiencia_fila_alteraciones_'+contador_alteraciones+'"></div>',
               '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_quitar_fila_alteraciones" class="text-info" data-fila="fila_alteraciones_'+contador_alteraciones+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
               'fila_alteraciones_'+contador_alteraciones
