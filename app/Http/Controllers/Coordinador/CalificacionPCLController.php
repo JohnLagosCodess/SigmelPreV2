@@ -184,9 +184,12 @@ class CalificacionPCLController extends Controller
         
         $info_comite_inter = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
         ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion]])->get();
+
+        $info_accion_eventos = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion]])->get();
         
         return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 
-        'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos','SubModulo','consecutivo','arraycampa_documento_solicitado', 'info_comite_inter', 'Id_servicio'));
+        'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos','SubModulo','consecutivo','arraycampa_documento_solicitado', 'info_comite_inter', 'Id_servicio', 'info_accion_eventos'));
     }
 
     public function cargueListadoSelectoresModuloCalifcacionPcl(Request $request){
@@ -587,83 +590,45 @@ class CalificacionPCLController extends Controller
             }
 
             // insercion de datos a la tabla de sigmel_informacion_accion_eventos
-            if ($request->modalidad_calificacion == '') {
-                $datos_info__registrarCalifcacionPcl= [
-                    'ID_evento' => $request->newId_evento,
-                    'Id_Asignacion' => $request->newId_asignacion,
-                    'Id_proceso' => $request->Id_proceso,
-                    'Modalidad_calificacion' => 'N/A',
-                    'fuente_informacion' => $request->fuente_informacion,
-                    'F_accion' => $date_time,
-                    'Accion' => $request->accion,
-                    'F_Alerta' => $request->fecha_alerta,
-                    'Enviar' => $request->enviar,
-                    'Estado_Facturacion' => $request->estado_facturacion,
-                    'Causal_devolucion_comite' => $Causal_devolucion_comite,
-                    'F_devolucion_comite' => $Fecha_devolucion_comite,
-                    'Descripcion_accion' => $request->descripcion_accion,
-                    'F_cierre' => $request->fecha_cierre,
-                    'Nombre_usuario' => $nombre_usuario,
-                    'F_registro' => $date,
-                ];
+                          
+            $datos_info__registrarCalifcacionPcl= [
+                'ID_evento' => $request->newId_evento,
+                'Id_Asignacion' => $request->newId_asignacion,
+                'Id_proceso' => $request->Id_proceso,
+                'Modalidad_calificacion' => $request->modalidad_calificacion,
+                'fuente_informacion' => $request->fuente_informacion,
+                'F_accion' => $date_time,
+                'Accion' => $request->accion,
+                'F_Alerta' => $request->fecha_alerta,
+                'Enviar' => $request->enviar,
+                'Estado_Facturacion' => $request->estado_facturacion,
+                'Causal_devolucion_comite' => $Causal_devolucion_comite,                    
+                'F_devolucion_comite' => $Fecha_devolucion_comite,
+                'Descripcion_accion' => $request->descripcion_accion,
+                'F_cierre' => $request->fecha_cierre,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];
 
-                $aud_datos_info_registrarCalifcacionPcl= [
-                    'Aud_ID_evento' => $request->newId_evento,
-                    'Aud_Id_Asignacion' => $request->newId_asignacion,
-                    'Aud_Id_proceso' => $request->Id_proceso,
-                    'Aud_Modalidad_calificacion' => 'N/A',
-                    'Aud_fuente_informacion' => $request->fuente_informacion,
-                    'Aud_F_accion' => $date_time,
-                    'Aud_Accion' => $request->accion,
-                    'Aud_F_Alerta' => $request->fecha_alerta,
-                    'Aud_Enviar' => $request->enviar,
-                    'Aud_Estado_Facturacion' => $request->estado_facturacion,
-                    'Aud_Causal_devolucion_comite' => $Causal_devolucion_comite,
-                    'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
-                    'Aud_Descripcion_accion' => $request->descripcion_accion,
-                    'Aud_F_cierre' => $request->fecha_cierre,
-                    'Aud_Nombre_usuario' => $nombre_usuario,
-                    'Aud_F_registro' => $date,
-                ];
-            } else {                
-                $datos_info__registrarCalifcacionPcl= [
-                    'ID_evento' => $request->newId_evento,
-                    'Id_Asignacion' => $request->newId_asignacion,
-                    'Id_proceso' => $request->Id_proceso,
-                    'Modalidad_calificacion' => $request->modalidad_calificacion,
-                    'fuente_informacion' => $request->fuente_informacion,
-                    'F_accion' => $date_time,
-                    'Accion' => $request->accion,
-                    'F_Alerta' => $request->fecha_alerta,
-                    'Enviar' => $request->enviar,
-                    'Estado_Facturacion' => $request->estado_facturacion,
-                    'Causal_devolucion_comite' => $Causal_devolucion_comite,                    
-                    'F_devolucion_comite' => $Fecha_devolucion_comite,
-                    'Descripcion_accion' => $request->descripcion_accion,
-                    'F_cierre' => $request->fecha_cierre,
-                    'Nombre_usuario' => $nombre_usuario,
-                    'F_registro' => $date,
-                ];
-
-                $aud_datos_info_registrarCalifcacionPcl= [
-                    'Aud_ID_evento' => $request->newId_evento,
-                    'Aud_Id_Asignacion' => $request->newId_asignacion,
-                    'Aud_Id_proceso' => $request->Id_proceso,
-                    'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
-                    'Aud_fuente_informacion' => $request->fuente_informacion,
-                    'Aud_F_accion' => $date_time,
-                    'Aud_Accion' => $request->accion,
-                    'Aud_F_Alerta' => $request->fecha_alerta,
-                    'Aud_Enviar' => $request->enviar,
-                    'Aud_Estado_Facturacion' => $request->estado_facturacion,
-                    'Aud_Causal_devolucion_comite' => $Causal_devolucion_comite,                    
-                    'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
-                    'Aud_Descripcion_accion' => $request->descripcion_accion,
-                    'Aud_F_cierre' => $request->fecha_cierre,
-                    'Aud_Nombre_usuario' => $nombre_usuario,
-                    'Aud_F_registro' => $date,
-                ];
-            }
+            $aud_datos_info_registrarCalifcacionPcl= [
+                'Aud_ID_evento' => $request->newId_evento,
+                'Aud_Id_Asignacion' => $request->newId_asignacion,
+                'Aud_Id_proceso' => $request->Id_proceso,
+                'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
+                'Aud_fuente_informacion' => $request->fuente_informacion,
+                'Aud_F_accion' => $date_time,
+                'Aud_Accion' => $request->accion,
+                'Aud_F_Alerta' => $request->fecha_alerta,
+                'Aud_Enviar' => $request->enviar,
+                'Aud_Estado_Facturacion' => $request->estado_facturacion,
+                'Aud_Causal_devolucion_comite' => $Causal_devolucion_comite,                    
+                'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
+                'Aud_Descripcion_accion' => $request->descripcion_accion,
+                'Aud_F_cierre' => $request->fecha_cierre,
+                'Aud_Nombre_usuario' => $nombre_usuario,
+                'Aud_F_registro' => $date,
+            ];
+            
 
             $Id_Accion_eventos = sigmel_informacion_accion_eventos::on('sigmel_gestiones')->insertGetId($datos_info__registrarCalifcacionPcl);
 
@@ -1166,84 +1131,45 @@ class CalificacionPCLController extends Controller
             }
 
             // actualizacion de datos a la tabla de sigmel_informacion_accion_eventos
-            if ($request->modalidad_calificacion == '') {                
-                $datos_info_actualizarCalifcacionPcl= [
-                    'ID_evento' => $request->newId_evento,
-                    'Id_Asignacion' => $request->newId_asignacion,
-                    'Id_proceso' => $request->Id_proceso,
-                    'Modalidad_calificacion' => 'N/A',
-                    'fuente_informacion' => $request->fuente_informacion,
-                    'F_accion' => $date_time,
-                    'Accion' => $request->accion,
-                    'F_Alerta' => $request->fecha_alerta,
-                    'Enviar' => $request->enviar,
-                    'Estado_Facturacion' => $request->estado_facturacion,
-                    'Causal_devolucion_comite' => $Causal_devolucion_comite,
-                    'F_devolucion_comite' => $Fecha_devolucion_comite,
-                    'Descripcion_accion' => $request->descripcion_accion,
-                    'F_cierre' => $request->fecha_cierre,
-                    'Nombre_usuario' => $nombre_usuario,
-                    'F_registro' => $date,
-                ];
+            
+            $datos_info_actualizarCalifcacionPcl= [
+                'ID_evento' => $request->newId_evento,
+                'Id_Asignacion' => $request->newId_asignacion,
+                'Id_proceso' => $request->Id_proceso,
+                'Modalidad_calificacion' => $request->modalidad_calificacion,
+                'fuente_informacion' => $request->fuente_informacion,
+                'F_accion' => $date_time,
+                'Accion' => $request->accion,
+                'F_Alerta' => $request->fecha_alerta,
+                'Enviar' => $request->enviar,
+                'Estado_Facturacion' => $request->estado_facturacion,
+                'Causal_devolucion_comite' => $Causal_devolucion_comite,
+                'F_devolucion_comite' => $Fecha_devolucion_comite,
+                'Descripcion_accion' => $request->descripcion_accion,
+                'F_cierre' => $request->fecha_cierre,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];
 
-                $aud_datos_info_actualizarCalifcacionPcl= [
-                    'Aud_ID_evento' => $request->newId_evento,
-                    'Aud_Id_Asignacion' => $request->newId_asignacion,
-                    'Aud_Id_proceso' => $request->Id_proceso,
-                    'Aud_Modalidad_calificacion' => 'N/A',
-                    'Aud_fuente_informacion' => $request->fuente_informacion,
-                    'Aud_F_accion' => $date_time,
-                    'Aud_Accion' => $request->accion,
-                    'Aud_F_Alerta' => $request->fecha_alerta,
-                    'Aud_Enviar' => $request->enviar,
-                    'Aud_Estado_Facturacion' => $request->estado_facturacion,
-                    'Aud_Causal_devolucion_comite' => $Causal_devolucion_comite,
-                    'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
-                    'Aud_Descripcion_accion' => $request->descripcion_accion,
-                    'Aud_F_cierre' => $request->fecha_cierre,
-                    'Aud_Nombre_usuario' => $nombre_usuario,
-                    'Aud_F_registro' => $date,
-                ];
-
-            } else {
-                $datos_info_actualizarCalifcacionPcl= [
-                    'ID_evento' => $request->newId_evento,
-                    'Id_Asignacion' => $request->newId_asignacion,
-                    'Id_proceso' => $request->Id_proceso,
-                    'Modalidad_calificacion' => $request->modalidad_calificacion,
-                    'fuente_informacion' => $request->fuente_informacion,
-                    'F_accion' => $date_time,
-                    'Accion' => $request->accion,
-                    'F_Alerta' => $request->fecha_alerta,
-                    'Enviar' => $request->enviar,
-                    'Estado_Facturacion' => $request->estado_facturacion,
-                    'Causal_devolucion_comite' => $Causal_devolucion_comite,
-                    'F_devolucion_comite' => $Fecha_devolucion_comite,
-                    'Descripcion_accion' => $request->descripcion_accion,
-                    'F_cierre' => $request->fecha_cierre,
-                    'Nombre_usuario' => $nombre_usuario,
-                    'F_registro' => $date,
-                ];
-
-                $aud_datos_info_actualizarCalifcacionPcl= [
-                    'Aud_ID_evento' => $request->newId_evento,
-                    'Aud_Id_Asignacion' => $request->newId_asignacion,
-                    'Aud_Id_proceso' => $request->Id_proceso,
-                    'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
-                    'Aud_fuente_informacion' => $request->fuente_informacion,
-                    'Aud_F_accion' => $date_time,
-                    'Aud_Accion' => $request->accion,
-                    'Aud_F_Alerta' => $request->fecha_alerta,
-                    'Aud_Enviar' => $request->enviar,
-                    'Aud_Estado_Facturacion' => $request->estado_facturacion,
-                    'Aud_Causal_devolucion_comite' => $Causal_devolucion_comite,
-                    'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
-                    'Aud_Descripcion_accion' => $request->descripcion_accion,
-                    'Aud_F_cierre' => $request->fecha_cierre,
-                    'Aud_Nombre_usuario' => $nombre_usuario,
-                    'Aud_F_registro' => $date,
-                ];
-            }
+            $aud_datos_info_actualizarCalifcacionPcl= [
+                'Aud_ID_evento' => $request->newId_evento,
+                'Aud_Id_Asignacion' => $request->newId_asignacion,
+                'Aud_Id_proceso' => $request->Id_proceso,
+                'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
+                'Aud_fuente_informacion' => $request->fuente_informacion,
+                'Aud_F_accion' => $date_time,
+                'Aud_Accion' => $request->accion,
+                'Aud_F_Alerta' => $request->fecha_alerta,
+                'Aud_Enviar' => $request->enviar,
+                'Aud_Estado_Facturacion' => $request->estado_facturacion,
+                'Aud_Causal_devolucion_comite' => $Causal_devolucion_comite,
+                'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
+                'Aud_Descripcion_accion' => $request->descripcion_accion,
+                'Aud_F_cierre' => $request->fecha_cierre,
+                'Aud_Nombre_usuario' => $nombre_usuario,
+                'Aud_F_registro' => $date,
+            ];
+            
 
             sigmel_informacion_accion_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_actualizarCalifcacionPcl);
