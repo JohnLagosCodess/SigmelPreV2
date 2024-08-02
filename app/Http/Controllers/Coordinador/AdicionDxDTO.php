@@ -2131,7 +2131,7 @@ class AdicionDxDTO extends Controller
         //consulta si esta visado o no para mostrar las firmas
 
         $validacion_visado = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
-        ->select('ID_evento', 'Id_proceso', 'Id_Asignacion', 'Visar')
+        ->select('ID_evento', 'Id_proceso', 'Id_Asignacion', 'Visar', 'F_visado_comite')
         ->where([['Id_Asignacion',$Id_Asignacion], ['Visar','Si']])->get();
 
         /* Armado de datos para reemplazarlos en la plantilla */

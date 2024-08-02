@@ -87,6 +87,32 @@
             width: auto;
             height: 11.2%;
         }
+
+        .consideracion_legal{
+            font-size: 10px;
+            font-style:italic;
+            text-align: justify;
+        }
+
+        .quitar_borde_derecho{
+            border-right: none !important;
+        }
+
+        .quitar_borde_izquierdo{
+            border-left: none !important;
+        }
+
+        .texto_finalmente{
+            font-size: 9px;
+            text-align: center;
+            border:none;
+        }
+
+        .firma_visado{
+            text-align: center;
+            font-size: 8px;
+        }
+
         /* .hijo{
             width: 2cm;
             height: 1cm;
@@ -232,18 +258,32 @@
                     <td colspan="8"><span class="titulo_labels">Elaborado por: </span><span class="dato_dinamico">{{$nombre_usuario}}</span></td>
                 </tr>
                 <tr>
+                    <td colspan="8" class="consideracion_legal">
+                        <b>CONSIDERACIONES LEGALES:</b> Basados en Ley 100 de 1993, Ley 1562 de 2012, 
+                        Decreto 1352 de 2013 y artículo 142 de la Ley 019 de 2012. 
+                        En caso de no estar de acuerdo con la calificación realizada, 
+                        los interesados podrán presentar su apelación o inconformidad por escrito, 
+                        dentro de los 10 días hábiles siguientes a la notificación de la misma, 
+                        de acuerdo al artículo 142 del Decreto Ley 019 de 2012. 
+                        Las controversias que surjan al respecto serán resueltas por las Juntas Regionales de Calificación de Invalidez, 
+                        de conformidad con lo establecido en el Decreto 1352 de 2013.
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="8" class="titulo_tablas">6. RESPONSABLES DE LA CALIFICACIÓN COMITÉ INTERDISCIPLINARIO DE CALIFICACIÓN</td>
                 </tr>
                 @if (count($validacion_visado) > 0)
+                    <?php $f_visado = date("m/d/Y", strtotime($validacion_visado[0]->F_visado_comite));?>
                     <tr>
                         <td colspan="4" class="dato_dinamico" style="text-align: center;">
                             <span style="font-weight: 700;">LINA MARCELA MAYORGA CULMA</span><br>
                             <span>Medicina Fisica Y Rehabilitación - E.S.O<br>
                             RM 250623/09 - LSO 16640/22</span>
+                            <p class="firma_visado"><b>Fecha de firma: {{$f_visado}}</b></p>
                         </td>
                         <td colspan="4" class="dato_dinamico">
                             <?php 
-                                $ruta_firma_1 = "/Firmas_provisionales/firma_lina_sin_texto.png";
+                                $ruta_firma_1 = "/Firmas_provisionales/firma_comite_lina_origen.png";
                                 $imagenPath_firma_1 = public_path($ruta_firma_1);
                                 $imagenData_firma_1 = file_get_contents($imagenPath_firma_1);
                                 $imagenBase64_firma_1 = base64_encode($imagenData_firma_1);
@@ -258,10 +298,11 @@
                             <span style="font-weight: 700;">JULIAN ENRIQUE CAMACHO GONZALEZ</span><br>
                             <span>MÉDICO LABORAL<br>
                                 RM. 04036/2010 - Lic. S.O 28239 del 13/12/2022</span>
+                            <p class="firma_visado"><b>Fecha de firma: {{$f_visado}}</b></p>
                         </td>
                         <td colspan="4" class="dato_dinamico">
                             <?php 
-                                $ruta_firma_2 = "/Firmas_provisionales/firma_julian_sin_texto.png";
+                                $ruta_firma_2 = "/Firmas_provisionales/firma_comite_julian_origen.png";
                                 $imagenPath_firma_2 = public_path($ruta_firma_2);
                                 $imagenData_firma_2 = file_get_contents($imagenPath_firma_2);
                                 $imagenBase64_firma_2 = base64_encode($imagenData_firma_2);
@@ -276,10 +317,11 @@
                             <span style="font-weight: 700;">LILIANA MONTES CASTAÑEDA</span><br>
                             <span>FISIOTERAPEUTA<br>
                             LSO Resolución 4919 del 08/05/2012</span>
+                            <p class="firma_visado"><b>Fecha de firma: {{$f_visado}}</b></p>
                         </td>
                         <td colspan="4" class="dato_dinamico">
                             <?php 
-                                $ruta_firma_3 = "/Firmas_provisionales/firma_liliana_sin_texto.png";
+                                $ruta_firma_3 = "/Firmas_provisionales/firma_comite_liliana_origen.png";
                                 $imagenPath_firma_3 = public_path($ruta_firma_3);
                                 $imagenData_firma_3 = file_get_contents($imagenPath_firma_3);
                                 $imagenBase64_firma_3 = base64_encode($imagenData_firma_3);
@@ -288,6 +330,16 @@
                                 <img src="data:image/png;base64,{{ $imagenBase64_firma_3 }}" class="firma_3">
                             </div>
                         </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="quitar_borde_derecho"></td>
+                        <td colspan="6" class="texto_finalmente">
+                            <b>“Finalmente, reiteramos que en nuestra Compañía contamos con la mejor disposición para atender sus quejas y reclamos a 
+                                través del defensor consumidor financiero, en la Av. Calle 26 No 59-15, local 6 y 7. Conmutador: 7435333 Extensión: 14454, Fax Ext. 14456 o Correo Electrónico: 
+                                defensordelconsumidorfinanciero@segurosdevidaalfa.com.co”.
+                            </b>
+                        </td>
+                        <td colspan="1" class="quitar_borde_izquierdo"></td>
                     </tr>
                 @else
                     <tr>
@@ -301,6 +353,16 @@
                     <tr>
                         <td colspan="4" class="dato_dinamico" style="text-align: center;"></td>
                         <td colspan="4" class="dato_dinamico"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="quitar_borde_derecho"></td>
+                        <td colspan="6" class="texto_finalmente">
+                            <b>“Finalmente, reiteramos que en nuestra Compañía contamos con la mejor disposición para atender sus quejas y reclamos a 
+                                través del defensor consumidor financiero, en la Av. Calle 26 No 59-15, local 6 y 7. Conmutador: 7435333 Extensión: 14454, Fax Ext. 14456 o Correo Electrónico: 
+                                defensordelconsumidorfinanciero@segurosdevidaalfa.com.co”.
+                            </b>
+                        </td>
+                        <td colspan="1" class="quitar_borde_izquierdo"></td>
                     </tr>
                 @endif
             </tbody>
