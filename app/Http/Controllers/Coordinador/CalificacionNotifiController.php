@@ -26,7 +26,7 @@ class CalificacionNotifiController extends Controller
         $newIdEvento = $request->newIdEvento;
         $array_datos_calificacionNoti = DB::select('CALL psrcalificacionNoti(?)', array($newIdAsignacion));
         //Trae Documetos Generales del evento
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?)',array($newIdEvento));
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento,$newIdAsignacion));
 
         return view('coordinador.calificacionNotificaciones', compact('user','array_datos_calificacionNoti','arraylistado_documentos'));
 

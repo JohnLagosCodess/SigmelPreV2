@@ -273,6 +273,72 @@ class ReporteNotificacionesController extends Controller
         }
     }
 
+
+    public function generarZipReporteNotificaciones1(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $time = time();
+        $date = date("Y-m-d", $time);
+
+
+        $documentos_archivo_1 = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+        ->select('ID_evento','Nombre_documento as Archivo_1')
+        ->get();
+        $array_documentos_archivo_1 = json_decode(json_encode($documentos_archivo_1, true)); 
+        
+        // Ruta donde se guardará el archivo comprimido
+        $rutaArchivoComprimido = storage_path('app/'.$date.' Correspondencia SIGMEL.zip');
+
+        if(count($array_documentos_archivo_1) == 0){
+            $mensajes = array(
+                "parametro" => 'error',
+                "mensaje" => 'El archivo .zip no se pudo descargar, debido a que no existen documentos generados por el sistema.'
+            );
+            return json_decode(json_encode($mensajes, true));
+        }else{
+            // Crear un nuevo archivo zip
+            $zip = new ZipArchive;
+            if ($zip->open($rutaArchivoComprimido, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+
+                    foreach ($array_documentos_archivo_1 as $archivo) {
+                        
+                        if ($archivo->Archivo_1 <> "") {
+                            
+                            $nombreArchivo = $archivo->Archivo_1;
+                            $rutaArchivo = "Documentos_Eventos/{$archivo->ID_evento}/{$archivo->Archivo_1}";
+                            
+                            if (file_exists($rutaArchivo)) {
+                                // Obtener el nombre del archivo sin la extensión
+                                $nombreSinExtension = pathinfo($nombreArchivo, PATHINFO_FILENAME);
+                                
+                                // Crear la estructura de carpetas en el ZIP
+                                if (!$zip->locateName($nombreSinExtension, ZipArchive::FL_NOCASE | ZipArchive::FL_NODIR)) {
+                                    $zip->addEmptyDir($nombreSinExtension);
+                                }
+                    
+                                // Agregar el archivo al ZIP en la subcarpeta
+                                $zip->addFile($rutaArchivo, $nombreSinExtension . '/' . $nombreArchivo);
+                            }
+                        }
+                    }
+                // Cerrar el archivo zip
+                $zip->close();
+            }
+
+            // Mover el archivo zip al directorio público
+            $nombreArchivoComprimido = $date.' Correspondencia SIGMEL.zip';
+            $ubicacionDestino = public_path($nombreArchivoComprimido);
+            File::move($rutaArchivoComprimido, $ubicacionDestino);
+
+            // Devolver la URL del archivo zip en la respuesta Ajax
+            $urlArchivoComprimido = asset($nombreArchivoComprimido);
+            return response()->json(['url' => $urlArchivoComprimido, 'nom_archivo' => $nombreArchivoComprimido]);
+        }
+    }
+
+
     // Eliminar el reporte de notificaciones
     public function eliminarZipReporteNotificaciones(Request $request){
         $nom_archivo = $request->nom_archivo;

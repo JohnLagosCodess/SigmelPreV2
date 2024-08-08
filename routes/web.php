@@ -311,6 +311,10 @@ Route::post('/alertasNaranjasRojasPCL', [CoordinadorController::class, 'alertaNa
 Route::post('/actualizarProfesionalServicio', [CoordinadorController::class, 'actualizarBandejaPCL']);
 // Acción: Reemplazar Documentos
 Route::post('/reemplazarDocumento', [CoordinadorController::class, 'reemplazarDocumento']);
+// Acción: Traer la información necesaria para la correspondencia PBS014
+Route::post('/getInformacionCorrespondencia', [CoordinadorController::class, 'getInformacionCorrespondencia']);
+// Acción: Guardar la información de la correspondencia PBS014
+Route::post('/guardarInformacionCorrespondencia', [CoordinadorController::class, 'guardarInformacionCorrespondencia']);
 
 // 14/07/2023
 // Vista: Módulo Calificación PCL Coordinador
@@ -645,6 +649,7 @@ Route::post('/selectoresBandejaNotifi', [BandejaNotifiController::class, 'cargue
 Route::post('/sinfiltrosBandejaNotifi', [BandejaNotifiController::class, 'sinFiltroBandejaNotifi']);
 // Accion: Capturar data según los filtros
 Route::post('/filtrosBandejaNotifi', [BandejaNotifiController::class, 'filtrosBandejaNotifi']);
+Route::post('/alertasNaranjasRojasNotif', [BandejaJuntasController::class, 'alertaNaranjasRojasJuntas']);
 // Accion: Actualizar el profesional y redireccionar el servicio
 Route::post('/actualizarProfesionalServicioNotifi', [BandejaNotifiController::class, 'actualizarBandejaNotifi']);
 // 05/10/2023
@@ -880,3 +885,5 @@ Route::controller(ProbandoController::class)->group(function(){
 });
 
 Route::get('test_proformas', [ProbandoController::class, 'test_proformas']);
+
+Route::post('/generarZipReporteNotificaciones1', [ReporteNotificacionesController::class, 'generarZipReporteNotificaciones1']);

@@ -235,9 +235,9 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="enviar">Enviar a <span style="color: red;">(*)</span></label>
-                                                <select class="custom-select" name="enviar" id="enviar" style="color: red;">
-                                                    <option value="NO ESTA DEFINIDO">NO ESTA DEFINIDO</option>
+                                                <label for="enviar">Enviar a</label>
+                                                <select class="custom-select" name="enviar" id="enviar" style="color: red;" disabled>
+                                                    <option value=""></option>
                                                 </select>
                                             </div>
                                         </div>

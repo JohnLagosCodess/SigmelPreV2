@@ -12,6 +12,7 @@ use App\Models\sigmel_lista_procesos_servicios;
 use App\Models\cndatos_bandeja_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_numero_orden_eventos;
+use App\Models\sigmel_informacion_alertas_automaticas_eventos;
 
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
@@ -62,101 +63,6 @@ class BandejaNotifiController extends Controller
             return response()->json($info_listado_servicio_Notifi);
         }
 
-        // listado de acciones
-        if ($parametro == 'listado_accion') {
-            // $array_Id_asignacion = $request->Id_asignacion;
-
-            /* Iniciamos trayendo las acciones a ejecutar configuradas en la tabla de parametrizaciones
-            dependiendo del id del cliente, id del proceso, id del servicio, estado activo */
-            
-            // $array_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
-            // ->select('Cliente')->where('ID_evento', $request->nro_evento)->first();
-
-            // $id_cliente = $array_id_cliente["Cliente"];
-
-            $acciones_a_ejecutar = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
-            ->select('sipc.Accion_ejecutar')
-            ->where([
-                // ['sipc.Id_cliente', '=', $id_cliente],
-                ['sipc.Id_proceso', '=', $request->Id_proceso],
-                ['sipc.Servicio_asociado', '=', $request->Id_servicio],
-                ['sipc.Status_parametrico', '=', 'Activo']
-            ])->get();
-
-            $info_acciones_a_ejecutar = json_decode(json_encode($acciones_a_ejecutar, true));
-            // echo "<pre>"; print_r($info_acciones_a_ejecutar); echo "</pre>";
-            if (count($info_acciones_a_ejecutar) > 0) {
-                // Extraemos las acciones antecesoras a partir de las acciones a ejecutar
-                $array_acciones_ejecutar = [];
-                for ($i=0; $i < count($info_acciones_a_ejecutar); $i++) { 
-                    array_push($array_acciones_ejecutar, $info_acciones_a_ejecutar[$i]->Accion_ejecutar);
-                };
-
-                $extraccion_acciones_antecesoras = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
-                ->select('Accion_ejecutar','Accion_antecesora')
-                ->where([
-                    // ['Id_cliente', '=', $id_cliente],
-                    ['Id_proceso', '=', $request->Id_proceso],
-                    ['Servicio_asociado', '=', $request->Id_servicio],
-                ])
-                ->whereIn('Accion_ejecutar', $array_acciones_ejecutar)
-                ->get();
-                
-                $info_extraccion_acciones_antecesoras = json_decode(json_encode($extraccion_acciones_antecesoras, true));
-                
-                // En caso de que almenos exista una acción antecesora, se debe analizar si esta acción 
-                // (que depende de una acción ejecutar) está en la tabla de auditorias de asignacion de eventos dependiendo
-                // del id del proceso y el id del servicio. El id de la accion a ejecutar estaría dentro de las opciones a mostrar solo si se encuentra el id
-                // de la accion antecesora en dicha tabla
-                if (count($info_extraccion_acciones_antecesoras) > 0) {
-                    
-                    foreach ($info_extraccion_acciones_antecesoras as $key => $value) {
-                        if ($info_extraccion_acciones_antecesoras[$key]->Accion_antecesora !== null) {
-                            $busqueda_accion_antecesora = DB::table(getDatabaseName('sigmel_auditorias') .'sigmel_auditorias_informacion_asignacion_eventos as saiae')
-                            ->select('saiae.Aud_Id_accion')
-                            ->where([
-                                // ['saiae.Aud_Id_Asignacion', '=', $request->Id_asignacion],
-                                // ['saiae.Aud_ID_evento', '=', $request->nro_evento],
-                                ['saiae.Aud_Id_proceso', '=', $request->Id_proceso],
-                                ['saiae.Aud_Id_servicio', '=', $request->Id_servicio],
-                                ['saiae.Aud_Id_accion', $info_extraccion_acciones_antecesoras[$key]->Accion_antecesora]
-                            ])
-                            ->get();
-
-                            // Si no existe en la tabla debe eliminar la información de la acción a ejecutar ya que esta no se debe mostrar.
-                            if (count($busqueda_accion_antecesora) == 0) {
-                                unset($info_extraccion_acciones_antecesoras[$key]);
-                            }
-                        }
-                    }
-                    
-                    $info_extraccion_acciones_antecesoras = array_values($info_extraccion_acciones_antecesoras);
-                    
-                    /* echo "<pre>";
-                    print_r($info_extraccion_acciones_antecesoras);
-                    echo "</pre>"; */
-
-                    // Extraemos los id de las acciones a ejecutar para buscarlas en la tabla sigmel_informacion_acciones;
-                    $array_listado_acciones = [];
-                    for ($a=0; $a < count($info_extraccion_acciones_antecesoras); $a++) { 
-                        array_push($array_listado_acciones, $info_extraccion_acciones_antecesoras[$a]->Accion_ejecutar);
-                    }
-
-                    // print_r($array_listado_acciones);
-                    $listado_acciones = sigmel_informacion_acciones::on('sigmel_gestiones')
-                    ->select('Id_Accion', 'Accion as Nombre_accion')
-                    ->where([
-                        ['Status_accion', '=', 'Activo']
-                    ])
-                    ->whereIn('Id_Accion', $array_listado_acciones)
-                    ->get();
-
-                    $info_listado_acciones_nuevo_servicio = json_decode(json_encode($listado_acciones, true));
-                    return response()->json(($info_listado_acciones_nuevo_servicio));
-                }
-            }
-
-        }    
 
         // listado de profesionales para el proceso notificaciones
         if ($parametro == 'lista_profesional_notifi') {
@@ -177,32 +83,36 @@ class BandejaNotifiController extends Controller
         $newId_rol = $request->newId_rol; 
         $newId_user = $request->newId_user;     
 
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $year = date("Y");  
+
         if($BandejaNotifiTotal == 'CargaBandejaNotifi'){
 
-            if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
-            
+            if($newId_rol=='5' || $newId_rol=='9' || $newId_rol=='10'|| $newId_rol == '3'){ // si el rol es analista o profesional o comité
                 $bandejaNotifi = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                ->where([
-                    ['Nombre_proceso_actual', '=', 'Notificaciones'],
-                    ['Id_profesional', '=', $newId_user]
-                ])
+                ->where('Id_profesional', '=', $newId_user)->where(function($query){
+                    $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'Si');
+                })
+                //->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
                 ->get();
+                //dd( $newId_user);
             }else{
                 $bandejaNotifi = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                ->where([
-                    ['Nombre_proceso_actual', '=', 'Notificaciones']
-                ])
+                ->where('Enviar_bd_Notificacion', '=', 'Si')
+                //->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
                 ->get();
+
             }
             // $bandejaNotifisin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
             // ->where([
-            //     ['Nombre_proceso_actual', '=', 'Notificaciones']
+            //     ['Enviar_bd_Notificacion', '=', 'Si'],
             // ])
             // ->whereNull('Nombre_proceso_anterior');
 
             // $bandejaNotifi = cndatos_bandeja_eventos::on('sigmel_gestiones')
             // ->where([
-            //     ['Nombre_proceso_actual', '=', 'Notificaciones'],
+            //     ['Enviar_bd_Notificacion', '=', 'Si'],,
             //     ['Id_proceso_anterior', '<>', 4]
             // ])
             // ->union($bandejaNotifisin_Pro_ant)
@@ -276,22 +186,21 @@ class BandejaNotifiController extends Controller
         switch (true) {
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and !empty($consultar_g_dias)):
 
-                if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional
-                        $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                        ->where([
-                            ['Nombre_proceso_actual', '=', 'Notificaciones'],
-                            ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
-                            ['Id_profesional', '=', $newId_user]
-                        ])
-                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
-                        ->get();
-                }else{
-
+                if($newId_rol=='5' || $newId_rol=='9' || $newId_rol=='10'|| $newId_rol == '3'){ // si el rol es analista o profesional o comité
                     $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
-                        ['Nombre_proceso_actual', '=', 'Notificaciones'],
-                        ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
-                    ])
+                        ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
+                        ['Id_profesional', '=', $newId_user]
+                    ])->where(function($query){
+                        $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'Si');
+                    })
+                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    ->get();
+                }else{
+                    $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
+                    ->where('Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias)->where(function($query){
+                        $query->where('Enviar_bd_Notificacion', '=', 'Si');
+                    })
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
                 }
@@ -300,7 +209,7 @@ class BandejaNotifiController extends Controller
                     
                     // $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     // ->where([
-                    //         ['Nombre_proceso_actual', '=', 'Notificaciones'],
+                    //         ['Enviar_bd_Notificacion', '=', 'Si'],,
                     //         ['Id_proceso_anterior', '<>', 4],
                     //         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
                     //     ])            
@@ -322,23 +231,19 @@ class BandejaNotifiController extends Controller
             break;
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and empty($consultar_g_dias)):
                     
-                if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional  
+                if($newId_rol=='5' || $newId_rol=='9' || $newId_rol=='10'|| $newId_rol == '3'){ // si el rol es analista o profesional o comité
                     $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                        ['Nombre_proceso_actual', '=', 'Notificaciones'],
-                        ['Id_profesional', '=', $newId_user]
-                    ])
+                    ->where('Id_profesional', '=', $newId_user)->where(function($query){
+                        $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'Si');
+                    })
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
+                
                 }else{
-
                     $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                        ['Nombre_proceso_actual', '=', 'Notificaciones'],
-                    ])
+                    ->where('Enviar_bd_Notificacion', '=', 'Si')
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
-
                 }
 
                     // ->whereNull('Nombre_proceso_anterior')
@@ -346,7 +251,7 @@ class BandejaNotifiController extends Controller
 
                     // $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     // ->where([
-                    //         ['Nombre_proceso_actual', '=', 'Notificaciones'],
+                    //         ['Enviar_bd_Notificacion', '=', 'Si'],,
                     //         ['Id_proceso_anterior', '<>', 4],
                     //     ])            
                     // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
@@ -367,29 +272,28 @@ class BandejaNotifiController extends Controller
             break;
             case (empty($consultar_f_desde) and empty($consultar_f_hasta) and !empty($consultar_g_dias)):
                     
-                if($newId_rol=='5' || $newId_rol=='9'){ // si el rol es analista o profesional  
+                if($newId_rol=='5' || $newId_rol=='9' || $newId_rol=='10'|| $newId_rol == '3'){ // si el rol es analista o profesional o comité
                     $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
-                        ['Nombre_proceso_actual', '=', 'Notificaciones'],
                         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
                         ['Id_profesional', '=', $newId_user]
-                    ])
+                    ])->where(function($query){
+                        $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'Si');
+                    })
                     ->get();
                 }else{
                     $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    ->where([
-                        ['Nombre_proceso_actual', '=', 'Notificaciones'],
-                        ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
-                    ])
+                    ->where('Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias)->where(function($query){
+                        $query->where('Enviar_bd_Notificacion', '=', 'Si');
+                    })
                     ->get();
-
 
                 }
                     // ->whereNull('Nombre_proceso_anterior');
                     
                     // $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     // ->where([
-                    //         ['Nombre_proceso_actual', '=', 'Notificaciones'],
+                    //         ['Enviar_bd_Notificacion', '=', 'Si'],,
                     //         ['Id_proceso_anterior', '<>', 4],
                     //         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
                     //     ])            
@@ -447,6 +351,7 @@ class BandejaNotifiController extends Controller
         
     }
 
+    //No se esta usando actualmente
     public function actualizarBandejaNotifi(Request $request){
 
         if(!Auth::check()){
@@ -627,5 +532,12 @@ class BandejaNotifiController extends Controller
         
         
         
+    }
+
+    public function alertaNaranjasRojasOrigen(Request $request) {
+        $alertas = sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')
+        ->where([['Estado_alerta_automatica', '=', 'Ejecucion']])
+        ->get();
+        return response()->json(['data' => $alertas]);
     }
 }

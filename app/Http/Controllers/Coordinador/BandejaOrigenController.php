@@ -16,6 +16,7 @@ use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
 use App\Models\sigmel_informacion_alertas_automaticas_eventos;
 use App\Models\sigmel_informacion_historial_accion_eventos;
+use App\Models\sigmel_numero_orden_eventos;
 
 class BandejaOrigenController extends Controller
 {
@@ -239,21 +240,23 @@ class BandejaOrigenController extends Controller
         if($BandejaOrigenTotal == 'CargaBandejaOrigen'){
 
             // Consultar la vista de mysql, traer eventos acorde al proceso
-            if($newId_rol=='5' || $newId_rol=='9' || $newId_rol=='10'|| $newId_rol == '3'){ // si el rol es analista o profesional o comité
+            if($newId_rol=='5' || $newId_rol=='9' || $newId_rol=='10' || $newId_rol == '3'){ // si el rol es analista o profesional o comité
                 $bandejaOrigen = cndatos_bandeja_eventos::on('sigmel_gestiones')
                 ->where([
                     ['Nombre_proceso_actual', '=', 'Origen'],
                     ['Id_profesional', '=', $newId_user]
-                ])
+                ])->where(function($query){
+                    $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
+                })
                 //->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
                 ->get();
             }else{
                 $bandejaOrigen = cndatos_bandeja_eventos::on('sigmel_gestiones')
                 ->where([
-                    ['Nombre_proceso_actual', '=', 'Origen'],
-                    // ['Nombre_estado', '<>', 'Gestionado']
-                ])
-                ->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
+                    ['Nombre_proceso_actual', '=', 'Origen']
+                ])->where(function($query){
+                    $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
+                })->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
                 ->get();
             }
             // $ID_evento_bandeja = $bandejaOrigen[0]->ID_evento;
@@ -424,16 +427,18 @@ class BandejaOrigenController extends Controller
                             ['Nombre_proceso_actual', '=', 'Origen'],
                             ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
                             ['Id_profesional', '=', $newId_user]
-                        ])
-                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ])->where(function($query){
+                            $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
+                        })->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
                         ->get();
                     }else{
                         $bandejaOrigenFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                         ->where([
                             ['Nombre_proceso_actual', '=', 'Origen'],
                             ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
-                        ])
-                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ])->where(function($query){
+                            $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
+                        })->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
                         ->get();
                     }
                     // ->whereNull('Nombre_proceso_anterior')
@@ -469,15 +474,17 @@ class BandejaOrigenController extends Controller
                         ->where([
                             ['Nombre_proceso_actual', '=', 'Origen'],
                             ['Id_profesional', '=', $newId_user]
-                        ])
-                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ])->where(function($query){
+                            $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
+                        })->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
                         ->get();
                     }else{
                         $bandejaOrigenFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                         ->where([
                             ['Nombre_proceso_actual', '=', 'Origen'],
-                        ])
-                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ])->where(function($query){
+                            $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
+                        })->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
                         ->get();
                     }
                     // ->whereNull('Nombre_proceso_anterior')
@@ -513,15 +520,17 @@ class BandejaOrigenController extends Controller
                             ['Nombre_proceso_actual', '=', 'Origen'],
                             ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
                             ['Id_profesional', '=', $newId_user]
-                        ])
-                        ->get();
+                        ])->where(function($query){
+                            $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
+                        })->get();
                     }else{
                         $bandejaOrigenFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                         ->where([
                             ['Nombre_proceso_actual', '=', 'Origen'],
                             ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
-                        ])
-                        ->get();
+                        ])->where(function($query){
+                            $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
+                        })->get();
 
                     }
                     // ->whereNull('Nombre_proceso_anterior');
@@ -614,13 +623,25 @@ class BandejaOrigenController extends Controller
         // Paso N°1: Extraemos el id estado de la tabla de parametrizaciones dependiendo del
         // id proceso, id servicio, id accion. Este id irá como estado  en el evento
         $estado_acorde_a_parametrica = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
-        ->select('sipc.Estado')
+        ->select('sipc.Estado', 'sipc.Enviar_a_bandeja_trabajo_destino as enviarA')
         ->where([
             // ['sipc.Id_cliente', '=', $request->cliente],
             ['sipc.Id_proceso', '=', $Id_proceso],
             ['sipc.Servicio_asociado', '=', $Id_Servicio_redireccionar],
             ['sipc.Accion_ejecutar','=',  $Id_accion]
         ])->get();
+
+        //Trae El numero de orden actual
+        $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
+        ->select('Numero_orden')
+        ->get();
+
+        //Asignamos #n de orden cuado se envie un caso a notificaciones
+        if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+            $N_orden_evento=$n_orden[0]->Numero_orden;
+        }else{
+            $N_orden_evento=null;
+        }
 
         if(count($estado_acorde_a_parametrica)>0){
             $Id_Estado_evento = $estado_acorde_a_parametrica[0]->Estado;
@@ -696,6 +717,8 @@ class BandejaOrigenController extends Controller
                         'Id_profesional' =>  $Id_profesional,
                         'Nombre_profesional' => $nombre_profesional,
                         'Descripcion_bandeja' => $Descripcion_bandeja,
+                        'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
+                        'N_de_orden' => $N_orden_evento,
                         'Nombre_usuario' => $usuario,
                         'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                         'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion
@@ -742,6 +765,8 @@ class BandejaOrigenController extends Controller
                         'Id_estado_evento' => $Id_Estado_evento,
                         'Id_proceso_anterior' => $array_id_procesos[$m],
                         'Id_servicio_anterior' => $array_id_servicios[$m],
+                        'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
+                        'N_de_orden' => $N_orden_evento,
                         'Nombre_usuario' => $usuario,
                         'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                         'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion
@@ -792,6 +817,8 @@ class BandejaOrigenController extends Controller
                         'Id_profesional' =>  $Id_profesional,
                         'Nombre_profesional' => $nombre_profesional,
                         'Descripcion_bandeja' => $Descripcion_bandeja,
+                        'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
+                        'N_de_orden' => $N_orden_evento,
                         'Nombre_usuario' => $usuario,
                         'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                         'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion

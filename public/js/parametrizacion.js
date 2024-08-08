@@ -218,6 +218,18 @@ $(document).ready(function(){
 
         // Esta función realiza los controles de cada elemento por fila
         edicion_parametrizacion_origen_atel(id_fila_parametrizacion_editar);
+
+//Si no hay niguna accion selecionada setea los valores de enviar como vacio
+$(`#bd_accion_ejecutar_origen_atel_${id_parametrizacion_calificacion_pcl_editar} `).change(function(){
+    if($(this).val() == 0){
+        console.log('q');
+        $('#bd_enviar_a_origen_atel_'+id_parametrizacion_calificacion_pcl_editar).prop('disabled',true);
+        $('#bd_enviar_a_origen_atel_'+id_parametrizacion_calificacion_pcl_editar).prop('checked',false);
+        $('#bd_bandeja_trabajo_destino_origen_atel_'+id_parametrizacion_calificacion_pcl_editar).empty();
+    }else{
+        $('#bd_enviar_a_origen_atel_'+id_parametrizacion_calificacion_pcl_editar).prop('disabled',false);
+    }
+});
     });
     
     /* ACTUALIZAR PARAMETRIZACIÓN ORIGEN ATEL */
@@ -330,7 +342,7 @@ $(document).ready(function(){
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="detiene_tiempo_gestion_origen_atel" id="detiene_tiempo_gestion_origen_atel_'+contador_origen_atel+'"></div>',
             '<select disabled class="custom-select equipo_trabajo_origen_atel_'+contador_origen_atel+'" name="equipo_trabajo_origen_atel" id="equipo_trabajo_origen_atel_'+contador_origen_atel+'"><option value=""></option></select>',
             '<select disabled class="custom-select listado_profesionales_origen_atel_'+contador_origen_atel+'" name="listado_profesionales_origenl_atel" id="listado_profesionales_origen_atel_'+contador_origen_atel+'"><option value=""></option></select>',
-            '<div style="text-align:center;"><input type="checkbox" class="scales" name="enviar_a_origen_atel" id="enviar_a_origen_atel_'+contador_origen_atel+'"></div>',
+            '<div style="text-align:center;"><input type="checkbox" class="scales" name="enviar_a_origen_atel" id="enviar_a_origen_atel_'+contador_origen_atel+'" disabled></div>',
             '<select disabled class="custom-select bandeja_trabajo_destino_origen_atel_'+contador_origen_atel+'" name="bandeja_trabajo_destino_origen_atel" id="bandeja_trabajo_destino_origen_atel_'+contador_origen_atel+'"><option value=""></option></select>',
             '<input type="text" class="form-control" name="estado_facturacion_origen_atel" id="estado_facturacion_origen_atel_'+contador_origen_atel+'">',
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="movimiento_automatico_origen_atel" id="movimiento_automatico_origen_atel_'+contador_origen_atel+'" data-id_movimiento_automatico_origen_atel="'+contador_origen_atel+'"></div>',
@@ -673,7 +685,7 @@ $(document).ready(function(){
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="detiene_tiempo_gestion_calificacion_pcl" id="detiene_tiempo_gestion_calificacion_pcl_'+contador_calificacion_pcl+'"></div>',
             '<select class="custom-select equipo_trabajo_calificacion_pcl_'+contador_calificacion_pcl+'" name="equipo_trabajo_calificacion_pcl" id="equipo_trabajo_calificacion_pcl_'+contador_calificacion_pcl+'"><option value=""></option></select>',
             '<select disabled class="custom-select listado_profesionales_calificacion_pcl_'+contador_calificacion_pcl+'" name="listado_profesionales_calificacion_pcl" id="listado_profesionales_calificacion_pcl_'+contador_calificacion_pcl+'"><option value=""></option></select>',
-            '<div style="text-align:center;"><input type="checkbox" class="scales" name="enviar_a_calificacion_pcl" id="enviar_a_calificacion_pcl_'+contador_calificacion_pcl+'"></div>',
+            '<div style="text-align:center;"><input type="checkbox" class="scales" name="enviar_a_calificacion_pcl" id="enviar_a_calificacion_pcl_'+contador_calificacion_pcl+'" disabled></div>',
             '<select disabled class="custom-select bandeja_trabajo_destino_calificacion_pcl_'+contador_calificacion_pcl+'" name="bandeja_trabajo_destino_calificacion_pcl" id="bandeja_trabajo_destino_calificacion_pcl_'+contador_calificacion_pcl+'"><option value=""></option></select>',
             '<input type="text" class="form-control" name="estado_facturacion_calificacion_pcl" id="estado_facturacion_calificacion_pcl_'+contador_calificacion_pcl+'">',
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="movimiento_automatico_calificacion_pcl" id="movimiento_automatico_calificacion_pcl_'+contador_calificacion_pcl+'" data-id_movimiento_automatico_calificacion_pcl="'+contador_calificacion_pcl+'"></div>',
@@ -1037,7 +1049,7 @@ $(document).ready(function(){
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="detiene_tiempo_gestion_juntas" id="detiene_tiempo_gestion_juntas_'+contador_juntas+'"></div>',
             '<select class="custom-select equipo_trabajo_juntas_'+contador_juntas+'" name="equipo_trabajo_juntas" id="equipo_trabajo_juntas_'+contador_juntas+'"><option value=""></option></select>',
             '<select disabled class="custom-select listado_profesionales_juntas_'+contador_juntas+'" name="listado_profesionales_juntas" id="listado_profesionales_juntas_'+contador_juntas+'"><option value=""></option></select>',
-            '<div style="text-align:center;"><input type="checkbox" class="scales" name="enviar_a_juntas" id="enviar_a_juntas_'+contador_juntas+'"></div>',
+            '<div style="text-align:center;"><input type="checkbox" class="scales" name="enviar_a_juntas" id="enviar_a_juntas_'+contador_juntas+'" disabled></div>',
             '<select disabled class="custom-select bandeja_trabajo_destino_juntas_'+contador_juntas+'" name="bandeja_trabajo_destino_juntas" id="bandeja_trabajo_destino_juntas_'+contador_juntas+'"><option value=""></option></select>',
             '<input type="text" class="form-control" name="estado_facturacion_juntas" id="estado_facturacion_juntas_'+contador_juntas+'">',
             '<div style="text-align:center;"><input type="checkbox" class="scales" name="movimiento_automatico_juntas" id="movimiento_automatico_juntas_'+contador_juntas+'" data-id_movimiento_automatico_juntas="'+contador_juntas+'"></div>',
@@ -1175,6 +1187,9 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
     $("#estado_origen_atel_"+num_consecutivo).change(function(){
         $("#accion_ejecutar_origen_atel_"+num_consecutivo).prop('disabled', false);
         let id_estado_seleccionada_origen_atel = $("#estado_origen_atel_"+num_consecutivo).val();
+
+        validacionesNotificaciones(num_consecutivo,'origen');
+
         let datos_acciones_ejecutar_origen_atel = {
             '_token': token,
             'parametro': "acciones_ejecutar_proceso_origen_atel",
@@ -1187,7 +1202,7 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
             data: datos_acciones_ejecutar_origen_atel,
             success:function(data){
                 $('#accion_ejecutar_origen_atel_'+num_consecutivo).empty();
-                $('#accion_ejecutar_origen_atel_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                $('#accion_ejecutar_origen_atel_'+num_consecutivo).append('<option value="0" selected>Seleccione</option>');
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
                     $("#accion_ejecutar_origen_atel_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Accion"]+'</option>');
@@ -1200,6 +1215,7 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
     $("#accion_ejecutar_origen_atel_"+num_consecutivo).change(function(){
         $("#equipo_trabajo_origen_atel_"+num_consecutivo).prop('disabled', false);
         // let id_accion = $("#accion_ejecutar_origen_atel_"+num_consecutivo).val();
+        validacionesNotificaciones(num_consecutivo,'origen','');
 
         let datos_equipos_trabajo_origen_atel = {
             '_token': token,
@@ -1212,7 +1228,7 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
             data: datos_equipos_trabajo_origen_atel,
             success:function(data){
                 $('#equipo_trabajo_origen_atel_'+num_consecutivo).empty();
-                $('#equipo_trabajo_origen_atel_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                $('#equipo_trabajo_origen_atel_'+num_consecutivo).append('<option value="0" selected>Seleccione</option>');
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
                     $("#equipo_trabajo_origen_atel_"+num_consecutivo).append('<option value="'+data[claves[i]]["id"]+'">'+data[claves[i]]["nombre"]+'</option>');
@@ -1674,7 +1690,7 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
         data: datos_acciones_ejecutar_origen_atel,
         success:function(data){
             $('#bd_accion_ejecutar_origen_atel_'+id_parametrizacion_origen_atel_editar).empty();
-            $('#bd_accion_ejecutar_origen_atel_'+id_parametrizacion_origen_atel_editar).append('<option value="" selected>Seleccione</option>');
+            $('#bd_accion_ejecutar_origen_atel_'+id_parametrizacion_origen_atel_editar).append('<option value="0" selected>Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
                 if (data[claves[i]]["Id_Accion"] == $("#bd_id_accion_ejecutar_origen_atel_"+id_parametrizacion_origen_atel_editar).val()) {
@@ -1685,6 +1701,8 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
             }
         }
     });
+
+    validacionesNotificaciones(id_parametrizacion_origen_atel_editar,'origen');
 
     /* Carga del selector de acciones a ejecutar dependiendo de la seleccion del estado del proceso origen atel evento change */
     $("#bd_estado_origen_atel_"+id_parametrizacion_origen_atel_editar).change(function(){
@@ -1910,7 +1928,7 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
 
             let datos_bandeja_trabajo_destino_origen_atel = {
                 '_token': token,
-                'parametro': "bandeja_trabajo_destino_proceso_origen_atel",
+                'parametro': "bandeja_trabajo_destino_notificaciones",
                 'Id_cliente': Id_cliente,
             };
             $.ajax({
@@ -1919,11 +1937,7 @@ function edicion_parametrizacion_origen_atel(id_parametrizacion_origen_atel_edit
                 data: datos_bandeja_trabajo_destino_origen_atel,
                 success:function(data){
                     $('#bd_bandeja_trabajo_destino_origen_atel_'+id_parametrizacion_origen_atel_editar).empty();
-                    $('#bd_bandeja_trabajo_destino_origen_atel_'+id_parametrizacion_origen_atel_editar).append('<option value="" selected>Seleccione</option>');
-                    let claves = Object.keys(data);
-                    for (let i = 0; i < claves.length; i++) {
-                        $("#bd_bandeja_trabajo_destino_origen_atel_"+id_parametrizacion_origen_atel_editar).append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
-                    }
+                    $("#bd_bandeja_trabajo_destino_origen_atel_"+id_parametrizacion_origen_atel_editar).append(`<option value="${data.Id_proceso}" selected>${data.Nombre_proceso}</option>`);
                 }
             });
 
@@ -2225,6 +2239,7 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
     $("#accion_ejecutar_calificacion_pcl_"+num_consecutivo).change(function(){
         $("#equipo_trabajo_calificacion_pcl_"+num_consecutivo).prop('disabled', false);
         // let id_accion = $("#accion_ejecutar_calificacion_pcl_"+num_consecutivo).val();
+        validacionesNotificaciones(num_consecutivo,'pcl','');
 
         let datos_equipos_trabajo_calificacion_pcl = {
             '_token': token,
@@ -2363,7 +2378,7 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
 
             let datos_bandeja_trabajo_destino_calificacion_pcl = {
                 '_token': token,
-                'parametro': "bandeja_trabajo_destino_proceso_calificacion_pcl",
+                'parametro': "bandeja_trabajo_destino_notificaciones",
                 'Id_cliente': Id_cliente,
             };
             $.ajax({
@@ -2372,11 +2387,7 @@ function funciones_elementos_fila_parametrizar_calificacion_pcl(num_consecutivo)
                 data: datos_bandeja_trabajo_destino_calificacion_pcl,
                 success:function(data){
                     $('#bandeja_trabajo_destino_calificacion_pcl_'+num_consecutivo).empty();
-                    $('#bandeja_trabajo_destino_calificacion_pcl_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
-                    let claves = Object.keys(data);
-                    for (let i = 0; i < claves.length; i++) {
-                        $("#bandeja_trabajo_destino_calificacion_pcl_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
-                    }
+                    $("#bandeja_trabajo_destino_calificacion_pcl_"+num_consecutivo).append(`<option value="${data.Id_proceso}" selected>${data.Nombre_proceso}</option>`);
                 }
             });
 
@@ -2697,7 +2708,9 @@ function edicion_parametrizacion_calificacion_pcl(id_parametrizacion_calificacio
         }
     });
 
-    /* Carga del selector de equipos de trabajo dependiendo del proceso calificacion pcl apenas carga */    
+    validacionesNotificaciones(id_parametrizacion_calificacion_pcl_editar,'pcl');
+
+    /* Carga del selector de equipos de trabajo dependiendo del proceso calificacion pcl apenas carga */
     let datos_equipos_trabajo_calificacion_pcl = {
         '_token': token,
         'parametro' : "equipos_trabajo_proceso_calificacion_pcl",
@@ -2923,7 +2936,7 @@ function edicion_parametrizacion_calificacion_pcl(id_parametrizacion_calificacio
 
             let datos_bandeja_trabajo_destino_calificacion_pcl = {
                 '_token': token,
-                'parametro': "bandeja_trabajo_destino_proceso_calificacion_pcl",
+                'parametro': "bandeja_trabajo_destino_notificaciones",
                 'Id_cliente': Id_cliente,
             };
             $.ajax({
@@ -2932,11 +2945,7 @@ function edicion_parametrizacion_calificacion_pcl(id_parametrizacion_calificacio
                 data: datos_bandeja_trabajo_destino_calificacion_pcl,
                 success:function(data){
                     $('#bd_bandeja_trabajo_destino_calificacion_pcl_'+id_parametrizacion_calificacion_pcl_editar).empty();
-                    $('#bd_bandeja_trabajo_destino_calificacion_pcl_'+id_parametrizacion_calificacion_pcl_editar).append('<option value="" selected>Seleccione</option>');
-                    let claves = Object.keys(data);
-                    for (let i = 0; i < claves.length; i++) {
-                        $("#bd_bandeja_trabajo_destino_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
-                    }
+                    $("#bd_bandeja_trabajo_destino_calificacion_pcl_"+id_parametrizacion_calificacion_pcl_editar).append(`<option value="${data.Id_proceso}" selected>${data.Nombre_proceso}</option>`);   
                 }
             });
 
@@ -3238,6 +3247,8 @@ function funciones_elementos_fila_parametrizar_juntas(num_consecutivo){
     $("#accion_ejecutar_juntas_"+num_consecutivo).change(function(){
         $("#equipo_trabajo_juntas_"+num_consecutivo).prop('disabled', false);
         // let id_accion = $("#accion_ejecutar_juntas_"+num_consecutivo).val();
+        
+        validacionesNotificaciones(num_consecutivo,'juntas','');
 
         let datos_equipos_trabajo_juntas = {
             '_token': token,
@@ -3376,7 +3387,7 @@ function funciones_elementos_fila_parametrizar_juntas(num_consecutivo){
 
             let datos_bandeja_trabajo_destino_juntas = {
                 '_token': token,
-                'parametro': "bandeja_trabajo_destino_proceso_juntas",
+                'parametro': "bandeja_trabajo_destino_notificaciones",
                 'Id_cliente': Id_cliente,
             };
             $.ajax({
@@ -3385,11 +3396,7 @@ function funciones_elementos_fila_parametrizar_juntas(num_consecutivo){
                 data: datos_bandeja_trabajo_destino_juntas,
                 success:function(data){
                     $('#bandeja_trabajo_destino_juntas_'+num_consecutivo).empty();
-                    $('#bandeja_trabajo_destino_juntas_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
-                    let claves = Object.keys(data);
-                    for (let i = 0; i < claves.length; i++) {
-                        $("#bandeja_trabajo_destino_juntas_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
-                    }
+                    $('#bandeja_trabajo_destino_juntas_'+num_consecutivo).append(`<option value="${data.Id_proceso}" selected>${data.Nombre_proceso}</option>`);
                 }
             });
 
@@ -3698,7 +3705,7 @@ function edicion_parametrizacion_juntas(id_parametrizacion_juntas_editar){
         data: datos_acciones_ejecutar_juntas,
         success:function(data){
             $('#bd_accion_ejecutar_juntas_'+id_parametrizacion_juntas_editar).empty();
-            $('#bd_accion_ejecutar_juntas_'+id_parametrizacion_juntas_editar).append('<option value="" selected>Seleccione</option>');
+            $('#bd_accion_ejecutar_juntas_'+id_parametrizacion_juntas_editar).append('<option value="0">Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
                 if (data[claves[i]]["Id_Accion"] == $("#bd_id_accion_ejecutar_juntas_"+id_parametrizacion_juntas_editar).val()) {
@@ -3710,7 +3717,9 @@ function edicion_parametrizacion_juntas(id_parametrizacion_juntas_editar){
         }
     });
 
-    /* Carga del selector de equipos de trabajo dependiendo del proceso juntas apenas carga */    
+    validacionesNotificaciones(id_parametrizacion_juntas_editar,'juntas');
+
+    /* Carga del selector de equipos de trabajo dependiendo del proceso juntas apenas carga */
     let datos_equipos_trabajo_juntas = {
         '_token': token,
         'parametro' : "equipos_trabajo_proceso_juntas",
@@ -3828,7 +3837,7 @@ function edicion_parametrizacion_juntas(id_parametrizacion_juntas_editar){
             //$('#bd_accion_antecesora_juntas_'+id_parametrizacion_juntas_editar).append('<option value="">Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                if (ata[claves[i]]["Id_Accion"] != $("#bd_accion_antecesora_juntas"+id_parametrizacion_juntas_editar).val()) {
+                if (data[claves[i]]["Id_Accion"] != $("#bd_accion_antecesora_juntas"+id_parametrizacion_juntas_editar).val()) {
                     $("#bd_accion_antecesora_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Accion"]+'</option>');
                 }
             }
@@ -3935,7 +3944,7 @@ function edicion_parametrizacion_juntas(id_parametrizacion_juntas_editar){
 
             let datos_bandeja_trabajo_destino_juntas = {
                 '_token': token,
-                'parametro': "bandeja_trabajo_destino_proceso_juntas",
+                'parametro': "bandeja_trabajo_destino_notificaciones",
                 'Id_cliente': Id_cliente,
             };
             $.ajax({
@@ -3944,11 +3953,7 @@ function edicion_parametrizacion_juntas(id_parametrizacion_juntas_editar){
                 data: datos_bandeja_trabajo_destino_juntas,
                 success:function(data){
                     $('#bd_bandeja_trabajo_destino_juntas_'+id_parametrizacion_juntas_editar).empty();
-                    $('#bd_bandeja_trabajo_destino_juntas_'+id_parametrizacion_juntas_editar).append('<option value="" selected>Seleccione</option>');
-                    let claves = Object.keys(data);
-                    for (let i = 0; i < claves.length; i++) {
-                        $("#bd_bandeja_trabajo_destino_juntas_"+id_parametrizacion_juntas_editar).append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
-                    }
+                    $('#bd_bandeja_trabajo_destino_juntas_'+id_parametrizacion_juntas_editar).append(`<option value="${data.Id_proceso}" selected>${data.Nombre_proceso}</option>`);
                 }
             });
 
@@ -4113,5 +4118,44 @@ function edicion_parametrizacion_juntas(id_parametrizacion_juntas_editar){
             $('#bd_accion_automatica_juntas_'+id_fila_parametrizacion_movimiento_editar).empty();
             $('#bd_accion_automatica_juntas_'+id_fila_parametrizacion_movimiento_editar).append('<option value="" selected>Seleccione</option>');                
         }
-    }); 
+    });  
 };
+
+function validacionesNotificaciones(idFila,caso,prefix = 'bd_'){
+    //Habilitar campo enviar solo cuando haya una accion selecionada dependiendo del caso
+    switch(caso){
+        case 'juntas' :
+            accionSeleccionada  = $(`#${prefix}accion_ejecutar_juntas_${idFila}`).find(':selected').val();
+            if(accionSeleccionada == 0 || accionSeleccionada == undefined){
+                $(`#${prefix}enviar_a_juntas_${idFila}`).prop('disabled', true);
+            }else{
+               $(`#${prefix}enviar_a_juntas_${idFila}`).prop('disabled', false);
+            }
+            break;
+        case 'pcl' : 
+            accionSeleccionada  = $(`#${prefix}accion_ejecutar_calificacion_pcl_${idFila}`).find(':selected').val();
+            if(accionSeleccionada == 0 || accionSeleccionada == undefined){
+                console.log('entre');
+                $(`#${prefix}enviar_a_calificacion_pcl_${idFila}`).prop('disabled', true);
+            }else{
+                console.log(accionSeleccionada,'no entre');
+                console.log(`$(#${prefix}enviar_a_calificacion_pcl_${idFila}).prop('disabled', false)`);
+                $(`#${prefix}enviar_a_calificacion_pcl_${idFila}`).prop('disabled', false);
+            }
+            break;
+        case 'origen' :
+            accionSeleccionada  = $(`#${prefix}accion_ejecutar_origen_atel_${idFila}`).find(':selected').val();
+            if(accionSeleccionada == 0 || accionSeleccionada == undefined){
+                console.log('entre');
+                $(`#${prefix}enviar_a_origen_atel_${idFila}`).prop('disabled', true);
+            }else{
+                console.log(accionSeleccionada,'no entre');
+                console.log(`$(#${prefix}enviar_a_origen_atel_${idFila}).prop('disabled', false)`);
+                $(`#${prefix}enviar_a_origen_atel_${idFila}`).prop('disabled', false);
+            }
+            break;
+    }
+    
+    
+
+}

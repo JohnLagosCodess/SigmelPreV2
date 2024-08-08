@@ -442,14 +442,10 @@ class ParametrizacionController extends Controller
         }
         
         // Bandeja de trabajo destino
-        if ($parametro == "bandeja_trabajo_destino_proceso_calificacion_pcl") {
-            $bandeja_trabajo_destino_proceso_calificacion_pcl = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_servicios_contratados as sisc')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slps', 'sisc.Id_servicio', '=', 'slps.Id_Servicio')
-            ->select('sisc.Id_proceso', 'slps.Nombre_proceso')
-            ->whereNotIn('sisc.Id_proceso', [2])
-            ->where([
-                ['sisc.Id_cliente', $Id_cliente],
-            ])->groupBy('sisc.Id_proceso')->get();
+        if ($parametro == "bandeja_trabajo_destino_notificaciones") {
+
+            $bandeja_trabajo_destino_proceso_calificacion_pcl = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_lista_procesos_servicios')
+            ->select('Id_proceso', 'Nombre_proceso')->where('Id_proceso',4)->first();
 
             $informacion_bandeja_trabajo_destino_proceso_calificacion_pcl = json_decode(json_encode($bandeja_trabajo_destino_proceso_calificacion_pcl), true);
             return response()->json($informacion_bandeja_trabajo_destino_proceso_calificacion_pcl);

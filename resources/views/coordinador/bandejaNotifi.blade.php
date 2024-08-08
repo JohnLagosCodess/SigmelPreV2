@@ -14,11 +14,14 @@
     <div class="card-info Notifibandeja" style="border: 1px solid black;">
         <div class="card-header text-center">
             <h4>Bandeja Notificaciones</h4>
-            <input type="hidden" id="action_modulo_calificacion_Notifi" value="{{ route('calificacionNotifi') }}">
+            <input type="hidden" id="action_modulo_calificacion_Juntas" value="{{ route('calificacionJuntas') }}">
+            <input type="hidden" id="action_modulo_calificacion_Origen" value="{{ route('calificacionOrigen') }}">
+            <input type="hidden" id="action_modulo_calificacion_pcl" value="{{ route('calificacionPCL') }}">
             <!--traemos los datos de id rol y id usuario de la session -->
             <input type="hidden" class="form-control" name="newId_rol" id="newId_rol" value="{{$captura_id_rol = session('id_cambio_rol')}}">
             <input type="hidden" class="form-control" name="newId_user" id="newId_user" value="{{$user->id}}">
         </div>
+ 
         <form id="form_filtro_bandejaNotifi" method="POST">
             @csrf
             <div class="card-body">                
@@ -69,10 +72,17 @@
                     </div>                                      
                 </div>
             </div>
-            &nbsp; <label for="nro_registros2" class="col-form-label d-none" id="num_registros2">Se encontraron <span></span> 0 registros</label>
         </form> 
+        <div class="alert mt-1 alert-info " id="mensaje_importante" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-info-circle m-1"></i> 
+                <strong class="me-2">Importante:</strong>
+                <span class="spinner-border m-1" role="status" aria-hidden="true" style="width: 1rem; height: 1rem;"></span>
+                <i>Cargando resultados de la Bandeja, por favor espere un momento...</i>
+            </div>
+        </div>
         <!-- Bandeja Notificaciones-->
-        <form id="form_proser_bandejaNotifi" method="POST">
+        <form id="form_proser_bandejaNotifi" method="POST" class="d-none">
             @csrf
             <div class="row contenedor_casos_notifi">
                 <div class="col-12">                                           
@@ -80,7 +90,7 @@
                     <br>&nbsp;<label for="nro_orden" class="col-form-label" id="num_ordenlabel">N° de orden: {{$n_orden[0]->Numero_orden}}</label>
                     <div class="card-body" id="contenedorTable">
                         <div class="table table-responsive">
-                            <table id="Bandeja_Notifi" class="table table-striped table-bordered" style="width:100%">
+                            <table id="Bandeja_Notifi" class="table table-striped table-bordered" style="width:100%;">
                                 <thead>
                                     <tr class="bg-info">
                                         <th class="detallenotifi">Detalle  </th>
@@ -118,7 +128,7 @@
                             </table>
                         </div>
                     </div>
-                    @if ($dato_rol<>'5' && $dato_rol<>'9')
+                    {{-- PBS014 la bandeja no debe cambiar el estado de la accion @if ($dato_rol<>'5' && $dato_rol<>'9')
                         <div class="card-body" id="contenedor_selectores">
                             <div class="row">
                                 <div class="col-12">
@@ -153,7 +163,7 @@
                                 </div>
                             </div>
                         </div>
-                    @endif
+                    @endif --}}
                     <div class="card-footer">
                         <div class="alert alert-danger no_ejecutar_parametrica_bandeja_trabajo d-none" role="alert">
                             <i class="fas fa-info-circle"></i> <strong>Importante:</strong> No puede mover la información debido a que el proceso, servicio y/o acción seleccionados no tienen una parametrización
@@ -161,7 +171,6 @@
                         </div>
                         <div class="grupo_botones" style="float: left;">
                             @if ($dato_rol<>'5' && $dato_rol<>'9')
-                                <input type="submit" id="btn_guardar" class="btn btn-info" value="Actualizar">
                                 <input type="button" id="btn_bandeja" class="btn btn-info d-none" value="Retornar Bandeja"> 
                             @endif
                             <input type="button" id="btn_expor_datos" class="btn btn-info" value="Exportar datos"> 
@@ -182,7 +191,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.templates.min.js"></script>
-
+    <script src="/js/funciones_helpers.js"></script>
     <script src="/js/bandeja_notifi.js"></script>
     
     <script>
