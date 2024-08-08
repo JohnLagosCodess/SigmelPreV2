@@ -39,6 +39,7 @@ use App\Models\sigmel_informacion_alertas_automaticas_eventos;
 use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_auditorias_informacion_accion_eventos;
+use App\Models\sigmel_numero_orden_eventos;
 
 use DateTime;
 use PhpOffice\PhpWord\PhpWord;
@@ -209,6 +210,21 @@ class CalificacionJuntasController extends Controller
             $informacion_datos_tipo_evento = json_decode(json_encode($datos_tipo_evento, true));
             return response()->json($informacion_datos_tipo_evento);
         }
+
+        //Lista estados notificacion correspondencia
+        if($parametro == "EstadosNotificacionCorrespondencia"){
+            $datos_status_notificacion_correspondencia = sigmel_lista_parametros::on('sigmel_gestiones')
+                ->select('Id_Parametro','Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Estatus_Correspondencia'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
+
+            $datos_status_notificacion_corresp = json_decode(json_encode($datos_status_notificacion_correspondencia, true));
+            return response()->json($datos_status_notificacion_corresp);
+        }
+
         // Listado tipo entidad
         if($parametro == 'lista_primer_calificador'){
             $listado_tipo_entidad = sigmel_lista_parametros::on('sigmel_gestiones')
@@ -593,13 +609,25 @@ class CalificacionJuntasController extends Controller
             $id_cliente = $array_id_cliente["Cliente"];
 
             $estado_acorde_a_parametrica = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
-            ->select('sipc.Estado')
+            ->select('sipc.Estado','sipc.Enviar_a_bandeja_trabajo_destino as enviarA')
             ->where([
                 ['sipc.Id_cliente', '=', $id_cliente],
                 ['sipc.Id_proceso', '=', $Id_proceso],
                 ['sipc.Servicio_asociado', '=', $Id_servicio],
                 ['sipc.Accion_ejecutar','=',  $request->accion]
             ])->get();
+
+            //Asignamos #n de orden cuado se envie un caso a notificaciones
+            if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+                //Trae El numero de orden actual
+                $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
+                ->select('Numero_orden')
+                ->get();
+
+                $N_orden_evento=$n_orden[0]->Numero_orden;
+            }else{
+                $N_orden_evento=null;
+            }
 
             if(count($estado_acorde_a_parametrica)>0){
                 $Id_Estado_evento = $estado_acorde_a_parametrica[0]->Estado;
@@ -786,7 +814,9 @@ class CalificacionJuntasController extends Controller
                 'F_accion' => $date_time,
                 'Id_profesional' => $id_profesional,
                 'Nombre_profesional' => $asignacion_profesional,
-                'Nueva_F_radicacion' => $Nueva_fecha_radicacion,         
+                'Nueva_F_radicacion' => $Nueva_fecha_radicacion,
+                'N_de_orden' => $N_orden_evento,     
+                'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No', 
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
@@ -1130,13 +1160,25 @@ class CalificacionJuntasController extends Controller
             $id_cliente = $array_id_cliente["Cliente"];
 
             $estado_acorde_a_parametrica = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
-            ->select('sipc.Estado')
+            ->select('sipc.Estado','sipc.Enviar_a_bandeja_trabajo_destino as enviarA')
             ->where([
                 ['sipc.Id_cliente', '=', $id_cliente],
                 ['sipc.Id_proceso', '=', $Id_proceso],
                 ['sipc.Servicio_asociado', '=', $Id_servicio],
                 ['sipc.Accion_ejecutar','=',  $request->accion]
             ])->get();
+
+            //Asignamos #n de orden cuado se envie un caso a notificaciones
+            if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+                //Trae El numero de orden actual
+                $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
+                ->select('Numero_orden')
+                ->get();
+
+                $N_orden_evento=$n_orden[0]->Numero_orden;
+            }else{
+                $N_orden_evento=null;
+            }
 
             if(count($estado_acorde_a_parametrica)>0){
                 $Id_Estado_evento = $estado_acorde_a_parametrica[0]->Estado;
@@ -1359,7 +1401,9 @@ class CalificacionJuntasController extends Controller
                 'F_accion' => $date_time,
                 'Id_profesional' => $id_profesional,
                 'Nombre_profesional' => $asignacion_profesional,
-                'Nueva_F_radicacion' => $Nueva_fecha_radicacion,             
+                'Nueva_F_radicacion' => $Nueva_fecha_radicacion,
+                'N_de_orden' => $N_orden_evento,     
+                'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',              
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
@@ -2619,6 +2663,26 @@ class CalificacionJuntasController extends Controller
             $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
             return response()->json(($arrayhitorialAgregarComunicado));
 
+        }
+
+        //Accion Actualizar status,nota del comunicado
+        if($request->bandera == 'Actualizar'){
+            $request->validate([
+                'bandera' => 'required',
+                'radicado' => 'required',
+                'id_asignacion' => 'required'
+            ]);
+            
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where([
+                ['N_radicado',$request->radicado],
+                ['Id_Asignacion', $request->id_asignacion]])->update([
+                'Nota' => $request->Nota,
+                'Estado_notificacion' => $request->Estado_general
+            ]);
+
+            $mensajeResponse = 'Comunicado acualizado correctamente';
+            
+            return $mensajeResponse;
         }
         
     }

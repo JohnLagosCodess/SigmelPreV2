@@ -1301,7 +1301,115 @@ $(document).ready(function(){
                 $("#cargarComunicado").removeClass("descarga-deshabilitada");
             }
         });  
+    });
+    
+    //pbs014
+    $("#listado_agregar_comunicados").on('click', '#CorrespondenciaNotificacion', function() {
+        let id = $(this);
+        let destinatario = $(id).data('destinatario');
+        
+        // Modificar el título de la modal
+        $("#modalCorrespondencia").attr('title', 'Correspondencia ' + destinatario);
+        
+        // Mostrar la modal
+        $("#modalCorrespondencia").show();
+    });
+
+    let selectores_notificacion = {
+        '_token': $('input[name=_token]').val(),
+        'parametro': 'EstadosNotificaion'
+    }
+
+    let opciones_Notificacion = [];
+
+    //Selectores estados de notificacion
+    $("[id^='status_notificacion_']").each(function() {
+        let $selector = $(this);
+ 
+        let opocionSeleccionada = $selector.data('default');
+
+        $.ajax({
+            type: 'POST',
+            url: '/cargarselectores',
+            data: selectores_notificacion,
+            success: function (data) {
+                $.each(data, function (index, item) {
+                    //Establecemos el color que tendra le texto de cada opcion segun corresponda
+                    let color = (()=>{
+                        switch(item.Nombre_parametro){
+                            case 'Pendiente': return '#000000'; // negro
+                            case 'No notificar': return '#CBCBCB'; // gris
+                            case 'Devuelto': return '#E70000'; // rojo
+                            case 'Notificado efectivamente': return '#00E738'; // verde
+                            case 'Notificado parcialmente': return '#00ACE7'; // azul
+                        }
+                    })();
+    
+                    let opcion = $('<option>', {
+                        value: item.Id_Parametro,
+                        text: item.Nombre_parametro
+                    });
+    
+                    $selector.append(opcion);
+    
+                    /**@var opciones_Notificacion Corresponde a las propiedades del elemento */
+                    opciones_Notificacion.push({
+                        id:item.Id_Parametro,
+                        texto: item.Nombre_parametro,
+                        color: color
+                    });
+                });
+    
+                //Cargamos la configuracion del select2
+                $selector.select2({
+                    placeholder: "Seleccione una opción",
+                    allowClear: false,
+                    data: opciones_Notificacion,
+                    templateResult: function(data) {
+                        return $('<span>', {
+                            style: `color: ${data.color}`,
+                            text: data.texto
+                        });
+                    },
+                    templateSelection: function(data) {
+                        return $('<span>', {
+                            style: `color: ${data.color}`,
+                            text: data.texto
+                        });
+                    }
+                }).val(opocionSeleccionada);
+
+                $selector.trigger('change');
+            },
+        });
     }); 
+
+    //Accion editar comunicado
+    $("#listado_comunicados_clpcl").on("click",'#editar_comunicado',function(){
+        let radicado = $(this).data('radicado');
+        let datos_comunicados_actualizar = {
+            '_token' : token,
+            'bandera': 'Actualizar',
+            'radicado' : $(this).data('radicado'),
+            'Nota': $("#nota_comunicado_" + radicado).val(),
+            'Estado_general': $("#status_notificacion_" + radicado).val(),
+            'id_asignacion': $('#Id_Asignacion_dto_atel').val()
+        };
+        $.ajax({
+            type:'POST',
+            url:'/historialComunicadoOrigen',
+            data: datos_comunicados_actualizar,
+            success:function(data){
+                $('.alerta_externa_comunicado').removeClass('d-none');
+                $(".alerta_externa_comunicado").append("<strong>" + data + "</strong>");
+                setTimeout(()=>{
+                    localStorage.setItem("#Generar_comunicados", true);
+                    location.reload();
+                },2000);
+
+            }
+        });
+    });
 
     //Descargar archivo cargado manualmente
     $("form[id^='form_descargar_archivo_']").submit(function (e){

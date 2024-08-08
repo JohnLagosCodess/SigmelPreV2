@@ -21,6 +21,8 @@
                 <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>            
             <?php elseif ($dato_rol == 7):?>
                 <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+            <?php elseif(isset($_POST['bd_notificacion']) && $_POST['bd_notificacion'] == true):?>
+                <a href="{{route("bandejaNotifi")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>                                                
             <?php else: ?>
                 <a href="{{route("bandejaOrigen")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
             <?php endif ?>
@@ -53,7 +55,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="cliente">Cliente</label>
-                                                <input type="text" class="form-control" name="cliente" id="cliente" value="{{$array_datos_calificacionOrigen[0]->Nombre_Cliente}}" disabled>
+                                                <input type="text" class="form-control" name="cliente" id="cliente" data-id={{$array_datos_calificacionOrigen[0]->Id_cliente}} value="{{$array_datos_calificacionOrigen[0]->Nombre_Cliente}}" disabled>
                                                 <input type="hidden" class="form-control" name="newId_evento" id="newId_evento" value="{{$array_datos_calificacionOrigen[0]->ID_evento}}">
                                                 <input type="hidden" class="form-control" name="newId_asignacion" id="newId_asignacion" value="{{$array_datos_calificacionOrigen[0]->Id_Asignacion}}">
                                                 <input type="hidden" class="form-control" name="Id_proceso" id="Id_proceso" value="{{$array_datos_calificacionOrigen[0]->Id_proceso}}">
@@ -307,9 +309,9 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="enviar">Enviar a <span style="color: red;">(*)</span></label>
-                                                <select class="custom-select" name="enviar" id="enviar" style="color: red;">
-                                                    <option value="NO ESTA DEFINIDO">NO ESTA DEFINIDO</option>
+                                                <label for="enviar">Enviar a</label>
+                                                <select class="custom-select" name="enviar" id="enviar" disabled>
+                                                    <option value=""></option>
                                                 </select>
                                             </div>
                                         </div>
@@ -569,13 +571,16 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="listado_agregar_comunicados" class="table table-striped table-bordered" style="width: 100%">
+                                <table id="listado_agregar_comunicados" class="table table-striped table-bordered" style="width: 100%;  white-space: nowrap;">
                                     <thead>
                                         <tr class="bg-info">
                                             <th>N° Radicado</th>
                                             <th>Elaboro</th>
                                             <th>Fecha Comunicado</th>
                                             <th>Documento</th>
+                                            <th>Destinatarios</th>
+                                            <th>Estado general de la Notificación</th>
+                                            <th>Nota</th>
                                             <th>Acción</th>
                                         </tr>
                                     </thead>
@@ -1325,6 +1330,7 @@
 <?php $aperturaModal = 'Edicion'; ?>
 @include('//.administrador.modalcarguedocumentos')
 @include('//.coordinador.modalReemplazarArchivos')
+@include('//.coordinador.modalCorrespondencia')
 @stop
 @section('js')
 

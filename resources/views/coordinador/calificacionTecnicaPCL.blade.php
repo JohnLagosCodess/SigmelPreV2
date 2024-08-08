@@ -7680,19 +7680,24 @@
                                     <div class="form-group">          
                                         <input type="hidden" id="descargar_dictamenesPcl" value="{{ route('descargar_Dictamen_PCL') }}">
                                         <div class="table-responsive">
-                                            <table id="listado_comunicados_clpcl" class="table table-striped table-bordered" width="100%">
+                                            <table id="listado_comunicados_clpcl" class="table table-striped table-bordered" style="width: 100%;  white-space: nowrap;">
                                                 <thead>
                                                     <tr class="bg-info">
                                                         <th>N° de Radicado</th>
                                                         <th>Elaboró</th>
                                                         <th>Fecha de comunicado</th>
                                                         <th>Documento</th>
+                                                        <th>Destinatarios</th>
+                                                        <th>Estado general de la Notificación</th>
+                                                        <th>Nota</th>
                                                         <th>Acción</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     @if (!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion == 1)                                                            
-                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados)                                                        
+                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados)
+                                                            <input type="hidden" id="status_default_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_Notificacion']}}">
+                                                            <input type="hidden" id="Nota_comunicado_{{$comunicados['N_radicado']}}" value="{{$comunicados['Nota']}}">                                                        
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL 1507 --}}
@@ -7773,7 +7778,9 @@
                                                             @endforeach                                                                
                                                         @endif     
                                                     @elseif(!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion == 2)                                                            
-                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados)    
+                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados)
+                                                        <input type="hidden" id="status_default_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_Notificacion']}}">
+                                                        <input type="hidden" id="Nota_comunicado_{{$comunicados['N_radicado']}}" value="{{$comunicados['Nota']}}">     
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL Cero --}}
@@ -7855,6 +7862,8 @@
                                                         @endif                                                   
                                                     @elseif(!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion == 3)                                                            
                                                         @foreach ($array_comunicados_correspondencia as $index => $comunicados)
+                                                        <input type="hidden" id="status_default_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_Notificacion']}}">
+                                                        <input type="hidden" id="Nota_comunicado_{{$comunicados['N_radicado']}}" value="{{$comunicados['Nota']}}"> 
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL 917 --}}
@@ -7935,7 +7944,9 @@
                                                             @endforeach
                                                         @endif
                                                     @elseif(empty($datos_demos[0]->Decreto_calificacion))
-                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados) 
+                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados)
+                                                        <input type="hidden" id="status_default_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_Notificacion']}}">
+                                                        <input type="hidden" id="Nota_comunicado_{{$comunicados['N_radicado']}}" value="{{$comunicados['Nota']}}"> 
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Documentos cargados manualmente  --}}

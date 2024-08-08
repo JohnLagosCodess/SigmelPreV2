@@ -1907,10 +1907,14 @@ class ControversiaJuntasController extends Controller
             ];   
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-            ->where([                
-                ['N_radicado',$radicado]
-            ])->update($datos_info_comunicado_eventos); 
-    
+                ->where([
+                    ['ID_evento', $newId_evento],
+                    ['Id_Asignacion',$newId_asignacion],
+                    ['Id_proceso', $Id_proceso],
+                    ['N_radicado',$radicado]
+                    ])
+            ->update($datos_info_comunicado_eventos);
+
             $mensajes = array(
                 "parametro" => 'actualizar_correspondencia',
                 "mensaje" => 'Correspondencia actualizada satisfactoriamente.'
