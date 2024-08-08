@@ -20,7 +20,7 @@ use App\Models\sigmel_informacion_alertas_automaticas_eventos;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_comunicado_eventos;
-
+use App\Models\sigmel_informacion_correspondencia_eventos;
 use App\Models\sigmel_numero_orden_eventos;
 use App\Models\User;
 use Illuminate\Support\Arr;
@@ -1447,4 +1447,254 @@ class CoordinadorController extends Controller
 
         return json_decode(json_encode($mensajes, true));
     }
+
+
+    // public function getInformacionCorrespondencia(Request $request){
+    //     if (!Auth::check()) {
+    //         return redirect('/');
+    //     }
+    //     $time = time();
+    //     $date = date("Y-m-d", $time);
+    //     $nombre_usuario = Auth::user()->name;
+    //     $Id_comunicado = $request->id_comunicado;
+    //     $Id_evento = $request->id_evento;
+    //     $Id_asignacion = $request->id_asignacion;
+    //     $Id_proceso = $request->id_proceso;
+    //     $Tipo_correspondencia = $request->tipo_correspondencia;
+    //     $Previous_saved = $request->previous_saved;
+    //     if($Previous_saved === 'false'){
+    //         //Nro_Orden
+    //         $nro_orden = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+    //         ->select('N_de_orden')
+    //         ->where([['Id_Asignacion', $Id_asignacion]])
+    //         ->first();
+    //         $response = [
+    //             'nro_orden' => $nro_orden ? $nro_orden->N_de_orden : null,
+    //         ];
+    //         //Informacion afiliado
+    //         $infoAfiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
+    //             ->select('siae.Direccion as Direccion_destinatario','ci.Nombre_municipio as Ciudad_destinatario','ci.Nombre_departamento as Departamento_destinatario',
+    //             'siae.Telefono_contacto as Telefono_destinatario','siae.Email as Email_destinatario','siae.Nombre_afiliado as Nombre_destinatario',
+    //             'siae.Medio_notificacion as Medio_notificacion_destinatario', 'siae.Nro_identificacion as Documento_destinatario')
+    //             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+    //             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as ci', 'siae.Id_municipio', '=', 'ci.Id_municipios')
+    //             ->where('siae.ID_evento',  '=', $Id_evento)
+    //             ->get();
+    //         if($Tipo_correspondencia != '' && $Tipo_correspondencia != null){
+    //             $Tipo_correspondencia = strtolower($Tipo_correspondencia);
+    //             if($Tipo_correspondencia === 'afiliado' && !empty($infoAfiliado)){
+    //                 $response['datos'] = count($infoAfiliado) > 0 ? $infoAfiliado[0] : null;
+    //             }
+    //             else if($Tipo_correspondencia === 'empresa' && !empty($infoAfiliado)){
+    //                 $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
+    //                 ->select('sile.Empresa as Nombre_destinatario', 'sile.Direccion as Direccion_destinatario', 'sile.Telefono_empresa as Telefono_destinatario',
+    //                 'sile.Email as Email_destinatario', 'sldm.Nombre_departamento as Departamento_destinatario', 'sldm2.Nombre_municipio as Ciudad_destinatario',
+    //                 'sile.Medio_notificacion as Medio_notificacion_destinatario')
+    //                 ->where([['sile.Nro_identificacion', $infoAfiliado[0]->Documento_destinatario],['sile.ID_evento', $Id_evento]])
+    //                 ->get();
+    //                 $response['datos'] = count($datos_empleador) > 0 ? $datos_empleador[0] : null;
+    //             }
+    //             else if($Tipo_correspondencia === 'empleador' && !empty($infoAfiliado)){
+    //                 $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
+    //                 ->select('sile.Empresa as Nombre_destinatario', 'sile.Direccion as Direccion_destinatario', 'sile.Telefono_empresa as Telefono_destinatario',
+    //                 'sile.Email as Email_destinatario', 'sldm.Nombre_departamento as Departamento_destinatario', 'sldm2.Nombre_municipio as Ciudad_destinatario',
+    //                 'sile.Medio_notificacion as Medio_notificacion_destinatario')
+    //                 ->where([['sile.Nro_identificacion', $infoAfiliado[0]->Documento_destinatario],['sile.ID_evento', $Id_evento]])
+    //                 ->get();
+    //                 $response['datos'] = count($datos_empleador) > 0 ? $datos_empleador[0] : null;
+    //             }
+    //             else if($Tipo_correspondencia === 'eps' && !empty($infoAfiliado)){
+    //                 $datos_eps = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
+    //                 ->select('sie.Nombre_entidad as Nombre_destinatario', 'sie.Direccion as Direccion_destinatario', 'sie.Emails as Email_destinatario', 'sie.Telefonos as Telefono_destinatario', 
+    //                 'sldm.Nombre_departamento as Departamento_destinatario', 'sldm2.Nombre_municipio as Ciudad_destinatario','slp.Nombre_parametro as Medio_notificacion_destinatario')
+    //                 ->where([['Nro_identificacion', $infoAfiliado[0]->Documento_destinatario],['ID_evento', $Id_evento]])
+    //                 ->get();
+    //                 $response['datos'] = count($datos_eps) > 0 ? $datos_eps[0] : null;
+    //             }
+    //             else if($Tipo_correspondencia === 'afp' && !empty($infoAfiliado)){
+    //                 $datos_afp = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
+    //                 ->select('sie.Nombre_entidad as Nombre_destinatario', 'sie.Direccion as Direccion_destinatario', 'sie.Telefonos as Telefono_destinatario', 'sie.Otros_Telefonos', 'sie.Emails as Email_destinatario',
+    //                 'sldm.Nombre_departamento as Departamento_destinatario', 'sldm2.Nombre_municipio as Ciudad_destinatario','slp.Nombre_parametro as Medio_notificacion_destinatario')
+    //                 ->where([['Nro_identificacion', $infoAfiliado[0]->Documento_destinatario],['ID_evento', $Id_evento]])
+    //                 ->get();
+    //                 $response['datos'] = count($datos_afp) > 0 ? $datos_afp[0] : null;
+    //             }
+    //             else if($Tipo_correspondencia === 'arl' && !empty($infoAfiliado)){
+    //                 $datos_arl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
+    //                 ->select('sie.Nombre_entidad as Nombre_destinatario', 'sie.Direccion as Direccion_destinatario', 'sie.Telefonos as Telefono_destinatario', 'sie.Otros_Telefonos', 'sie.Emails as Email_destinatario',
+    //                 'sldm.Nombre_departamento as Departamento_destinatario', 'sldm2.Nombre_municipio as Ciudad_destinatario', 'slp.Nombre_parametro as Medio_notificacion_destinatario')
+    //                 ->where([['Nro_identificacion', $infoAfiliado[0]->Documento_destinatario],['ID_evento', $Id_evento]])
+    //                 ->get();
+    //                 $response['datos'] = count($datos_arl) > 0 ? $datos_arl[0] : null;
+    //             }
+    //             else if($Tipo_correspondencia === 'jrci'){
+    //                 $datos_jrci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_controversia_juntas_eventos as sicje') 
+    //                 ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sicje.Jrci_califi_invalidez', '=', 'sie.Id_Entidad')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
+    //                 ->select('sie.Nombre_entidad as Nombre_destinatario', 'sie.Direccion as Direccion_destinatario', 'sie.Telefonos as Telefono_destinatario', 'sie.Otros_Telefonos', 'sie.Emails as Email_destinatario',
+    //                 'sldm.Nombre_departamento as Departamento_destinatario', 'sldm2.Nombre_municipio as Ciudad_destinatario', 'slp.Nombre_parametro as Medio_notificacion_destinatario')                   
+    //                 ->where([['ID_evento', $Id_evento],['Id_Asignacion', $Id_asignacion],['Id_proceso', $Id_proceso]])
+    //                 ->get();
+    //                 $response['datos'] = count($datos_jrci) > 0 ? $datos_jrci[0] : null;
+    //             }
+    //             else if($Tipo_correspondencia === 'jnci' && !empty($infoAfiliado)){
+    //                 $datos_jnci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+    //                 ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
+    //                 ->select('sie.Nombre_entidad as Nombre_destinatario', 
+    //                     'sie.Direccion as Direccion_destinatario', 
+    //                     'sie.Telefonos as Telefono_destinatario',
+    //                     'sie.Emails as Email_destinatario',
+    //                     'sldm.Nombre_departamento as Departamento_destinatario',
+    //                     'sldm1.Nombre_municipio as Ciudad_destinatario',
+    //                     'slp.Nombre_parametro as Medio_notificacion_destinatario'
+    //                 )->where([
+    //                     ['sie.IdTipo_entidad', 5],['sie.Id_Entidad',111]
+    //                 ])->limit(1)->get();
+    //                 $response['datos'] = count($datos_jnci) > 0 ? $datos_jnci[0] : null;
+    //             }
+    //             return response()->json($response);
+    //         }
+    //     }
+    //     else{
+    //         $info_correspondencia = sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')
+    //         ->where([['Id_comunicado', $Id_comunicado],['Tipo_correspondencia', $Tipo_correspondencia]])
+    //         ->get();
+    //         return response()->json($info_correspondencia);
+    //     }
+    // }
+
+    // public function guardarInformacionCorrespondencia(Request $request){
+    //     if (!Auth::check()) {
+    //         return redirect('/');
+    //     }
+    //     $time = time();
+    //     $date = date("Y-m-d", $time);
+    //     $nombre_usuario = Auth::user()->name;
+    //     $id_evento = $request->id_evento;
+    //     $id_asignacion = $request->id_asignacion;
+    //     $id_proceso = $request->id_proceso;
+    //     $id_comunicado = $request->id_comunicado;
+    //     $correspondencia = $request->correspondencia;
+    //     $tipo_correspondencia = $request->tipo_correspondencia;
+    //     $accion = $request->accion;
+    //     $id_correspondencia = $request->id_correspondencia;
+        
+    //     $info_asignacion_eventos = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+    //     ->select('Id_servicio')
+    //     ->where([['Id_Asignacion',$id_asignacion]])
+    //     ->first();
+    //     $id_servicio = $info_asignacion_eventos ? $info_asignacion_eventos->Id_servicio : null;
+
+    //     if (!empty($correspondencia)) {
+    //         $correspondencia_guardada = implode(", ", $correspondencia);                
+    //     }else{
+    //         $correspondencia_guardada = '';
+    //     }
+    //     if($accion === 'Guardar'){
+    //         $datos_info_correspondencia= [
+    //             'ID_evento' => $id_evento,
+    //             'Id_Asignacion' => $id_asignacion,
+    //             'Id_proceso' => $id_proceso,
+    //             'Id_servicio' => $id_servicio,
+    //             'Id_comunicado' => $id_comunicado,
+    //             'Nombre_afiliado' => $request->nombre_afiliado,
+    //             'N_identificacion' => $request->n_identificacion_afiliado,
+    //             'N_radicado' => $request->n_radicado,
+    //             'N_orden' => $request->n_orden,
+    //             'Tipo_destinatario' => $request->tipo_destinatario,
+    //             'Nombre_destinatario' => $request->nombre_destinatario,
+    //             'Direccion_destinatario' => $request->direccion_destinatario,
+    //             'Departamento' => $request->departamento_destinatario,
+    //             'Ciudad' => $request->ciudad_destinatario,
+    //             'Telefono_destinatario' => $request->telefono_destinatario,
+    //             'Email_destinatario' => $request->email_destinatario,
+    //             'Medio_notificacion' => $request->medio_notificacion_destinatario,
+    //             'N_guia' => $request->n_guia,
+    //             'Folios' => $request->folios,
+    //             'F_envio' => $request->fecha_envio,
+    //             'F_notificacion' => $request->fecha_notificacion,
+    //             'Id_Estado_corresp' => $request->estado_notificacion,
+    //             'tipo_correspondencia' => $tipo_correspondencia,
+    //             'Nombre_usuario' => $nombre_usuario,
+    //             'F_registro' => $date
+    //         ];
+    //         sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')->insert($datos_info_correspondencia);
+            
+    //         //Actualizamos en los comunicados los destinatarios a los que se les ha guardado correspondencia
+    //         $datos_info_comunicado = [
+    //             'Correspondencia' => $correspondencia_guardada
+    //         ];
+    //         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado',$id_comunicado)->update($datos_info_comunicado);
+
+
+    //         $mensajes = array(
+    //             "parametro" => 'agregar_correspondencia',
+    //             "mensaje" => 'Correspondencia guardada satisfactoriamente.'
+    //         );
+    //         return json_decode(json_encode($mensajes, true));
+    //     }
+    //     else{
+    //         $datos_info_correspondencia= [
+    //             'ID_evento' => $id_evento,
+    //             'Id_Asignacion' => $id_asignacion,
+    //             'Id_proceso' => $id_proceso,
+    //             'Id_servicio' => $id_servicio,
+    //             'Id_comunicado' => $id_comunicado,
+    //             'Nombre_afiliado' => $request->nombre_afiliado,
+    //             'N_identificacion' => $request->n_identificacion_afiliado,
+    //             'N_radicado' => $request->n_radicado,
+    //             'N_orden' => $request->n_orden,
+    //             'Tipo_destinatario' => $request->tipo_destinatario,
+    //             'Nombre_destinatario' => $request->nombre_destinatario,
+    //             'Direccion_destinatario' => $request->direccion_destinatario,
+    //             'Departamento' => $request->departamento_destinatario,
+    //             'Ciudad' => $request->ciudad_destinatario,
+    //             'Telefono_destinatario' => $request->telefono_destinatario,
+    //             'Email_destinatario' => $request->email_destinatario,
+    //             'Medio_notificacion' => $request->medio_notificacion_destinatario,
+    //             'N_guia' => $request->n_guia,
+    //             'Folios' => $request->folios,
+    //             'F_envio' => $request->fecha_envio,
+    //             'F_notificacion' => $request->fecha_notificacion,
+    //             'Id_Estado_corresp' => $request->estado_notificacion,
+    //             'tipo_correspondencia' => $tipo_correspondencia,
+    //             'Nombre_usuario' => $nombre_usuario,
+    //             'F_registro' => $date
+    //         ];
+    //         sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')->where('Id_Correspondencia',$id_correspondencia)->update($datos_info_correspondencia);
+            
+    //         //Actualizamos en los comunicados los destinatarios a los que se les ha guardado correspondencia
+    //         $datos_info_comunicado = [
+    //             'Correspondencia' => $correspondencia_guardada
+    //         ];
+    //         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado',$id_comunicado)->update($datos_info_comunicado);
+
+
+    //         $mensajes = array(
+    //             "parametro" => 'agregar_correspondencia',
+    //             "mensaje" => 'Correspondencia actualizada satisfactoriamente.'
+    //         );
+    //         return json_decode(json_encode($mensajes, true));
+    //     }
+    // }
 }
