@@ -7180,7 +7180,7 @@
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Correspondencia</h5>
                         </div>
-                        <form id="form_correspondencia" action="POST">                            
+                        <form id="form_correspondencia_pcl" action="POST">                            
                             <div class="card-body">
                                 <div class="row">
                                     {{-- @if (!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion <> 2)
@@ -7687,12 +7687,17 @@
                                                         <th>Elaboró</th>
                                                         <th>Fecha de comunicado</th>
                                                         <th>Documento</th>
+                                                        <th>Destinatarios</th>
+                                                        <th>Estado general de la Notificación</th>
+                                                        <th>Nota</th>
                                                         <th>Acción</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     @if (!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion == 1)                                                            
-                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados)                                                        
+                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados)
+                                                            <input type="hidden" id="status_default_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_Notificacion']}}">
+                                                            <input type="hidden" id="Nota_comunicado_{{$comunicados['N_radicado']}}" value="{{$comunicados['Nota']}}">                                                        
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL 1507 --}}
@@ -7773,7 +7778,9 @@
                                                             @endforeach                                                                
                                                         @endif     
                                                     @elseif(!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion == 2)                                                            
-                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados)    
+                                                        @foreach ($array_comunicados_correspondencia as $index => $comunicados)
+                                                            <input type="hidden" id="status_default_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_Notificacion']}}">
+                                                            <input type="hidden" id="Nota_comunicado_{{$comunicados['N_radicado']}}" value="{{$comunicados['Nota']}}">         
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL Cero --}}
@@ -7855,6 +7862,8 @@
                                                         @endif                                                   
                                                     @elseif(!empty($datos_demos[0]->Decreto_calificacion) && $datos_demos[0]->Decreto_calificacion == 3)                                                            
                                                         @foreach ($array_comunicados_correspondencia as $index => $comunicados)
+                                                            <input type="hidden" id="status_default_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_Notificacion']}}">
+                                                            <input type="hidden" id="Nota_comunicado_{{$comunicados['N_radicado']}}" value="{{$comunicados['Nota']}}"> 
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL 917 --}}

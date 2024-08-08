@@ -644,7 +644,7 @@ $(document).ready(function () {
 
 // Función para obtener las alertas naranjas
 
-function obtenerAlertasNaranja() {
+function obtenerAlertasNaranjaRojas() {
     var token = $('meta[name="csrf-token"]').attr('content');
     return new Promise((resolve, reject) => {
         $.ajax({
@@ -667,8 +667,8 @@ function obtenerAlertasNaranja() {
 // Función principal para renderizar registros
 
 function renderizarRegistros(data, inicio, fin, bandejaPclTable) {
-    obtenerAlertasNaranja().then(alertasNaranja => {
-        const alertasNaranjaMap = new Map(alertasNaranja.map(alerta => [
+    obtenerAlertasNaranjaRojas().then(alertasNaranja => {
+        const alertasNaranjaRojaMap = new Map(alertasNaranja.map(alerta => [
             alerta.Id_Asignacion, 
             {
                 naranja: alerta.F_accion_alerta_naranja,
@@ -716,8 +716,8 @@ function renderizarRegistros(data, inicio, fin, bandejaPclTable) {
 
             let rowNode = bandejaPclTable.row.add(datos).draw(false).node();
 
-            if (alertasNaranjaMap.has(data[a].Id_Asignacion)) {
-                let alertaFechas = alertasNaranjaMap.get(data[a].Id_Asignacion);
+            if (alertasNaranjaRojaMap.has(data[a].Id_Asignacion)) {
+                let alertaFechas = alertasNaranjaRojaMap.get(data[a].Id_Asignacion);
                 let currentTime = new Date();
 
                 // Verificar alerta naranja

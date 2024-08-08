@@ -2324,6 +2324,45 @@ class CalificacionPCLController extends Controller
             return response()->json(($arrayhitorialAgregarComunicado));
 
         }
+
+        if($request->bandera == 'Actualizar'){
+            $request->validate([
+                'bandera' => 'required',
+                'radicado' => 'required',
+                'id_asignacion' => 'required'
+            ]);
+
+            //Accion Actualizar status,nota del comunicado
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where([
+                ['N_radicado',$request->radicado],
+                ['Id_Asignacion', $request->id_asignacion]])->update([
+                'Nota' => $request->Nota,
+                'Estado_notificacion' => $request->Estado_general
+            ]);
+
+            $mensajeResponse = 'Comunicado actualizado correctamente';
+            
+            return $mensajeResponse;
+        }
+
+        if($request->bandera == 'info_comunicado'){
+            $request->validate([
+                'bandera' => 'required',
+                'radicado' => 'required',
+                'id_asignacion' => 'required'
+            ]);
+
+            $infoComunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([
+                ['N_radicado', $request->radicado],
+                ['Id_Asignacion', $request->id_asignacion],
+            ])
+            ->get();
+
+            $arrayhitorialAgregarComunicado = json_decode(json_encode($infoComunicado, true));
+            return response()->json(($arrayhitorialAgregarComunicado));
+        }
+
         
     }
 
