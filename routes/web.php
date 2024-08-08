@@ -311,6 +311,10 @@ Route::post('/alertasNaranjasRojasPCL', [CoordinadorController::class, 'alertaNa
 Route::post('/actualizarProfesionalServicio', [CoordinadorController::class, 'actualizarBandejaPCL']);
 // Acción: Reemplazar Documentos
 Route::post('/reemplazarDocumento', [CoordinadorController::class, 'reemplazarDocumento']);
+// Acción: Traer la información necesaria para la correspondencia PBS014
+Route::post('/getInformacionCorrespondencia', [CoordinadorController::class, 'getInformacionCorrespondencia']);
+// Acción: Guardar la información de la correspondencia PBS014
+Route::post('/guardarInformacionCorrespondencia', [CoordinadorController::class, 'guardarInformacionCorrespondencia']);
 
 // 14/07/2023
 // Vista: Módulo Calificación PCL Coordinador
