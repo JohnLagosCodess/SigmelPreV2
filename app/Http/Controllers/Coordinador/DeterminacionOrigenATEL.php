@@ -1211,10 +1211,14 @@ class DeterminacionOrigenATEL extends Controller
             ];   
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-            ->where([                
-                ['N_radicado',$radicado]
-            ])->update($datos_info_comunicado_eventos);
-    
+                ->where([
+                    ['ID_evento', $Id_Evento_dto_atel],
+                    ['Id_Asignacion',$Id_Asignacion_dto_atel],
+                    ['Id_proceso', $Id_Proceso_dto_atel],
+                    ['N_radicado',$radicado]
+                    ])
+            ->update($datos_info_comunicado_eventos);
+
             $mensajes = array(
                 "parametro" => 'actualizar_correspondencia',
                 "mensaje" => 'Correspondencia actualizada satisfactoriamente.'

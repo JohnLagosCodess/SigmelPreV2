@@ -50,7 +50,7 @@
                 
                 {{-- campos creados para extraer algunos datos de la proforma  --}}
                 <input type="hidden" class="form-control" id="id_servicio" value="{{$array_datos_controversiaJuntas[0]->Id_Servicio}}">
-                <input type="hidden" id="id_cliente" value="<?php if(!empty($array_datos_controversiaJuntas[0]->Id_cliente)){echo $array_datos_controversiaJuntas[0]->Id_cliente;}?>">
+                <input type="hidden" id="id_cliente"  value="<?php if(!empty($array_datos_controversiaJuntas[0]->Id_cliente)){echo $array_datos_controversiaJuntas[0]->Id_cliente;}?>">
                 <input type="hidden" id="tipo_documento" value="<?php if(!empty($array_datos_controversiaJuntas[0]->Nombre_tipo_documento)){echo $array_datos_controversiaJuntas[0]->Nombre_tipo_documento;}?>">
                 <input type="hidden" id="id_Jrci_califi_invalidez" value="<?php if(!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez)){echo $arrayinfo_controvertido[0]->Jrci_califi_invalidez;}?>">
                 <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
@@ -1847,13 +1847,16 @@
                                     </div>
                                     <div class="col-12">
                                         <div class="table-responsive">
-                                            <table class="table table-striped table-bordered" id="tabla_comunicados_juntas" width="100%">
+                                            <table class="table table-striped table-bordered" id="tabla_comunicados_juntas"  style="width: 100%;  white-space: nowrap;">
                                                 <thead>
                                                     <tr class="bg-info">
                                                         <th>N° de Radicado</th>
                                                         <th>Elaboró</th>
                                                         <th>Fecha de comunicado</th>
                                                         <th>Documento</th>
+                                                        <th>Destinatarios</th>
+                                                        <th>Estado general de la Notificación</th>
+                                                        <th>Nota</th>
                                                         <th>Acción</th>
                                                     </tr>
                                                 </thead>
@@ -1865,6 +1868,15 @@
                                                             <td>{{$comunicados->Elaboro}}</td>
                                                             <td>{{$comunicados->F_comunicado}}</td>
                                                             <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>
+                                                            <td><a href="javascript:void(0);" data-toggle="modal"     data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-destinatario="Afiliado">Afiliado</a>
+                                                                <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-destinatario="empleador">Empleador</a>
+                                                                <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-destinatario="eps">EPS</a>
+                                                                <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-destinatario="afp" style="text-decoration-line: underline;"><strong>AFP</strong></a>
+                                                                <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-destinatario="arl" style="text-decoration-line: underline;"><strong>ARL</strong></a>
+                                                                <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-destinatario="jrci">JRCI</a>
+                                                                <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-destinatario="jnci">JNCI</a></td>
+                                                            <td><select class="custom-select" id="status_notificacion_{{$comunicados->N_radicado}}" style="width:100%;" data-default={{$comunicados->Estado_Notificacion}}></select></td>
+                                                            <td><textarea class="form-control nota-col" name="nota_comunicado_{{$comunicados->N_radicado}}" id="nota_comunicado_{{$comunicados->N_radicado}}" cols="70" rows="3" style="resize:none; width:200px;">{{$comunicados->Nota}}</textarea></td> {{-- campo Nota--}}
                                                             @if ($comunicados->Tipo_descarga == "Manual") 
                                                                 <td style="display: flex; flex-direction:row; justify-content:space-around;">
                                                                     <form id="form_descargar_archivo_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" method="POST">
@@ -1879,6 +1891,7 @@
                                                                             </button>
                                                                         </form>
                                                                     @endif
+                                                                    <a href="javascript:void(0);" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
                                                                 </td>
                                                             @else
                                                                 <td style="display: flex; flex-direction:row; justify-content:space-around;">
@@ -1922,8 +1935,8 @@
                                                                                 </form>
                                                                             @endif
                                                                         @endif
-                                                                    @endforeach
-                                                                    
+                                                                @endforeach
+                                                                <a href="javascript:void(0);" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
                                                                 </td>
                                                             @endif
                                                         </tr>
@@ -1959,6 +1972,7 @@
     <?php $aperturaModal = 'Edicion'; ?>
     @include('//.administrador.modalcarguedocumentos')
     @include('//.coordinador.modalReemplazarArchivos')
+    @include('//.coordinador.modalCorrespondencia')
 
 @stop
 @section('js')

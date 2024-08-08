@@ -2204,7 +2204,7 @@ class BuscarEventoController extends Controller
         $id_cliente = $array_id_cliente["Cliente"];
 
         $estado_acorde_a_parametrica = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
-        ->select('sipc.Estado')
+        ->select('sipc.Estado','sipc.Enviar_a_bandeja_trabajo_destino as enviarA')
         ->where([
             ['sipc.Id_cliente', '=', $id_cliente],
             ['sipc.Id_proceso', '=', $request->id_proceso_actual],
@@ -2216,6 +2216,13 @@ class BuscarEventoController extends Controller
             $Id_Estado_evento = $estado_acorde_a_parametrica[0]->Estado;
         }else{
             $Id_Estado_evento = 223;
+        }
+
+        //Asignamos #n de orden cuado se envie un caso a notificaciones
+        if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+            $N_orden_evento=$n_orden[0]->Numero_orden;
+        }else{
+            $N_orden_evento=null;
         }
 
         // Recopilación de datos para insertar el nuevo servicio
@@ -2236,6 +2243,8 @@ class BuscarEventoController extends Controller
             'Id_servicio_anterior' => $request->id_servicio_actual,
             'F_asignacion_calificacion' => $F_asignacion_calificacion,
             'Consecutivo_dictamen' => $numero_consecutivo_Dictamen,
+            'N_de_orden' =>  $N_orden_evento,
+            'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',  
             'Id_profesional' => $id_profesional,
             'Nombre_profesional' => $nombre_profesional,
             'Nombre_usuario' => $nombre_usuario,
@@ -2334,13 +2343,6 @@ class BuscarEventoController extends Controller
         $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
         ->select('Numero_orden')
         ->get();
-        //Validamos si un caso de Notificaciones
-        if($request->selector_nuevo_proceso=='4'){
-            $N_orden_evento=$n_orden[0]->Numero_orden;
-        }else{
-            $N_orden_evento='';
-        }
-
 
         // Extraemos el id estado de la tabla de parametrizaciones dependiendo del
         // id del cliente, id proceso, id servicio, id accion. Este id irá como estado inicial
@@ -2352,13 +2354,20 @@ class BuscarEventoController extends Controller
         $id_cliente = $array_id_cliente["Cliente"];
 
         $estado_acorde_a_parametrica = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
-        ->select('sipc.Estado')
+        ->select('sipc.Estado','sipc.Enviar_a_bandeja_trabajo_destino as enviarA')
         ->where([
             ['sipc.Id_cliente', '=', $id_cliente],
             ['sipc.Id_proceso', '=', $request->selector_nuevo_proceso],
             ['sipc.Servicio_asociado', '=', $request->selector_nuevo_servicio],
             ['sipc.Accion_ejecutar','=', $request->nueva_accion_nuevo_proceso]
         ])->get();
+
+        //Asignamos #n de orden cuado se envie un caso a notificaciones
+        if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+            $N_orden_evento=$n_orden[0]->Numero_orden;
+        }else{
+            $N_orden_evento=null;
+        }
 
         if(count($estado_acorde_a_parametrica)>0){
             $Id_Estado_evento = $estado_acorde_a_parametrica[0]->Estado;
@@ -2385,6 +2394,7 @@ class BuscarEventoController extends Controller
             'N_de_orden' => $N_orden_evento,
             'Id_profesional' => $id_profesional,
             'Nombre_profesional' => $nombre_profesional,
+            'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date
         ];
@@ -2839,6 +2849,7 @@ class BuscarEventoController extends Controller
                     $Controvertido['N_siniestro'] = optional($origen[0])->N_siniestro;
                     $Controvertido['Id_Asignacion_Servicio_Anterior'] = $Id_Asignacion_origen;
 
+                    //Se copian los documentos siempre y cuando no se una controversia y cumpla las reglas.
                     $this->copiarLisdatoGeneralDocumentos($evento,$servicioNuevo,$servicioOrigen);
 
                     break;

@@ -54,6 +54,11 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    $(".state_notificacion").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
     $(".forma_envio_act").select2({
         placeholder:"Seleccione una opción",
         allowClear:false
@@ -355,6 +360,27 @@ $(document).ready(function(){
                 }
             }
         });
+
+        //Selector enviara, seccion 'Accion a realizar'
+        let datos_bandeja_destino = {
+            '_token':token,
+            'parametro':"lista_bandejas_destino",
+            'Id_proceso' : Id_proceso_actual,
+            'Id_cliente' : $("#cliente").data('id'),
+            'Id_servicio': $("#Id_servicio").val(),
+            'Id_accion': $(this).val(),
+        }
+
+        $.ajax({
+            type:'POST',
+            url:'/selectoresModuloCalificacionPCL',
+            data: datos_bandeja_destino,
+            success:function (data) {
+                console.log(data);
+                $('#enviar').empty();
+                $('#enviar').append(`<option value="${data.bd_destino}" selected>${data.Nombre_proceso}</option>`);
+            }
+        });
     });
 
     //Mostrar Historial de acciones
@@ -426,7 +452,8 @@ $(document).ready(function(){
                         }  
                     }
                 ]
-            }, 
+            },
+            "processing": true, 
             "destroy": true,
             "data": response,
             "order": [[0, 'desc']],
@@ -439,6 +466,7 @@ $(document).ready(function(){
             ],
             "language":{
                 "search": "Buscar",
+                "processing": '<div class="d-flex justify-content-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>',
                 "info": "Mostrando registros _START_ de _END_ de un total de _TOTAL_ registros",
                 "paginate": {
                     "previous": "Anterior",
@@ -2769,6 +2797,51 @@ $(document).ready(function(){
         localStorage.removeItem("#Generar_comunicados");
         document.querySelector("#clicGuardado").click();
     }
+    let selectores_notificacion = {
+        '_token': $('input[name=_token]').val(),
+        'parametro': 'EstadosNotificaion'
+    }
+
+    let opciones_Notificacion = [];
+
+    $.ajax({
+        type: 'POST',
+        url: '/cargarselectores',
+        data: selectores_notificacion,
+        success: function (data) {
+            $.each(data, function (index, item) {
+                //Establecemos el color que tendra le texto de cada opcion segun corresponda
+                let color = (()=>{
+                    switch(item.Nombre_parametro){
+                        case 'Pendiente':
+                            return '#000000'; //negro
+                            break;
+                        case 'No notificar':
+                            return '#CBCBCB'; //Gris
+                            break;
+                        case 'Devuelto':
+                            return '#E70000'; //Rojo
+                            break;
+                        case 'Notificado efectivamente':
+                            return '#00E738'; //Verde
+                            break;
+                        case 'Notificado parcialmente':
+                            return '#00ACE7'; //Azul
+                            break;
+                    }
+                })();
+                
+                /**@var opciones_Notificacion Corresponde a las propiedades del elemento */
+                opciones_Notificacion.push({
+                    opciones: `<option value="${item.Id_Parametro}">${item.Nombre_parametro}</option>`,
+                    id:item.Id_Parametro,
+                    texto: item.Nombre_parametro,
+                    color: color
+                });
+            });
+
+        },
+    });
 
     // Captura de data para la tabla de Comunicados
     // data de la modal de agregar comunicados
@@ -2785,9 +2858,10 @@ $(document).ready(function(){
         url:'/historialComunicadoJuntas',
         data: datos_comunicados,
         success:function(data){
-            var comunicadoNradico = '';
-            for (let i = 0; i < data.length; i++) {                             
-                
+            var comunicadoNradico = '';  
+            /** @var select2 Config. del select2 */
+            let select2 = [];
+            for (let i = 0; i < data.length; i++) { 
                 if (data[i]['N_radicado'] != '' && data[i]['Tipo_descarga'] != 'Manual'){
 
                     comunicadoNradico = '<div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center"><a href="javascript:void(0);" class="text-dark" data-toggle="modal" data-target="#modalcomunicados_" id="EditarComunicado_'+data[i]["Id_Comunicado"]+'" title="Editar Comunicado"\
@@ -2843,6 +2917,9 @@ $(document).ready(function(){
                             data-numero_identificacion="'+data[i]["N_identificacion"] +'" data-nombre_documento="'+data[i]["Nombre_documento"] + '"\
                             ><i class="fas fa-sync-alt text-info"></i></a>';
                     }
+
+                    comunicadoNradico += '<a href="javascript:void(0);" id="editar_comunicado" data-radicado="'+data[i]["N_radicado"]+'" style="display: flex; justify-content: center;"><i class="fa fa-sm fa-check text-success"></i></a></div>';
+
                     comunicadoNradico += '</div>';
                     data[i]['Editarcomunicado'] = comunicadoNradico;
                     
@@ -2885,30 +2962,73 @@ $(document).ready(function(){
                     if(data[i]["Asunto"].includes('Lista_chequeo')){
                         comunicadoNradico += '<a href="javascript:void(0);" class="text-dark" data-toggle="modal" data-target="#modalCrearExpediente" title="Editar expediente" id="editarExpediente"><i style="cursor:pointer" class="fa fa-pen text-info"></i></a>';
                     }
+                    comunicadoNradico += '<a href="javascript:void(0);" id="editar_comunicado" data-radicado="'+data[i]["N_radicado"]+'" style="display: flex; justify-content: center;"><i class="fa fa-sm fa-check text-success"></i></a></div>';
                     comunicadoNradico += '</div>';
                     data[i]['Editarcomunicado'] = comunicadoNradico;
                 }
                 else{
                     data[i]['Editarcomunicado'] = ""; 
-                } 
+                }
+
+                //Obtenemos los datos de los campos 'Destinatarios','Estado_general','Nota' para mostrar en la tabla de comunicados y expedientes
+                let info_notificacion = getHistorialNotificacion(data[i]["N_radicado"],data[i]["Nota"],opciones_Notificacion,data[i]);
+                
+                data[i]["Destinatarios"] = info_notificacion.Destinatarios;
+                data[i]["Estado_General"] = info_notificacion.Estado_General;
+                data[i]["Nota"] = info_notificacion.Nota_Comunicados;
+
+                //Configuracion que se cargara en el select2
+                let select2Config = {
+                    selector: `#status_notificacion_${data[i]["N_radicado"]}`,
+                    default:  data[i]["Estado_Notificacion"], //Opcion a selecionar
+                    data: opciones_Notificacion, // Opciones disponibles para seleccionar
+                };
+
+                select2.push(select2Config);
+
             }
             $.each(data, function(index, value){
                 capturar_informacion_comunicados(data, index, value)
-            })
+            });
+
+            //Se inicializa configuracion de select2 con los estilos definidos
+            select2.forEach(function(item) {
+                $(item.selector).select2({
+                    placeholder: "Seleccione una opción",
+                    allowClear: false,
+                    data: item.data,
+                    templateResult: function(data){
+                        if(data.color != undefined){
+                            return $(`<span style="color: ${data.color}">${data.texto}</span>`); //Opciones disponibles
+                        }
+                    },
+                    templateSelection: function(data){
+                        if(data.color != undefined){
+                            return $(`<span style="color: ${data.color}">${data.texto}</span>`); //Opcion selecionada
+                        }
+                    }
+                }).val(item.default);
+
+                $(item.selector).trigger('change');
+
+            });
+
         }
     });
 
     //DataTable Historial de comunicados
 
     function capturar_informacion_comunicados(response, index, value) {
-        $('#listado_agregar_comunicados').DataTable({
-            orderCellsTop:true,
-            fixedHeader:true,
-            "destroy":true,
-            "data": response,
-            paging:true,
-            "pageLength": 3,
-            "order": [[0, 'desc']],
+       // response.push();
+        let listadoComunicados = $('#listado_agregar_comunicados').DataTable({
+            scrollY: "30vh", //dos celdas
+            orderCellsTop: true,
+            fixedHeader: false,
+            scrollX: true,
+            destroy: true,
+            data: response,
+            paging: false,
+            order: [[0, 'desc']],
             "columns":[
                 {"data":"N_radicado"},
                 {"data":"Elaboro"},
@@ -2941,9 +3061,11 @@ $(document).ready(function(){
                         }
                     }
                 },
-                {"data":"Editarcomunicado"},
-
-            ],            
+                {"data": "Destinatarios"},
+                {"data": "Estado_General"},
+                {"data": "Nota"},
+                {"data":"Editarcomunicado"}
+            ],   
             "language":{                
                 "search": "Buscar",
                 "lengthMenu": "Mostrar _MENU_ registros",
@@ -2960,6 +3082,7 @@ $(document).ready(function(){
                 "infoEmpty": "No se encontró información",
             }
         });
+        autoAdjustColumns(listadoComunicados);
     }
 
     $(document).on('click', "a[id^='generar_descarga_archivo_']", function(){
@@ -3405,6 +3528,33 @@ $(document).ready(function(){
 
     });
 
+    //Accion agregar nota comunicado
+    $("#listado_agregar_comunicados").on("click",'#editar_comunicado',function(){
+        let radicado = $(this).data('radicado');
+        let datos_comunicados_actualizar = {
+            '_token' : token,
+            'bandera': 'Actualizar',
+            'radicado' : $(this).data('radicado'),
+            'id_asignacion': $('#newId_asignacion').val(),
+            'Nota': $("#nota_comunicado_" + radicado).val(),
+            'Estado_general': $("#status_notificacion_" + radicado).val()
+        };
+        $.ajax({
+            type:'POST',
+            url:'/historialComunicadoJuntas',
+            data: datos_comunicados_actualizar,
+            success:function(data){
+                $('.alerta_externa_comunicado').removeClass('d-none');
+                $(".alerta_externa_comunicado").append("<strong>" + data + "</strong>");
+                setTimeout(()=>{
+                    localStorage.setItem("#Generar_comunicados", true);
+                    location.reload();
+                },2000);
+
+            }
+        });
+    })
+    
     var AlertaPdf;
     $(document).on('click', "input[id='Pdf']", function () {                       
         AlertaPdf = setTimeout(() => {            
@@ -6389,3 +6539,85 @@ function procesarListaChequeo(accion){
     })
 
 }
+
+/**
+ * Funcion construir los elementos a las columnas de notificacion a las tablas de comunicados
+ * @param {string} n_radicado #Radicado asociado al comunicado
+ * @param {string} nota Opcional Nota del comunicado
+ * @param {object} status_notificacion corresponde a las opciones disponibles que se incluiran en el selector del estado general de notificaciones
+ * @returns {Array} correspondiente a las columnas asociadas a notificacion (Destinatarios','Estado_general','Nota')
+ */
+function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comunicado) {
+    let Destinatario = data_comunicado['Destinatario'];
+    let Copias = data_comunicado['Agregar_copia'];
+    let Correspondencia = data_comunicado['Correspondencia'];
+    if(Copias){
+        Copias = Copias.split(',').map(copia => copia.trim().toLowerCase());
+    }
+    if(Correspondencia){
+        Correspondencia = Correspondencia.split(',').map(correspondencia => correspondencia.trim().toLowerCase());
+    }
+    //Función para agregar el subrayado al destinatario principal y aquellos que hayan sido seleccionados como copia
+    function getUnderlineStyle(entity) {
+        let negrita = (Correspondencia && Correspondencia.includes(entity)) ? 'font-weight:700;' : '';
+        let underline = (Destinatario.toLowerCase() === entity || (Copias && Copias.includes(entity))) ? 'text-decoration-line: underline;' : '';
+        return negrita + underline;
+    }
+    let info_notificacion = {
+        'Destinatarios': 
+            `<a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Afiliado" \
+                data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
+                data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
+                data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
+                style="${getUnderlineStyle('afiliado')}">Afiliado</a>
+            <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Empresa" \
+                data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
+                data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
+                data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
+                style="${getUnderlineStyle('empresa')}">Empleador</a>
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="eps" \
+                data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
+                data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
+                data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
+                style="${getUnderlineStyle('eps')}">EPS</a>
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="afp" \
+                data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
+                data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
+                data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
+                style="${getUnderlineStyle('afp')}">AFP</a>
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="arl" \ 
+                data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
+                data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
+                data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
+                style="${getUnderlineStyle('arl')}">ARL</a>
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="jrci" \
+                data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
+                data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
+                data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
+                style="${getUnderlineStyle('jrci')}">JRCI</a>
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="jnci" \
+                data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
+                data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
+                data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
+                style="${getUnderlineStyle('jnci')}">JNCI</a>`,
+
+        'Nota_Comunicados': `<textarea class="form-control nota-col" name="nota_comunicado_${n_radicado}" id="nota_comunicado_${n_radicado}" cols="70" rows="5" style="resize:none; width:200px;">${nota == null ? "" : nota}</textarea>`,
+    };
+    //Opciones a incluir en el selector del estado general de la notificacion
+    let opciones_Notificacion = '';
+    $.each(status_notificacion,function(item,index){
+        opciones_Notificacion += index.opciones;
+    });
+
+    info_notificacion['Estado_General'] =`<select class="custom-select" id="status_notificacion_${n_radicado}" style="width:100%;">${opciones_Notificacion}</select>`;
+
+    return info_notificacion;
+}
+

@@ -70,6 +70,8 @@ use App\Models\sigmel_informacion_entidades;
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
 use App\Models\sigmel_informacion_historial_accion_eventos;
+
+/* Manejo de archivos */
 use ZipArchive;
 
 class AdministradorController extends Controller
@@ -1094,7 +1096,13 @@ class AdministradorController extends Controller
         ->select(DB::raw("COUNT(IF(Estado = 'Activo', 1, NULL)) AS 'Activos'"), DB::raw("COUNT(IF(Estado = 'Inactivo', 1, NULL)) AS 'Inactivos'"))
         ->get();
 
-        return view('administrador.listarClientes', compact('user', 'array_datos_clientes', 'conteo_activos_inactivos'));
+        //Consultamos N° Consecutivo ID evento
+        $arrayinfo_consecutivo_evento= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_numero_orden_eventos as e')
+        ->select('e.Numero_orden as consecutivo_evento')
+        ->where('e.Proceso',  '=', 'General_Evento')
+        ->get();
+
+        return view('administrador.listarClientes', compact('user', 'array_datos_clientes', 'conteo_activos_inactivos','arrayinfo_consecutivo_evento'));
     }
 
     public function InformacionClienteEditar(Request $request){
@@ -3022,6 +3030,20 @@ class AdministradorController extends Controller
             return response()->json($info_lista_unidades_ans);
         }
 
+        //Lista estados notificacion
+        if($parametro == "EstadosNotificaion"){
+            $datos_status_notificacion = sigmel_lista_parametros::on('sigmel_gestiones')
+                ->select('Id_Parametro','Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Estatus_Notificacion'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
+
+            $datos_status_notificacion = json_decode(json_encode($datos_status_notificacion, true));
+            return response()->json($datos_status_notificacion);
+        }
+        
     }
     
     public function validacionParametricaEnSi(Request $request){
@@ -3585,25 +3607,26 @@ class AdministradorController extends Controller
         $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
         ->select('Numero_orden')
         ->get();
-        //Validamos si un caso de Notificaciones
-        if($request->proceso=='4'){
-            $N_orden_evento=$n_orden[0]->Numero_orden;
-        }else{
-            $N_orden_evento=null;
-        }
 
         // Extraemos el id estado de la tabla de parametrizaciones dependiendo del
         // id del cliente, id proceso, id servicio, id accion. Este id irá como estado inicial
         // en la creación de un evento
         // MAURO PARAMETRICA
         $estado_acorde_a_parametrica = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
-        ->select('sipc.Estado')
+        ->select('sipc.Estado', 'sipc.Enviar_a_bandeja_trabajo_destino as enviarA')
         ->where([
             ['sipc.Id_cliente', '=', $request->cliente],
             ['sipc.Id_proceso', '=', $request->proceso],
             ['sipc.Servicio_asociado', '=', $request->servicio],
             ['sipc.Accion_ejecutar','=', $request->accion]
         ])->get();
+
+        //Asignamos #n de orden cuado se envie un caso a notificaciones
+        if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+            $N_orden_evento=$n_orden[0]->Numero_orden;
+        }else{
+            $N_orden_evento=null;
+        }
 
         if(count($estado_acorde_a_parametrica)>0){
             $Id_Estado_evento = $estado_acorde_a_parametrica[0]->Estado;
@@ -3669,6 +3692,7 @@ class AdministradorController extends Controller
             'Consecutivo_dictamen' => $consecutivoDictamen,
             'Id_profesional' => $id_profesional,
             'Nombre_profesional' => $asignacion_profesional,
+            'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date
         ];
