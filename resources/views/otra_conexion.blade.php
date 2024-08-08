@@ -25,6 +25,10 @@
             </table>
         </div>
         <div class="col-12">
+            <br><br>
+            <input type="button" class="btn btn-info" id="genero" value="GENERAR ZIP">
+        </div>
+        <div class="col-12">
             <br>
             <h3>GENERAR PDF</h3>
             <form action="{{route('generarPDF')}}" method="POST">
@@ -129,4 +133,64 @@
         
         
     </div>
+@stop
+@section('js')
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var token = $('input[name=_token]').val();
+
+            $("#genero").click(function(){
+                var datos_generar_zip_reporte_notifi = {
+                    '_token': token,
+                };
+
+                $.ajax({
+                    type:'POST',
+                    url:'/generarZipReporteNotificaciones1',
+                    data: datos_generar_zip_reporte_notifi,
+                    success:function(data){ 
+                        if (data.parametro == "error") {
+                            /* Mostrar contenedor mensaje de que no hay información */
+                            $('.resultado_validacion').removeClass('d-none');
+                            $('.resultado_validacion').addClass('alert-danger');
+                            $('#llenar_mensaje_validacion').append(data.mensaje);
+                            setTimeout(() => {
+                                $('.resultado_validacion').addClass('d-none');
+                                $('.resultado_validacion').removeClass('alert-danger');
+                                $('#llenar_mensaje_validacion').empty();
+                            }, 4000);
+
+                        }else{
+                            // Descarga del Archivo
+                            window.location.href = data.url;
+                            // Eliminando mensajes
+                            $('.resultado_validacion').addClass('d-none');
+                            $('.resultado_validacion').removeClass('alert-info');
+                            $('#llenar_mensaje_validacion').append('');
+
+                            // habilitar el botón del zip nuevamente
+                            $("#btn_generar_zip_reporte_notificaciones").prop('disabled', false);
+
+                            // Eliminar el archivo después de un tiempo de espera (por ejemplo, 10 segundos)
+                            setTimeout(function() {
+                                var datos_eliminar_reporte = {
+                                    '_token': token,
+                                    'nom_archivo': data.nom_archivo
+                                };
+                                
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/eliminarZipReporteNotificaciones',
+                                    data: datos_eliminar_reporte,
+                                    success: function(response) {
+                                    }
+                                });
+                            }, 10000);
+                            
+                        }
+                    }
+                });
+            })
+        });
+    </script>
 @stop

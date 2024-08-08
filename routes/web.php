@@ -880,3 +880,5 @@ Route::controller(ProbandoController::class)->group(function(){
 });
 
 Route::get('test_proformas', [ProbandoController::class, 'test_proformas']);
+
+Route::post('/generarZipReporteNotificaciones1', [ReporteNotificacionesController::class, 'generarZipReporteNotificaciones1']);
