@@ -645,6 +645,8 @@ Route::post('/guardarInfoServiPronunciaOrigen', [PronunciamientoOrigenController
 Route::get('/Sigmel/RolCoordinador/BandejaNotifi', [BandejaNotifiController::class, 'mostrarVistaBandejaNotifi'])->name('bandejaNotifi');
 // Accion: Selectores Bandeja Origen
 Route::post('/selectoresBandejaNotifi', [BandejaNotifiController::class, 'cargueListadoSelectoresBandejaNotifi']);
+// Accion: informacion referente a los eventos que estan en la bandeja
+Route::post('/informacionBandejaNotifi', [BandejaNotifiController::class, 'infomacionEnventosNotifiacion']);
 // Accion: Capturar data sin filtros
 Route::post('/sinfiltrosBandejaNotifi', [BandejaNotifiController::class, 'sinFiltroBandejaNotifi']);
 // Accion: Capturar data según los filtros
