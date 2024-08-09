@@ -1486,11 +1486,11 @@
                                                                     }, $copias);
                                                                 }
 
-                                                                
+
                                                                 // La copia del empleador y el destinanario empleador tienen valores distintos, por ende, se realiza la siguiente validación:
                                                                 // este dato finalmente irá en donde se construye los elementos a subrayados
                                                                 $array_copias_analizar = implode(',', $array_copias);
-                                                                if (strpos(strtolower($array_copias_analizar), 'empleador')) {
+                                                                if (strpos($array_copias_analizar, 'empleador') !== false) {
                                                                     $dato_empleador = 'empleador';
                                                                     $dato_empleador_form = 'Empleador'; // Empleador
                                                                 }else{
@@ -1579,7 +1579,7 @@
                                                     <td><select class="custom-select" id="status_notificacion_{{$comunicados->N_radicado}}" style="width:100%;" data-default={{$comunicados->Estado_Notificacion}}></select></td>
                                                     <td><textarea class="form-control nota-col" name="nota_comunicado_{{$comunicados->N_radicado}}" id="nota_comunicado_{{$comunicados->N_radicado}}" cols="70" rows="3" style="resize:none; width:200px;">{{$comunicados->Nota}}</textarea></td> {{-- campo Nota--}}
                                                     @if ($comunicados->Ciudad == 'N/A' && $comunicados->Tipo_descarga == "Dictamen")
-                                                        <td style="display: flex; flex-direction:row; justify-content:space-around;">
+                                                        <td style="display: flex; flex-direction:row; justify-content:space-around; border:none;">
                                                             {{-- Formulario para descargar el dml origen atel previsional (dictamen) --}}
                                                             <form id="Form_dml_origen_previsional_{{$comunicados->Id_Comunicado}}" data-info_comunicados="{{json_encode($comunicados)}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
                                                                 @csrf
@@ -1631,7 +1631,7 @@
                                                             <a href="javascript:void(0);" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
                                                         </td>
                                                     @elseif ($comunicados->Tipo_descarga == "Manual")
-                                                        <td style="display: flex; flex-direction:row; justify-content:space-around;">
+                                                        <td style="display: flex; flex-direction:row; justify-content:space-around; border:none;">
                                                             <form id="form_descargar_archivo_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" method="POST">
                                                                 <button type="submit" id="btn_descargar_archivo_{{$comunicados->Id_Comunicado}}" style="border: none; background:transparent;">
                                                                     <i class="far fa-eye text-info"></i>
@@ -1647,7 +1647,7 @@
                                                             <a href="javascript:void(0);" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
                                                         </td>
                                                     @else
-                                                        <td style="display: flex; flex-direction:row; justify-content:space-around;">
+                                                        <td style="display: flex; flex-direction:row; justify-content:space-around; border:none;">
                                                             {{-- formulario Notificación del DML PREVISIONAL (oficio remisorio) --}}
                                                             <form id="Form_noti_dml_previsional_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
                                                                 @csrf
@@ -1705,8 +1705,8 @@
                                                                     </button>
                                                                 </form>
                                                             @endif
+                                                            <a href="javascript:void(0);" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
                                                         </td>
-                                                        <a href="javascript:void(0);" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
                                                     @endif
                                                 </tr>                                                      
                                             @endforeach
