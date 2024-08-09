@@ -151,7 +151,22 @@ class PronunciamientoPCLController extends Controller
                 $comunicado['Existe'] = false;
             }
         }
-        return view('coordinador.pronunciamientoPCL', compact('user','array_datos_pronunciamientoPcl','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo', 'array_comunicados'));
+
+        // Consultamos si el caso está en la bandeja de Notificaciones
+        $array_caso_notificado = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        ->select('Notificacion')
+        ->where([
+            ['Id_Asignacion', $Id_asignacion_calitec],
+            ['ID_evento', $Id_evento_calitec]
+        ])
+        ->get();
+
+        if(count($array_caso_notificado) > 0){
+            $caso_notificado = $array_caso_notificado[0]->Notificacion;
+        }
+
+        return view('coordinador.pronunciamientoPCL', compact('user','array_datos_pronunciamientoPcl','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo', 'array_comunicados','caso_notificado'));
+    
     }
     //Ver Documento Pronuncia
     public function VerDocumentoPronuncia(Request $request){

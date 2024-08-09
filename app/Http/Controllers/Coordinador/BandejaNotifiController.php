@@ -540,4 +540,24 @@ class BandejaNotifiController extends Controller
         ->get();
         return response()->json(['data' => $alertas]);
     }
+
+    //Obtener informacion relacionada a los eventos de notificacion
+    public function infomacionEnventosNotifiacion(Request $request){
+
+        if($request->bandera == 'info_evento'){
+            $request->validate([
+                'bandera' => 'required',
+                'id_asignacion' => 'required',
+                'evento' => 'required'
+            ]);
+
+            $info_evento = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->select('Notificacion')->where([
+                ['Id_Asignacion',$request->id_asignacion],
+                ['ID_evento',$request->evento]
+            ])->get();
+
+            $info_evento = json_decode(json_encode($info_evento, true));
+            return response()->json($info_evento);
+        }
+    }
 }

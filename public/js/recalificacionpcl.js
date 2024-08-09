@@ -6678,3 +6678,40 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
 
     return info_notificacion;
 }
+
+function cleanModalCorrespondencia(){
+    $("#btn_guardar_actualizar_correspondencia").val('Guardar');
+
+    correspondencia_array = [];
+    $("#modalCorrespondencia #check_principal").prop('checked', false).prop('disabled', true).prop('required', true);
+    $("#modalCorrespondencia #check_copia").prop('checked', false).prop('disabled', false).prop('required', true);
+    $('#state_notificacion').val('').trigger('change');
+    $("#modalCorrespondencia #tipo_correspondencia").val('');
+    $("#modalCorrespondencia #n_orden").val('');
+    $("#modalCorrespondencia #nombre_destinatario").val('');
+    $("#modalCorrespondencia #direccion").val('');
+    $("#modalCorrespondencia #departamento").val('');
+    $("#modalCorrespondencia #ciudad").val('');
+    $("#modalCorrespondencia #telefono").val('');
+    $("#modalCorrespondencia #email").val('');
+    $("#modalCorrespondencia #m_notificacion").val('');
+    $("#modalCorrespondencia #folios").val('');
+    $("#modalCorrespondencia #n_guia").val('');
+    $("#modalCorrespondencia #f_envio").val('');
+    $("#modalCorrespondencia #f_notificacion").val('');
+    $("#modalCorrespondencia #state_notificacion").val('');
+    $("#modalCorrespondencia #id_correspondencia").val('');
+    $("#modalCorrespondencia #id_asignacion").val('');
+    $("#modalCorrespondencia #id_proceso").val('');
+    $("#modalCorrespondencia #id_comunicado").val('');
+    
+}
+
+function showLoading() {
+    $('#loading').addClass('loading');
+    $('#loading-content').addClass('loading-content');
+}
+function hideLoading() {
+    $('#loading').removeClass('loading');
+    $('#loading-content').removeClass('loading-content');
+}

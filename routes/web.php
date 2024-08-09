@@ -650,6 +650,8 @@ Route::post('/sinfiltrosBandejaNotifi', [BandejaNotifiController::class, 'sinFil
 // Accion: Capturar data según los filtros
 Route::post('/filtrosBandejaNotifi', [BandejaNotifiController::class, 'filtrosBandejaNotifi']);
 Route::post('/alertasNaranjasRojasNotif', [BandejaJuntasController::class, 'alertaNaranjasRojasJuntas']);
+// Accion: informacion referente a los eventos que estan en la bandeja
+Route::post('/informacionBandejaNotifi', [BandejaNotifiController::class, 'infomacionEnventosNotifiacion']);
 // Accion: Actualizar el profesional y redireccionar el servicio
 Route::post('/actualizarProfesionalServicioNotifi', [BandejaNotifiController::class, 'actualizarBandejaNotifi']);
 // 05/10/2023
