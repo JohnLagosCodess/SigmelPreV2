@@ -3167,7 +3167,7 @@ $(document).ready(function(){
             'tipo_descarga':tipo_descarga,
             'N_siniestro':N_siniestro,
         }
-        console.log("Cuerpo comunicado : ", cuerpo_comunicado);
+        // console.log("Cuerpo comunicado : ", cuerpo_comunicado);
         document.querySelector("#Generar_comunicados").disabled = true;   
         $.ajax({
             type:'POST',
