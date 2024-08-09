@@ -3089,8 +3089,7 @@ $(document).ready(function(){
 
     // Habilitar formulario de correspondencia
 
-    var editar_correspondencia = $('#editar_correspondencia');
-        editar_correspondencia.click(function(){
+    $(document).on('click','#editar_correspondencia',function(){
         $("#div_correspondecia").removeClass('d-none');
     });
 
@@ -3593,7 +3592,7 @@ $(document).ready(function(){
     });
 
     //Descargar archivo cargado manualmente
-    $("form[id^='form_descargar_archivo_']").submit(function (e){
+    $(document).on('submit',"form[id^='form_descargar_archivo_']",function (e){
         e.preventDefault();              
         var archivo = $(this).data("archivo");
 
@@ -3663,7 +3662,7 @@ $(document).ready(function(){
 
     //Reemplazar archivo 
     let comunicado_reemplazar = null;
-    $("form[id^='form_reemplazar_archivo_']").submit(function (e){
+    $(document).on('submit',"form[id^='form_reemplazar_archivo_']",function (e){
         e.preventDefault();           
         //Se abre el modal
         $('#modalReemplazarArchivos').modal('show');  

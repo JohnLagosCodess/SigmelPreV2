@@ -1082,7 +1082,11 @@ class DeterminacionOrigenATEL extends Controller
             $variables_llenas[] = $jnci;
         }
 
-        $agregar_copias_comu = implode(', ', $variables_llenas);
+        if(count($variables_llenas) > 0){
+            $agregar_copias_comu = implode(', ', $variables_llenas);
+        }else{
+            $agregar_copias_comu = '';
+        }
         
         $anexos = $request->anexos;
         $elaboro = $request->elaboro;
@@ -1143,7 +1147,6 @@ class DeterminacionOrigenATEL extends Controller
             }
         }
         
-
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
                 'Oficio_Origen' => $oficio_origen,

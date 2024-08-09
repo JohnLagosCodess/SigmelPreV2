@@ -2338,7 +2338,7 @@ $(document).ready(function(){
     });
 
    //Descargar archivo cargado manualmente
-    $("form[id^='form_descargar_archivo_']").submit(function (e){
+    $(document).on('submit',"form[id^='form_descargar_archivo_']",function (e){
         e.preventDefault();              
         var archivo = $(this).data("archivo");
 
@@ -2361,7 +2361,7 @@ $(document).ready(function(){
 
     //Reemplazar archivo 
     let comunicado_reemplazar = null;
-    $("form[id^='form_reemplazar_archivo_']").submit(function (e){
+    $(document).on('submit',"form[id^='form_reemplazar_archivo_']",function (e){
         e.preventDefault();           
         //Se abre el modal
         $('#modalReemplazarArchivos').modal('show');  
@@ -4402,8 +4402,7 @@ $(document).ready(function(){
 
     // Habilitar formulario de correspondencia
 
-    var editar_correspondencia = $('#editar_correspondencia');
-        editar_correspondencia.click(function(){
+    $(document).on('click','#editar_correspondencia',function(){
         $("#div_correspondecia").removeClass('d-none');
     });
 
@@ -6677,4 +6676,41 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     info_notificacion['Estado_General'] =`<select class="custom-select" id="status_notificacion_${n_radicado}" style="width:100%;">${opciones_Notificacion}</select>`;
 
     return info_notificacion;
+}
+
+function cleanModalCorrespondencia(){
+    $("#btn_guardar_actualizar_correspondencia").val('Guardar');
+
+    correspondencia_array = [];
+    $("#modalCorrespondencia #check_principal").prop('checked', false).prop('disabled', true).prop('required', true);
+    $("#modalCorrespondencia #check_copia").prop('checked', false).prop('disabled', false).prop('required', true);
+    $('#state_notificacion').val('').trigger('change');
+    $("#modalCorrespondencia #tipo_correspondencia").val('');
+    $("#modalCorrespondencia #n_orden").val('');
+    $("#modalCorrespondencia #nombre_destinatario").val('');
+    $("#modalCorrespondencia #direccion").val('');
+    $("#modalCorrespondencia #departamento").val('');
+    $("#modalCorrespondencia #ciudad").val('');
+    $("#modalCorrespondencia #telefono").val('');
+    $("#modalCorrespondencia #email").val('');
+    $("#modalCorrespondencia #m_notificacion").val('');
+    $("#modalCorrespondencia #folios").val('');
+    $("#modalCorrespondencia #n_guia").val('');
+    $("#modalCorrespondencia #f_envio").val('');
+    $("#modalCorrespondencia #f_notificacion").val('');
+    $("#modalCorrespondencia #state_notificacion").val('');
+    $("#modalCorrespondencia #id_correspondencia").val('');
+    $("#modalCorrespondencia #id_asignacion").val('');
+    $("#modalCorrespondencia #id_proceso").val('');
+    $("#modalCorrespondencia #id_comunicado").val('');
+    
+}
+
+function showLoading() {
+    $('#loading').addClass('loading');
+    $('#loading-content').addClass('loading-content');
+}
+function hideLoading() {
+    $('#loading').removeClass('loading');
+    $('#loading-content').removeClass('loading-content');
 }

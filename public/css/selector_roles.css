@@ -219,6 +219,7 @@
     padding: 5px;
     text-align: justify;
 }
+
 .loading {
     z-index: 1051; /* Asegúrate de que el z-index sea mayor que el del modal */
     position: fixed;

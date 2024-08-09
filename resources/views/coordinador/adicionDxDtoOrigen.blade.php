@@ -1146,7 +1146,7 @@
                             <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para mostrar todo el cuerpo del comunicado (dentro del pdf) que usted escriba, 
                             debe incluir las etiquetas de Nombre afiliado y Origen de evento dentro de la sección Cuerpo del Comunicado.
                         </div>
-                        <form id="form_correspondencia" action="POST">                            
+                        <form id="form_correspondencia_adx" action="POST">                            
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-3">
@@ -1553,14 +1553,17 @@
                         <div class="col-12">
                             <div class="form-group">                                            
                                 <div class="table-responsive">
-                                    <table id="listado_comunicados_clpcl" class="table table-striped table-bordered" style="width: 100%;  white-space: nowrap;">
+                                    <table id="listado_comunicados_adx" class="table table-striped table-bordered" style="width: 100%;  white-space: nowrap;">
                                         <thead>
                                             <tr class="bg-info">
                                                 <th>N° de Radicado</th>
                                                 <th>Elaboró</th>
                                                 <th>Fecha de comunicado</th>
                                                 <th>Documento</th>
-                                       			<th>Destinatarios</th>
+                                       			{{-- Si el caso está en la bandeja de notificaciones se muestra la columna Destinatarios --}}
+                                                @if ($caso_notificado == "Si")
+                                                   <th>Destinatarios</th>
+                                                @endif
                                                 <th>Estado general de la Notificación</th>
                                                 <th>Nota</th>
                                                 <th>Acción</th>
@@ -1573,17 +1576,117 @@
                                                 <td>{{$comunicados->Elaboro}}</td>
                                                 <td>{{$comunicados->F_comunicado}}</td>
                                                 <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>
-                                                <td><a href="javascript:void(0);" data-toggle="modal"     data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-destinatario="Afiliado">Afiliado</a>
-                                                        <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-destinatario="empleador">Empleador</a>
-                                                        <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-destinatario="eps">EPS</a>
-                                                        <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-destinatario="afp" style="text-decoration-line: underline;"><strong>AFP</strong></a>
-                                                        <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-destinatario="arl" style="text-decoration-line: underline;"><strong>ARL</strong></a>
-                                                        <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-destinatario="jrci">JRCI</a>
-                                                        <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-destinatario="jnci">JNCI</a></td>
+                                                @if ($caso_notificado == "Si")
+                                                    <td>
+                                                        <?php
+                                                            $destinatario = strtolower($comunicados->Destinatario);
+                                                            $copias = $comunicados->Agregar_copia;
+                                                            $correspondencia = $comunicados->Correspondencia;
+
+                                                            $array_copias = array();
+                                                            $array_correspondencia = array();
+
+                                                            if ($copias) {
+                                                                $copias = explode(", ", $copias);
+                                                                $array_copias = array_map(function($item) {
+                                                                    return strtolower(trim($item));
+                                                                }, $copias);
+                                                            }
+
+
+                                                            // La copia del empleador y el destinanario empleador tienen valores distintos, por ende, se realiza la siguiente validación:
+                                                            // este dato finalmente irá en donde se construye los elementos a subrayados
+                                                            $array_copias_analizar = implode(',', $array_copias);
+                                                            if (strpos($array_copias_analizar, 'empleador') !== false) {
+                                                                $dato_empleador = 'empleador';
+                                                                $dato_empleador_form = 'Empleador'; // Empleador
+                                                            }else{
+                                                                $dato_empleador = 'empresa';
+                                                                $dato_empleador_form = 'Empresa'; // Empresa
+                                                            }
+
+                                                            if($correspondencia){
+                                                                $correspondencia = explode(", ", $correspondencia);
+                                                                $array_correspondencia = array_map(function($item) {
+                                                                    return strtolower(trim($item));
+                                                                }, $correspondencia);
+                                                            }
+                                                            
+                                                            if (!function_exists('subrayado')) {
+                                                                function subrayado($entidad, $destinatario, $array_copias, $array_correspondencia) {
+
+                                                                    $array_copias = implode(',', $array_copias);
+                                                                    $array_correspondencia = implode(',', $array_correspondencia);
+
+                                                                    $negrita = (isset($array_correspondencia) && strpos($array_correspondencia, $entidad) !== false) ? 'font-weight:700;' : '';
+                                                                    $underline = ($destinatario === strtolower($entidad) || (isset($array_copias) && strpos(strtolower($array_copias), strtolower($entidad)) !== false)) ? 'text-decoration-line: underline;' : '';
+
+                                                                    return $negrita.$underline;
+                                                                }
+                                                            }
+                                                        ?>
+                                                        
+                                                        <a  href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Afiliado"
+                                                            data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
+                                                            data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
+                                                            data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
+                                                            data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
+                                                            style="<?php echo subrayado('afiliado', $destinatario, $array_copias, $array_correspondencia); ?>"
+                                                        >Afiliado</a>
+
+                                                        <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="<?php echo $dato_empleador_form;?>"
+                                                        data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
+                                                        data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
+                                                        data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
+                                                        data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
+                                                        style="<?php echo subrayado($dato_empleador, $destinatario, $array_copias, $array_correspondencia); ?>"
+                                                        >Empleador</a>
+
+                                                        <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="eps"
+                                                        data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
+                                                        data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
+                                                        data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
+                                                        data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
+                                                        style="<?php echo subrayado('eps', $destinatario, $array_copias, $array_correspondencia); ?>"
+                                                        >EPS</a>
+
+                                                        <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="afp"
+                                                        data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
+                                                        data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
+                                                        data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
+                                                        data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
+                                                        style="<?php echo subrayado('afp', $destinatario, $array_copias, $array_correspondencia); ?>"
+                                                        >AFP</a>
+
+                                                        <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="arl"
+                                                        data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
+                                                        data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
+                                                        data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
+                                                        data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
+                                                        style="<?php echo subrayado('arl', $destinatario, $array_copias, $array_correspondencia); ?>"
+                                                        >ARL</a>
+                                                        
+                                                        <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="jrci"
+                                                        data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
+                                                        data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
+                                                        data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
+                                                        data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
+                                                        style="<?php echo subrayado('jrci', $destinatario, $array_copias, $array_correspondencia); ?>"
+                                                        >JRCI</a>
+
+                                                        <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="jnci"
+                                                        data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
+                                                        data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
+                                                        data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
+                                                        data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
+                                                        style="<?php echo subrayado('jnci', $destinatario, $array_copias, $array_correspondencia); ?>"
+                                                        >JNCI</a>
+                                                    </td>
+                                                @endif
                                                 <td><select class="custom-select" id="status_notificacion_{{$comunicados->N_radicado}}" style="width:100%;" data-default={{$comunicados->Estado_Notificacion}}></select></td>
                                                 <td><textarea class="form-control nota-col" name="nota_comunicado_{{$comunicados->N_radicado}}" id="nota_comunicado_{{$comunicados->N_radicado}}" cols="70" rows="3" style="resize:none; width:200px;">{{$comunicados->Nota}}</textarea></td>
                                                 @if ($comunicados->Ciudad == 'N/A' && $comunicados->Tipo_descarga == "Dictamen")
-                                                    <td style="display: flex; flex-direction:row; justify-content:space-around;">
+                                                    <td style="display: flex; flex-direction:row; justify-content:space-around; border:none;">
                                                        {{-- Formulario para descargar el dml origen atel previsional (dictamen) --}}
                                                        <form id="Form_dml_origen_previsional_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
                                                             @csrf
@@ -1635,7 +1738,7 @@
                                                         <a href="javascript:void(0);" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
                                                     </td>
                                                 @elseif ($comunicados->Tipo_descarga == "Manual")
-                                                    <td style="display: flex; flex-direction:row; justify-content:space-around;">
+                                                    <td style="display: flex; flex-direction:row; justify-content:space-around; border:none;">
                                                         <form id="form_descargar_archivo_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" method="POST">
                                                             <button type="submit" id="btn_descargar_archivo_{{$comunicados->Id_Comunicado}}" style="border: none; background:transparent;">
                                                                 <i class="far fa-eye text-info"></i>
@@ -1651,7 +1754,7 @@
                                                         <a href="javascript:void(0);" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
                                                     </td>                                                                
                                                 @else
-                                                    <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
+                                                    <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center; border:none;">
                                                         {{-- formulario Notificación del DML PREVISIONAL (oficio remisorio) --}}
                                                         <form id="Form_noti_dml_previsional_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" method="POST">
                                                             <div class="d-none">
@@ -1697,7 +1800,10 @@
                                                                 <i class="far fa-eye text-info"></i>
                                                             </button>
                                                         </form>
-                                                        <label for="editar_correspondencia" id="editar_correspondencia"><i class="fa fa-pen text-info"></i></label>
+                                                        @if ($comunicados->Correspondencia == '')
+                                                            <label for="editar_correspondencia" id="editar_correspondencia"><i class="fa fa-pen text-info"></i></label>
+                                                        @endif
+
                                                         @if ($comunicados['Existe'])
                                                             <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
                                                                 <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
@@ -1752,6 +1858,7 @@
    </form>
    @include('//.coordinador.modalReemplazarArchivos')
    @include('//.coordinador.modalCorrespondencia')
+
 @stop
 
 @section('js')

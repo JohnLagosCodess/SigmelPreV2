@@ -5210,6 +5210,55 @@ class RecalificacionPCLController extends Controller
         $radicado = $request->radicado;
         $bandera_correspondecia_guardar_actualizar = $request->bandera_correspondecia_guardar_actualizar;
 
+        /* Se completan los siguientes datos para lo del tema del pbs 014 */
+
+        // eL número de identificacion será el del afiliado.
+        $array_nro_ident_afi = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+        ->select('Nro_identificacion')
+        ->where([['ID_evento', $Id_EventoDecreto]])
+        ->get();
+
+        if (count($array_nro_ident_afi) > 0) {
+            $nro_identificacion = $array_nro_ident_afi[0]->Nro_identificacion;
+        }else{
+            $nro_identificacion = 'N/A';
+        }
+
+        // el nombre del destinatario principal dependerá de lo siguiente:
+        // Si no se seleccciona la opción otro destinatario principal: el destinatario será por defecto la Afiliado.
+        // Si selecciona la opción otro destinatario principal: el destinataria dependerá del tipo de destinatario que se seleccione.
+
+        // Caso 1: Arl, Caso 2: Afp, Caso 3: Eps, Caso 4: Afiliado, Caso 5: Empleador.
+        if ($otrodestinariop == '') {
+            $Destinatario = 'Afiliado';
+        } else {
+            switch ($tipo_destinatario_principal) {
+                case '1':
+                    $Destinatario = 'Arl';
+                break;
+
+                case '2':
+                    $Destinatario = 'Afp';
+                break;
+
+                case '3':
+                    $Destinatario = 'Eps';
+                break;
+
+                case '4':
+                    $Destinatario = 'Afiliado';
+                break;
+
+                case '5':
+                    $Destinatario = 'Empleador';
+                break;
+                
+                default:
+                    $Destinatario = 'N/A';
+                break;
+            }
+        }
+
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
                 'Oficio_pcl' => $oficiopcl,
@@ -5267,8 +5316,8 @@ class RecalificacionPCLController extends Controller
                 'Cliente' => 'N/A',
                 'Nombre_afiliado' => $destinatario_principal,
                 'T_documento' => 'N/A',
-                'N_identificacion' => 'N/A',
-                'Destinatario' => 'N/A',
+                'N_identificacion' => $nro_identificacion,
+                'Destinatario' => $Destinatario,
                 'Nombre_destinatario' => 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
@@ -5350,13 +5399,39 @@ class RecalificacionPCLController extends Controller
             ])->update($datos_correspondencia);   
             
             $datos_info_comunicado_eventos = [
+                'ID_Evento' => $Id_EventoDecreto,
+                'Id_proceso' => $Id_ProcesoDecreto,
+                'Id_Asignacion' => $Id_Asignacion_Dcreto,
+                'Ciudad' => $ciudad,
+                'F_comunicado' => $date,
+                'N_radicado' => $radicado,
+                'Cliente' => 'N/A',
+                'Nombre_afiliado' => $destinatario_principal,
+                'T_documento' => 'N/A',
+                'N_identificacion' => $nro_identificacion,
+                'Destinatario' => $Destinatario,
+                'Nombre_destinatario' => 'N/A',
+                'Nit_cc' => 'N/A',
+                'Direccion_destinatario' => 'N/A',
+                'Telefono_destinatario' => '001',
+                'Email_destinatario' => 'N/A',
+                'Id_departamento' => '001',
+                'Id_municipio' => '001',
+                'Asunto'=> $Asunto,
+                'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Forma_envio' => '0',
+                'Elaboro' => $elaboro,
+                'Reviso' => $reviso,
                 'Agregar_copia' => $agregar_copias_comu,
                 'JRCI_copia' => $cual,
+                'Anexos' => $anexos,
+                'Tipo_descarga' => $request->tipo_descarga,
+                'Modulo_creacion' => 'recalificacionPCL',
+                'Reemplazado' => 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
-                'Reemplazado' => 0,
                 'N_siniestro' => $N_siniestro
-            ];   
+            ];  
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
             ->where([                

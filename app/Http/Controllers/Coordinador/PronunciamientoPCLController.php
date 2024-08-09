@@ -151,7 +151,22 @@ class PronunciamientoPCLController extends Controller
                 $comunicado['Existe'] = false;
             }
         }
-        return view('coordinador.pronunciamientoPCL', compact('user','array_datos_pronunciamientoPcl','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo', 'array_comunicados'));
+
+        // Consultamos si el caso está en la bandeja de Notificaciones
+        $array_caso_notificado = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        ->select('Notificacion')
+        ->where([
+            ['Id_Asignacion', $Id_asignacion_calitec],
+            ['ID_evento', $Id_evento_calitec]
+        ])
+        ->get();
+
+        if(count($array_caso_notificado) > 0){
+            $caso_notificado = $array_caso_notificado[0]->Notificacion;
+        }
+
+        return view('coordinador.pronunciamientoPCL', compact('user','array_datos_pronunciamientoPcl','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo', 'array_comunicados','caso_notificado'));
+    
     }
     //Ver Documento Pronuncia
     public function VerDocumentoPronuncia(Request $request){
@@ -350,6 +365,20 @@ class PronunciamientoPCLController extends Controller
             return response()->json($info_listado_nombres_entidades);
         }
 
+        //Lista estados notificacion correspondencia
+        if($parametro == "EstadosNotificacionCorrespondencia"){
+            $datos_status_notificacion_correspondencia = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro','Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Estatus_Correspondencia'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $datos_status_notificacion_corresp = json_decode(json_encode($datos_status_notificacion_correspondencia, true));
+            return response()->json($datos_status_notificacion_corresp);
+        }
+    
     }
 
     //Guardar o actualizar informacion pronunciamiento
@@ -498,6 +527,23 @@ class PronunciamientoPCLController extends Controller
         
         $radicado = $request->n_radicado;
 
+
+        /* Se completan los siguientes datos para lo del tema del pbs 014 */
+
+        // el nombre del destinatario principal dependerá del la selección del primer calificador
+        $id_primer_calificador = $request->primer_calificador;
+
+        // Caso 1: Arl, Caso 2: Afp, Caso 3: Eps
+        switch ($id_primer_calificador) {
+            case '1': $Destinatario = 'Arl'; break;
+
+            case '2': $Destinatario = 'Afp'; break;
+
+            case '3': $Destinatario = 'Eps'; break;
+
+            default: $Destinatario = 'N/A'; break;
+        }
+
         //valida la acción del botón
         if ($request->bandera_pronuncia_guardar_actualizar == 'Guardar') {
         
@@ -559,7 +605,7 @@ class PronunciamientoPCLController extends Controller
                 'Nombre_afiliado' => $request->nombre_afiliado,
                 'T_documento' => 'N/A',
                 'N_identificacion' => $request->identificacion,
-                'Destinatario' => 'N/A',
+                'Destinatario' => $Destinatario,
                 'Nombre_destinatario' => 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
@@ -577,6 +623,7 @@ class PronunciamientoPCLController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
                 'Tipo_descarga' => $request->decision_pr,
+                'Reemplazado' => 0,
                 'Modulo_creacion' => 'pronunciamientoPCL',
             ];
             sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->insert($datos_info_pronunciamiento_eventos);
@@ -731,7 +778,7 @@ class PronunciamientoPCLController extends Controller
                 'Nombre_afiliado' => $request->nombre_afiliado,
                 'T_documento' => 'N/A',
                 'N_identificacion' => $request->identificacion,
-                'Destinatario' => 'N/A',
+                'Destinatario' => $Destinatario,
                 'Nombre_destinatario' => 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
@@ -1675,6 +1722,7 @@ class PronunciamientoPCLController extends Controller
         }  
         
     }
+
 }
 function reemplazarStyleImg($html, $nuevoStyle)
 {

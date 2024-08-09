@@ -913,11 +913,24 @@ class AdicionDxDTO extends Controller
         ->where([['siae.ID_evento', $Id_evento]])
         ->get();
 
+        // Consultamos si el caso está en la bandeja de Notificaciones
+        $array_caso_notificado = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        ->select('Notificacion')
+        ->where([
+            ['Id_Asignacion', $Id_asignacion_actual],
+            ['ID_evento', $Id_evento]
+        ])
+        ->get();
+
+        if(count($array_caso_notificado) > 0){
+            $caso_notificado = $array_caso_notificado[0]->Notificacion;
+        }
+
         return view('coordinador.adicionDxDtoOrigen', compact('user', 'Id_asignacion_actual', 'datos_bd_DTO_ATEL', 'bandera_hay_dto', 'array_datos_calificacion_origen', 
             'bandera_tipo_evento', 'nombre_del_evento_guardado', 'numero_consecutivo', 'motivo_solicitud_actual',
             'datos_apoderado_actual', 'array_datos_info_laboral','listado_documentos_solicitados', 'dato_articulo_12', 'array_datos_examenes_interconsultas',
             'array_datos_diagnostico_motcalifi', 'info_adicion_dx', 'array_datos_diagnostico_adicionales','array_comite_interdisciplinario', 'consecutivo', 
-            'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento'
+            'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento', 'caso_notificado'
             )
         );
         
@@ -1120,6 +1133,19 @@ class AdicionDxDTO extends Controller
             return response()->json($informacion_datos_reviso);
         }  
 
+        //Lista estados notificacion correspondencia
+        if($parametro == "EstadosNotificacionCorrespondencia"){
+            $datos_status_notificacion_correspondencia = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro','Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Estatus_Correspondencia'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $datos_status_notificacion_corresp = json_decode(json_encode($datos_status_notificacion_correspondencia, true));
+            return response()->json($datos_status_notificacion_corresp);
+        }
 
     }
 
@@ -1775,10 +1801,7 @@ class AdicionDxDTO extends Controller
         if ($oficio_origen == '') {
             $oficio_origen = 'No';
         }
-        // $oficioinca = $request->oficioinca;
-        // if($oficioinca == ''){
-        //     $oficioinca = 'No';
-        // }
+      
         $destinatario_principal = $request->destinatario_principal;
         $otrodestinariop = $request->otrodestinariop;
         $tipo_destinatario_principal = $request->tipo_destinatario_principal;
@@ -1849,7 +1872,11 @@ class AdicionDxDTO extends Controller
             $variables_llenas[] = $jnci;
         }
 
-        $agregar_copias_comu = implode(',', $variables_llenas);
+        if(count($variables_llenas) > 0){
+            $agregar_copias_comu = implode(', ', $variables_llenas);
+        }else{
+            $agregar_copias_comu = '';
+        }
 
         $anexos = $request->anexos;
         $elaboro = $request->elaboro;
@@ -1859,6 +1886,55 @@ class AdicionDxDTO extends Controller
         $f_correspondencia = $request->f_correspondencia;
         $radicado = $request->radicado;
         $bandera_correspondecia_guardar_actualizar = $request->bandera_correspondecia_guardar_actualizar;
+
+        /* Se completan los siguientes datos para lo del tema del pbs 014 */
+
+        // eL número de identificacion será el del afiliado.
+        $array_nro_ident_afi = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+        ->select('Nro_identificacion')
+        ->where([['ID_evento', $Id_Evento]])
+        ->get();
+
+        if (count($array_nro_ident_afi) > 0) {
+            $nro_identificacion = $array_nro_ident_afi[0]->Nro_identificacion;
+        }else{
+            $nro_identificacion = 'N/A';
+        }
+
+        // el nombre del destinatario principal dependerá de lo siguiente:
+        // Si no se seleccciona la opción otro destinatario principal: el destinatario será por defecto la AFP que tenga el afiliado.
+        // Si selecciona la opción otro destinatario principal: el destinataria dependerá del tipo de destinatario que se seleccione.
+
+        // Caso 1: Arl, Caso 2: Afp, Caso 3: Eps, Caso 4: Afiliado, Caso 5: Empleador.
+        if ($otrodestinariop == '') {
+            $Destinatario = 'Afp';
+        } else {
+            switch ($tipo_destinatario_principal) {
+                case '1':
+                    $Destinatario = 'Arl';
+                break;
+
+                case '2':
+                    $Destinatario = 'Afp';
+                break;
+
+                case '3':
+                    $Destinatario = 'Eps';
+                break;
+
+                case '4':
+                    $Destinatario = 'Afiliado';
+                break;
+
+                case '5':
+                    $Destinatario = 'Empresa';
+                break;
+                
+                default:
+                    $Destinatario = 'N/A';
+                break;
+            }
+        }
 
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
@@ -1914,8 +1990,8 @@ class AdicionDxDTO extends Controller
                 'Cliente' => 'N/A',
                 'Nombre_afiliado' => $destinatario_principal,
                 'T_documento' => 'N/A',
-                'N_identificacion' => 'N/A',
-                'Destinatario' => 'N/A',
+                'N_identificacion' => $nro_identificacion,
+                'Destinatario' => $Destinatario,
                 'Nombre_destinatario' => 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
@@ -1993,12 +2069,46 @@ class AdicionDxDTO extends Controller
             ])->update($datos_correspondencia);       
 
             $datos_info_comunicado_eventos = [
+                'ID_Evento' => $Id_Evento,
+                'Id_proceso' => $Id_Proceso_adicion_dx,
+                'Id_Asignacion' => $Id_Asignacion_adicion_dx,
+                'Ciudad' => $ciudad,
+                'F_comunicado' => $date,
+                'N_radicado' => $radicado,
+                'Cliente' => 'N/A',
+                'Nombre_afiliado' => $destinatario_principal,
+                'T_documento' => 'N/A',
+                'N_identificacion' => $nro_identificacion,
+                'Destinatario' => $Destinatario,
+                'Nombre_destinatario' => 'N/A',
+                'Nit_cc' => 'N/A',
+                'Direccion_destinatario' => 'N/A',
+                'Telefono_destinatario' => '001',
+                'Email_destinatario' => 'N/A',
+                'Id_departamento' => '001',
+                'Id_municipio' => '001',
+                'Asunto'=> $Asunto,
+                'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Forma_envio' => '0',
+                'Elaboro' => $elaboro,
+                'Reviso' => $reviso,
                 'Agregar_copia' => $agregar_copias_comu,
                 'JRCI_copia' => $cual,
+                'Anexos' => $anexos,
+                'Tipo_descarga' => 'Comunicado',
+                'Modulo_creacion' => 'adicionDxDtoOrigen',
+                'Reemplazado' => 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
-                'Reemplazado' => 0
-            ];   
+            ];
+            
+            // $datos_info_comunicado_eventos = [
+            //     'Agregar_copia' => $agregar_copias_comu,
+            //     'JRCI_copia' => $cual,
+            //     'Nombre_usuario' => $nombre_usuario,
+            //     'F_registro' => $date,
+            //     'Reemplazado' => 0
+            // ];   
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
             ->where([                
