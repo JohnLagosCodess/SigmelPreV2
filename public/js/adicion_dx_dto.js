@@ -2374,12 +2374,22 @@ $(document).ready(function(){
                         $("#modalCorrespondencia .modal-title").text('Correspondencia ' + tipo_correspondencia);
                         $("#modalCorrespondencia #radicado").val(N_radicado);
                         
-                        if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){
+                        if(tipo_descarga === 'Dictamen' && tipo_correspondencia.toLowerCase() === 'afiliado'){
                             $("#modalCorrespondencia #check_principal").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias.includes(tipo_correspondencia.toLowerCase())){
+                        else if(tipo_descarga === 'Dictamen' && (tipo_correspondencia.toLowerCase() === 'eps' || tipo_correspondencia.toLowerCase() === 'afp')){
+                            $("#modalCorrespondencia #check_copia").prop('checked', true);
+                            $("#modalCorrespondencia #check_copia").prop('disabled', true);
+                            $("#modalCorrespondencia #check_principal").prop('required', false);
+                        }
+                        else if(tipo_descarga != 'Manual' && tipo_descarga != 'Dictamen' && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){
+                            $("#modalCorrespondencia #check_principal").prop('checked', true);
+                            $("#modalCorrespondencia #check_copia").prop('disabled', true);
+                            $("#modalCorrespondencia #check_copia").prop('required', false);
+                        }
+                        else if(tipo_descarga != 'Manual' && tipo_descarga != 'Dictamen' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.includes(tipo_correspondencia.toLowerCase())){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);

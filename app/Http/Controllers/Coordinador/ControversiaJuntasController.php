@@ -1808,7 +1808,36 @@ class ControversiaJuntasController extends Controller
             $nro_identificacion = 'N/A';
         }
         // el destinatario siempre será Afiliado debido a que en ARL el otro destinatario no funciona
-        $Destinatario = 'Jrci';
+        if ($otrodestinariop == '') {
+            $Destinatario = 'Jrci';
+        } else {
+            switch ($tipo_destinatario_principal) {
+                case '1':
+                    $Destinatario = 'Arl';
+                break;
+
+                case '2':
+                    $Destinatario = 'Afp';
+                break;
+
+                case '3':
+                    $Destinatario = 'Eps';
+                break;
+
+                case '4':
+                    $Destinatario = 'Afiliado';
+                break;
+
+                case '5':
+                    $Destinatario = 'Empleador';
+                break;
+                
+                default:
+                    $Destinatario = 'N/A';
+                break;
+            }
+        }
+        // $Destinatario = 'Jrci';
         // Se crea un array que contiene las copias y se filtra por las que traigan el dato
         $array_copias = [$afiliado, $empleador, $eps, $afp, $arl, $jrci, $jnci];
         $variables_filtradas = array_filter($array_copias, function($var) {
