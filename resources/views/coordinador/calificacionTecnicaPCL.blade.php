@@ -7689,10 +7689,7 @@
                                                         <th>Documento</th>
                                                         <th>Destinatarios</th>
                                                         <th>Estado general de la Notificación</th>
-                                                        <th>Nota</th>
-                                                        <th>Destinatarios</th>
-                                                        <th>Estado general de la Notificación</th>
-                                                        <th>Nota</th>
+                                                        <th>Nota</th>                                                        
                                                         <th>Acción</th>
                                                     </tr>
                                                 </thead>
@@ -8047,6 +8044,7 @@
         </x-slot>     
     </x-adminlte-modal>
     @include('//.coordinador.modalReemplazarArchivos')
+    @include('//.coordinador.modalCorrespondencia')
  @stop
  
 

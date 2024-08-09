@@ -3089,8 +3089,7 @@ $(document).ready(function(){
 
     // Habilitar formulario de correspondencia
 
-    var editar_correspondencia = $('#editar_correspondencia');
-        editar_correspondencia.click(function(){
+    $(document).on('click','#editar_correspondencia',function(){
         $("#div_correspondecia").removeClass('d-none');
     });
 
