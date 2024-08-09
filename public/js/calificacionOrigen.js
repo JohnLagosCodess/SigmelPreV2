@@ -339,6 +339,91 @@ $(document).ready(function(){
         }
     });
 
+    // autoseleccion del estado de facturacion y cargue de listado de profesionales dependiendo de la accion cuando la pag carga
+    var accion_cargada = $("#bd_id_accion").val();
+    if (accion_cargada != '') {
+        let datos_ejecutar_parametrica_mod_principal = {
+            '_token': token,
+            'parametro': "validarSiModPrincipal",
+            'Id_proceso': $("#Id_proceso").val(),
+            'Id_servicio': $("#Id_servicio").val(),
+            'Id_accion': accion_cargada,
+            'nro_evento': $("#newId_evento").val()
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/validacionParametricaEnSi',
+            data: datos_ejecutar_parametrica_mod_principal,
+            success:function(data) {
+                if(data.length > 0){
+                    if (data[0]["Modulo_principal"] !== "Si") {
+                        $(".no_ejecutar_parametrica_modulo_principal").removeClass('d-none');
+                        $("#Edicion").addClass('d-none');
+                    } else {
+                        $(".no_ejecutar_parametrica_modulo_principal").addClass('d-none');
+                        $("#Edicion").removeClass('d-none');
+
+                        // llenado del input Estado de Facturación
+                        $("#estado_facturacion").val(data[0]["Estado_facturacion"]);
+                    }
+                }
+            }
+        });
+
+        // CARGUE LISTADO DE PROFESIONALES DEPENDIENDO DE LA SELECCIÓN DE LA ACCIÓN
+        let datos_lista_profesional = {
+            '_token':token,
+            'parametro':"lista_profesional_accion",
+            'nro_evento': $("#newId_evento").val(),
+            'Id_proceso' : Id_proceso_actual,
+            'Id_servicio': $("#Id_servicio").val(),
+            'Id_accion': accion_cargada,
+        }
+
+        $.ajax({
+            type:'POST',
+            url:'/cargarselectores',
+            data: datos_lista_profesional,
+            success:function (data) {
+                // console.log(data)
+                $('#profesional').empty();
+                $('#profesional').append('<option value="" selected>Seleccione</option>');
+                let id_profesional= $('select[name=profesional]').val();
+                let profesionalorigen = Object.keys(data.info_listado_profesionales);
+                for (let i = 0; i < profesionalorigen.length; i++) {
+                    if (data.info_listado_profesionales[profesionalorigen[i]]['id'] != id_profesional) {
+                        if (data.info_listado_profesionales[profesionalorigen[i]]['id'] == data.Profesional_asignado) {
+                            $('#profesional').append('<option value="'+data.info_listado_profesionales[profesionalorigen[i]]['id']+'" selected>'+data.info_listado_profesionales[profesionalorigen[i]]['name']+'</option>')                    
+                        }else{
+                            $('#profesional').append('<option value="'+data.info_listado_profesionales[profesionalorigen[i]]['id']+'">'+data.info_listado_profesionales[profesionalorigen[i]]['name']+'</option>')                    
+                        }
+                    }
+                }
+            }
+        });
+
+        //Selector enviara, seccion 'Accion a realizar'
+        let datos_bandeja_destino = {
+            '_token':token,
+            'parametro':"lista_bandejas_destino",
+            'Id_proceso' : Id_proceso_actual,
+            'Id_cliente' : $("#cliente").data('id'),
+            'Id_servicio': $("#Id_servicio").val(),
+            'Id_accion': accion_cargada,
+        }
+        
+        $.ajax({
+            type:'POST',
+            url:'/selectoresOrigenAtel',
+            data: datos_bandeja_destino,
+            success:function (data) {
+                $('#enviar').empty();
+                $('#enviar').append(`<option value="${data.bd_destino}" selected>${data.Nombre_proceso}</option>`);
+            }
+        });
+    }
+
     $("#accion").change(function(){
         let datos_ejecutar_parametrica_mod_principal = {
             '_token': token,
@@ -1678,7 +1763,7 @@ $(document).ready(function(){
     }
     $.ajax({
         type: 'POST',
-        url: '/selectoresJuntas',
+        url: '/selectoresOrigenAtel',
         data: selectores_notificacion_correspondencia,
         success: function (data) {
             let SelectorModalCorrespondencia = $('select[name=state_notificacion]').val();
@@ -2416,7 +2501,7 @@ $(document).ready(function(){
                         }
                         $.ajax({
                             type: 'POST',
-                            url: '/selectoresJuntas',
+                            url: '/selectoresOrigenAtel',
                             data: selectores_notificacion_correspondencia,
                             beforeSend:  function() {
                                 $("#btn_guardar_actualizar_correspondencia").addClass("descarga-deshabilitada");
@@ -3613,6 +3698,15 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     if(Copias){
         Copias = Copias.split(',').map(copia => copia.trim().toLowerCase());
     }
+    // La copia del empleador y el destinanario empleador tienen valores distintos, por ende, se realiza la siguiente validación:
+    // este dato finalmente irá en donde se construye los elementos a subrayados
+    if (Copias.includes('empleador')) {
+        var dato_empleador = 'empleador';
+        var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
+    }else{
+        var dato_empleador = 'empresa';
+        var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
+    }
     if(Correspondencia){
         Correspondencia = Correspondencia.split(',').map(correspondencia => correspondencia.trim().toLowerCase());
     }
@@ -3630,12 +3724,12 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
                 style="${getUnderlineStyle('afiliado')}">Afiliado</a>
-            <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Empresa" \
+            <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="${dato_empleador_form}" \
                 data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
-                style="${getUnderlineStyle('empresa')}">Empleador</a>
+                style="${getUnderlineStyle(dato_empleador)}">Empleador</a>
             <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="eps" \
                 data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \

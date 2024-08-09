@@ -517,6 +517,20 @@ class CalificacionPCLController extends Controller
             $info_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados,true));
             return response()->json($info_listado_documentos_solicitados);
         }
+
+        //Lista estados notificacion correspondencia
+        if($parametro == "EstadosNotificacionCorrespondencia"){
+            $datos_status_notificacion_correspondencia = sigmel_lista_parametros::on('sigmel_gestiones')
+                ->select('Id_Parametro','Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Estatus_Correspondencia'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
+
+            $datos_status_notificacion_corresp = json_decode(json_encode($datos_status_notificacion_correspondencia, true));
+            return response()->json($datos_status_notificacion_corresp);
+        }
         
     }
 
@@ -2292,7 +2306,7 @@ class CalificacionPCLController extends Controller
                 'Forma_envio' => $request->forma_envio,
                 'Elaboro' => $nombre_usuario,
                 'Reviso' => $request->reviso,
-                'Agregar_copia' => null,
+                'Agregar_copia' => '',
                 'Firmar_Comunicado' => $request->firmarcomunicado,
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => 'calificacionPCL',

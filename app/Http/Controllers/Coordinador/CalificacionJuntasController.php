@@ -189,9 +189,19 @@ class CalificacionJuntasController extends Controller
             // $arrayinfo_controvertido[0]->F_plazo_controversia = $fecha_controversia[0]->Fecha;
             $arrayinfo_controvertido[0]->F_plazo_controversia = $fecha_controversia;
         }
+
+        // Validar si la accion ejecutada tiene enviar a notificaciones            
+        $enviar_notificaciones = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        ->select('Notificacion')
+        ->where([
+            ['ID_evento', $newIdEvento],
+            ['Id_Asignacion', $newIdAsignacion]
+        ])
+        ->get();
+
         return view('coordinador.calificacionJuntas', compact('user','array_datos_calificacionJuntas','arraylistado_documentos','arrayinfo_afiliado',
         'arrayinfo_controvertido','arrayinfo_pagos','listado_documentos_solicitados','dato_validacion_no_aporta_docs',
-        'arraycampa_documento_solicitado','consecutivo','hitorialAgregarSeguimiento','SubModulo', 'Id_servicio'));
+        'arraycampa_documento_solicitado','consecutivo','hitorialAgregarSeguimiento','SubModulo', 'Id_servicio','enviar_notificaciones'));
     }
     //Cargar Selectores Juntas
     public function cargueListadoSelectoresJuntas(Request $request){
@@ -562,6 +572,37 @@ class CalificacionJuntasController extends Controller
             } */
 
             return response()->json($lista_chequeo);
+        }
+
+        //Listado bandejas de destino
+        if($parametro == 'lista_bandejas_destino'){            
+
+            $request->validate([
+                'Id_proceso'=> 'required',
+                'Id_cliente' => 'required',
+                'Id_servicio' => 'required',
+                'Id_accion' => 'required'
+            ]);
+            //Caso cuando en la parametrica hay un 'enviar a' para la accion a ejecutar.
+            $lista_bandejas_destino = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slps2', 'sipc.Bandeja_trabajo_destino', '=', 'slps2.Id_proceso')
+            ->select('slps2.Nombre_proceso as Nombre_proceso','sipc.Bandeja_trabajo_destino as bd_destino')
+            ->where([
+                ['sipc.Id_proceso',$request->Id_proceso], 
+                ['sipc.Id_cliente',$request->Id_cliente],
+                ['sipc.Servicio_asociado',$request->Id_servicio],
+                ['sipc.Accion_ejecutar',$request->Id_accion]
+            ])->first();            
+            
+            if(empty($lista_bandejas_destino->Nombre_proceso)){
+                $lista_bandejas_destino = [
+                    'Nombre_proceso' => "NO ESTA DEFINIDO",
+                    'bd_destino' => 0
+                ];
+            }
+
+            $lista_bandejas_destino = json_decode(json_encode($lista_bandejas_destino, true));
+            return response()->json($lista_bandejas_destino);
         }
     }
 
@@ -2573,7 +2614,7 @@ class CalificacionJuntasController extends Controller
                 'Forma_envio' => $request->forma_envio,
                 'Elaboro' => $nombre_usuario,
                 'Reviso' => $request->reviso,
-                'Agregar_copia' => null,
+                'Agregar_copia' => '',
                 'Firmar_Comunicado' => $request->firmarcomunicado,
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => $request->modulo_creacion,
@@ -2637,6 +2678,17 @@ class CalificacionJuntasController extends Controller
                 ['Id_proceso', '3']
             ])
             ->get();
+
+            // Validar si la accion ejecutada tiene enviar a notificaciones
+            
+            $enviar_notificacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            ->select('Notificacion')
+            ->where([
+                ['ID_evento', $newId_evento],
+                ['Id_Asignacion', $newId_asignacion]
+            ])
+            ->get();
+
             foreach ($hitorialAgregarComunicado as &$comunicado) {
                 if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
                     $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
@@ -2660,9 +2712,11 @@ class CalificacionJuntasController extends Controller
                     $comunicado['Existe'] = false;
                 }
             }
-            $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
-            return response()->json(($arrayhitorialAgregarComunicado));
-
+            
+            return response()->json([
+                'hitorialAgregarComunicado' => $hitorialAgregarComunicado,
+                'enviar_notificacion' => $enviar_notificacion
+            ]);
         }
 
         //Accion Actualizar status,nota del comunicado
