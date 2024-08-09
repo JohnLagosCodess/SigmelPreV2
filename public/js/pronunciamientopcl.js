@@ -1381,7 +1381,7 @@ $(document).ready(function(){
     }
     $.ajax({
         type: 'POST',
-        url: '/selectoresCalificacionTecnicaPCL',
+        url: '/selectoresPronunciamiento',
         data: selectores_notificacion_correspondencia,
         success: function (data) {
             let SelectorModalCorrespondencia = $('select[name=state_notificacion]').val();
