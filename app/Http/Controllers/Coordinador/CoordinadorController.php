@@ -1462,6 +1462,12 @@ class CoordinadorController extends Controller
         $Id_proceso = $request->id_proceso;
         $Tipo_correspondencia = $request->tipo_correspondencia;
         $Previous_saved = $request->previous_saved;
+
+        $info_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->select('Destinatario','Nombre_destinatario')
+            ->where([['Id_Comunicado', $Id_comunicado]])
+            ->get();
+
         if($Previous_saved === 'false'){
             //Nro_Orden
             $nro_orden = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
@@ -1518,6 +1524,20 @@ class CoordinadorController extends Controller
                     ->where([['Nro_identificacion', $infoAfiliado[0]->Documento_destinatario],['ID_evento', $Id_evento]])
                     ->get();
                     $response['datos'] = count($datos_eps) > 0 ? $datos_eps[0] : null;
+                    if(!empty($info_comunicado)){
+                        if(strtolower($info_comunicado[0]->Destinatario) === $Tipo_correspondencia && $info_comunicado[0]->Nombre_destinatario != 'N/A'){
+                            $datos_eps_otro_destinatario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
+                            ->select('sie.Nombre_entidad as Nombre_destinatario', 'sie.Direccion as Direccion_destinatario', 'sie.Emails as Email_destinatario', 'sie.Telefonos as Telefono_destinatario', 
+                            'sldm.Nombre_departamento as Departamento_destinatario', 'sldm2.Nombre_municipio as Ciudad_destinatario','slp.Nombre_parametro as Medio_notificacion_destinatario')
+                            ->where([['Id_Entidad', $info_comunicado[0]->Nombre_destinatario]])
+                            ->get();
+                            $response['datos'] = count($datos_eps_otro_destinatario) > 0 ? $datos_eps_otro_destinatario[0] : null;
+                        }
+                    }
+                    
                 }
                 else if($Tipo_correspondencia === 'afp' && !empty($infoAfiliado)){
                     $datos_afp = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
@@ -1530,6 +1550,19 @@ class CoordinadorController extends Controller
                     ->where([['Nro_identificacion', $infoAfiliado[0]->Documento_destinatario],['ID_evento', $Id_evento]])
                     ->get();
                     $response['datos'] = count($datos_afp) > 0 ? $datos_afp[0] : null;
+                    if(!empty($info_comunicado)){
+                        if(strtolower($info_comunicado[0]->Destinatario) === $Tipo_correspondencia && $info_comunicado[0]->Nombre_destinatario != 'N/A'){
+                            $datos_afp_otro_destinatario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
+                            ->select('sie.Nombre_entidad as Nombre_destinatario', 'sie.Direccion as Direccion_destinatario', 'sie.Emails as Email_destinatario', 'sie.Telefonos as Telefono_destinatario', 
+                            'sldm.Nombre_departamento as Departamento_destinatario', 'sldm2.Nombre_municipio as Ciudad_destinatario','slp.Nombre_parametro as Medio_notificacion_destinatario')
+                            ->where([['Id_Entidad', $info_comunicado[0]->Nombre_destinatario]])
+                            ->get();
+                            $response['datos'] = count($datos_afp_otro_destinatario) > 0 ? $datos_afp_otro_destinatario[0] : null;
+                        }
+                    }
                 }
                 else if($Tipo_correspondencia === 'arl' && !empty($infoAfiliado)){
                     $datos_arl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
@@ -1542,6 +1575,19 @@ class CoordinadorController extends Controller
                     ->where([['Nro_identificacion', $infoAfiliado[0]->Documento_destinatario],['ID_evento', $Id_evento]])
                     ->get();
                     $response['datos'] = count($datos_arl) > 0 ? $datos_arl[0] : null;
+                    if(!empty($info_comunicado)){
+                        if(strtolower($info_comunicado[0]->Destinatario) === $Tipo_correspondencia && $info_comunicado[0]->Nombre_destinatario != 'N/A'){
+                            $datos_arl_otro_destinatario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
+                            ->select('sie.Nombre_entidad as Nombre_destinatario', 'sie.Direccion as Direccion_destinatario', 'sie.Emails as Email_destinatario', 'sie.Telefonos as Telefono_destinatario', 
+                            'sldm.Nombre_departamento as Departamento_destinatario', 'sldm2.Nombre_municipio as Ciudad_destinatario','slp.Nombre_parametro as Medio_notificacion_destinatario')
+                            ->where([['Id_Entidad', $info_comunicado[0]->Nombre_destinatario]])
+                            ->get();
+                            $response['datos'] = count($datos_arl_otro_destinatario) > 0 ? $datos_arl_otro_destinatario[0] : null;
+                        }
+                    }
                 }
                 else if($Tipo_correspondencia === 'jrci'){
                     $datos_jrci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_controversia_juntas_eventos as sicje') 
@@ -1581,8 +1627,9 @@ class CoordinadorController extends Controller
                         $datos_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
                         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
                         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
                         ->select('sie.Nombre_entidad as Nombre_destinatario', 'sie.Direccion as Direccion_destinatario', 'sie.Emails as Email_destinatario','sie.Telefonos as Telefono_destinatario', 
-                        'sie.Otros_Telefonos', 'sldm.Nombre_departamento as Departamento_destinatario', 'sldm2.Nombre_municipio as Ciudad_destinatario')
+                        'sie.Otros_Telefonos', 'sldm.Nombre_departamento as Departamento_destinatario', 'sldm2.Nombre_municipio as Ciudad_destinatario','slp.Nombre_parametro as Medio_notificacion_destinatario')
                         ->where([['sie.Id_Entidad', $id_afp_conocimiento]])
                         ->get();
                         $response['datos'] = count($datos_afp_conocimiento) > 0 ? $datos_afp_conocimiento[0] : null;
