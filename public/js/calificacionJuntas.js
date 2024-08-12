@@ -3126,7 +3126,6 @@ $(document).ready(function(){
     //DataTable Historial de comunicados
 
     function capturar_informacion_comunicados(response, index, value, enviara) {
-        console.log(enviara)
         let columns = [
             {"data":"N_radicado"},
             {"data":"Elaboro"},

@@ -188,9 +188,19 @@ class CalificacionPCLController extends Controller
 
         $info_accion_eventos = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
         ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion]])->get();
+
+        // Validar si la accion ejecutada tiene enviar a notificaciones            
+        $enviar_notificaciones = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        ->select('Notificacion')
+        ->where([
+            ['ID_evento', $newIdEvento],
+            ['Id_Asignacion', $newIdAsignacion]
+        ])
+        ->get();
         
         return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 
-        'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos','SubModulo','consecutivo','arraycampa_documento_solicitado', 'info_comite_inter', 'Id_servicio', 'info_accion_eventos'));
+        'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos','SubModulo','consecutivo','arraycampa_documento_solicitado', 
+        'info_comite_inter', 'Id_servicio', 'info_accion_eventos', 'enviar_notificaciones'));
     }
 
     public function cargueListadoSelectoresModuloCalifcacionPcl(Request $request){
@@ -2371,6 +2381,17 @@ class CalificacionPCLController extends Controller
                 ['Id_proceso', '2']
             ])
             ->get();
+
+            // Validar si la accion ejecutada tiene enviar a notificaciones
+            
+            $enviar_notificacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            ->select('Notificacion')
+            ->where([
+                ['ID_evento', $newId_evento],
+                ['Id_Asignacion', $newId_asignacion]
+            ])
+            ->get();
+
             foreach ($hitorialAgregarComunicado as &$comunicado) {
                 if ($comunicado['Tipo_descarga'] === 'Documento_PCL') {
                     $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
@@ -2394,8 +2415,11 @@ class CalificacionPCLController extends Controller
                     $comunicado['Existe'] = false;
                 }
             }
-            $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
-            return response()->json(($arrayhitorialAgregarComunicado));
+
+            return response()->json([
+                'hitorialAgregarComunicado' => $hitorialAgregarComunicado,
+                'enviar_notificacion' => $enviar_notificacion
+            ]);
 
         }
 

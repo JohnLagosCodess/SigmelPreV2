@@ -1471,7 +1471,6 @@ class PronunciamientoOrigenController extends Controller
             ->where([['Id_cliente', $Id_cliente_firma]])
             ->limit(1)->get();
             if (count($dato_logo_footer) > 0 && $dato_logo_footer[0]->Footer_cliente != null) {
-                dd($dato_logo_footer);
                 $logo_footer = $dato_logo_footer[0]->Footer_cliente;
                 $ruta_logo_footer = "/footer_clientes/{$Id_cliente_firma}/{$logo_footer}";
             } else {

@@ -2230,6 +2230,17 @@ class CalificacionOrigenController extends Controller
                 ['Id_proceso', '1']
             ])
             ->get();
+
+            // Validar si la accion ejecutada tiene enviar a notificaciones
+            
+            $enviar_notificacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            ->select('Notificacion')
+            ->where([
+                ['ID_evento', $newId_evento],
+                ['Id_Asignacion', $newId_asignacion]
+            ])
+            ->get();
+
             foreach ($hitorialAgregarComunicado as &$comunicado) {
                 if ($comunicado['Tipo_descarga'] === 'Documento_Origen') {
                     $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
@@ -2253,8 +2264,11 @@ class CalificacionOrigenController extends Controller
                     $comunicado['Existe'] = false;
                 }
             }
-            $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
-            return response()->json(($arrayhitorialAgregarComunicado));
+            
+            return response()->json([
+                'hitorialAgregarComunicado' => $hitorialAgregarComunicado,
+                'enviar_notificacion' => $enviar_notificacion
+            ]);
         }
         
         if($request->bandera == 'Actualizar'){
