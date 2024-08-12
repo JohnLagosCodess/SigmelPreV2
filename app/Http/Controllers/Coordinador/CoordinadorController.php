@@ -1475,7 +1475,7 @@ class CoordinadorController extends Controller
             $infoAfiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
                 ->select('siae.Direccion as Direccion_destinatario','ci.Nombre_municipio as Ciudad_destinatario','ci.Nombre_departamento as Departamento_destinatario',
                 'siae.Telefono_contacto as Telefono_destinatario','siae.Email as Email_destinatario','siae.Nombre_afiliado as Nombre_destinatario',
-                'siae.Medio_notificacion as Medio_notificacion_destinatario', 'siae.Nro_identificacion as Documento_destinatario')
+                'siae.Medio_notificacion as Medio_notificacion_destinatario', 'siae.Nro_identificacion as Documento_destinatario', 'siae.Entidad_conocimiento', 'siae.Id_afp_entidad_conocimiento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as ci', 'siae.Id_municipio', '=', 'ci.Id_municipios')
                 ->where('siae.ID_evento',  '=', $Id_evento)
@@ -1571,6 +1571,22 @@ class CoordinadorController extends Controller
                         ['sie.IdTipo_entidad', 5],['sie.Id_Entidad',111]
                     ])->limit(1)->get();
                     $response['datos'] = count($datos_jnci) > 0 ? $datos_jnci[0] : null;
+                }
+                else if($Tipo_correspondencia === 'afp_conocimiento' && !empty($infoAfiliado)){
+                    $si_entidad_conocimiento = $infoAfiliado[0]->Entidad_conocimiento;
+
+                    if ($si_entidad_conocimiento == "Si") {
+                        $id_afp_conocimiento = $infoAfiliado[0]->Id_afp_entidad_conocimiento;
+
+                        $datos_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                        ->select('sie.Nombre_entidad as Nombre_destinatario', 'sie.Direccion as Direccion_destinatario', 'sie.Emails as Email_destinatario','sie.Telefonos as Telefono_destinatario', 
+                        'sie.Otros_Telefonos', 'sldm.Nombre_departamento as Departamento_destinatario', 'sldm2.Nombre_municipio as Ciudad_destinatario')
+                        ->where([['sie.Id_Entidad', $id_afp_conocimiento]])
+                        ->get();
+                        $response['datos'] = count($datos_afp_conocimiento) > 0 ? $datos_afp_conocimiento[0] : null;
+                    }
                 }
                 return response()->json($response);
             }
