@@ -386,12 +386,10 @@ $(document).ready(function(){
             url:'/cargarselectores',
             data: datos_lista_profesional,
             success:function (data) {
-                console.log(data)
+                // console.log(data)
                 $('#profesional').empty();
                 $('#profesional').append('<option value="" selected>Seleccione</option>');
                 let id_profesional= $('select[name=profesional]').val();
-                console.log(id_profesional);
-                
                 let profesionalorigen = Object.keys(data.info_listado_profesionales);
                 for (let i = 0; i < profesionalorigen.length; i++) {
                     if (data.info_listado_profesionales[profesionalorigen[i]]['id'] != id_profesional) {
@@ -1765,7 +1763,7 @@ $(document).ready(function(){
     }
     $.ajax({
         type: 'POST',
-        url: '/selectoresJuntas',
+        url: '/selectoresOrigenAtel',
         data: selectores_notificacion_correspondencia,
         success: function (data) {
             let SelectorModalCorrespondencia = $('select[name=state_notificacion]').val();
@@ -1793,124 +1791,139 @@ $(document).ready(function(){
             var comunicadoNradico = '';
             /** @var select2 Config. del select2 */
             let select2 = [];
-            for (let i = 0; i < data.length; i++) {
-                if (data[i]['N_radicado'] != '' && data[i]['Tipo_descarga'] != 'Manual'){
-
-                    comunicadoNradico = '<div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center"><a href="javascript:void(0);" class="text-dark" data-toggle="modal" data-target="#modalcomunicados_" id="EditarComunicado_'+data[i]["Id_Comunicado"]+'" title="Editar Comunicado"\
-                    data-id_comunicado="'+data[i]["Id_Comunicado"]+'" data-id_evento="'+data[i]["ID_evento"]+'"\
-                    data-id_asignacion="'+data[i]["Id_Asignacion"]+'" data-id_proceso="'+data[i]["Id_proceso"]+'"\
-                    data-ciudad_comunicaddo="'+data[i]["Ciudad"]+'" data-fecha_comunicado="'+data[i]["F_comunicado"]+'"\
-                    data-numero_radicado="'+data[i]["N_radicado"]+'" data-cliente_comunicado="'+data[i]["Cliente"]+'"\
-                    data-nombre_afiliado="'+data[i]["Nombre_afiliado"]+'" data-tipo_documento="'+data[i]["T_documento"]+'"\
-                    data-numero_identificacion="'+data[i]["N_identificacion"]+'" data-destinatario_principal="'+data[i]["Destinatario"]+'"\
-                    data-nombre_destinatario="'+data[i]["Nombre_destinatario"]+'" data-niccc_comunicado="'+data[i]["Nit_cc"]+'"\
-                    data-direccion_destinatario="'+data[i]["Direccion_destinatario"]+'" data-telefono_destinatario="'+data[i]["Telefono_destinatario"]+'"\
-                    data-email_destinatario="'+data[i]["Email_destinatario"]+'" data-id_departamento="'+data[i]["Id_departamento"]+'"\
-                    data-nombre_departamento="'+data[i]["Nombre_departamento"]+'" data-id_municipio="'+data[i]["Id_municipio"]+'"\
-                    data-nombre_municipio="'+data[i]["Nombre_municipio"]+'" data-asunto_comunicado="'+data[i]["Asunto"]+'"\
-                    data-cuerpo_comunicado="'+data[i]["Cuerpo_comunicado"]+'" data-anexos_comunicados="'+data[i]["Anexos"]+'"\
-                    data-forma_envio_comunicado="'+data[i]["Forma_envio"]+'" data-nombre_envio_comunicado="'+data[i]["Nombre_forma_envio"]+'"\
-                    data-elaboro_comunicado="'+data[i]["Elaboro"]+'"\
-                    data-reviso_comunicado="'+data[i]["Reviso"]+'" data-revisonombre_comunicado="'+data[i]["Nombre_lider"]+'"\
-                    data-firmar_comunicado="'+data[i]["Firmar_Comunicado"]+'"\
-                    data-agregar_copia="'+data[i]["Agregar_copia"]+'" data-tipo_descarga="'+data[i]["Tipo_descarga"]+'"\
-                    data-modulo_creacion="'+data[i]["Modulo_creacion"]+'" data-reemplazado="'+data[i]["Reemplazado"]+'" data-nombre_documento="'+data[i]["Nombre_documento"] + '"\
-                    data-numero_siniestro="'+data[i]["N_siniestro"]+'"><i class="fa fa-pen text-info"></i></a>\
-                    <a href="javascript:void(0);" class="text-dark" id="verDocumento_'+data[i]["Id_Comunicado"]+'"\
-                    title="Descargar Comunicado"\
-                    id_comunicado="'+ data[i]["Id_Comunicado"] + '" id_evento="' + data[i]["ID_evento"] + '"\
-                    id_asignacion="'+ data[i]["Id_Asignacion"] + '" id_proceso="' + data[i]["Id_proceso"] + '"\
-                    ciudad_comunicaddo="'+ data[i]["Ciudad"] + '" fecha_comunicado="' + data[i]["F_comunicado"] + '"\
-                    numero_radicado="'+ data[i]["N_radicado"] + '" cliente_comunicado="' + data[i]["Cliente"] + '"\
-                    nombre_afiliado="'+ data[i]["Nombre_afiliado"] + '" tipo_documento="' + data[i]["T_documento"] + '"\
-                    numero_identificacion="'+ data[i]["N_identificacion"] + '" destinatario_principal="' + data[i]["Destinatario"] + '"\
-                    nombre_destinatario="'+ data[i]["Nombre_destinatario"] + '" niccc_comunicado="' + data[i]["Nit_cc"] + '"\
-                    direccion_destinatario="'+ data[i]["Direccion_destinatario"] + '" telefono_destinatario="' + data[i]["Telefono_destinatario"] + '"\
-                    email_destinatario="'+ data[i]["Email_destinatario"] + '" id_departamento="' + data[i]["Id_departamento"] + '"\
-                    nombre_departamento="'+ data[i]["Nombre_departamento"] + '" id_municipio="' + data[i]["Id_municipio"] + '"\
-                    nombre_municipio="'+ data[i]["Nombre_municipio"] + '" asunto_comunicado="' + data[i]["Asunto"] + '"\
-                    cuerpo_comunicado="'+ data[i]["Cuerpo_comunicado"] + '" anexos_comunicados="' + data[i]["Anexos"] + '"\
-                    forma_envio_comunicado="'+ data[i]["Forma_envio"] + '" nombre_envio_comunicado="' + data[i]["Nombre_forma_envio"] + '"\
-                    elaboro_comunicado="'+ data[i]["Elaboro"] + '"\
-                    reviso_comunicado="'+ data[i]["Reviso"] + '" revisonombre_comunicado="' + data[i]["Nombre_lider"] + '"\
-                    firmar_comunicado="'+ data[i]["Firmar_Comunicado"] + '"\
-                    agregar_copia="'+ data[i]["Agregar_copia"] + '" tipo_descarga="'+ data[i]["Tipo_descarga"] + '"\
-                    modulo_creacion="'+data[i]["Modulo_creacion"]+'" reemplazado="'+data[i]["Reemplazado"]+'" nombre_documento="'+data[i]["Nombre_documento"] + '"\
-                    numero_siniestro="'+data[i]["N_siniestro"]+'"><i style="cursor:pointer" class="far fa-eye text-info"></i></a>';
-                    if(data[i]['Existe'] && data[i]['Nombre_documento'] != null){
+            for (let i = 0; i < data.hitorialAgregarComunicado.length; i++) { 
+                if (data.hitorialAgregarComunicado[i].N_radicado != '' && data.hitorialAgregarComunicado[i].Tipo_descarga != 'Manual'){
+                    let comunicadoNradico = '<div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center">';
+                    if (!data.hitorialAgregarComunicado[i].Correspondencia) {
+                        comunicadoNradico += '<a href="javascript:void(0);" class="text-dark" data-toggle="modal" data-target="#modalcomunicados_" id="EditarComunicado_'+data.hitorialAgregarComunicado[i].Id_Comunicado+'" title="Editar Comunicado"\
+                            data-id_comunicado="'+data.hitorialAgregarComunicado[i].Id_Comunicado+'" data-id_evento="'+data.hitorialAgregarComunicado[i].ID_evento+'"\
+                            data-id_asignacion="'+data.hitorialAgregarComunicado[i].Id_Asignacion+'" data-id_proceso="'+data.hitorialAgregarComunicado[i].Id_proceso+'"\
+                            data-ciudad_comunicaddo="'+data.hitorialAgregarComunicado[i].Ciudad+'" data-fecha_comunicado="'+data.hitorialAgregarComunicado[i].F_comunicado+'"\
+                            data-numero_radicado="'+data.hitorialAgregarComunicado[i].N_radicado+'" data-cliente_comunicado="'+data.hitorialAgregarComunicado[i].Cliente+'"\
+                            data-nombre_afiliado="'+data.hitorialAgregarComunicado[i].Nombre_afiliado+'" data-tipo_documento="'+data.hitorialAgregarComunicado[i].T_documento+'"\
+                            data-numero_identificacion="'+data.hitorialAgregarComunicado[i].N_identificacion+'" data-destinatario_principal="'+data.hitorialAgregarComunicado[i].Destinatario+'"\
+                            data-jrci_destinatario="'+data.hitorialAgregarComunicado[i].JRCI_Destinatario+'"\
+                            data-nombre_destinatario="'+data.hitorialAgregarComunicado[i].Nombre_destinatario+'" data-niccc_comunicado="'+data.hitorialAgregarComunicado[i].Nit_cc+'"\
+                            data-direccion_destinatario="'+data.hitorialAgregarComunicado[i].Direccion_destinatario+'" data-telefono_destinatario="'+data.hitorialAgregarComunicado[i].Telefono_destinatario+'"\
+                            data-email_destinatario="'+data.hitorialAgregarComunicado[i].Email_destinatario+'" data-id_departamento="'+data.hitorialAgregarComunicado[i].Id_departamento+'"\
+                            data-nombre_departamento="'+data.hitorialAgregarComunicado[i].Nombre_departamento+'" data-id_municipio="'+data.hitorialAgregarComunicado[i].Id_municipio+'"\
+                            data-nombre_municipio="'+data.hitorialAgregarComunicado[i].Nombre_municipio+'" data-asunto_comunicado="'+data.hitorialAgregarComunicado[i].Asunto+'"\
+                            data-cuerpo_comunicado="'+data.hitorialAgregarComunicado[i].Cuerpo_comunicado+'" data-anexos_comunicados="'+data.hitorialAgregarComunicado[i].Anexos+'"\
+                            data-forma_envio_comunicado="'+data.hitorialAgregarComunicado[i].Forma_envio+'" data-nombre_envio_comunicado="'+data.hitorialAgregarComunicado[i].Nombre_forma_envio+'"\
+                            data-elaboro_comunicado="'+data.hitorialAgregarComunicado[i].Elaboro+'"\
+                            data-reviso_comunicado="'+data.hitorialAgregarComunicado[i].Reviso+'" data-revisonombre_comunicado="'+data.hitorialAgregarComunicado[i].Nombre_lider+'"\
+                            data-firmar_comunicado="'+data.hitorialAgregarComunicado[i].Firmar_Comunicado+'"\
+                            data-jrci_copia="'+data.hitorialAgregarComunicado[i].JRCI_copia+'"\
+                            data-agregar_copia="'+data.hitorialAgregarComunicado[i].Agregar_copia+'" data-tipo_descarga="'+data.hitorialAgregarComunicado[i].Tipo_descarga+'"\
+                            data-modulo_creacion="'+data.hitorialAgregarComunicado[i].Modulo_creacion+'" data-reemplazado="'+data.hitorialAgregarComunicado[i].Reemplazado+'" data-nombre_documento="'+data.hitorialAgregarComunicado[i].Nombre_documento + '"\
+                            data-numero_siniestro="'+data.hitorialAgregarComunicado[i].N_siniestro+'"><i style="cursor:pointer; display: flex; justify-content: center; align-items:center;" class="fa fa-pen text-info"></i></a>';
+                    }
+                    comunicadoNradico += '<a href="javascript:void(0);" class="text-dark" id="verDocumento_'+data.hitorialAgregarComunicado[i].Id_Comunicado+'"\
+                        title="Descargar Comunicado"\
+                        id_comunicado="'+data.hitorialAgregarComunicado[i].Id_Comunicado+'" id_evento="'+data.hitorialAgregarComunicado[i].ID_evento+'"\
+                        id_asignacion="'+data.hitorialAgregarComunicado[i].Id_Asignacion+'" id_proceso="'+data.hitorialAgregarComunicado[i].Id_proceso+'"\
+                        ciudad_comunicaddo="'+data.hitorialAgregarComunicado[i].Ciudad+'" fecha_comunicado="'+data.hitorialAgregarComunicado[i].F_comunicado+'"\
+                        numero_radicado="'+data.hitorialAgregarComunicado[i].N_radicado+'" cliente_comunicado="'+data.hitorialAgregarComunicado[i].Cliente+'"\
+                        nombre_afiliado="'+data.hitorialAgregarComunicado[i].Nombre_afiliado+'" tipo_documento="'+data.hitorialAgregarComunicado[i].T_documento+'"\
+                        numero_identificacion="'+data.hitorialAgregarComunicado[i].N_identificacion+'" destinatario_principal="'+data.hitorialAgregarComunicado[i].Destinatario+'"\
+                        jrci_destinatario="'+data.hitorialAgregarComunicado[i].JRCI_Destinatario+'"\
+                        nombre_destinatario="'+data.hitorialAgregarComunicado[i].Nombre_destinatario+'" niccc_comunicado="'+data.hitorialAgregarComunicado[i].Nit_cc+'"\
+                        direccion_destinatario="'+data.hitorialAgregarComunicado[i].Direccion_destinatario+'" telefono_destinatario="'+data.hitorialAgregarComunicado[i].Telefono_destinatario+'"\
+                        email_destinatario="'+data.hitorialAgregarComunicado[i].Email_destinatario+'" id_departamento="'+data.hitorialAgregarComunicado[i].Id_departamento+'"\
+                        nombre_departamento="'+data.hitorialAgregarComunicado[i].Nombre_departamento+'" id_municipio="'+data.hitorialAgregarComunicado[i].Id_municipio+'"\
+                        nombre_municipio="'+data.hitorialAgregarComunicado[i].Nombre_municipio+'" asunto_comunicado="'+data.hitorialAgregarComunicado[i].Asunto+'"\
+                        cuerpo_comunicado="'+data.hitorialAgregarComunicado[i].Cuerpo_comunicado+'" anexos_comunicados="'+data.hitorialAgregarComunicado[i].Anexos+'"\
+                        forma_envio_comunicado="'+data.hitorialAgregarComunicado[i].Forma_envio+'" nombre_envio_comunicado="'+data.hitorialAgregarComunicado[i].Nombre_forma_envio+'"\
+                        elaboro_comunicado="'+data.hitorialAgregarComunicado[i].Elaboro+'"\
+                        reviso_comunicado="'+data.hitorialAgregarComunicado[i].Reviso+'" revisonombre_comunicado="'+data.hitorialAgregarComunicado[i].Nombre_lider+'"\
+                        firmar_comunicado="'+data.hitorialAgregarComunicado[i].Firmar_Comunicado+'"\
+                        jrci_copia="'+data.hitorialAgregarComunicado[i].JRCI_copia+'" agregar_copia="'+data.hitorialAgregarComunicado[i].Agregar_copia+'" tipo_descarga="'+data.hitorialAgregarComunicado[i].Tipo_descarga+'"\
+                        modulo_creacion="'+data.hitorialAgregarComunicado[i].Modulo_creacion+'" reemplazado="'+data.hitorialAgregarComunicado[i].Reemplazado+'" nombre_documento="'+data.hitorialAgregarComunicado[i].Nombre_documento + '"\
+                        numero_siniestro="'+data.hitorialAgregarComunicado[i].N_siniestro+'"><i style="cursor:pointer; display: flex; justify-content: center; align-items:center;" class="far fa-eye text-info"></i></a>';
+                    if(data.hitorialAgregarComunicado[i].Existe && data.hitorialAgregarComunicado[i].Nombre_documento != null){
                         comunicadoNradico += '<a href="javascript:void(0);" id="replace_file" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalReemplazarArchivos"\
-                            data-id_evento="' + data[i]["ID_evento"] + '" data-id_comunicado="'+ data[i]["Id_Comunicado"] + '"\
-                            data-numero_radicado="'+ data[i]["N_radicado"] + '" data-fecha_comunicado="' + data[i]["F_comunicado"] + '"\
-                            data-tipo_descarga="'+ data[i]["Tipo_descarga"] + '" data-asunto_comunicado="' + data[i]["Asunto"] + '"\
-                            data-id_asignacion="'+ data[i]["Id_Asignacion"] + '" data-id_proceso="' + data[i]["Id_proceso"] +'"\
-                            data-numero_identificacion="'+data[i]["N_identificacion"] +'" data-nombre_documento="'+data[i]["Nombre_documento"] + '"\
+                            data-id_evento="' + data.hitorialAgregarComunicado[i].ID_evento + '" data-id_comunicado="'+ data.hitorialAgregarComunicado[i].Id_Comunicado + '"\
+                            data-numero_radicado="'+ data.hitorialAgregarComunicado[i].N_radicado + '" data-fecha_comunicado="' + data.hitorialAgregarComunicado[i].F_comunicado + '"\
+                            data-tipo_descarga="'+ data.hitorialAgregarComunicado[i].Tipo_descarga + '" data-asunto_comunicado="' + data.hitorialAgregarComunicado[i].Asunto + '"\
+                            data-id_asignacion="'+ data.hitorialAgregarComunicado[i].Id_Asignacion + '" data-id_proceso="' + data.hitorialAgregarComunicado[i].Id_proceso +'"\
+                            data-numero_identificacion="'+data.hitorialAgregarComunicado[i].N_identificacion +'" data-nombre_documento="'+data.hitorialAgregarComunicado[i].Nombre_documento + '"\
                             ><i class="fas fa-sync-alt text-info"></i></a>';
                     }
 
-                    comunicadoNradico += '<a href="javascript:void(0);" id="editar_comunicado" data-radicado="'+data[i]["N_radicado"]+'" style="display: flex; justify-content: center;"><i class="fa fa-sm fa-check text-success"></i></a></div>';
+                    comunicadoNradico += '<a href="javascript:void(0);" id="editar_comunicado" data-radicado="'+data.hitorialAgregarComunicado[i].N_radicado+'" style="display: flex; justify-content: center;"><i class="fa fa-sm fa-check text-success"></i></a></div>';
+
                     comunicadoNradico += '</div>';
-                    data[i]['Editarcomunicado'] = comunicadoNradico;
+                    data.hitorialAgregarComunicado[i].Editarcomunicado = comunicadoNradico;
                     
                 }
-                else if(data[i]['N_radicado'] != '' && data[i]['Tipo_descarga'] == 'Manual'){
-                    comunicadoNradico = '<div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center"><a href="javascript:void(0);" class="text-dark" id="generar_descarga_archivo_'+data[i]["Id_Comunicado"]+'"\
+                else if(data.hitorialAgregarComunicado[i].N_radicado != '' && data.hitorialAgregarComunicado[i].Tipo_descarga == 'Manual'){
+                    comunicadoNradico = '<div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center"><a href="javascript:void(0);" class="text-dark" id="generar_descarga_archivo_'+data.hitorialAgregarComunicado[i].Id_Comunicado+'"\
                     title="Descargar Comunicado"\
-                    id_comunicado="'+ data[i]["Id_Comunicado"] + '" id_evento="' + data[i]["ID_evento"] + '"\
-                    id_asignacion="'+ data[i]["Id_Asignacion"] + '" id_proceso="' + data[i]["Id_proceso"] + '"\
-                    ciudad_comunicaddo="'+ data[i]["Ciudad"] + '" fecha_comunicado="' + data[i]["F_comunicado"] + '"\
-                    numero_radicado="'+ data[i]["N_radicado"] + '" cliente_comunicado="' + data[i]["Cliente"] + '"\
-                    nombre_afiliado="'+ data[i]["Nombre_afiliado"] + '" tipo_documento="' + data[i]["T_documento"] + '"\
-                    numero_identificacion="'+ data[i]["N_identificacion"] + '" destinatario_principal="' + data[i]["Destinatario"] + '"\
-                    nombre_destinatario="'+ data[i]["Nombre_destinatario"] + '" niccc_comunicado="' + data[i]["Nit_cc"] + '"\
-                    direccion_destinatario="'+ data[i]["Direccion_destinatario"] + '" telefono_destinatario="' + data[i]["Telefono_destinatario"] + '"\
-                    email_destinatario="'+ data[i]["Email_destinatario"] + '" id_departamento="' + data[i]["Id_departamento"] + '"\
-                    nombre_departamento="'+ data[i]["Nombre_departamento"] + '" id_municipio="' + data[i]["Id_municipio"] + '"\
-                    nombre_municipio="'+ data[i]["Nombre_municipio"] + '" asunto_comunicado="' + data[i]["Asunto"] + '"\
-                    cuerpo_comunicado="'+ data[i]["Cuerpo_comunicado"] + '" anexos_comunicados="' + data[i]["Anexos"] + '"\
-                    forma_envio_comunicado="'+ data[i]["Forma_envio"] + '" nombre_envio_comunicado="' + data[i]["Nombre_forma_envio"] + '"\
-                    elaboro_comunicado="'+ data[i]["Elaboro"] + '"\
-                    reviso_comunicado="'+ data[i]["Reviso"] + '" revisonombre_comunicado="' + data[i]["Nombre_lider"] + '"\
-                    firmar_comunicado="'+ data[i]["Firmar_Comunicado"] + '"\
-                    agregar_copia="'+ data[i]["Agregar_copia"] + '" tipo_descarga="'+ data[i]["Tipo_descarga"] + '"\
-                    modulo_creacion="'+data[i]["Modulo_creacion"]+'" reemplazado="'+data[i]["Reemplazado"]+'" nombre_documento="'+data[i]["Nombre_documento"] + '"\
-                    ><i style="cursor:pointer" class="far fa-eye text-info"></i></a>';
-                    if(data[i]['Existe']){
+                    id_comunicado="'+data.hitorialAgregarComunicado[i].Id_Comunicado+'" id_evento="'+data.hitorialAgregarComunicado[i].ID_evento+'"\
+                    id_asignacion="'+data.hitorialAgregarComunicado[i].Id_Asignacion+'" id_proceso="'+data.hitorialAgregarComunicado[i].Id_proceso+'"\
+                    ciudad_comunicaddo="'+data.hitorialAgregarComunicado[i].Ciudad+'" fecha_comunicado="'+data.hitorialAgregarComunicado[i].F_comunicado+'"\
+                    numero_radicado="'+data.hitorialAgregarComunicado[i].N_radicado+'" cliente_comunicado="'+data.hitorialAgregarComunicado[i].Cliente+'"\
+                    nombre_afiliado="'+data.hitorialAgregarComunicado[i].Nombre_afiliado+'" tipo_documento="'+data.hitorialAgregarComunicado[i].T_documento+'"\
+                    numero_identificacion="'+data.hitorialAgregarComunicado[i].N_identificacion+'" destinatario_principal="'+data.hitorialAgregarComunicado[i].Destinatario+'"\
+                    jrci_destinatario="'+data.hitorialAgregarComunicado[i].JRCI_Destinatario+'"\
+                    nombre_destinatario="'+data.hitorialAgregarComunicado[i].Nombre_destinatario+'" niccc_comunicado="'+data.hitorialAgregarComunicado[i].Nit_cc+'"\
+                    direccion_destinatario="'+data.hitorialAgregarComunicado[i].Direccion_destinatario+'" telefono_destinatario="'+data.hitorialAgregarComunicado[i].Telefono_destinatario+'"\
+                    email_destinatario="'+data.hitorialAgregarComunicado[i].Email_destinatario+'" id_departamento="'+data.hitorialAgregarComunicado[i].Id_departamento+'"\
+                    nombre_departamento="'+data.hitorialAgregarComunicado[i].Nombre_departamento+'" id_municipio="'+data.hitorialAgregarComunicado[i].Id_municipio+'"\
+                    nombre_municipio="'+data.hitorialAgregarComunicado[i].Nombre_municipio+'" asunto_comunicado="'+data.hitorialAgregarComunicado[i].Asunto+'"\
+                    cuerpo_comunicado=\''+data.hitorialAgregarComunicado[i].Cuerpo_comunicado+'\' anexos_comunicados="'+data.hitorialAgregarComunicado[i].Anexos+'"\
+                    forma_envio_comunicado="'+data.hitorialAgregarComunicado[i].Forma_envio+'" nombre_envio_comunicado="'+data.hitorialAgregarComunicado[i].Nombre_forma_envio+'"\
+                    elaboro_comunicado="'+data.hitorialAgregarComunicado[i].Elaboro+'"\
+                    reviso_comunicado="'+data.hitorialAgregarComunicado[i].Reviso+'" revisonombre_comunicado="'+data.hitorialAgregarComunicado[i].Nombre_lider+'"\
+                    firmar_comunicado="'+data.hitorialAgregarComunicado[i].Firmar_Comunicado+'"\
+                    jrci_copia="'+data.hitorialAgregarComunicado[i].JRCI_copia+'"\
+                    agregar_copia="'+data.hitorialAgregarComunicado[i].Agregar_copia+'"tipo_descarga="'+data.hitorialAgregarComunicado[i].Tipo_descarga+ '"\
+                    modulo_creacion="'+data.hitorialAgregarComunicado[i].Modulo_creacion+'" reemplazado="'+data.hitorialAgregarComunicado[i].Reemplazado+'" nombre_documento="'+data.hitorialAgregarComunicado[i].Nombre_documento + '"\
+                    ><i style="cursor:pointer" id="comunicado_manual_boton" class="far fa-eye text-info"></i></a>';
+                    if(data.hitorialAgregarComunicado[i].Existe  && !data.hitorialAgregarComunicado[i].Asunto.includes('Lista_chequeo')){
                         comunicadoNradico += '<a href="javascript:void(0);" id="replace_file" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalReemplazarArchivos"\
-                            data-id_evento="' + data[i]["ID_evento"] + '" data-id_comunicado="'+ data[i]["Id_Comunicado"] + '"\
-                            data-numero_radicado="'+ data[i]["N_radicado"] + '" data-fecha_comunicado="' + data[i]["F_comunicado"] + '"\
-                            data-tipo_descarga="'+ data[i]["Tipo_descarga"] + '" data-asunto_comunicado="' + data[i]["Asunto"] + '"\
-                            data-id_asignacion="'+ data[i]["Id_Asignacion"] + '" data-id_proceso="' + data[i]["Id_proceso"] +'"\
-                            data-numero_identificacion="'+data[i]["N_identificacion"] + '" data-nombre_documento="'+data[i]["Nombre_documento"] +'"\
+                            data-id_evento="' + data.hitorialAgregarComunicado[i].ID_evento + '" data-id_comunicado="'+ data.hitorialAgregarComunicado[i].Id_Comunicado + '"\
+                            data-numero_radicado="'+ data.hitorialAgregarComunicado[i].N_radicado + '" data-fecha_comunicado="' + data.hitorialAgregarComunicado[i].F_comunicado + '"\
+                            data-tipo_descarga="'+ data.hitorialAgregarComunicado[i].Tipo_descarga + '" data-asunto_comunicado="' + data.hitorialAgregarComunicado[i].Asunto + '"\
+                            data-id_asignacion="'+ data.hitorialAgregarComunicado[i].Id_Asignacion + '" data-id_proceso="' + data.hitorialAgregarComunicado[i].Id_proceso +'"\
+                            data-numero_identificacion="'+data.hitorialAgregarComunicado[i].N_identificacion + '" data-nombre_documento="'+data.hitorialAgregarComunicado[i].Nombre_documento +'"\
                             ><i class="fas fa-sync-alt text-info"></i></a>';
                     }
 
-                    comunicadoNradico += '<a href="javascript:void(0);" id="editar_comunicado" data-radicado="'+data[i]["N_radicado"]+'" style="display: flex; justify-content: center;"><i class="fa fa-sm fa-check text-success"></i></a></div>';
+                    //Accion editar lista de chequeo
+                    if(data.hitorialAgregarComunicado[i].Asunto.includes('Lista_chequeo')){
+                        comunicadoNradico += '<a href="javascript:void(0);" class="text-dark" data-toggle="modal" data-target="#modalCrearExpediente" title="Editar expediente" id="editarExpediente"><i style="cursor:pointer" class="fa fa-pen text-info"></i></a>';
+                    }
+                    comunicadoNradico += '<a href="javascript:void(0);" id="editar_comunicado" data-radicado="'+data.hitorialAgregarComunicado[i].N_radicado+'" style="display: flex; justify-content: center;"><i class="fa fa-sm fa-check text-success"></i></a></div>';
                     comunicadoNradico += '</div>';
-                    data[i]['Editarcomunicado'] = comunicadoNradico;
+                    data.hitorialAgregarComunicado[i].Editarcomunicado = comunicadoNradico;
                 }
                 else{
-                    data[i]['Editarcomunicado'] = ""; 
+                    data.hitorialAgregarComunicado[i].Editarcomunicado = "";
                 }
 
                 //Obtenemos los datos de los campos 'Destinatarios','Estado_general','Nota' para mostrar en la tabla de comunicados y expedientes
-                let info_notificacion = getHistorialNotificacion(data[i]["N_radicado"],data[i]["Nota"],opciones_Notificacion,data[i]);
-                
-                data[i]["Destinatarios"] = info_notificacion.Destinatarios;
-                data[i]["Estado_General"] = info_notificacion.Estado_General;
-                data[i]["Nota"] = info_notificacion.Nota_Comunicados;
+                let info_notificacion = getHistorialNotificacion(data.hitorialAgregarComunicado[i].N_radicado,data.hitorialAgregarComunicado[i].Nota,opciones_Notificacion,data.hitorialAgregarComunicado[i]);
+                if (data.enviar_notificacion[0].Notificacion == 'Si') {
+                    data.hitorialAgregarComunicado[i].Destinatarios = info_notificacion.Destinatarios;                    
+                }
+                data.hitorialAgregarComunicado[i].Estado_General = info_notificacion.Estado_General;
+                data.hitorialAgregarComunicado[i].Nota = info_notificacion.Nota_Comunicados;
 
                 //Configuracion que se cargara en el select2
                 let select2Config = {
-                    selector: `#status_notificacion_${data[i]["N_radicado"]}`,
-                    default:  data[i]["Estado_Notificacion"], //Opcion a selecionar
+                    selector: `#status_notificacion_${data.hitorialAgregarComunicado[i].N_radicado}`,
+                    default:  data.hitorialAgregarComunicado[i].Estado_Notificacion, //Opcion a selecionar
                     data: opciones_Notificacion, // Opciones disponibles para seleccionar
                 };
 
                 select2.push(select2Config);
+
             }
-            $.each(data, function(index, value){
-                capturar_informacion_comunicados(data, index, value)
+            $.each(data.hitorialAgregarComunicado, function(index, value){
+                capturar_informacion_comunicados(data.hitorialAgregarComunicado, index, value, data.enviar_notificacion[0].Notificacion)
             });
+
 
             select2.forEach(function(item) {
                 $(item.selector).select2({
@@ -1937,7 +1950,38 @@ $(document).ready(function(){
 
     //DataTable Historial de comunicados
 
-    function capturar_informacion_comunicados(response, index, value) {
+    function capturar_informacion_comunicados(response, index, value, enviara) {
+        let columns = [
+            {"data":"N_radicado"},
+            {"data":"Elaboro"},
+            {"data":"F_comunicado"},
+            { 
+                "data": function(row) {
+                    if (row.Tipo_descarga === "Documento_Origen") {
+                        return "Solicitud Documentos Orígen";
+                    }
+                    else if(row.Tipo_descarga === "Otro_Documento") {
+                        return "Otro Documento";
+                    }
+                    else if(row.Tipo_descarga === 'Manual'){
+                        return row.Asunto;
+                    }
+                    else{
+                        return row.Tipo_descarga;
+                    }
+                }
+            },
+            {"data": "Estado_General"},
+            {"data": "Nota"},
+            {"data":"Editarcomunicado"}
+        ]
+        if (enviara === 'Si') {
+            columns.splice(4, 0, {
+                "data": function(row) {
+                    return row.Destinatarios;
+                }
+            });
+        }
         let listadoComunicados =  $('#listado_agregar_comunicados').DataTable({
             scrollY: "30vh", //dos celdas
             orderCellsTop: true,
@@ -1947,32 +1991,7 @@ $(document).ready(function(){
             data: response,
             paging: false,
             order: [[0, 'desc']],
-            "columns":[
-                {"data":"N_radicado"},
-                {"data":"Elaboro"},
-                {"data":"F_comunicado"},
-                { 
-                    "data": function(row) {
-                        if (row.Tipo_descarga === "Documento_Origen") {
-                            return "Solicitud Documentos Orígen";
-                        }
-                        else if(row.Tipo_descarga === "Otro_Documento") {
-                            return "Otro Documento";
-                        }
-                        else if(row.Tipo_descarga === 'Manual'){
-                            return row.Asunto;
-                        }
-                        else{
-                            return row.Tipo_descarga;
-                        }
-                    }
-                },
-                {"data": "Destinatarios"},
-                {"data": "Estado_General"},
-                {"data": "Nota"},
-                {"data":"Editarcomunicado"}
-
-            ],            
+            "columns":columns,            
             "language":{                
                 "search": "Buscar",
                 "lengthMenu": "Mostrar _MENU_ registros",
@@ -2503,7 +2522,7 @@ $(document).ready(function(){
                         }
                         $.ajax({
                             type: 'POST',
-                            url: '/selectoresJuntas',
+                            url: '/selectoresOrigenAtel',
                             data: selectores_notificacion_correspondencia,
                             beforeSend:  function() {
                                 $("#btn_guardar_actualizar_correspondencia").addClass("descarga-deshabilitada");
@@ -3700,6 +3719,15 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     if(Copias){
         Copias = Copias.split(',').map(copia => copia.trim().toLowerCase());
     }
+    // La copia del empleador y el destinanario empleador tienen valores distintos, por ende, se realiza la siguiente validación:
+    // este dato finalmente irá en donde se construye los elementos a subrayados
+    if (Copias.includes('empleador')) {
+        var dato_empleador = 'empleador';
+        var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
+    }else{
+        var dato_empleador = 'empresa';
+        var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
+    }
     if(Correspondencia){
         Correspondencia = Correspondencia.split(',').map(correspondencia => correspondencia.trim().toLowerCase());
     }
@@ -3717,12 +3745,12 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
                 style="${getUnderlineStyle('afiliado')}">Afiliado</a>
-            <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Empresa" \
+            <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="${dato_empleador_form}" \
                 data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
-                style="${getUnderlineStyle('empresa')}">Empleador</a>
+                style="${getUnderlineStyle(dato_empleador)}">Empleador</a>
             <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="eps" \
                 data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
@@ -3752,7 +3780,13 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
-                style="${getUnderlineStyle('jnci')}">JNCI</a>`,
+                style="${getUnderlineStyle('jnci')}">JNCI</a>
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="afp_conocimiento" \
+                data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
+                data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
+                data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
+                style="${getUnderlineStyle('afp_conocimiento')}">AFP Conocimiento</a>`,
 
         'Nota_Comunicados': `<textarea class="form-control nota-col" name="nota_comunicado_${n_radicado}" id="nota_comunicado_${n_radicado}" cols="70" rows="5" style="resize:none; width:200px;">${nota == null ? "" : nota}</textarea>`,
     };

@@ -219,9 +219,20 @@ class CalificacionOrigenController extends Controller
            ['Id_proceso','1']
         ])
        ->get();
+
+        // Validar si la accion ejecutada tiene enviar a notificaciones            
+        $enviar_notificaciones = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        ->select('Notificacion')
+        ->where([
+            ['ID_evento', $newIdEvento],
+            ['Id_Asignacion', $newIdAsignacion]
+        ])
+        ->get();
+
         return view('coordinador.calificacionOrigen', compact('user','nombre_usuario','array_datos_calificacionOrigen','arraylistado_documentos',
         'arraycampa_documento_solicitado','SubModulo','Fnuevo','listado_documentos_solicitados','dato_validacion_no_aporta_docs','dato_ultimo_grupo_doc',
-        'dato_doc_sugeridos','dato_articulo_12','consecutivo','primer_seguimiento','segundo_seguimiento','tercer_seguimiento','listado_seguimiento_solicitados','cali_profe_comite', 'Id_servicio'));
+        'dato_doc_sugeridos','dato_articulo_12','consecutivo','primer_seguimiento','segundo_seguimiento','tercer_seguimiento','listado_seguimiento_solicitados',
+        'cali_profe_comite', 'Id_servicio', 'enviar_notificaciones'));
     }
 
     //Guardar informacion del modulo de Origen ATEL
@@ -1739,6 +1750,20 @@ class CalificacionOrigenController extends Controller
             $lista_bandejas_destino = json_decode(json_encode($lista_bandejas_destino, true));
             return response()->json($lista_bandejas_destino);
         }
+
+        //Lista estados notificacion correspondencia
+        if($parametro == "EstadosNotificacionCorrespondencia"){
+            $datos_status_notificacion_correspondencia = sigmel_lista_parametros::on('sigmel_gestiones')
+                ->select('Id_Parametro','Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Estatus_Correspondencia'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
+
+            $datos_status_notificacion_corresp = json_decode(json_encode($datos_status_notificacion_correspondencia, true));
+            return response()->json($datos_status_notificacion_corresp);
+        }
     }
 
     // Guardar la información del Listado de Documentos solicitados
@@ -2140,7 +2165,7 @@ class CalificacionOrigenController extends Controller
                 'Forma_envio' => $request->forma_envio,
                 'Elaboro' => $nombre_usuario,
                 'Reviso' => $request->reviso,
-                'Agregar_copia' => null,
+                'Agregar_copia' => '',
                 'Firmar_Comunicado' => $request->firmarcomunicado,
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => $request->modulo_creacion,
@@ -2205,6 +2230,17 @@ class CalificacionOrigenController extends Controller
                 ['Id_proceso', '1']
             ])
             ->get();
+
+            // Validar si la accion ejecutada tiene enviar a notificaciones
+            
+            $enviar_notificacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            ->select('Notificacion')
+            ->where([
+                ['ID_evento', $newId_evento],
+                ['Id_Asignacion', $newId_asignacion]
+            ])
+            ->get();
+
             foreach ($hitorialAgregarComunicado as &$comunicado) {
                 if ($comunicado['Tipo_descarga'] === 'Documento_Origen') {
                     $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
@@ -2228,8 +2264,11 @@ class CalificacionOrigenController extends Controller
                     $comunicado['Existe'] = false;
                 }
             }
-            $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
-            return response()->json(($arrayhitorialAgregarComunicado));
+            
+            return response()->json([
+                'hitorialAgregarComunicado' => $hitorialAgregarComunicado,
+                'enviar_notificacion' => $enviar_notificacion
+            ]);
         }
         
         if($request->bandera == 'Actualizar'){

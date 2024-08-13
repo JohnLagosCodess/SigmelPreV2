@@ -188,9 +188,19 @@ class CalificacionPCLController extends Controller
 
         $info_accion_eventos = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
         ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion]])->get();
+
+        // Validar si la accion ejecutada tiene enviar a notificaciones            
+        $enviar_notificaciones = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        ->select('Notificacion')
+        ->where([
+            ['ID_evento', $newIdEvento],
+            ['Id_Asignacion', $newIdAsignacion]
+        ])
+        ->get();
         
         return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 
-        'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos','SubModulo','consecutivo','arraycampa_documento_solicitado', 'info_comite_inter', 'Id_servicio', 'info_accion_eventos'));
+        'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos','SubModulo','consecutivo','arraycampa_documento_solicitado', 
+        'info_comite_inter', 'Id_servicio', 'info_accion_eventos', 'enviar_notificaciones'));
     }
 
     public function cargueListadoSelectoresModuloCalifcacionPcl(Request $request){
@@ -516,6 +526,20 @@ class CalificacionPCLController extends Controller
 
             $info_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados,true));
             return response()->json($info_listado_documentos_solicitados);
+        }
+
+        //Lista estados notificacion correspondencia
+        if($parametro == "EstadosNotificacionCorrespondencia"){
+            $datos_status_notificacion_correspondencia = sigmel_lista_parametros::on('sigmel_gestiones')
+                ->select('Id_Parametro','Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Estatus_Correspondencia'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
+
+            $datos_status_notificacion_corresp = json_decode(json_encode($datos_status_notificacion_correspondencia, true));
+            return response()->json($datos_status_notificacion_corresp);
         }
         
     }
@@ -2292,7 +2316,7 @@ class CalificacionPCLController extends Controller
                 'Forma_envio' => $request->forma_envio,
                 'Elaboro' => $nombre_usuario,
                 'Reviso' => $request->reviso,
-                'Agregar_copia' => null,
+                'Agregar_copia' => '',
                 'Firmar_Comunicado' => $request->firmarcomunicado,
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => 'calificacionPCL',
@@ -2357,6 +2381,17 @@ class CalificacionPCLController extends Controller
                 ['Id_proceso', '2']
             ])
             ->get();
+
+            // Validar si la accion ejecutada tiene enviar a notificaciones
+            
+            $enviar_notificacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+            ->select('Notificacion')
+            ->where([
+                ['ID_evento', $newId_evento],
+                ['Id_Asignacion', $newId_asignacion]
+            ])
+            ->get();
+
             foreach ($hitorialAgregarComunicado as &$comunicado) {
                 if ($comunicado['Tipo_descarga'] === 'Documento_PCL') {
                     $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
@@ -2380,8 +2415,11 @@ class CalificacionPCLController extends Controller
                     $comunicado['Existe'] = false;
                 }
             }
-            $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
-            return response()->json(($arrayhitorialAgregarComunicado));
+
+            return response()->json([
+                'hitorialAgregarComunicado' => $hitorialAgregarComunicado,
+                'enviar_notificacion' => $enviar_notificacion
+            ]);
 
         }
 
@@ -7543,7 +7581,7 @@ class CalificacionPCLController extends Controller
                 'T_documento' => 'N/A',
                 'N_identificacion' => $nro_identificacion,
                 'Destinatario' => $Destinatario,
-                'Nombre_destinatario' => 'N/A',
+                'Nombre_destinatario' => $request->nombre_destinatariopri ? $request->nombre_destinatariopri : 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
                 'Telefono_destinatario' => '001',
@@ -7632,7 +7670,7 @@ class CalificacionPCLController extends Controller
                 'T_documento' => 'N/A',
                 'N_identificacion' => $nro_identificacion,
                 'Destinatario' => $Destinatario,
-                'Nombre_destinatario' => 'N/A',
+                'Nombre_destinatario' => $request->nombre_destinatariopri ? $request->nombre_destinatariopri : 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
                 'Telefono_destinatario' => '001',

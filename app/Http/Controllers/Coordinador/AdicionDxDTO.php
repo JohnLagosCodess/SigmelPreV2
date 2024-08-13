@@ -1992,7 +1992,7 @@ class AdicionDxDTO extends Controller
                 'T_documento' => 'N/A',
                 'N_identificacion' => $nro_identificacion,
                 'Destinatario' => $Destinatario,
-                'Nombre_destinatario' => 'N/A',
+                'Nombre_destinatario' => $request->nombre_destinatariopri ? $request->nombre_destinatariopri : 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
                 'Telefono_destinatario' => '001',
@@ -2080,7 +2080,7 @@ class AdicionDxDTO extends Controller
                 'T_documento' => 'N/A',
                 'N_identificacion' => $nro_identificacion,
                 'Destinatario' => $Destinatario,
-                'Nombre_destinatario' => 'N/A',
+                'Nombre_destinatario' => $request->nombre_destinatariopri ? $request->nombre_destinatariopri : 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
                 'Telefono_destinatario' => '001',
@@ -2111,7 +2111,10 @@ class AdicionDxDTO extends Controller
             // ];   
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-            ->where([                
+            ->where([ 
+                ['ID_evento', $Id_Evento],
+                ['Id_Asignacion',$Id_Asignacion_adicion_dx],
+                ['Id_proceso', $Id_Proceso_adicion_dx],               
                 ['N_radicado',$radicado]
             ])->update($datos_info_comunicado_eventos);
     
