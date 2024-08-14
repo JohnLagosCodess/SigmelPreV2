@@ -637,7 +637,7 @@ class BandejaOrigenController extends Controller
         ->get();
 
         //Asignamos #n de orden cuado se envie un caso a notificaciones
-        if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+        if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
             $N_orden_evento=$n_orden[0]->Numero_orden;
         }else{
             $N_orden_evento=null;
@@ -872,6 +872,11 @@ class BandejaOrigenController extends Controller
                     $info_array_asignacion[0]['Id_Asignacion'], 
                     $info_array_asignacion[0]['ID_evento']
                 ];
+
+                //Habilita edicion del proceso de correspodencia para el proceso de notificacion.
+                if(isset($estado_acorde_a_parametrica[0]->enviarA)){
+                    BandejaNotifiController::finalizarNotificacion($info_array_asignacion[0]['ID_evento'], $info_array_asignacion[0]['Id_Asignacion'],false);
+                }
             }
 
         }        

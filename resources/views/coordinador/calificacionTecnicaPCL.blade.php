@@ -7528,7 +7528,7 @@
                                             </div>
                                         </div>
                                     </div>    
-                                    <div class="col-4">
+                                    {{-- <div class="col-4">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
                                                 @if (!empty($array_comite_interdisciplinario[0]->Copia_jr))
@@ -7566,7 +7566,7 @@
                                                 <label for="jnci" class="custom-control-label">Junta Nacional de Calificación de Invalidez</label>
                                             </div>
                                         </div>
-                                    </div> 
+                                    </div>  --}}
                                 </div>   
                                 <div class="row">  
                                     <div class="col-1">
@@ -7698,6 +7698,7 @@
                                                         @foreach ($array_comunicados_correspondencia as $index => $comunicados)
                                                             <input type="hidden" id="status_default_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_Notificacion']}}">
                                                             <input type="hidden" id="Nota_comunicado_{{$comunicados['N_radicado']}}" value="{{$comunicados['Nota']}}">                                                        
+                                                            <input type="hidden" id="Estado_Correspondencia_{{$comunicados['Estado_Correspondencia']}}" value="{{$comunicados['Estado_Correspondencia']}}">
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL 1507 --}}
@@ -7781,6 +7782,7 @@
                                                         @foreach ($array_comunicados_correspondencia as $index => $comunicados)
                                                             <input type="hidden" id="status_default_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_Notificacion']}}">
                                                             <input type="hidden" id="Nota_comunicado_{{$comunicados['N_radicado']}}" value="{{$comunicados['Nota']}}">         
+                                                            <input type="hidden" id="Estado_Correspondencia_{{$comunicados['Estado_Correspondencia']}}" value="{{$comunicados['Estado_Correspondencia']}}">
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL Cero --}}
@@ -7864,6 +7866,7 @@
                                                         @foreach ($array_comunicados_correspondencia as $index => $comunicados)
                                                             <input type="hidden" id="status_default_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_Notificacion']}}">
                                                             <input type="hidden" id="Nota_comunicado_{{$comunicados['N_radicado']}}" value="{{$comunicados['Nota']}}"> 
+                                                            <input type="hidden" id="Estado_Correspondencia_{{$comunicados['Estado_Correspondencia']}}" value="{{$comunicados['Estado_Correspondencia']}}">
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL 917 --}}
@@ -7947,6 +7950,7 @@
                                                         @foreach ($array_comunicados_correspondencia as $index => $comunicados)
                                                         <input type="hidden" id="status_default_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_Notificacion']}}">
                                                         <input type="hidden" id="Nota_comunicado_{{$comunicados['N_radicado']}}" value="{{$comunicados['Nota']}}"> 
+                                                        <input type="hidden" id="Estado_Correspondencia_{{$comunicados['Estado_Correspondencia']}}" value="{{$comunicados['Estado_Correspondencia']}}">
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Documentos cargados manualmente  --}}
