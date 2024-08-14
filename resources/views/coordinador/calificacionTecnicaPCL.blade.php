@@ -7528,7 +7528,7 @@
                                             </div>
                                         </div>
                                     </div>    
-                                    <div class="col-4">
+                                    {{-- <div class="col-4">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
                                                 @if (!empty($array_comite_interdisciplinario[0]->Copia_jr))
@@ -7566,7 +7566,7 @@
                                                 <label for="jnci" class="custom-control-label">Junta Nacional de Calificación de Invalidez</label>
                                             </div>
                                         </div>
-                                    </div> 
+                                    </div>  --}}
                                 </div>   
                                 <div class="row">  
                                     <div class="col-1">

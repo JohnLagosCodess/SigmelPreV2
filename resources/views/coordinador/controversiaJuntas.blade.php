@@ -1724,15 +1724,17 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        
                                         <div class="col-4" id="div_cual">
-                                            <div class="form-group">
+                                            {{-- <div class="form-group">
                                                 <label for="cual">¿Cuál?<span style="color: red;">(*)</span></label>
                                                 <input type="hidden" id="bd_cual_jr">
                                                 <select class="cual custom-select" name="cual" id="cual" style="width: 100%">
                                                     <option value="">Seleccione una opción</option>
                                                 </select>
                                                                                               
-                                            </div>
+                                            </div> --}}
+                                            <input type="text" class="form-control" name="jrci_copia" id="jrci_copia" value="<?php if(!empty($arrayinfo_controvertido[0]->JrciNombre)) { echo $arrayinfo_controvertido[0]->JrciNombre;} ?>" disabled>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
