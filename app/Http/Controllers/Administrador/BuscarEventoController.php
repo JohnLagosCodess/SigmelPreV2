@@ -136,7 +136,7 @@ class BuscarEventoController extends Controller
                             }    
                         }                   
                     }  
-                    // // Resultado Adicion DX Origen
+                    // Resultado Adicion DX Origen
                     $posicionOrigenAdx = [];
                     foreach ($resultArrayEventos as $element) {
                         if ($element['Id_proceso'] == $proceso_origen && $element['Id_Servicio'] == $servicio_OrigenAdx) {
@@ -786,20 +786,22 @@ class BuscarEventoController extends Controller
                     }    
                                
                     if (count($posicionOrigenAdx) > 0) {
-                        $ID_eventoAdx = $posicionOrigenAdx[0]['ID_evento'];
-                        $Id_procesoAdx = $posicionOrigenAdx[0]['Id_proceso'];
-                        $Id_ServicioAdx = $posicionOrigenAdx[0]['Id_Servicio'];
-                        $Id_AsignacionAdx = $posicionOrigenAdx[0]['Id_Asignacion'];
-    
                         $resultadoAdxOrigen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
                         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
-                        ->select('side.ID_evento','side.Id_Asignacion','side.CIE10', 'slcd.CIE10 as CodigoCIE', 'side.Nombre_CIE10')
-                        ->where([['side.Id_Asignacion',$Id_AsignacionAdx], ['side.Id_proceso',$Id_procesoAdx], ['side.ID_evento',$ID_eventoAdx]])
-                        ->whereNotNull('F_adicion_CIE10')
-                        ->get(); 
-                        
-                        if (count($resultadoAdxOrigen) > 0) {
-                            foreach ($resultadoAdxOrigen as $item) {
+                        ->select('side.ID_evento','side.Id_Asignacion','side.CIE10', 'slcd.CIE10 as CodigoCIE', 'side.Nombre_CIE10');
+                        // Iterar sobre el array y agregar las condiciones
+                        foreach ($posicionOrigenAdx as $item) {
+                            $resultadoAdxOrigen->orWhere([
+                                ['side.Id_Asignacion', $item['Id_Asignacion']],
+                                ['side.Id_proceso', $item['Id_proceso']],
+                                ['side.ID_evento', $item['ID_evento']]
+                            ]);
+                        }
+                        // Ejecutar la consulta final
+                        $resulAdxOrigen = $resultadoAdxOrigen->whereNotNull('F_adicion_CIE10')->get();                     
+                        if (count($resulAdxOrigen) > 0) {
+                            $ArrayresulAdxOrigen = $resulAdxOrigen->toArray();                                            
+                            foreach ($ArrayresulAdxOrigen as $item) {
                                 $idEvento = $item->ID_evento;
                                 $idAsignacion = $item->Id_Asignacion;
                                 $codigoCIE = $item->CodigoCIE;                       
@@ -820,16 +822,13 @@ class BuscarEventoController extends Controller
                                     }
                                 }
                                 
-                            }   
-                            
-                            // Filtrar los elementos que contienen [OrigenCieResultado]
+                            }                                                                
+                            // Filtrar los elementos que contienen [OrigenDtoResultado]
                             $posicionOrigenAdxFiltrado = array_filter($posicionOrigenAdx, function ($item) {
                                 return isset($item['OrigenCieResultado']);
-                            });
-                            
+                            }); 
                             // Reorganizar los índices del array filtrado
-                            $posicionOrigenAdxFiltrado = array_values($posicionOrigenAdxFiltrado);                                                                                   
-                            
+                            $posicionOrigenAdxFiltrado = array_values($posicionOrigenAdxFiltrado);                           
                             //Combinar el array object con el array posicionOrigenAdx
                             foreach ($array_informacion_eventos as $key2 => $item2) {
                                 foreach ($posicionOrigenAdxFiltrado as $item1) {
@@ -840,10 +839,10 @@ class BuscarEventoController extends Controller
                                         break; // Romper el bucle interno una vez que se encuentra la coincidencia
                                     }
                                 }
-                            }                            
+                            }
                         }
                         
-                    }  
+                    }   
                        
                     // Resultado Pronunciamiento Origen
                     $posicionOrigenPron = [];
@@ -857,35 +856,41 @@ class BuscarEventoController extends Controller
                             ];
                         }
                     }
+
                     if (count($posicionOrigenPron) > 0) {
-                        $ID_eventoPron = $posicionOrigenPron[0]['ID_evento'];
-                        $Id_procesoPron = $posicionOrigenPron[0]['Id_proceso'];
-                        $Id_ServicioPron = $posicionOrigenPron[0]['Id_Servicio'];
-                        $Id_AsignacionPron = $posicionOrigenPron[0]['Id_Asignacion'];
-    
-                        $resultadoPronOrigen = sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')
-                        ->select('ID_evento','Id_Asignacion','Decision')
-                        ->where([['Id_Asignacion',$Id_AsignacionPron], ['Id_proceso',$Id_procesoPron], ['ID_evento',$ID_eventoPron]])
-                        ->get(); 
-                        if (count($resultadoPronOrigen) > 0) {
-                            $DecisionProResultado = $resultadoPronOrigen[0]->Decision;
-                            $IdAsignacionResultado = $resultadoPronOrigen[0]->Id_Asignacion;
-                            $ID_eventoResultado = $resultadoPronOrigen[0]->ID_evento;
-            
-                            foreach ($posicionOrigenPron as &$elemento) {
-                                // Verificar si Id_Asignacion es igual a $IdAsignacionResultado
-                                if ($elemento['Id_Asignacion'] == $IdAsignacionResultado && $elemento['ID_evento'] == $ID_eventoResultado) {
-                                    // Agregar $OrigenResultado al array
-                                    $elemento['DecisionProResultado'] = $DecisionProResultado;
-                                }
-                            }
-                            // Filtrar los elementos que contienen [DecisionProResultado]
+                        $resultadoPronOrigen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_pronunciamiento_eventos as sidae')                    
+                        ->select('sidae.ID_evento','sidae.Id_Asignacion', 'sidae.Id_proceso', 'sidae.Decision');
+                        // Iterar sobre el array y agregar las condiciones
+                        foreach ($posicionOrigenPron as $item) {
+                            $resultadoPronOrigen->orWhere([
+                                ['sidae.Id_Asignacion', $item['Id_Asignacion']],
+                                ['sidae.Id_proceso', $item['Id_proceso']],
+                                ['sidae.ID_evento', $item['ID_evento']]
+                            ]);
+                        }
+                        // Ejecutar la consulta final
+                        $resulPronOrigen = $resultadoPronOrigen->get();                     
+                        
+                        if (count($resulPronOrigen) > 0) {
+                            $ArrayresulPronOrigen = $resulPronOrigen->toArray();                         
+                            foreach ($posicionOrigenPron as &$item) {
+                                // Buscar el elemento correspondiente en los resultados de la consulta
+                                $resultado = array_filter($ArrayresulPronOrigen, function ($result) use ($item) {
+                                    return $result->Id_Asignacion == $item['Id_Asignacion'];
+                                });                    
+                                // Si se encuentra una coincidencia, agregar la información al array original
+                                if (!empty($resultado)) {
+                                    $resultado = reset($resultado); // Obtener el primer elemento del array de resultados
+                                    $item['DecisionProResultado'] = $resultado->Decision;
+                                } 
+                            }                          
+                            // Filtrar los elementos que contienen [OrigenDtoResultado]
                             $posicionOrigenPronFiltrado = array_filter($posicionOrigenPron, function ($item) {
                                 return isset($item['DecisionProResultado']);
                             }); 
                             // Reorganizar los índices del array filtrado
-                            $posicionOrigenPronFiltrado = array_values($posicionOrigenPronFiltrado);                                                                            
-                            //Combinar el array object con el array 
+                            $posicionOrigenPronFiltrado = array_values($posicionOrigenPronFiltrado);                                             
+                            //Combinar el array object con el array                          
                             foreach ($array_informacion_eventos as $key2 => $item2) {
                                 foreach ($posicionOrigenPronFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
@@ -895,10 +900,11 @@ class BuscarEventoController extends Controller
                                         break; // Romper el bucle interno una vez que se encuentra la coincidencia
                                     }
                                 }
-                            }                            
+                            }                                                    
+                               
                         }
                         
-                    }
+                    }                     
 
                     // Resultado Calificacion Tecnica Pcl
                     $posicionPclCali = [];
@@ -1081,28 +1087,32 @@ class BuscarEventoController extends Controller
                         }
                     }
                     if (count($posicionPclPron) > 0) {
-                        $ID_eventoPron = $posicionPclPron[0]['ID_evento'];
-                        $Id_procesoPron = $posicionPclPron[0]['Id_proceso'];
-                        $Id_ServicioPron = $posicionPclPron[0]['Id_Servicio'];
-                        $Id_AsignacionPron = $posicionPclPron[0]['Id_Asignacion'];
+                        
+                        $resultadoPronPcl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_pronunciamiento_eventos as sipe')                    
+                        ->select('sipe.ID_evento','sipe.Id_Asignacion','sipe.Decision');
+                        foreach ($posicionPclPron as $item) {
+                            $resultadoPronPcl->orWhere([
+                                ['sipe.Id_Asignacion',$item['Id_Asignacion']], 
+                                ['sipe.Id_proceso',$item['Id_proceso']], 
+                                ['sipe.ID_evento',$item['ID_evento']]
+                            ]);
+                        }
+                        $resulPronPcl = $resultadoPronPcl->get();
     
-                        $resultadoPronPcl = sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')
-                        ->select('ID_evento','Id_Asignacion','Decision')
-                        ->where([['Id_Asignacion',$Id_AsignacionPron], ['Id_proceso',$Id_procesoPron], ['ID_evento',$ID_eventoPron]])
-                        ->get(); 
-                        if (count($resultadoPronPcl) > 0) {
-                            $DecisionProResultado = $resultadoPronPcl[0]->Decision;
-                            $IdAsignacionResultado = $resultadoPronPcl[0]->Id_Asignacion;
-                            $ID_eventoResultado = $resultadoPronPcl[0]->ID_evento;
-            
-                            foreach ($posicionPclPron as &$elemento) {
-                                // Verificar si Id_Asignacion es igual a $IdAsignacionResultado
-                                if ($elemento['Id_Asignacion'] == $IdAsignacionResultado && $elemento['ID_evento'] == $ID_eventoResultado) {
-                                    // Agregar $OrigenResultado al array
-                                    $elemento['DecisionProResultado'] = $DecisionProResultado;
-                                }
-                            }
-                            // Filtrar los elementos que contienen [DecisionProResultado]
+                        if (count($resulPronPcl) > 0) {
+                            $ArrayresulPronPcl = $resulPronPcl->toArray();                                                
+                            foreach ($posicionPclPron as &$item) {
+                                // Buscar el elemento correspondiente en los resultados de la consulta
+                                $resultado = array_filter($ArrayresulPronPcl, function ($result) use ($item) {
+                                    return $result->Id_Asignacion == $item['Id_Asignacion'];
+                                });                    
+                                // Si se encuentra una coincidencia, agregar la información al array original
+                                if (!empty($resultado)) {
+                                    $resultado = reset($resultado); // Obtener el primer elemento del array de resultados
+                                    $item['DecisionProResultado'] = $resultado->Decision;
+                                } 
+                            }                              
+                            // Filtrar los elementos que contienen [OrigenDtoResultado]
                             $posicionPclPronFiltrado = array_filter($posicionPclPron, function ($item) {
                                 return isset($item['DecisionProResultado']);
                             }); 
@@ -1118,8 +1128,8 @@ class BuscarEventoController extends Controller
                                         break; // Romper el bucle interno una vez que se encuentra la coincidencia
                                     }
                                 }
-                            }                            
-                        }                        
+                            }
+                        }  
                     }
 
                     // Resultado Controversia Origen Juntas
@@ -1475,19 +1485,22 @@ class BuscarEventoController extends Controller
                         }
                     }                 
                     if (count($posicionOrigenAdx) > 0) {
-                        $ID_eventoAdx = $posicionOrigenAdx[0]['ID_evento'];
-                        $Id_procesoAdx = $posicionOrigenAdx[0]['Id_proceso'];
-                        $Id_ServicioAdx = $posicionOrigenAdx[0]['Id_Servicio'];
-                        $Id_AsignacionAdx = $posicionOrigenAdx[0]['Id_Asignacion'];
-    
                         $resultadoAdxOrigen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
                         ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
-                        ->select('side.ID_evento','side.Id_Asignacion','side.CIE10', 'slcd.CIE10 as CodigoCIE', 'side.Nombre_CIE10')
-                        ->where([['side.Id_Asignacion',$Id_AsignacionAdx], ['side.Id_proceso',$Id_procesoAdx], ['side.ID_evento',$ID_eventoAdx]])
-                        ->whereNotNull('F_adicion_CIE10')
-                        ->get(); 
-                        if (count($resultadoAdxOrigen) > 0) {
-                            foreach ($resultadoAdxOrigen as $item) {
+                        ->select('side.ID_evento','side.Id_Asignacion','side.CIE10', 'slcd.CIE10 as CodigoCIE', 'side.Nombre_CIE10');
+                        // Iterar sobre el array y agregar las condiciones
+                        foreach ($posicionOrigenAdx as $item) {
+                            $resultadoAdxOrigen->orWhere([
+                                ['side.Id_Asignacion', $item['Id_Asignacion']],
+                                ['side.Id_proceso', $item['Id_proceso']],
+                                ['side.ID_evento', $item['ID_evento']]
+                            ]);
+                        }
+                        // Ejecutar la consulta final
+                        $resulAdxOrigen = $resultadoAdxOrigen->whereNotNull('F_adicion_CIE10')->get();                     
+                        if (count($resulAdxOrigen) > 0) {
+                            $ArrayresulAdxOrigen = $resulAdxOrigen->toArray();                                            
+                            foreach ($ArrayresulAdxOrigen as $item) {
                                 $idEvento = $item->ID_evento;
                                 $idAsignacion = $item->Id_Asignacion;
                                 $codigoCIE = $item->CodigoCIE;                       
@@ -1508,13 +1521,13 @@ class BuscarEventoController extends Controller
                                     }
                                 }
                                 
-                            }
-                            // Filtrar los elementos que contienen [OrigenCieResultado]
+                            }                                                                
+                            // Filtrar los elementos que contienen [OrigenDtoResultado]
                             $posicionOrigenAdxFiltrado = array_filter($posicionOrigenAdx, function ($item) {
                                 return isset($item['OrigenCieResultado']);
-                            });
+                            }); 
                             // Reorganizar los índices del array filtrado
-                            $posicionOrigenAdxFiltrado = array_values($posicionOrigenAdxFiltrado);                                                                           
+                            $posicionOrigenAdxFiltrado = array_values($posicionOrigenAdxFiltrado);                           
                             //Combinar el array object con el array posicionOrigenAdx
                             foreach ($array_informacion_eventos as $key2 => $item2) {
                                 foreach ($posicionOrigenAdxFiltrado as $item1) {
@@ -1525,7 +1538,7 @@ class BuscarEventoController extends Controller
                                         break; // Romper el bucle interno una vez que se encuentra la coincidencia
                                     }
                                 }
-                            }                            
+                            }
                         }
                         
                     }  
@@ -1541,36 +1554,41 @@ class BuscarEventoController extends Controller
                             ];
                         }
                     }
+
                     if (count($posicionOrigenPron) > 0) {
-                        $ID_eventoPron = $posicionOrigenPron[0]['ID_evento'];
-                        $Id_procesoPron = $posicionOrigenPron[0]['Id_proceso'];
-                        $Id_ServicioPron = $posicionOrigenPron[0]['Id_Servicio'];
-                        $Id_AsignacionPron = $posicionOrigenPron[0]['Id_Asignacion'];
-    
-                        $resultadoPronOrigen = sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')
-                        ->select('ID_evento','Id_Asignacion','Decision')
-                        ->where([['Id_Asignacion',$Id_AsignacionPron], ['Id_proceso',$Id_procesoPron], ['ID_evento',$ID_eventoPron]])
-                        ->get(); 
-                        if (count($resultadoPronOrigen) > 0) {
-                            $DecisionProResultado = $resultadoPronOrigen[0]->Decision;
-                            $IdAsignacionResultado = $resultadoPronOrigen[0]->Id_Asignacion;
-                            $ID_eventoResultado = $resultadoPronOrigen[0]->ID_evento;
-            
-                            foreach ($posicionOrigenPron as &$elemento) {
-                                // Verificar si Id_Asignacion es igual a $IdAsignacionResultado
-                                if ($elemento['Id_Asignacion'] == $IdAsignacionResultado && $elemento['ID_evento'] == $ID_eventoResultado) {
-                                    // Agregar $OrigenResultado al array
-                                    $elemento['DecisionProResultado'] = $DecisionProResultado;
-                                }
-                            }
-                            // Filtrar los elementos que contienen [DecisionProResultado]
+                        $resultadoPronOrigen = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_pronunciamiento_eventos as sidae')                    
+                        ->select('sidae.ID_evento','sidae.Id_Asignacion', 'sidae.Id_proceso', 'sidae.Decision');
+                        // Iterar sobre el array y agregar las condiciones
+                        foreach ($posicionOrigenPron as $item) {
+                            $resultadoPronOrigen->orWhere([
+                                ['sidae.Id_Asignacion', $item['Id_Asignacion']],
+                                ['sidae.Id_proceso', $item['Id_proceso']],
+                                ['sidae.ID_evento', $item['ID_evento']]
+                            ]);
+                        }
+                        // Ejecutar la consulta final
+                        $resulPronOrigen = $resultadoPronOrigen->get();                     
+                        
+                        if (count($resulPronOrigen) > 0) {
+                            $ArrayresulPronOrigen = $resulPronOrigen->toArray();                         
+                            foreach ($posicionOrigenPron as &$item) {
+                                // Buscar el elemento correspondiente en los resultados de la consulta
+                                $resultado = array_filter($ArrayresulPronOrigen, function ($result) use ($item) {
+                                    return $result->Id_Asignacion == $item['Id_Asignacion'];
+                                });                    
+                                // Si se encuentra una coincidencia, agregar la información al array original
+                                if (!empty($resultado)) {
+                                    $resultado = reset($resultado); // Obtener el primer elemento del array de resultados
+                                    $item['DecisionProResultado'] = $resultado->Decision;
+                                } 
+                            }                          
+                            // Filtrar los elementos que contienen [OrigenDtoResultado]
                             $posicionOrigenPronFiltrado = array_filter($posicionOrigenPron, function ($item) {
                                 return isset($item['DecisionProResultado']);
                             }); 
                             // Reorganizar los índices del array filtrado
-                            $posicionOrigenPronFiltrado = array_values($posicionOrigenPronFiltrado);                                                                            
-                                                        
-                            //Combinar el array object con el array 
+                            $posicionOrigenPronFiltrado = array_values($posicionOrigenPronFiltrado);                                             
+                            //Combinar el array object con el array                          
                             foreach ($array_informacion_eventos as $key2 => $item2) {
                                 foreach ($posicionOrigenPronFiltrado as $item1) {
                                     // Verificar si hay coincidencia en Id_Asignacion
@@ -1580,10 +1598,12 @@ class BuscarEventoController extends Controller
                                         break; // Romper el bucle interno una vez que se encuentra la coincidencia
                                     }
                                 }
-                            }                            
+                            }                                                    
+                               
                         }
                         
-                    }
+                    }  
+                    
                     // Resultado Calificacion Tecnica Pcl
                     $posicionPclCali = [];
                     foreach ($resultArrayEventos as $element) {
@@ -1762,33 +1782,37 @@ class BuscarEventoController extends Controller
                         }
                     }
                     if (count($posicionPclPron) > 0) {
-                        $ID_eventoPron = $posicionPclPron[0]['ID_evento'];
-                        $Id_procesoPron = $posicionPclPron[0]['Id_proceso'];
-                        $Id_ServicioPron = $posicionPclPron[0]['Id_Servicio'];
-                        $Id_AsignacionPron = $posicionPclPron[0]['Id_Asignacion'];
+                        
+                        $resultadoPronPcl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_pronunciamiento_eventos as sipe')                    
+                        ->select('sipe.ID_evento','sipe.Id_Asignacion','sipe.Decision');
+                        foreach ($posicionPclPron as $item) {
+                            $resultadoPronPcl->orWhere([
+                                ['sipe.Id_Asignacion',$item['Id_Asignacion']], 
+                                ['sipe.Id_proceso',$item['Id_proceso']], 
+                                ['sipe.ID_evento',$item['ID_evento']]
+                            ]);
+                        }
+                        $resulPronPcl = $resultadoPronPcl->get();
     
-                        $resultadoPronPcl = sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')
-                        ->select('ID_evento','Id_Asignacion','Decision')
-                        ->where([['Id_Asignacion',$Id_AsignacionPron], ['Id_proceso',$Id_procesoPron], ['ID_evento',$ID_eventoPron]])
-                        ->get(); 
-                        if (count($resultadoPronPcl) > 0) {
-                            $DecisionProResultado = $resultadoPronPcl[0]->Decision;
-                            $IdAsignacionResultado = $resultadoPronPcl[0]->Id_Asignacion;
-                            $ID_eventoResultado = $resultadoPronPcl[0]->ID_evento;
-            
-                            foreach ($posicionPclPron as &$elemento) {
-                                // Verificar si Id_Asignacion es igual a $IdAsignacionResultado
-                                if ($elemento['Id_Asignacion'] == $IdAsignacionResultado && $elemento['ID_evento'] == $ID_eventoResultado) {
-                                    // Agregar $OrigenResultado al array
-                                    $elemento['DecisionProResultado'] = $DecisionProResultado;
-                                }
-                            }
-                            // Filtrar los elementos que contienen [DecisionProResultado]
+                        if (count($resulPronPcl) > 0) {
+                            $ArrayresulPronPcl = $resulPronPcl->toArray();                                                
+                            foreach ($posicionPclPron as &$item) {
+                                // Buscar el elemento correspondiente en los resultados de la consulta
+                                $resultado = array_filter($ArrayresulPronPcl, function ($result) use ($item) {
+                                    return $result->Id_Asignacion == $item['Id_Asignacion'];
+                                });                    
+                                // Si se encuentra una coincidencia, agregar la información al array original
+                                if (!empty($resultado)) {
+                                    $resultado = reset($resultado); // Obtener el primer elemento del array de resultados
+                                    $item['DecisionProResultado'] = $resultado->Decision;
+                                } 
+                            }                              
+                            // Filtrar los elementos que contienen [OrigenDtoResultado]
                             $posicionPclPronFiltrado = array_filter($posicionPclPron, function ($item) {
                                 return isset($item['DecisionProResultado']);
                             }); 
                             // Reorganizar los índices del array filtrado
-                            $posicionPclPronFiltrado = array_values($posicionPclPronFiltrado);                            
+                            $posicionPclPronFiltrado = array_values($posicionPclPronFiltrado);
                             //Combinar el array object con el array 
                             foreach ($array_informacion_eventos as $key2 => $item2) {
                                 foreach ($posicionPclPronFiltrado as $item1) {
@@ -1799,8 +1823,8 @@ class BuscarEventoController extends Controller
                                         break; // Romper el bucle interno una vez que se encuentra la coincidencia
                                     }
                                 }
-                            }                            
-                        }                        
+                            }
+                        }  
                     }
                     // Resultado Controversia Origen Juntas
                     $posicionJuntasConOri = [];

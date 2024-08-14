@@ -296,9 +296,9 @@ class BandejaNotifiController extends Controller
     public static function evento_en_notificaciones($id_evento,$id_asignacion){
         $enviar_notificacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->from('sigmel_informacion_asignacion_eventos as siaev')
         ->select('siaev.Notificacion','sicoe.Estado_correspondencia')
-        ->leftjoin('sigmel_gestiones.sigmel_informacion_correspondencia_eventos as sicoe','sicoe.Id_Asignacion','siaev.Id_Asignacion')->where([
-            ['siaev.Id_Asignacion',$id_evento],
-            ['siaev.ID_evento',$id_asignacion],
+        ->leftjoin('sigmel_gestiones.sigmel_informacion_correspondencia_eventos as sicoe','sicoe.Id_Asignacion','siaev.Id_Asignacion')->where([            
+            ['siaev.Id_Asignacion',$id_asignacion],
+            ['siaev.ID_evento',$id_evento],
         ])->get()->map(function($item){
             //1 - Activo 0 - Inactivo: Siempre y el evento no tenga alguna correspondencia y/o su estado sea 1 la se mostrara la correspodencia 
             $item->Notificacion = $item->Estado_Correspondencia == '1'|| is_null($item->Estado_Correspondencia) ? 'Si' : 'No';
