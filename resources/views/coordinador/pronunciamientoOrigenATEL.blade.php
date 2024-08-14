@@ -587,6 +587,11 @@
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
                                                 <br>
+                                                @if (!empty($info_pronuncia[0]->Firmar) && $info_pronuncia[0]->Firmar=='firmar')
+                                                    <input type="hidden" id="bd_check_firmar" value= "{{$info_pronuncia[0]->Firmar=='firmar'}}">
+                                                @else
+                                                    <input type="hidden" id="bd_check_firmar" value= "">
+                                                @endif
                                                 <input class="custom-control-input" type="checkbox" id="firmar" name="firmar" value="firmar" @if (!empty($info_pronuncia[0]->Firmar) && $info_pronuncia[0]->Firmar=='firmar') checked @endif>
                                                 <label for="firmar" class="custom-control-label">Firmar</label>                 
                                             </div>
@@ -962,20 +967,20 @@
             });
 
             //PBS 045 se solicita desactivar la obligatoriedad del campo asunto cuando se selecione un silencio.
-            if($("#di_silencio_pr").prop('checked',true)){
-                $("#asunto_cali").prop("required",false);
-                $("#label_asunto_cali span").addClass('d-none');
-            }
+            // if($("#di_silencio_pr").prop('checked',true)){
+            //     $("#asunto_cali").prop("required",false);
+            //     $("#label_asunto_cali span").addClass('d-none');
+            // }
 
-            $("#di_silencio_pr").focus(function() {
-                $("#asunto_cali").prop("required",false);
-                $("#label_asunto_cali span").addClass('d-none');
-            });
+            // $("#di_silencio_pr").focus(function() {
+            //     $("#asunto_cali").prop("required",false);
+            //     $("#label_asunto_cali span").addClass('d-none');
+            // });
 
-            $("input[type='radio']:not(#di_silencio_pr)").change(function(){
-                $("#asunto_cali").prop("required",true);
-                $("#label_asunto_cali span").removeClass('d-none');
-            });
+            // $("input[type='radio']:not(#di_silencio_pr)").change(function(){
+            //     $("#asunto_cali").prop("required",true);
+            //     $("#label_asunto_cali span").removeClass('d-none');
+            // });
             
         });
 
