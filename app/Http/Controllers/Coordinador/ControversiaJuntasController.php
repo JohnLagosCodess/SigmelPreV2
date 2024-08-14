@@ -1709,7 +1709,6 @@ class ControversiaJuntasController extends Controller
         $time = time();
         $nombre_usuario = Auth::user()->name;
         $date = date("Y-m-d", $time);
-
         $newId_evento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
         $newId_asignacion = $request->newId_asignacion;
@@ -1903,7 +1902,7 @@ class ControversiaJuntasController extends Controller
                 'T_documento' => 'N/A',
                 'N_identificacion' => $nro_identificacion,
                 'Destinatario' => $Destinatario,
-                'Nombre_destinatario' => 'N/A',
+                'Nombre_destinatario' => $request->nombre_destinatariopri ? $request->nombre_destinatariopri : 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
                 'Telefono_destinatario' => '001',

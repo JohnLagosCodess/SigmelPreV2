@@ -491,8 +491,27 @@ class PronunciamientoOrigenController extends Controller
                 $Destinatario = 'N/A';
             break;
         }
-
-
+        $id_dest_principal = $request->nombre_calificador;
+        if($request->tipo_entidad != null && $request->nombre_entidad !== "null"){
+            switch ($request->tipo_entidad) {
+                case '1':
+                    $Destinatario = 'Arl';
+                break;
+    
+                case '2':
+                    $Destinatario = 'Afp';
+                break;
+    
+                case '3':
+                    $Destinatario = 'Eps';
+                break;
+                
+                default:
+                    $Destinatario = 'N/A';
+                break;
+            }
+            $id_dest_principal = $request->nombre_entidad;
+        }
         //valida la acción del botón
         if ($request->bandera_pronuncia_guardar_actualizar == 'Guardar') {
         
@@ -552,7 +571,7 @@ class PronunciamientoOrigenController extends Controller
                 'T_documento' => 'N/A',
                 'N_identificacion' => $request->identificacion,
                 'Destinatario' => $Destinatario,
-                'Nombre_destinatario' => 'N/A',
+                'Nombre_destinatario' => $id_dest_principal ? $id_dest_principal : 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
                 'Telefono_destinatario' => '001',
@@ -729,7 +748,7 @@ class PronunciamientoOrigenController extends Controller
                 'T_documento' => 'N/A',
                 'N_identificacion' => $request->identificacion,
                 'Destinatario' => $Destinatario,
-                'Nombre_destinatario' => 'N/A',
+                'Nombre_destinatario' => $id_dest_principal ? $id_dest_principal : 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
                 'Telefono_destinatario' => '001',
@@ -1465,7 +1484,6 @@ class PronunciamientoOrigenController extends Controller
             ->where([['Id_cliente', $Id_cliente_firma]])
             ->limit(1)->get();
             if (count($dato_logo_footer) > 0 && $dato_logo_footer[0]->Footer_cliente != null) {
-                dd($dato_logo_footer);
                 $logo_footer = $dato_logo_footer[0]->Footer_cliente;
                 $ruta_logo_footer = "/footer_clientes/{$Id_cliente_firma}/{$logo_footer}";
             } else {

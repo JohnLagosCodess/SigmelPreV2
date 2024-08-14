@@ -2787,6 +2787,7 @@ $(document).ready(function(){
         var tipo_descarga = $("[name='tipo_de_preforma']").filter(":checked").val();
         //Copias Interesadas Origen
         var copiaComunicadoTotal = [];
+        cuerpo_comunicado = cuerpo_comunicado ? cuerpo_comunicado.replace(/"/g, "'") : '';
 
         $('input[type="checkbox"]').each(function() {
             var copiaComunicado = $(this).attr('id');            
@@ -3126,7 +3127,6 @@ $(document).ready(function(){
     //DataTable Historial de comunicados
 
     function capturar_informacion_comunicados(response, index, value, enviara) {
-        console.log(enviara)
         let columns = [
             {"data":"N_radicado"},
             {"data":"Elaboro"},
