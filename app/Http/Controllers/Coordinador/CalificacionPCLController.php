@@ -603,9 +603,12 @@ class CalificacionPCLController extends Controller
             ->get();
 
             //Asignamos #n de orden cuado se envie un caso a notificaciones
-            if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+            if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,false);
                 $N_orden_evento=$n_orden[0]->Numero_orden;
             }else{
+
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,true);
                 $N_orden_evento=null;
             }
 
@@ -1158,9 +1161,11 @@ class CalificacionPCLController extends Controller
             ->get();
 
             //Asignamos #n de orden cuado se envie un caso a notificaciones
-            if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+            if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,false);
                 $N_orden_evento=$n_orden[0]->Numero_orden;
             }else{
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,true);
                 $N_orden_evento=null;
             }
 
@@ -2371,6 +2376,9 @@ class CalificacionPCLController extends Controller
                 ['Id_proceso', '2']
             ])
             ->get();
+            // Validar si la accion ejecutada tiene enviar a notificaciones
+            $enviar_notificacion =  BandejaNotifiController::evento_en_notificaciones($newId_evento,$newId_asignacion);
+            
             foreach ($hitorialAgregarComunicado as &$comunicado) {
                 if ($comunicado['Tipo_descarga'] === 'Documento_PCL') {
                     $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
@@ -2395,7 +2403,11 @@ class CalificacionPCLController extends Controller
                 }
             }
             $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
-            return response()->json(($arrayhitorialAgregarComunicado));
+            return response()->json([
+                'hitorialAgregarComunicado' => $hitorialAgregarComunicado,
+                'enviar_notificacion' => $enviar_notificacion
+            ]);
+
 
         }
 

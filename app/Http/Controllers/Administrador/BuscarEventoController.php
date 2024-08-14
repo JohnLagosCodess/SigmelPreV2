@@ -2219,7 +2219,7 @@ class BuscarEventoController extends Controller
         }
 
         //Asignamos #n de orden cuado se envie un caso a notificaciones
-        if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+        if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
             $N_orden_evento=$n_orden[0]->Numero_orden;
         }else{
             $N_orden_evento=null;
@@ -2363,7 +2363,7 @@ class BuscarEventoController extends Controller
         ])->get();
 
         //Asignamos #n de orden cuado se envie un caso a notificaciones
-        if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+        if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
             $N_orden_evento=$n_orden[0]->Numero_orden;
         }else{
             $N_orden_evento=null;

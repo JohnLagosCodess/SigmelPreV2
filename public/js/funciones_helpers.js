@@ -731,7 +731,11 @@ function ubicacionEvento() {
             dataType: 'json',
             data: data,
             success: function(response) {
-                let status = response[0].Notificacion === 'Si'; 
+                let status = 'No';
+                if(response != '' && response != undefined){
+                    let status = response[0].Notificacion == 'Si'; 
+                }
+                
                 resolve(status); //true o false 
             }
         });
