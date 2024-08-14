@@ -1792,6 +1792,10 @@ $(document).ready(function(){
             /** @var select2 Config. del select2 */
             let select2 = [];
             for (let i = 0; i < data.hitorialAgregarComunicado.length; i++) { 
+                let estado_correspondencia = {
+                    deshabilitar_selector : data.hitorialAgregarComunicado[i].Estado_correspondencia == '0' ? true : false,
+                    deshabilitar_edicion: data.hitorialAgregarComunicado[i].Estado_correspondencia == '0' ? 'pointer-events: none; color: gray;' : '',
+                }
                 if (data.hitorialAgregarComunicado[i].N_radicado != '' && data.hitorialAgregarComunicado[i].Tipo_descarga != 'Manual'){
                     let comunicadoNradico = '<div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center">';
                     if (!data.hitorialAgregarComunicado[i].Correspondencia) {
@@ -1915,6 +1919,7 @@ $(document).ready(function(){
                     selector: `#status_notificacion_${data.hitorialAgregarComunicado[i].N_radicado}`,
                     default:  data.hitorialAgregarComunicado[i].Estado_Notificacion, //Opcion a selecionar
                     data: opciones_Notificacion, // Opciones disponibles para seleccionar
+                    enabled: estado_correspondencia.deshabilitar_selector
                 };
 
                 select2.push(select2Config);
