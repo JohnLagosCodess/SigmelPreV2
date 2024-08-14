@@ -1903,7 +1903,7 @@ $(document).ready(function(){
         var elaboro_comunicado =  $(this).data("elaboro_comunicado"); 
         var reviso_comunicado =  $(this).data("reviso_comunicado");     
         var revisonombre_comunicado =  $(this).data("revisonombre_comunicado");  
-        var firma_cliente = $(this).data("firma_cliente");
+        var firma_cliente = $(this).data("firmar_comunicado");
         var agregar_copia =  $(this).data("agregar_copia");
         var tipo_descarga = $(this).data("tipo_descarga");
         var N_siniestro = $(this).data("numero_siniestro");
