@@ -188,9 +188,19 @@ class CalificacionPCLController extends Controller
 
         $info_accion_eventos = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
         ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion]])->get();
+
+        // Validar si la accion ejecutada tiene enviar a notificaciones            
+        $enviar_notificaciones = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        ->select('Notificacion')
+        ->where([
+            ['ID_evento', $newIdEvento],
+            ['Id_Asignacion', $newIdAsignacion]
+        ])
+        ->get();
         
         return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 
-        'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos','SubModulo','consecutivo','arraycampa_documento_solicitado', 'info_comite_inter', 'Id_servicio', 'info_accion_eventos'));
+        'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos','SubModulo','consecutivo','arraycampa_documento_solicitado', 
+        'info_comite_inter', 'Id_servicio', 'info_accion_eventos', 'enviar_notificaciones'));
     }
 
     public function cargueListadoSelectoresModuloCalifcacionPcl(Request $request){
@@ -517,6 +527,20 @@ class CalificacionPCLController extends Controller
             $info_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados,true));
             return response()->json($info_listado_documentos_solicitados);
         }
+
+        //Lista estados notificacion correspondencia
+        if($parametro == "EstadosNotificacionCorrespondencia"){
+            $datos_status_notificacion_correspondencia = sigmel_lista_parametros::on('sigmel_gestiones')
+                ->select('Id_Parametro','Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Estatus_Correspondencia'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
+
+            $datos_status_notificacion_corresp = json_decode(json_encode($datos_status_notificacion_correspondencia, true));
+            return response()->json($datos_status_notificacion_corresp);
+        }
         
     }
 
@@ -589,9 +613,12 @@ class CalificacionPCLController extends Controller
             ->get();
 
             //Asignamos #n de orden cuado se envie un caso a notificaciones
-            if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+            if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,false);
                 $N_orden_evento=$n_orden[0]->Numero_orden;
             }else{
+
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,true);
                 $N_orden_evento=null;
             }
 
@@ -1144,9 +1171,11 @@ class CalificacionPCLController extends Controller
             ->get();
 
             //Asignamos #n de orden cuado se envie un caso a notificaciones
-            if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+            if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,false);
                 $N_orden_evento=$n_orden[0]->Numero_orden;
             }else{
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,true);
                 $N_orden_evento=null;
             }
 
@@ -2292,7 +2321,7 @@ class CalificacionPCLController extends Controller
                 'Forma_envio' => $request->forma_envio,
                 'Elaboro' => $nombre_usuario,
                 'Reviso' => $request->reviso,
-                'Agregar_copia' => null,
+                'Agregar_copia' => '',
                 'Firmar_Comunicado' => $request->firmarcomunicado,
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => 'calificacionPCL',
@@ -2357,6 +2386,9 @@ class CalificacionPCLController extends Controller
                 ['Id_proceso', '2']
             ])
             ->get();
+            // Validar si la accion ejecutada tiene enviar a notificaciones
+            $enviar_notificacion =  BandejaNotifiController::evento_en_notificaciones($newId_evento,$newId_asignacion);
+            
             foreach ($hitorialAgregarComunicado as &$comunicado) {
                 if ($comunicado['Tipo_descarga'] === 'Documento_PCL') {
                     $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
@@ -2381,7 +2413,11 @@ class CalificacionPCLController extends Controller
                 }
             }
             $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
-            return response()->json(($arrayhitorialAgregarComunicado));
+            return response()->json([
+                'hitorialAgregarComunicado' => $hitorialAgregarComunicado,
+                'enviar_notificacion' => $enviar_notificacion
+            ]);
+
 
         }
 
@@ -7383,7 +7419,6 @@ class CalificacionPCLController extends Controller
             $ciudad_destinatario = $request->ciudad_destinatario;
         }
         $Asunto = $request->Asunto;
-        $afiliado = $request->afiliado;
         $cuerpo_comunicado = $request->cuerpo_comunicado;
         $afiliado = $request->afiliado;
         $empleador = $request->empleador;
@@ -7401,6 +7436,10 @@ class CalificacionPCLController extends Controller
         // $agregar_copias_comu = $empleador.','.$eps.','.$afp.','.$arl.','.$jrci.','.$jnci;
 
         $variables_llenas = array();
+
+        if (!empty($afiliado)) {
+            $variables_llenas[] = $afiliado;
+        }
 
         if (!empty($empleador)) {
             $variables_llenas[] = $empleador;
@@ -7434,6 +7473,55 @@ class CalificacionPCLController extends Controller
         $f_correspondencia = $request->f_correspondencia;
         $radicado = $request->radicado;
         $bandera_correspondecia_guardar_actualizar = $request->bandera_correspondecia_guardar_actualizar;
+
+        /* Se completan los siguientes datos para lo del tema del pbs 014 */
+
+        // eL número de identificacion será el del afiliado.
+        $array_nro_ident_afi = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+        ->select('Nro_identificacion')
+        ->where([['ID_evento', $Id_EventoDecreto]])
+        ->get();
+
+        if (count($array_nro_ident_afi) > 0) {
+            $nro_identificacion = $array_nro_ident_afi[0]->Nro_identificacion;
+        }else{
+            $nro_identificacion = 'N/A';
+        }
+
+        // el nombre del destinatario principal dependerá de lo siguiente:
+        // Si no se seleccciona la opción otro destinatario principal: el destinatario será por defecto la Afiliado.
+        // Si selecciona la opción otro destinatario principal: el destinataria dependerá del tipo de destinatario que se seleccione.
+
+        // Caso 1: Arl, Caso 2: Afp, Caso 3: Eps, Caso 4: Afiliado, Caso 5: Empleador.
+        if ($otrodestinariop == '') {
+            $Destinatario = 'Afiliado';
+        } else {
+            switch ($tipo_destinatario_principal) {
+                case '1':
+                    $Destinatario = 'Arl';
+                break;
+
+                case '2':
+                    $Destinatario = 'Afp';
+                break;
+
+                case '3':
+                    $Destinatario = 'Eps';
+                break;
+
+                case '4':
+                    $Destinatario = 'Afiliado';
+                break;
+
+                case '5':
+                    $Destinatario = 'Empleador';
+                break;
+                
+                default:
+                    $Destinatario = 'N/A';
+                break;
+            }
+        }
 
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
@@ -7489,9 +7577,9 @@ class CalificacionPCLController extends Controller
                 'Cliente' => 'N/A',
                 'Nombre_afiliado' => $destinatario_principal,
                 'T_documento' => 'N/A',
-                'N_identificacion' => 'N/A',
-                'Destinatario' => 'N/A',
-                'Nombre_destinatario' => 'N/A',
+                'N_identificacion' => $nro_identificacion,
+                'Destinatario' => $Destinatario,
+                'Nombre_destinatario' => $request->nombre_destinatariopri ? $request->nombre_destinatariopri : 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
                 'Telefono_destinatario' => '001',
@@ -7569,13 +7657,39 @@ class CalificacionPCLController extends Controller
             ])->update($datos_correspondencia); 
 
             $datos_info_comunicado_eventos = [
+                'ID_Evento' => $Id_EventoDecreto,
+                'Id_proceso' => $Id_ProcesoDecreto,
+                'Id_Asignacion' => $Id_Asignacion_Dcreto,
+                'Ciudad' => $ciudad,
+                'F_comunicado' => $date,
+                'N_radicado' => $radicado,
+                'Cliente' => 'N/A',
+                'Nombre_afiliado' => $destinatario_principal,
+                'T_documento' => 'N/A',
+                'N_identificacion' => $nro_identificacion,
+                'Destinatario' => $Destinatario,
+                'Nombre_destinatario' => $request->nombre_destinatariopri ? $request->nombre_destinatariopri : 'N/A',
+                'Nit_cc' => 'N/A',
+                'Direccion_destinatario' => 'N/A',
+                'Telefono_destinatario' => '001',
+                'Email_destinatario' => 'N/A',
+                'Id_departamento' => '001',
+                'Id_municipio' => '001',
+                'Asunto'=> $Asunto,
+                'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Forma_envio' => '0',
+                'Elaboro' => $elaboro,
+                'Reviso' => $reviso,
                 'Agregar_copia' => $agregar_copias_comu,
                 'JRCI_copia' => $cual,
+                'Anexos' => $anexos,
+                'Tipo_descarga' => $request->tipo_descarga,
+                'Modulo_creacion' => 'calificacionTecnicaPCL',
+                'Reemplazado' => 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
-                'Reemplazado' => 0,
                 'N_siniestro' => $N_siniestro
-            ];   
+            ];  
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
                 ->where([

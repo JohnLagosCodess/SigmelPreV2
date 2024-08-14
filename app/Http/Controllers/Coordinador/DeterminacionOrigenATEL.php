@@ -295,13 +295,7 @@ class DeterminacionOrigenATEL extends Controller
         ->get();
 
         // Consultamos si el caso está en la bandeja de Notificaciones
-        $array_caso_notificado = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-        ->select('Notificacion')
-        ->where([
-            ['Id_Asignacion', $Id_asignacion_dto_atel],
-            ['ID_evento', $Id_evento_dto_atel]
-        ])
-        ->get();
+        $array_caso_notificado = BandejaNotifiController::evento_en_notificaciones($request->evento,$request->id_asignacion);
 
         if(count($array_caso_notificado) > 0){
             $caso_notificado = $array_caso_notificado[0]->Notificacion;
@@ -1203,7 +1197,7 @@ class DeterminacionOrigenATEL extends Controller
                 'T_documento' => 'N/A',
                 'N_identificacion' => $nro_identificacion,
                 'Destinatario' => $Destinatario,
-                'Nombre_destinatario' => 'N/A',
+                'Nombre_destinatario' => $request->nombre_destinatariopri ? $request->nombre_destinatariopri : 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
                 'Telefono_destinatario' => '001',
@@ -1291,7 +1285,7 @@ class DeterminacionOrigenATEL extends Controller
                 'T_documento' => 'N/A',
                 'N_identificacion' => $nro_identificacion,
                 'Destinatario' => $Destinatario,
-                'Nombre_destinatario' => 'N/A',
+                'Nombre_destinatario' => $request->nombre_destinatariopri ? $request->nombre_destinatariopri : 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
                 'Telefono_destinatario' => '001',

@@ -221,16 +221,19 @@
                                                 </div>
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="email_info_afiliado" class="col-form-label">Email</label>
-                                                        <input type="email" class="email_info_afiliado form-control" name="email_info_afiliado" id="email_info_afiliado">
+                                                        <label for="email_info_afiliado" class="col-form-label">Email <span style="color:red;">(*)</span></label>
+                                                        <input type="email" class="email_info_afiliado form-control" list="opciones_email" id="email_info_afiliado" name="email_info_afiliado" placeholder="Selecciona o escribe..." required>
+                                                        <datalist id="opciones_email">
+                                                            <option value="sin@correo.com">
+                                                        </datalist><br>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-sm">
                                                     <div class="form-group">
-                                                        <label for="telefono" class="col-form-label">Teléfono/Celular</label>
-                                                        <input type="text" class="telefono form-control" name="telefono" id="telefono">
+                                                        <label for="telefono" class="col-form-label">Teléfono/Celular <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="telefono form-control" name="telefono" id="telefono" required>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm">
@@ -497,8 +500,11 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="email_info_laboral" class="col-form-label si_nom_email">Email <span style="color:red;">(*)</span></label>
-                                                    <label for="email_info_laboral" class="col-form-label no_nom_email d-none">Email</label>
-                                                    <input type="email" class="email_info_laboral form-control" name="email_info_laboral" id="email_info_laboral" required>
+                                                    <label for="email_info_laboral" class="col-form-label no_nom_email d-none">Email </label>
+                                                    <input type="email" class="email_info_laboral form-control" list="opciones_email_laboral" id="email_info_laboral" name="email_info_laboral" placeholder="Selecciona o escribe..." required>
+                                                    <datalist id="opciones_email_laboral">
+                                                        <option value="sin@correo.com">
+                                                    </datalist><br>
                                                 </div>
                                             </div>
                                             <div class="col-sm">

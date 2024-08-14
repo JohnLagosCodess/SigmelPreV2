@@ -711,3 +711,33 @@ function descargarDocumentos(){
         },
     });
 }
+
+/**
+ * Valida si el evento se encuentra en la bandeja de notificacion
+ * @returns bool
+ */
+function ubicacionEvento() {
+    return new Promise((resolve, reject) => {
+        let data = {
+            '_token': $('input[name=_token]').val(),
+            'bandera': 'info_evento',
+            'id_asignacion': $("#newIdAsignacion").val(),
+            'evento': $("#newIdEvento").val()
+        };
+        
+        $.ajax({
+            type: 'POST',
+            url: '/informacionBandejaNotifi',
+            dataType: 'json',
+            data: data,
+            success: function(response) {
+                let status = 'No';
+                if(response != '' && response != undefined){
+                    let status = response[0].Notificacion == 'Si'; 
+                }
+                
+                resolve(status); //true o false 
+            }
+        });
+    });
+}

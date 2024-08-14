@@ -1893,6 +1893,7 @@ $(document).ready(function(){
         let radicado = $tableComunicados.find("td").eq(0).text();
         let StatusSeleccionado = $("#status_default_" + radicado).val();
         let NotaComunicado = $("#Nota_comunicado_" + radicado).val();
+        let estado_correspondencia =  $("#Estado_Correspondencia_" + radicado).val();
         
         let info_comunicado = {
             '_token': $('input[name=_token]').val(),
@@ -1920,6 +1921,7 @@ $(document).ready(function(){
                     Tipo_descarga: data[0].Tipo_descarga,
                     Nombre_afiliado: data[0].Nombre_afiliado,
                     N_identificacion: data[0].N_identificacion,
+                    Estado_correspondencia: estado_correspondencia,
                 }
 
                 // Extraer el contenido de la columna de acciones y limpiar la columna
@@ -2004,13 +2006,27 @@ $(document).ready(function(){
         let id_asignacion = $(id).data('id_asignacion');
         let anexos = $(id).data('anexos');
         let correspondencia = $(id).data('correspondencia');
+        //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
+        let tipo_descarga = $(id).data('tipo_descarga');
+    
+        //Desactiva el formulario en caso de que la correspodencia este inactiva.
+        if($(id).data("estado_correspondencia") != 1){
+            $("#btn_guardar_actualizar_correspondencia").remove();
+            $("#form_correspondencia *").prop('disabled',true);
+            $("#cerar_modalCorrespondencia").prop('disabled',false);
+        }
+
         //Información superior del modal 
-        $("#modalCorrespondencia #nombre_afiliado").val($(id).data('nombre_afiliado'));
-        $("#modalCorrespondencia #n_identificacion").val($(id).data('numero_identificacion'));
+        if(tipo_descarga === 'Manual' || tipo_descarga === 'Dictamen'){
+            $("#modalCorrespondencia #nombre_afiliado").val($("#nombre_afiliado").val());
+            $("#modalCorrespondencia #n_identificacion").val($("#identificacion").val());
+        }
+        else{
+            $("#modalCorrespondencia #nombre_afiliado").val($(id).data('nombre_afiliado'));
+            $("#modalCorrespondencia #n_identificacion").val($(id).data('numero_identificacion'));
+        }
         $("#modalCorrespondencia #id_evento").val($(id).data('id_evento'));
         $("#modalCorrespondencia #enlace_ed_evento").text($(id).data('id_evento'));
-        //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
-        let tipo_descarga = $(id).data('tipo_descarga')
         if(tipo_descarga === 'Manual'){
             $("#modalCorrespondencia #check_principal").prop('checked', false);
             $("#modalCorrespondencia #check_principal").prop('disabled', false);
@@ -2164,12 +2180,22 @@ $(document).ready(function(){
                         $("#modalCorrespondencia #folios").val(anexos);
                         $("#modalCorrespondencia .modal-title").text('Correspondencia ' + tipo_correspondencia);
                         $("#modalCorrespondencia #radicado").val(N_radicado);
-                        if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){
+                        if(tipo_descarga === 'Dictamen' && tipo_correspondencia.toLowerCase() === 'afiliado'){
                             $("#modalCorrespondencia #check_principal").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias.includes(tipo_correspondencia.toLowerCase())){
+                        else if(tipo_descarga === 'Dictamen' && (tipo_correspondencia.toLowerCase() === 'eps' || tipo_correspondencia.toLowerCase() === 'afp' || tipo_correspondencia.toLowerCase() === 'arl')){
+                            $("#modalCorrespondencia #check_copia").prop('checked', true);
+                            $("#modalCorrespondencia #check_copia").prop('disabled', true);
+                            $("#modalCorrespondencia #check_principal").prop('required', false);
+                        }
+                        else if(tipo_descarga != 'Manual' && tipo_descarga != 'Dictamen' && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){
+                            $("#modalCorrespondencia #check_principal").prop('checked', true);
+                            $("#modalCorrespondencia #check_copia").prop('disabled', true);
+                            $("#modalCorrespondencia #check_copia").prop('required', false);
+                        }
+                        else if(tipo_descarga != 'Manual' && tipo_descarga != 'Dictamen' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.includes(tipo_correspondencia.toLowerCase())){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
@@ -2338,7 +2364,7 @@ $(document).ready(function(){
     });
 
    //Descargar archivo cargado manualmente
-    $("form[id^='form_descargar_archivo_']").submit(function (e){
+    $(document).on('submit',"form[id^='form_descargar_archivo_']",function (e){
         e.preventDefault();              
         var archivo = $(this).data("archivo");
 
@@ -2361,7 +2387,7 @@ $(document).ready(function(){
 
     //Reemplazar archivo 
     let comunicado_reemplazar = null;
-    $("form[id^='form_reemplazar_archivo_']").submit(function (e){
+    $(document).on('submit',"form[id^='form_reemplazar_archivo_']",function (e){
         e.preventDefault();           
         //Se abre el modal
         $('#modalReemplazarArchivos').modal('show');  
@@ -4402,8 +4428,7 @@ $(document).ready(function(){
 
     // Habilitar formulario de correspondencia
 
-    var editar_correspondencia = $('#editar_correspondencia');
-        editar_correspondencia.click(function(){
+    $(document).on('click','#editar_correspondencia',function(){
         $("#div_correspondecia").removeClass('d-none');
     });
 
@@ -6616,55 +6641,53 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
         Correspondencia = Correspondencia.split(',').map(correspondencia => correspondencia.trim().toLowerCase());
     }
     //Función para agregar el subrayado al destinatario principal y aquellos que hayan sido seleccionados como copia
-    function getUnderlineStyle(entity) {
+    function getUnderlineStyle(entity,tipo_descarga = null) {
         let negrita = (Correspondencia && Correspondencia.includes(entity)) ? 'font-weight:700;' : '';
         let underline = (Destinatario.toLowerCase() === entity || (Copias && Copias.includes(entity))) ? 'text-decoration-line: underline;' : '';
+        if(tipo_descarga === 'Dictamen'){
+            negrita = (Correspondencia && Correspondencia?.includes(entity)) ? 'font-weight:700;' : '';
+            underline = 'text-decoration-line: underline;';
+        }
         return negrita + underline;
     }
     let info_notificacion = {
         'Destinatarios': 
             `<a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Afiliado" \
-                data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
-                style="${getUnderlineStyle('afiliado')}">Afiliado</a>
-            <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Empresa" \
-                data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                style="${getUnderlineStyle('afiliado',data_comunicado['Tipo_descarga'])}">Afiliado</a>
+            <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Empleador" \
+                data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
-                style="${getUnderlineStyle('empresa')}">Empleador</a>
+                style="${getUnderlineStyle('empleador')}">Empleador</a>
             <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="eps" \
-                data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
-                style="${getUnderlineStyle('eps')}">EPS</a>
+                style="${getUnderlineStyle('eps',data_comunicado['Tipo_descarga'])}">EPS</a>
             <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="afp" \
-                data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
-                style="${getUnderlineStyle('afp')}">AFP</a>
+                style="${getUnderlineStyle('afp',data_comunicado['Tipo_descarga'])}">AFP</a>
             <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="arl" \ 
-                data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
-                style="${getUnderlineStyle('arl')}">ARL</a>
-            <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="jrci" \
-                data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                style="${getUnderlineStyle('arl',data_comunicado['Tipo_descarga'])}">ARL</a>
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="afp_conocimiento" \
+                data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
-                style="${getUnderlineStyle('jrci')}">JRCI</a>
-            <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="jnci" \
-                data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
-                data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
-                data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
-                data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
-                style="${getUnderlineStyle('jnci')}">JNCI</a>`,
+                style="${getUnderlineStyle('afp_conocimiento')}">AFP Conocimiento</a>`,
 
         'Nota_Comunicados': `<textarea class="form-control nota-col" name="nota_comunicado_${n_radicado}" id="nota_comunicado_${n_radicado}" cols="70" rows="5" style="resize:none; width:200px;">${nota == null ? "" : nota}</textarea>`,
     };
@@ -6677,4 +6700,41 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     info_notificacion['Estado_General'] =`<select class="custom-select" id="status_notificacion_${n_radicado}" style="width:100%;">${opciones_Notificacion}</select>`;
 
     return info_notificacion;
+}
+
+function cleanModalCorrespondencia(){
+    $("#btn_guardar_actualizar_correspondencia").val('Guardar');
+
+    correspondencia_array = [];
+    $("#modalCorrespondencia #check_principal").prop('checked', false).prop('disabled', true).prop('required', true);
+    $("#modalCorrespondencia #check_copia").prop('checked', false).prop('disabled', false).prop('required', true);
+    $('#state_notificacion').val('').trigger('change');
+    $("#modalCorrespondencia #tipo_correspondencia").val('');
+    $("#modalCorrespondencia #n_orden").val('');
+    $("#modalCorrespondencia #nombre_destinatario").val('');
+    $("#modalCorrespondencia #direccion").val('');
+    $("#modalCorrespondencia #departamento").val('');
+    $("#modalCorrespondencia #ciudad").val('');
+    $("#modalCorrespondencia #telefono").val('');
+    $("#modalCorrespondencia #email").val('');
+    $("#modalCorrespondencia #m_notificacion").val('');
+    $("#modalCorrespondencia #folios").val('');
+    $("#modalCorrespondencia #n_guia").val('');
+    $("#modalCorrespondencia #f_envio").val('');
+    $("#modalCorrespondencia #f_notificacion").val('');
+    $("#modalCorrespondencia #state_notificacion").val('');
+    $("#modalCorrespondencia #id_correspondencia").val('');
+    $("#modalCorrespondencia #id_asignacion").val('');
+    $("#modalCorrespondencia #id_proceso").val('');
+    $("#modalCorrespondencia #id_comunicado").val('');
+    
+}
+
+function showLoading() {
+    $('#loading').addClass('loading');
+    $('#loading-content').addClass('loading-content');
+}
+function hideLoading() {
+    $('#loading').removeClass('loading');
+    $('#loading-content').removeClass('loading-content');
 }

@@ -916,7 +916,9 @@
                                                 <th>Elaboro</th>
                                                 <th>Fecha Comunicado</th>
                                                 <th>Documento</th>
-                                                <th>Destinatarios</th>
+                                                @if (!empty($enviar_notificaciones[0]->Notificacion) && $enviar_notificaciones[0]->Notificacion == 'Si')
+                                                    <th>Destinatarios</th>
+                                                @endif
                                                 <th>Estado general de la Notificación</th>
                                                 <th>Nota</th>
                                                 <th>Acción</th>
@@ -1904,6 +1906,7 @@
     <?php $aperturaModal = 'Edicion'; ?>
     @include('//.administrador.modalcarguedocumentos')
     @include('//.coordinador.modalCrearExpediente')
+    @include('//.coordinador.modalCorrespondencia')
     @include('//.coordinador.modalReemplazarArchivos')
 @stop
 @section('js')

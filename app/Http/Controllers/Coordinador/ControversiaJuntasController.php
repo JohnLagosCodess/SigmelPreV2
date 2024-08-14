@@ -19,6 +19,7 @@ use App\Models\sigmel_informacion_entidades;
 use App\Models\sigmel_lista_regional_juntas;
 use App\Models\sigmel_lista_solicitantes;
 use App\Models\sigmel_clientes;
+use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
@@ -248,12 +249,17 @@ class ControversiaJuntasController extends Controller
             $bandera_manual_calificacion = 'activar';
         }
 
+        // Consultamos si el caso está en la bandeja de Notificaciones
+        $array_caso_notificado = BandejaNotifiController::evento_en_notificaciones($request->evento,$request->id_asignacion);
+        if(count($array_caso_notificado) > 0){
+            $caso_notificado = $array_caso_notificado[0]->Notificacion;
+        }
         //dd($arrayinfo_controvertido);
         return view('coordinador.controversiaJuntas', compact('user','array_datos_controversiaJuntas','arrayinfo_controvertido',
         'array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci',
         'array_datos_diagnostico_reposi_dictamen_jrci',
         'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 
-        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion'));
+        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 'caso_notificado'));
     }
 
         /**
@@ -517,7 +523,21 @@ class ControversiaJuntasController extends Controller
 
             $informacion_datos_reviso = json_decode(json_encode($array_datos_reviso, true));
             return response()->json($informacion_datos_reviso);
-        }  
+        } 
+        
+        //Lista estados notificacion correspondencia
+        if($parametro == "EstadosNotificacionCorrespondencia"){
+            $datos_status_notificacion_correspondencia = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro','Nombre_parametro')
+            ->where([
+                ['Tipo_lista', '=', 'Estatus_Correspondencia'],
+                ['Estado', '=', 'activo']
+            ])
+            ->get();
+
+            $datos_status_notificacion_corresp = json_decode(json_encode($datos_status_notificacion_correspondencia, true));
+            return response()->json($datos_status_notificacion_corresp);
+        }
     }
 
     //Guarda informacion de controvertido Juntas Modulo
@@ -1689,7 +1709,6 @@ class ControversiaJuntasController extends Controller
         $time = time();
         $nombre_usuario = Auth::user()->name;
         $date = date("Y-m-d", $time);
-
         $newId_evento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
         $newId_asignacion = $request->newId_asignacion;
@@ -1698,6 +1717,7 @@ class ControversiaJuntasController extends Controller
         $tipo_destinatario_principal = $request->tipo_destinatario_principal;
         $nombre_destinatariopri = $request->nombre_destinatariopri;
         $Nombre_dest_principal_afi_empl = $request->Nombre_dest_principal_afi_empl;
+        $nombreAfiliado = $request->nombre_afiliado;
         
         if ($tipo_destinatario_principal == '') {
             $tipo_destinatario_principal = null;
@@ -1769,6 +1789,63 @@ class ControversiaJuntasController extends Controller
         $radicado = $request->radicado;
         $bandera_correspondecia_guardar_actualizar = $request->bandera_correspondecia_guardar_actualizar;
 
+        // eL número de identificacion siempre será el del afiliado.
+        $array_nro_ident_afi = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+        ->select('Nro_identificacion')
+        ->where([['ID_evento', $newId_evento]])
+        ->get();
+
+        if (count($array_nro_ident_afi) > 0) {
+            $nro_identificacion = $array_nro_ident_afi[0]->Nro_identificacion;
+        }else{
+            $nro_identificacion = 'N/A';
+        }
+        // el destinatario siempre será Afiliado debido a que en ARL el otro destinatario no funciona
+        if ($otrodestinariop == '') {
+            $Destinatario = 'Jrci';
+        } else {
+            switch ($tipo_destinatario_principal) {
+                case '1':
+                    $Destinatario = 'Arl';
+                break;
+
+                case '2':
+                    $Destinatario = 'Afp';
+                break;
+
+                case '3':
+                    $Destinatario = 'Eps';
+                break;
+
+                case '4':
+                    $Destinatario = 'Afiliado';
+                break;
+
+                case '5':
+                    $Destinatario = 'Empleador';
+                break;
+                
+                default:
+                    $Destinatario = 'N/A';
+                break;
+            }
+        }
+        // $Destinatario = 'Jrci';
+        // Se crea un array que contiene las copias y se filtra por las que traigan el dato
+        $array_copias = [$afiliado, $empleador, $eps, $afp, $arl, $jrci, $jnci];
+        $variables_filtradas = array_filter($array_copias, function($var) {
+            return !empty($var);
+        });
+        // Verifica si el array resultante está vacío
+        if (!empty($variables_filtradas)) {
+            // Si hay elementos en el array, los concatenamos con comas
+            $Agregar_copias = implode(", ", $variables_filtradas);
+        } else {
+            // Si el array está vacío, asignamos una cadena vacía
+            $Agregar_copias = '';
+        }
+
+
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
                 'ID_evento' => $newId_evento,
@@ -1821,11 +1898,11 @@ class ControversiaJuntasController extends Controller
                 'F_comunicado' => $date,
                 'N_radicado' => $radicado,
                 'Cliente' => 'N/A',
-                'Nombre_afiliado' => $destinatario_principal,
+                'Nombre_afiliado' => $nombreAfiliado,
                 'T_documento' => 'N/A',
-                'N_identificacion' => 'N/A',
-                'Destinatario' => 'N/A',
-                'Nombre_destinatario' => 'N/A',
+                'N_identificacion' => $nro_identificacion,
+                'Destinatario' => $Destinatario,
+                'Nombre_destinatario' => $request->nombre_destinatariopri ? $request->nombre_destinatariopri : 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
                 'Telefono_destinatario' => '001',
@@ -1837,7 +1914,7 @@ class ControversiaJuntasController extends Controller
                 'Forma_envio' => '0',
                 'Elaboro' => $elaboro,
                 'Reviso' => $reviso,
-                'Agregar_copia' => $agregar_copias_comu,
+                'Agregar_copia' => $Agregar_copias,
                 'JRCI_copia' => $cual,
                 'Anexos' => $anexos,
                 'Tipo_descarga' => 'Controversia',
@@ -1899,7 +1976,7 @@ class ControversiaJuntasController extends Controller
             ])->update($datos_correspondencia); 
             
             $datos_info_comunicado_eventos = [
-                'Agregar_copia' => $agregar_copias_comu,
+                'Agregar_copia' => $Agregar_copias,
                 'JRCI_copia' => $cual,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
