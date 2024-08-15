@@ -5681,6 +5681,9 @@ class CalificacionPCLController extends Controller
                 }
                 $descripcion_otros = $request->descripcion_otros;
                 $descripcion_enfermedad = $request->descripcion_enfermedad;
+                $dominancia = $request->dominancia;
+                $id_afiliado = $request->id_afiliado;
+
                 $datos_info_decreto_eventos = [
                     'ID_Evento' => $id_Evento_decreto,
                     'Id_proceso' => $id_Proceso_decreto,
@@ -5700,13 +5703,23 @@ class CalificacionPCLController extends Controller
                 $dato_info_pericial_eventos = [
                     'Id_motivo_solicitud' => $motivo_solicitud,
                 ];
+
+                $dato_info_dominancia_afiliado = [
+                    'Id_dominancia' => $dominancia
+                ];
         
                 sigmel_informacion_decreto_eventos::on('sigmel_gestiones')->insert($datos_info_decreto_eventos);
                 sleep(2);
                 sigmel_informacion_pericial_eventos::on('sigmel_gestiones')
-                ->where([
+                ->where([                    
                     ['ID_evento', $id_Evento_decreto]
                 ])->update($dato_info_pericial_eventos);
+
+                sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['Id_Afiliado', $id_afiliado],
+                    ['ID_evento', $id_Evento_decreto]
+                ])->update($dato_info_dominancia_afiliado);
                 
                 $mensajes = array(
                     "parametro" => 'agregar_decreto_parte',
@@ -5731,6 +5744,9 @@ class CalificacionPCLController extends Controller
                 }
                 $descripcion_otros = $request->descripcion_otros;
                 $descripcion_enfermedad = $request->descripcion_enfermedad;
+                $dominancia = $request->dominancia;
+                $id_afiliado = $request->id_afiliado;
+                
                 $datos_info_decreto_eventos = [
                     'ID_Evento' => $id_Evento_decreto,
                     'Id_proceso' => $id_Proceso_decreto,
@@ -5749,6 +5765,10 @@ class CalificacionPCLController extends Controller
                 $dato_info_pericial_eventos = [
                     'Id_motivo_solicitud' => $motivo_solicitud,
                 ];
+
+                $dato_info_dominancia_afiliado = [
+                    'Id_dominancia' => $dominancia
+                ];
         
                 sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
                 ->where('ID_Evento', $id_Evento_decreto)->update($datos_info_decreto_eventos);
@@ -5758,6 +5778,12 @@ class CalificacionPCLController extends Controller
                     ['ID_evento', $id_Evento_decreto]
                 ])->update($dato_info_pericial_eventos);
         
+                sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['Id_Afiliado', $id_afiliado],
+                    ['ID_evento', $id_Evento_decreto]
+                ])->update($dato_info_dominancia_afiliado);
+
                 $mensajes = array(
                     "parametro" => 'update_decreto_parte',
                     "mensaje2" => 'Actualizado satisfactoriamente.'

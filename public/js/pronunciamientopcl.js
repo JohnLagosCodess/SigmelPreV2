@@ -90,11 +90,14 @@ $(document).ready(function(){
     });
 
     var info_pronuncia = $('#info_pronuncia').val();
+    // Si la pronuncia tiene como decisión Silencio, no genera proforma y deja visible el cuadro de correspondencia.
     if(info_pronuncia){
         var info_pronunciamiento = JSON.parse(info_pronuncia)[0];
         if(info_pronunciamiento.Decision == 'Silencio'){
             $("#div_pronu_califi").removeClass('d-none');
         } 
+        /* Si la decisión es distinta a pronunciamiento entonces significa que es un desacuerdo o acuerdo por 
+        ende ocultara todo y la unica forma de habilitarlo es dandole en editar en la tabla de comunicados */
         else{
             $("#ActualizarPronuncia").addClass('d-none');
             $("#div_pronu_califi").addClass('d-none');
